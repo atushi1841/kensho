@@ -38,6 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
                     help='取得する一覧ページ数（デフォルト: %(default)s）')
     p.add_argument('--all', action='store_true',
                     help='全ページ取得')
+    p.add_argument('--version', action='version', version='Kensho v3.5')
     return p
 
 

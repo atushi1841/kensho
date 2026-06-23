@@ -17,6 +17,7 @@ if __name__ == '__main__':
     _p.add_argument('account', help='アカウントキー (例: atushi16)')
     _p.add_argument('max_n', type=int, help='最大処理件数')
     _p.add_argument('--dry-run', action='store_true', help='実際に応募せずログのみ')
+    _p.add_argument('--version', action='version', version='Kensho v3.5')
     _args = _p.parse_args()
     key = _args.account
     max_n = _args.max_n
