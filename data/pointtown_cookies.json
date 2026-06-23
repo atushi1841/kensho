@@ -1,0 +1,32 @@
+[
+  {
+    "name": "JSESSIONID",
+    "value": "186DA580CAD5FEC624D91C7BB83D0BD4",
+    "domain": "seal.atlas.globalsign.com",
+    "path": "/gss",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "None"
+  },
+  {
+    "name": "gmoidltfg",
+    "value": "1",
+    "domain": ".id.gmo.jp",
+    "path": "/",
+    "expires": 1815987023,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "__cf_bm",
+    "value": "h65OXGyQkIptVZhqiR0qjKY5KacrP9iY8At6OnU1ESc-1781427024.149881-1.0.1.1-GQNnt9PPLrcFphpX0aDtEbDUr5SQx.0GjIWzaPGcBunnYTsEMojAzIF9gmUyIKhul4bl6vWEQqqZa6hW4gdmEClbl4ySD8dIYsn.h0wrWk4jbqyyc1eVVyi1pnBZqFUS",
+    "domain": ".gmo.jp",
+    "path": "/",
+    "expires": 1781428823,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  }
+]

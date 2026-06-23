@@ -1,0 +1,43 @@
+# ── Kensho .gitignore ──
+# セキュリティ: Xアカウント認証情報
+data/x_session*.json
+data/session_backup/
+data/backups/
+
+# セキュリティ: ポイントサイト認証情報
+.env.pointsites*
+.env
+*.env
+
+# 巨大Chromeプロファイル（デバッグ用）
+chrome_profile/
+tmp_profile/
+
+# ビルド・キャッシュ
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pyc
+
+# ログ
+logs/
+*.log
+
+# 実行時生成ファイル
+output*.txt
+run_output*.txt
+nul
+moppy_test.txt
+
+# OSゴミ
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# その他
+.hermes/
+hermes_agent.log
+scripts/claude-flash
+scripts/claude-pro
+wiki/

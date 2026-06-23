@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "kensho-sweeps"
+version = "3.4"
+description = "X(Twitter) 懸賞自動応募システム — Playwright Firefox + マルチアカウント"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Kensho-Sweeps"},
+]
+keywords = ["sweepstakes", "twitter", "automation", "playwright"]
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: Microsoft :: Windows",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["application*", "core*", "keepalive*", "scraping*", "utils*", "scheduler*", "scripts*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

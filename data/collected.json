@@ -1,0 +1,377 @@
+{
+  "timestamp": "2026-06-24T06:33:18.927323",
+  "total_on_page": 50,
+  "new_items_processed": 38,
+  "success": 25,
+  "errors": 13,
+  "collected": [
+    {
+      "detail_url": "/detail/a544f578196d5c40.html",
+      "rd_url": "/rd/a544f578196d5c40",
+      "x_url": "https://x.com/lotte_coolish",
+      "time": 1.35,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/04e64ada5fbd9c7d.html",
+      "rd_url": "/rd/04e64ada5fbd9c7d",
+      "x_url": "https://x.com/LINE_BUBBLE2_JP",
+      "time": 1.5,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/118005a6452860e3.html",
+      "rd_url": "/rd/118005a6452860e3",
+      "x_url": "https://x.com/buchigire_anime",
+      "time": 0.82,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/bda7613e973b9.html",
+      "rd_url": "/rd/bda7613e973b9",
+      "x_url": "https://x.com/P5X_Official_JP",
+      "time": 1.41,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/599c802a6bd1e4b6.html",
+      "rd_url": "/rd/599c802a6bd1e4b6",
+      "x_url": "https://x.com/asahigf_jp/status/2060194419182272630",
+      "time": 0.63,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/634627d9aa53bf6c.html",
+      "rd_url": "/rd/634627d9aa53bf6c",
+      "x_url": "https://x.com/Nescafe_jp/status/2069072926599438670",
+      "time": 0.74,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/49d31214b9579f4e.html",
+      "rd_url": "/rd/49d31214b9579f4e",
+      "x_url": "https://x.com/hitotubukanro/status/2068891729227358360",
+      "time": 0.77,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/e6975d4b0fefbd1f.html",
+      "rd_url": "/rd/e6975d4b0fefbd1f",
+      "x_url": "https://x.com/cocos_campaign",
+      "time": 1.31,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/6481971f899d44e1.html",
+      "rd_url": "/rd/6481971f899d44e1",
+      "x_url": "https://x.com/BROWNDUST2_JP",
+      "time": 1.37,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/e11818bb7abec3ce.html",
+      "rd_url": "/rd/e11818bb7abec3ce",
+      "x_url": "https://x.com/hamasushi_jp",
+      "time": 1.06,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/82ceb53fc8ebb2e0.html",
+      "rd_url": "/rd/82ceb53fc8ebb2e0",
+      "x_url": "https://x.com/beanstalk_baby/status/2068831505712128312",
+      "time": 0.89,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/p2a5qg63kbb3cbg2.html",
+      "rd_url": "/rd/p2a5qg63kbb3cbg2",
+      "x_url": "https://x.com/koseofficial_jp/status/2069223961318339034",
+      "time": 0.65,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/7f4290419912acc.html",
+      "rd_url": "/rd/7f4290419912acc",
+      "x_url": "https://x.com/jolf_sales/status/2067442183926583647",
+      "time": 0.87,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/c6f4d7a3f7cf4d01.html",
+      "rd_url": "/rd/c6f4d7a3f7cf4d01",
+      "x_url": "https://x.com/yowapeda_ism/status/2068890504876695745",
+      "time": 0.66,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/d541d383747f8de8.html",
+      "rd_url": "/rd/d541d383747f8de8",
+      "x_url": "https://x.com/kikkoman_desu/status/2068891978197311710",
+      "time": 0.8,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/cf6fd48d852ecd88.html",
+      "rd_url": "/rd/cf6fd48d852ecd88",
+      "x_url": "https://x.com/ORBIS_JP/status/2068884810643480689",
+      "time": 0.8,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/8a7ed7a313f1b41f.html",
+      "rd_url": "/rd/8a7ed7a313f1b41f",
+      "x_url": "https://x.com/Ginei_NeueSaga/status/2068620366470369736",
+      "time": 0.61,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/n6eswj3o75jmigcf.html",
+      "rd_url": "/rd/n6eswj3o75jmigcf",
+      "x_url": "https://x.com/tantakatan_godo",
+      "time": 1.28,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/8cc3ed544a0b0be1.html",
+      "rd_url": "/rd/8cc3ed544a0b0be1",
+      "x_url": "https://x.com/at_cosme_nagoya/status/2066445656714252527",
+      "time": 0.61,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/599eda581a1f6822.html",
+      "rd_url": "/rd/599eda581a1f6822",
+      "x_url": "https://x.com/andst_official/status/2068982688141431150",
+      "time": 0.83,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/bcd42609f381312f.html",
+      "rd_url": "/rd/bcd42609f381312f",
+      "x_url": "https://x.com/meito_alphabet",
+      "time": 1.49,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/d5710f5659e34c55.html",
+      "rd_url": "/rd/d5710f5659e34c55",
+      "x_url": "https://x.com/surf_beverage/status/2067529414825722293",
+      "time": 0.68,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/f04a1647524071aa.html",
+      "rd_url": "/rd/f04a1647524071aa",
+      "x_url": "https://x.com/dynamjp/status/2069005028124483868",
+      "time": 0.76,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/4km3j5bc4jy84c4s.html",
+      "rd_url": "/rd/4km3j5bc4jy84c4s",
+      "x_url": "https://x.com/modelpress/status/2066445733621117346",
+      "time": 0.72,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/986019bcb5957450.html",
+      "rd_url": "/rd/986019bcb5957450",
+      "x_url": "https://x.com/br_miyajima/status/2069178616865591342",
+      "time": 0.68,
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    }
+  ],
+  "error_details": [
+    {
+      "detail_url": "/detail/becd374d51386369.html",
+      "error": "X URLではない: https://cp.kirin.jp/join/37335#869",
+      "time": 0.5
+    },
+    {
+      "detail_url": "/detail/6a331803ce78bcc.html",
+      "error": "X URLではない: https://mobile.suntory.co.jp/cpn/sho-chu/matsurika/U2606MTK1",
+      "time": 0.32
+    },
+    {
+      "detail_url": "/detail/cp4c7f53eb0.html",
+      "error": "X URLではない: https://cloud.mail.am.sumitomolife.co.jp/campaign-line#865",
+      "time": 0.95
+    },
+    {
+      "detail_url": "/detail/cp75aa59e08.html",
+      "error": "X URLではない: https://www.lawson.co.jp/lab/app/art/1527607_8411.html#858",
+      "time": 0.36
+    },
+    {
+      "detail_url": "/detail/cp504ddb1f7.html",
+      "error": "X URLではない: https://www.lawson.co.jp/lab/app/art/1527778_8411.html#857",
+      "time": 0.47
+    },
+    {
+      "detail_url": "/detail/cpaec261888.html",
+      "error": "[SSL: UNSAFE_LEGACY_RENEGOTIATION_DISABLED] unsafe legacy renegotiation disabled (_ssl.c:1006)",
+      "time": 0.43
+    },
+    {
+      "detail_url": "/detail/47872a9662f61.html",
+      "error": "X URLではない: https://www.ministop.co.jp/campaign/260703softcream-cp.html#",
+      "time": 0.48
+    },
+    {
+      "detail_url": "/detail/kvspoactrrmewvay.html",
+      "error": "X URLではない: https://page.line.me/928etbyq?oat__id=695691&openQrModal=tru",
+      "time": 0.66
+    },
+    {
+      "detail_url": "/detail/87490f50f7132368.html",
+      "error": "X URLではない: https://unell.jp/sample/#534",
+      "time": 0.46
+    },
+    {
+      "detail_url": "/detail/3c2cb127965c4cdc.html",
+      "error": "X URLではない: https://lp.smartnews.com/coupon_event/202605/announcement.ht",
+      "time": 0.51
+    },
+    {
+      "detail_url": "/detail/bcaa0euxx0qsce34.html",
+      "error": "X URLではない: https://www.marinfood.co.jp/campaign/monthly/#810",
+      "time": 0.45
+    },
+    {
+      "detail_url": "/detail/84ee0ed4cb4de0b2.html",
+      "error": "X URLではない: https://business.form-mailer.jp/lp/71042e89333657#981",
+      "time": 0.43
+    },
+    {
+      "detail_url": "/detail/5b7b8755d2c78bb0.html",
+      "error": "X URLではない: https://www.sonoda-himeji.jp/news/detail/2651#066",
+      "time": 0.7
+    }
+  ],
+  "elapsed_seconds": 42.6
+}

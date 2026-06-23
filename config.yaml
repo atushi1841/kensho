@@ -1,0 +1,112 @@
+# ════════════════════════════════════════════
+# Kensho 全体設定 v3.1
+# ════════════════════════════════════════════
+
+general:
+  project_dir: "D:\\Project2\\kensho"
+  python: "C:\\Users\\1F\\AppData\\Local\\hermes\\hermes-agent\\venv\\Scripts\\python.exe"
+  log_retention_days: 30
+  session_warn_days: 14
+
+# ── 通知設定 ──
+notify:
+  discord_webhook: ""
+  windows_toast: true
+
+# ── Xアカウント ──
+# 垢を追加するときはここに追記し、python recreate_tasks.py を実行する
+accounts:
+  - key: atushi16
+    display: "@atushi16"
+    session: "data/x_session.json"
+    network_interface: "イーサネット"
+    schedule:
+      collects: true
+      batches:
+        - { time: "09:21", max: 15 }
+        - { time: "14:33", max: 15 }
+        - { time: "19:47", max: 15 }
+
+  - key: kudou
+    display: "@kudou_aoshi"
+    session: "data/x_session_kudou.json"
+    network_interface: "Wi-Fi"
+    schedule:
+      collects: false
+      batches:
+        - { time: "10:05", max: 10 }
+        - { time: "12:13", max: 10 }
+        - { time: "15:28", max: 10 }
+        - { time: "17:47", max: 10 }
+        - { time: "20:14", max: 10 }
+
+  - key: atushi1840
+    display: "@atushi1840"
+    session: "data/x_session_b.json"
+    network_interface: "イーサネット 15"
+    schedule:
+      collects: false
+      batches:
+        - { time: "11:17", max: 10 }
+        - { time: "13:42", max: 10 }
+        - { time: "16:42", max: 10 }
+        - { time: "18:23", max: 10 }
+        - { time: "21:08", max: 10 }
+
+  - key: zin20120731
+    display: "@zin20120731"
+    session: "data/x_session_c.json"
+    network_interface: "Wi-Fi 2"
+    schedule:
+      collects: false
+      batches:
+        - { time: "10:45", max: 10 }
+        - { time: "13:00", max: 10 }
+        - { time: "16:00", max: 10 }
+        - { time: "18:00", max: 10 }
+        - { time: "20:30", max: 10 }
+
+# ── 収集設定 ──
+collection:
+  source: "https://knshow.com"
+  times: ["09:00", "13:00", "18:00"]
+  max_items: 200
+
+# ── Keepalive ──
+keepalive:
+  interval_minutes: 5
+  interfaces:
+    - label: "USB-B (povo/@atushi1840)"
+      type: ping
+      network_interface: "イーサネット 15"
+    - label: "WiFi-A (@kudou_aoshi)"
+      type: wifi_monitor
+      network_interface: "Wi-Fi"
+      wifi_profile: "a"
+    - label: "WiFi-C (@zin20120731)"
+      type: wifi_monitor
+      network_interface: "Wi-Fi 2"
+      wifi_profile: "AiR-WiFi_B8W38T_ino"
+
+# ── レート制限（X BAN回避）──
+# 1垢あたりの日次上限。制限値の20-30%で設定。
+# 各バッチで上限に達したらその垢はその日は停止。
+rate_limits:
+  max_follow_per_day: 120          # atushi16が収集垢のため多め（制限400/日の30%）
+  max_rt_per_day: 80              # RT枠は広いが抑え気味に
+  max_like_per_day: 200           # いいね制限は非公開だが抑えめに
+  active_hours_start: "09:00"     # この時間以降のみ動作
+  active_hours_end: "23:59"       # 深夜は避ける（BOT判定対象）
+  min_delay_between_actions: 12   # 基本最小間隔（秒）
+  max_delay_between_actions: 40   # 基本最大間隔（秒）
+  extra_long_pause_chance: 0.10   # 10%の確率で60-120秒の長休憩
+  break_after_n_items: 3          # N件ごとに長め休憩
+  break_min_seconds: 30           # 休憩最小
+  break_max_seconds: 90           # 休憩最大
+
+# ── オーケストレーター ──
+orchestrator:
+  interval_minutes: 15
+  max_accounts_per_run: 2        # 2垢ずつ処理（4垢を回すのに必要）
+  apply_timeout: 1800
+  priority: "pending_first"
