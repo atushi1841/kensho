@@ -354,6 +354,14 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
         except Exception as e:
             if log:
                 log.write(f"WARN: session file read error: {e}")
+    # keyring優先（ファイルより新しいデータがあれば上書き）
+    if account_key:
+        from utils.keyring import load_session as _kr_load
+        kr_data = _kr_load(account_key)
+        if kr_data:
+            storage = kr_data
+            if log:
+                log.write(f"  [KEYRING] Session loaded from Credential Manager")
 
     fp: dict[str, Any] | None = FINGERPRINTS.get(account_key) if account_key else None
     if fp and log:

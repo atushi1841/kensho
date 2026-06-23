@@ -1,5 +1,6 @@
 """
 Kensho Session Manager — セッションファイルの管理・監視
+v3.4: keyring対応（Credential Manager優先、ファイルフォールバック）
 """
 from __future__ import annotations
 
@@ -7,6 +8,16 @@ import os, time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+from utils.keyring import load_session
+
+
+def get_session_data(account_key: str) -> dict[str, Any] | None:
+    """
+    アカウントのセッションデータを取得。
+    優先順位: Credential Manager → 従来のセッションファイル
+    """
+    return load_session(account_key)
 
 def check_sessions(cfg: dict[str, Any], log: Any = None) -> list[tuple[str, str, float]]:
     """

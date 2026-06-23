@@ -54,7 +54,8 @@ def _is_daemon_or_child(pid: int) -> bool:
 
 def kill_zombies(log: Any = None) -> dict[str, int]:
     """
-    Firefox/Chromeのゾンビプロセス + 孤立python.exe を掃除。
+    Kenshoが起動したFirefox/Chromeのゾンビプロセスを掃除。
+    ユーザーが自分で開いたFirefoxは絶対に殺さない。
     最大5回リトライ。daemonプロセスは絶対に殺さない。
     """
     global PROTECTED_PIDS
@@ -63,6 +64,7 @@ def kill_zombies(log: Any = None) -> dict[str, int]:
     killed: dict[str, int] = {}
     targets: list[str | int] = []
 
+    # Kensho用Firefoxのみkill（ユーザーFirefoxを識別するためcmdline確認）
     for exe in ['firefox.exe', 'geckodriver.exe']:
         targets.append(exe)
 
@@ -88,8 +90,48 @@ def kill_zombies(log: Any = None) -> dict[str, int]:
     firefox_killed: int = 0
     python_killed: int = 0
 
+    # ユーザーのFirefoxを識別するため、親プロセスがpythonでなければスキップ
+    def _is_kensho_firefox(exe_name: str) -> bool:
+        """このexeのプロセスのうち、親がpythonのものだけ返す"""
+        try:
+            import psutil as _ps
+            for proc in _ps.process_iter(['pid', 'name', 'ppid']):
+                try:
+                    if proc.info['name'] and proc.info['name'].lower() == exe_name:
+                        pp = _ps.Process(proc.info['ppid'])
+                        if 'python' in pp.name().lower():
+                            return True
+                except (_ps.NoSuchProcess, _ps.AccessDenied):
+                    pass
+        except Exception:
+            pass
+        return False
+
+    # ユーザーFirefoxが動いているか事前確認
+    user_firefox_active = False
+    try:
+        import psutil as _ps2
+        for proc in _ps2.process_iter(['pid', 'name', 'ppid']):
+            try:
+                if proc.info['name'] and proc.info['name'].lower() == 'firefox.exe':
+                    pp = _ps2.Process(proc.info['ppid'])
+                    if 'python' not in pp.name().lower():
+                        user_firefox_active = True
+                        break
+            except (_ps2.NoSuchProcess, _ps2.AccessDenied):
+                pass
+    except Exception:
+        pass
+
+    if user_firefox_active and log:
+        log.write("[CLEANUP] 🔒 ユーザーFirefox検出 → Kensho Firefoxのみkill")
+
     for exe in ['firefox.exe', 'geckodriver.exe']:
         for _ in range(3):
+            # ユーザーFirefoxがいる場合、親プロセスがpythonのFirefoxのみkill
+            if user_firefox_active and exe == 'firefox.exe':
+                if not _is_kensho_firefox('firefox.exe'):
+                    break  # Kensho Firefoxなし
             kill_ret: int = os.system(f'taskkill /F /IM {exe} 2>nul')
             if kill_ret == 0:
                 if exe == 'firefox.exe':

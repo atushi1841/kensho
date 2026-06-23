@@ -42,7 +42,7 @@ python daemon.py
 ```
 D:\Project2\kensho\
 ├── config.yaml                  # 全体設定
-├── daemon.py                    # 常駐デーモン（3スレッド）
+├── daemon.py                    # 常駐デーモン（2スレッド）
 ├── orchestrator.py              # オーケストレーター（15分おき）
 ├── kensho_collect.py            # CLIラッパー（scraping/collectorに委譲）
 ├── kensho_apply_single.py       # 単一アカウント応募
@@ -54,20 +54,26 @@ D:\Project2\kensho\
 │   └── collector.py             # knshow.com収集エンジン
 ├── core/
 │   ├── config.py                # 設定読み込み
+│   ├── encoding.py              # cp932ガード共通ユーティリティ
 │   ├── cleanup.py               # ゾンビ掃除
 │   ├── logger.py                # ログ出力
 │   └── notifier.py              # Windowsトースト通知
 ├── keepalive/                   # ネットワーク監視
 ├── utils/
 │   ├── backup.py                # 自動バックアップ/復旧
-│   └── network.py               # ネットワークユーティリティ
-├── scripts/                     # 補助スクリプト
+│   ├── network.py               # ネットワークユーティリティ
+│   └── process.py               # サブプロセス実行ユーティリティ
+├── scripts/                     # 補助スクリプト（health check, cron worker）
+├── tests/                       # pytest（32テスト, mypy strict 0 error）
 ├── data/
+│   ├── archive/                 # 古い応募結果ログ
 │   ├── collected.json           # 収集懸賞リスト＋応募状態
 │   ├── processed.json           # 処理済みID一覧
 │   ├── daily_counts.json        # 日次カウンター
 │   └── x_session*.json          # Xセッション（認証情報）
 ├── logs/                        # ログ（日付別）
+├── pyproject.toml               # プロジェクトメタデータ
+├── .python-version              # Python 3.11固定
 └── requirements.txt             # 依存パッケージ
 ```
 

@@ -156,3 +156,61 @@ class TestExtractDeadline:
         deadline, winners = extract_deadline_and_winners(html)
         assert deadline == "2026-07-15"
         assert winners == 500
+
+
+class TestKnpwDeadlineExtraction:
+    """knshow.com の実HTMLに対する deadline/winners 抽出テスト"""
+
+    # 実際のknshow詳細ページから取得したHTML断片
+    KNSHOW_HTML_TITLE = (
+        '<title>【毎日・その場で当たる】'
+        'クーリッシュバニラ1個 無料引換券を10000名様にプレゼント'
+        '【〆切07月01日】ロッテ クーリッシュ</title>'
+    )
+
+    KNSHOW_HTML_TOUSEN = (
+        '<strong class="tousenST"> 10,000</strong>名様'
+    )
+
+    KNSHOW_HTML_EXPIRY = (
+        '<p>応募締切日：<strong>'
+        '<span class="expiredatetime-display" '
+        "data-expiredatetime='2026-07-01'>2026-07-01</span>"
+        '</strong></p>'
+    )
+
+    def test_title_deadline_extraction(self) -> None:
+        """実HTMLのtitleタグから締切を正しく抽出"""
+        deadline, winners = extract_deadline_and_winners(
+            self.KNSHOW_HTML_TITLE
+        )
+        assert deadline == "2026-07-01"
+        assert winners == 10000
+
+    def test_tousen_st_extraction(self) -> None:
+        """tousenSTクラスから当選人数を抽出"""
+        html: str = self.KNSHOW_HTML_TOUSEN
+        deadline, winners = extract_deadline_and_winners(html)
+        assert winners == 10000
+
+    def test_expiredatetime_extraction(self) -> None:
+        """expiredatetime-display属性から締切を抽出"""
+        html: str = self.KNSHOW_HTML_EXPIRY
+        deadline, winners = extract_deadline_and_winners(html)
+        assert deadline == "2026-07-01"
+
+    def test_full_page_pattern(self) -> None:
+        """実際のknshowページ構成を模したHTML"""
+        html: str = (
+            self.KNSHOW_HTML_TITLE
+            + '<meta name="description" content="懸賞情報 (07月01日マデ)"/>'
+            + self.KNSHOW_HTML_EXPIRY
+            + self.KNSHOW_HTML_TOUSEN
+            + '<div class="sidebar">'
+            + '<p>当選人数：170,000名様　締切：6月29日</p>'
+            + '<p>当選人数：50,000名様　締切：6月30日</p>'
+            + '</div>'
+        )
+        deadline, winners = extract_deadline_and_winners(html)
+        assert deadline == "2026-07-01", f"Expected 2026-07-01, got {deadline}"
+        assert winners == 10000, f"Expected 10000, got {winners}"

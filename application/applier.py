@@ -365,23 +365,29 @@ def apply_for_account(account_key: str, max_n: int,
 
     success: int = 0
     errors: int = 0
+    total: int = len(to_process)
 
     for i, item in enumerate(to_process):
+        global_idx: int = i + 1
         x_url: str = item.get('x_url', '')
         if not x_url:
-            out(f"  [{global_idx}/{len(to_process)}] [SKIP] x_url 空")
+            out(f"  [{global_idx}/{total}] [SKIP] x_url 空")
             continue
 
         clean_url: str = x_url.split('#')[0]
 
         # /status/ がないURL（アカウントページ）はスキップ
         if '/status/' not in clean_url.lower():
-            out(f"  [{global_idx}/{len(to_process)}] [SKIP] ツイートURLではない: {clean_url[:55]}...")
+            out(f"  [{global_idx}/{total}] [SKIP] ツイートURLではない: {clean_url[:55]}...")
             continue
-        global_idx: int = i + 1
+
+        deadline_info: str = item.get('deadline', '') or '未設定'
+        wc_info: str = str(item.get('winner_count', '')) if item.get('winner_count', 0) > 0 else '?'
+        elapsed_global: float = time.time() - t0
 
         try:
-            out(f"[{global_idx}/{len(to_process)}] {clean_url[:55]}...")
+            out(f"[{global_idx}/{total}] ⏱{elapsed_global/60:.0f}分 "
+                f"〆{deadline_info} {wc_info}名 {clean_url[:50]}...")
 
             page.goto(clean_url, timeout=120000)
             time.sleep(random.uniform(2, 5))

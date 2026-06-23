@@ -2,8 +2,8 @@
 """
 Kensho Cron Worker — no_agent cron用
 使い方:
-  kensho_cron_worker.py atushi16 15   # 収集+応募
-  kensho_cron_worker.py kudou 10      # 応募のみ
+  python scripts/kensho_cron_worker.py <account> [max_n]
+  例: python scripts/kensho_cron_worker.py atushi16 15
 
 ログファイル: logs/cron_{account}_YYYY-MM-DD_HHMMSS.log
 """
@@ -30,7 +30,7 @@ def kill_zombies():
     """Firefox/Chromeのゾンビを確実に掃除"""
     for exe in ['firefox.exe']:
         for _ in range(3):  # 最大3回リトライ
-            r = os.system(f'taskkill.exe //F //IM {exe} 2>nul')
+            r = os.system(f'taskkill /F /IM {exe} 2>nul')
             if r == 0:
                 time.sleep(1)  # プロセス終了待ち
             else:

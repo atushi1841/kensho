@@ -209,32 +209,32 @@ def main() -> None:
         else:
             log.write(f"  収集時刻外 → スキップ")
         
-        # 5. 応募（ForceBindIPでアカウントごとにIP分離）
+        # 5. 応募（ThreadPoolExecutorで並列処理、最大2垢同時）
         log.write("\n--- Step 5: Apply Check ---")
         pending = get_pending_batches(cfg, state)
         max_accounts = cfg.get('orchestrator', {}).get('max_accounts_per_run', 2)
         apply_timeout = cfg.get('orchestrator', {}).get('apply_timeout', 1800)
-        
+
         # ForceBindIPのパス
         BINDIP = os.path.join(cfg['general']['project_dir'], 'tools', 'ForceBindIP', 'ForceBindIP64.exe')
         APPLY_SCRIPT = os.path.join(cfg['general']['project_dir'], 'kensho_apply_single.py')
         PYTHON = cfg['general'].get('python', sys.executable)
-        
+
         if not pending:
             log.write("  処理待ちのバッチなし")
         else:
-            log.write(f"  処理待ち: {len(pending)}バッチ（最大{max_accounts}垢処理）")
+            log.write(f"  処理待ち: {len(pending)}バッチ（最大{max_accounts}垢並列）")
             processed = 0
-            for key, batch_time, batch_max in pending[:max_accounts]:
+
+            def _run_one(key: str, batch_time: str, batch_max: int) -> tuple[str, int, int]:
+                """1アカウントの応募を実行（並列ワーカー用）"""
                 log.write(f"\n  ▶ {key}（時刻{batch_time}、最大{batch_max}件）")
                 try:
-                    # アカウントのネットワークインターフェースを取得
                     acct = next((a for a in cfg.get('accounts', []) if a['key'] == key), None)
                     if not acct:
                         log.write(f"  [SKIP] アカウント情報なし")
-                        continue
-                    
-                    # インターフェースのIPを取得（シングルクォートエスケープ）
+                        return (key, 0, 0)
+
                     interface_name = acct.get('network_interface', '')
                     safe_iface = interface_name.replace("'", "''")
                     ip_result = sp.run(
@@ -243,111 +243,118 @@ def main() -> None:
                         capture_output=True, timeout=10
                     )
                     bind_ip = ip_result.stdout.decode('cp932', errors='replace').strip()
-                    
+
                     if not bind_ip or bind_ip == 'None' or bind_ip.startswith('169.254.'):
                         log.write(f"  [SKIP] インターフェース '{interface_name}' 未接続（IP: {bind_ip or 'なし'}）")
-                        continue
-                    
+                        return (key, 0, 0)
+
                     log.write(f"  ForceBindIP: {bind_ip} ({interface_name})")
-                    
-                    # ForceBindIPでIPをバインドして応募実行（窓非表示）
+
                     start = time.time()
                     si = sp.STARTUPINFO()
                     si.dwFlags = sp.STARTF_USESHOWWINDOW
-                    si.wShowWindow = 0  # SW_HIDE
-                    
-                    # stderrをファイルに出力（クラッシュ原因特定用）
+                    si.wShowWindow = 0
+
                     stderr_path = os.path.join(
                         cfg['general']['project_dir'], 'logs',
                         datetime.now().strftime('%Y-%m-%d'),
                         f'apply_stderr_{key}.log'
                     )
                     os.makedirs(os.path.dirname(stderr_path), exist_ok=True)
-                    stderr_f = open(stderr_path, 'w')
-                    
-                    proc = sp.Popen(
-                        [BINDIP, bind_ip, PYTHON, '-u', APPLY_SCRIPT, key, str(batch_max)],
-                        stdout=sp.DEVNULL, stderr=stderr_f,
-                        cwd=cfg['general']['project_dir'],
-                        creationflags=0x08000000,
-                        startupinfo=si
-                    )
-                    
-                    # proc.wait(timeout=N) → 標準のタイムアウト機構（ポーリング不要）
-                    timed_out = False
-                    try:
-                        proc.wait(timeout=apply_timeout)
-                    except sp.TimeoutExpired:
-                        timed_out = True
-                        elapsed = time.time() - start
-                        log.write(f"  [TIMEOUT] {apply_timeout}秒超過（{elapsed:.0f}秒）→ ツリーごと強制終了")
-                        # psutilでForceBindIP→Pythonまでのツリー全体を再帰的にkill
-                        try:
-                            parent = psutil.Process(proc.pid)
-                            for child in parent.children(recursive=True):
-                                try:
-                                    child.kill()
-                                except (psutil.NoSuchProcess, psutil.AccessDenied):
-                                    pass
-                            parent.kill()
-                            proc.wait(timeout=5)
-                        except (psutil.NoSuchProcess, psutil.AccessDenied):
-                            pass
-                    
-                    elapsed = time.time() - start
-                    
-                    # stderrファイルを閉じる
-                    stderr_f.close()
-                    
-                    if timed_out:
-                        succ = 0; err = 1
-                    else:
-                        # 結果ファイルを読む（ForceBindIPがstdoutを食うため）
-                        succ = 0; err = 0
-                        result_file = os.path.join(
-                            cfg['general']['project_dir'], 'logs',
-                            datetime.now().strftime('%Y-%m-%d'),
-                            f'apply_result_{key}.json'
+
+                    with open(stderr_path, 'w') as stderr_f:
+                        proc = sp.Popen(
+                            [BINDIP, bind_ip, PYTHON, '-u', APPLY_SCRIPT, key, str(batch_max)],
+                            stdout=sp.DEVNULL, stderr=stderr_f,
+                            cwd=cfg['general']['project_dir'],
+                            creationflags=0x08000000,
+                            startupinfo=si
                         )
+
+                        timed_out = False
                         try:
-                            with open(result_file, 'r', encoding='utf-8') as rf:
-                                res = json.load(rf)
-                                succ = res.get('success', 0)
-                                err = res.get('errors', 0)
-                                if res.get('exception'):
-                                    log.write(f"  Exception: {res['exception'][:100]}")
-                                if res.get('traceback'):
-                                    log.write(f"  Traceback: {res['traceback'][:200]}")
-                        except Exception as _e:
-                            log.write(f"[WARN] 結果ファイル読み込み失敗: {_e}")
-                        
-                        # stderrも確認（クラッシュ原因特定用）
-                        if succ == 0 and err == 0:
+                            proc.wait(timeout=apply_timeout)
+                        except sp.TimeoutExpired:
+                            timed_out = True
+                            elapsed = time.time() - start
+                            log.write(f"  [TIMEOUT] {apply_timeout}秒超過（{elapsed:.0f}秒）→ ツリーごと強制終了")
                             try:
-                                if os.path.exists(stderr_path):
-                                    sz = os.path.getsize(stderr_path)
-                                    if sz > 0:
-                                        with open(stderr_path, 'r', encoding='utf-8', errors='replace') as sf:
-                                            content = sf.read()[-500:]
-                                        log.write(f"  Stderr({sz}B): {content[:300]}")
-                            except Exception:
+                                parent = psutil.Process(proc.pid)
+                                for child in parent.children(recursive=True):
+                                    try:
+                                        child.kill()
+                                    except (psutil.NoSuchProcess, psutil.AccessDenied):
+                                        pass
+                                parent.kill()
+                                proc.wait(timeout=5)
+                            except (psutil.NoSuchProcess, psutil.AccessDenied):
                                 pass
-                    
+
+                    elapsed = time.time() - start
+
+                    if timed_out:
+                        return (key, 0, 1)
+
+                    succ = 0
+                    err = 0
+                    result_file = os.path.join(
+                        cfg['general']['project_dir'], 'logs',
+                        datetime.now().strftime('%Y-%m-%d'),
+                        f'apply_result_{key}.json'
+                    )
+                    try:
+                        with open(result_file, 'r', encoding='utf-8') as rf:
+                            res = json.load(rf)
+                            succ = res.get('success', 0)
+                            err = res.get('errors', 0)
+                            if res.get('exception'):
+                                log.write(f"  Exception: {res['exception'][:100]}")
+                            if res.get('traceback'):
+                                log.write(f"  Traceback: {res['traceback'][:200]}")
+                    except Exception as _e:
+                        log.write(f"[WARN] 結果ファイル読み込み失敗: {_e}")
+
+                    if succ == 0 and err == 0:
+                        try:
+                            if os.path.exists(stderr_path):
+                                sz = os.path.getsize(stderr_path)
+                                if sz > 0:
+                                    with open(stderr_path, 'r', encoding='utf-8', errors='replace') as sf:
+                                        content = sf.read()[-500:]
+                                    log.write(f"  Stderr({sz}B): {content[:300]}")
+                        except Exception:
+                            pass
+
                     log.write(f"  完了: {succ}成功/{err}エラー（{elapsed:.0f}秒{' TIMEOUT' if timed_out else ''}）")
-                    
-                    # 状態更新（結果が取れた時のみ — 空っぽなら再試行）
-                    if succ > 0 or err > 0:
-                        state['last_processed'][key] = f"{datetime.now().strftime('%Y-%m-%d')}:{batch_time}"
-                        save_state(state)
-                        processed += 1
-                    else:
-                        log.write(f"  [WARN] 結果空っぽ（スクリプトクラッシュ？）→ 状態保持、次回再試行")
-                    
+                    return (key, succ, err)
+
                 except Exception as e:
                     log.write(f"  [NG] applyエラー: {e}")
                     log.write(traceback.format_exc()[-300:])
-            
-            log.write(f"\n  今回処理: {processed}垢")
+                    return (key, 0, 1)
+
+            # 並列実行（最大max_accounts垢まで同時）
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+            batch_items = pending[:max_accounts]
+            with ThreadPoolExecutor(max_workers=max_accounts) as executor:
+                futures = {
+                    executor.submit(_run_one, key, bt, bm): (key, bt, bm)
+                    for key, bt, bm in batch_items
+                }
+                for future in as_completed(futures):
+                    key, succ, err = future.result()
+                    processed += 1
+                    batch_time = futures[future][1]
+                    # 状態更新（結果が取れた時のみ）
+                    if succ > 0 or err > 0:
+                        state.setdefault('last_processed', {})
+                        state['last_processed'][key] = f"{datetime.now().strftime('%Y-%m-%d')}:{batch_time}"
+                        save_state(state)
+                    else:
+                        log.write(f"  [WARN] {key}: 結果空っぽ（スクリプトクラッシュ？）→ 状態保持、次回再試行")
+
+            log.write(f"\n  今回処理: {processed}垢（並列={max_accounts}）")
+        
         
         # 6. セッション期限警告（Discord）
         for key, display, days in session_warnings:

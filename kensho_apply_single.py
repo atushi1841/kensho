@@ -12,8 +12,14 @@ hide_console()
 from application.applier import apply_for_account
 
 if __name__ == '__main__':
-    key = sys.argv[1]
-    max_n = int(sys.argv[2])
+    from argparse import ArgumentParser
+    _p = ArgumentParser(description='Kensho 単一アカウント応募')
+    _p.add_argument('account', help='アカウントキー (例: atushi16)')
+    _p.add_argument('max_n', type=int, help='最大処理件数')
+    _p.add_argument('--dry-run', action='store_true', help='実際に応募せずログのみ')
+    _args = _p.parse_args()
+    key = _args.account
+    max_n = _args.max_n
 
     # ── 結果ファイルのパスを先に決定（クラッシュ時も書き込めるように）──
     result_dir = os.path.join(os.path.dirname(__file__), 'logs',
