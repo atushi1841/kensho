@@ -96,7 +96,7 @@ def check_all(cfg: dict[str, Any], log: Any = None) -> tuple[list[tuple[str, str
 
 if __name__ == '__main__':
     """スタンドアロン実行用"""
-    import sys
+    import sys, os
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from core.config import load as load_config
     from core.logger import make_path, LogWriter

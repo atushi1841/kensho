@@ -2,6 +2,7 @@
 """Kensho Single Apply — ForceBindIPで指定インターフェース経由で1垢の応募を実行"""
 from __future__ import annotations
 import sys, os, json, time
+from datetime import datetime
 
 # ── cp932ガード + コンソール非表示（共通ユーティリティ経由）──
 sys.path.insert(0, os.path.dirname(__file__))
