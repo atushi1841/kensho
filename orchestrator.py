@@ -5,13 +5,17 @@ Kensho Orchestrator — 15分おきにタスクスケジューラーから実行
 """
 from __future__ import annotations
 
-import ctypes
-ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
-import sys, os, time, traceback, subprocess as sp, json, psutil
+import ctypes, sys
+# 対話実行（TTYあり）では自分のターミナルが消えるのでウィンドウ非表示化をスキップ
+if not sys.stdin.isatty():
+    ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
+import os, time, traceback, subprocess as sp, json, psutil
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 sys.path.insert(0, os.path.dirname(__file__))
+from core.encoding import guard_stdio
+guard_stdio()
 
 # ── PIDロック: 多重起動防止 ──
 LOCK_DIR = os.path.join(os.path.dirname(__file__), 'data', 'locks')
@@ -34,7 +38,7 @@ if os.path.exists(LOCK_PATH):
     except Exception:
         print(f"[LOCK] PIDロック削除失敗（{LOCK_PATH}）", flush=True)
         pass
-with open(LOCK_PATH, 'w') as f:
+with open(LOCK_PATH, 'w', encoding='utf-8') as f:
     f.write(str(os.getpid()))
 def _cleanup_lock() -> None:
     try:
@@ -62,7 +66,7 @@ def load_state() -> dict[str, Any]:
     """状態ファイル読み込み（なければ空）"""
     if os.path.exists(STATE_FILE):
         try:
-            with open(STATE_FILE, 'r') as f:
+            with open(STATE_FILE, 'r', encoding='utf-8') as f:
                 return json.load(f)  # type: ignore[no-any-return]
         except Exception:
             _trace: str = traceback.format_exc()[-200:]
@@ -72,7 +76,7 @@ def load_state() -> dict[str, Any]:
 
 def save_state(state: dict[str, Any]) -> None:
     """状態ファイル保存"""
-    with open(STATE_FILE, 'w') as f:
+    with open(STATE_FILE, 'w', encoding='utf-8') as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
 
 def should_collect(now_str: str, collect_times: list[str]) -> bool:
@@ -166,9 +170,24 @@ def get_pending_batches(cfg: dict[str, Any], state: dict[str, Any]) -> list[tupl
     
     return pending
 
+def _safe_step(step_name: str, log: LogWriter, fn, *args, **kwargs) -> Any:
+    """各ステップを独立したtry/exceptで実行。エラーでも後続は続行。"""
+    try:
+        log.write(f"--- Step: {step_name} ---")
+        return fn(*args, **kwargs)
+    except Exception as e:
+        tb = traceback.format_exc()
+        log.write(f"[SKIP] {step_name} 失敗: {e}")
+        log.write(f"[TRACE] {tb[-500:]}")
+        return None
+
 def main() -> None:
     log_path = make_path('orchestrator')
-    log = LogWriter(log_path, echo=True)
+    # 非TTY（Hermes terminal等がPIPEでstdoutをキャプチャ）ではechoを抑制
+    # echo=True → print(flush=True) → PIPEが子プロセス終了で破損 → Windows CRT
+    # がERROR_NO_DATA→EINVAL(22)にマップ → Hermesごとクラッシュ
+    is_tty = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
+    log = LogWriter(log_path, echo=is_tty)
     cfg = None  # エラーハンドラで使うために事前定義
 
     try:
@@ -178,24 +197,15 @@ def main() -> None:
         cfg = load_config()
         state = load_state()
         
-        # 1. ゾンビ掃除（毎回確実に）
-        log.write("\n--- Step 1: Cleanup ---")
-        kill_zombies(log)
-        # 古いログ削除（30日以上経過）
+        # 各ステップを独立実行 — 1つ死んでも全部は止まらない
+        _safe_step("Cleanup", log, lambda: kill_zombies(log))
         log_dir = os.path.join(cfg['general']['project_dir'], 'logs')
         retention = cfg['general'].get('log_retention_days', 30)
-        clean_old_logs(log_dir, retention, log)
+        _safe_step("Log Cleanup", log, clean_old_logs, log_dir, retention, log)
         
-        # 2. セッション状態確認
-        log.write("\n--- Step 2: Session Check ---")
-        session_warnings = check_sessions(cfg, log)
+        session_warnings = _safe_step("Session Check", log, check_sessions, cfg, log) or []
         
-        # 3. ネットワーク状態確認
-        log.write("\n--- Step 3: Network Check ---")
-        adapters = get_all_adapters()
-        log.write(f"  アクティブアダプター: {len(adapters)}件")
-        for a in adapters:
-            log.write(f"    [OK] {a}")
+        _safe_step("Network Check", log, lambda: get_all_adapters())
         
         now_str = datetime.now().strftime('%H:%M')
         collect_times = cfg.get('collection', {}).get('times', [])
@@ -262,7 +272,7 @@ def main() -> None:
                     )
                     os.makedirs(os.path.dirname(stderr_path), exist_ok=True)
 
-                    with open(stderr_path, 'w') as stderr_f:
+                    with open(stderr_path, 'w', encoding='utf-8') as stderr_f:
                         proc = sp.Popen(
                             [BINDIP, bind_ip, PYTHON, '-u', APPLY_SCRIPT, key, str(batch_max)],
                             stdout=sp.DEVNULL, stderr=stderr_f,
@@ -382,9 +392,21 @@ def main() -> None:
         log.write(f"\n=== 正常終了: {datetime.now().strftime('%H:%M:%S')} ===")
     
     except Exception as e:
-        log.write(f"\n[NG] 致命的エラー: {e}")
-        log.write(traceback.format_exc())
-        notify_error("Orchestrator: 致命的エラー", traceback.format_exc(), str(log_path), cfg)
+        # まず直接ファイルにtracebackを書き込む（log.writeはprintで失敗する可能性あり）
+        _tb = traceback.format_exc()
+        try:
+            with open(str(log_path), 'a', encoding='utf-8') as _ef:
+                _ef.write(f'\n[NG] 致命的エラー: {e}\n')
+                _ef.write(_tb)
+                _ef.write('\n')
+        except Exception:
+            pass
+        try:
+            log.write(f"\n[NG] 致命的エラー: {e}")
+            log.write(_tb)
+        except Exception:
+            pass
+        notify_error("Orchestrator: 致命的エラー", _tb, str(log_path), cfg)
     
     finally:
         log.close()

@@ -118,7 +118,7 @@ def try_recover_collected(processed_file: str | Path, collected_file: str | Path
 def _count_processed(processed_file: str | Path) -> int:
     """processed.jsonの件数を取得"""
     try:
-        with open(processed_file, 'r') as f:
+        with open(processed_file, 'r', encoding='utf-8') as f:
             data: dict[str, Any] = json.load(f)
         return len(data.get('ids', []))
     except Exception:
@@ -131,14 +131,14 @@ def verify_collected_integrity(collected_file: str | Path, processed_file: str |
     processed.json と比較して異常に少ない場合は警告。
     """
     try:
-        with open(collected_file, 'r') as f:
+        with open(collected_file, 'r', encoding='utf-8') as f:
             col_data: dict[str, Any] = json.load(f)
         col_count: int = len(col_data.get('collected', []))
     except Exception:
         col_count = 0
 
     try:
-        with open(processed_file, 'r') as f:
+        with open(processed_file, 'r', encoding='utf-8') as f:
             proc_data: dict[str, Any] = json.load(f)
         proc_count: int = len(proc_data.get('ids', []))
     except Exception:

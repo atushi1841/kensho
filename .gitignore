@@ -9,6 +9,19 @@ data/backups/
 .env
 *.env
 
+# ランタイムデータ（git管理不要）
+data/collected.json
+data/processed.json
+data/prizes.json
+data/wins.json
+data/account_health.json
+data/follow_state.json
+data/locks/
+data/archive/
+data/daily_counts.json
+data/orchestrator_state.json
+accounts.db
+
 # 巨大Chromeプロファイル（デバッグ用）
 chrome_profile/
 tmp_profile/

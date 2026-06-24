@@ -57,7 +57,7 @@ if __name__ == '__main__':
                 print(f"[LOCK] ロックファイル削除失敗（{lock_path}）", flush=True)
                 pass
 
-        with open(lock_path, 'w') as f:
+        with open(lock_path, 'w', encoding='utf-8') as f:
             f.write(str(os.getpid()))
 
         def _cleanup() -> None:

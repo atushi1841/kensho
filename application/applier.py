@@ -107,7 +107,7 @@ def _load_daily_counts() -> dict[str, Any]:
     today: str = date.today().isoformat()
     if DAILY_COUNTS_FILE.exists():
         try:
-            with open(DAILY_COUNTS_FILE, 'r') as f:
+            with open(DAILY_COUNTS_FILE, 'r', encoding='utf-8') as f:
                 data: dict[str, Any] = json.load(f)
             if data.get('date') == today:
                 return data.get('counts', {})  # type: ignore[no-any-return]
@@ -125,19 +125,22 @@ def _save_daily_counts(counts: dict[str, Any]) -> None:
 
 def _check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
     """
-    日次上限に達してないかチェック。
+    日次上限 + 時間あたり上限に達してないかチェック。
     達してれば True（これ以上処理しない）、達してなければ False。
     """
     limits: dict[str, Any] = cfg.get('rate_limits', {})
-    max_follow: int = limits.get('max_follow_per_day', 80)
-    max_rt: int = limits.get('max_rt_per_day', 80)
-    max_like: int = limits.get('max_like_per_day', 200)
+    max_follow: int = limits.get('max_follow_per_day', 50)
+    max_rt: int = limits.get('max_rt_per_day', 15)
+    max_like: int = limits.get('max_like_per_day', 80)
+    max_reply: int = limits.get('max_reply_per_day', 10)
+    max_per_hour: int = limits.get('max_actions_per_hour', 15)
 
     counts: dict[str, Any] = _load_daily_counts()
-    acct: dict[str, int] = counts.get(account_key, {'follow': 0, 'rt': 0, 'like': 0})
+    acct: dict[str, Any] = counts.get(account_key, {'follow': 0, 'rt': 0, 'like': 0, 'reply': 0})
     f: int = acct.get('follow', 0)
     r: int = acct.get('rt', 0)
     l: int = acct.get('like', 0)
+    rep: int = acct.get('reply', 0)
 
     if f >= max_follow:
         print(f"[LIMIT] {account_key}: フォロー上限到達 ({f}/{max_follow})")
@@ -148,15 +151,32 @@ def _check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
     if l >= max_like:
         print(f"[LIMIT] {account_key}: いいね上限到達 ({l}/{max_like})")
         return True
+    if rep >= max_reply:
+        print(f"[LIMIT] {account_key}: リプライ上限到達 ({rep}/{max_reply})")
+        return True
+
+    # ── 時間あたり上限チェック ──
+    hourly: dict[str, int] = acct.get('hourly', {})
+    current_hour: str = datetime.now().strftime('%H')
+    hour_total: int = hourly.get(current_hour, 0)
+    if hour_total >= max_per_hour:
+        print(f"[LIMIT] {account_key}: 時間あたり上限到達 ({hour_total}/{max_per_hour}/時)")
+        return True
+
     return False
 
 
 def _increment_daily_count(account_key: str, action_type: str, n: int = 1) -> None:
-    """日次カウンターを増やす"""
+    """日次カウンターと時間別カウンターを増やす"""
     counts: dict[str, Any] = _load_daily_counts()
     if account_key not in counts:
-        counts[account_key] = {'follow': 0, 'rt': 0, 'like': 0, 'reply': 0}
+        counts[account_key] = {'follow': 0, 'rt': 0, 'like': 0, 'reply': 0, 'hourly': {}}
     counts[account_key][action_type] = counts[account_key].get(action_type, 0) + n
+    # 時間別カウント
+    current_hour: str = datetime.now().strftime('%H')
+    if 'hourly' not in counts[account_key]:
+        counts[account_key]['hourly'] = {}
+    counts[account_key]['hourly'][current_hour] = counts[account_key]['hourly'].get(current_hour, 0) + n
     _save_daily_counts(counts)
 
 
@@ -318,17 +338,95 @@ def apply_for_account(account_key: str, max_n: int,
 
     out(f"[Kensho] この垢の未応募: {len(account_applied)}件")
 
-    # ── 応募順序の最適化 ──
+    import random as _random
     _now: datetime = datetime.now()
 
-    def _sort_key(item: dict[str, Any]) -> float:
+    # 賞品価格キャッシュ（x_url → prize_rank）
+    _prize_cache: dict[str, int] = {}
+
+    def _fetch_tweet_text(url: str) -> str:
+        """twscrapeでツイート本文を取得"""
+        if url in _prize_cache:
+            return ''  # キャッシュ済み
+        try:
+            import asyncio
+            from twscrape import API
+            tweet_id = url.rstrip('/').split('/')[-1]
+            async def _get():
+                api = API()
+                # ゲストセッションで取得
+                tweets = await api.tweet_details(tweet_id)
+                return tweets.rawContent or ''
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            text = loop.run_until_complete(_get())
+            loop.close()
+            return text
+        except Exception:
+            return ''
+
+    def _extract_prize_rank(text: str) -> int:
+        """
+        ツイートテキストから賞品価格を推定し、ランクを返す。
+        高額ほど大きい値。
+        ランク値: 0=不明, 1=〜1000円, 2=〜5000円, 3=〜1万円, 4=〜5万円, 5=〜10万円, 10=10万円以上
+        """
+        if not text:
+            return 0
+        text_l = text.replace(',', '').replace('、', '')
+
+        # 高額チェック（万円以上）
+        m = re.search(r'(\d+)\s*万円', text_l)
+        if m:
+            val = int(m.group(1))
+            if val >= 10:
+                return 10  # 10万円以上
+            elif val >= 5:
+                return 5   # 5万円以上
+            elif val >= 1:
+                return 3   # 1万円以上
+
+        # 金額（円）
+        m = re.search(r'(\d+)\s*円', text_l)
+        if m:
+            val = int(m.group(1))
+            if val >= 10000:
+                return 3
+            elif val >= 5000:
+                return 2
+            elif val >= 1000:
+                return 1
+            return 1
+
+        # ポイント
+        m = re.search(r'(\d+)\s*ポイント', text_l)
+        if m:
+            val = int(m.group(1))
+            if val >= 5000:
+                return 2
+            elif val >= 1000:
+                return 1
+
+        # 賞品キーワード
+        high_value = ['現金', '旅行', '海外', '金', 'ギフト券', '商品券', 'QUOカード']
+        for kw in high_value:
+            if kw in text_l:
+                return 2
+
+        return 0
+
+
+    def _sort_key(item: dict[str, Any], now: datetime | None = None) -> float:
+        if now is None:
+            now = datetime.now()
         dl: str = item.get('deadline', '')
         wc: int = item.get('winner_count', 0)
+        x_url: str = item.get('x_url', '')
         dl_score: int = 0
         if dl:
             try:
                 dl_date: datetime = datetime.strptime(dl, '%Y-%m-%d')
-                days_left: int = (dl_date - _now).days
+                days_left: int = (dl_date - now).days
                 if days_left >= 0:
                     dl_score = 100 - min(days_left, 100)
                 else:
@@ -336,7 +434,12 @@ def apply_for_account(account_key: str, max_n: int,
             except Exception:
                 pass
         wc_score: float = min(wc / 100, 100) if wc > 0 else 0
-        return -(dl_score * 2 + wc_score)
+        # 賞品価格ランク（キャッシュ→なければツイート取得）
+        if x_url not in _prize_cache:
+            tweet_text: str = _fetch_tweet_text(x_url)
+            _prize_cache[x_url] = _extract_prize_rank(tweet_text)
+        prize_rank: int = _prize_cache[x_url]
+        return -(dl_score * 2 + wc_score + prize_rank * 10)
 
     account_applied.sort(key=_sort_key)
 
@@ -422,7 +525,7 @@ def apply_for_account(account_key: str, max_n: int,
             # ── RT ──
             if not skip_rt:
                 rt_count_before: int = _load_daily_counts().get(account_key, {}).get('rt', 0)
-                if rt_count_before < cfg.get('rate_limits', {}).get('max_rt_per_day', 80):
+                if rt_count_before < cfg.get('rate_limits', {}).get('max_rt_per_day', 15):
                     rt = page.query_selector('[data-testid="retweet"]')
                     if rt:
                         time.sleep(random.uniform(0.5, 2))
@@ -450,7 +553,7 @@ def apply_for_account(account_key: str, max_n: int,
             # ── いいね ──
             if not skip_like:
                 like_count_before: int = _load_daily_counts().get(account_key, {}).get('like', 0)
-                if like_count_before < cfg.get('rate_limits', {}).get('max_like_per_day', 200):
+                if like_count_before < cfg.get('rate_limits', {}).get('max_like_per_day', 80):
                     like_btn = page.query_selector('[data-testid="like"]')
                     if like_btn:
                         unlike_btn = page.query_selector('[data-testid="unlike"]')
@@ -474,7 +577,8 @@ def apply_for_account(account_key: str, max_n: int,
                 out("  [i] リプライ: 設定で無効化")
             elif not (random.random() < 0.85):  # 15%で実行
                 reply_count_before = _load_daily_counts().get(account_key, {}).get('reply', 0)
-                if reply_count_before < 10:
+                max_reply: int = cfg.get('rate_limits', {}).get('max_reply_per_day', 10)
+                if reply_count_before < max_reply:
                     reply_btn = page.query_selector('[data-testid="reply"]')
                     if reply_btn:
                         time.sleep(random.uniform(1, 3))

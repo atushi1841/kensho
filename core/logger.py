@@ -42,7 +42,12 @@ class LogWriter:
         self._file.write(line + '\n')
         self._file.flush()
         if self.echo:
-            print(line, flush=True)
+            try:
+                print(line, flush=True)
+            except OSError as _e:
+                # Windows: CRT maps ERROR_NO_DATA to EINVAL (errno 22)
+                # パイプが閉じられた場合も無視して続行
+                pass
 
     def close(self) -> None:
         self._file.close()

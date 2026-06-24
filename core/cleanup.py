@@ -132,8 +132,12 @@ def kill_zombies(log: Any = None) -> dict[str, int]:
             if user_firefox_active and exe == 'firefox.exe':
                 if not _is_kensho_firefox('firefox.exe'):
                     break  # Kensho Firefoxなし
-            kill_ret: int = os.system(f'taskkill /F /IM {exe} 2>nul')
-            if kill_ret == 0:
+            # subprocess.run() + DEVNULL でPIPEハンドル継承を完全回避
+            r = subprocess.run(
+                ['taskkill', '/F', '/IM', exe],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+            if r.returncode == 0:
                 if exe == 'firefox.exe':
                     firefox_killed += 1
                 time.sleep(0.5)
@@ -143,8 +147,9 @@ def kill_zombies(log: Any = None) -> dict[str, int]:
     for pid in [p for p in targets if isinstance(p, int)]:
         if not _is_daemon_or_child(pid):
             try:
-                kill_ret2 = os.system(f'taskkill /F /PID {pid} 2>nul')
-                if kill_ret2 == 0:
+                r2 = subprocess.run(['taskkill', '/F', '/PID', str(pid)],
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                if r2.returncode == 0:
                     python_killed += 1
             except Exception:
                 pass
@@ -168,9 +173,11 @@ def _win_force_rmtree(path: str | Path) -> bool:
     cmdのrd /s /q を使う → パス長制限・ロックに強い。
     """
     try:
-        os.system(f'attrib -R "{path}\\"*.*" /S 2>nul')
+        path_str = str(path).rstrip('\\/')
+        subprocess.run(['attrib', '-R', f'{path_str}\\*.*', '/S'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         r = subprocess.run(
-            ['cmd', '/c', f'rd /s /q "{path}"'],
+            ['cmd', '/c', f'rd /s /q "{path_str}"'],
             capture_output=True, timeout=30
         )
         if r.returncode == 0:

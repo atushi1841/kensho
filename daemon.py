@@ -26,8 +26,10 @@ except Exception:
 BASE = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE, 'data')
 LOG_DIR = os.path.join(BASE, 'logs')
+LOCK_DIR = os.path.join(DATA_DIR, 'locks')
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)
+os.makedirs(LOCK_DIR, exist_ok=True)
 
 PYTHON = sys.executable
 ORCHESTRATOR = os.path.join(BASE, 'orchestrator.py')
@@ -46,6 +48,15 @@ def _release_mutex() -> None:
         ctypes.windll.kernel32.ReleaseMutex(mutex)
         ctypes.windll.kernel32.CloseHandle(mutex)
 atexit.register(_release_mutex)
+
+# ── PIDファイル（Watchdog用）──
+PID_PATH = os.path.join(LOCK_DIR, 'daemon.pid')
+try:
+    with open(PID_PATH, 'w') as f:
+        f.write(str(os.getpid()))
+except Exception:
+    pass
+
 
 # ── ログ ──
 def log(msg: str) -> None:
@@ -115,16 +126,25 @@ def thread_orchestrator() -> None:
     interval = 900  # 15分
     while True:
         try:
-            r = subprocess.run(
-                [PYTHON, ORCHESTRATOR],
-                cwd=BASE, capture_output=True, timeout=600,
-                env={**os.environ, 'PYTHONIOENCODING': 'utf-8'}
-            )
+            # capture_output=True は Windows で Errno 22 を引き起こす（pipe→print→CRT EINVAL）
+            # → ファイルに直接リダイレクト
+            log_ts = time.strftime('%Y%m%d_%H%M%S')
+            log_today = time.strftime('%Y-%m-%d')
+            orch_log = os.path.join(LOG_DIR, log_today, f'orch_daemon_{log_ts}.log')
+            os.makedirs(os.path.dirname(orch_log), exist_ok=True)
+            with open(orch_log, 'w', encoding='utf-8') as orch_out:
+                r = subprocess.run(
+                    [PYTHON, ORCHESTRATOR],
+                    cwd=BASE, stdout=orch_out, stderr=subprocess.STDOUT,
+                    timeout=600,
+                    env={**os.environ, 'PYTHONIOENCODING': 'utf-8'}
+                )
             log_sub('ORCH', r.returncode)
         except subprocess.TimeoutExpired:
             log_sub('ORCH', 124)
             # ゾンビ掃除
-            os.system('taskkill /F /IM firefox.exe 2>nul')
+            subprocess.run(['taskkill', '/F', '/IM', 'firefox.exe'],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except Exception as e:
             log_sub('ORCH', str(e)[:20])
 
@@ -136,7 +156,8 @@ def main() -> None:
     log(f'Python: {PYTHON}')
 
     # ゾンビ掃除（初回）
-    os.system('taskkill /F /IM firefox.exe 2>nul')
+    subprocess.run(['taskkill', '/F', '/IM', 'firefox.exe'],
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     # スレッド起動（_run_with_restart でラップして例外時再起動）
     threads = [
@@ -157,7 +178,8 @@ def main() -> None:
     except KeyboardInterrupt:
         log('停止信号受信 → グレースフルシャットダウン')
         log('Firefoxプロセスをクリーンアップ中...')
-        os.system('taskkill /F /IM firefox.exe 2>nul')
+        subprocess.run(['taskkill', '/F', '/IM', 'firefox.exe'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         log('停止完了')
         sys.exit(0)
 

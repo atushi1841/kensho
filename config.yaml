@@ -95,20 +95,23 @@ keepalive:
       wifi_profile: "AiR-WiFi_B8W38T_ino"
 
 # ── レート制限（X BAN回避）──
-# 1垢あたりの日次上限。制限値の20-30%で設定。
+# 1垢あたりの日次上限。SocialNexis 2026年推奨値に準拠。
+# 新規アカウント（30日未満）はさらに30%減で運用。
 # 各バッチで上限に達したらその垢はその日は停止。
 rate_limits:
-  max_follow_per_day: 120          # atushi16が収集垢のため多め（制限400/日の30%）
-  max_rt_per_day: 80              # RT枠は広いが抑え気味に
-  max_like_per_day: 200           # いいね制限は非公開だが抑えめに
+  max_follow_per_day: 50           # 推奨30-50（旧120→危険）
+  max_rt_per_day: 15               # 推奨10-20（旧80→危険）
+  max_like_per_day: 80             # 推奨50-100（旧200→危険）
+  max_reply_per_day: 10            # そのまま
+  max_actions_per_hour: 15         # 推奨15/時（新規追加）
   active_hours_start: "09:00"     # この時間以降のみ動作
   active_hours_end: "23:59"       # 深夜は避ける（BOT判定対象）
-  min_delay_between_actions: 12   # 基本最小間隔（秒）
-  max_delay_between_actions: 40   # 基本最大間隔（秒）
-  extra_long_pause_chance: 0.10   # 10%の確率で60-120秒の長休憩
-  break_after_n_items: 3          # N件ごとに長め休憩
-  break_min_seconds: 30           # 休憩最小
-  break_max_seconds: 90           # 休憩最大
+  min_delay_between_actions: 15   # 基本最小間隔（秒）少し長めに
+  max_delay_between_actions: 50   # 基本最大間隔（秒）少し長めに
+  extra_long_pause_chance: 0.15   # 15%の確率で60-120秒の長休憩（増加）
+  break_after_n_items: 2          # 2件ごとに長め休憩（短縮）
+  break_min_seconds: 45           # 休憩最小（少し長め）
+  break_max_seconds: 120          # 休憩最大（少し長め）
 
 # ── オーケストレーター ──
 orchestrator:

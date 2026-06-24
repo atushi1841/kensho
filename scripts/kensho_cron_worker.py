@@ -12,7 +12,7 @@ import sys, subprocess, time, json, os
 from pathlib import Path
 from datetime import datetime, timedelta
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from core.encoding import guard_stdio
+from core.encoding import guard_stdio, cp932_safe
 guard_stdio()
 
 PYTHON = r'C:\Users\1F\AppData\Local\hermes\hermes-agent\venv\Scripts\python.exe'
@@ -30,8 +30,9 @@ def kill_zombies():
     """Firefox/Chromeのゾンビを確実に掃除"""
     for exe in ['firefox.exe']:
         for _ in range(3):  # 最大3回リトライ
-            r = os.system(f'taskkill /F /IM {exe} 2>nul')
-            if r == 0:
+            r = subprocess.run(['taskkill', '/F', '/IM', exe],
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if r.returncode == 0:
                 time.sleep(1)  # プロセス終了待ち
             else:
                 break  # もうプロセスがなくなった
@@ -132,14 +133,7 @@ def main():
 
     def log(msg):
         """標準出力（cp932セーフ）+ ログファイル"""
-        # 標準出力は絵文字をcp932で置換（タスクスケジューラー出力文字化け対策）
-        safe_msg = msg.replace('\u2705', '[OK]').replace('\u274c', '[NG]') \
-                       .replace('\u26a0\ufe0f', '[!]').replace('\u2757', '[!!]') \
-                       .replace('\u2139\ufe0f', '[i]').replace('\U0001f4e6', '[BOX]') \
-                       .replace('\u23f8\ufe0f', '[PAUSE]').replace('\u2615', '[TEA]') \
-                       .replace('\U0001f4be', '[SAVE]').replace('\u2795', '[+]') \
-                       .replace('\U0001f7e0', '[YEL]').replace('\U0001f534', '[RED]') \
-                       .replace('\U0001f7e2', '[GRN]')
+        safe_msg: str = cp932_safe(msg)
         print(safe_msg, flush=True)
         write_log(log_path, msg + '\n')
 

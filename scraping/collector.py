@@ -1,4 +1,4 @@
-"""Kensho Collector — knshow.com + ken-kaku.com からX懸賞URLを収集"""
+"""Kensho Collector — knshow.com + ken-kaku.com + kenshou.club + cp.meikan.org からX懸賞URLを収集"""
 
 from __future__ import annotations
 
@@ -82,7 +82,37 @@ def fetch(url: str, referer: str | None = None, timeout: int = 15) -> tuple[int,
         h['Referer'] = referer
     with httpx.Client(follow_redirects=False, timeout=timeout) as c:
         r = c.get(url, headers=h)
-        return r.status_code, r.text, str(r.url)
+        # 明示的エンコーディング: Content-Type→meta→UTF-8 の優先順位
+        html: str = _decode_response(r)
+        return r.status_code, html, str(r.url)
+
+
+def _decode_response(r: httpx.Response) -> str:
+    """HTTPレスポンスからHTMLを正しいエンコーディングでデコード。
+    Content-Type ヘッダー → HTML meta charset → UTF-8 の優先順位。
+    """
+    # Content-Type の charset を使う (httpxが既に設定)
+    if r.encoding and r.encoding.lower() not in ('utf-8', 'ascii', 'iso-8859-1'):
+        try:
+            return r.content.decode(r.encoding, errors='replace')
+        except (LookupError, ValueError):
+            pass
+    # 生バイトから charset を検出
+    raw: bytes = r.content
+    # HTMLのmeta charset を検出
+    m = re.search(
+        rb'<meta[^>]+charset\s*=\s*["\']?([a-zA-Z0-9_\-]+)["\'\s/>]',
+        raw[:4096], re.IGNORECASE
+    )
+    if m:
+        guessed: str = m.group(1).decode('ascii', errors='replace').lower()
+        if guessed != 'utf-8':
+            try:
+                return raw.decode(guessed, errors='replace')
+            except (LookupError, ValueError):
+                pass
+    # 最終手段: UTF-8 (Web標準)
+    return raw.decode('utf-8', errors='replace')
 
 
 def extract_detail_links(html: str) -> list[str]:
@@ -207,7 +237,7 @@ def scrape_kenkaku(out: Any, processed_set: set[str],
                 out(f'  [KENKAKU] ページ{pid}: HTTP {r.status_code} - スキップ')
                 continue
 
-            html: str = r.text
+            html: str = _decode_response(r)
             # X URL を直接抽出
             for m in re.finditer(
                 r'href=\"(https?://x\.com/[a-zA-Z0-9_]+/status/[0-9]+)\"', html
@@ -249,6 +279,398 @@ def scrape_kenkaku(out: Any, processed_set: set[str],
             out(f'  [KENKAKU] ページ{pid}: ERROR {type(e).__name__}: {e}')
 
     out(f'  [KENKAKU] 計{len(items)}件取得')
+    return items
+
+
+# ── 第3収集源: kenshou.club（懸賞CLUB）──
+_KENSHOUCLUB_BASE: str = 'https://kenshou.club'
+_KENSHOUCLUB_TAG: str = '/archives/tag/twitter%E3%81%A7%E5%BF%9C%E5%8B%9F'
+_KENSHOUCLUB_MAX_PAGES: int = 24
+
+
+def scrape_kenshouclub(out: Any, processed_set: set[str],
+                       account_keys: list[str]) -> list[dict[str, Any]]:
+    """kenshou.club のX/Twitter懸賞一覧からX URLを収集。
+    一覧ページ → 各記事ページ → X URL抽出 の2段階。
+    戻り値: collected.json 互換のアイテムリスト。
+    """
+    headers_jp: dict[str, str] = dict(HEADERS)
+    headers_jp['Accept-Language'] = 'ja,en-US;q=0.9,en;q=0.8'
+    items: list[dict[str, Any]] = []
+    seen_x_urls: set[str] = set()
+
+    for page in range(1, _KENSHOUCLUB_MAX_PAGES + 1):
+        list_url: str = f'{_KENSHOUCLUB_BASE}{_KENSHOUCLUB_TAG}'
+        if page > 1:
+            list_url = f'{_KENSHOUCLUB_BASE}{_KENSHOUCLUB_TAG}/page/{page}'
+
+        try:
+            code, html, _ = fetch(list_url)
+            if code != 200:
+                out(f'  [KCLUB] ページ{page}: HTTP {code} - 終了')
+                break
+
+            # 記事リンクを抽出（カテゴリ系は除外）
+            article_links: list[str] = []
+            for m in re.finditer(
+                r'href=\"(https://kenshou\.club/archives/\d+)\"', html
+            ):
+                href: str = m.group(1)
+                if href not in article_links:
+                    article_links.append(href)
+
+            if not article_links:
+                out(f'  [KCLUB] ページ{page}: リンクなし - 終了')
+                break
+
+            out(f'  [KCLUB] ページ{page}: {len(article_links)}件の記事')
+
+            for article_url in article_links:
+                try:
+                    code2, html2, _ = _fetch_with_retry(
+                        article_url, referer=list_url, timeout=15
+                    )
+                    if code2 != 200:
+                        continue
+
+                    # X URL抽出
+                    x_urls: list[str] = re.findall(
+                        r'https?://(?:x|twitter)\.com/[a-zA-Z0-9_]+/status/\d+',
+                        html2
+                    )
+                    if not x_urls:
+                        continue
+                    x_url = x_urls[0]
+                    if x_url in seen_x_urls or x_url in processed_set:
+                        continue
+                    seen_x_urls.add(x_url)
+
+                    # 締切日抽出
+                    deadline: str = ''
+                    dm = re.search(
+                        r'[締〆]切[：:]?\s*(\d{4})[年/](\d{1,2})[月/](\d{1,2})日',
+                        html2
+                    )
+                    if dm:
+                        deadline = f'{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3)):02d}'
+                    else:
+                        dm2 = re.search(
+                            r'(\d{1,2})月(\d{1,2})日[^\d]*?[締〆]切',
+                            html2
+                        )
+                        if dm2:
+                            deadline = f'2026-{int(dm2.group(1)):02d}-{int(dm2.group(2)):02d}'
+
+                    # 当選人数抽出
+                    winner_count: int = 0
+                    wm = re.search(r'(\d[\d,]*)\s*名様', html2)
+                    if wm:
+                        try:
+                            winner_count = int(wm.group(1).replace(',', ''))
+                        except ValueError:
+                            pass
+
+                    applied: dict[str, None] = {k: None for k in account_keys}
+                    article_id: str = str(article_url).split('/')[-1]
+                    detail_url: str = f'/kenshouclub/archives/{article_id}'
+                    items.append({
+                        'detail_url': detail_url,
+                        'x_url': x_url,
+                        'source': 'kenshouclub',
+                        'time': 0.0,
+                        'deadline': deadline,
+                        'winner_count': winner_count,
+                        'days_remaining': '',
+                        'applied': applied,
+                    })
+                    out(f'    ✅ {x_url[:65]}...')
+                except Exception:
+                    pass
+
+            if len(article_links) < 10:  # 最終ページ
+                break
+            time.sleep(0.5)  # 優しめの間隔
+
+        except Exception as e:
+            out(f'  [KCLUB] ページ{page}: ERROR {type(e).__name__}: {e}')
+            break
+
+    out(f'  [KCLUB] 計{len(items)}件取得')
+    return items
+
+
+# ── 第4収集源: cp.meikan.org（キャンペーン名鑑）──
+_CPMEIKAN_BASE: str = 'https://cp.meikan.org/xcp'
+
+
+def scrape_cpmeikan(out: Any, processed_set: set[str],
+                    account_keys: list[str]) -> list[dict[str, Any]]:
+    """cp.meikan.org のXキャンペーン一覧からX URLを直接収集。
+    一覧ページにX URLが直接記載されているため1段階で取得可能。
+    戻り値: collected.json 互換のアイテムリスト。
+    """
+    headers_jp: dict[str, str] = dict(HEADERS)
+    headers_jp['Accept-Language'] = 'ja,en-US;q=0.9,en;q=0.8'
+    items: list[dict[str, Any]] = []
+    seen_x_urls: set[str] = set()
+
+    for page_num in range(1, 11):  # 最大10ページ
+        page_url: str = _CPMEIKAN_BASE
+        if page_num > 1:
+            page_url = f'{_CPMEIKAN_BASE}/{page_num}/'
+
+        try:
+            code, html, _ = fetch(page_url)
+            if code != 200:
+                out(f'  [CPMK] ページ{page_num}: HTTP {code} - 終了')
+                break
+
+            # X URLを直接抽出
+            x_urls: list[str] = re.findall(
+                r'https?://(?:x|twitter)\.com/[a-zA-Z0-9_]+/status/\d+',
+                html
+            )
+            if not x_urls:
+                out(f'  [CPMK] ページ{page_num}: Xリンクなし - 終了')
+                break
+
+            for x_url in x_urls:
+                if x_url in seen_x_urls or x_url in processed_set:
+                    continue
+                seen_x_urls.add(x_url)
+
+                # 各キャンペーンの締切日を周辺テキストから抽出
+                deadline: str = ''
+                pos: int = html.find(x_url)
+                if pos > 0:
+                    context: str = html[max(0, pos - 800):pos]
+                    dm = re.search(
+                        r'[締〆]切[：:]?\s*(?:.*?)?(\d{1,2})月(\d{1,2})日',
+                        context
+                    )
+                    if dm:
+                        deadline = f'2026-{int(dm.group(1)):02d}-{int(dm.group(2)):02d}'
+
+                winner_count: int = 0
+                if pos > 0:
+                    wm2 = re.search(r'(\d[\d,]*)\s*名', context)
+                    if wm2:
+                        try:
+                            winner_count = int(wm2.group(1).replace(',', ''))
+                        except ValueError:
+                            pass
+
+                applied: dict[str, None] = {k: None for k in account_keys}
+                detail_url: str = f'/cpmeikan/xcp/{page_num}/{len(items)}'
+                items.append({
+                    'detail_url': detail_url,
+                    'x_url': x_url,
+                    'source': 'cpmeikan',
+                    'time': 0.0,
+                    'deadline': deadline,
+                    'winner_count': winner_count,
+                    'days_remaining': '',
+                    'applied': applied,
+                })
+                out(f'    ✅ {x_url[:65]}...')
+
+            out(f'  [CPMK] ページ{page_num}: {len(x_urls)}件')
+            time.sleep(0.3)
+
+        except Exception as e:
+            out(f'  [CPMK] ページ{page_num}: ERROR {type(e).__name__}: {e}')
+            break
+
+    out(f'  [CPMK] 計{len(items)}件取得')
+    return items
+
+
+# ── 第5収集源: ke-ma.net（懸賞マニア）──
+_KEMA_BASE: str = 'https://ke-ma.net'
+
+
+def scrape_kema(out: Any, processed_set: set[str],
+                account_keys: list[str]) -> list[dict[str, Any]]:
+    """ke-ma.net のオープン懸賞ページからX URLを直接収集。
+    一覧ページにX URLが直接記載されているため1段階で取得可能。
+    戻り値: collected.json 互換のアイテムリスト。
+    """
+    headers_jp: dict[str, str] = dict(HEADERS)
+    headers_jp['Accept-Language'] = 'ja,en-US;q=0.9,en;q=0.8'
+    items: list[dict[str, Any]] = []
+    seen_x_urls: set[str] = set()
+
+    # /open/ ページのみ（X懸賞が集中）
+    try:
+        code, html, _ = fetch(f'{_KEMA_BASE}/open/')
+        if code != 200:
+            out(f'  [KEMA] HTTP {code} - スキップ')
+            return items
+
+        x_urls: list[str] = re.findall(
+            r'https?://(?:x|twitter)\.com/[a-zA-Z0-9_]+/status/\d+',
+            html
+        )
+        if not x_urls:
+            out('  [KEMA] Xリンクなし')
+            return items
+
+        for x_url in x_urls:
+            if x_url in seen_x_urls or x_url in processed_set:
+                continue
+            seen_x_urls.add(x_url)
+
+            # 締切日抽出
+            deadline: str = ''
+            pos: int = html.find(x_url)
+            if pos > 0:
+                ctx: str = html[max(0, pos - 600):pos]
+                dm = re.search(
+                    r'[締〆]切[：:]?\s*(\d{4})[年/](\d{1,2})[月/](\d{1,2})日', ctx
+                )
+                if dm:
+                    deadline = f'{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3)):02d}'
+                else:
+                    dm2 = re.search(
+                        r'(\d{1,2})月(\d{1,2})日[^\d]*?[締〆]切', ctx
+                    )
+                    if dm2:
+                        deadline = f'2026-{int(dm2.group(1)):02d}-{int(dm2.group(2)):02d}'
+
+            # 当選人数
+            winner_count: int = 0
+            if pos > 0:
+                wm = re.search(r'(\d[\d,]*)\s*名', ctx)
+                if wm:
+                    try:
+                        winner_count = int(wm.group(1).replace(',', ''))
+                    except ValueError:
+                        pass
+
+            applied: dict[str, None] = {k: None for k in account_keys}
+            items.append({
+                'detail_url': f'/kema/open/{len(items)}',
+                'x_url': x_url,
+                'source': 'kema',
+                'time': 0.0,
+                'deadline': deadline,
+                'winner_count': winner_count,
+                'days_remaining': '',
+                'applied': applied,
+            })
+            out(f'    ✅ {x_url[:65]}...')
+
+        out(f'  [KEMA] {len(items)}件取得')
+    except Exception as e:
+        out(f'  [KEMA] ERROR {type(e).__name__}: {e}')
+
+    return items
+
+
+# ── 第6収集源: twscrape（X API直接検索）──
+# twscrape経由でXを直接検索し、懸賞キーワードに合致するツイートを収集。
+_TWSCRAPE_QUERIES: list[str] = [
+    '懸賞 フォロー リポスト プレゼント lang:ja',
+    'フォロー&RT プレゼント 抽選 lang:ja',
+    'キャンペーン フォロー リポスト 当選 lang:ja',
+    'RT プレゼント 抽選 100名 lang:ja',
+    'フォロー リツイート プレゼント 懸賞 lang:ja',
+]
+
+
+def scrape_twscrape(out: Any, processed_set: set[str],
+                    account_keys: list[str],
+                    session_path: str | None = None) -> list[dict[str, Any]]:
+    """twscrape を使ってXを直接検索し懸賞ツイートを収集。
+    auth_token は session_path のJSON or config指定から取得。
+    戻り値: collected.json 互換のアイテムリスト。
+    """
+    import asyncio, os, json as _json
+    from twscrape import API, gather
+
+    items: list[dict[str, Any]] = []
+    seen_x_urls: set[str] = set()
+
+    # ── auth_token 読み込み ──
+    auth_token: str = ''
+    ct0: str = ''
+    if session_path and os.path.exists(session_path):
+        try:
+            with open(session_path, 'r', encoding='utf-8') as f:
+                session_data: dict[str, Any] = _json.load(f)
+            cookies: dict[str, str] = {c['name']: c['value'] for c in session_data.get('cookies', [])}
+            auth_token = cookies.get('auth_token', '')
+            ct0 = cookies.get('ct0', '')
+        except Exception as e:
+            out(f'  [TWSCRAPE] session読み込み失敗: {e}')
+
+    if not auth_token:
+        out('  [TWSCRAPE] auth_tokenなし - スキップ')
+        return items
+
+    async def _run() -> list[dict[str, Any]]:
+        api = API()
+        cookie_str: str = f'auth_token={auth_token}; ct0={ct0}'
+        await api.pool.add_account_cookies('twscrape_bot', cookie_str)
+        found: list[dict[str, Any]] = []
+
+        for query in _TWSCRAPE_QUERIES:
+            try:
+                tweets = await gather(api.search(query, limit=10))
+                for tw in tweets:
+                    x_url: str = f'https://x.com/{tw.user.username}/status/{tw.id}'
+                    if x_url in seen_x_urls:
+                        continue
+                    if x_url in processed_set:
+                        continue
+                    seen_x_urls.add(x_url)
+
+                    # テキストから締切日を推定（ツイート内の日付）
+                    deadline: str = ''
+                    text: str = tw.rawContent or ''
+                    dm = __import__('re').search(
+                        r'(\d{1,2})月(\d{1,2})日', text
+                    )
+                    if dm:
+                        deadline = f'2026-{int(dm.group(1)):02d}-{int(dm.group(2)):02d}'
+
+                    # 当選人数
+                    winner_count: int = 0
+                    wm = __import__('re').search(r'(\d[\d,]*)\s*名', text)
+                    if wm:
+                        try:
+                            winner_count = int(wm.group(1).replace(',', ''))
+                        except ValueError:
+                            pass
+
+                    applied: dict[str, None] = {k: None for k in account_keys}
+                    found.append({
+                        'detail_url': f'/twscrape/tweet/{tw.id}',
+                        'x_url': x_url,
+                        'source': 'twscrape',
+                        'time': 0.0,
+                        'deadline': deadline,
+                        'winner_count': winner_count,
+                        'days_remaining': '',
+                        'applied': applied,
+                    })
+                    out(f'    ✅ {x_url[:65]}...')
+            except Exception as query_e:
+                out(f'  [TWSCRAPE] クエリ "{query[:30]}": {type(query_e).__name__}')
+
+            await asyncio.sleep(0.5)
+
+        return found
+
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        items = loop.run_until_complete(_run())
+        loop.close()
+    except Exception as e:
+        out(f'  [TWSCRAPE] ERROR: {type(e).__name__}: {e}')
+
+    out(f'  [TWSCRAPE] 計{len(items)}件取得')
     return items
 
 
@@ -399,6 +821,37 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None,
     out(f"  ken-kaku: {len(kenkaku_items)}件")
     collected.extend(kenkaku_items)
 
+    # ── Step 2c: kenshou.club 収集 ──
+    out("\n[Step 2c kenshou.club] X懸賞を収集...")
+    kclub_items: list[dict[str, Any]] = scrape_kenshouclub(out, processed_set, account_keys)
+    out(f"  kenshou.club: {len(kclub_items)}件")
+    collected.extend(kclub_items)
+
+    # ── Step 2d: cp.meikan.org 収集 ──
+    out("\n[Step 2d cp.meikan.org] Xキャンペーンを収集...")
+    cpmeikan_items: list[dict[str, Any]] = scrape_cpmeikan(out, processed_set, account_keys)
+    out(f"  cp.meikan.org: {len(cpmeikan_items)}件")
+    collected.extend(cpmeikan_items)
+
+    # ── Step 2e: ke-ma.net 収集 ──
+    out("\n[Step 2e ke-ma.net] X懸賞を収集...")
+    kema_items: list[dict[str, Any]] = scrape_kema(out, processed_set, account_keys)
+    out(f"  ke-ma.net: {len(kema_items)}件")
+    collected.extend(kema_items)
+
+    # ── Step 2f: twscrape 収集 ──
+    out("\n[Step 2f twscrape] X直接検索で懸賞を収集...")
+    session_path: str | None = None
+    for a in cfg.get('accounts', []):
+        if a.get('schedule', {}).get('collects', False):
+            session_path = str(Path(cfg['general']['project_dir']) / a['session'])
+            break
+    twscrape_items: list[dict[str, Any]] = scrape_twscrape(
+        out, processed_set, account_keys, session_path
+    )
+    out(f"  twscrape: {len(twscrape_items)}件")
+    collected.extend(twscrape_items)
+
     if not collected and not errors:
         out("\n✅ 全ソースで新規なし。終了。")
         existing: dict[str, Any] = load_json(COLLECTED_FILE, {})
@@ -408,7 +861,10 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None,
         safe_save_json(COLLECTED_FILE, existing, 'collected.json')
         return (0, 0, len(existing.get('collected', [])))
 
-    out(f"\n[Step 3] 結果保存... (knshow {success}件, ken-kaku {len(kenkaku_items)}件, 計{len(collected)}件)")
+    out(f"\n[Step 3] 結果保存... (knshow {success}件, ken-kaku {len(kenkaku_items)}件, "
+        f"kenshou.club {len(kclub_items)}件, cp.meikan {len(cpmeikan_items)}件, "
+        f"ke-ma {len(kema_items)}件, twscrape {len(twscrape_items)}件, "
+        f"計{len(collected)}件)")
 
     existing_collected = load_json(COLLECTED_FILE, {}).get('collected', [])
     existing_map: dict[str, dict[str, Any]] = {item['detail_url']: item for item in existing_collected}
@@ -436,6 +892,15 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None,
     purged: int = before - len(merged)
     if purged > 0:
         out(f"  期限切れ除去: {purged}件")
+
+    # ── 賞品価格ランクを収集アイテムに追加 ──
+    prizef: int = 0
+    for item in merged:
+        xurl: str = item.get('x_url', '')
+        if xurl:
+            # 簡易的な金額推定（x_urlからは取れないので0固定、後でapplierがツイート本文から取得）
+            item['prize_rank'] = 0
+    out(f"  賞品価格ランク: 全{len(merged)}件（実際のランクは応募時にツイート本文から計算）")
 
     result: dict[str, Any] = {
         'timestamp': datetime.now().isoformat(),
