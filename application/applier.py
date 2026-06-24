@@ -470,7 +470,9 @@ def apply_for_account(account_key: str, max_n: int,
                 out("  [i] いいね: スキップ（3%確率）")
 
             # ── リプライ ──
-            if not (random.random() < 0.85):  # 15%で実行
+            if acct.get('disable_reply', False):
+                out("  [i] リプライ: 設定で無効化")
+            elif not (random.random() < 0.85):  # 15%で実行
                 reply_count_before = _load_daily_counts().get(account_key, {}).get('reply', 0)
                 if reply_count_before < 10:
                     reply_btn = page.query_selector('[data-testid="reply"]')

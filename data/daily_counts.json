@@ -1,25 +1,29 @@
 {
-  "date": "2026-06-23",
+  "date": "2026-06-24",
   "counts": {
     "atushi16": {
-      "follow": 0,
-      "rt": 0,
-      "like": 1
+      "follow": 25,
+      "rt": 13,
+      "like": 21,
+      "reply": 4
     },
     "kudou": {
-      "follow": 0,
-      "rt": 0,
-      "like": 1
+      "follow": 20,
+      "rt": 13,
+      "like": 17,
+      "reply": 4
     },
     "atushi1840": {
-      "follow": 1,
-      "rt": 0,
-      "like": 1
+      "follow": 29,
+      "rt": 10,
+      "like": 21,
+      "reply": 2
     },
     "zin20120731": {
-      "follow": 1,
-      "rt": 0,
-      "like": 1
+      "follow": 33,
+      "rt": 12,
+      "like": 26,
+      "reply": 2
     }
   }
 }

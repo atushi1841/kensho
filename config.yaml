@@ -20,6 +20,7 @@ accounts:
     display: "@atushi16"
     session: "data/x_session.json"
     network_interface: "イーサネット"
+    disable_reply: true
     schedule:
       collects: true
       batches:
@@ -31,6 +32,7 @@ accounts:
     display: "@kudou_aoshi"
     session: "data/x_session_kudou.json"
     network_interface: "Wi-Fi"
+    disable_reply: true
     schedule:
       collects: false
       batches:
@@ -44,6 +46,7 @@ accounts:
     display: "@atushi1840"
     session: "data/x_session_b.json"
     network_interface: "イーサネット 15"
+    disable_reply: true
     schedule:
       collects: false
       batches:
@@ -57,6 +60,7 @@ accounts:
     display: "@zin20120731"
     session: "data/x_session_c.json"
     network_interface: "Wi-Fi 2"
+    disable_reply: true
     schedule:
       collects: false
       batches:
