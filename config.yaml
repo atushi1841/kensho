@@ -25,7 +25,9 @@ accounts:
       collects: true
       batches:
         - { time: "09:21", max: 15 }
-        - { time: "14:33", max: 15 }
+        - { time: "11:05", max: 15 }
+        - { time: "13:33", max: 15 }
+        - { time: "16:15", max: 15 }
         - { time: "19:47", max: 15 }
 
   - key: kudou
@@ -73,8 +75,8 @@ accounts:
 # ── 収集設定 ──
 collection:
   source: "https://knshow.com"
-  times: ["09:00", "13:00", "18:00"]
-  max_items: 200
+  times: ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"]
+  max_items: 500
 
 # ── Keepalive ──
 keepalive:

@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-06-24T09:16:05.975396",
-  "total_on_page": 40,
-  "new_items_processed": 2,
+  "timestamp": "2026-06-24T15:08:22.208048",
+  "total_on_page": 32,
+  "new_items_processed": 5,
   "success": 2,
-  "errors": 0,
+  "errors": 3,
   "collected": [
     {
       "detail_url": "/detail/a544f578196d5c40.html",
@@ -334,8 +334,399 @@
         "atushi1840": "2026-06-24T11:18:18.296266",
         "zin20120731": "2026-06-24T11:43:32.658312"
       }
+    },
+    {
+      "detail_url": "/detail/fb6749d831e61f80.html",
+      "rd_url": "/rd/fb6749d831e61f80",
+      "x_url": "https://x.com/Norganic_JP/status/2069254368990490738",
+      "time": 1.55,
+      "deadline": "2026-06-30",
+      "winner_count": 1000,
+      "days_remaining": "あと5日",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/detail/h45l28fnp592q3a6.html",
+      "rd_url": "/rd/h45l28fnp592q3a6",
+      "x_url": "https://x.com/asahiinryo_jp/status/2069586304275271891",
+      "time": 1.67,
+      "deadline": "2026-07-03",
+      "winner_count": 300,
+      "days_remaining": "あと8日",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=104510000/0",
+      "x_url": "https://x.com/famima_now/status/2069329615131427160",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "2026-07-06",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=104510000/1",
+      "x_url": "https://x.com/famima_now/status/2069556112064684118",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "2026-06-30",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=104510000/2",
+      "x_url": "https://x.com/edion_hiroshima/status/2068284597394440346",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=104510000/3",
+      "x_url": "https://x.com/edion_PR/status/2068892286688338256",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "2026-07-05",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100010/4",
+      "x_url": "https://x.com/gusto_official/status/2067736654970810404",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100010/5",
+      "x_url": "https://x.com/kamulab_meiji/status/2067789464043131260",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100010/6",
+      "x_url": "https://x.com/acecook_jp/status/2066762696876339342",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "2026-06-30",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100020/7",
+      "x_url": "https://x.com/famima_now/status/2066808008290529697",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100020/8",
+      "x_url": "https://x.com/kingjim/status/2066717486167593086",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "2026-06-30",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100020/9",
+      "x_url": "https://x.com/IHADA_jp/status/2066702301772075326",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100020/10",
+      "x_url": "https://x.com/nobel_seika/status/2066309714137186485",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "2026-06-25",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100020/11",
+      "x_url": "https://x.com/showasangyo_co/status/2066355414514725341",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100020/12",
+      "x_url": "https://x.com/minon_dshc/status/2064897909309706559",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100030/13",
+      "x_url": "https://x.com/famima_now/status/2064996059928011008",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100030/14",
+      "x_url": "https://x.com/capcomtown/status/2064543312993018238",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100030/15",
+      "x_url": "https://x.com/remixpoint_x/status/2063919008441921842",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "2026-06-30",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100040/16",
+      "x_url": "https://x.com/farmind_/status/2062731143406133752",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "2026-06-25",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100040/17",
+      "x_url": "https://x.com/akindosushiroco/status/2061991260257411288",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "2026-06-30",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100040/18",
+      "x_url": "https://x.com/sakuma_seika/status/2061387286336401459",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "2026-06-28",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100050/19",
+      "x_url": "https://x.com/nippon_steel_/status/2061281594107998665",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100050/20",
+      "x_url": "https://x.com/marutai/status/2059470597449724376",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100050/21",
+      "x_url": "https://x.com/biore_faceca_jp/status/2056196704748339421",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "2026-06-30",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
+    },
+    {
+      "detail_url": "/kenkaku/present.cgi?id=1045100060/22",
+      "x_url": "https://x.com/usmeat_jp/status/2056208158507278726",
+      "source": "ken-kaku",
+      "time": 0.0,
+      "deadline": "2026-06-28",
+      "winner_count": 0,
+      "days_remaining": "",
+      "applied": {
+        "atushi16": null,
+        "kudou": null,
+        "atushi1840": null,
+        "zin20120731": null
+      }
     }
   ],
-  "error_details": [],
-  "elapsed_seconds": 5.7
+  "error_details": [
+    {
+      "detail_url": "/detail/6fd261095eb5b.html",
+      "error": "X URLではない: https://x.com/akiko_lawson",
+      "time": 2.14
+    },
+    {
+      "detail_url": "/detail/aswhik3v75aar3c8.html",
+      "error": "X URLではない: https://x.com/famima_now",
+      "time": 2.1
+    },
+    {
+      "detail_url": "/detail/aa009e1180067079.html",
+      "error": "X URLではない: https://x.com/smcc_finance",
+      "time": 2.19
+    }
+  ],
+  "elapsed_seconds": 18.1
 }
