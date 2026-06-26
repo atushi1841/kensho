@@ -33,7 +33,7 @@ accounts:
   - key: kudou
     display: "@kudou_aoshi"
     session: "data/x_session_kudou.json"
-    network_interface: "Wi-Fi"
+    network_interface: "kudou_RM10JE_B"
     disable_reply: true
     schedule:
       collects: false
@@ -47,7 +47,7 @@ accounts:
   - key: atushi1840
     display: "@atushi1840"
     session: "data/x_session_b.json"
-    network_interface: "イーサネット 15"
+    network_interface: "Atushi1840_RM10JE_S"
     disable_reply: true
     schedule:
       collects: false
@@ -61,7 +61,7 @@ accounts:
   - key: zin20120731
     display: "@zin20120731"
     session: "data/x_session_c.json"
-    network_interface: "Wi-Fi 2"
+    network_interface: "zin_AiRWiFi"
     disable_reply: true
     schedule:
       collects: false
@@ -84,14 +84,14 @@ keepalive:
   interfaces:
     - label: "USB-B (povo/@atushi1840)"
       type: ping
-      network_interface: "イーサネット 15"
+      network_interface: "Atushi1840_RM10JE_S"
     - label: "WiFi-A (@kudou_aoshi)"
       type: wifi_monitor
-      network_interface: "Wi-Fi"
+      network_interface: "kudou_RM10JE_B"
       wifi_profile: "a"
     - label: "WiFi-C (@zin20120731)"
       type: wifi_monitor
-      network_interface: "Wi-Fi 2"
+      network_interface: "zin_AiRWiFi"
       wifi_profile: "AiR-WiFi_B8W38T_ino"
 
 # ── レート制限（X BAN回避）──

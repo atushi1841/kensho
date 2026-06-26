@@ -111,7 +111,7 @@ def try_recover_collected(processed_file: str | Path, collected_file: str | Path
     print('[RECOVER] ⚠️ collected.json が見つからないか空です')
     print(f'[RECOVER] ⚠️ processed.json に {_count_processed(processed_file)}件の履歴がありますが、')
     print('[RECOVER] ⚠️ 応募状態（applied）の情報は失われています')
-    print(f'[RECOVER] ⚠️ 新規収集を実行してください')
+    print('[RECOVER] ⚠️ 新規収集を実行してください')
     return True
 
 

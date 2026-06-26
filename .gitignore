@@ -54,3 +54,4 @@ hermes_agent.log
 scripts/claude-flash
 scripts/claude-pro
 wiki/
+.aider*

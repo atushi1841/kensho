@@ -2,38 +2,21 @@
 
 from __future__ import annotations
 
-import httpx, re, json, time, sys
-from datetime import datetime
+import sys, time, json, re
 from pathlib import Path
+from datetime import datetime
 from typing import Any
 
-from core.config import load as load_config
-from utils.backup import safe_save_json, verify_collected_integrity, try_recover_collected
-
-# ── 外部モジュールからのインポート ──
-from scraping.sources.common import (
-    HEADERS,
-    BASE_URL,
-    _fetch_with_retry,
-    load_json,
-    save_json,
-    fetch,
-    extract_detail_links,
-    extract_rd_link,
-    resolve_redirect,
-    is_x_url,
-    extract_deadline_and_winners,
-    _is_expired,
+from scraping.sources import (
+    fetch, _fetch_with_retry, _decode_response,
+    load_json, save_json, _is_expired, has_skip_keyword,
+    extract_detail_links, extract_rd_link, resolve_redirect,
+    is_x_url, extract_deadline_and_winners,
+    scrape_kenkaku, scrape_kenshouclub,
+    scrape_cpmeikan, scrape_kema, scrape_twscrape,
+    HEADERS, BASE_URL, KENKAKU_BASE,
 )
-from scraping.sources.kenkaku import scrape_kenkaku
-from scraping.sources.kenshouclub import scrape_kenshouclub
-from scraping.sources.cpmeikan import scrape_cpmeikan
-from scraping.sources.kema import scrape_kema
-from scraping.sources.twscrape import scrape_twscrape
-
-
-# ── User-Agent ローテーション（BOT検出回避）──
-
+from utils.backup import safe_save_json, verify_collected_integrity, try_recover_collected
 
 def collect(cfg: dict[str, Any] | None = None, log: Any = None,
             max_pages: int = 99) -> tuple[int, int, int]:
