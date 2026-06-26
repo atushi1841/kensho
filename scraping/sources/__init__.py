@@ -24,6 +24,7 @@ from .kenkaku import scrape_kenkaku
 from .kenshouclub import scrape_kenshouclub
 from .cpmeikan import scrape_cpmeikan
 from .kema import scrape_kema
+from .chancecom import scrape_chancecom
 from .kensho_everyday import scrape_kensho_everyday
 from .twscrape import scrape_twscrape
 
@@ -49,4 +50,5 @@ __all__ = [
     "scrape_kema",
     "scrape_kensho_everyday",
     "scrape_twscrape",
+    "scrape_chancecom",
 ]

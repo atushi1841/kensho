@@ -16,6 +16,7 @@ from scraping.sources import (
     is_x_url, extract_deadline_and_winners,
     scrape_kenkaku, scrape_kenshouclub,
     scrape_cpmeikan, scrape_kema, scrape_twscrape,
+    scrape_chancecom,
     BASE_URL,
 )
 from utils.backup import safe_save_json, verify_collected_integrity, try_recover_collected
@@ -198,6 +199,12 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None,
     out(f"  twscrape: {len(twscrape_items)}件")
     collected.extend(twscrape_items)
 
+    # ── Step 2g: chance.com 収集 ──
+    out("\n[Step 2g chance.com] X懸賞を収集...")
+    chancecom_items: list[dict[str, Any]] = scrape_chancecom(out, processed_set, account_keys)
+    out(f"  chance.com: {len(chancecom_items)}件")
+    collected.extend(chancecom_items)
+
     if not collected and not errors:
         out("\n✅ 全ソースで新規なし。終了。")
         existing: dict[str, Any] = load_json(COLLECTED_FILE, {})
@@ -210,6 +217,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None,
     out(f"\n[Step 3] 結果保存... (knshow {success}件, ken-kaku {len(kenkaku_items)}件, "
         f"kenshou.club {len(kclub_items)}件, cp.meikan {len(cpmeikan_items)}件, "
         f"ke-ma {len(kema_items)}件, twscrape {len(twscrape_items)}件, "
+        f"chance.com {len(chancecom_items)}件, "
         f"計{len(collected)}件)")
 
     existing_collected = load_json(COLLECTED_FILE, {}).get('collected', [])
