@@ -3,6 +3,7 @@ Tests for application/applier.py — ヘルパー関数・非ブラウザ部分
 """
 from __future__ import annotations
 
+import tempfile
 from pathlib import Path
 from datetime import datetime
 
