@@ -4,8 +4,8 @@ Kensho Session Monitor — auth_token/ct0 有効期限監視
 """
 from __future__ import annotations
 
-import json, os, sys
-from datetime import datetime, timedelta
+import json
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 

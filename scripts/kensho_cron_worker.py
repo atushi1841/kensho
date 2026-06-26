@@ -137,7 +137,7 @@ def main():
         print(safe_msg, flush=True)
         write_log(log_path, msg + '\n')
 
-    log(f"=== Kensho Cron Worker ===")
+    log("=== Kensho Cron Worker ===")
     log(f"Mode: {mode}, Account: {account}, Max: {max_n}")
     log(f"Start: {time.strftime('%H:%M:%S')}")
     log(f"Log: {log_path}")

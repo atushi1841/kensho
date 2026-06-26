@@ -4,7 +4,7 @@ Kensho FIFO Follower Manager — フォロー上限回避のための自動整�
 """
 from __future__ import annotations
 
-import asyncio, json, os
+import asyncio, json
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -66,7 +66,6 @@ async def get_following(account_key: str, auth_token: str, ct0: str) -> list[dic
         user = await api.user_by_login(account_key)
         following = await gather(api.following(user.id, limit=2000))
         result = []
-        now = int(datetime.now().timestamp())
         for i, f in enumerate(following):
             result.append({
                 'id': f.id,
@@ -112,7 +111,7 @@ def manage_account(account_key: str, state: dict[str, Any]) -> dict[str, Any]:
 
     auth_token, ct0, session_path, x_username = load_session(account_key)
     if not auth_token:
-        print(f'    auth_tokenなし - スキップ')
+        print('    auth_tokenなし - スキップ')
         return state
 
     # Xユーザー名でフォロー一覧を取得
@@ -120,14 +119,14 @@ def manage_account(account_key: str, state: dict[str, Any]) -> dict[str, Any]:
     print(f'    Xユーザー名: {username_to_query}')
     following = asyncio.run(get_following(username_to_query, auth_token, ct0))
     if not following:
-        print(f'    フォロー一覧が空 - スキップ')
+        print('    フォロー一覧が空 - スキップ')
         return state
 
     total = len(following)
     print(f'    現在のフォロー数: {total}/{MAX_FOLLOWS}')
 
     if total <= MAX_FOLLOWS:
-        print(f'    上限未達 - スキップ')
+        print('    上限未達 - スキップ')
         # 状態は保存
         acct_state = state.setdefault(account_key, {})
         acct_state['last_follow_count'] = total

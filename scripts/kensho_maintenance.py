@@ -17,7 +17,7 @@ Cron設定（推奨）:
 """
 from __future__ import annotations
 
-import sys, os, json, time
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any

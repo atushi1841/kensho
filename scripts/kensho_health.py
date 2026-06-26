@@ -5,9 +5,9 @@ Kensho Health Check — システム健全性をワンコマンドで確認
 """
 from __future__ import annotations
 
-import sys, os, json, time, subprocess
+import sys, json, time, subprocess
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime
 
 BASE = Path(__file__).parent.parent
 DATA = BASE / 'data'
@@ -224,33 +224,33 @@ def main() -> None:
     print("=" * 60)
 
     # 1. デーモン状態
-    print(f"\n📡 デーモン状態")
+    print("\n📡 デーモン状態")
     icon, msg = _check_daemon()
     print(f"  {icon} {msg}")
 
     # 2. セッションファイル
-    print(f"\n🔑 セッションファイル")
+    print("\n🔑 セッションファイル")
     print(_check_sessions())
 
     # 3. 収集データ
-    print(f"\n📦 収集データ")
+    print("\n📦 収集データ")
     print(_check_collected())
 
     # 4. 日次カウンター
-    print(f"\n📊 日次カウンター")
+    print("\n📊 日次カウンター")
     print(_check_daily_counts())
 
     # 5. アカウント設定
-    print(f"\n⚙️ アカウント設定")
+    print("\n⚙️ アカウント設定")
     print(_check_config_paths())
 
     # 6. ツール類
-    print(f"\n🔧 ツール類")
+    print("\n🔧 ツール類")
     print(f"  {_check_forcebindip()}")
     print(f"  {_check_playwright()}")
 
     # 7. ディスク使用量
-    print(f"\n💾 ディスク使用量")
+    print("\n💾 ディスク使用量")
     print(_check_disk())
 
     # 8. 型チェック結果（簡易）
