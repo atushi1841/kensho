@@ -2,19 +2,21 @@
 
 from __future__ import annotations
 
-import sys, time, json, re
+import time
 from pathlib import Path
 from datetime import datetime
 from typing import Any
 
+from core.config import load as load_config
+
 from scraping.sources import (
-    fetch, _fetch_with_retry, _decode_response,
-    load_json, save_json, _is_expired, has_skip_keyword,
+    fetch, _fetch_with_retry,
+    load_json, _is_expired,
     extract_detail_links, extract_rd_link, resolve_redirect,
     is_x_url, extract_deadline_and_winners,
     scrape_kenkaku, scrape_kenshouclub,
     scrape_cpmeikan, scrape_kema, scrape_twscrape,
-    HEADERS, BASE_URL, KENKAKU_BASE,
+    BASE_URL,
 )
 from utils.backup import safe_save_json, verify_collected_integrity, try_recover_collected
 
@@ -238,7 +240,6 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None,
         out(f"  期限切れ除去: {purged}件")
 
     # ── 賞品価格ランクを収集アイテムに追加 ──
-    prizef: int = 0
     for item in merged:
         xurl: str = item.get('x_url', '')
         if xurl:
