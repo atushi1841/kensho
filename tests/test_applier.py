@@ -109,7 +109,7 @@ class TestDailyCounts:
         tmpdir = tempfile.mkdtemp()
         counts_dir = Path(tmpdir)
         monkeypatch.setattr(
-            "application.state.DAILY_COUNTS_FILE",
+            "application.rate_limiter.DAILY_COUNTS_FILE",
             counts_dir / "daily_counts.json",
         )
         save_daily_counts({"test_acct": {"follow": 5}})
@@ -121,7 +121,7 @@ class TestDailyCounts:
         tmpdir = tempfile.mkdtemp()
         counts_dir = Path(tmpdir)
         monkeypatch.setattr(
-            "application.state.DAILY_COUNTS_FILE",
+            "application.rate_limiter.DAILY_COUNTS_FILE",
             counts_dir / "daily_counts.json",
         )
         increment_daily_count("test_acct", "follow", 1)
