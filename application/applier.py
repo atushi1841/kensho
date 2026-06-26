@@ -4,7 +4,7 @@ v3.3: 型ヒント追加 + 日次上限 + 人間らしいランダム間隔強�
 """
 from __future__ import annotations
 
-import sys, os, json, time, random, psutil
+import sys, os, json, time, random, psutil, re
 from datetime import datetime, date
 from pathlib import Path
 from typing import Any
