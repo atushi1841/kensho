@@ -263,7 +263,7 @@ def main() -> None:
     print(f"  {OK} テスト: {test_count}ファイル")
 
     print(f"\n{'='*60}")
-    print(f"  完了")
+    print("  完了")
     print(f"{'='*60}")
 
 

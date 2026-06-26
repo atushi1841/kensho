@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from datetime import datetime
 
 # ── テスト用の恒久的なプロジェクトルート設定 ──
 import sys

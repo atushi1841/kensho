@@ -46,7 +46,7 @@ def _fetch_with_retry(
                 return code, html, final_url
         except (httpx.TimeoutException, httpx.ConnectError, httpx.RemoteProtocolError):
             pass
-        except Exception as e:
+        except Exception:
             break
         if attempt < max_retries - 1:
             delay: float = (2**attempt) + _random.uniform(0, 1)
