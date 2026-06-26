@@ -25,7 +25,7 @@ from application.state import (
 
 
 class TestIsActiveHours:
-    """_is_active_hours: 動作時間帯判定（datetimeモック）"""
+    """is_active_hours: 動作時間帯判定（datetimeモック）"""
 
     def make_cfg(self, start: str = "09:00", end: str = "23:59") -> dict:
         return {"rate_limits": {
@@ -71,7 +71,7 @@ class TestIsActiveHours:
 
 
 class TestGenerateReply:
-    """_generate_reply: キーワード別リプライ生成"""
+    """generate_reply: キーワード別リプライ生成"""
 
     def test_present_keyword(self) -> None:
         """プレゼント系キーワード"""
@@ -131,7 +131,7 @@ class TestDailyCounts:
 
 
 class TestCheckRateLimit:
-    """_check_rate_limit: 日次上限判定"""
+    """check_rate_limit: 日次上限判定"""
 
     def make_cfg(self, follow=80, rt=80, like=200) -> dict:
         return {"rate_limits": {
@@ -166,7 +166,7 @@ class TestCheckRateLimit:
 
 
 class TestLockMechanism:
-    """_acquire_lock / _release_lock: 排他ロック"""
+    """acquire_lock / release_lock: 排他ロック"""
 
     def test_acquire_and_release(self) -> None:
         """ロック取得→解放のサイクル"""
