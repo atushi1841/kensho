@@ -3,9 +3,9 @@ Tests for utils/backup.py — JSON保存・復旧・整合性チェック
 """
 from __future__ import annotations
 
-import json, os, tempfile
+import json
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # ── テスト用の恒久的なプロジェクトルート設定 ──
 import sys

@@ -3,7 +3,6 @@ Tests for orchestrator.py — should_collect / load_state / save_state
 """
 from __future__ import annotations
 
-import json
 import os
 import tempfile
 from pathlib import Path

@@ -3,9 +3,8 @@ Tests for application/applier.py — ヘルパー関数・非ブラウザ部分
 """
 from __future__ import annotations
 
-import json, os, tempfile
 from pathlib import Path
-from datetime import datetime, date
+from datetime import datetime
 
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))

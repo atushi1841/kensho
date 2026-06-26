@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import pytest
-import json, os, random
+import json
 from pathlib import Path
 from unittest.mock import MagicMock, patch, call, mock_open
 from typing import Any
@@ -104,10 +104,6 @@ class TestHumanLikeMouse:
         )
 
         human_like_mouse(page, element)
-
-        # 計算期待値
-        end_x = 100 + 300 * 0.5  # 250.0
-        end_y = 200 + 50 * 0.5   # 225.0
 
         # steps+1 = 21回のmouse.moveが呼ばれる
         assert page.mouse.move.call_count == 21
@@ -232,10 +228,8 @@ class TestCreateBrowser:
     # ── test 1: 正常起動（デフォルト: アカウントなし, sessionなし, headless=True）──
 
     @pytest.mark.xfail(reason="Playwright asyncio conflicts in test env")
-    @patch('application.browser.os.path.exists', return_value=False)
     @patch('application.browser.random_viewport', create=True)
-    def test_normal_launch(self, mock_random_viewport: MagicMock,
-                           mock_path_exists: MagicMock) -> None:
+    def test_normal_launch(self, mock_random_viewport: MagicMock) -> None:
         """正常起動: アカウントなし, sessionなし → random_viewport"""
         import invisible_playwright as _ipw_mod
         ipw, browser, ctx, page = self._make_mock_chain()
@@ -258,10 +252,8 @@ class TestCreateBrowser:
     # ── test 2: headless=False ──
 
     @pytest.mark.xfail(reason="Playwright asyncio conflicts in test env")
-    @patch('application.browser.os.path.exists', return_value=False)
     @patch('application.browser.random_viewport', create=True)
-    def test_headless_false(self, mock_random_viewport: MagicMock,
-                            mock_path_exists: MagicMock) -> None:
+    def test_headless_false(self, mock_random_viewport: MagicMock) -> None:
         """headless=False が InvisiblePlaywright に伝播される"""
         import invisible_playwright as _ipw_mod
         ipw, browser, ctx, page = self._make_mock_chain()
@@ -276,10 +268,8 @@ class TestCreateBrowser:
     # ── test 3: session_fileあり ──
 
     @pytest.mark.xfail(reason="Playwright asyncio conflicts in test env")
-    @patch('application.browser.os.path.exists', return_value=False)
     @patch('application.browser.random_viewport', create=True)
-    def test_with_session_file(self, mock_random_viewport: MagicMock,
-                               mock_path_exists: MagicMock) -> None:
+    def test_with_session_file(self, mock_random_viewport: MagicMock) -> None:
         """session_fileが存在 → storage_stateに読み込まれる"""
         mock_path_exists.return_value = True  # セッションファイル存在
         import invisible_playwright as _ipw_mod
@@ -309,9 +299,9 @@ class TestCreateBrowser:
         ipw, browser, ctx, page = self._make_mock_chain()
 
         with patch.object(_ipw_mod, 'InvisiblePlaywright') as mock_ipw_cls, \
-             patch('application.browser.os.path.exists', return_value=False) as mock_path_exists, \
+             patch('application.browser.os.path.exists', return_value=False), \
              patch('application.browser.set_viewport_for_fingerprint') as mock_set_vp, \
-             patch('utils.keyring.load_session', return_value=None) as mock_kr:
+             patch('utils.keyring.load_session', return_value=None),
             mock_ipw_cls.return_value = ipw
 
             fp = FINGERPRINTS['atushi16']
