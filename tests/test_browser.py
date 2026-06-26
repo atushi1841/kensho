@@ -268,9 +268,9 @@ class TestCreateBrowser:
     # ── test 3: session_fileあり ──
 
     @pytest.mark.xfail(reason="Playwright asyncio conflicts in test env")
-    @patch('application.browser.random_viewport', create=True)
-    def test_with_session_file(self, mock_random_viewport: MagicMock) -> None:
-        """session_fileが存在 → storage_stateに読み込まれる"""
+    @patch("application.browser.os.path.exists")
+    @patch("application.browser.random_viewport", create=True)
+    def test_with_session_file(self, mock_path_exists: MagicMock, mock_random_viewport: MagicMock) -> None:
         mock_path_exists.return_value = True  # セッションファイル存在
         import invisible_playwright as _ipw_mod
         ipw, browser, ctx, page = self._make_mock_chain()
@@ -301,10 +301,10 @@ class TestCreateBrowser:
         with patch.object(_ipw_mod, 'InvisiblePlaywright') as mock_ipw_cls, \
              patch('application.browser.os.path.exists', return_value=False), \
              patch('application.browser.set_viewport_for_fingerprint') as mock_set_vp, \
-             patch('utils.keyring.load_session', return_value=None),
+             patch('utils.keyring.load_session', return_value=None):
             mock_ipw_cls.return_value = ipw
 
-            fp = FINGERPRINTS['atushi16']
+            fp = FINGERPRINTS["atushi16"]
             create_browser(account_key='atushi16', session_file=None,
                            headless=True, log=None)
 
