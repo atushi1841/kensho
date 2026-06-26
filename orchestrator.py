@@ -9,7 +9,7 @@ import ctypes, sys
 # 対話実行（TTYあり）では自分のターミナルが消えるのでウィンドウ非表示化をスキップ
 if not sys.stdin.isatty():
     ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
-import os, time, traceback, subprocess as sp, json, psutil
+import os, time, traceback, subprocess as sp, json
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -17,37 +17,11 @@ sys.path.insert(0, os.path.dirname(__file__))
 from core.encoding import guard_stdio
 guard_stdio()
 
+from core.lock import acquire_pid_lock
+
 # ── PIDロック: 多重起動防止 ──
-LOCK_DIR = os.path.join(os.path.dirname(__file__), 'data', 'locks')
-os.makedirs(LOCK_DIR, exist_ok=True)
-LOCK_PATH = os.path.join(LOCK_DIR, 'orchestrator.pid')
-if os.path.exists(LOCK_PATH):
-    try:
-        with open(LOCK_PATH) as f:
-            old_pid = int(f.read().strip())
-        # psutil使用 — os.system+tasklistはMSYSパス変換で壊れる
-        if psutil.pid_exists(old_pid):
-            print(f"[LOCK] 別orchestrator実行中 (PID {old_pid}) → 終了")
-            sys.exit(0)
-    except Exception:
-        import traceback as _tb
-        print(f"[LOCK] PIDロック読み込み失敗: {_tb.format_exc()[-100:]}", flush=True)
-        pass
-    try:
-        os.remove(LOCK_PATH)
-    except Exception:
-        print(f"[LOCK] PIDロック削除失敗（{LOCK_PATH}）", flush=True)
-        pass
-with open(LOCK_PATH, 'w', encoding='utf-8') as f:
-    f.write(str(os.getpid()))
-def _cleanup_lock() -> None:
-    try:
-        if os.path.exists(LOCK_PATH):
-            os.remove(LOCK_PATH)
-    except Exception:
-        pass
-import atexit
-atexit.register(_cleanup_lock)
+if not acquire_pid_lock('orchestrator'):
+    sys.exit(0)
 
 from core.config import load as load_config
 from core.cleanup import kill_zombies, clean_old_logs
@@ -238,6 +212,7 @@ def main() -> None:
 
             def _run_one(key: str, batch_time: str, batch_max: int) -> tuple[str, int, int]:
                 """1アカウントの応募を実行（並列ワーカー用）"""
+                import psutil
                 log.write(f"\n  ▶ {key}（時刻{batch_time}、最大{batch_max}件）")
                 try:
                     acct = next((a for a in cfg.get('accounts', []) if a['key'] == key), None)
