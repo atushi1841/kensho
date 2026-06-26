@@ -123,7 +123,6 @@ def thread_keepalive() -> None:
 
 # ── スレッド2: orchestrator（15分おき）──
 def thread_orchestrator() -> None:
-    interval = 900  # 15分
     while True:
         try:
             # capture_output=True は Windows で Errno 22 を引き起こす（pipe→print→CRT EINVAL）

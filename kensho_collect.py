@@ -60,11 +60,11 @@ def main() -> None:
     success, errors, total = collect(cfg=cfg, log=None, max_pages=max_pages)
 
     print(f"\n{'='*50}")
-    print(f"完了")
+    print("完了")
     print(f"  成功: {success}件")
     print(f"  エラー: {errors}件")
     print(f"  累計収集: {total}件")
-    print(f"  データ保存: data/collected.json")
+    print("  データ保存: data/collected.json")
 
 
 if __name__ == '__main__':

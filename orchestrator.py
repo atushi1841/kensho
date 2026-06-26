@@ -190,7 +190,7 @@ def main() -> None:
             success, errors, total = collect(cfg, log)
             log.write(f"  収集結果: {total}件（成功{success}/エラー{errors}）")
         else:
-            log.write(f"  収集時刻外 → スキップ")
+            log.write("  収集時刻外 → スキップ")
         
         # 5. 応募（ThreadPoolExecutorで並列処理、最大2垢同時）
         log.write("\n--- Step 5: Apply Check ---")
@@ -216,7 +216,7 @@ def main() -> None:
                 try:
                     acct = next((a for a in cfg.get('accounts', []) if a['key'] == key), None)
                     if not acct:
-                        log.write(f"  [SKIP] アカウント情報なし")
+                        log.write("  [SKIP] アカウント情報なし")
                         return (key, 0, 0)
 
                     interface_name = acct.get('network_interface', '')
@@ -345,7 +345,7 @@ def main() -> None:
             if days == -1:
                 notify_warning(
                     f"Sessionファイルなし: {display}",
-                    f"セッションファイルが見つかりません。ログインが必要です。",
+                    "セッションファイルが見つかりません。ログインが必要です。",
                     str(log_path),
                     cfg
                 )

@@ -103,14 +103,14 @@ def try_recover_collected(processed_file: str | Path, collected_file: str | Path
         backup_dir = col_path.parent / BACKUP_DIR_NAME
         backups: list[Path] = sorted(backup_dir.glob(f'{col_path.name}.*.bak'))
         if backups:
-            print(f'[RECOVER] 🔄 collected.jsonが空 → バックアップから復元試行')
+            print('[RECOVER] 🔄 collected.jsonが空 → バックアップから復元試行')
             _try_restore_from_backup(col_path, 'collected.json')
             if col_path.exists() and col_path.stat().st_size > 500:
                 return True
 
-    print(f'[RECOVER] ⚠️ collected.json が見つからないか空です')
+    print('[RECOVER] ⚠️ collected.json が見つからないか空です')
     print(f'[RECOVER] ⚠️ processed.json に {_count_processed(processed_file)}件の履歴がありますが、')
-    print(f'[RECOVER] ⚠️ 応募状態（applied）の情報は失われています')
+    print('[RECOVER] ⚠️ 応募状態（applied）の情報は失われています')
     print(f'[RECOVER] ⚠️ 新規収集を実行してください')
     return True
 
@@ -159,6 +159,6 @@ def verify_collected_integrity(collected_file: str | Path, processed_file: str |
     elif col_count > 0:
         result['message'] = f'✅ collected.json: {col_count}件 / processed.json: {proc_count}件'
     else:
-        result['message'] = f'📭 collected.json: 0件、processed.json: 0件（初期状態）'
+        result['message'] = '📭 collected.json: 0件、processed.json: 0件（初期状態）'
 
     return result

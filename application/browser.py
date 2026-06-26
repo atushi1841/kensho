@@ -140,7 +140,7 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
         if kr_data:
             storage = kr_data
             if log:
-                log.write(f"  [KEYRING] Session loaded from Credential Manager")
+                log.write("  [KEYRING] Session loaded from Credential Manager")
 
     if fp and log:
         log.write(f"  [FINGERPRINT] {account_key}: seed={fp['seed']}")

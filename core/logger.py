@@ -43,7 +43,7 @@ class LogWriter:
         if self.echo:
             try:
                 print(line, flush=True)
-            except OSError as _e:
+            except OSError:
                 # Windows: CRT maps ERROR_NO_DATA to EINVAL (errno 22)
                 # パイプが閉じられた場合も無視して続行
                 pass
