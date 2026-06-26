@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import re
 import httpx
-from typing import Any
 
 from .common import HEADERS, BASE_URL
 

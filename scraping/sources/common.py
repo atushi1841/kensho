@@ -39,17 +39,14 @@ def _fetch_with_retry(
     HTTP GET with exponential backoff.
     HTTP 5xx / タイムアウト / ネットワークエラー時にリトライ。
     """
-    last_err: str | None = None
     for attempt in range(max_retries):
         try:
             code, html, final_url = fetch(url, referer=referer, timeout=timeout)
             if code < 500:
                 return code, html, final_url
-            last_err = f"HTTP {code}"
-        except (httpx.TimeoutException, httpx.ConnectError, httpx.RemoteProtocolError) as e:
-            last_err = str(e)
+        except (httpx.TimeoutException, httpx.ConnectError, httpx.RemoteProtocolError):
+            pass
         except Exception as e:
-            last_err = str(e)
             break
         if attempt < max_retries - 1:
             delay: float = (2**attempt) + _random.uniform(0, 1)

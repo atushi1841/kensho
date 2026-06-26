@@ -6,7 +6,7 @@ from __future__ import annotations
 from core.encoding import guard_stdio
 guard_stdio()
 
-import subprocess, time
+import subprocess
 from typing import Any
 from keepalive import wifi_manager
 from utils.network import get_adapter_ipv4, is_adapter_up

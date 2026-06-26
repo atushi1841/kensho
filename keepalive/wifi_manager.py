@@ -5,9 +5,8 @@ v2.1: Restart-NetAdapter採用、重複排除、utils/network使用
 from __future__ import annotations
 
 import subprocess, time
-from typing import Any
 from utils.process import run_pwsh
-from utils.network import is_adapter_up, get_adapter_ipv4
+from utils.network import is_adapter_up
 
 
 def ping(ip: str = '8.8.8.8', count: int = 2, timeout_sec: int = 3) -> bool:
