@@ -10,15 +10,17 @@ from datetime import datetime, date
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from application.applier import (
-    _is_active_hours,
-    _generate_reply,
-    _load_daily_counts,
-    _save_daily_counts,
-    _increment_daily_count,
-    _check_rate_limit,
-    _acquire_lock,
-    _release_lock,
+from application.rate_limiter import (
+    is_active_hours,
+    load_daily_counts,
+    save_daily_counts,
+    increment_daily_count,
+    check_rate_limit,
+)
+from application.reply_generator import generate_reply
+from application.state import (
+    acquire_lock,
+    release_lock,
 )
 
 
@@ -35,37 +37,37 @@ class TestIsActiveHours:
         """09:00〜23:59の間はアクティブ"""
         import datetime as _dt
         monkeypatch.setattr(
-            "application.applier.datetime",
+            "application.rate_limiter.datetime",
             type("MockDT", (), {
                 "now": staticmethod(lambda: _dt.datetime(2026, 6, 24, 14, 30)),
             }),
         )
         cfg = self.make_cfg()
-        assert _is_active_hours(cfg) is True
+        assert is_active_hours(cfg) is True
 
     def test_inactive_before_start(self, monkeypatch) -> None:
         """08:00は09:00前なので非アクティブ"""
         import datetime as _dt
         monkeypatch.setattr(
-            "application.applier.datetime",
+            "application.rate_limiter.datetime",
             type("MockDT", (), {
                 "now": staticmethod(lambda: _dt.datetime(2026, 6, 24, 8, 0)),
             }),
         )
         cfg = self.make_cfg()
-        assert _is_active_hours(cfg) is False
+        assert is_active_hours(cfg) is False
 
     def test_inactive_after_end(self, monkeypatch) -> None:
         """00:30は深夜なので非アクティブ"""
         import datetime as _dt
         monkeypatch.setattr(
-            "application.applier.datetime",
+            "application.rate_limiter.datetime",
             type("MockDT", (), {
                 "now": staticmethod(lambda: _dt.datetime(2026, 6, 25, 0, 30)),
             }),
         )
         cfg = self.make_cfg()
-        assert _is_active_hours(cfg) is False
+        assert is_active_hours(cfg) is False
 
 
 class TestGenerateReply:
@@ -73,23 +75,23 @@ class TestGenerateReply:
 
     def test_present_keyword(self) -> None:
         """プレゼント系キーワード"""
-        reply = _generate_reply("プレゼントキャンペーン開催中")
+        reply = generate_reply("プレゼントキャンペーン開催中")
         assert "参加" in reply or "当た" in reply or "キャンペーン" in reply
 
     def test_season_keyword(self) -> None:
         """季節系キーワード（キャンペーンより優先されないので注意）"""
-        reply = _generate_reply("春らしいプレゼント企画")
+        reply = generate_reply("春らしいプレゼント企画")
         # 「プレゼント」で先にマッチする可能性もあるので柔軟に
         assert len(reply) >= 4
 
     def test_opinion_keyword(self) -> None:
         """感想系キーワード"""
-        reply = _generate_reply("感想を教えてください")
+        reply = generate_reply("感想を教えてください")
         assert any(w in reply for w in ["素敵", "面白", "気にな"])
 
     def test_fallback_random(self) -> None:
         """マッチしない場合は共通テンプレートから"""
-        reply = _generate_reply("何でもない普通のツイートです")
+        reply = generate_reply("何でもない普通のツイートです")
         # 必ず何か返る（長さ1以上）
         assert len(reply) >= 4
 
@@ -99,7 +101,7 @@ class TestDailyCounts:
 
     def test_load_empty(self, monkeypatch: object) -> None:
         """ファイルがない → 空dict"""
-        counts = _load_daily_counts()
+        counts = load_daily_counts()
         assert isinstance(counts, dict)
 
     def test_save_and_load(self, monkeypatch: object) -> None:
@@ -107,11 +109,11 @@ class TestDailyCounts:
         tmpdir = tempfile.mkdtemp()
         counts_dir = Path(tmpdir)
         monkeypatch.setattr(
-            "application.applier.DAILY_COUNTS_FILE",
+            "application.state.DAILY_COUNTS_FILE",
             counts_dir / "daily_counts.json",
         )
-        _save_daily_counts({"test_acct": {"follow": 5}})
-        loaded = _load_daily_counts()
+        save_daily_counts({"test_acct": {"follow": 5}})
+        loaded = load_daily_counts()
         assert loaded.get("test_acct", {}).get("follow") == 5
 
     def test_increment(self, monkeypatch: object) -> None:
@@ -119,12 +121,12 @@ class TestDailyCounts:
         tmpdir = tempfile.mkdtemp()
         counts_dir = Path(tmpdir)
         monkeypatch.setattr(
-            "application.applier.DAILY_COUNTS_FILE",
+            "application.state.DAILY_COUNTS_FILE",
             counts_dir / "daily_counts.json",
         )
-        _increment_daily_count("test_acct", "follow", 1)
-        _increment_daily_count("test_acct", "follow", 3)
-        loaded = _load_daily_counts()
+        increment_daily_count("test_acct", "follow", 1)
+        increment_daily_count("test_acct", "follow", 3)
+        loaded = load_daily_counts()
         assert loaded["test_acct"]["follow"] == 4
 
 
@@ -141,26 +143,26 @@ class TestCheckRateLimit:
     def test_under_limit(self, monkeypatch: object) -> None:
         """上限未満 → False（処理続行）"""
         monkeypatch.setattr(
-            "application.applier._load_daily_counts",
+            "application.rate_limiter.load_daily_counts",
             lambda: {"test_acct": {"follow": 5, "rt": 3, "like": 10}},
         )
-        assert _check_rate_limit("test_acct", self.make_cfg()) is False
+        assert check_rate_limit("test_acct", self.make_cfg()) is False
 
     def test_follow_over_limit(self, monkeypatch: object) -> None:
         """フォロー上限超過 → True（停止）"""
         monkeypatch.setattr(
-            "application.applier._load_daily_counts",
+            "application.rate_limiter.load_daily_counts",
             lambda: {"test_acct": {"follow": 80, "rt": 0, "like": 0}},
         )
-        assert _check_rate_limit("test_acct", self.make_cfg(follow=80)) is True
+        assert check_rate_limit("test_acct", self.make_cfg(follow=80)) is True
 
     def test_rt_over_limit(self, monkeypatch: object) -> None:
         """RT上限超過 → True"""
         monkeypatch.setattr(
-            "application.applier._load_daily_counts",
+            "application.rate_limiter.load_daily_counts",
             lambda: {"test_acct": {"follow": 0, "rt": 80, "like": 0}},
         )
-        assert _check_rate_limit("test_acct", self.make_cfg(rt=80)) is True
+        assert check_rate_limit("test_acct", self.make_cfg(rt=80)) is True
 
 
 class TestLockMechanism:
@@ -168,14 +170,14 @@ class TestLockMechanism:
 
     def test_acquire_and_release(self) -> None:
         """ロック取得→解放のサイクル"""
-        assert _acquire_lock(timeout=5) is True
-        _release_lock()
+        assert acquire_lock(timeout=5) is True
+        release_lock()
         # 解放後は再取得できる
-        assert _acquire_lock(timeout=5) is True
-        _release_lock()
+        assert acquire_lock(timeout=5) is True
+        release_lock()
 
     def test_double_acquire_fails(self) -> None:
         """2重取得は失敗"""
-        assert _acquire_lock(timeout=5) is True
-        assert _acquire_lock(timeout=1) is False  # タイムアウトで失敗
-        _release_lock()
+        assert acquire_lock(timeout=5) is True
+        assert acquire_lock(timeout=1) is False  # タイムアウトで失敗
+        release_lock()
