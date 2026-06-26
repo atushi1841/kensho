@@ -24,6 +24,27 @@ DAILY_COUNTS_FILE: Path = DATA_DIR / 'daily_counts.json'
 COLLECTED_LOCK: Path = DATA_DIR / 'collected.lock'
 
 
+def _save_session_cookies(ctx: Any, account_key: str, session_path: Path) -> None:
+    """
+    ブラウザコンテキストのセッションクッキーをファイルに保存する。
+    例外が発生した場合は無視する（永続セッションの補助的機能）。
+
+    Parameters
+    ----------
+    ctx : Any
+        Playwright の BrowserContext（storage_state() メソッドを持つ）。
+    account_key : str
+        アカウントキー（デバッグ用、現在は未使用）。
+    session_path : Path
+        セッションJSONファイルの保存先パス。
+    """
+    try:
+        data = ctx.storage_state()
+        session_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
+    except Exception:
+        pass
+
+
 def _acquire_lock(timeout: int = 30) -> bool:
     """排他ロックを取得する（最大timeout秒待つ）"""
     import os as _os
