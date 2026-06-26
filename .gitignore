@@ -28,6 +28,7 @@ tmp_profile/
 
 # ビルド・キャッシュ
 __pycache__/
+.coverage
 *.pyc
 *.pyo
 *.pyd
