@@ -96,7 +96,6 @@ def _run_with_restart(name: str, fn: Any, interval: int = 5) -> None:
         try:
             fn()
         except Exception as e:
-            ts = time.strftime('%H:%M:%S')
             log(f'[{name}] スレッド異常終了: {e} → {interval}秒後に再起動')
             log(f'[{name}] traceback: {traceback.format_exc()[-200:]}')
             time.sleep(interval)
