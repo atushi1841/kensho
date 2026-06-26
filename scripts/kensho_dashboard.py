@@ -134,7 +134,7 @@ if wins:
             st.write(f'**受信日:** {w.get("date", "?")}')
             st.write(f'**送信者:** @{w.get("from_user", "?")} ({w.get("from_name", "")})')
             st.write(f'**賞品価格:** {w.get("prize_value", "不明")}')
-            st.write(f'**テキスト:**')
+            st.write('**テキスト:**')
             st.code(w.get("text", ""))
             claimed = '✅ 報告済み' if w.get('claimed') else '⏳ 未報告'
             st.write(f'**ステータス:** {claimed}')

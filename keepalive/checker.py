@@ -59,7 +59,7 @@ def check_interface(cfg: dict[str, Any], log: Any = None) -> tuple[str, bool, st
                         log.write(f"[!] {label}: Ping不通（IP: {ip}）→ 復旧試行中...")
                     ok = wifi_manager.reconnect_adapter(iface)
                     if ok:
-                        return (label, True, f"再接続成功（ping回復）")
+                        return (label, True, "再接続成功（ping回復）")
                     else:
                         return (label, False, f"再接続失敗（{iface}）— 手動接続が必要")
             return (label, True, "")
