@@ -5,7 +5,6 @@ v3.4: keyring対応（Credential Manager優先、ファイルフォールバッ�
 from __future__ import annotations
 
 import os, time
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 

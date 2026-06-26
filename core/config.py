@@ -3,7 +3,7 @@ Kensho Config — YAML設定ファイルの読み込み・バリデーション
 """
 from __future__ import annotations
 
-import yaml, os
+import yaml
 from pathlib import Path
 from typing import Any
 

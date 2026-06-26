@@ -4,7 +4,7 @@ v1.0: collected.json / daily_counts.json の安全な保存と自動復旧
 """
 from __future__ import annotations
 
-import json, os, time, glob, re
+import json
 from datetime import datetime
 from pathlib import Path
 from shutil import copy2

@@ -11,7 +11,6 @@ if not sys.stdin.isatty():
     ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
 import os, time, traceback, subprocess as sp, json
 from datetime import datetime
-from pathlib import Path
 from typing import Any
 sys.path.insert(0, os.path.dirname(__file__))
 from core.encoding import guard_stdio

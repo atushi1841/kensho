@@ -4,7 +4,6 @@ Kensho PID Lock — 多重起動防止の汎用ロック
 from __future__ import annotations
 
 import os
-import sys
 import psutil
 import atexit
 import traceback as _tb

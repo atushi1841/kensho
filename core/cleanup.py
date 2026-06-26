@@ -5,7 +5,7 @@ orchestrator起動時に毎回実行される。
 """
 from __future__ import annotations
 
-import subprocess, time, os, re, shutil
+import subprocess, time, os, shutil
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Any

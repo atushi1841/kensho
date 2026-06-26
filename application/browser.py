@@ -4,8 +4,7 @@ v4.0: C++レベル指紋偽装（invisible_playwright）+ アカウント別シ�
 """
 from __future__ import annotations
 
-import sys, os, time, random, json
-from pathlib import Path
+import os, time, random, json
 from typing import Any
 
 # ═══════════════════════════════════════════════════════════

@@ -5,13 +5,11 @@ v3.3: application/applier.py から抽出、公開関数化
 from __future__ import annotations
 
 import json
-import random
 from datetime import datetime, date
 from pathlib import Path
 from typing import Any
 
 from utils.backup import safe_save_json
-from core.config import load as load_config
 
 DATA_DIR: Path = Path(__file__).parent.parent / 'data'
 DAILY_COUNTS_FILE: Path = DATA_DIR / 'daily_counts.json'

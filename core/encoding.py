@@ -10,7 +10,7 @@ WindowsのタスクスケジューラーやForceBindIP経由で
 """
 from __future__ import annotations
 
-import sys, os, re as _re
+import sys, os
 
 
 def _set_console_utf8() -> None:

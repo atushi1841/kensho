@@ -4,8 +4,8 @@ v3.3: 機能を rate_limiter, reply_generator, state, actions に分割
 """
 from __future__ import annotations
 
-import sys, os, json, time, random, psutil, re
-from datetime import datetime, date
+import json, time, random
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -14,7 +14,6 @@ from application.browser import (
     create_browser, check_x_login, close_browser,
     human_like_mouse,
 )
-from utils.backup import safe_save_json
 
 from application.rate_limiter import (
     check_rate_limit,

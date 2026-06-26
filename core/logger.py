@@ -3,7 +3,6 @@ Kensho Logger — ログ出力・日次サマリー生成
 """
 from __future__ import annotations
 
-import sys, os, time
 from pathlib import Path
 from datetime import datetime
 

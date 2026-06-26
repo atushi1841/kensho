@@ -4,7 +4,7 @@ Kensho Daemon — 常駐デーモン、窓ゼロ、3スレッド並列実行
 """
 from __future__ import annotations
 
-import sys, os, json, time, subprocess, threading, atexit, ctypes, traceback
+import sys, os, time, subprocess, threading, atexit, ctypes, traceback
 from typing import Any
 
 # ── cp932ガード ──

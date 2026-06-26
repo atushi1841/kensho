@@ -3,7 +3,7 @@ Kensho Utils — サブプロセス実行（統一エラーハンドリング）
 """
 from __future__ import annotations
 
-import subprocess, sys
+import subprocess
 from typing import Any
 
 

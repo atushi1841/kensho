@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Kensho Single Apply — ForceBindIPで指定インターフェース経由で1垢の応募を実行"""
 from __future__ import annotations
-import sys, os, json, time
+import sys, os, json
 from datetime import datetime
 
 # ── cp932ガード + コンソール非表示（共通ユーティリティ経由）──
