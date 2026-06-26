@@ -254,7 +254,7 @@ def main() -> None:
     print(_check_disk())
 
     # 8. 型チェック結果（簡易）
-    print(f"\n🧪 品質")
+    print("\n🧪 品質")
     # mypy結果があれば
     mypy_ini = BASE / 'mypy.ini'
     pytest_dir = BASE / 'tests'
