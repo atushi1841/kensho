@@ -169,8 +169,31 @@ def _get_interface_ip(acct: dict[str, Any], log: LogWriter) -> str | None:
             capture_output=True, timeout=10
         )
         if ip_result.returncode != 0:
-            log.write(f"  [SKIP] インターフェース '{interface_name}' が見つかりません")
-            return None
+            log.write(f"  [SKIP] インターフェース '{interface_name}' が見つかりません。WSL2デフォルトIFにフォールバック")
+            # fallback to eth0
+            try:
+                ip_result2 = _sp.run(
+                    ['ip', '-4', 'addr', 'show', 'eth0'],
+                    capture_output=True, timeout=10
+                )
+                if ip_result2.returncode != 0:
+                    log.write("  [SKIP] WSL2デフォルトIF 'eth0' も見つかりません")
+                    return None
+                output2 = ip_result2.stdout.decode('utf-8', errors='replace')
+                match2 = re.search(r'inet\s+(\d+\.\d+\.\d+\.\d+)', output2)
+                if not match2:
+                    log.write("  [SKIP] WSL2デフォルトIF 'eth0' にIPv4アドレスがありません")
+                    return None
+                bind_ip = match2.group(1)
+                if bind_ip.startswith('169.254.'):
+                    log.write(f"  [SKIP] WSL2デフォルトIF 'eth0' 未接続（IP: {bind_ip}）")
+                    return None
+                log.write(f"  Interface (fallback): {bind_ip} (eth0)")
+                return bind_ip
+            except Exception as e:
+                log.write(f"  [SKIP] WSL2フォールバックエラー: {e}")
+                return None
+
         output = ip_result.stdout.decode('utf-8', errors='replace')
         match = re.search(r'inet\s+(\d+\.\d+\.\d+\.\d+)', output)
         if not match:
