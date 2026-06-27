@@ -5,7 +5,10 @@ Kensho Health Check — システム健全性をワンコマンドで確認
 """
 from __future__ import annotations
 
-import sys, json, time, subprocess
+import sys
+import json
+import time
+import subprocess
 from pathlib import Path
 from datetime import datetime
 

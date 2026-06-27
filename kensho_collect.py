@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 # ── cp932ガード + コンソール非表示（共通ユーティリティ経由）──
-import sys, os, argparse
+import sys
+import os
+import argparse
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 from core.encoding import guard_stdio, hide_console
 guard_stdio()
@@ -15,12 +17,12 @@ v4.1: argparse 対応
 
 使い方: python kensho_collect.py [-h] [--max-items N] [--pages N] [--all]
 """
-from pathlib import Path
-from datetime import datetime
+from pathlib import Path  # noqa: E402
+from datetime import datetime  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).parent))
-from core.config import load as load_config
-from scraping.collector import collect
+from core.config import load as load_config  # noqa: E402
+from scraping.collector import collect  # noqa: E402
 
 MAX_ITEMS = 200
 MAX_PAGES = 1

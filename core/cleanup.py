@@ -6,7 +6,6 @@ orchestrator起動時に毎回実行される。
 from __future__ import annotations
 
 import os
-import platform
 import shutil
 import subprocess
 import time
@@ -42,12 +41,8 @@ def _is_daemon_or_child(pid: int) -> bool:
         import psutil
         p = psutil.Process(pid)
         proc_name = p.name().lower()
-        if platform.system() == 'Linux':
-            if 'python' in proc_name:
-                return True
-        else:
-            if proc_name == 'pythonw.exe':
-                return True
+        if 'python' in proc_name:
+            return True
         for pp in PROTECTED_PIDS:
             if pid == pp:
                 return True
@@ -62,51 +57,26 @@ def _is_daemon_or_child(pid: int) -> bool:
 
 
 def kill_process_by_name(name: str, force: bool = True) -> bool:
-    """
-    プロセス名を指定して強制終了。
-    Windows: taskkill /F /IM <name>
-    Linux: pkill -f <name> (部分一致)
-    """
+    """プロセス名を指定して強制終了"""
     try:
-        if platform.system() == 'Linux':
-            # Linux: pkill を使う
-            cmd = ['pkill', '-f', name]
-            subprocess.run(
-                cmd,
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-            )
-            return True
-        else:
-            # Windows: taskkill を使う
-            cmd = ['taskkill', '/F', '/IM', name]
-            r = subprocess.run(
-                cmd,
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-            )
-            return r.returncode == 0
+        cmd = ['pkill', '-f', name]
+        subprocess.run(
+            cmd,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        )
+        return True
     except Exception:
         return False
 
 
 def kill_process_by_pid(pid: int) -> bool:
-    """
-    指定PIDのプロセスを強制終了。
-    Windows: taskkill /F /PID <pid>
-    Linux: kill -9 <pid>
-    """
+    """指定PIDのプロセスを強制終了"""
     try:
-        if platform.system() == 'Linux':
-            r = subprocess.run(
-                ['kill', '-9', str(pid)],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-            )
-            return r.returncode == 0
-        else:
-            r = subprocess.run(
-                ['taskkill', '/F', '/PID', str(pid)],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-            )
-            return r.returncode == 0
+        r = subprocess.run(
+            ['kill', '-9', str(pid)],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        )
+        return r.returncode == 0
     except Exception:
         return False
 
@@ -148,36 +118,14 @@ def kill_zombies(log: Any = None) -> dict[str, int]:
     killed: dict[str, int] = {}
     targets: list[str | int] = []
 
-    # 対象プロセス名（OS別）
-    if platform.system() == 'Linux':
-        browser_exes = ['firefox', 'geckodriver']
-    else:
-        browser_exes = ['firefox.exe', 'geckodriver.exe']
+    # 対象プロセス名
+    browser_exes = ['firefox', 'geckodriver']
 
     for exe in browser_exes:
         targets.append(exe)
 
     # 孤立pythonプロセス
-    if platform.system() == 'Linux':
-        targets.extend(_get_linux_python_pids())
-    else:
-        try:
-            r = subprocess.run(
-                ['tasklist', '/FI', 'IMAGENAME eq python.exe', '/FO', 'CSV', '/NH'],
-                capture_output=True, timeout=10
-            )
-            out: str = r.stdout.decode('cp932', errors='replace')
-            for line in out.strip().split('\n'):
-                parts: list[str] = line.strip('"').split('","')
-                if len(parts) >= 2:
-                    try:
-                        pid: int = int(parts[1])
-                        if not _is_daemon_or_child(pid):
-                            targets.append(pid)
-                    except (ValueError, IndexError):
-                        pass
-        except Exception:
-            pass
+    targets.extend(_get_linux_python_pids())
 
     firefox_killed: int = 0
     python_killed: int = 0
@@ -203,7 +151,7 @@ def kill_zombies(log: Any = None) -> dict[str, int]:
     user_firefox_active = False
     try:
         import psutil as _ps2
-        browser_name = browser_exes[0]  # 'firefox' or 'firefox.exe'
+        browser_name = browser_exes[0]
         for proc in _ps2.process_iter(['pid', 'name', 'ppid']):
             try:
                 if proc.info['name'] and proc.info['name'].lower() == browser_name:
@@ -250,50 +198,28 @@ def kill_zombies(log: Any = None) -> dict[str, int]:
 
 
 def _win_force_rmtree(path: str | Path) -> bool:
-    """
-    再帰的にディレクトリ削除。
-    Windows: 特殊対策（attrib + rd /s /q → shutil.rmtree）。
-    Linux: 直接shutil.rmtree。
-    """
-    if platform.system() == 'Linux':
-        # Linux では単純に shutil.rmtree
+    """強制フォルダ削除"""
+    try:
+        shutil.rmtree(str(path))
+        return True
+    except Exception:
         try:
-            shutil.rmtree(str(path))
+            def _onerror(func: Any, p: str, exc_info: Any) -> None:
+                try:
+                    os.chmod(p, 0o777)
+                    func(p)
+                except Exception:
+                    pass
+            shutil.rmtree(str(path), onerror=_onerror)
             return True
         except Exception:
             return False
-
-    # Windows 対策
-    try:
-        path_str = str(path).rstrip('\\/')
-        subprocess.run(['attrib', '-R', f'{path_str}\\*.*', '/S'],
-                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        r = subprocess.run(
-            ['cmd', '/c', f'rd /s /q "{path_str}"'],
-            capture_output=True, timeout=30
-        )
-        if r.returncode == 0:
-            return True
-    except Exception:
-        pass
-    try:
-        def _onerror(func: Any, p: str, exc_info: Any) -> None:
-            try:
-                os.chmod(p, 0o777)
-                func(p)
-            except Exception:
-                pass
-        shutil.rmtree(str(path), onerror=_onerror)
-        return True
-    except Exception:
-        return False
 
 
 def clean_old_logs(log_dir: str | Path, retention_days: int = 30, log: Any = None) -> int:
     """
     retention_daysより古いログファイル/フォルダを削除。
     config.yaml の log_retention_days の値を使うこと。
-    Windows [Errno 22] Invalid argument 対策済み。
     """
     cutoff: datetime = datetime.now() - timedelta(days=retention_days)
     removed: int = 0

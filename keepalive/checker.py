@@ -6,10 +6,10 @@ from __future__ import annotations
 from core.encoding import guard_stdio
 guard_stdio()
 
-import subprocess
-from typing import Any
-from keepalive import wifi_manager
-from utils.network import get_adapter_ipv4, is_adapter_up
+import subprocess  # noqa: E402
+from typing import Any  # noqa: E402
+from keepalive import wifi_manager  # noqa: E402
+from utils.network import get_adapter_ipv4, is_adapter_up  # noqa: E402
 
 def ping_src(src_ip: str, dst: str = '8.8.8.8', timeout: int = 15) -> bool:
     """特定IPからping（3回中2回成功でOK。誤検知耐性）"""
@@ -37,7 +37,7 @@ def check_interface(cfg: dict[str, Any], log: Any = None) -> tuple[str, bool, st
     label = cfg.get('label', '?')
     iface = cfg.get('network_interface', '')
     itype = cfg.get('type', '')
-    
+
     if itype == 'ping':
         # USBテザリング: IP取得 → ping
         ip = get_adapter_ipv4(iface)
@@ -46,7 +46,7 @@ def check_interface(cfg: dict[str, Any], log: Any = None) -> tuple[str, bool, st
         if not ping_src(ip):
             return (label, False, f"Ping不通（IP: {ip}）")
         return (label, True, "")
-    
+
     elif itype == 'wifi_monitor':
         # WiFi: アダプター状態確認 → pingで接続維持 → 切断時は復旧試行
         if is_adapter_up(iface):
@@ -71,7 +71,7 @@ def check_interface(cfg: dict[str, Any], log: Any = None) -> tuple[str, bool, st
             return (label, True, f"再接続成功（{iface}）")
         else:
             return (label, False, f"再接続失敗（{iface}）— 手動接続が必要")
-    
+
     else:
         return (label, False, f"不明なtype: {itype}")
 
@@ -84,31 +84,32 @@ def check_all(cfg: dict[str, Any], log: Any = None) -> tuple[list[tuple[str, str
     interfaces: list[dict[str, Any]] = cfg.get('keepalive', {}).get('interfaces', [])
     issues: list[tuple[str, str]] = []
     all_ok = True
-    
+
     for iface_cfg in interfaces:
         label, ok, msg = check_interface(iface_cfg, log)
         if not ok:
             all_ok = False
             issues.append((label, msg))
-    
+
     return (issues, all_ok)
 
 
 if __name__ == '__main__':
     """スタンドアロン実行用"""
-    import sys, os
+    import sys
+    import os
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from core.config import load as load_config
     from core.logger import make_path, LogWriter
-    
+
     log_path = make_path('keepalive')
     log = LogWriter(log_path, echo=True)
     cfg = load_config()
-    
+
     issues, all_ok = check_all(cfg, log)
     if not all_ok:
         for label, msg in issues:
             log.write(f'[!] {label}: {msg}')
-    
+
     log.close()
     sys.exit(0 if all_ok else 1)

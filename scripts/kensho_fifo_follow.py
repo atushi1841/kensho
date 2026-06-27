@@ -4,7 +4,8 @@ Kensho FIFO Follower Manager — フォロー上限回避のための自動整�
 """
 from __future__ import annotations
 
-import asyncio, json
+import asyncio
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Any

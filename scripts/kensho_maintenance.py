@@ -25,7 +25,7 @@ from typing import Any
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_DIR))
 
-from core.encoding import guard_stdio
+from core.encoding import guard_stdio  # noqa: E402
 guard_stdio()
 
 LOG_DIR = PROJECT_DIR / "logs"

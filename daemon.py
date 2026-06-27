@@ -5,7 +5,6 @@ v2.0: Linux対応（WSL2対応）
 """
 from __future__ import annotations
 
-import atexit
 import os
 import platform
 import subprocess
@@ -24,14 +23,6 @@ if hasattr(sys.stdout, 'reconfigure'):
     except Exception:
         sys.stdout.reconfigure(line_buffering=True)
 
-# ── コンソール窓を即座に隠す（Windowsのみ） ──
-if platform.system() == 'Windows':
-    try:
-        import ctypes
-        ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
-    except Exception:
-        pass
-
 # ── パス設定 ──
 BASE = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE, 'data')
@@ -45,40 +36,23 @@ PYTHON = sys.executable
 ORCHESTRATOR = os.path.join(BASE, 'orchestrator.py')
 KEEPALIVE = os.path.join(BASE, 'keepalive', 'checker.py')
 
-# ── 二重起動防止 ──
-if platform.system() == 'Windows':
-    # Windows: CreateMutex を使用
-    import ctypes.wintypes
-    MUTEX_NAME = "KenshoDaemon_Mutex_v3"
-    mutex = ctypes.windll.kernel32.CreateMutexW(None, False, MUTEX_NAME)
-    if mutex and ctypes.windll.kernel32.GetLastError() == 183:  # ERROR_ALREADY_EXISTS
-        ctypes.windll.kernel32.CloseHandle(mutex)
-        sys.exit(0)
-
-    def _release_mutex() -> None:
-        if mutex:
-            ctypes.windll.kernel32.ReleaseMutex(mutex)
-            ctypes.windll.kernel32.CloseHandle(mutex)
-    atexit.register(_release_mutex)
-else:
-    # Linux: PIDファイルで二重起動防止
-    PID_PATH_LOCK = os.path.join(LOCK_DIR, 'daemon.pid')
-    try:
-        if os.path.exists(PID_PATH_LOCK):
-            with open(PID_PATH_LOCK) as f:
-                old_pid_str = f.read().strip()
-            if old_pid_str:
-                old_pid = int(old_pid_str)
-                # 既存プロセスが生きているか確認
-                try:
-                    os.kill(old_pid, 0)  # シグナル0 = 生存確認専用
-                    print(f"[DAEMON] 既存デーモン (PID {old_pid}) が稼働中 → 終了")
-                    sys.exit(0)
-                except OSError:
-                    pass  # プロセスが死んでいる → PIDファイルを上書き
-    except (ValueError, OSError):
-        pass
-    mutex = None  # type: ignore[assignment]
+# ── PIDファイルで二重起動防止 ──
+PID_PATH_LOCK = os.path.join(LOCK_DIR, 'daemon.pid')
+try:
+    if os.path.exists(PID_PATH_LOCK):
+        with open(PID_PATH_LOCK) as f:
+            old_pid_str = f.read().strip()
+        if old_pid_str:
+            old_pid = int(old_pid_str)
+            # 既存プロセスが生きているか確認
+            try:
+                os.kill(old_pid, 0)  # シグナル0 = 生存確認専用
+                print(f"[DAEMON] 既存デーモン (PID {old_pid}) が稼働中 → 終了")
+                sys.exit(0)
+            except OSError:
+                pass  # プロセスが死んでいる → PIDファイルを上書き
+except (ValueError, OSError):
+    pass
 
 # ── PIDファイル（Watchdog用）──
 PID_PATH = os.path.join(LOCK_DIR, 'daemon.pid')
@@ -93,15 +67,9 @@ except Exception:
 def _kill_firefox() -> None:
     """Firefox / geckodriver プロセスを強制終了"""
     try:
-        if platform.system() == 'Linux':
-            for pname in ['firefox', 'geckodriver']:
-                subprocess.run(
-                    ['pkill', '-f', pname],
-                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-                )
-        else:
+        for pname in ['firefox', 'geckodriver']:
             subprocess.run(
-                ['taskkill', '/F', '/IM', 'firefox.exe'],
+                ['pkill', '-f', pname],
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
             )
     except Exception:

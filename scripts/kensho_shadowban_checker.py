@@ -5,7 +5,8 @@ shadowban検出時は自動で該当アカウントの応募を停止
 """
 from __future__ import annotations
 
-import asyncio, json
+import asyncio
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Any

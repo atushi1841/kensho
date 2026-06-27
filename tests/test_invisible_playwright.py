@@ -1,10 +1,8 @@
 """invisible_playwright モジュールの単体テスト"""
 from __future__ import annotations
 
-import sys
 from unittest.mock import MagicMock, patch
 
-import pytest
 
 from invisible_playwright import InvisiblePlaywright
 
