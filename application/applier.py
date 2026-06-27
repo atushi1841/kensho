@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import time
 import random
+import math
 import psutil
 from datetime import datetime
 from pathlib import Path
@@ -15,7 +16,7 @@ from typing import Any
 from core.config import load as load_config
 from application.browser import (
     create_browser, check_x_login, close_browser,
-    human_like_mouse,
+    human_like_mouse, FINGERPRINTS,
 )
 
 from application.rate_limiter import (
@@ -135,6 +136,16 @@ def apply_for_account(account_key: str, max_n: int,
         else:
             print(msg, flush=True)
 
+    # ★ ACCOUNT_PROFILESから行動パラメータ抽出
+    fp: dict[str, Any] | None = FINGERPRINTS.get(account_key)
+    profile: dict[str, Any] = fp.get('profile', {}) if fp else {}
+    click_delay: int = profile.get('click_delay', 80)
+    scroll_pattern: str = profile.get('scroll_pattern', 'smooth')
+    work_style: str = profile.get('work_style', 'steady')
+    typing_speed: int = profile.get('typing_speed', 150)
+
+    out(f"[PROFILE] scroll={scroll_pattern} click_delay={click_delay}ms work={work_style} type={typing_speed}ms")
+
     out(f"[Kensho] アカウント: {display} ({account_key})")
 
     jitter: int = random.randint(0, 60)
@@ -244,22 +255,28 @@ def apply_for_account(account_key: str, max_n: int,
             page.goto(clean_url, timeout=120000)
             time.sleep(random.uniform(2, 5))
 
-            # ★ 自然なスクロール：上下混在・速度変化
-            scrolls: int = random.randint(3, 6)
-            for _ in range(scrolls):
-                dy: int = random.randint(-80, 250)
-                delay: float = random.uniform(0.2, 1.5)
-                if dy > 0:
-                    # 下スクロールは自然（徐々に）
-                    for s in range(random.randint(1, 3)):
-                        page.mouse.wheel(0, dy // 3 + random.randint(-10, 10))
-                        time.sleep(delay * 0.3)
+            # ★ 自然なスクロール：垢別パターン＋上下混在・速度変化
+            _scroll_cfg: dict[str, Any] = {
+                'smooth':      {'count': (4, 8),  'dy': (30, 120),   'delay': (0.3, 1.0), 'subdivide': True,  'up_chance': 0.15, 'mouse_move': 0.2},
+                'aggressive':  {'count': (2, 4),  'dy': (80, 350),   'delay': (0.1, 0.5), 'subdivide': False, 'up_chance': 0.10, 'mouse_move': 0.1},
+                'erratic':     {'count': (5, 10), 'dy': (-120, 200), 'delay': (0.2, 2.0), 'subdivide': True,  'up_chance': 0.40, 'mouse_move': 0.4},
+                'measured':    {'count': (3, 6),  'dy': (50, 180),   'delay': (0.5, 2.5), 'subdivide': True,  'up_chance': 0.20, 'mouse_move': 0.3},
+                'explorative': {'count': (6, 12), 'dy': (-200, 300), 'delay': (0.3, 1.8), 'subdivide': True,  'up_chance': 0.35, 'mouse_move': 0.5},
+            }.get(scroll_pattern, {'count': (3, 6), 'dy': (-80, 250), 'delay': (0.2, 1.5), 'subdivide': True, 'up_chance': 0.15, 'mouse_move': 0.3})
+            scroll_count: int = random.randint(*_scroll_cfg['count'])
+            for _ in range(scroll_count):
+                dy: int = random.randint(*_scroll_cfg['dy'])
+                delay: float = random.uniform(*_scroll_cfg['delay'])
+                if _scroll_cfg['subdivide'] and dy > 50:
+                    parts: int = random.randint(2, 4)
+                    for s in range(parts):
+                        page.mouse.wheel(0, dy // parts + random.randint(-8, 8))
+                        time.sleep(delay * 0.25)
                 else:
-                    # 上スクロール（たまに）
                     page.mouse.wheel(0, dy)
                     time.sleep(delay)
-                # たまにマウスをランダム位置に動かす
-                if random.random() < 0.3:
+                # ランダムマウス移動（垢別確率）
+                if random.random() < _scroll_cfg['mouse_move']:
                     vp = page.viewport_size
                     page.mouse.move(random.randint(100, vp['width']-100),
                                     random.randint(100, vp['height']-100))
@@ -275,7 +292,7 @@ def apply_for_account(account_key: str, max_n: int,
                 if fb:
                     t: str = (fb.text_content() or '').strip()
                     if 'フォロー' in t or 'Follow' in t:
-                        human_like_mouse(page, fb)
+                        human_like_mouse(page, fb, click_delay=click_delay)
                         out("  [OK] フォロー")
                         increment_daily_count(account_key, 'follow')
                         time.sleep(random.uniform(3, 7))
@@ -293,18 +310,18 @@ def apply_for_account(account_key: str, max_n: int,
                     rt = page.query_selector('[data-testid="retweet"]')
                     if rt:
                         time.sleep(random.uniform(0.5, 2))
-                        human_like_mouse(page, rt)
+                        human_like_mouse(page, rt, click_delay=click_delay)
                         time.sleep(random.uniform(1.5, 3.5))
                         for mi in page.query_selector_all('[role="menuitem"]'):
                             if 'リポスト' in (mi.text_content() or ''):
-                                human_like_mouse(page, mi)
+                                human_like_mouse(page, mi, click_delay=click_delay)
                                 out("  [OK] RT")
                                 increment_daily_count(account_key, 'rt')
                                 break
                         else:
                             cf = page.query_selector('[data-testid="retweetConfirm"]')
                             if cf:
-                                human_like_mouse(page, cf)
+                                human_like_mouse(page, cf, click_delay=click_delay)
                                 out("  [OK] RT(confirm)")
                                 increment_daily_count(account_key, 'rt')
                     else:
@@ -320,7 +337,7 @@ def apply_for_account(account_key: str, max_n: int,
                         unlike_btn = page.query_selector('[data-testid="unlike"]')
                         if not unlike_btn:
                             time.sleep(random.uniform(0.5, 1.5))
-                            human_like_mouse(page, like_btn)
+                            human_like_mouse(page, like_btn, click_delay=click_delay)
                             out("  [OK] いいね")
                             increment_daily_count(account_key, 'like')
                             time.sleep(random.uniform(2, 5))
@@ -351,16 +368,40 @@ def apply_for_account(account_key: str, max_n: int,
             if global_idx % break_after_n == 0:
                 save_collected_safe(data, account_key, log)
                 out(f"  [SAVE] 保存 ({global_idx}/{len(to_process)})")
-                rest: float = random.uniform(break_min, break_max)
-                out(f"  [TEA] 休憩{rest:.0f}秒（レート制限対策）")
+                # ★ work_style別：burstは短い活動後に長め休憩
+                if work_style == 'burst':
+                    rest = random.uniform(break_min * 1.5, break_max * 1.3)
+                elif work_style == 'night_owl':
+                    rest = random.uniform(break_min, break_max * 1.2)
+                elif work_style == 'morning_person':
+                    rest = random.uniform(break_min * 0.7, break_max * 0.8)
+                else:
+                    rest = random.uniform(break_min, break_max)
+                out(f"  [TEA] 休憩{rest:.0f}秒（{work_style}）")
                 time.sleep(rest)
             else:
-                if random.random() < extra_long_pause_chance:
+                # ★ extra_long_pauseはwork_style別：night_owl/morning_personは非効率的
+                _extra_chance: float = extra_long_pause_chance
+                if work_style == 'steady':
+                    _extra_chance = extra_long_pause_chance * 1.3
+                elif work_style in ('morning_person', 'burst'):
+                    _extra_chance = extra_long_pause_chance * 0.6
+                if random.random() < _extra_chance:
                     extra: float = random.uniform(60, 120)
                     out(f"  [TEA] 長め休憩{extra:.0f}秒（人間らしさ）")
                     time.sleep(extra)
                 else:
-                    time.sleep(random.uniform(min_delay, max_delay))
+                    # ★ アクション間待機もwork_style別：morning_personは短め、steadyは長め
+                    if work_style == 'morning_person':
+                        _min_d = min_delay * 0.7
+                        _max_d = max_delay * 0.8
+                    elif work_style == 'steady':
+                        _min_d = min_delay * 1.2
+                        _max_d = max_delay * 1.1
+                    else:
+                        _min_d = min_delay
+                        _max_d = max_delay
+                    time.sleep(random.uniform(_min_d, _max_d))
 
         except Exception as e:
             err_msg: str = str(e)[:60]

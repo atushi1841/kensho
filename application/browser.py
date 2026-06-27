@@ -303,16 +303,34 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
 
     # invisible_playwright インスタンス作成（まだ起動しない）
     extra_prefs: dict[str, Any] = {}
-    wv = 'Google Inc. (Intel)'
-    wr = 'Intel Iris OpenGL Engine'
+    pin: dict[str, Any] = {}
     if fp:
-        wv = fp.get('webgl_vendor', wv)
-        wr = fp.get('webgl_renderer', wr)
-        extra_prefs['_webgl_vendor'] = wv
-        extra_prefs['_webgl_renderer'] = wr
         tls_prefs = fp.get('tls', {})
         extra_prefs.update(tls_prefs)
-    ipw = InvisiblePlaywright(seed=seed, headless=headless, extra_prefs=extra_prefs)
+        if 'webgl_vendor' in fp:
+            pin['gpu.vendor'] = fp['webgl_vendor']
+        if 'webgl_renderer' in fp:
+            pin['gpu.renderer'] = fp['webgl_renderer']
+        if 'screen_width' in fp:
+            pin['screen.width'] = fp['screen_width']
+        if 'screen_height' in fp:
+            pin['screen.height'] = fp['screen_height']
+        if 'pixel_ratio' in fp:
+            pin['screen.dpr'] = fp['pixel_ratio']
+    # upstream: proxy/locale/timezone/humanize は InvisiblePlaywright が処理
+    proxy_dict = {"server": proxy} if proxy else None
+    upstream_locale = fp.get('locale', 'ja-JP') if fp else 'ja-JP'
+    upstream_tz = fp.get('timezone_id', '') if fp else ''
+    ipw = InvisiblePlaywright(
+        seed=seed,
+        headless=headless,
+        extra_prefs=extra_prefs,
+        pin=pin,
+        proxy=proxy_dict,
+        locale=upstream_locale,
+        timezone=upstream_tz,
+        humanize=True,
+    )
 
     # コンテキストマネージャーに入る → ブラウザ起動
     browser: Any = ipw.__enter__()
@@ -341,33 +359,17 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
     if fp and log:
         log.write(f"  [FINGERPRINT] {account_key}: seed={fp['seed']}")
 
-    device_scale: float = fp['pixel_ratio'] if fp else random.choice([1.0, 1.25, 1.5])
+    # upstream patched new_context が viewport/screen/DPR/locale/timezone を自動設定
+    # → ctx_kwargs には storage_state と user_agent のみ指定
     ctx_kwargs: dict[str, Any] = {
         'storage_state': storage,
-        'locale': fp.get('locale', 'ja-JP') if fp else 'ja-JP',
-        'timezone_id': fp.get('timezone_id', 'Asia/Tokyo') if fp else 'Asia/Tokyo',
-        'device_scale_factor': device_scale,
     }
     if fp:
         ctx_kwargs['user_agent'] = fp['user_agent']
-    if proxy:
-        ctx_kwargs['proxy'] = {"server": proxy}
     ctx = browser.new_context(**ctx_kwargs)
 
-    # ★ 作成したコンテキストに stealth script を注入
-    #    （navigator.webdriver, Canvas ノイズ, AudioContext 偽装,
-    #      WebGL, Error.stack, コンソール抑制など）
-    #    ビューポートは set_viewport_for_fingerprint / random_viewport で
-    #    後から設定される値に合わせる
-    if fp:
-        stealth_vp = (fp['screen_width'], fp['screen_height'])
-    else:
-        stealth_vp = ipw._pick_viewport()
-    stealth = ipw._stealth_script(stealth_vp, wv, wr, seed)
-    ctx.add_init_script(stealth)
-
     if log:
-        log.write("DEBUG: context created (with stealth script)")
+        log.write("DEBUG: context created (upstream handles stealth at C++ level)")
 
     page = ctx.new_page()
 

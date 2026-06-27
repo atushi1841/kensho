@@ -30,7 +30,6 @@ from core.config import load as load_config  # noqa: E402
 from core.cleanup import kill_zombies, clean_old_logs  # noqa: E402
 from core.logger import make_path, LogWriter, write_daily_summary  # noqa: E402
 from core.notifier import notify_error, notify_warning  # noqa: E402
-from core.ip_binder import apply_patch, set_interface, clear_interface  # noqa: E402
 from scraping.collector import collect  # noqa: E402
 from application.session_manager import check_sessions  # noqa: E402
 from application.applier import apply_for_account  # noqa: E402
@@ -159,30 +158,7 @@ def _safe_step(step_name: str, log: LogWriter, fn, *args, **kwargs) -> Any:
         return None
 
 
-def _get_interface_ip(acct: dict[str, Any], log: LogWriter) -> str | None:
-    """アカウントのネットワークインターフェースのIPv4アドレスを取得
 
-    WSL2環境では唯一のIFはeth0。WindowsのIF名はLinuxでは認識できないため、
-    Python socket でデフォルトルートのIPを取得する。
-    """
-    import socket
-    interface_name = acct.get('network_interface', '')
-    if not interface_name:
-        log.write("  [SKIP] network_interface未設定")
-        return None
-    try:
-        # Python socket でデフォルトルートのIPを取得（subprocess不使用）
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        try:
-            s.connect(('8.8.8.8', 80))
-            bind_ip = s.getsockname()[0]
-            log.write(f"  Interface: {bind_ip} ({interface_name})")
-            return bind_ip
-        finally:
-            s.close()
-    except Exception as e:
-        log.write(f"  [SKIP] IP取得エラー: {e}")
-        return None
 
 
 def _apply_account(
@@ -200,17 +176,8 @@ def _apply_account(
             log.write("  [SKIP] アカウント情報なし")
             return (key, 0, 0)
 
-        # インターフェースIPを取得してソケットバインド
-        bind_ip = _get_interface_ip(acct, log)
-        if bind_ip is None:
-            return (key, 0, 0)
-
         start = time.time()
-        set_interface(bind_ip)
-        try:
-            succ, err = apply_for_account(key, batch_max, cfg, log)
-        finally:
-            clear_interface()
+        succ, err = apply_for_account(key, batch_max, cfg, log)
 
         elapsed = time.time() - start
         log.write(f"  完了: {succ}成功/{err}エラー（{elapsed:.0f}秒）")
@@ -242,9 +209,8 @@ def main() -> None:
         log.write("   詳細: data/crash_reports/ を確認")
 
     try:
-        # ── 起動時: IPバインドのパッチ適用 ──
-        guard.update('init', 'IPパッチ適用')
-        apply_patch()
+        # ── 起動時: 初期化 ──
+        guard.update('init', '起動')
 
         log.write("=== Kensho Orchestrator v4 ===")
         log.write(f"起動: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
