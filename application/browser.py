@@ -25,7 +25,7 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
         'pixel_ratio': 1.0,
         'locale': 'ja-JP',
         'timezone_id': 'Asia/Tokyo',
-        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0',
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0.1',
         'webgl_vendor': 'Google Inc. (Intel)',
         'webgl_renderer': 'Intel HD Graphics 4600 (ANGLE)',
         # ── 行動プロファイル ──
@@ -54,9 +54,9 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
         'pixel_ratio': 1.0,
         'locale': 'ja-JP',
         'timezone_id': 'Asia/Tokyo',
-        'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:128.0) Gecko/20100101 Firefox/128.0',
-        'webgl_vendor': 'Apple Inc.',
-        'webgl_renderer': 'Apple M1',
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0.1',
+        'webgl_vendor': 'Google Inc. (Intel)',
+        'webgl_renderer': 'Intel Iris Xe Graphics',
         'profile': {
             'active_hours': ('14:00', '02:00'),
             'max_per_day': {'follow': 25, 'rt': 8, 'like': 45},
@@ -82,7 +82,7 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
         'pixel_ratio': 1.0,
         'locale': 'ja-JP',
         'timezone_id': 'Asia/Tokyo',
-        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0',
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; x64; rv:150.0) Gecko/20100101 Firefox/150.0',
         'webgl_vendor': 'Google Inc. (NVIDIA)',
         'webgl_renderer': 'NVIDIA GeForce GTX 1060',
         'profile': {
@@ -110,7 +110,7 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
         'pixel_ratio': 1.0,
         'locale': 'ja-JP',
         'timezone_id': 'Asia/Tokyo',
-        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0',
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0',
         'webgl_vendor': 'Google Inc. (Intel)',
         'webgl_renderer': 'Intel UHD Graphics 620',
         'profile': {
@@ -138,7 +138,7 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
         'pixel_ratio': 1.0,
         'locale': 'ja-JP',
         'timezone_id': 'Asia/Tokyo',
-        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0',
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0',
         'webgl_vendor': 'Google Inc. (AMD)',
         'webgl_renderer': 'AMD Radeon RX 580',
         'profile': {
@@ -171,7 +171,7 @@ PROXY_MAP: dict[str, str] = {
 }
 
 # ☆ プロキシ有効/無効フラグ（True=有効、False=バイパス）
-USE_PROXY: bool = False
+USE_PROXY: bool = True
 
 # invisible_playwright は使わないが、型の互換性のためにエイリアス
 # build_stealth_script は C++レベル偽装に置き換えたため削除
