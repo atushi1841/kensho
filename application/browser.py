@@ -9,6 +9,7 @@ import os
 import time
 import random
 import json
+import math
 from typing import Any
 
 # ═══════════════════════════════════════════════════════════
@@ -22,9 +23,22 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
         'screen_width': 1366,
         'screen_height': 768,
         'pixel_ratio': 1.0,
+        'locale': 'ja-JP',
+        'timezone_id': 'Asia/Tokyo',
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0',
         'webgl_vendor': 'Google Inc. (Intel)',
         'webgl_renderer': 'Intel HD Graphics 4600 (ANGLE)',
+        # ── 行動プロファイル ──
+        'profile': {
+            'active_hours': ('10:00', '22:00'),
+            'max_per_day': {'follow': 35, 'rt': 10, 'like': 60},
+            'skip_rate': {'follow': 0.04, 'rt': 0.03, 'like': 0.05},
+            'persona': 'anime_manga',
+            'work_style': 'steady',
+            'typing_speed': 150,
+            'click_delay': 80,
+            'scroll_pattern': 'smooth',
+        },
         'tls': {
             'security.tls.version.min': 3,
             'security.tls.version.max': 4,
@@ -38,9 +52,21 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
         'screen_width': 1920,
         'screen_height': 1080,
         'pixel_ratio': 1.0,
+        'locale': 'ja-JP',
+        'timezone_id': 'Asia/Tokyo',
         'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:128.0) Gecko/20100101 Firefox/128.0',
         'webgl_vendor': 'Apple Inc.',
         'webgl_renderer': 'Apple M1',
+        'profile': {
+            'active_hours': ('14:00', '02:00'),
+            'max_per_day': {'follow': 25, 'rt': 8, 'like': 45},
+            'skip_rate': {'follow': 0.02, 'rt': 0.01, 'like': 0.03},
+            'persona': 'music_artist',
+            'work_style': 'night_owl',
+            'typing_speed': 200,
+            'click_delay': 120,
+            'scroll_pattern': 'erratic',
+        },
         'tls': {
             'security.tls.version.min': 3,
             'security.tls.version.max': 4,
@@ -54,9 +80,21 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
         'screen_width': 1536,
         'screen_height': 864,
         'pixel_ratio': 1.0,
+        'locale': 'ja-JP',
+        'timezone_id': 'Asia/Tokyo',
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0',
         'webgl_vendor': 'Google Inc. (NVIDIA)',
         'webgl_renderer': 'NVIDIA GeForce GTX 1060',
+        'profile': {
+            'active_hours': ('08:00', '20:00'),
+            'max_per_day': {'follow': 40, 'rt': 12, 'like': 70},
+            'skip_rate': {'follow': 0.03, 'rt': 0.02, 'like': 0.04},
+            'persona': 'gaming_vtuber',
+            'work_style': 'morning_person',
+            'typing_speed': 100,
+            'click_delay': 50,
+            'scroll_pattern': 'aggressive',
+        },
         'tls': {
             'security.tls.version.min': 3,
             'security.tls.version.max': 4,
@@ -70,9 +108,21 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
         'screen_width': 1366,
         'screen_height': 768,
         'pixel_ratio': 1.0,
+        'locale': 'ja-JP',
+        'timezone_id': 'Asia/Tokyo',
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0',
         'webgl_vendor': 'Google Inc. (Intel)',
         'webgl_renderer': 'Intel UHD Graphics 620',
+        'profile': {
+            'active_hours': ('12:00', '23:00'),
+            'max_per_day': {'follow': 30, 'rt': 6, 'like': 50},
+            'skip_rate': {'follow': 0.03, 'rt': 0.01, 'like': 0.05},
+            'persona': 'tech_gadget',
+            'work_style': 'burst',
+            'typing_speed': 130,
+            'click_delay': 60,
+            'scroll_pattern': 'measured',
+        },
         'tls': {
             'security.tls.version.min': 3,
             'security.tls.version.max': 4,
@@ -86,9 +136,21 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
         'screen_width': 1440,
         'screen_height': 900,
         'pixel_ratio': 1.0,
+        'locale': 'ja-JP',
+        'timezone_id': 'Asia/Tokyo',
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0',
         'webgl_vendor': 'Google Inc. (AMD)',
         'webgl_renderer': 'AMD Radeon RX 580',
+        'profile': {
+            'active_hours': ('09:00', '21:00'),
+            'max_per_day': {'follow': 20, 'rt': 5, 'like': 35},
+            'skip_rate': {'follow': 0.05, 'rt': 0.03, 'like': 0.04},
+            'persona': 'life_culture',
+            'work_style': 'steady',
+            'typing_speed': 220,
+            'click_delay': 150,
+            'scroll_pattern': 'explorative',
+        },
         'tls': {
             'security.tls.version.min': 3,
             'security.tls.version.max': 4,
@@ -101,11 +163,11 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
 
 # ★ 垢別SOCKS5プロキシ（Windows物理回線個別ルーティング）
 PROXY_MAP: dict[str, str] = {
-    "atushi16": "socks5://172.26.80.1:1081",
-    "kudou": "socks5://172.26.80.1:1082",
-    "atushi1840": "socks5://172.26.80.1:1083",
-    "zin20120731": "socks5://172.26.80.1:1084",
-    "TankanNotes": "socks5://172.26.80.1:1085",
+    "atushi16": "socks5h://172.26.80.1:1081",
+    "kudou": "socks5h://172.26.80.1:1082",
+    "atushi1840": "socks5h://172.26.80.1:1083",
+    "zin20120731": "socks5h://172.26.80.1:1084",
+    "TankanNotes": "socks5h://172.26.80.1:1085",
 }
 
 # invisible_playwright は使わないが、型の互換性のためにエイリアス
@@ -124,8 +186,14 @@ def set_viewport_for_fingerprint(page: Any, fp: dict[str, Any]) -> None:
     page.set_viewport_size({'width': fp['screen_width'], 'height': fp['screen_height']})
 
 
-def human_like_mouse(page: Any, element: Any) -> None:
-    """人間らしいマウス軌跡でクリック（ベジェ曲線）"""
+def human_like_mouse(page: Any, element: Any, click_delay: int = 80) -> None:
+    """人間らしいマウス軌跡でクリック（高度ベジェ曲線＋Jitter＋加速減速＋オーバーシュート）
+    
+    Args:
+        page: Playwright page object
+        element: クリック対象要素
+        click_delay: クリック後の追加待機時間(ms)。ACCOUNT_PROFILES由来で垢別に変動
+    """
     box = element.bounding_box()
     if not box:
         vp = page.viewport_size
@@ -134,6 +202,7 @@ def human_like_mouse(page: Any, element: Any) -> None:
         bx, by = element.evaluate('(el) => {const r = el.getBoundingClientRect(); return [r.x, r.y];}')
         if not bx:
             element.click()
+            time.sleep(random.uniform(click_delay * 0.5, click_delay * 1.5) / 1000)
             return
         steps: int = random.randint(10, 20)
         for i in range(steps + 1):
@@ -141,29 +210,59 @@ def human_like_mouse(page: Any, element: Any) -> None:
             u: float = 1 - t
             x: float = u**2 * cx + 2*u*t * (cx + (bx-cx)*0.3) + t**2 * bx
             y: float = u**2 * cy + 2*u*t * (cy + (by-cy)*0.3) + t**2 * cy
+            x += random.uniform(-2, 2)
+            y += random.uniform(-2, 2)
             page.mouse.move(x, y)
             time.sleep(random.uniform(0.01, 0.03))
         page.mouse.click(bx, by)
+        time.sleep(random.uniform(click_delay * 0.5, click_delay * 1.5) / 1000)
         return
     vp = page.viewport_size
     start_x: int = random.randint(50, vp['width'] - 50)
     start_y: int = random.randint(50, vp['height'] - 50)
     end_x: float = box['x'] + box['width'] * random.uniform(0.2, 0.8)
     end_y: float = box['y'] + box['height'] * random.uniform(0.2, 0.8)
-    cx1: float = start_x + (end_x - start_x) * random.uniform(0.1, 0.4)
-    cy1: float = start_y + random.uniform(-100, 100)
-    cx2: float = end_x + random.uniform(-100, 100)
-    cy2: float = end_y + random.uniform(-50, 50)
-    steps = random.randint(15, 30)
+    overshoot: bool = random.random() < 0.15
+    if overshoot:
+        overshoot_x: float = end_x + random.uniform(20, 50) * random.choice([-1, 1])
+        overshoot_y: float = end_y + random.uniform(20, 50) * random.choice([-1, 1])
+    else:
+        overshoot_x = end_x
+        overshoot_y = end_y
+    cx1: float = start_x + (overshoot_x - start_x) * random.uniform(0.1, 0.4)
+    cy1: float = start_y + random.uniform(-120, 120)
+    cx2: float = overshoot_x + random.uniform(-120, 120)
+    cy2: float = overshoot_y + random.uniform(-60, 60)
+    steps = random.randint(18, 35)
+    t_values: list[float] = []
     for i in range(steps + 1):
-        t = i / steps
+        raw: float = i / steps
+        eased: float = -(math.cos(math.pi * raw) - 1) / 2
+        t_values.append(eased)
+    for idx, t in enumerate(t_values):
         u = 1 - t
-        x = u**3 * start_x + 3*u**2*t * cx1 + 3*u*t**2 * cx2 + t**3 * end_x
-        y = u**3 * start_y + 3*u**2*t * cy1 + 3*u*t**2 * cy2 + t**3 * end_y
+        x: float = u**3 * start_x + 3*u**2*t * cx1 + 3*u*t**2 * cx2 + t**3 * overshoot_x
+        y: float = u**3 * start_y + 3*u**2*t * cy1 + 3*u*t**2 * cy2 + t**3 * overshoot_y
+        jitter_mag: float = 0.5 + 2.5 * abs(t - 0.5) * 2
+        x += random.uniform(-jitter_mag, jitter_mag)
+        y += random.uniform(-jitter_mag, jitter_mag)
         page.mouse.move(x, y)
-        time.sleep(random.uniform(0.01, 0.035))
-    time.sleep(random.uniform(0.05, 0.15))
+        speed_factor: float = 1.0 + 0.8 * abs(t - 0.5)
+        time.sleep(random.uniform(0.008, 0.030) * speed_factor)
+        if idx == steps // 2 and random.random() < 0.10:
+            time.sleep(random.uniform(0.05, 0.20))
+    if overshoot:
+        for i in range(5):
+            t = (i + 1) / 6
+            x = overshoot_x + (end_x - overshoot_x) * t
+            y = overshoot_y + (end_y - overshoot_y) * t
+            x += random.uniform(-2, 2)
+            y += random.uniform(-2, 2)
+            page.mouse.move(x, y)
+            time.sleep(random.uniform(0.015, 0.04))
+    time.sleep(random.uniform(0.05, 0.2))
     page.mouse.click(end_x, end_y)
+    time.sleep(random.uniform(click_delay * 0.5, click_delay * 1.5) / 1000)
 
 
 def create_browser(account_key: str | None = None, session_file: str | None = None,
@@ -201,9 +300,11 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
 
     # invisible_playwright インスタンス作成（まだ起動しない）
     extra_prefs: dict[str, Any] = {}
+    wv = 'Google Inc. (Intel)'
+    wr = 'Intel Iris OpenGL Engine'
     if fp:
-        wv = fp.get('webgl_vendor', 'Google Inc. (Intel)')
-        wr = fp.get('webgl_renderer', 'Intel Iris OpenGL Engine')
+        wv = fp.get('webgl_vendor', wv)
+        wr = fp.get('webgl_renderer', wr)
         extra_prefs['_webgl_vendor'] = wv
         extra_prefs['_webgl_renderer'] = wr
         tls_prefs = fp.get('tls', {})
@@ -240,8 +341,8 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
     device_scale: float = fp['pixel_ratio'] if fp else random.choice([1.0, 1.25, 1.5])
     ctx_kwargs: dict[str, Any] = {
         'storage_state': storage,
-        'locale': 'ja-JP',
-        'timezone_id': 'Asia/Tokyo',
+        'locale': fp.get('locale', 'ja-JP') if fp else 'ja-JP',
+        'timezone_id': fp.get('timezone_id', 'Asia/Tokyo') if fp else 'Asia/Tokyo',
         'device_scale_factor': device_scale,
     }
     if fp:
@@ -250,13 +351,20 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
         ctx_kwargs['proxy'] = {"server": proxy}
     ctx = browser.new_context(**ctx_kwargs)
 
-    # ★ invisible_playwright は C++レベルで全指紋を偽装するため、
-    #    JSによる stealth_script の注入は不要！
-    #    （navigator.webdriver, plugins, WebGL, Canvas, Fonts,
-    #      Audio, Screen, Timezone など全てカバー済み）
+    # ★ 作成したコンテキストに stealth script を注入
+    #    （navigator.webdriver, Canvas ノイズ, AudioContext 偽装,
+    #      WebGL, Error.stack, コンソール抑制など）
+    #    ビューポートは set_viewport_for_fingerprint / random_viewport で
+    #    後から設定される値に合わせる
+    if fp:
+        stealth_vp = (fp['screen_width'], fp['screen_height'])
+    else:
+        stealth_vp = ipw._pick_viewport()
+    stealth = ipw._stealth_script(stealth_vp, wv, wr, seed)
+    ctx.add_init_script(stealth)
 
     if log:
-        log.write("DEBUG: context created")
+        log.write("DEBUG: context created (with stealth script)")
 
     page = ctx.new_page()
 
