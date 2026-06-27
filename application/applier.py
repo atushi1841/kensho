@@ -302,58 +302,59 @@ def apply_for_account(account_key: str, max_n: int,
                 out("  [i] いいね: スキップ（3%確率）")
 
             # リプライ
-            if acct.get('disable_reply', False):
-                out("  [i] リプライ: 設定で無効化")
-            elif not (random.random() < 0.85):  # 15%で実行
-                reply_count_before = load_daily_counts().get(account_key, {}).get('reply', 0)
-                max_reply: int = cfg.get('rate_limits', {}).get('max_reply_per_day', 10)
-                if reply_count_before < max_reply:
-                    reply_btn = page.query_selector('[data-testid="reply"]')
-                    if reply_btn:
-                        time.sleep(random.uniform(1, 3))
-                        human_like_mouse(page, reply_btn)
-                        time.sleep(random.uniform(2, 4))
-
-                        tweet_text: str = ""
-                        try:
-                            tweet_text = page.evaluate('''() => {
-                                const article = document.querySelector('article');
-                                if (!article) return "";
-                                const textEls = article.querySelectorAll('[data-testid="tweetText"]');
-                                return Array.from(textEls).map(e => e.textContent).join(" ").slice(0, 100);
-                            }''')
-                        except Exception:
-                            pass
-
-                        reply_text: str = generate_reply(tweet_text)
-                        time.sleep(random.uniform(1, 2))
-
-                        reply_box = page.query_selector('[data-testid="tweetTextarea_0"]')
-                        if not reply_box:
-                            reply_box = page.query_selector('[role="textbox"]')
-                        if reply_box:
-                            reply_box.click()
-                            time.sleep(random.uniform(0.5, 1.5))
-                            human_type(page, reply_box, reply_text)
+            try:
+                if acct.get('disable_reply', False):
+                    out("  [i] リプライ: 設定で無効化")
+                elif not (random.random() < 0.85):  # 15%で実行
+                    # ↓ 変更①を適用済みの同じコード ↓
+                    reply_count_before = load_daily_counts().get(account_key, {}).get('reply', 0)
+                    max_reply: int = cfg.get('rate_limits', {}).get('max_reply_per_day', 10)
+                    if reply_count_before < max_reply:
+                        reply_btn = page.query_selector('[data-testid="reply"]')
+                        if reply_btn:
                             time.sleep(random.uniform(1, 3))
+                            human_like_mouse(page, reply_btn)
+                            time.sleep(random.uniform(2, 4))
 
-                            send_btn = page.query_selector('[data-testid="tweetButton"]')
-                            if send_btn:
+                            tweet_text: str = ""
+                            try:
+                                tweet_text_el = page.query_selector("[data-testid='tweetText']")
+                                if tweet_text_el:
+                                    tweet_text = (tweet_text_el.text_content() or "")[:100]
+                            except Exception:
+                                pass
+
+                            reply_text: str = generate_reply(tweet_text)
+                            time.sleep(random.uniform(1, 2))
+
+                            reply_box = page.query_selector('[data-testid="tweetTextarea_0"]')
+                            if not reply_box:
+                                reply_box = page.query_selector('[role="textbox"]')
+                            if reply_box:
+                                reply_box.click()
                                 time.sleep(random.uniform(0.5, 1.5))
-                                human_like_mouse(page, send_btn)
-                                out(f"  [OK] リプライ: {reply_text[:30]}...")
-                                increment_daily_count(account_key, 'reply')
-                                time.sleep(random.uniform(3, 6))
+                                human_type(page, reply_box, reply_text)
+                                time.sleep(random.uniform(1, 3))
+
+                                send_btn = page.query_selector('[data-testid="tweetButton"]')
+                                if send_btn:
+                                    time.sleep(random.uniform(0.5, 1.5))
+                                    human_like_mouse(page, send_btn)
+                                    out(f"  [OK] リプライ: {reply_text[:30]}...")
+                                    increment_daily_count(account_key, 'reply')
+                                    time.sleep(random.uniform(3, 6))
+                                else:
+                                    out("  [i] リプライ送信ボタンなし")
                             else:
-                                out("  [i] リプライ送信ボタンなし")
+                                out("  [i] リプライ入力欄なし")
                         else:
-                            out("  [i] リプライ入力欄なし")
+                            out("  [i] リプライボタンなし")
                     else:
-                        out("  [i] リプライボタンなし")
+                        out("  [i] リプライ: 上限到達スキップ")
                 else:
-                    out("  [i] リプライ: 上限到達スキップ")
-            else:
-                out("  [i] リプライ: スキップ（85%確率）")
+                    out("  [i] リプライ: スキップ（85%確率）")
+            except Exception as reply_err:
+                out(f"  [i] リプライ処理中のエラー（無視）: {str(reply_err)[:60]}")
 
             item['applied'][account_key] = datetime.now().isoformat()
             success += 1
