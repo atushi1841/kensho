@@ -4,7 +4,7 @@ v3.3: 機能を rate_limiter, reply_generator, state, actions に分割
 """
 from __future__ import annotations
 
-import json, time, random
+import json, time, random, os, psutil
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -36,6 +36,35 @@ def _save_session_cookies(ctx: Any, account_key: str, session_path: Path) -> Non
         session_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
     except Exception:
         pass
+
+
+def _wait_for_memory(cfg: dict, log: Any = None) -> bool:
+    """ブラウザ起動前に空きRAMを確認。不足時は最大60秒待機。
+    
+    Returns:
+        True: メモリ十分（または待機後確保）
+        False: タイムアウト（警告ログを出して続行）
+    """
+    reserve_mb: int = cfg.get('rate_limits', {}).get('memory_reserve_mb', 2048)
+    deadline: float = time.time() + 60  # 最大60秒待機
+    
+    def out(msg: str) -> None:
+        if log:
+            log.write(msg)
+        else:
+            print(msg, flush=True)
+    
+    while time.time() < deadline:
+        avail_mb: int = psutil.virtual_memory().available // (1024 * 1024)
+        if avail_mb >= reserve_mb:
+            return True
+        remaining: int = int(deadline - time.time())
+        out(f"[MEM] 空きRAM {avail_mb}MB < {reserve_mb}MB → {min(10, remaining)}秒待機（残り{remaining}秒）")
+        time.sleep(min(10, max(1, remaining)))
+    
+    avail_mb = psutil.virtual_memory().available // (1024 * 1024)
+    out(f"[MEM] ⚠ タイムアウト: 空きRAM {avail_mb}MB < {reserve_mb}MB → 強行（クラッシュリスク）")
+    return False
 
 
 def apply_for_account(account_key: str, max_n: int,
@@ -145,12 +174,22 @@ def apply_for_account(account_key: str, max_n: int,
         out("[Kensho] 処理対象なし。")
         return (0, 0)
 
-    p, browser, ctx, page = create_browser(
-        account_key=account_key,
-        session_file=str(session_path) if session_path.exists() else None,
-        headless=True,
-        log=log,
-    )
+    # ── メモリチェック: ブラウザ起動前に空きRAMを確認 ──
+    _wait_for_memory(cfg, log)
+
+    # ── ブラウザ起動（例外捕捉でstderr出力を確実に）──
+    try:
+        p, browser, ctx, page = create_browser(
+            account_key=account_key,
+            session_file=str(session_path) if session_path.exists() else None,
+            headless=True,
+            log=log,
+        )
+    except Exception as e:
+        out(f"[NG] ブラウザ起動失敗: {e}")
+        import traceback
+        out(f"  {traceback.format_exc()[-300:]}")
+        return (0, 1)
 
     if not check_x_login(page, log):
         out("[NG] ログイン失敗 - auth_tokenが必要")
@@ -187,7 +226,7 @@ def apply_for_account(account_key: str, max_n: int,
 
             scrolls: int = random.randint(2, 5)
             for _ in range(scrolls):
-                page.evaluate(f'window.scrollBy(0, {random.randint(30, 200)})')
+                page.mouse.wheel(0, random.randint(30, 200))
                 time.sleep(random.uniform(0.3, 1.2))
             time.sleep(random.uniform(0.5, 2))
 
