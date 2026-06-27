@@ -263,7 +263,23 @@ def human_like_mouse(page: Any, element: Any, click_delay: int = 80) -> None:
             y += random.uniform(-2, 2)
             page.mouse.move(x, y)
             time.sleep(random.uniform(0.015, 0.04))
-    time.sleep(random.uniform(0.05, 0.2))
+
+    # ── クリック前の「ためらい」動作 ──
+    # 1. ターゲットに到達後、50-150ms 滞留
+    time.sleep(random.uniform(0.05, 0.15))
+
+    # 2. 15% の確率で「迷い」: 3-8px 揺らす
+    if random.random() < 0.15:
+        wobble_passes = random.randint(2, 4)
+        for _ in range(wobble_passes):
+            wobble_x = end_x + random.uniform(-8, 8)
+            wobble_y = end_y + random.uniform(-8, 8)
+            page.mouse.move(wobble_x, wobble_y)
+            time.sleep(random.uniform(0.02, 0.06))
+
+    # 3. 最終ディレイ 30-80ms
+    time.sleep(random.uniform(0.03, 0.08))
+
     page.mouse.click(end_x, end_y)
     time.sleep(random.uniform(click_delay * 0.5, click_delay * 1.5) / 1000)
 
@@ -396,10 +412,40 @@ def check_x_login(page: Any, log: Any = None) -> bool:
         return False
     time.sleep(random.uniform(3, 6))
 
-    if 'login' in page.url.lower():
+    # 各種異常状態の検出
+    url_lower = page.url.lower()
+    if 'login' in url_lower or 'flow' in url_lower or 'signup' in url_lower:
         if log:
-            log.write("[NG] ログイン失敗")
+            log.write("[NG] needs_login: ログイン画面が検出されました")
         return False
+
+    # ページ本文を取得（不完全な可能性もあるが目安）
+    try:
+        body_text = page.inner_text('body')
+    except Exception:
+        body_text = ""
+    body_lower = body_text.lower()
+
+    # レート制限
+    if 'rate limit' in body_lower or 'rate_limit' in body_lower:
+        if log:
+            log.write("[NG] rate_limited: レート制限ページが検出されました")
+        return False
+
+    # アカウント停止
+    if 'account suspended' in body_lower or '凍結' in body_lower or 'suspended' in body_lower:
+        if log:
+            log.write("[NG] suspended: アカウント停止が検出されました")
+        return False
+
+    # reCAPTCHA / Cloudflare チャレンジ
+    challenge_elem = page.query_selector('.cf-browser-verification, .challenge, #challenge')
+    if challenge_elem or 'challenge' in body_lower:
+        if log:
+            log.write("[NG] challenge: reCAPTCHA/Cloudflare チャレンジが検出されました")
+        return False
+
+    # 他のログイン誘導（i/flow/signup などは URL チェックでカバー済み）
 
     if log:
         log.write(f"[OK] ログインOK: {page.url[:50]}")

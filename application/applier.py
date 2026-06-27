@@ -253,7 +253,20 @@ def apply_for_account(account_key: str, max_n: int,
                 f"〆{deadline_info} {wc_info}名 {clean_url[:50]}...")
 
             page.goto(clean_url, timeout=120000)
-            time.sleep(random.uniform(2, 5))
+
+            # ── 読んだふり時間（ツイート閲覧）──
+            base_read = random.uniform(3, 8)
+            media_delay = 0.0
+            if page.query_selector('[data-testid="tweetPhoto"]') or page.query_selector('video'):
+                media_delay = random.uniform(2, 5)
+            work_coef = {
+                'steady': 1.2,
+                'morning_person': 0.8,
+                'night_owl': 1.0,
+                'burst': 0.7,
+            }.get(work_style, 1.0)
+            read_time = (base_read + media_delay) * work_coef
+            time.sleep(read_time)
 
             # ★ 自然なスクロール：垢別パターン＋上下混在・速度変化
             _scroll_cfg: dict[str, Any] = {
