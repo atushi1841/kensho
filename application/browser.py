@@ -4,7 +4,11 @@ v4.0: C++レベル指紋偽装（invisible_playwright）+ アカウント別シ�
 """
 from __future__ import annotations
 
-import os, time, random, json
+import asyncio
+import os
+import time
+import random
+import json
 from typing import Any
 
 # ═══════════════════════════════════════════════════════════
@@ -18,24 +22,80 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
         'screen_width': 1366,
         'screen_height': 768,
         'pixel_ratio': 1.0,
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0',
+        'webgl_vendor': 'Google Inc. (Intel)',
+        'webgl_renderer': 'Intel HD Graphics 4600 (ANGLE)',
+        'tls': {
+            'security.tls.version.min': 3,
+            'security.tls.version.max': 4,
+            'security.tls.hello_downgrade': False,
+            'security.ssl.enable_ocsp_stapling': True,
+            'security.ssl.enable_ocsp_must_staple': False,
+        },
     },
     'kudou': {
         'seed': 77,
         'screen_width': 1920,
         'screen_height': 1080,
         'pixel_ratio': 1.0,
+        'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:128.0) Gecko/20100101 Firefox/128.0',
+        'webgl_vendor': 'Apple Inc.',
+        'webgl_renderer': 'Apple M1',
+        'tls': {
+            'security.tls.version.min': 3,
+            'security.tls.version.max': 4,
+            'security.tls.hello_downgrade': True,
+            'security.ssl.enable_ocsp_stapling': True,
+            'security.ssl.enable_ocsp_must_staple': True,
+        },
     },
     'atushi1840': {
         'seed': 13,
         'screen_width': 1536,
         'screen_height': 864,
         'pixel_ratio': 1.0,
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0',
+        'webgl_vendor': 'Google Inc. (NVIDIA)',
+        'webgl_renderer': 'NVIDIA GeForce GTX 1060',
+        'tls': {
+            'security.tls.version.min': 3,
+            'security.tls.version.max': 4,
+            'security.tls.hello_downgrade': True,
+            'security.ssl.enable_ocsp_stapling': False,
+            'security.ssl.enable_ocsp_must_staple': False,
+        },
     },
     'zin20120731': {
         'seed': 55,
         'screen_width': 1366,
         'screen_height': 768,
         'pixel_ratio': 1.0,
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0',
+        'webgl_vendor': 'Google Inc. (Intel)',
+        'webgl_renderer': 'Intel UHD Graphics 620',
+        'tls': {
+            'security.tls.version.min': 3,
+            'security.tls.version.max': 4,
+            'security.tls.hello_downgrade': False,
+            'security.ssl.enable_ocsp_stapling': True,
+            'security.ssl.enable_ocsp_must_staple': True,
+        },
+    },
+    'TankanNotes': {
+        'seed': 91,
+        'screen_width': 1440,
+        'screen_height': 900,
+        'pixel_ratio': 1.0,
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0',
+        'webgl_vendor': 'Google Inc. (AMD)',
+        'webgl_renderer': 'AMD Radeon RX 580',
+        'tls': {
+            'security.tls.version.min': 3,
+            'security.tls.version.max': 4,
+            'security.tls.hello_downgrade': True,
+            'security.ssl.enable_ocsp_stapling': False,
+            'security.ssl.enable_ocsp_must_staple': True,
+        },
     },
 }
 
@@ -111,12 +171,30 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
     if log:
         log.write(f"DEBUG: invisible_playwright Firefox starting (account={account_key})")
 
+    # asyncio loop 残留対策: sync Playwright起動前にクリア
+    try:
+        asyncio.get_running_loop()
+        # ループが回っている → sync Playwrightは使えない
+        # （実際は発生しないはず。もし発生したらnew_event_loopで上書き）
+        asyncio.set_event_loop(asyncio.new_event_loop())
+    except RuntimeError:
+        # ループ無し → 正常。何もしない
+        pass
+
     # 垢別シードマッピング
     fp: dict[str, Any] | None = FINGERPRINTS.get(account_key) if account_key else None
     seed: int | None = fp['seed'] if fp else None
 
     # invisible_playwright インスタンス作成（まだ起動しない）
-    ipw = InvisiblePlaywright(seed=seed)
+    extra_prefs: dict[str, Any] = {}
+    if fp:
+        wv = fp.get('webgl_vendor', 'Google Inc. (Intel)')
+        wr = fp.get('webgl_renderer', 'Intel Iris OpenGL Engine')
+        extra_prefs['_webgl_vendor'] = wv
+        extra_prefs['_webgl_renderer'] = wr
+        tls_prefs = fp.get('tls', {})
+        extra_prefs.update(tls_prefs)
+    ipw = InvisiblePlaywright(seed=seed, headless=headless, extra_prefs=extra_prefs)
 
     # コンテキストマネージャーに入る → ブラウザ起動
     browser: Any = ipw.__enter__()
@@ -146,12 +224,15 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
         log.write(f"  [FINGERPRINT] {account_key}: seed={fp['seed']}")
 
     device_scale: float = fp['pixel_ratio'] if fp else random.choice([1.0, 1.25, 1.5])
-    ctx = browser.new_context(
-        storage_state=storage,
-        locale='ja-JP',
-        timezone_id='Asia/Tokyo',
-        device_scale_factor=device_scale,
-    )
+    ctx_kwargs: dict[str, Any] = {
+        'storage_state': storage,
+        'locale': 'ja-JP',
+        'timezone_id': 'Asia/Tokyo',
+        'device_scale_factor': device_scale,
+    }
+    if fp:
+        ctx_kwargs['user_agent'] = fp['user_agent']
+    ctx = browser.new_context(**ctx_kwargs)
 
     # ★ invisible_playwright は C++レベルで全指紋を偽装するため、
     #    JSによる stealth_script の注入は不要！

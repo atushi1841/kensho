@@ -5,9 +5,13 @@ orchestrator起動時に毎回実行される。
 """
 from __future__ import annotations
 
-import subprocess, time, os, shutil
-from pathlib import Path
+import os
+import platform
+import shutil
+import subprocess
+import time
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Any
 
 # 絶対にkillしてはいけないPID（daemon自身）
@@ -37,8 +41,13 @@ def _is_daemon_or_child(pid: int) -> bool:
     try:
         import psutil
         p = psutil.Process(pid)
-        if p.name().lower() == 'pythonw.exe':
-            return True
+        proc_name = p.name().lower()
+        if platform.system() == 'Linux':
+            if 'python' in proc_name:
+                return True
+        else:
+            if proc_name == 'pythonw.exe':
+                return True
         for pp in PROTECTED_PIDS:
             if pid == pp:
                 return True
@@ -50,6 +59,81 @@ def _is_daemon_or_child(pid: int) -> bool:
     except Exception:
         pass
     return False
+
+
+def kill_process_by_name(name: str, force: bool = True) -> bool:
+    """
+    プロセス名を指定して強制終了。
+    Windows: taskkill /F /IM <name>
+    Linux: pkill -f <name> (部分一致)
+    """
+    try:
+        if platform.system() == 'Linux':
+            # Linux: pkill を使う
+            cmd = ['pkill', '-f', name]
+            subprocess.run(
+                cmd,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+            return True
+        else:
+            # Windows: taskkill を使う
+            cmd = ['taskkill', '/F', '/IM', name]
+            r = subprocess.run(
+                cmd,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+            return r.returncode == 0
+    except Exception:
+        return False
+
+
+def kill_process_by_pid(pid: int) -> bool:
+    """
+    指定PIDのプロセスを強制終了。
+    Windows: taskkill /F /PID <pid>
+    Linux: kill -9 <pid>
+    """
+    try:
+        if platform.system() == 'Linux':
+            r = subprocess.run(
+                ['kill', '-9', str(pid)],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+            return r.returncode == 0
+        else:
+            r = subprocess.run(
+                ['taskkill', '/F', '/PID', str(pid)],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+            return r.returncode == 0
+    except Exception:
+        return False
+
+
+def _get_linux_python_pids() -> list[int]:
+    """Linux: ps aux から孤立pythonプロセスPID一覧を取得"""
+    pids: list[int] = []
+    try:
+        r = subprocess.run(
+            ['ps', 'aux'],
+            capture_output=True, timeout=10, text=True
+        )
+        for line in r.stdout.splitlines():
+            parts = line.split(None, 10)
+            if len(parts) >= 11:
+                try:
+                    pid = int(parts[1])
+                    cmd = parts[10]
+                    # python プロセスを検出
+                    if 'python' in cmd.lower():
+                        if not _is_daemon_or_child(pid):
+                            pids.append(pid)
+                except (ValueError, IndexError):
+                    pass
+    except Exception:
+        pass
+    return pids
 
 
 def kill_zombies(log: Any = None) -> dict[str, int]:
@@ -64,28 +148,36 @@ def kill_zombies(log: Any = None) -> dict[str, int]:
     killed: dict[str, int] = {}
     targets: list[str | int] = []
 
-    # Kensho用Firefoxのみkill（ユーザーFirefoxを識別するためcmdline確認）
-    for exe in ['firefox.exe', 'geckodriver.exe']:
+    # 対象プロセス名（OS別）
+    if platform.system() == 'Linux':
+        browser_exes = ['firefox', 'geckodriver']
+    else:
+        browser_exes = ['firefox.exe', 'geckodriver.exe']
+
+    for exe in browser_exes:
         targets.append(exe)
 
-    # 孤立python.exe（daemon以外）
-    try:
-        r = subprocess.run(
-            ['tasklist', '/FI', 'IMAGENAME eq python.exe', '/FO', 'CSV', '/NH'],
-            capture_output=True, timeout=10
-        )
-        out: str = r.stdout.decode('cp932', errors='replace')
-        for line in out.strip().split('\n'):
-            parts: list[str] = line.strip('"').split('","')
-            if len(parts) >= 2:
-                try:
-                    pid: int = int(parts[1])
-                    if not _is_daemon_or_child(pid):
-                        targets.append(pid)
-                except (ValueError, IndexError):
-                    pass
-    except Exception:
-        pass
+    # 孤立pythonプロセス
+    if platform.system() == 'Linux':
+        targets.extend(_get_linux_python_pids())
+    else:
+        try:
+            r = subprocess.run(
+                ['tasklist', '/FI', 'IMAGENAME eq python.exe', '/FO', 'CSV', '/NH'],
+                capture_output=True, timeout=10
+            )
+            out: str = r.stdout.decode('cp932', errors='replace')
+            for line in out.strip().split('\n'):
+                parts: list[str] = line.strip('"').split('","')
+                if len(parts) >= 2:
+                    try:
+                        pid: int = int(parts[1])
+                        if not _is_daemon_or_child(pid):
+                            targets.append(pid)
+                    except (ValueError, IndexError):
+                        pass
+        except Exception:
+            pass
 
     firefox_killed: int = 0
     python_killed: int = 0
@@ -111,9 +203,10 @@ def kill_zombies(log: Any = None) -> dict[str, int]:
     user_firefox_active = False
     try:
         import psutil as _ps2
+        browser_name = browser_exes[0]  # 'firefox' or 'firefox.exe'
         for proc in _ps2.process_iter(['pid', 'name', 'ppid']):
             try:
-                if proc.info['name'] and proc.info['name'].lower() == 'firefox.exe':
+                if proc.info['name'] and proc.info['name'].lower() == browser_name:
                     pp = _ps2.Process(proc.info['ppid'])
                     if 'python' not in pp.name().lower():
                         user_firefox_active = True
@@ -126,33 +219,22 @@ def kill_zombies(log: Any = None) -> dict[str, int]:
     if user_firefox_active and log:
         log.write("[CLEANUP] 🔒 ユーザーFirefox検出 → Kensho Firefoxのみkill")
 
-    for exe in ['firefox.exe', 'geckodriver.exe']:
+    for exe in browser_exes:
         for _ in range(3):
             # ユーザーFirefoxがいる場合、親プロセスがpythonのFirefoxのみkill
-            if user_firefox_active and exe == 'firefox.exe':
-                if not _is_kensho_firefox('firefox.exe'):
+            if user_firefox_active and exe == browser_exes[0]:
+                if not _is_kensho_firefox(browser_exes[0]):
                     break  # Kensho Firefoxなし
-            # subprocess.run() + DEVNULL でPIPEハンドル継承を完全回避
-            r = subprocess.run(
-                ['taskkill', '/F', '/IM', exe],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-            )
-            if r.returncode == 0:
-                if exe == 'firefox.exe':
-                    firefox_killed += 1
+            if kill_process_by_name(exe):
+                firefox_killed += 1
                 time.sleep(0.5)
             else:
                 break
 
     for pid in [p for p in targets if isinstance(p, int)]:
         if not _is_daemon_or_child(pid):
-            try:
-                r2 = subprocess.run(['taskkill', '/F', '/PID', str(pid)],
-                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                if r2.returncode == 0:
-                    python_killed += 1
-            except Exception:
-                pass
+            if kill_process_by_pid(pid):
+                python_killed += 1
 
     killed['firefox'] = firefox_killed
     killed['python'] = python_killed
@@ -169,9 +251,19 @@ def kill_zombies(log: Any = None) -> dict[str, int]:
 
 def _win_force_rmtree(path: str | Path) -> bool:
     """
-    Windowsでshutil.rmtreeが[Errno 22]で死ぬのを回避。
-    cmdのrd /s /q を使う → パス長制限・ロックに強い。
+    再帰的にディレクトリ削除。
+    Windows: 特殊対策（attrib + rd /s /q → shutil.rmtree）。
+    Linux: 直接shutil.rmtree。
     """
+    if platform.system() == 'Linux':
+        # Linux では単純に shutil.rmtree
+        try:
+            shutil.rmtree(str(path))
+            return True
+        except Exception:
+            return False
+
+    # Windows 対策
     try:
         path_str = str(path).rstrip('\\/')
         subprocess.run(['attrib', '-R', f'{path_str}\\*.*', '/S'],

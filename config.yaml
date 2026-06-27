@@ -3,18 +3,18 @@
 # ════════════════════════════════════════════
 
 general:
-  project_dir: "D:\\Project2\\kensho"
-  python: "C:\\Users\\1F\\AppData\\Local\\hermes\\hermes-agent\\venv\\Scripts\\python.exe"
+  project_dir: "/mnt/d/Project2/kensho"
+  python: "/home/atushi/kensho-venv/bin/python"
   log_retention_days: 30
   session_warn_days: 14
 
 # ── 通知設定 ──
 notify:
   discord_webhook: ""
-  windows_toast: true
+  windows_toast: false
 
 # ── Xアカウント ──
-# 垢を追加するときはここに追記し、python recreate_tasks.py を実行する
+# 垢を追加するときはここに追記
 accounts:
   - key: atushi16
     display: "@atushi16"
@@ -24,11 +24,11 @@ accounts:
     schedule:
       collects: true
       batches:
-        - { time: "09:21", max: 15 }
-        - { time: "11:05", max: 15 }
-        - { time: "13:33", max: 15 }
-        - { time: "16:15", max: 15 }
-        - { time: "19:47", max: 15 }
+        - { time: "09:21", max: 5 }
+        - { time: "11:05", max: 5 }
+        - { time: "13:33", max: 5 }
+        - { time: "16:15", max: 5 }
+        - { time: "19:47", max: 5 }
 
   - key: kudou
     display: "@kudou_aoshi"
@@ -38,11 +38,11 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "10:05", max: 10 }
-        - { time: "12:13", max: 10 }
-        - { time: "15:28", max: 10 }
-        - { time: "17:47", max: 10 }
-        - { time: "20:14", max: 10 }
+        - { time: "10:05", max: 5 }
+        - { time: "12:13", max: 5 }
+        - { time: "15:28", max: 5 }
+        - { time: "17:47", max: 5 }
+        - { time: "20:14", max: 5 }
 
   - key: atushi1840
     display: "@atushi1840"
@@ -52,11 +52,11 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "11:17", max: 10 }
-        - { time: "13:42", max: 10 }
-        - { time: "16:42", max: 10 }
-        - { time: "18:23", max: 10 }
-        - { time: "21:08", max: 10 }
+        - { time: "11:17", max: 5 }
+        - { time: "13:42", max: 5 }
+        - { time: "16:42", max: 5 }
+        - { time: "18:23", max: 5 }
+        - { time: "21:03", max: 5 }
 
   - key: zin20120731
     display: "@zin20120731"
@@ -66,11 +66,25 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "10:45", max: 10 }
-        - { time: "13:00", max: 10 }
-        - { time: "16:00", max: 10 }
-        - { time: "18:00", max: 10 }
-        - { time: "20:30", max: 10 }
+        - { time: "09:45", max: 5 }
+        - { time: "12:30", max: 5 }
+        - { time: "15:00", max: 5 }
+        - { time: "17:15", max: 5 }
+        - { time: "20:30", max: 5 }
+
+  - key: TankanNotes
+    display: "@TankanNotes"
+    session: "data/x_session_TankanNotes.json"
+    network_interface: "Tankan_8iP6s"
+    disable_reply: true
+    schedule:
+      collects: false
+      batches:
+        - { time: "09:30", max: 5 }
+        - { time: "12:00", max: 5 }
+        - { time: "14:30", max: 5 }
+        - { time: "17:30", max: 5 }
+        - { time: "20:00", max: 5 }
 
 # ── 収集設定 ──
 collection:
@@ -93,6 +107,10 @@ keepalive:
       type: wifi_monitor
       network_interface: "zin_AiRWiFi"
       wifi_profile: "AiR-WiFi_B8W38T_ino"
+    - label: "WiFi-D (@TankanNotes)"
+      type: wifi_monitor
+      network_interface: "Tankan_8iP6s"
+      wifi_profile: "8_iP6s"
 
 # ── レート制限（X BAN回避）──
 # 1垢あたりの日次上限。SocialNexis 2026年推奨値に準拠。
@@ -100,18 +118,20 @@ keepalive:
 # 各バッチで上限に達したらその垢はその日は停止。
 rate_limits:
   max_follow_per_day: 50           # 推奨30-50（旧120→危険）
-  max_rt_per_day: 15               # 推奨10-20（旧80→危険）
+  max_rt_per_day: 15               # 基準値
+  max_rt_jitter: 5                 # +0〜5のjitter（実効15〜20）
   max_like_per_day: 80             # 推奨50-100（旧200→危険）
   max_reply_per_day: 10            # そのまま
   max_actions_per_hour: 15         # 推奨15/時（新規追加）
   active_hours_start: "09:00"     # この時間以降のみ動作
-  active_hours_end: "23:59"       # 深夜は避ける（BOT判定対象）
+  active_hours_end: "22:00"       # 深夜は避ける（BOT判定対象）
   min_delay_between_actions: 15   # 基本最小間隔（秒）少し長めに
   max_delay_between_actions: 50   # 基本最大間隔（秒）少し長めに
   extra_long_pause_chance: 0.15   # 15%の確率で60-120秒の長休憩（増加）
   break_after_n_items: 2          # 2件ごとに長め休憩（短縮）
   break_min_seconds: 45           # 休憩最小（少し長め）
   break_max_seconds: 120          # 休憩最大（少し長め）
+  memory_reserve_mb: 2048         # ブラウザ起動前に確保すべき空きRAM(MB)。不足時は待機
 
 # ── オーケストレーター ──
 orchestrator:

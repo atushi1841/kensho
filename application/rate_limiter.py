@@ -52,7 +52,7 @@ def check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
     acct: dict[str, Any] = counts.get(account_key, {'follow': 0, 'rt': 0, 'like': 0, 'reply': 0})
     f: int = acct.get('follow', 0)
     r: int = acct.get('rt', 0)
-    l: int = acct.get('like', 0)
+    lk: int = acct.get('like', 0)
     rep: int = acct.get('reply', 0)
 
     if f >= max_follow:
@@ -61,8 +61,8 @@ def check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
     if r >= max_rt:
         print(f"[LIMIT] {account_key}: RT上限到達 ({r}/{max_rt})")
         return True
-    if l >= max_like:
-        print(f"[LIMIT] {account_key}: いいね上限到達 ({l}/{max_like})")
+    if lk >= max_like:
+        print(f"[LIMIT] {account_key}: いいね上限到達 ({lk}/{max_like})")
         return True
     if rep >= max_reply:
         print(f"[LIMIT] {account_key}: リプライ上限到達 ({rep}/{max_reply})")

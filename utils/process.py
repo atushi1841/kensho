@@ -3,11 +3,15 @@ Kensho Utils — サブプロセス実行（統一エラーハンドリング）
 """
 from __future__ import annotations
 
+import platform
 import subprocess
 from typing import Any
 
+# 実行OSに応じたデフォルトエンコーディング
+_DEFAULT_ENCODING: str = 'utf-8' if platform.system() == 'Linux' else 'cp932'
 
-def run(cmd: list[str], timeout: int = 60, capture: bool = True, encoding: str = 'cp932') -> dict[str, Any]:
+
+def run(cmd: list[str], timeout: int = 60, capture: bool = True, encoding: str | None = None) -> dict[str, Any]:
     """
     サブプロセスを実行し、結果を返す。
     エンコーディング問題（cp932/utf-8）に対応。
@@ -15,6 +19,9 @@ def run(cmd: list[str], timeout: int = 60, capture: bool = True, encoding: str =
     Returns:
         dict with keys: returncode, stdout, stderr, success
     """
+    if encoding is None:
+        encoding = _DEFAULT_ENCODING
+
     kwargs: dict[str, Any] = {'timeout': timeout}
     if capture:
         kwargs['capture_output'] = True

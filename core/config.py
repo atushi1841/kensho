@@ -74,3 +74,6 @@ def fill_defaults(cfg: dict[str, Any]) -> None:
     orch.setdefault('max_accounts_per_run', 2)
     orch.setdefault('apply_timeout', 600)
     orch.setdefault('priority', 'round_robin')
+
+    rl: dict[str, Any] = cfg.setdefault('rate_limits', {})
+    rl.setdefault('memory_reserve_mb', 2048)

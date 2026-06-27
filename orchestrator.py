@@ -7,30 +7,34 @@ v4.0: ForceBindIP廃止、サブプロセス撤廃、apply_for_account()直接�
 """
 from __future__ import annotations
 
-import os, time, traceback, json, sys
+import os
+import time
+import traceback
+import json
+import sys
 from datetime import datetime
 from typing import Any
 sys.path.insert(0, os.path.dirname(__file__))
 from core.encoding import guard_stdio
 guard_stdio()
 
-from core.lock import acquire_pid_lock
+from core.lock import acquire_pid_lock  # noqa: E402
 
 # ── PIDロック: 多重起動防止 ──
 if not acquire_pid_lock('orchestrator'):
     sys.exit(0)
 
-from core.crash_guard import start as start_crash_guard, check_previous_crash, list_crash_reports
+from core.crash_guard import start as start_crash_guard, check_previous_crash  # noqa: E402
 
-from core.config import load as load_config
-from core.cleanup import kill_zombies, clean_old_logs
-from core.logger import make_path, LogWriter, write_daily_summary
-from core.notifier import notify_error, notify_warning
-from core.ip_binder import apply_patch, set_interface, clear_interface
-from scraping.collector import collect
-from application.session_manager import check_sessions
-from application.applier import apply_for_account
-from utils.network import get_all_adapters
+from core.config import load as load_config  # noqa: E402
+from core.cleanup import kill_zombies, clean_old_logs  # noqa: E402
+from core.logger import make_path, LogWriter, write_daily_summary  # noqa: E402
+from core.notifier import notify_error, notify_warning  # noqa: E402
+from core.ip_binder import apply_patch, set_interface, clear_interface  # noqa: E402
+from scraping.collector import collect  # noqa: E402
+from application.session_manager import check_sessions  # noqa: E402
+from application.applier import apply_for_account  # noqa: E402
+from utils.network import get_all_adapters  # noqa: E402
 
 # ── 最終処理時刻 管理ファイル ──
 STATE_DIR = os.path.join(os.path.dirname(__file__), 'data')
@@ -156,55 +160,26 @@ def _safe_step(step_name: str, log: LogWriter, fn, *args, **kwargs) -> Any:
 
 
 def _get_interface_ip(acct: dict[str, Any], log: LogWriter) -> str | None:
-    """アカウントのネットワークインターフェースのIPv4アドレスを取得"""
-    import subprocess as _sp
-    import re
+    """アカウントのネットワークインターフェースのIPv4アドレスを取得
+
+    WSL2環境では唯一のIFはeth0。WindowsのIF名はLinuxでは認識できないため、
+    Python socket でデフォルトルートのIPを取得する。
+    """
+    import socket
     interface_name = acct.get('network_interface', '')
     if not interface_name:
         log.write("  [SKIP] network_interface未設定")
         return None
     try:
-        ip_result = _sp.run(
-            ['ip', '-4', 'addr', 'show', interface_name],
-            capture_output=True, timeout=10
-        )
-        if ip_result.returncode != 0:
-            log.write(f"  [SKIP] インターフェース '{interface_name}' が見つかりません。WSL2デフォルトIFにフォールバック")
-            # fallback to eth0
-            try:
-                ip_result2 = _sp.run(
-                    ['ip', '-4', 'addr', 'show', 'eth0'],
-                    capture_output=True, timeout=10
-                )
-                if ip_result2.returncode != 0:
-                    log.write("  [SKIP] WSL2デフォルトIF 'eth0' も見つかりません")
-                    return None
-                output2 = ip_result2.stdout.decode('utf-8', errors='replace')
-                match2 = re.search(r'inet\s+(\d+\.\d+\.\d+\.\d+)', output2)
-                if not match2:
-                    log.write("  [SKIP] WSL2デフォルトIF 'eth0' にIPv4アドレスがありません")
-                    return None
-                bind_ip = match2.group(1)
-                if bind_ip.startswith('169.254.'):
-                    log.write(f"  [SKIP] WSL2デフォルトIF 'eth0' 未接続（IP: {bind_ip}）")
-                    return None
-                log.write(f"  Interface (fallback): {bind_ip} (eth0)")
-                return bind_ip
-            except Exception as e:
-                log.write(f"  [SKIP] WSL2フォールバックエラー: {e}")
-                return None
-
-        output = ip_result.stdout.decode('utf-8', errors='replace')
-        match = re.search(r'inet\s+(\d+\.\d+\.\d+\.\d+)', output)
-        if not match:
-            log.write(f"  [SKIP] インターフェース '{interface_name}' にIPv4アドレスがありません")
-            return None
-        bind_ip = match.group(1)
-        if bind_ip.startswith('169.254.'):
-            log.write(f"  [SKIP] インターフェース '{interface_name}' 未接続（IP: {bind_ip}）")
-            return None
-        log.write(f"  Interface: {bind_ip} ({interface_name})")
-        return bind_ip
+        # Python socket でデフォルトルートのIPを取得（subprocess不使用）
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            s.connect(('8.8.8.8', 80))
+            bind_ip = s.getsockname()[0]
+            log.write(f"  Interface: {bind_ip} ({interface_name})")
+            return bind_ip
+        finally:
+            s.close()
     except Exception as e:
         log.write(f"  [SKIP] IP取得エラー: {e}")
         return None
@@ -264,7 +239,7 @@ def main() -> None:
         crash_step = prev_crash.get('step', '?')
         crash_acct = prev_crash.get('account', '')
         log.write(f"⚠️ 前回異常終了を検出: step={crash_step} msg={crash_msg} account={crash_acct}")
-        log.write(f"   詳細: data/crash_reports/ を確認")
+        log.write("   詳細: data/crash_reports/ を確認")
 
     try:
         # ── 起動時: IPバインドのパッチ適用 ──

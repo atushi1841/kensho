@@ -4,7 +4,10 @@ v3.3: 機能を rate_limiter, reply_generator, state, actions に分割
 """
 from __future__ import annotations
 
-import json, time, random, os, psutil
+import json
+import time
+import random
+import psutil
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -21,7 +24,6 @@ from application.rate_limiter import (
     is_active_hours,
     load_daily_counts,
 )
-from application.reply_generator import generate_reply, human_type
 from application.state import save_collected_safe
 from application.actions import sort_items
 
@@ -40,20 +42,20 @@ def _save_session_cookies(ctx: Any, account_key: str, session_path: Path) -> Non
 
 def _wait_for_memory(cfg: dict, log: Any = None) -> bool:
     """ブラウザ起動前に空きRAMを確認。不足時は最大60秒待機。
-    
-    Returns:
+
+Returns:
         True: メモリ十分（または待機後確保）
         False: タイムアウト（警告ログを出して続行）
     """
     reserve_mb: int = cfg.get('rate_limits', {}).get('memory_reserve_mb', 2048)
     deadline: float = time.time() + 60  # 最大60秒待機
-    
+
     def out(msg: str) -> None:
         if log:
             log.write(msg)
         else:
             print(msg, flush=True)
-    
+
     while time.time() < deadline:
         avail_mb: int = psutil.virtual_memory().available // (1024 * 1024)
         if avail_mb >= reserve_mb:
@@ -61,7 +63,7 @@ def _wait_for_memory(cfg: dict, log: Any = None) -> bool:
         remaining: int = int(deadline - time.time())
         out(f"[MEM] 空きRAM {avail_mb}MB < {reserve_mb}MB → {min(10, remaining)}秒待機（残り{remaining}秒）")
         time.sleep(min(10, max(1, remaining)))
-    
+
     avail_mb = psutil.virtual_memory().available // (1024 * 1024)
     out(f"[MEM] ⚠ タイムアウト: 空きRAM {avail_mb}MB < {reserve_mb}MB → 強行（クラッシュリスク）")
     return False
@@ -69,7 +71,8 @@ def _wait_for_memory(cfg: dict, log: Any = None) -> bool:
 
 def apply_for_account(account_key: str, max_n: int,
                       cfg: dict[str, Any] | None = None,
-                      log: Any = None) -> tuple[int, int]:
+                      log: Any = None,
+                      dry_run: bool = False) -> tuple[int, int]:
     """
     指定されたアカウントで未応募の懸賞に応募する。
 
@@ -78,6 +81,7 @@ def apply_for_account(account_key: str, max_n: int,
         max_n: 最大処理件数
         cfg: config（Noneなら自動読込）
         log: LogWriter
+        dry_run: Trueなら実際の応募はせず、処理対象の表示のみ
 
     Returns: (success_count, error_count)
     """
@@ -171,7 +175,19 @@ def apply_for_account(account_key: str, max_n: int,
     out(f"[Kensho] 処理: {len(to_process)}件（max={max_n}）")
 
     if not to_process:
-        out("[Kensho] 処理対象なし。")
+        out('[Kensho] 処理対象なし。')
+        return (0, 0)
+
+    # ── dry-run: 実際の応募はせず対象表示のみ ──
+    if dry_run:
+        out(f'[DRY-RUN] 処理対象 {len(to_process)}件（実際には応募しません）')
+        for di, ditem in enumerate(to_process[:3], 1):
+            dx_url: str = ditem.get('x_url', '')
+            ddeadline: str = ditem.get('deadline', '') or '未設定'
+            out(f'  [{di}/{len(to_process)}] 〆{ddeadline} {dx_url[:55]}...')
+        if len(to_process) > 3:
+            out(f'  ...他 {len(to_process) - 3}件')
+        out('')
         return (0, 0)
 
     # ── メモリチェック: ブラウザ起動前に空きRAMを確認 ──
@@ -195,6 +211,10 @@ def apply_for_account(account_key: str, max_n: int,
         out("[NG] ログイン失敗 - auth_tokenが必要")
         close_browser(p, browser, log)
         return (0, 1)
+
+    # ★ コンソールエラー抑制：Playwright操作の痕跡をXの検出スクリプトから隠す
+    page.on('console', lambda msg: None if msg.type in ('error','warning') else None)
+    page.on('pageerror', lambda err: None)
 
     success: int = 0
     errors: int = 0
@@ -224,18 +244,33 @@ def apply_for_account(account_key: str, max_n: int,
             page.goto(clean_url, timeout=120000)
             time.sleep(random.uniform(2, 5))
 
-            scrolls: int = random.randint(2, 5)
+            # ★ 自然なスクロール：上下混在・速度変化
+            scrolls: int = random.randint(3, 6)
             for _ in range(scrolls):
-                page.mouse.wheel(0, random.randint(30, 200))
-                time.sleep(random.uniform(0.3, 1.2))
+                dy: int = random.randint(-80, 250)
+                delay: float = random.uniform(0.2, 1.5)
+                if dy > 0:
+                    # 下スクロールは自然（徐々に）
+                    for s in range(random.randint(1, 3)):
+                        page.mouse.wheel(0, dy // 3 + random.randint(-10, 10))
+                        time.sleep(delay * 0.3)
+                else:
+                    # 上スクロール（たまに）
+                    page.mouse.wheel(0, dy)
+                    time.sleep(delay)
+                # たまにマウスをランダム位置に動かす
+                if random.random() < 0.3:
+                    vp = page.viewport_size
+                    page.mouse.move(random.randint(100, vp['width']-100),
+                                    random.randint(100, vp['height']-100))
             time.sleep(random.uniform(0.5, 2))
 
-            skip_follow: bool = random.random() < 0.05
-            skip_rt: bool = random.random() < 0.08
-            skip_like: bool = random.random() < 0.03
+            skip_follow: bool = random.random() < random.uniform(0.02, 0.04)
+            skip_rt: bool = random.random() < random.uniform(0.01, 0.03)
+            skip_like: bool = random.random() < random.uniform(0.03, 0.05)
 
-            # フォロー
-            if not skip_follow:
+            # ── アクション順をランダムシャッフル（BOT対策） ──
+            def _do_follow() -> None:
                 fb = page.query_selector('[data-testid*="follow"]')
                 if fb:
                     t: str = (fb.text_content() or '').strip()
@@ -247,14 +282,14 @@ def apply_for_account(account_key: str, max_n: int,
                     else:
                         out("  [i] フォロー済み")
                 else:
-                    out("  [i] フォローボタンなし")
-            else:
-                out("  [i] フォロー: スキップ（5%確率）")
+                    out("  [i] フォローボタンなし（応募対象外かも）")
 
-            # RT
-            if not skip_rt:
+            def _do_rt() -> None:
                 rt_count_before: int = load_daily_counts().get(account_key, {}).get('rt', 0)
-                if rt_count_before < cfg.get('rate_limits', {}).get('max_rt_per_day', 15):
+                rt_base: int = cfg.get('rate_limits', {}).get('max_rt_per_day', 15)
+                rt_jitter: int = cfg.get('rate_limits', {}).get('max_rt_jitter', 0)
+                rt_limit: int = rt_base + random.randint(0, rt_jitter)
+                if rt_count_before < rt_limit:
                     rt = page.query_selector('[data-testid="retweet"]')
                     if rt:
                         time.sleep(random.uniform(0.5, 2))
@@ -276,11 +311,8 @@ def apply_for_account(account_key: str, max_n: int,
                         out("  [i] RTなし")
                 else:
                     out("  [i] RT: 上限到達スキップ")
-            else:
-                out("  [i] RT: スキップ（8%確率）")
 
-            # いいね
-            if not skip_like:
+            def _do_like() -> None:
                 like_count_before: int = load_daily_counts().get(account_key, {}).get('like', 0)
                 if like_count_before < cfg.get('rate_limits', {}).get('max_like_per_day', 80):
                     like_btn = page.query_selector('[data-testid="like"]')
@@ -298,63 +330,20 @@ def apply_for_account(account_key: str, max_n: int,
                         out("  [i] いいねボタンなし")
                 else:
                     out("  [i] いいね: 上限到達スキップ")
-            else:
-                out("  [i] いいね: スキップ（3%確率）")
 
-            # リプライ
-            try:
-                if acct.get('disable_reply', False):
-                    out("  [i] リプライ: 設定で無効化")
-                elif not (random.random() < 0.85):  # 15%で実行
-                    # ↓ 変更①を適用済みの同じコード ↓
-                    reply_count_before = load_daily_counts().get(account_key, {}).get('reply', 0)
-                    max_reply: int = cfg.get('rate_limits', {}).get('max_reply_per_day', 10)
-                    if reply_count_before < max_reply:
-                        reply_btn = page.query_selector('[data-testid="reply"]')
-                        if reply_btn:
-                            time.sleep(random.uniform(1, 3))
-                            human_like_mouse(page, reply_btn)
-                            time.sleep(random.uniform(2, 4))
+            action_queue = []
+            if not skip_follow:
+                action_queue.append(_do_follow)
+            if not skip_rt:
+                action_queue.append(_do_rt)
+            if not skip_like:
+                action_queue.append(_do_like)
+            random.shuffle(action_queue)
+            for action_fn in action_queue:
+                action_fn()
 
-                            tweet_text: str = ""
-                            try:
-                                tweet_text_el = page.query_selector("[data-testid='tweetText']")
-                                if tweet_text_el:
-                                    tweet_text = (tweet_text_el.text_content() or "")[:100]
-                            except Exception:
-                                pass
-
-                            reply_text: str = generate_reply(tweet_text)
-                            time.sleep(random.uniform(1, 2))
-
-                            reply_box = page.query_selector('[data-testid="tweetTextarea_0"]')
-                            if not reply_box:
-                                reply_box = page.query_selector('[role="textbox"]')
-                            if reply_box:
-                                reply_box.click()
-                                time.sleep(random.uniform(0.5, 1.5))
-                                human_type(page, reply_box, reply_text)
-                                time.sleep(random.uniform(1, 3))
-
-                                send_btn = page.query_selector('[data-testid="tweetButton"]')
-                                if send_btn:
-                                    time.sleep(random.uniform(0.5, 1.5))
-                                    human_like_mouse(page, send_btn)
-                                    out(f"  [OK] リプライ: {reply_text[:30]}...")
-                                    increment_daily_count(account_key, 'reply')
-                                    time.sleep(random.uniform(3, 6))
-                                else:
-                                    out("  [i] リプライ送信ボタンなし")
-                            else:
-                                out("  [i] リプライ入力欄なし")
-                        else:
-                            out("  [i] リプライボタンなし")
-                    else:
-                        out("  [i] リプライ: 上限到達スキップ")
-                else:
-                    out("  [i] リプライ: スキップ（85%確率）")
-            except Exception as reply_err:
-                out(f"  [i] リプライ処理中のエラー（無視）: {str(reply_err)[:60]}")
+            # リプライ: 応募はフォロー/いいね/RTのみで行うため無効化
+            out("  [i] リプライ: 無効化（応募はフォロー/いいね/RTのみ）")
 
             item['applied'][account_key] = datetime.now().isoformat()
             success += 1
@@ -380,6 +369,17 @@ def apply_for_account(account_key: str, max_n: int,
             time.sleep(random.uniform(10, 20))
 
     save_collected_safe(data, account_key, log)
+
+    # ★ セッション状態保存（クッキー/ローカルストレージ更新）
+    try:
+        new_storage = ctx.storage_state()
+        if session_path:
+            with open(session_path, 'w', encoding='utf-8') as f:
+                json.dump(new_storage, f, ensure_ascii=False)
+            out("  [SESSION] セッション状態更新")
+    except Exception as e:
+        out(f"  [WARN] セッション保存失敗: {e}")
+
     close_browser(p, browser, log)
 
     final_counts: dict[str, int] = load_daily_counts().get(account_key, {})

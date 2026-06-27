@@ -1,18 +1,51 @@
 """
-Kensho Notifier — Windows Toast / Discord Webhook 通知
-v2.0: Windowsトースト通知対応
+Kensho Notifier — Windows Toast / Discord Webhook / Linux Log 通知
+v2.1: Linux対応（WSL2ではトースト非対応 → ファイルログ）
 """
 from __future__ import annotations
+
+import json
+import os
+import platform
+import time
+import urllib.request
+import subprocess
+from typing import Any
 
 from core.encoding import guard_stdio
 guard_stdio()
 
-import json, urllib.request, subprocess
-from typing import Any
+_NOTIFIER_LOG_DIR: str = ''
+
+
+def _set_notifier_log_dir(log_dir: str) -> None:
+    """ログ出力先を設定"""
+    global _NOTIFIER_LOG_DIR
+    _NOTIFIER_LOG_DIR = log_dir
+
+
+def _write_notifier_log(title: str, message: str) -> None:
+    """Linux用: ファイルログに通知を書き込む"""
+    if not _NOTIFIER_LOG_DIR:
+        return
+    ts = time.strftime('%Y-%m-%d %H:%M:%S')
+    today = time.strftime('%Y-%m-%d')
+    logfile = os.path.join(_NOTIFIER_LOG_DIR, today, 'notifier.log')
+    os.makedirs(os.path.dirname(logfile), exist_ok=True)
+    try:
+        with open(logfile, 'a', encoding='utf-8') as f:
+            f.write(f'[{ts}] [{title}] {message}\n')
+    except Exception:
+        pass
 
 
 def send_windows_toast(title: str, message: str) -> bool:
-    """Windowsトースト通知を表示"""
+    """Windowsトースト通知を表示（Linuxではファイルログ）"""
+    if platform.system() == 'Linux':
+        # WSL2 はデスクトップ通知不可 → ファイルログ
+        _write_notifier_log('NOTIFY', f'{title}: {message}')
+        return True
+
     safe_title = title.replace('"', '`"').replace("'", "`'")
     safe_msg = message.replace('"', '`"').replace("'", "`'")[:80]
     ps_script = f'''
@@ -64,7 +97,7 @@ def send_discord(message: str, webhook_url: str = '') -> bool:
 
 def notify_error(title: str, details: str, log_path: str = '', cfg: dict[str, Any] | None = None) -> bool:
     """
-    エラー通知を送信（Windows Toast + Discord）。
+    エラー通知を送信（Windows Toast + Discord / Linux Log + Discord）。
     cfg が None なら何もしない。
     """
     toast = False

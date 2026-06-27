@@ -96,7 +96,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None,
             unique_links.append(link)
     out(f"  ユニーク: {len(unique_links)}件")
 
-    new_links: list[str] = [l for l in unique_links if l not in processed_set]
+    new_links: list[str] = [link for link in unique_links if link not in processed_set]
     new_links = new_links[:max_items]
     out(f"  未処理: {len(new_links)}件（最大{max_items}件処理）")
 

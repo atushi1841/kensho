@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
 """
 Kensho Daemon — 常駐デーモン、窓ゼロ、3スレッド並列実行
+v2.0: Linux対応（WSL2対応）
 """
 from __future__ import annotations
 
-import sys, os, time, subprocess, threading, atexit, ctypes, traceback
+import atexit
+import os
+import platform
+import subprocess
+import sys
+import threading
+import time
+import traceback
 from typing import Any
 
-# ── cp932ガード ──
+# ── エンコーディングガード ──
 os.environ['PYTHONIOENCODING'] = 'utf-8'
 if hasattr(sys.stdout, 'reconfigure'):
     try:
@@ -16,11 +24,13 @@ if hasattr(sys.stdout, 'reconfigure'):
     except Exception:
         sys.stdout.reconfigure(line_buffering=True)
 
-# ── コンソール窓を即座に隠す ──
-try:
-    ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
-except Exception:
-    pass
+# ── コンソール窓を即座に隠す（Windowsのみ） ──
+if platform.system() == 'Windows':
+    try:
+        import ctypes
+        ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
+    except Exception:
+        pass
 
 # ── パス設定 ──
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -35,19 +45,40 @@ PYTHON = sys.executable
 ORCHESTRATOR = os.path.join(BASE, 'orchestrator.py')
 KEEPALIVE = os.path.join(BASE, 'keepalive', 'checker.py')
 
-# ── Mutex: 二重起動防止 ──
-import ctypes.wintypes
-MUTEX_NAME = "KenshoDaemon_Mutex_v3"
-mutex = ctypes.windll.kernel32.CreateMutexW(None, False, MUTEX_NAME)
-if mutex and ctypes.windll.kernel32.GetLastError() == 183:  # ERROR_ALREADY_EXISTS
-    ctypes.windll.kernel32.CloseHandle(mutex)
-    sys.exit(0)
-
-def _release_mutex() -> None:
-    if mutex:
-        ctypes.windll.kernel32.ReleaseMutex(mutex)
+# ── 二重起動防止 ──
+if platform.system() == 'Windows':
+    # Windows: CreateMutex を使用
+    import ctypes.wintypes
+    MUTEX_NAME = "KenshoDaemon_Mutex_v3"
+    mutex = ctypes.windll.kernel32.CreateMutexW(None, False, MUTEX_NAME)
+    if mutex and ctypes.windll.kernel32.GetLastError() == 183:  # ERROR_ALREADY_EXISTS
         ctypes.windll.kernel32.CloseHandle(mutex)
-atexit.register(_release_mutex)
+        sys.exit(0)
+
+    def _release_mutex() -> None:
+        if mutex:
+            ctypes.windll.kernel32.ReleaseMutex(mutex)
+            ctypes.windll.kernel32.CloseHandle(mutex)
+    atexit.register(_release_mutex)
+else:
+    # Linux: PIDファイルで二重起動防止
+    PID_PATH_LOCK = os.path.join(LOCK_DIR, 'daemon.pid')
+    try:
+        if os.path.exists(PID_PATH_LOCK):
+            with open(PID_PATH_LOCK) as f:
+                old_pid_str = f.read().strip()
+            if old_pid_str:
+                old_pid = int(old_pid_str)
+                # 既存プロセスが生きているか確認
+                try:
+                    os.kill(old_pid, 0)  # シグナル0 = 生存確認専用
+                    print(f"[DAEMON] 既存デーモン (PID {old_pid}) が稼働中 → 終了")
+                    sys.exit(0)
+                except OSError:
+                    pass  # プロセスが死んでいる → PIDファイルを上書き
+    except (ValueError, OSError):
+        pass
+    mutex = None  # type: ignore[assignment]
 
 # ── PIDファイル（Watchdog用）──
 PID_PATH = os.path.join(LOCK_DIR, 'daemon.pid')
@@ -56,6 +87,25 @@ try:
         f.write(str(os.getpid()))
 except Exception:
     pass
+
+
+# ── OS別プロセスキル ──
+def _kill_firefox() -> None:
+    """Firefox / geckodriver プロセスを強制終了"""
+    try:
+        if platform.system() == 'Linux':
+            for pname in ['firefox', 'geckodriver']:
+                subprocess.run(
+                    ['pkill', '-f', pname],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                )
+        else:
+            subprocess.run(
+                ['taskkill', '/F', '/IM', 'firefox.exe'],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+    except Exception:
+        pass
 
 
 # ── ログ ──
@@ -141,8 +191,7 @@ def thread_orchestrator() -> None:
         except subprocess.TimeoutExpired:
             log_sub('ORCH', 124)
             # ゾンビ掃除
-            subprocess.run(['taskkill', '/F', '/IM', 'firefox.exe'],
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            _kill_firefox()
         except Exception as e:
             log_sub('ORCH', str(e)[:20])
 
@@ -152,10 +201,10 @@ def main() -> None:
     log('=== Kensho Daemon 起動 ===')
     log(f'PID: {os.getpid()}, CWD: {BASE}')
     log(f'Python: {PYTHON}')
+    log(f'Platform: {platform.system()}')
 
     # ゾンビ掃除（初回）
-    subprocess.run(['taskkill', '/F', '/IM', 'firefox.exe'],
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    _kill_firefox()
 
     # スレッド起動（_run_with_restart でラップして例外時再起動）
     threads = [
@@ -176,8 +225,7 @@ def main() -> None:
     except KeyboardInterrupt:
         log('停止信号受信 → グレースフルシャットダウン')
         log('Firefoxプロセスをクリーンアップ中...')
-        subprocess.run(['taskkill', '/F', '/IM', 'firefox.exe'],
-                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        _kill_firefox()
         log('停止完了')
         sys.exit(0)
 

@@ -9,7 +9,8 @@ Windows Credential Manager 経由で保管（平文JSONからの脱却）。
 """
 from __future__ import annotations
 
-import json, keyring
+import json
+import keyring
 from pathlib import Path
 from typing import Any
 

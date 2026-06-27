@@ -20,6 +20,8 @@ data/locks/
 data/archive/
 data/daily_counts.json
 data/orchestrator_state.json
+data/orchestrator_heartbeat.json
+data/crash_reports/
 accounts.db
 
 # 巨大Chromeプロファイル（デバッグ用）
@@ -32,7 +34,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.pyc
+*.pyc
+*.egg-info/
 
 # ログ
 logs/
@@ -48,10 +51,12 @@ moppy_test.txt
 Thumbs.db
 .DS_Store
 desktop.ini
+*.swp
 
 # その他
 .hermes/
 hermes_agent.log
+.venv/
 scripts/claude-flash
 scripts/claude-pro
 wiki/

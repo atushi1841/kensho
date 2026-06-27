@@ -9,13 +9,13 @@ import asyncio
 from datetime import datetime
 from typing import Any
 
-from twscrape import API
-
 _prize_cache: dict[str, int] = {}  # x_url → prize_rank
 
 
 def fetch_tweet_text(url: str) -> str:
     """twscrapeでツイート本文を取得（公開関数）"""
+    # twscrape import は関数内で遅延ロード（module-levelだとasyncio loopが残留する）
+    from twscrape import API
     if url in _prize_cache:
         return ''
     try:
@@ -86,7 +86,9 @@ def extract_prize_rank(text: str) -> int:
 def sort_items(items: list[dict[str, Any]], now: datetime | None = None) -> list[dict[str, Any]]:
     """
     未応募アイテムを優先順にソートして返す（公開関数）。
-    ソートキー: 締切日が近い＞当選者数が多い＞賞品価格が高い
+    ソートキー: 締切日が近い＞当選者数が多い
+    ※ twscrape API呼び出し(fetch_tweet_text)は遅すぎるので除外。
+      1000件超の未応募があると30分〜3時間ハングするため。
     """
     if now is None:
         now = datetime.now()
@@ -94,7 +96,6 @@ def sort_items(items: list[dict[str, Any]], now: datetime | None = None) -> list
     def _sort_key(item: dict[str, Any]) -> float:
         dl: str = item.get('deadline', '')
         wc: int = item.get('winner_count', 0)
-        x_url: str = item.get('x_url', '')
         dl_score: int = 0
         if dl:
             try:
@@ -107,11 +108,6 @@ def sort_items(items: list[dict[str, Any]], now: datetime | None = None) -> list
             except Exception:
                 pass
         wc_score: float = min(wc / 100, 100) if wc > 0 else 0
-        # 賞品価格ランク（キャッシュ→なければツイート取得）
-        if x_url not in _prize_cache:
-            tweet_text: str = fetch_tweet_text(x_url)
-            _prize_cache[x_url] = extract_prize_rank(tweet_text)
-        prize_rank: int = _prize_cache[x_url]
-        return -(dl_score * 2 + wc_score + prize_rank * 10)
+        return -(dl_score * 2 + wc_score)
 
     return sorted(items, key=_sort_key)
