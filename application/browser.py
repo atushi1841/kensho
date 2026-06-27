@@ -170,6 +170,9 @@ PROXY_MAP: dict[str, str] = {
     "TankanNotes": "socks5h://172.26.80.1:1085",
 }
 
+# ☆ プロキシ有効/無効フラグ（True=有効、False=バイパス）
+USE_PROXY: bool = False
+
 # invisible_playwright は使わないが、型の互換性のためにエイリアス
 # build_stealth_script は C++レベル偽装に置き換えたため削除
 
@@ -295,7 +298,7 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
     seed: int | None = fp['seed'] if fp else None
 
     # ★ プロキシ設定
-    if proxy is None and account_key in PROXY_MAP:
+    if USE_PROXY and proxy is None and account_key in PROXY_MAP:
         proxy = PROXY_MAP[account_key]
 
     # invisible_playwright インスタンス作成（まだ起動しない）
