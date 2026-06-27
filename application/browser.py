@@ -99,6 +99,15 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
     },
 }
 
+# ★ 垢別SOCKS5プロキシ（Windows物理回線個別ルーティング）
+PROXY_MAP: dict[str, str] = {
+    "atushi16": "socks5://172.26.80.1:1081",
+    "kudou": "socks5://172.26.80.1:1082",
+    "atushi1840": "socks5://172.26.80.1:1083",
+    "zin20120731": "socks5://172.26.80.1:1084",
+    "TankanNotes": "socks5://172.26.80.1:1085",
+}
+
 # invisible_playwright は使わないが、型の互換性のためにエイリアス
 # build_stealth_script は C++レベル偽装に置き換えたため削除
 
@@ -158,7 +167,8 @@ def human_like_mouse(page: Any, element: Any) -> None:
 
 
 def create_browser(account_key: str | None = None, session_file: str | None = None,
-                   headless: bool = True, log: Any = None) -> tuple[Any, Any, Any, Any]:
+                   headless: bool = True, log: Any = None,
+                   proxy: str | None = None) -> tuple[Any, Any, Any, Any]:
     """
     invisible_playwright Firefox ブラウザを起動（C++レベル指紋偽装）。
     account_key が指定されていれば、垢別固定シードで指紋を再現。
@@ -184,6 +194,10 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
     # 垢別シードマッピング
     fp: dict[str, Any] | None = FINGERPRINTS.get(account_key) if account_key else None
     seed: int | None = fp['seed'] if fp else None
+
+    # ★ プロキシ設定
+    if proxy is None and account_key in PROXY_MAP:
+        proxy = PROXY_MAP[account_key]
 
     # invisible_playwright インスタンス作成（まだ起動しない）
     extra_prefs: dict[str, Any] = {}
@@ -232,6 +246,8 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
     }
     if fp:
         ctx_kwargs['user_agent'] = fp['user_agent']
+    if proxy:
+        ctx_kwargs['proxy'] = {"server": proxy}
     ctx = browser.new_context(**ctx_kwargs)
 
     # ★ invisible_playwright は C++レベルで全指紋を偽装するため、
