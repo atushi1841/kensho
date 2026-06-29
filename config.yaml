@@ -124,6 +124,12 @@ rate_limits:
   break_max_seconds: 120          # 休憩最大（少し長め）
   memory_reserve_mb: 2048         # ブラウザ起動前に確保すべき空きRAM(MB)。不足時は待機
 
+# ── 安全設定 ──
+safety:
+  ip_separation_check: true        # true: 応募前に各プロキシ経由IPがユニークか確認
+  ip_check_timeout: 10             # 各プロキシ接続のタイムアウト(秒)
+  cache_ttl_seconds: 1800          # チェック結果のキャッシュ時間(秒)。30分
+
 # ── オーケストレーター ──
 orchestrator:
   interval_minutes: 15

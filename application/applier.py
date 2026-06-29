@@ -9,6 +9,7 @@ import time
 import random
 import math
 import psutil
+import datetime as dt
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -27,9 +28,40 @@ from application.rate_limiter import (
 )
 from application.state import save_collected_safe
 from application.actions import sort_items
+from utils.safety import verify_ip_separation
 
 DATA_DIR: Path = Path(__file__).parent.parent / 'data'
 COLLECTED_FILE: Path = DATA_DIR / 'collected.json'
+
+_DEFER_PREFIX: str = "DEFER:"
+_DEFER_HOURS_MIN: int = 4
+_DEFER_HOURS_MAX: int = 8
+_DEFER_WINDOW_HOURS: int = 6
+
+
+def _is_deferred(val: Any) -> bool:
+    """applied値がDEFERスキップ中か判定"""
+    return val is not None and isinstance(val, str) and val.startswith(_DEFER_PREFIX)
+
+
+def _get_defer_time(val: str) -> dt.datetime | None:
+    """DEFERの予定時刻をパース"""
+    try:
+        return dt.datetime.fromisoformat(val[len(_DEFER_PREFIX):])
+    except Exception:
+        return None
+
+
+def _should_process_item(item: dict[str, Any], account_key: str) -> bool:
+    """ツイートを処理すべきか判定（DEFER解除も考慮）"""
+    val = item.get('applied', {}).get(account_key)
+    if val is None:
+        return True  # 未処理
+    if _is_deferred(val):
+        defer_time = _get_defer_time(str(val))
+        if defer_time and dt.datetime.now() >= defer_time:
+            return True  # DEFER期限切れ → 処理可能
+    return False  # 処理済み または DEFER有効中
 
 
 def _save_session_cookies(ctx: Any, account_key: str, session_path: Path) -> None:
@@ -108,6 +140,16 @@ def apply_for_account(account_key: str, max_n: int,
             print(msg)
         return (0, 0)
 
+    # ★ 安全チェック: IP分離ができているか（初回のみ + 30分キャッシュ）
+    safety_enabled: bool = cfg.get("safety", {}).get("ip_separation_check", True)
+    if safety_enabled and not verify_ip_separation(cfg, log=log):
+        msg = "[SAFETY] IP分離チェック失敗 → 全アカウントの応募を中止（プロキシ設定を確認）"
+        if log:
+            log.write(msg)
+        else:
+            print(msg, flush=True)
+        return (0, 0)
+
     acct: dict[str, Any] | None = None
     for a in cfg.get('accounts', []):
         if a['key'] == account_key:
@@ -166,7 +208,7 @@ def apply_for_account(account_key: str, max_n: int,
 
     account_applied: list[dict[str, Any]] = []
     for item in items:
-        if item.get('applied', {}).get(account_key) is not None:
+        if not _should_process_item(item, account_key):
             continue
         if check_rate_limit(account_key, cfg):
             out(f"[LIMIT] {account_key}: 処理中に上限到達 → 残りスキップ")
@@ -251,6 +293,37 @@ def apply_for_account(account_key: str, max_n: int,
         try:
             out(f"[{global_idx}/{total}] ⏱{elapsed_global/60:.0f}分 "
                 f"〆{deadline_info} {wc_info}名 {clean_url[:50]}...")
+
+            # ★ 同一ツイート複数アカウント連続アクション防止
+            # 他アカウントが6時間以内に処理済みなら、自垢は4-8時間後に再試行
+            applied_dict: dict[str, Any] = item.get('applied', {})
+            now_dt: dt.datetime = dt.datetime.now()
+            window_start: dt.datetime = now_dt - dt.timedelta(hours=_DEFER_WINDOW_HOURS)
+            recent_other: str | None = None
+            for other_key, other_val in applied_dict.items():
+                if other_key == account_key:
+                    continue
+                if other_val is None:
+                    continue
+                if _is_deferred(other_val):
+                    continue
+                if isinstance(other_val, str):
+                    try:
+                        other_time = dt.datetime.fromisoformat(other_val)
+                        if other_time >= window_start:
+                            recent_other = other_key
+                            break
+                    except Exception:
+                        continue
+            if recent_other:
+                defer_hours: float = random.uniform(_DEFER_HOURS_MIN, _DEFER_HOURS_MAX)
+                defer_until: dt.datetime = now_dt + dt.timedelta(hours=defer_hours)
+                item.setdefault('applied', {})[account_key] = \
+                    f"{_DEFER_PREFIX}{defer_until.isoformat()}"
+                save_collected_safe(data, account_key, log)
+                out(f"  [DEFER] 他垢({recent_other})が{_DEFER_WINDOW_HOURS}時間以内に処理済み → "
+                    f"{defer_hours:.1f}時間後({defer_until.strftime('%H:%M')})に再試行")
+                continue
 
             page.goto(clean_url, timeout=120000)
 
