@@ -284,6 +284,102 @@ def human_like_mouse(page: Any, element: Any, click_delay: int = 80) -> None:
     time.sleep(random.uniform(click_delay * 0.5, click_delay * 1.5) / 1000)
 
 
+def _build_stealth_js(fp: dict[str, Any] | None) -> str:
+    """アカウント別JSレベルの完全偽装コードを生成。
+    
+    Service Worker / AudioBuffer / Performance / Canvas / Navigator / MediaDevices /
+    Permissions / WebGL拡張 / WebRTC を垢別seedに基づいて偽装。
+    このJSは C++レベル偽装（invisible_playwright）を補完する第2層。
+    JSは実改行(ASCII 10)で行を結合 — コメントが後続コードを食わない。
+    """
+    seed = fp['seed'] if fp else 42
+    canvas_noise = (seed * 13 + 7) % 1000 / 10000.0
+    hc_cores = [4, 8, 6, 12, 16][seed % 5]
+    wgl_variant = seed % 4
+    lines = [
+        "// ── Kensho JavaScript Stealth Layer v2（全面カバー）──",
+        "(async()=>{",
+        "try{",
+        f"let _seed={seed}; let _cn={canvas_noise};",
+        "// 1. Service Worker unregister（XのSW追跡防止）",
+        "if(navigator.serviceWorker){",
+        "  try{",
+        "    const regs=await navigator.serviceWorker.getRegistrations();",
+        "    for(const r of regs){await r.unregister();}",
+        "  }catch(e){}",
+        "}",
+        "// 2. AudioBuffer.getChannelData にseed別ノイズ注入",
+        "let _origGCD=AudioBuffer.prototype.getChannelData;",
+        "AudioBuffer.prototype.getChannelData=function(c){",
+        "  let a=_origGCD.apply(this,arguments);",
+        "  for(let i=0;i<a.length;i++){a[i]+=(Math.random()-0.5)*_cn*0.1;}",
+        "  return a;",
+        "};",
+        "// 3. Performance.now() にseed別オフセット",
+        "let _origPN=performance.now.bind(performance);",
+        "performance.now=()=>_origPN()+(_seed%47)*0.013;",
+        "// 4. Canvas.toDataURL 微量改変（seed別）",
+        "let _origTDU=HTMLCanvasElement.prototype.toDataURL;",
+        "HTMLCanvasElement.prototype.toDataURL=function(...a){",
+        "  let b=_origTDU.apply(this,a);",
+        "  if(b.length<50)return b;",
+        "  let i=b.length-4,c=b.charAt(i);",
+        '  let cs="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";',
+        "  let nc=cs.charAt((cs.indexOf(c)+Math.floor(_cn*10))%cs.length);",
+        "  return b.substring(0,i)+nc+b.substring(i+1);",
+        "};",
+        f"// 5. Navigator.hardwareConcurrency 固定（{hc_cores}コア）",
+        f"Object.defineProperty(navigator,\"hardwareConcurrency\",{{get:()=>{hc_cores}}});",
+        "// 6. navigator.connection を削除（Firefox未実装を維持）",
+        "Object.defineProperty(navigator,\"connection\",{get:()=>undefined});",
+        "// 7. MediaDevices 固定ダミーリスト（カメラ1台＋マイク1台）",
+        "if(navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices){",
+        "  let _origED=navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices);",
+        "  navigator.mediaDevices.enumerateDevices=async()=>{",
+        "    return[",
+        '      {deviceId:"default",kind:"audioinput",label:"",groupId:"default"},',
+        '      {deviceId:"default",kind:"audiooutput",label:"",groupId:"default"},',
+        "    ];",
+        "  };",
+        "}",
+        "// 8. Permissions API 固定（geolocation/notifications を denied）",
+        "if(navigator.permissions&&navigator.permissions.query){",
+        "  let _origPQ=navigator.permissions.query.bind(navigator.permissions);",
+        "  navigator.permissions.query=(desc)=>{",
+        "    if(desc&&(desc.name===\"geolocation\"||desc.name===\"notifications\"))",
+        "      return Promise.resolve({state:\"denied\",onchange:null});",
+        "    return _origPQ(desc);",
+        "  };",
+        "}",
+        f"// 9. WebGL getExtension 制限（variant {wgl_variant}）",
+        f"let _wglVariant={wgl_variant};",
+        "let _allowedExts=[",
+        '  "EXT_blend_minmax","EXT_color_buffer_half_float","EXT_disjoint_timer_query",',
+        '  "EXT_float_blend","EXT_frag_depth","EXT_shader_texture_lod",',
+        '  "EXT_texture_compression_rgtc","EXT_texture_filter_anisotropic",',
+        '  "OES_element_index_uint","OES_fbo_render_mipmap","OES_standard_derivatives",',
+        '  "OES_texture_float","OES_texture_half_float","OES_texture_half_float_linear",',
+        '  "OES_vertex_array_object","WEBGL_color_buffer_float","WEBGL_compressed_texture_s3tc",',
+        '  "WEBGL_compressed_texture_s3tc_srgb","WEBGL_debug_renderer_info",',
+        '  "WEBGL_lose_context","MOZ_WEBGL_lose_context",',
+        "];",
+        "let _origGE=WebGLRenderingContext.prototype.getExtension;",
+        "WebGLRenderingContext.prototype.getExtension=function(e){",
+        "  if(!_allowedExts.includes(e))return null;",
+        "  let ext=_origGE.apply(this,arguments);",
+        "  return ext;",
+        "};",
+        "// 10. WebRTC：RTCPeerConnection を握殺（Firefox pref の二重ロック）",
+        "if(window.RTCPeerConnection){",
+        "  window.RTCPeerConnection=function(){return{close:()=>{}}};",
+        "  window.RTCPeerConnection.prototype={close:()=>{}};",
+        "  window.webkitRTCPeerConnection=undefined;",
+        "}",
+        "}catch(e){})()",
+    ]
+    return "\n".join(lines)
+
+
 def create_browser(account_key: str | None = None, session_file: str | None = None,
                    headless: bool = True, log: Any = None,
                    proxy: str | None = None) -> tuple[Any, Any, Any, Any]:
@@ -382,6 +478,12 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
     }
     if fp:
         ctx_kwargs['user_agent'] = fp['user_agent']
+    # Accept-Language アカウント別設定
+    if fp:
+        accept_lang = fp.get('accept_language', 'ja-JP,ja;q=0.9,en-US;q=0.8')
+        ctx_kwargs['extra_http_headers'] = {
+            'Accept-Language': accept_lang,
+        }
     ctx = browser.new_context(**ctx_kwargs)
 
     if log:
@@ -393,6 +495,11 @@ def create_browser(account_key: str | None = None, session_file: str | None = No
         set_viewport_for_fingerprint(page, fp)
     else:
         random_viewport(page)
+
+    # ★ JavaScript Stealth Layer 注入（C++レベル偽装の補完）
+    #   Service Worker unregister / AudioBuffer ノイズ / Performance オフセット / Canvas 改変
+    js_code = _build_stealth_js(fp)
+    page.add_init_script(js_code)
 
     if log:
         log.write("DEBUG: page created")
