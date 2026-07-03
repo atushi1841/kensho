@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """総合stealth性能測定 — 全5検出サイト × JS評価"""
 
-import sys, os, time, json
+import json
+import os
+import sys
+import time
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from application.browser import create_browser, close_browser
+from kensho.application.browser import close_browser, create_browser
 
 SITES = [
-    ("sannysoft",  "https://bot.sannysoft.com/"),
-    ("rebrowser",  "https://bot-detector.rebrowser.net/"),
+    ("sannysoft", "https://bot.sannysoft.com/"),
+    ("rebrowser", "https://bot-detector.rebrowser.net/"),
     ("browserscan", "https://browserscan.net/"),
 ]
 
@@ -43,16 +47,28 @@ os.makedirs(OUT, exist_ok=True)
 
 results = {}
 
-for acct in ['atushi16', 'kudou', 'atushi1840', 'zin20120731', 'TankanNotes']:
+
+class _LogProxy:
+    def write(self, msg: str) -> None:
+        print(msg)
+
+    def flush(self) -> None:
+        pass
+
+
+for acct in ["atushi16", "kudou", "atushi1840", "zin20120731", "TankanNotes"]:
     acct_results: dict = {}
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"[MEASURE] {acct}")
-    print(f"{'='*60}")
-    
+    print(f"{'=' * 60}")
+
     ipw, browser, ctx, page = create_browser(
-        account_key=acct, headless=True, proxy="",
+        account_key=acct,
+        headless=True,
+        proxy="",
+        log=_LogProxy(),
     )
-    
+
     try:
         for name, url in SITES:
             print(f"\n  [{name}] ", end="", flush=True)
@@ -61,10 +77,10 @@ for acct in ['atushi16', 'kudou', 'atushi1840', 'zin20120731', 'TankanNotes']:
                 time.sleep(3)
                 screenshot = f"{OUT}/{acct}-{name}.png"
                 page.screenshot(path=screenshot, full_page=True)
-                
+
                 js_data = page.evaluate(MEASURE_JS)
                 page_text = page.evaluate("() => document.body.innerText")
-                
+
                 acct_results[name] = {
                     "url": page.url,
                     "title": page.title(),
@@ -77,7 +93,7 @@ for acct in ['atushi16', 'kudou', 'atushi1840', 'zin20120731', 'TankanNotes']:
                 err = str(e)[:120]
                 print(f"NG: {err}")
                 acct_results[name] = {"error": err}
-        
+
         results[acct] = acct_results
     finally:
         close_browser(ipw, browser)
@@ -86,25 +102,35 @@ for acct in ['atushi16', 'kudou', 'atushi1840', 'zin20120731', 'TankanNotes']:
 report = {"summary": {}, "details": results}
 
 # 集計
-KEYS = ['webdriver', 'webgl', 'plugins', 'languages', 'platform', 'hardwareConcurrency', 'deviceMemory', 'pwInitScripts', 'pixelRatio']
+KEYS = [
+    "webdriver",
+    "webgl",
+    "plugins",
+    "languages",
+    "platform",
+    "hardwareConcurrency",
+    "deviceMemory",
+    "pwInitScripts",
+    "pixelRatio",
+]
 for acct, r in results.items():
     by_site = {}
     for site_name, data in r.items():
-        if 'js' in data:
-            by_site[site_name] = {k: data['js'].get(k) for k in KEYS}
-    report['summary'][acct] = by_site
+        if "js" in data:
+            by_site[site_name] = {k: data["js"].get(k) for k in KEYS}
+    report["summary"][acct] = by_site
 
 with open(f"{OUT}/report.json", "w", encoding="utf-8") as f:
     json.dump(report, f, ensure_ascii=False, indent=2)
 
-print(f"\n{'='*60}")
+print(f"\n{'=' * 60}")
 print(f"レポート保存: {OUT}/report.json")
 print(f"スクリーンショット: {OUT}/*.png")
-print(f"{'='*60}")
+print(f"{'=' * 60}")
 
 # 簡易ターミナル表示
 print("\n\n=== JS Fingerprint 測定結果（要約）===")
-for acct, by_site in report['summary'].items():
+for acct, by_site in report["summary"].items():
     print(f"\n--- {acct} ---")
     for site_name, vals in by_site.items():
         print(f"  [{site_name}]")

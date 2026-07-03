@@ -21,7 +21,7 @@ accounts:
     session: "data/x_session.json"
     disable_reply: true
     schedule:
-      collects: true
+      collects: false           # 収集は03:00のcronジョブに移行
       batches:
         - { time: "09:21", max: 5 }
         - { time: "11:05", max: 5 }
@@ -136,3 +136,72 @@ orchestrator:
   max_accounts_per_run: 2        # 2垢ずつ処理（4垢を回すのに必要）
   apply_timeout: 1800
   priority: "pending_first"
+
+# ── NGワード（除外フィルター）──
+# この文字列を含むツイートは応募をスキップします
+ng_words:
+  - "応募フォーム"
+  - "結果を確認"
+  - "画像"
+  - "応募はこちら"
+  - "引用"
+  - "結果確認"
+  # ↓ 2026-07-03 拡充 (出会い系・怪しい案件)
+  - "マッチング"
+  - "出会い"
+  - "恋人"
+  - "仮想通貨"
+  - "ビットコイン"
+  - "FX"
+  - "投資"
+  - "稼げる"
+  - "在宅"
+  - "副業"
+  - "簡単"
+  - "相互"
+  - "フォロバ"
+  - "拡散希望"
+  - "url"
+  - "リンク先"
+  - "チェック"
+  - "いいね"
+  - "保存"
+  - "DM"
+
+# ── 収集フィルタ ──
+collection_filter:
+  min_retweet_threshold: 3       # RT数がこれ未満はスキップ（偽懸賞対策）
+  min_like_threshold: 1          # いいね数がこれ未満はスキップ
+  max_tweet_age_hours: 72        # 3日以上前のツイートは応募しない
+
+# ── 賞品価値推定 ──
+prize_scoring:
+  enabled: true
+  jpy_patterns:
+    - "\\d{1,3}(?:,\\d{3})*万円"
+    - "\\d{1,3}(?:,\\d{3})*円"
+    - "\\d{1,3}(?:,\\d{3})*円相当"
+    - "\\d{1,3}(?:,\\d{3})*円分"
+  item_patterns:
+    - "Amazon.*ギフト券?|ギフト券"
+    - "商品券|図書券"
+    - "QUOカード|クオカード"
+    - "家電|スマホ|タブレット"
+    - "旅行|宿泊|温泉"
+    - "現金"
+    - "Switch|PS5|ゲーム機"
+  priority_multipliers:
+    "現金": 3.0
+    "Amazon.*ギフト券?|ギフト券": 2.5
+    "旅行|宿泊": 2.5
+    "家電|スマホ|タブレット": 2.0
+    "Switch|PS5": 2.0
+    "商品券|図書券": 1.5
+    "QUOカード|クオカード": 1.2
+
+# ── Telegram通知 ──
+telegram:
+  enabled: false                 # trueにしてtoken/chat_idを設定
+  token: ""                      # BotFatherから取得（例: "123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"）
+  chat_id: ""                    # 通知先チャットID（@userinfobot等で確認）
+  notify_on: ["dm_win"]         # 通知イベント: dm_win, error, daily_report
