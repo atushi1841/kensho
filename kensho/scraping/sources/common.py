@@ -6,6 +6,7 @@ import json
 import random as _random
 import re
 import time
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -150,3 +151,23 @@ _SKIP_KEYWORDS: list[str] = [
     "結果確認",
     "ハッシュタグ",
 ]
+
+def has_skip_keyword(text: str) -> bool:
+    """テキストにスキップキーワード（引用・コメント応募）が含まれているか判定"""
+    t: str = text.lower()
+    for kw in _SKIP_KEYWORDS:
+        if kw.lower() in t:
+            return True
+    return False
+
+def _is_expired(deadline_str: str, now: datetime | None = None) -> bool:
+    """締切日が _EXPIRY_DAYS 以上経過していれば True"""
+    if not deadline_str:
+        return False
+    if now is None:
+        now = datetime.now()
+    try:
+        dl: datetime = datetime.strptime(deadline_str, "%Y-%m-%d")
+        return (now - dl).days > _EXPIRY_DAYS
+    except (ValueError, TypeError):
+        return False

@@ -985,42 +985,43 @@ def apply_for_account(
                 # ── Post-action browser verification ──
                 # API calls may return false successes (200 with errors, 403 treated as "already done")
                 # Navigate to tweet and verify actual button states
-                time.sleep(random.uniform(1.0, 2.0))
                 total_v = 0
                 fail_v = 0
-                try:
-                    page.goto(clean_url, timeout=30000, wait_until="domcontentloaded")
-                    time.sleep(random.uniform(2.0, 3.5))
-                    from kensho.application.verifier import ActionVerifier
+                if cfg.get("verification", {}).get("enabled", False):
+                    time.sleep(random.uniform(1.0, 2.0))
+                    try:
+                        page.goto(clean_url, timeout=30000, wait_until="domcontentloaded")
+                        time.sleep(random.uniform(2.0, 3.5))
+                        from kensho.application.verifier import ActionVerifier
 
-                    if not skip_rt and tweet_id:
-                        rt_result = ActionVerifier.verify_retweet(page, tweet_id, fallback_url=clean_url)
-                        total_v += 1
-                        if not rt_result.success:
-                            fail_v += 1
-                            out(f"  [VERIFY] RT: x {rt_result.detail}")
-                        else:
-                            out("  [VERIFY] RT: ok")
-                    if not skip_like and tweet_id:
-                        like_result = ActionVerifier.verify_like(page, tweet_id, fallback_url=clean_url)
-                        total_v += 1
-                        if not like_result.success:
-                            fail_v += 1
-                            out(f"  [VERIFY] Like: x {like_result.detail}")
-                        else:
-                            out("  [VERIFY] Like: ok")
-                    if not skip_follow and screen_name:
-                        follow_result = ActionVerifier.verify_follow(page, screen_name)
-                        total_v += 1
-                        if not follow_result.success:
-                            fail_v += 1
-                            out(f"  [VERIFY] Follow: x {follow_result.detail}")
-                        else:
-                            out("  [VERIFY] Follow: ok")
-                except Exception as ve:
-                    out(f"  [VERIFY] エラー: {ve}")
-                    if fc_enabled:
-                        failure_tracker.record_failure(account_key)
+                        if not skip_rt and tweet_id:
+                            rt_result = ActionVerifier.verify_retweet(page, tweet_id, fallback_url=clean_url)
+                            total_v += 1
+                            if not rt_result.success:
+                                fail_v += 1
+                                out(f"  [VERIFY] RT: x {rt_result.detail}")
+                            else:
+                                out("  [VERIFY] RT: ok")
+                        if not skip_like and tweet_id:
+                            like_result = ActionVerifier.verify_like(page, tweet_id, fallback_url=clean_url)
+                            total_v += 1
+                            if not like_result.success:
+                                fail_v += 1
+                                out(f"  [VERIFY] Like: x {like_result.detail}")
+                            else:
+                                out("  [VERIFY] Like: ok")
+                        if not skip_follow and screen_name:
+                            follow_result = ActionVerifier.verify_follow(page, screen_name)
+                            total_v += 1
+                            if not follow_result.success:
+                                fail_v += 1
+                                out(f"  [VERIFY] Follow: x {follow_result.detail}")
+                            else:
+                                out("  [VERIFY] Follow: ok")
+                    except Exception as ve:
+                        out(f"  [VERIFY] エラー: {ve}")
+                        if fc_enabled:
+                            failure_tracker.record_failure(account_key)
 
                 # Verify全件失敗チェック
                 if total_v > 0 and fail_v == total_v:

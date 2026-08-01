@@ -64,13 +64,13 @@ def save_state(state: dict[str, Any]) -> None:
 
 
 def should_collect(now_str: str, collect_times: list[str]) -> bool:
-    """現在時刻が収集時刻の範囲内か判定（±15分）"""
+    """現在時刻が収集時刻の範囲内か判定（±30分）"""
     now = now_str.split(":")
     now_m = int(now[0]) * 60 + int(now[1])
     for t in collect_times:
         parts = t.split(":")
         target_m = int(parts[0]) * 60 + int(parts[1])
-        if abs(now_m - target_m) <= 15:
+        if abs(now_m - target_m) <= 30:
             return True
     return False
 
