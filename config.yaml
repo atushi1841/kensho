@@ -80,21 +80,21 @@ accounts:
         - { time: "20:00", max: 10 }
         - { time: "22:00", max: 10 }
 
-  - key: TankanNotes
-    display: "@TankanNotes"
-    session: "data/x_session_TankanNotes.json"
-    disable_reply: true
-    schedule:
-      collects: false
-      batches:
-        - { time: "09:00", max: 10 }
-        - { time: "10:45", max: 10 }
-        - { time: "13:00", max: 10 }
-        - { time: "14:45", max: 10 }
-        - { time: "16:45", max: 10 }
-        - { time: "18:30", max: 10 }
-        - { time: "20:30", max: 10 }
-        - { time: "22:15", max: 10 }
+  # - key: TankanNotes
+  #   display: "@TankanNotes"
+  #   session: "data/x_session_TankanNotes.json"
+  #   disable_reply: true
+  #   schedule:
+  #     collects: false
+  #     batches:
+  #       - { time: "09:00", max: 10 }
+  #       - { time: "10:45", max: 10 }
+  #       - { time: "13:00", max: 10 }
+  #       - { time: "14:45", max: 10 }
+  #       - { time: "16:45", max: 10 }
+  #       - { time: "18:30", max: 10 }
+  #       - { time: "20:30", max: 10 }
+  #       - { time: "22:15", max: 10 }
 
   - key: inobase1-4
     display: "@inobase128508"
@@ -199,12 +199,9 @@ safety:
   ip_check_timeout: 10             # 各プロキシ接続のタイムアウト(秒)
   cache_ttl_seconds: 300           # チェック結果のキャッシュ時間(秒)。5分（自宅IP変動の早期検出）
   home_internet_accounts:
-    - "atushi16"                   # 自宅インターネット回線を使う正規アカウント
-    - "atushi1840"                 # USBアダプタ断線により自宅IPフォールバック中
-    - "kudou"                     # USBアダプタIP変更により自宅IPフォールバック中
-    - "zin20120731"               # WiFi経由（独自IP）
-    - "TankanNotes"               # USBアダプタ断線により自宅IPフォールバック中
+    - "atushi16"                   # 自宅インターネット回線を使う正規アカウント（他アカウントは個別SOCKS5プロキシ必須）
     # ↓ 凍結済み（削除済み）
+
 # ── オーケストレーター ──
 orchestrator:
   interval_minutes: 15

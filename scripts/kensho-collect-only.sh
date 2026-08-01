@@ -1,7 +1,8 @@
 #!/bin/bash
 # kensho-collect-only.sh — 収集のみ実行（深夜用）
 cd /mnt/d/Project2/kensho || exit 1
-source ~/kensho-venv/bin/activate
+export HOME=/home/atushi
+source /home/atushi/kensho-venv/bin/activate
 
 LOG_FILE="/mnt/d/Project2/kensho/logs/collect_$(date +%Y%m%d_%H%M%S).log"
 exec python -c "

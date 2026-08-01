@@ -11,8 +11,9 @@
 cd "$(dirname "$0")" || exit 1
 PROJECT_DIR="$(pwd)"
 
+export HOME=/home/atushi
 # Activate kensho virtual environment
-source "$HOME/kensho-venv/bin/activate"
+source /home/atushi/kensho-venv/bin/activate
 
 ACCOUNT_KEY="${1:-}"
 if [[ -z "${ACCOUNT_KEY}" ]]; then

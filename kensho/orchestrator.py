@@ -131,7 +131,7 @@ def get_pending_batches(cfg: dict[str, Any], state: dict[str, Any]) -> list[tupl
 
     if priority == "pending_first":
         try:
-            col_path = os.path.join(os.path.dirname(__file__), "data", "collected.json")
+            col_path = os.path.join(os.path.dirname(__file__), "..", "data", "collected.json")
             if os.path.exists(col_path):
                 with open(col_path) as f:
                     col_data = json.load(f)

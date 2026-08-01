@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re as _re
 import time
 from datetime import datetime
 from pathlib import Path
@@ -194,6 +195,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
                     "detail_url": detail_url,
                     "rd_url": rd,
                     "x_url": x_url,
+                    "source": "knshow",
                     "time": round(elapsed, 2),
                     "deadline": deadline,
                     "winner_count": winner_count,
@@ -323,46 +325,66 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         item for item in merged if not item.get("tweet_text", "").strip() and "/status/" in item.get("x_url", "")
     ]
     if text_candidates:
-        out(f"\n[Step 4 Tweet Text Fetch] 未取得 {len(text_candidates)}件をfixupxで取得...")
+        out(f"\n[Step 4 Tweet Text Fetch] 未取得 {len(text_candidates)}件をCDN→fixupxで取得...")
         for idx, item in enumerate(text_candidates):
             x_url: str = item["x_url"]
-            fx_url: str = x_url.replace("x.com/", "fixupx.com/").replace("twitter.com/", "fixupx.com/")
-            try:
-                _fx_resp: httpx.Response = httpx.get(
-                    fx_url,
-                    headers={
-                        "User-Agent": (
-                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                            "AppleWebKit/537.36 (KHTML, like Gecko) "
-                            "Chrome/125.0.0.0 Safari/537.36"
-                        )
-                    },
-                    follow_redirects=True,
-                    timeout=15,
-                )
-                if _fx_resp.status_code == 200 and _fx_resp.text:
-                    _m = _re.search(
-                        r'<meta\s+property="og:description"\s+content="([^"]*)"',
-                        _fx_resp.text,
-                        _re.IGNORECASE,
+            # ★ CDN優先（認証不要・全文取得・軽量） — REST v1.1死の代替
+            _tweet_id = _re.search(r"/status/(\d+)", x_url)
+            _cdn_text: str = ""
+            if _tweet_id:
+                try:
+                    _cdn_resp = httpx.get(
+                        f"https://cdn.syndication.twimg.com/tweet-result?id={_tweet_id.group(1)}&lang=ja&token=a",
+                        headers={"User-Agent": "Mozilla/5.0"},
+                        timeout=10,
                     )
-                    if _m:
-                        item["tweet_text"] = _m.group(1)
-                        text_fetched += 1
+                    if _cdn_resp.status_code == 200 and _cdn_resp.text:
+                        _cdn_data = _cdn_resp.json()
+                        _cdn_text = _cdn_data.get("text", "") or ""
+                except Exception:
+                    _cdn_text = ""
+            if _cdn_text:
+                item["tweet_text"] = _cdn_text
+                text_fetched += 1
+            else:
+                # ★ fixupxフォールバック（og:description 168文字打ち切り）
+                fx_url: str = x_url.replace("x.com/", "fixupx.com/").replace("twitter.com/", "fixupx.com/")
+                try:
+                    _fx_resp: httpx.Response = httpx.get(
+                        fx_url,
+                        headers={
+                            "User-Agent": (
+                                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                                "Chrome/125.0.0.0 Safari/537.36"
+                            )
+                        },
+                        follow_redirects=True,
+                        timeout=15,
+                    )
+                    if _fx_resp.status_code == 200 and _fx_resp.text:
+                        _m = _re.search(
+                            r'<meta\s+property="og:description"\s+content="([^"]*)"',
+                            _fx_resp.text,
+                            _re.IGNORECASE,
+                        )
+                        if _m:
+                            item["tweet_text"] = _m.group(1)
+                            text_fetched += 1
+                        else:
+                            text_skipped += 1  # no og:description meta
                     else:
-                        text_skipped += 1  # no og:description meta
-                else:
+                        text_errors += 1
+                except Exception:
                     text_errors += 1
-            except Exception:
-                text_errors += 1
 
             if (idx + 1) % 10 == 0:
                 out(
                     f"  {idx + 1}/{len(text_candidates)}: 取得{text_fetched} / スキップ{text_skipped} / エラー{text_errors}"
                 )
 
-            # ★ 人間の閲覧ペース: 1.5〜2秒の自然な間隔
-            time.sleep(2.0)
+            # ★ 人間の閲覧ペース: CDN成功時は0.5s、フォールバック後は1.5〜2秒
+            time.sleep(0.5 if _cdn_text else 1.5)
 
         out(f"  Tweet Text一括取得完了: 成功{text_fetched} / スキップ{text_skipped} / エラー{text_errors}")
     else:

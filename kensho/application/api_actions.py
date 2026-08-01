@@ -261,8 +261,35 @@ def verify_x_api_works(page: Any) -> bool:
     return False
 
 
+def _cdn_get_tweet_text(tweet_id: str, log_fn: Callable[[str], None] | None = None) -> str:
+    """認証不要の公開CDNからツイート本文を取得（REST v1.1死のフォールバック）。
+
+    cdn.syndication.twimg.com はX公式の公開エンドポイント。認証・CSRF不要。
+    削除済みツイートは404。レート制限に注意（大量アクセスは控える）。
+    """
+    url: str = f"https://cdn.syndication.twimg.com/tweet-result?id={tweet_id}&lang=ja&token=a"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            raw: str = resp.read().decode("utf-8", errors="replace")
+        if resp.status != 200:
+            if log_fn:
+                log_fn(f"  [CDN] status={resp.status}")
+            return ""
+        data: dict[str, Any] = json.loads(raw)
+        text: str = data.get("text", "") or ""
+        if log_fn:
+            log_fn(f"  [CDN] ✓ 本文取得（{len(text)}文字）")
+        return text
+    except Exception as e:
+        if log_fn:
+            log_fn(f"  [CDN] エラー: {e}")
+        return ""
+
+
 def api_get_tweet_text(page: Any, tweet_id: str, log_fn: Callable[[str], None] | None = None) -> str:
-    """ツイート本文をX内部API経由で取得（NGワードチェック用）。"""
+    """ツイート本文を取得（NGワードチェック用）。REST v1.1 → CDNフォールバック。"""
+    # 1) REST v1.1 (statuses/show.json) — 2026-08現在 403/404で死んでいることが多い
     js: str = _make_js_fetch(
         "GET",
         f"https://x.com/i/api/1.1/statuses/show.json?id={tweet_id}&tweet_mode=extended",
@@ -272,21 +299,23 @@ def api_get_tweet_text(page: Any, tweet_id: str, log_fn: Callable[[str], None] |
     result: dict[str, Any] = _run_js(page, js)
     status: int = result.get("status", 0)
     body: str = result.get("body", "")
-    if status != 200 or not body:
-        if log_fn:
-            log_fn(f"  [API] status={status}, body_len={len(body)}")
-        return ""
-    try:
-        data: dict[str, Any] = json.loads(body)
-        # extended_tweet または full_text を取得
-        text: str = (
-            data.get("extended_tweet", {}).get("full_text", "") or data.get("full_text", "") or data.get("text", "")
-        )
-        return text
-    except (json.JSONDecodeError, TypeError):
-        if log_fn:
-            log_fn(f"  [API] JSONパース失敗: {body[:200]}")
-        return ""
+    if status == 200 and body:
+        try:
+            data: dict[str, Any] = json.loads(body)
+            text: str = (
+                data.get("extended_tweet", {}).get("full_text", "")
+                or data.get("full_text", "")
+                or data.get("text", "")
+            )
+            if text:
+                return text
+        except (json.JSONDecodeError, TypeError):
+            pass
+    if log_fn:
+        log_fn(f"  [API] REST status={status}, body_len={len(body)} → CDNフォールバック")
+
+    # 2) CDNフォールバック（認証不要・公開エンドポイント）
+    return _cdn_get_tweet_text(tweet_id, log_fn)
 
 
 def api_like(
