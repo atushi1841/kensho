@@ -64,37 +64,37 @@ accounts:
         - { time: "19:15", max: 10 }
         - { time: "21:45", max: 10 }
 
-  - key: zin20120731
-    display: "@zin20120731"
-    session: "data/x_session_c.json"
-    disable_reply: true
-    schedule:
-      collects: false
-      batches:
-        - { time: "08:45", max: 10 }
-        - { time: "10:15", max: 10 }
-        - { time: "11:45", max: 10 }
-        - { time: "14:15", max: 10 }
-        - { time: "16:15", max: 10 }
-        - { time: "18:00", max: 10 }
-        - { time: "20:00", max: 10 }
-        - { time: "22:00", max: 10 }
-
-  # - key: TankanNotes
-  #   display: "@TankanNotes"
-  #   session: "data/x_session_TankanNotes.json"
+  # - key: zin20120731
+  #   display: "@zin20120731"
+  #   session: "data/x_session_c.json"
   #   disable_reply: true
   #   schedule:
   #     collects: false
   #     batches:
-  #       - { time: "09:00", max: 10 }
-  #       - { time: "10:45", max: 10 }
-  #       - { time: "13:00", max: 10 }
-  #       - { time: "14:45", max: 10 }
-  #       - { time: "16:45", max: 10 }
-  #       - { time: "18:30", max: 10 }
-  #       - { time: "20:30", max: 10 }
-  #       - { time: "22:15", max: 10 }
+  #       - { time: "08:45", max: 10 }
+  #       - { time: "10:15", max: 10 }
+  #       - { time: "11:45", max: 10 }
+  #       - { time: "14:15", max: 10 }
+  #       - { time: "16:15", max: 10 }
+  #       - { time: "18:00", max: 10 }
+  #       - { time: "20:00", max: 10 }
+  #       - { time: "22:00", max: 10 }
+
+  - key: TankanNotes
+    display: "@TankanNotes"
+    session: "data/x_session_TankanNotes.json"
+    disable_reply: true
+    schedule:
+      collects: false
+      batches:
+        - { time: "09:00", max: 10 }
+        - { time: "10:45", max: 10 }
+        - { time: "13:00", max: 10 }
+        - { time: "14:45", max: 10 }
+        - { time: "16:45", max: 10 }
+        - { time: "18:30", max: 10 }
+        - { time: "20:30", max: 10 }
+        - { time: "22:15", max: 10 }
 
   - key: inobase1-4
     display: "@inobase128508"

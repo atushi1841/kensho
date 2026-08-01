@@ -59,14 +59,14 @@ try:
     with open(DATA_FILE) as f:
         raw = json.load(f)
     items = raw.get("collected", [])
-except:
+except Exception:
     items = []
 
 try:
     with open(COUNT_FILE) as f:
         dc = json.load(f)
     daily_counts = dc.get("counts", {})
-except:
+except Exception:
     daily_counts = {}
 
 result = {"accounts": {}, "stats": {}}
@@ -95,7 +95,7 @@ for ac in accounts:
                         future_dl += 1
                     else:
                         future_dl += 1
-            except:
+            except Exception:
                 no_dl += 1
         elif pending:
             no_dl += 1
@@ -184,7 +184,7 @@ for it in items:
                 dl_dist["week"] += 1
             else:
                 dl_dist["future"] += 1
-        except:
+        except Exception:
             dl_dist["no_deadline"] = dl_dist.get("no_deadline", 0) + 1
     else:
         dl_dist["no_deadline"] += 1
@@ -215,17 +215,32 @@ log_files = sorted(glob.glob(os.path.join(LOG_DIR, "auto_*.log")), key=os.path.g
 recent_runs = []
 for lf in log_files[-60:]:
     bn = os.path.basename(lf).replace("auto_", "").replace(".log", "")
+    run_dt = None
     try:
         run_dt = datetime.strptime(bn, "%Y%m%d_%H%M%S")
-    except:
-        continue
+    except ValueError:
+        pass
+    if run_dt is None:
+        # 日次ログ auto_YYYYMMDD.log 対応
+        try:
+            if len(bn) == 8 and bn.isdigit():
+                run_dt = datetime.strptime(bn, "%Y%m%d")
+        except ValueError:
+            pass
     try:
         with open(lf) as fh:
             log_text = fh.read()
-    except:
+    except Exception:
         continue
     if "今回処理:" not in log_text:
         continue
+    if run_dt is None or (len(bn) == 8 and bn.isdigit()):
+        # 日次ログ: 最後のタイムスタンプ付き行の時刻を実行時刻として使う
+        ts_matches = list(re.finditer(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)", log_text))
+        if not ts_matches:
+            continue
+        ts_str = ts_matches[-1].group(1)
+        run_dt = datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S.%f")
     if "処理待ちのバッチなし" in log_text and "今回処理: 0垢" in log_text:
         continue
     entry = {
@@ -239,33 +254,37 @@ for lf in log_files[-60:]:
         "status": "ok",
         "status_text": "",
     }
-    for line in log_text.split("\n"):
-        m = re.search(r"\[OK\] 完了:\s*(\d+)成功\s*/\s*(\d+)エラー", line)
-        if m:
-            entry["success"] = int(m.group(1))
-            entry["error"] = int(m.group(2))
-        m2 = re.search(r"本日累計:\s*フォロー(\d+)\s+RT(\d+)\s+いいね(\d+)", line)
-        if m2:
-            entry["follow"] = int(m2.group(1))
-            entry["rt"] = int(m2.group(2))
-            entry["like"] = int(m2.group(3))
-        m3 = re.search(r"\s*今回処理:\s*(\d+)垢", line)
-        if m3:
-            entry["accounts"] = int(m3.group(1))
-        m4 = re.search(r"⚠️|FAIL|ERROR|失敗", line)
-        if m4:
-            entry["status"] = "warn"
-        m5 = re.search(r"❌|FATAL", line)
-        if m5:
-            entry["status"] = "error"
+    # 各パターンは「最後のマッチ」を採用する
+    ok_matches = re.findall(r"\[OK\] 完了:\s*(\d+)成功\s*/\s*(\d+)エラー", log_text)
+    if ok_matches:
+        entry["success"] = int(ok_matches[-1][0])
+        entry["error"] = int(ok_matches[-1][1])
+    daily_matches = re.findall(r"本日累計:\s*フォロー(\d+)\s+RT(\d+)\s+いいね(\d+)", log_text)
+    if daily_matches:
+        entry["follow"] = int(daily_matches[-1][0])
+        entry["rt"] = int(daily_matches[-1][1])
+        entry["like"] = int(daily_matches[-1][2])
+    acc_matches = re.findall(r"\s*今回処理:\s*(\d+)垢", log_text)
+    if acc_matches:
+        entry["accounts"] = int(acc_matches[-1])
+    warn_matches = list(re.finditer(r"⚠️|FAIL|ERROR|失敗", log_text))
+    error_matches = list(re.finditer(r"❌|FATAL", log_text))
+    last_warn = warn_matches[-1] if warn_matches else None
+    last_err = error_matches[-1] if error_matches else None
+    if last_err and (not last_warn or last_err.start() > last_warn.start()):
+        entry["status"] = "error"
+    elif last_warn:
+        entry["status"] = "warn"
+    else:
+        entry["status"] = "ok"
     recent_runs.append(entry)
 result["recent_runs"] = recent_runs
 
 # ── パイプライン健全性 ──
 pipeline_status = {"last_run": None, "last_status": None, "updated": now.isoformat()}
 if recent_runs:
-    pipeline_status["last_run"] = recent_runs[0]["time"]
-    pipeline_status["last_status"] = recent_runs[0]["status"]
+    pipeline_status["last_run"] = recent_runs[-1]["time"]
+    pipeline_status["last_status"] = recent_runs[-1]["status"]
 result["pipeline"] = pipeline_status
 
 # ── 全体サマリー ──

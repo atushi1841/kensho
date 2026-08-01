@@ -32,7 +32,7 @@ from kensho.application.applier import apply_for_account  # noqa: E402
 from kensho.application.session_manager import check_sessions  # noqa: E402
 from kensho.core.cleanup import clean_old_logs, kill_zombies  # noqa: E402
 from kensho.core.config import load as load_config  # noqa: E402
-from kensho.core.crash_guard import check_previous_crash
+from kensho.core.crash_guard import check_previous_crash  # noqa: E402
 from kensho.core.crash_guard import start as start_crash_guard  # noqa: E402
 from kensho.core.logger import LogWriter, make_path, write_daily_summary  # noqa: E402
 from kensho.core.notifier import notify_error, notify_warning  # noqa: E402
@@ -64,13 +64,13 @@ def save_state(state: dict[str, Any]) -> None:
 
 
 def should_collect(now_str: str, collect_times: list[str]) -> bool:
-    """現在時刻が収集時刻の範囲内か判定（±5分）"""
+    """現在時刻が収集時刻の範囲内か判定（±15分）"""
     now = now_str.split(":")
     now_m = int(now[0]) * 60 + int(now[1])
     for t in collect_times:
         parts = t.split(":")
         target_m = int(parts[0]) * 60 + int(parts[1])
-        if abs(now_m - target_m) <= 5:
+        if abs(now_m - target_m) <= 15:
             return True
     return False
 
@@ -233,6 +233,15 @@ def main() -> None:
         cfg = load_config()
         state = load_state()
 
+        # ハートビート（orchestrator_heartbeat.json）を書き込む
+        try:
+            hb_path = os.path.join(cfg["general"]["project_dir"], "data", "orchestrator_heartbeat.json")
+            os.makedirs(os.path.dirname(hb_path), exist_ok=True)
+            with open(hb_path, "w", encoding="utf-8") as _hf:
+                json.dump({"ts": datetime.now().isoformat(), "pid": os.getpid()}, _hf)
+        except Exception as _e:
+            log.write(f"[WARN] heartbeat書き込み失敗: {_e}")
+
         guard.update("cleanup", "ゾンビクリーンアップ")
 
         # 各ステップを独立実行
@@ -254,10 +263,25 @@ def main() -> None:
         guard.update("collect", "収集")
         log.write("\n--- Step 4: Collection Check ---")
         if should_collect(now_str, collect_times):
-            log.write(f"  収集時刻（{now_str}）→ 収集実行")
-            guard.update("collect", "収集実行中")
-            success, errors, total = collect(cfg, log)
-            log.write(f"  収集結果: {total}件（成功{success}/エラー{errors}）")
+            last_collect = state.get("last_collect")
+            do_collect = True
+            if last_collect:
+                parts = last_collect.split(":")
+                if len(parts) == 2:
+                    last_m = int(parts[0]) * 60 + int(parts[1])
+                    now_parts = now_str.split(":")
+                    now_m = int(now_parts[0]) * 60 + int(now_parts[1])
+                    if now_m - last_m < 45:
+                        do_collect = False
+            if do_collect:
+                log.write(f"  収集時刻（{now_str}）→ 収集実行")
+                guard.update("collect", "収集実行中")
+                success, errors, total = collect(cfg, log)
+                log.write(f"  収集結果: {total}件（成功{success}/エラー{errors}）")
+                state["last_collect"] = now_str
+                save_state(state)
+            else:
+                log.write(f"  収集時刻（{now_str}）→ 前回収集から45分以内のためスキップ")
         else:
             log.write("  収集時刻外 → スキップ")
 

@@ -6,7 +6,6 @@ import json
 import random as _random
 import re
 import time
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -21,7 +20,7 @@ _USER_AGENTS: list[str] = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",  # noqa: E501
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
 ]
 _UA_INDEX: int = _random.randint(0, len(_USER_AGENTS) - 1)
@@ -119,11 +118,11 @@ def _decode_response(r: httpx.Response) -> str:
     return raw.decode("utf-8", errors="replace")
 
 
-# ── 期限切れアイテムの自動パージ ──
-_EXPIRY_DAYS: int = 3
+# ── 期限切れアイテムの即時パージ（締切日を過ぎたら即座に除外）──
+_EXPIRY_DAYS: int = 0
 
 
-# ── スキップキーワード（引用・コメント・視聴・画像・質問・アプリ/URL/ハッシュタグ等 — RP/リプライ/リポストは通常応募なので除外）──
+# ── スキップキーワード（引用・コメント・視聴・画像・質問・アプリ/URL/ハッシュタグ等 — RP/リプライ/リポストは通常応募なので除外）── # noqa: E501
 _SKIP_KEYWORDS: list[str] = [
     "引用RT",
     "引用リツイート",
@@ -151,25 +150,3 @@ _SKIP_KEYWORDS: list[str] = [
     "結果確認",
     "ハッシュタグ",
 ]
-
-
-def has_skip_keyword(text: str) -> bool:
-    """テキストにスキップキーワード（引用・コメント応募）が含まれているか判定"""
-    t: str = text.lower()
-    for kw in _SKIP_KEYWORDS:
-        if kw.lower() in t:
-            return True
-    return False
-
-
-def _is_expired(deadline_str: str, now: datetime | None = None) -> bool:
-    """締切日が _EXPIRY_DAYS 以上経過していれば True"""
-    if not deadline_str:
-        return False
-    if now is None:
-        now = datetime.now()
-    try:
-        dl: datetime = datetime.strptime(deadline_str, "%Y-%m-%d")
-        return (now - dl).days > _EXPIRY_DAYS
-    except (ValueError, TypeError):
-        return False

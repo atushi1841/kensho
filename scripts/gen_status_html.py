@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+# ruff: noqa: E501, N806
 """Kensho ステータスHTML生成 — gen_status_data.py の出力からHTMLを生成"""
 
+import glob
 import json
 import os
-import subprocess
+import time
 
 DATA_FILE = "/tmp/kensho_status_data.json"
 OUTPUT_FILE = "/mnt/d/Project2/kensho/kensho-status.html"
@@ -14,14 +16,23 @@ def load_data():
         return json.load(f)
 
 
-def check_process(pattern):
-    r = subprocess.run(["pgrep", "-f", pattern], capture_output=True)
-    return "yes" if r.returncode == 0 else "no"
+def heartbeat_age(path, max_minutes=35):
+    """指定ファイルが max_minutes 分以内に更新されていれば 'yes'、なければ 'no'"""
+    try:
+        age = time.time() - os.path.getmtime(path)
+        return "yes" if age < max_minutes * 60 else "no"
+    except Exception:
+        return "no"
 
 
 def generate_html(data):
-    cron_running = check_process("kensho-auto-apply")
-    orch_running = check_process("orchestrator.py")
+    log_files = glob.glob("/mnt/d/Project2/kensho/logs/auto_*.log")
+    if log_files:
+        latest_log = max(log_files, key=os.path.getmtime)
+    else:
+        latest_log = ""
+    cron_running = heartbeat_age(latest_log) if latest_log else "no"
+    orch_running = heartbeat_age("/mnt/d/Project2/kensho/data/orchestrator_heartbeat.json")
     now = data["pipeline"]["updated"]
     sm = data["summary"]
     st = data["stats"]
