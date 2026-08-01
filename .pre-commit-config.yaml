@@ -1,0 +1,35 @@
+# ════════════════════════════════════════════
+# Kensho Pre-commit Hooks
+# Ruff (linter + formatter) + basic checks
+# ════════════════════════════════════════════
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.20
+    hooks:
+      - id: ruff-check
+        args: [--fix, --exit-non-zero-on-fix]
+        types_or: [python, pyi]
+      - id: ruff-format
+        types_or: [python, pyi]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: |
+          (?x)^(
+            data/.*|
+            logs/.*
+          )$
+      - id: end-of-file-fixer
+        exclude: |
+          (?x)^(
+            data/.*|
+            logs/.*
+          )$
+      - id: check-yaml
+        exclude: ^logs/
+      - id: check-json
+        exclude: ^data/
+      - id: check-added-large-files
+        args: [--maxkb=500]

@@ -21,13 +21,16 @@ accounts:
     session: "data/x_session.json"
     disable_reply: true
     schedule:
-      collects: false           # 収集は03:00のcronジョブに移行
+      collects: false
       batches:
-        - { time: "09:21", max: 5 }
-        - { time: "11:05", max: 5 }
-        - { time: "13:33", max: 5 }
-        - { time: "16:15", max: 5 }
-        - { time: "19:47", max: 5 }
+        - { time: "08:00", max: 10 }
+        - { time: "09:30", max: 10 }
+        - { time: "11:00", max: 10 }
+        - { time: "12:30", max: 10 }
+        - { time: "14:00", max: 10 }
+        - { time: "16:00", max: 10 }
+        - { time: "19:00", max: 10 }
+        - { time: "21:00", max: 10 }
 
   - key: kudou
     display: "@kudou_aoshi"
@@ -36,11 +39,14 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "10:05", max: 5 }
-        - { time: "12:13", max: 5 }
-        - { time: "15:28", max: 5 }
-        - { time: "17:47", max: 5 }
-        - { time: "20:14", max: 5 }
+        - { time: "08:30", max: 10 }
+        - { time: "10:00", max: 10 }
+        - { time: "12:00", max: 10 }
+        - { time: "14:00", max: 10 }
+        - { time: "15:30", max: 10 }
+        - { time: "17:00", max: 10 }
+        - { time: "19:30", max: 10 }
+        - { time: "21:30", max: 10 }
 
   - key: atushi1840
     display: "@atushi1840"
@@ -49,11 +55,14 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "11:17", max: 5 }
-        - { time: "13:42", max: 5 }
-        - { time: "16:42", max: 5 }
-        - { time: "18:23", max: 5 }
-        - { time: "21:03", max: 5 }
+        - { time: "08:15", max: 10 }
+        - { time: "10:30", max: 10 }
+        - { time: "12:15", max: 10 }
+        - { time: "13:45", max: 10 }
+        - { time: "15:15", max: 10 }
+        - { time: "17:30", max: 10 }
+        - { time: "19:15", max: 10 }
+        - { time: "21:45", max: 10 }
 
   - key: zin20120731
     display: "@zin20120731"
@@ -62,11 +71,14 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "09:45", max: 5 }
-        - { time: "12:30", max: 5 }
-        - { time: "15:00", max: 5 }
-        - { time: "17:15", max: 5 }
-        - { time: "20:30", max: 5 }
+        - { time: "08:45", max: 10 }
+        - { time: "10:15", max: 10 }
+        - { time: "11:45", max: 10 }
+        - { time: "14:15", max: 10 }
+        - { time: "16:15", max: 10 }
+        - { time: "18:00", max: 10 }
+        - { time: "20:00", max: 10 }
+        - { time: "22:00", max: 10 }
 
   - key: TankanNotes
     display: "@TankanNotes"
@@ -75,16 +87,36 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "09:30", max: 5 }
-        - { time: "12:00", max: 5 }
-        - { time: "14:30", max: 5 }
-        - { time: "17:30", max: 5 }
-        - { time: "20:00", max: 5 }
+        - { time: "09:00", max: 10 }
+        - { time: "10:45", max: 10 }
+        - { time: "13:00", max: 10 }
+        - { time: "14:45", max: 10 }
+        - { time: "16:45", max: 10 }
+        - { time: "18:30", max: 10 }
+        - { time: "20:30", max: 10 }
+        - { time: "22:15", max: 10 }
+
+  - key: inobase1-4
+    display: "@inobase128508"
+    session: "data/x_session_inobase1-4.json"
+    disable_reply: true
+    schedule:
+      collects: false
+      batches:
+        - { time: "09:00", max: 10 }
+        - { time: "11:00", max: 10 }
+        - { time: "13:00", max: 10 }
+        - { time: "15:00", max: 10 }
+        - { time: "17:00", max: 10 }
+        - { time: "19:00", max: 10 }
+        - { time: "21:00", max: 10 }
+        - { time: "23:00", max: 10 }
 
 # ── 収集設定 ──
 collection:
   source: "https://knshow.com"
-  times: ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"]
+  use_scrapling: false        # true: Cloudflare突破にScrapling（curl_cffi + browserforge）を使用
+  times: ["03:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"]
   max_items: 500
 
 # ── Keepalive ──
@@ -108,65 +140,111 @@ keepalive:
 # 新規アカウント（30日未満）はさらに30%減で運用。
 # 各バッチで上限に達したらその垢はその日は停止。
 rate_limits:
-  max_follow_per_day: 50           # 推奨30-50（旧120→危険）
-  max_rt_per_day: 15               # 基準値
-  max_rt_jitter: 5                 # +0〜5のjitter（実効15〜20）
-  max_like_per_day: 80             # 推奨50-100（旧200→危険）
-  max_reply_per_day: 10            # そのまま
-  max_actions_per_hour: 15         # 推奨15/時（新規追加）
-  active_hours_start: "09:00"     # この時間以降のみ動作
-  active_hours_end: "22:00"       # 深夜は避ける（BOT判定対象）
-  min_delay_between_actions: 15   # 基本最小間隔（秒）少し長めに
-  max_delay_between_actions: 50   # 基本最大間隔（秒）少し長めに
-  extra_long_pause_chance: 0.15   # 15%の確率で60-120秒の長休憩（増加）
-  break_after_n_items: 2          # 2件ごとに長め休憩（短縮）
-  break_min_seconds: 45           # 休憩最小（少し長め）
-  break_max_seconds: 120          # 休憩最大（少し長め）
-  memory_reserve_mb: 2048         # ブラウザ起動前に確保すべき空きRAM(MB)。不足時は待機
+  max_follow_per_day: 100           # 120→100（フォローが最も危険、少し抑える）
+  max_rt_per_day: 80                # そのまま
+  max_like_per_day: 250            # 200→250（いいねは安全、増やす）
+  max_reply_per_day: 10
+  max_actions_per_hour: 15         # 30→15（アイテム数基準、15件×3=45アクション/時に分散）
+  active_hours_start: "08:00"
+  active_hours_end: "23:00"
+  min_delay_between_actions: 20   # 12→20（基本間隔を拡大）
+  max_delay_between_actions: 60   # 45→60
+  extra_long_pause_chance: 0.25   # 0.20→0.25（長休憩確率up）
+  break_after_n_items: 5          # 3→5（休憩頻度は減らすが、休憩時間を長く）
+  break_min_seconds: 45           # 30→45
+  break_max_seconds: 120          # 90→120
+  memory_reserve_mb: 2048
+
+# ── PolicyEngine（アクション実行前ポリシー評価）──
+# AEE (Agent-Execution-Partnership) 由来のポリシー評価設定
+# PolicyEngineで各アクション前にチェック: 日次上限→時間あたり上限→最低間隔→確率スキップ→アクティブ時間
+# 注意: 日次上限の実制御は rate_limits 配下。PolicyEngineの時間あたり上限は補助的な上乗せレイヤー。
+policy_engine:
+  # リスククラス別の1時間あたり上限（確実性重視の値）
+  hourly_limits:
+    like: 20
+    follow: 8
+    rt: 12
+  # アクションごとの確率スキップ率（BOT対策：高リスクほど高確率でスキップ）
+  skip_probability:
+    like: 0.05
+    follow: 0.10
+    rt: 0.08
+  # リスクウェイト（日次上限 × この倍率 = 事実上の上限）
+  risk_weights:
+    like: 1.0
+    follow: 0.8
+    rt: 0.9
+
+# ── Failure Ceiling（連続失敗上限）──
+# Loop Engineering: 連続XX回エラーでその垢のバッチを打ち切り、cooldown後に再開
+failure_ceiling:
+  enabled: true
+  max_consecutive_failures: 3      # 3回連続失敗で打ち切り
+  cooldown_minutes: 30             # 30分後に自動リセット
+
+# ── アクション検証設定 ──
+# Loop Engineering: page.gotoによる重検証（プロフィールに遷移してボタン状態を確認）
+# コスト高いのでデフォルトOFF。必要なアクションだけONに推奨。
+verification:
+  enabled: false                   # false: 軽量チェックのみ（API戻り値）
+  verify_follow: false             # true: フォロー後→プロフィール遷移で確認
+  verify_rt: false                 # true: RT後→ツイート遷移で確認
+  verify_like: false               # true: いいね後→ツイート遷移で確認
+  verify_account_health: true      # true: ループ開始前にアカウント健全性チェック
 
 # ── 安全設定 ──
 safety:
   ip_separation_check: true        # true: 応募前に各プロキシ経由IPがユニークか確認
   ip_check_timeout: 10             # 各プロキシ接続のタイムアウト(秒)
-  cache_ttl_seconds: 1800          # チェック結果のキャッシュ時間(秒)。30分
-
+  cache_ttl_seconds: 300           # チェック結果のキャッシュ時間(秒)。5分（自宅IP変動の早期検出）
+  home_internet_accounts:
+    - "atushi16"                   # 自宅インターネット回線を使う正規アカウント
+    - "atushi1840"                 # USBアダプタ断線により自宅IPフォールバック中
+    - "kudou"                     # USBアダプタIP変更により自宅IPフォールバック中
+    - "zin20120731"               # WiFi経由（独自IP）
+    - "TankanNotes"               # USBアダプタ断線により自宅IPフォールバック中
+    # ↓ 凍結済み（削除済み）
 # ── オーケストレーター ──
 orchestrator:
   interval_minutes: 15
-  max_accounts_per_run: 2        # 2垢ずつ処理（4垢を回すのに必要）
+  max_accounts_per_run: 5        # 全垢を毎サイクル処理
   apply_timeout: 1800
+  batch_jitter_minutes: 15      # バッチ時刻を±15分ランダム化（BOT対策）
   priority: "pending_first"
 
 # ── NGワード（除外フィルター）──
 # この文字列を含むツイートは応募をスキップします
 ng_words:
   - "応募フォーム"
+  - "クイズ"
+  - "URL"
+  - "問題"
+  - "動画"
+  - "LINE"
   - "結果を確認"
   - "画像"
   - "応募はこちら"
   - "引用"
   - "結果確認"
-  # ↓ 2026-07-03 拡充 (出会い系・怪しい案件)
-  - "マッチング"
-  - "出会い"
-  - "恋人"
-  - "仮想通貨"
-  - "ビットコイン"
-  - "FX"
-  - "投資"
-  - "稼げる"
-  - "在宅"
-  - "副業"
-  - "簡単"
-  - "相互"
-  - "フォロバ"
-  - "拡散希望"
   - "url"
   - "リンク先"
   - "チェック"
-  - "いいね"
-  - "保存"
-  - "DM"
+  - "合言葉"
+  - "アンケート"
+  - "抽選結果"
+  - "リンク"
+  - "シェア"
+
+# ── 必須ワード（応募条件）──
+# 「フォロー」を含む投稿のみ応募
+required_words:
+  require_all: ["フォロー"]
+  require_any: []
+
+# ── URLフィルター ──
+# true: URL（http/https）を含む投稿は応募しない
+skip_url_posts: true
 
 # ── 収集フィルタ ──
 collection_filter:

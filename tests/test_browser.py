@@ -1,32 +1,34 @@
 """Tests for application/browser.py — ブラウザ制御（モックベース）"""
+
 from __future__ import annotations
 
-import pytest
-import json
 import itertools
-from pathlib import Path
-from unittest.mock import MagicMock, patch, call, mock_open
-from typing import Any
-
+import json
 import sys
+from pathlib import Path
+from typing import Any
+from unittest.mock import MagicMock, call, mock_open, patch
+
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from application.browser import (
-    set_viewport_for_fingerprint,
-    human_like_mouse,
-    create_browser,
+from kensho.application.applier import _save_session_cookies
+from kensho.application.browser import FINGERPRINTS as REAL_FINGERPRINTS
+from kensho.application.browser import (
+    _build_stealth_js,
     check_x_login,
     close_browser,
-    _build_stealth_js,
+    create_browser,
+    human_like_mouse,
+    set_viewport_for_fingerprint,
 )
-from application.browser import FINGERPRINTS as REAL_FINGERPRINTS
-from application.applier import _save_session_cookies
 
 # ─── ヘルパー ────────────────────────────────────────────────
 
 FINGERPRINTS: dict[str, dict[str, Any]] = {
-    'atushi16':  {'seed': 42, 'screen_width': 1366, 'screen_height': 768,  'pixel_ratio': 1.0},
-    'kudou':     {'seed': 77, 'screen_width': 1920, 'screen_height': 1080, 'pixel_ratio': 1.0},
+    "atushi16": {"seed": 42, "screen_width": 1366, "screen_height": 768, "pixel_ratio": 1.0},
+    "kudou": {"seed": 77, "screen_width": 1920, "screen_height": 1080, "pixel_ratio": 1.0},
 }
 
 
@@ -34,26 +36,27 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
 # TestSetViewport — 2 tests
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestSetViewport:
     """set_viewport_for_fingerprint — 指紋に応じたビューポート設定"""
 
     def test_sets_viewport_size(self) -> None:
         """正常系: 指紋のwidth/heightでset_viewport_sizeが呼ばれる"""
         page = MagicMock()
-        fp: dict[str, Any] = {'screen_width': 1920, 'screen_height': 1080, 'pixel_ratio': 1.0}
+        fp: dict[str, Any] = {"screen_width": 1920, "screen_height": 1080, "pixel_ratio": 1.0}
         set_viewport_for_fingerprint(page, fp)
-        page.set_viewport_size.assert_called_once_with({'width': 1920, 'height': 1080})
+        page.set_viewport_size.assert_called_once_with({"width": 1920, "height": 1080})
 
     def test_different_fingerprint_values(self) -> None:
         """異なる指紋で異なる値が設定される"""
         page = MagicMock()
-        fp1: dict[str, Any] = {'screen_width': 1366, 'screen_height': 768, 'pixel_ratio': 1.0}
-        fp2: dict[str, Any] = {'screen_width': 1920, 'screen_height': 1080, 'pixel_ratio': 1.0}
+        fp1: dict[str, Any] = {"screen_width": 1366, "screen_height": 768, "pixel_ratio": 1.0}
+        fp2: dict[str, Any] = {"screen_width": 1920, "screen_height": 1080, "pixel_ratio": 1.0}
         set_viewport_for_fingerprint(page, fp1)
         set_viewport_for_fingerprint(page, fp2)
         assert page.set_viewport_size.call_args_list == [
-            call({'width': 1366, 'height': 768}),
-            call({'width': 1920, 'height': 1080}),
+            call({"width": 1366, "height": 768}),
+            call({"width": 1920, "height": 1080}),
         ]
 
 
@@ -61,29 +64,29 @@ class TestSetViewport:
 # TestHumanLikeMouse — 4 tests
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestHumanLikeMouse:
     """human_like_mouse — 人間らしいマウス軌跡（ベジェ曲線）"""
 
     def _make_mock_page(self, viewport: dict[str, int] | None = None) -> MagicMock:
         page = MagicMock()
-        page.viewport_size = viewport or {'width': 1366, 'height': 768}
+        page.viewport_size = viewport or {"width": 1366, "height": 768}
         page.mouse = MagicMock()
         return page
 
     # ── bounded box path (cubic bezier) ──
 
-    @patch('application.browser.random.random')
-    @patch('application.browser.random.randint')
-    @patch('application.browser.random.uniform')
-    @patch('application.browser.time.sleep')
-    def test_with_bounding_box(self, mock_sleep: MagicMock,
-                               mock_uniform: MagicMock,
-                               mock_randint: MagicMock,
-                               mock_random: MagicMock) -> None:
+    @patch("application.browser.random.random")
+    @patch("application.browser.random.randint")
+    @patch("application.browser.random.uniform")
+    @patch("application.browser.time.sleep")
+    def test_with_bounding_box(
+        self, mock_sleep: MagicMock, mock_uniform: MagicMock, mock_randint: MagicMock, mock_random: MagicMock
+    ) -> None:
         """bounding_boxあり → 3次ベジェ曲線でマウス軌跡"""
-        page = self._make_mock_page({'width': 1366, 'height': 768})
+        page = self._make_mock_page({"width": 1366, "height": 768})
         element = MagicMock()
-        element.bounding_box.return_value = {'x': 100, 'y': 200, 'width': 300, 'height': 50}
+        element.bounding_box.return_value = {"x": 100, "y": 200, "width": 300, "height": 50}
 
         steps = 20
         mock_randint.side_effect = [200, 300, steps]
@@ -104,10 +107,10 @@ class TestHumanLikeMouse:
 
     # ── no bounding box, evaluate returns None (fallback to element.click) ──
 
-    @patch('application.browser.time.sleep')
+    @patch("application.browser.time.sleep")
     def test_no_bounding_box_fallback_click(self, mock_sleep: MagicMock) -> None:
         """bounding_boxなし & evaluate=None → element.click() にフォールバック"""
-        page = self._make_mock_page({'width': 1366, 'height': 768})
+        page = self._make_mock_page({"width": 1366, "height": 768})
         element = MagicMock()
         element.bounding_box.return_value = None
         element.evaluate.return_value = [None, None]  # bx is falsy
@@ -120,15 +123,14 @@ class TestHumanLikeMouse:
 
     # ── no bounding box, evaluate returns coords (quadratic bezier) ──
 
-    @patch('application.browser.random.randint')
-    @patch('application.browser.random.uniform')
-    @patch('application.browser.time.sleep')
+    @patch("application.browser.random.randint")
+    @patch("application.browser.random.uniform")
+    @patch("application.browser.time.sleep")
     def test_no_bounding_box_quadratic_bezier(
-            self, mock_sleep: MagicMock,
-            mock_uniform: MagicMock,
-            mock_randint: MagicMock) -> None:
+        self, mock_sleep: MagicMock, mock_uniform: MagicMock, mock_randint: MagicMock
+    ) -> None:
         """bounding_boxなし & evaluate成功 → 2次ベジェ曲線で遷移"""
-        page = self._make_mock_page({'width': 800, 'height': 600})
+        page = self._make_mock_page({"width": 800, "height": 600})
         element = MagicMock()
         element.bounding_box.return_value = None
         element.evaluate.return_value = [500, 300]  # 要素座標
@@ -151,19 +153,17 @@ class TestHumanLikeMouse:
 
     # ── bezier 座標の計算正当性（math検証） ──
 
-    @patch('application.browser.random.random')
-    @patch('application.browser.random.randint')
-    @patch('application.browser.random.uniform')
-    @patch('application.browser.time.sleep')
+    @patch("application.browser.random.random")
+    @patch("application.browser.random.randint")
+    @patch("application.browser.random.uniform")
+    @patch("application.browser.time.sleep")
     def test_bezier_coordinates_verified(
-            self, mock_sleep: MagicMock,
-            mock_uniform: MagicMock,
-            mock_randint: MagicMock,
-            mock_random: MagicMock) -> None:
+        self, mock_sleep: MagicMock, mock_uniform: MagicMock, mock_randint: MagicMock, mock_random: MagicMock
+    ) -> None:
         """ベジェ曲線の中間座標が正しい曲線を描く（math検証）"""
-        page = self._make_mock_page({'width': 1000, 'height': 800})
+        page = self._make_mock_page({"width": 1000, "height": 800})
         element = MagicMock()
-        element.bounding_box.return_value = {'x': 0, 'y': 0, 'width': 400, 'height': 300}
+        element.bounding_box.return_value = {"x": 0, "y": 0, "width": 400, "height": 300}
 
         steps = 3
         mock_randint.side_effect = [100, 50, steps]
@@ -191,6 +191,7 @@ class TestHumanLikeMouse:
 # TestCreateBrowser — 4 tests
 # ═══════════════════════════════════════════════════════════════
 
+
 @pytest.mark.skip(reason="Moved to upstream feder-cr API; tests pending rewrite")
 class TestCreateBrowser:
     """create_browser — invisible_playwright ブラウザ起動"""
@@ -199,7 +200,7 @@ class TestCreateBrowser:
     def _make_mock_chain() -> tuple[MagicMock, MagicMock, MagicMock, MagicMock]:
         """ipw → browser → ctx → page のモック連鎖"""
         page = MagicMock()
-        page.viewport_size = {'width': 1366, 'height': 768}
+        page.viewport_size = {"width": 1366, "height": 768}
         ctx = MagicMock()
         ctx.new_page.return_value = page
         browser = MagicMock()
@@ -211,23 +212,23 @@ class TestCreateBrowser:
     # ── test 1: 正常起動（デフォルト: アカウントなし, sessionなし, headless=True）──
 
     @pytest.mark.xfail(reason="Playwright asyncio conflicts in test env")
-    @patch('application.browser.random_viewport', create=True)
+    @patch("application.browser.random_viewport", create=True)
     def test_normal_launch(self, mock_random_viewport: MagicMock) -> None:
         """正常起動: アカウントなし, sessionなし → random_viewport"""
         import invisible_playwright as _ipw_mod
+
         ipw, browser, ctx, page = self._make_mock_chain()
-        with patch.object(_ipw_mod, 'InvisiblePlaywright') as mock_ipw_cls:
+        with patch.object(_ipw_mod, "InvisiblePlaywright") as mock_ipw_cls:
             mock_ipw_cls.return_value = ipw
 
-            result = create_browser(account_key=None, session_file=None,
-                                    headless=True, log=None)
+            result = create_browser(account_key=None, session_file=None, headless=True, log=None)
 
             mock_ipw_cls.assert_called_once_with(seed=None, headless=True)
             ipw.__enter__.assert_called_once()
             browser.new_context.assert_called_once()
             call_kw = browser.new_context.call_args.kwargs
-            assert call_kw['locale'] == 'ja-JP'
-            assert call_kw['timezone_id'] == 'Asia/Tokyo'
+            assert call_kw["locale"] == "ja-JP"
+            assert call_kw["timezone_id"] == "Asia/Tokyo"
             ctx.new_page.assert_called_once()
             mock_random_viewport.assert_called_once_with(page)
             assert result == (ipw, browser, ctx, page)
@@ -235,16 +236,16 @@ class TestCreateBrowser:
     # ── test 2: headless=False ──
 
     @pytest.mark.xfail(reason="Playwright asyncio conflicts in test env")
-    @patch('application.browser.random_viewport', create=True)
+    @patch("application.browser.random_viewport", create=True)
     def test_headless_false(self, mock_random_viewport: MagicMock) -> None:
         """headless=False が InvisiblePlaywright に伝播される"""
         import invisible_playwright as _ipw_mod
+
         ipw, browser, ctx, page = self._make_mock_chain()
-        with patch.object(_ipw_mod, 'InvisiblePlaywright') as mock_ipw_cls:
+        with patch.object(_ipw_mod, "InvisiblePlaywright") as mock_ipw_cls:
             mock_ipw_cls.return_value = ipw
 
-            create_browser(account_key=None, session_file=None,
-                           headless=False, log=None)
+            create_browser(account_key=None, session_file=None, headless=False, log=None)
 
             mock_ipw_cls.assert_called_once_with(seed=None, headless=False)
 
@@ -256,22 +257,22 @@ class TestCreateBrowser:
     def test_with_session_file(self, mock_path_exists: MagicMock, mock_random_viewport: MagicMock) -> None:
         mock_path_exists.return_value = True  # セッションファイル存在
         import invisible_playwright as _ipw_mod
+
         ipw, browser, ctx, page = self._make_mock_chain()
-        with patch.object(_ipw_mod, 'InvisiblePlaywright') as mock_ipw_cls:
+        with patch.object(_ipw_mod, "InvisiblePlaywright") as mock_ipw_cls:
             mock_ipw_cls.return_value = ipw
 
             session_data: dict[str, Any] = {
-                'cookies': [{'name': 'auth_token', 'value': 'xxx'}],
-                'origins': [],
+                "cookies": [{"name": "auth_token", "value": "xxx"}],
+                "origins": [],
             }
-            session_file = '/tmp/session.json'
+            session_file = "/tmp/session.json"
 
-            with patch('builtins.open', mock_open(read_data=json.dumps(session_data))):
-                create_browser(account_key=None, session_file=session_file,
-                               headless=True, log=None)
+            with patch("builtins.open", mock_open(read_data=json.dumps(session_data))):
+                create_browser(account_key=None, session_file=session_file, headless=True, log=None)
 
             call_kw = browser.new_context.call_args.kwargs
-            assert call_kw['storage_state'] == session_data
+            assert call_kw["storage_state"] == session_data
 
     # ── test 4: account_key + 指紋シード ──
 
@@ -279,23 +280,25 @@ class TestCreateBrowser:
     def test_account_key_fingerprint(self) -> None:
         """account_key指定 → 指紋シード適用 & set_viewport_for_fingerprint"""
         import invisible_playwright as _ipw_mod
+
         ipw, browser, ctx, page = self._make_mock_chain()
 
-        with patch.object(_ipw_mod, 'InvisiblePlaywright') as mock_ipw_cls, \
-             patch('application.browser.os.path.exists', return_value=False), \
-             patch('application.browser.set_viewport_for_fingerprint') as mock_set_vp, \
-             patch('utils.keyring.load_session', return_value=None):
+        with (
+            patch.object(_ipw_mod, "InvisiblePlaywright") as mock_ipw_cls,
+            patch("application.browser.os.path.exists", return_value=False),
+            patch("application.browser.set_viewport_for_fingerprint") as mock_set_vp,
+            patch("utils.keyring.load_session", return_value=None),
+        ):
             mock_ipw_cls.return_value = ipw
 
             fp = FINGERPRINTS["atushi16"]
-            create_browser(account_key='atushi16', session_file=None,
-                           headless=True, log=None)
+            create_browser(account_key="atushi16", session_file=None, headless=True, log=None)
 
             # シードが伝播
-            mock_ipw_cls.assert_called_once_with(seed=fp['seed'], headless=True)
+            mock_ipw_cls.assert_called_once_with(seed=fp["seed"], headless=True)
             # device_scale_factor
             call_kw = browser.new_context.call_args.kwargs
-            assert call_kw['device_scale_factor'] == fp['pixel_ratio']
+            assert call_kw["device_scale_factor"] == fp["pixel_ratio"]
             # ビューポート設定
             mock_set_vp.assert_called_once()
             args_page, args_fp = mock_set_vp.call_args[0]
@@ -306,64 +309,67 @@ class TestCreateBrowser:
 # TestCheckXLogin — 3 tests
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestCheckXLogin:
     """check_x_login — Xログイン状態確認"""
 
-    @patch('application.browser.time.sleep')
-    @patch('application.browser.random.uniform')
+    @patch("application.browser.time.sleep")
+    @patch("application.browser.random.uniform")
     def test_logged_in(self, mock_uniform: MagicMock, mock_sleep: MagicMock) -> None:
         """正常ログイン → True"""
         page = MagicMock()
-        page.url = 'https://x.com/home'
+        page.url = "https://x.com/home"
         page.query_selector.return_value = None  # challenge検出誤判定防止
 
         result = check_x_login(page, log=None)
 
-        page.goto.assert_called_once_with(
-            'https://x.com/home', timeout=120000, wait_until='domcontentloaded')
+        page.goto.assert_called_once_with("https://x.com/home", timeout=30000, wait_until="commit")
         assert result is True
 
-    @patch('application.browser.time.sleep')
-    @patch('application.browser.random.uniform')
+    @patch("application.browser.time.sleep")
+    @patch("application.browser.random.uniform")
     def test_not_logged_in(self, mock_uniform: MagicMock, mock_sleep: MagicMock) -> None:
         """urlに'login'が含まれる → False"""
         page = MagicMock()
-        page.url = 'https://x.com/login?redirect=home'
+        page.url = "https://x.com/login?redirect=home"
 
         result = check_x_login(page, log=None)
 
         assert result is False
 
-    @patch('application.browser.time.sleep')
-    @patch('application.browser.random.uniform')
+    @patch("application.browser.time.sleep")
+    @patch("application.browser.random.uniform")
     def test_goto_raises_exception(self, mock_uniform: MagicMock, mock_sleep: MagicMock) -> None:
-        """gotoが例外を送出 → False"""
+        """gotoが例外を送出 → リトライ後 False"""
         page = MagicMock()
         page.goto.side_effect = Exception("Timeout")
 
         result = check_x_login(page, log=None)
 
         assert result is False
-        # time.sleep は呼ばれない（goto失敗時は即 return）
-        mock_sleep.assert_not_called()
+        # 3 回のリトライを行い、各失敗後に 5 秒の sleep が入る
+        assert page.goto.call_count == 3
+        assert mock_sleep.call_count == 2
+        mock_sleep.assert_has_calls([call(5), call(5)])
 
 
 # ═══════════════════════════════════════════════════════════════
 # TestCloseBrowser — 3 tests
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestCloseBrowser:
     """close_browser — ブラウザ終了"""
 
     def test_normal_close(self) -> None:
-        """正常終了: browser.close + ipw.__exit__ が呼ばれる"""
+        """正常終了: browser.close + playwright.stop が呼ばれる"""
         browser = MagicMock()
         ipw = MagicMock()
 
         close_browser(ipw, browser, log=None)
 
         browser.close.assert_called_once()
-        ipw.__exit__.assert_called_once_with(None, None, None)
+        ipw.stop.assert_called_once()
 
     def test_double_close_no_error(self) -> None:
         """二重closeしても例外が発生しない"""
@@ -374,7 +380,7 @@ class TestCloseBrowser:
         close_browser(ipw, browser, log=None)
 
         assert browser.close.call_count == 2
-        assert ipw.__exit__.call_count == 2
+        assert ipw.stop.call_count == 2
 
     def test_exception_handled_gracefully(self) -> None:
         """close中に例外 → キャッチしてログ出力"""
@@ -386,15 +392,16 @@ class TestCloseBrowser:
         close_browser(ipw, browser, log=log)
 
         browser.close.assert_called_once()
-        ipw.__exit__.assert_called_once_with(None, None, None)
+        ipw.stop.assert_called_once()
         # ログに警告が書かれる
         log.write.assert_any_call("[WARN] browser.close失敗: browser error")
-        log.write.assert_any_call("DEBUG: browser closed")
+        log.write.assert_any_call("DEBUG: browser closed (aggressive cleanup)")
 
 
 # ═══════════════════════════════════════════════════════════════
 # TestSaveSessionCookies — 2 tests
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestSaveSessionCookies:
     """_save_session_cookies — セッションクッキー保存"""
@@ -403,16 +410,16 @@ class TestSaveSessionCookies:
         """正常保存: ctx.storage_state → JSONファイルに書き出し"""
         ctx = MagicMock()
         storage_data: dict[str, Any] = {
-            'cookies': [{'name': 'auth_token', 'value': 'abc123'}],
-            'origins': [],
+            "cookies": [{"name": "auth_token", "value": "abc123"}],
+            "origins": [],
         }
         ctx.storage_state.return_value = storage_data
-        session_path: Path = tmp_path / 'session.json'
+        session_path: Path = tmp_path / "session.json"
 
-        _save_session_cookies(ctx, 'test_acct', session_path)
+        _save_session_cookies(ctx, "test_acct", session_path)
 
         assert session_path.exists()
-        loaded = json.loads(session_path.read_text(encoding='utf-8'))
+        loaded = json.loads(session_path.read_text(encoding="utf-8"))
         assert loaded == storage_data
 
     def test_storage_state_raises_exception(self) -> None:
@@ -421,7 +428,7 @@ class TestSaveSessionCookies:
         ctx.storage_state.side_effect = Exception("Connection closed")
 
         # 例外が外に出ないこと
-        _save_session_cookies(ctx, 'test_acct', Path('/nonexistent/session.json'))
+        _save_session_cookies(ctx, "test_acct", Path("/nonexistent/session.json"))
         ctx.storage_state.assert_called_once()
 
 
@@ -429,41 +436,42 @@ class TestSaveSessionCookies:
 # TestBuildStealthJs — 5 tests
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestBuildStealthJs:
     """_build_stealth_js — JS stealth layer 生成（改行・全機能・シード別）"""
 
     def test_has_real_newlines(self) -> None:
         """JSが実改行(ASCII 10)で生成されること"""
-        js = _build_stealth_js(REAL_FINGERPRINTS['atushi16'])
+        js = _build_stealth_js(REAL_FINGERPRINTS["atushi16"])
         assert chr(10) in js, "JS should contain real newlines"
         # リテラルな \\n や \\\\n が混入してない
-        assert '\\\\n' not in js, "JS should not contain literal backslash-n"
+        assert "\\\\n" not in js, "JS should not contain literal backslash-n"
         # 80行前後（実際は79行）
-        lines = js.split('\n')
+        lines = js.split("\n")
         assert 70 <= len(lines) <= 90, f"Expected ~80 JS lines, got {len(lines)}"
 
     def test_all_10_features_present(self) -> None:
         """10個の機能すべてがJSコード内にコメントとして存在する"""
-        js = _build_stealth_js(REAL_FINGERPRINTS['atushi16'])
+        js = _build_stealth_js(REAL_FINGERPRINTS["atushi16"])
         for i in range(1, 11):
-            assert f'// {i}.' in js, f"Feature {i} comment missing"
+            assert f"// {i}." in js, f"Feature {i} comment missing"
 
     def test_service_worker_unregister(self) -> None:
         """Service Worker unregister コードが含まれる"""
-        js = _build_stealth_js(REAL_FINGERPRINTS['atushi16'])
-        assert 'navigator.serviceWorker.getRegistrations()' in js
-        assert 'r.unregister()' in js
+        js = _build_stealth_js(REAL_FINGERPRINTS["atushi16"])
+        assert "navigator.serviceWorker.getRegistrations()" in js
+        assert "r.unregister()" in js
 
     def test_webgl_extension_limiting(self) -> None:
         """WebGL拡張制限が含まれる"""
-        js = _build_stealth_js(REAL_FINGERPRINTS['atushi16'])
-        assert 'WebGLRenderingContext.prototype.getExtension' in js
-        assert 'EXT_texture_filter_anisotropic' in js
+        js = _build_stealth_js(REAL_FINGERPRINTS["atushi16"])
+        assert "WebGLRenderingContext.prototype.getExtension" in js
+        assert "EXT_texture_filter_anisotropic" in js
 
     def test_seed_differentiation(self) -> None:
         """異なるseedで hardwareConcurrency が異なる"""
-        js16 = _build_stealth_js(REAL_FINGERPRINTS['atushi16'])  # seed=42 → 42%5=2 → 6cores
-        jskd = _build_stealth_js(REAL_FINGERPRINTS['kudou'])     # seed=77 → 77%5=2 → 6cores
+        js16 = _build_stealth_js(REAL_FINGERPRINTS["atushi16"])  # seed=42 → 42%5=2 → 6cores
+        jskd = _build_stealth_js(REAL_FINGERPRINTS["kudou"])  # seed=77 → 77%5=2 → 6cores
         # Both happen to map to same core count (index 2 = 6), but check seed value is different
-        assert 'let _seed=42' in js16
-        assert 'let _seed=77' in jskd
+        assert "let _seed=42" in js16
+        assert "let _seed=77" in jskd

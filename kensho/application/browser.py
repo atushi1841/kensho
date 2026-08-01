@@ -190,6 +190,35 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
             "security.ssl.enable_ocsp_must_staple": True,
         },
     },
+    "inobase1-4": {
+        "seed": 44,
+        "accept_language": "ja,en;q=0.9,zh-CN;q=0.7,ko;q=0.5",
+        "screen_width": 1280,
+        "screen_height": 720,
+        "pixel_ratio": 1.0,
+        "locale": "ja-JP",
+        "timezone_id": "Asia/Tokyo",
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0",
+        "webgl_vendor": "Google Inc. (Intel)",
+        "webgl_renderer": "Intel Iris Xe Graphics",
+        "profile": {
+            "active_hours": ("09:00", "21:00"),
+            "max_per_day": {"follow": 40, "rt": 12, "like": 70},
+            "skip_rate": {"follow": 0.03, "rt": 0.02, "like": 0.04},
+            "persona": "book_culture",
+            "work_style": "morning_person",
+            "typing_speed": 100,
+            "click_delay": 50,
+            "scroll_pattern": "aggressive",
+        },
+        "tls": {
+            "security.tls.version.min": 3,
+            "security.tls.version.max": 4,
+            "security.tls.hello_downgrade": True,
+            "security.ssl.enable_ocsp_stapling": True,
+            "security.ssl.enable_ocsp_must_staple": False,
+        },
+    },
 }
 
 # ★ 垢別SOCKS5プロキシ（Windows物理回線個別ルーティング）
@@ -199,6 +228,7 @@ PROXY_MAP: dict[str, str] = {
     "atushi1840": "socks5h://172.26.80.1:1083",
     "zin20120731": "socks5h://172.26.80.1:1084",
     "TankanNotes": "socks5h://172.26.80.1:1085",
+    "inobase1-4": "socks5h://172.26.80.1:1089",
 }
 
 # ☆ プロキシ有効/無効フラグ（True=有効、False=バイパス）
@@ -233,9 +263,7 @@ def human_like_mouse(page: Any, element: Any, click_delay: int = 80) -> None:
         vp = page.viewport_size
         cx: int = vp["width"] // 2
         cy: int = vp["height"] // 2
-        bx, by = element.evaluate(
-            "(el) => {const r = el.getBoundingClientRect(); return [r.x, r.y];}"
-        )
+        bx, by = element.evaluate("(el) => {const r = el.getBoundingClientRect(); return [r.x, r.y];}")
         if not bx:
             element.click()
             time.sleep(random.uniform(click_delay * 0.5, click_delay * 1.5) / 1000)
@@ -277,18 +305,8 @@ def human_like_mouse(page: Any, element: Any, click_delay: int = 80) -> None:
         t_values.append(eased)
     for idx, t in enumerate(t_values):
         u = 1 - t
-        x: float = (
-            u**3 * start_x
-            + 3 * u**2 * t * cx1
-            + 3 * u * t**2 * cx2
-            + t**3 * overshoot_x
-        )
-        y: float = (
-            u**3 * start_y
-            + 3 * u**2 * t * cy1
-            + 3 * u * t**2 * cy2
-            + t**3 * overshoot_y
-        )
+        x: float = u**3 * start_x + 3 * u**2 * t * cx1 + 3 * u * t**2 * cx2 + t**3 * overshoot_x
+        y: float = u**3 * start_y + 3 * u**2 * t * cy1 + 3 * u * t**2 * cy2 + t**3 * overshoot_y
         jitter_mag: float = 0.5 + 2.5 * abs(t - 0.5) * 2
         x += random.uniform(-jitter_mag, jitter_mag)
         y += random.uniform(-jitter_mag, jitter_mag)
@@ -495,9 +513,7 @@ def create_browser(
     """
 
     if log:
-        log.write(
-            f"DEBUG: invisible_playwright Firefox starting (account={account_key})"
-        )
+        log.write(f"DEBUG: invisible_playwright Firefox starting (account={account_key})")
 
     # asyncio loop 残留対策: sync Playwright起動前にクリア
     try:
@@ -527,19 +543,11 @@ def create_browser(
     extra_prefs["dom.ipc.keepProcessesAlive.web"] = 0
     extra_prefs["javascript.options.mem.max"] = 256000  # 256MB JS heap
     extra_prefs["browser.tabs.unloadOnLowMemory"] = True  # 低メモリ時タブ解放
-    extra_prefs["browser.sessionhistory.max_entries"] = (
-        10  # セッション履歴削減（メモリ節約）
-    )
-    extra_prefs["browser.sessionhistory.max_total_viewers"] = (
-        0  # bfcache完全無効（数百MB節約）
-    )
+    extra_prefs["browser.sessionhistory.max_entries"] = 10  # セッション履歴削減（メモリ節約）
+    extra_prefs["browser.sessionhistory.max_total_viewers"] = 0  # bfcache完全無効（数百MB節約）
     extra_prefs["browser.cache.memory.enable"] = False  # メモリキャッシュ無効
-    extra_prefs["media.peerconnection.enabled"] = (
-        True  # WebRTC有効（無効化はfingerprint異常と判定されるリスク）
-    )
-    extra_prefs["media.peerconnection.ice.obfuscate_host_addresses"] = (
-        True  # 内部IP漏洩防止
-    )
+    extra_prefs["media.peerconnection.enabled"] = True  # WebRTC有効（無効化はfingerprint異常と判定されるリスク）
+    extra_prefs["media.peerconnection.ice.obfuscate_host_addresses"] = True  # 内部IP漏洩防止
     extra_prefs["media.memory_cache_max_size"] = 2048  # メディアキャッシュ最小
 
     # ── Firefox軽量化prefs（BOT対策に影響しないもののみ）──
@@ -569,9 +577,7 @@ def create_browser(
     # SOCKS5プロキシはFirefox prefs経由で設定（Playwright proxyは標準Firefoxと競合）
     if proxy_dict:
         # socks5:// または socks5h:// の両方に対応
-        proxy_str = (
-            proxy_dict["server"].replace("socks5h://", "").replace("socks5://", "")
-        )
+        proxy_str = proxy_dict["server"].replace("socks5h://", "").replace("socks5://", "")
         proxy_host, proxy_port_str = proxy_str.split(":")
         proxy_port = int(proxy_port_str)
         extra_prefs["network.proxy.type"] = 1
@@ -691,9 +697,7 @@ def check_x_login(page: Any, log: Any = None) -> bool:
     max_attempts = _CHECK_LOGIN_MAX_ATTEMPTS
     for attempt in range(1, max_attempts + 1):
         try:
-            page.goto(
-                "https://x.com/home", timeout=_CHECK_LOGIN_TIMEOUT, wait_until="commit"
-            )
+            page.goto("https://x.com/home", timeout=_CHECK_LOGIN_TIMEOUT, wait_until="commit")
             break
         except Exception as e:
             if log:
@@ -725,19 +729,13 @@ def check_x_login(page: Any, log: Any = None) -> bool:
         return False
 
     # アカウント停止
-    if (
-        "account suspended" in body_lower
-        or "凍結" in body_lower
-        or "suspended" in body_lower
-    ):
+    if "account suspended" in body_lower or "凍結" in body_lower or "suspended" in body_lower:
         if log:
             log.write("[NG] suspended: アカウント停止が検出されました")
         return False
 
     # reCAPTCHA / Cloudflare チャレンジ
-    challenge_elem = page.query_selector(
-        ".cf-browser-verification, .challenge, #challenge"
-    )
+    challenge_elem = page.query_selector(".cf-browser-verification, .challenge, #challenge")
     if challenge_elem or "challenge" in body_lower:
         if log:
             log.write("[NG] challenge: reCAPTCHA/Cloudflare チャレンジが検出されました")
@@ -750,9 +748,7 @@ def check_x_login(page: Any, log: Any = None) -> bool:
     return True
 
 
-def close_browser(
-    ipw: Any, browser: Any, log: Any = None, label: str = "browser"
-) -> None:
+def close_browser(ipw: Any, browser: Any, log: Any = None, label: str = "browser") -> None:
     """invisible_playwright ブラウザを閉じる。Firefox子プロセスも完全kill"""
     import gc
 
@@ -774,15 +770,9 @@ def close_browser(
         for child in current.children(recursive=True):
             try:
                 name = child.name().lower()
-                if (
-                    "firefox" in name
-                    or "geckodriver" in name
-                    or "plugin_container" in name
-                ):
+                if "firefox" in name or "geckodriver" in name or "plugin_container" in name:
                     if log:
-                        log.write(
-                            f"  [KILL] Firefox子プロセス: {child.pid} ({child.name()})"
-                        )
+                        log.write(f"  [KILL] Firefox子プロセス: {child.pid} ({child.name()})")
                     child.send_signal(signal.SIGKILL)
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass

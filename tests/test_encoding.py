@@ -1,13 +1,15 @@
 """
 Tests for core/encoding.py — cp932ガード共通ユーティリティ
 """
+
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.encoding import guard_stdio, hide_console, cp932_safe
+from kensho.core.encoding import cp932_safe, guard_stdio
 
 
 class TestGuardStdio:
@@ -16,19 +18,11 @@ class TestGuardStdio:
     def test_sets_env_var(self) -> None:
         """PYTHONIOENCODING が設定される"""
         guard_stdio()
-        assert 'utf-8' in __import__('os').environ.get('PYTHONIOENCODING', '')
+        assert "utf-8" in __import__("os").environ.get("PYTHONIOENCODING", "")
 
     def test_is_callable(self) -> None:
         """例外を投げずに実行できる"""
         guard_stdio()  # 2回目もOK
-
-
-class TestHideConsole:
-    """hide_console: 例外を投げない"""
-
-    def test_does_not_crash(self) -> None:
-        """常に例外なく実行できる"""
-        hide_console()
 
 
 class TestCp932Safe:
@@ -36,26 +30,26 @@ class TestCp932Safe:
 
     def test_plain_japanese(self) -> None:
         """日本語テキストはそのまま"""
-        text: str = '文字化けが直ってないので直して欲しい'
+        text: str = "文字化けが直ってないので直して欲しい"
         result: str = cp932_safe(text)
         assert result == text
-        result.encode('cp932')  # cp932でエンコード可能
+        result.encode("cp932")  # cp932でエンコード可能
 
     def test_emoji_replaced(self) -> None:
         """絵文字が安全なASCIIに置き換わる"""
-        result: str = cp932_safe('✅ 完了')
-        assert '[OK]' in result
-        result.encode('cp932')
+        result: str = cp932_safe("✅ 完了")
+        assert "[OK]" in result
+        result.encode("cp932")
 
     def test_all_cp932_safe(self) -> None:
         """変換結果が常にcp932でエンコード可能"""
         cases: list[str] = [
-            '✅ 🔄 💾 ☕ ⚠️ ❗ ℹ️ ⏸️ ➕ ➖',
-            '文字化けテスト 💯',
-            '普通のテキストのみ',
-            '',
-            '半角英数123abc!@#',
+            "✅ 🔄 💾 ☕ ⚠️ ❗ ℹ️ ⏸️ ➕ ➖",
+            "文字化けテスト 💯",
+            "普通のテキストのみ",
+            "",
+            "半角英数123abc!@#",
         ]
         for c in cases:
             safe: str = cp932_safe(c)
-            safe.encode('cp932')  # 例外を投げない
+            safe.encode("cp932")  # 例外を投げない

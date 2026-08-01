@@ -15,6 +15,7 @@ Kensho Daily Maintenance — 日次メンテナンス（1日1回実行）
 Cron設定（推奨）:
     every day 3:00 AM — 深夜のうちに実行
 """
+
 from __future__ import annotations
 
 import sys
@@ -25,7 +26,8 @@ from typing import Any
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_DIR))
 
-from core.encoding import guard_stdio  # noqa: E402
+from kensho.core.encoding import guard_stdio  # noqa: E402
+
 guard_stdio()
 
 LOG_DIR = PROJECT_DIR / "logs"
@@ -52,10 +54,9 @@ def run_health_check() -> dict[str, Any]:
         return {"success": False, "summary": {"fail": 1}}
 
     import subprocess
+
     result = subprocess.run(
-        [sys.executable, str(health_py)],
-        capture_output=True, text=True, timeout=60,
-        encoding='utf-8'
+        [sys.executable, str(health_py)], capture_output=True, text=True, timeout=60, encoding="utf-8"
     )
     for line in result.stdout.splitlines():
         if line.strip():
@@ -68,8 +69,9 @@ def run_health_check() -> dict[str, Any]:
 
 def cleanup_old_logs() -> int:
     """30日以上前のログディレクトリを削除"""
-    from core.cleanup import clean_old_logs
-    from core.config import load as load_config
+    from kensho.core.cleanup import clean_old_logs
+    from kensho.core.config import load as load_config
+
     cfg = load_config()
     retention = cfg.get("general", {}).get("log_retention_days", 30)
     removed = clean_old_logs(str(LOG_DIR), retention_days=retention)

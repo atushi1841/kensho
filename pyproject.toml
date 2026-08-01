@@ -1,35 +1,78 @@
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "kensho-sweeps"
-version = "3.4"
-description = "X(Twitter) 懸賞自動応募システム — Playwright Firefox + マルチアカウント"
-readme = "README.md"
+version = "3.5.0"
+description = "Kensho - 懸賞自動応募システム"
 requires-python = ">=3.11"
-license = {text = "MIT"}
-authors = [
-    {name = "Kensho-Sweeps"},
-]
-keywords = ["sweepstakes", "twitter", "automation", "playwright"]
-classifiers = [
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Operating System :: POSIX :: Linux",
+dependencies = [
+    "playwright>=1.52",
+    "pyyaml>=6.0",
+    "psutil>=5.9",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "loguru>=0.7",
+    "keyring>=24.0",
+    "requests>=2.31",
+    "httpx>=0.27",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
 ]
 
-dependencies = [
-    "playwright>=1.52,<1.53",
-    "httpx>=0.27,<0.29",
-    "pyyaml>=6.0,<7.0",
-    "psutil>=5.9,<6.0",
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-mock>=3.0",
+    "pytest-cov>=7.0",
+    "ruff>=0.15",
+    "mypy>=2.0",
+    "pre-commit>=4.0",
 ]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["application*", "core*", "keepalive*", "scraping*", "utils*", "scripts*"]
+include = ["kensho*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-python_files = ["test_*.py"]
+addopts = "-v --tb=short --cov=kensho --cov-report=term-missing"
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+no_implicit_optional = true
+check_untyped_defs = false  # 既存コード対応、新規コードは型付け前提
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "W",   # pycodestyle warnings
+    "UP",  # pyupgrade
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["N"]  # Allow non-PEP8 naming in tests
+"tests/measure_comprehensive.py" = ["E501"]  # Long measurement keys
+
+[tool.ruff.format]
+preview = true
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "pytest-mock>=3.15.1",
+    "ruff>=0.15.20",
+]

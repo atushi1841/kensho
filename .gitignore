@@ -61,3 +61,30 @@ scripts/claude-flash
 scripts/claude-pro
 wiki/
 .aider*
+
+# ランタイム生成データ（git管理不要）
+data/audit.jsonl
+data/crash_history.json
+data/dashboard.html
+data/discovered_accounts.json
+data/profiles/
+data/*.bak.*
+kensho-status.html
+.supermemory/
+
+# VirtualBox VM（誤配置防止）
+VirtualBox VMs/
+
+# Windowsショートカット
+scripts/*.lnk
+
+# kensho/tools配下のサードパーティバイナリ
+kensho/tools/3proxy*
+kensho/tools/ForceBindIP*
+kensho/tools/*.zip
+kensho/tools/kudou_RM10JE_B
+kensho/tools/繧*
+
+# kensho/配下のランタイムデータ
+kensho/data/
+kensho/application/transaction_pairs.json

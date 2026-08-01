@@ -6,6 +6,7 @@ v3.3: application/applier.py から抽出、公開関数化
 from __future__ import annotations
 
 import asyncio
+import random
 import re
 from datetime import datetime
 from typing import Any
@@ -87,21 +88,39 @@ def extract_prize_rank(text: str) -> int:
     return 0
 
 
-def sort_items(
-    items: list[dict[str, Any]], now: datetime | None = None
-) -> list[dict[str, Any]]:
+_EXPIRY_DAYS: int = 0  # 締切からこの日数以上過ぎたら除外
+
+
+def sort_items(items: list[dict[str, Any]], now: datetime | None = None) -> tuple[list[dict[str, Any]], int]:
     """
     未応募アイテムを優先順にソートして返す（公開関数）。
-    ソートキー: 締切日が近い＞当選者数が多い
-    ※ twscrape API呼び出し(fetch_tweet_text)は遅すぎるので除外。
-      1000件超の未応募があると30分〜3時間ハングするため。
+    ソートキー: 締切日が近い（2倍） + 当選者数（最大10点）に賞品価値倍率（1.0〜3.0）を乗算
+    優先度が近いアイテムはランダム順になる（アカウント間で処理する投稿が分散する）
+
+    締切から _EXPIRY_DAYS（デフォルト0日）以上経過したアイテムは除外する。
+    締切未設定のアイテムは注釈確定できないので常に含める。
     """
     if now is None:
         now = datetime.now()
 
-    def _sort_key(item: dict[str, Any]) -> float:
+    # ── 期限切れフィルター ──
+    filtered: list[dict[str, Any]] = []
+    _removed: int = 0
+    for item in items:
         dl: str = item.get("deadline", "")
-        wc: int = item.get("winner_count", 0)
+        if dl:
+            try:
+                dl_date: datetime = datetime.strptime(dl, "%Y-%m-%d")
+                if (now - dl_date).days > _EXPIRY_DAYS:
+                    _removed += 1
+                    continue
+            except Exception:
+                pass  # パース不能 → 含める
+        filtered.append(item)
+
+    def _sort_key(item: dict[str, Any]) -> float:
+        # ── 締切スコア ──
+        dl: str = item.get("deadline", "")
         dl_score: int = 0
         if dl:
             try:
@@ -113,7 +132,18 @@ def sort_items(
                     dl_score = -100
             except Exception:
                 pass
-        wc_score: float = min(wc / 100, 100) if wc > 0 else 0
-        return -(dl_score * 2 + wc_score)
 
-    return sorted(items, key=_sort_key)
+        # ── 賞品価値倍率 ──
+        prize_mult: float = item.get("prize_score", {}).get("priority", 1.0)
+
+        # ── 当選者数スコア ──
+        wc: int = item.get("winner_count", 0)
+        wc_score: float = min(wc / 100, 10) if wc > 0 else 0
+
+        # ── 優先度スコア + ランダムジッター（±5点）──
+        # 同じ優先度帯ならランダム順になり、アカウント間で処理する投稿が分散する
+        score: float = (dl_score * 2 + wc_score) * prize_mult
+        jitter: float = random.uniform(-5.0, 5.0)
+        return -(score + jitter)
+
+    return sorted(filtered, key=_sort_key), _removed

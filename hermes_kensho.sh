@@ -48,9 +48,9 @@ else
     # ── Step 1: Health Check ──
     echo "[1/2] Running Health Check..."
     if [[ ${FORCE_RESET} -eq 1 ]]; then
-        "${PYTHON}" "${PROJECT_DIR}/tools/health_check.py" --force-reset || true
+        "${PYTHON}" "${PROJECT_DIR}/kensho/tools/health_check.py" --force-reset || true
     else
-        "${PYTHON}" "${PROJECT_DIR}/tools/health_check.py" || true
+        "${PYTHON}" "${PROJECT_DIR}/kensho/tools/health_check.py" || true
     fi
     HC_EXIT=$?
 
@@ -66,9 +66,9 @@ else
     # ── Step 2: Hindsight Guard ──
     echo "[2/2] Running Hindsight Guard..."
     if [[ ${FORCE_RESET} -eq 1 ]]; then
-        "${PYTHON}" "${PROJECT_DIR}/tools/hindsight_guard.py" --force-reset || true
+        "${PYTHON}" "${PROJECT_DIR}/kensho/tools/hindsight_guard.py" --force-reset || true
     else
-        "${PYTHON}" "${PROJECT_DIR}/tools/hindsight_guard.py" || true
+        "${PYTHON}" "${PROJECT_DIR}/kensho/tools/hindsight_guard.py" || true
     fi
     HG_EXIT=$?
 

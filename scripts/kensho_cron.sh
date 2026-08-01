@@ -11,4 +11,5 @@ LOG_FILE="$LOG_DIR/orchestrator_$(date +%Y%m%d_%H%M%S).log"
 
 cd "$PROJECT_DIR"
 source "$HOME/kensho-venv/bin/activate"
-exec python orchestrator.py >> "$LOG_FILE" 2>&1
+export PYTHONPATH="$PROJECT_DIR"
+exec python kensho/orchestrator.py >> "$LOG_FILE" 2>&1

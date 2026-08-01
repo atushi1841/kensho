@@ -53,9 +53,7 @@ def release_lock() -> None:
         print(f"[LOCK] 解放失敗: {e}", flush=True)
 
 
-def save_collected_safe(
-    data: dict[str, Any], account_key: str, log: Any = None
-) -> None:
+def save_collected_safe(data: dict[str, Any], account_key: str, log: Any = None) -> None:
     """
     collected.json を安全に保存（race condition対策）。
     保存直前にディスクから再読み込みし、他プロセスの変更をマージしてから書き込む。
@@ -76,9 +74,7 @@ def save_collected_safe(
             with open(COLLECTED_FILE, encoding="utf-8") as f:
                 current: dict[str, Any] = json.load(f)
             current_items: list[dict[str, Any]] = current.get("collected", [])
-            current_map: dict[str, dict[str, Any]] = {
-                item["detail_url"]: item for item in current_items
-            }
+            current_map: dict[str, dict[str, Any]] = {item["detail_url"]: item for item in current_items}
 
             my_items: list[dict[str, Any]] = data.get("collected", [])
             merged_items: list[dict[str, Any]] = list(current_items)
@@ -87,14 +83,13 @@ def save_collected_safe(
             for item in my_items:
                 detail_url: str = item.get("detail_url", "")
                 if detail_url in merged_urls:
-                    idx: int = next(
-                        i
-                        for i, it in enumerate(merged_items)
-                        if it.get("detail_url") == detail_url
-                    )
-                    merged_items[idx]["applied"] = item.get(
-                        "applied", merged_items[idx].get("applied", {})
-                    )
+                    idx: int = next(i for i, it in enumerate(merged_items) if it.get("detail_url") == detail_url)
+                    merged_items[idx]["applied"] = item.get("applied", merged_items[idx].get("applied", {}))
+                    # ★ 全文取得できた場合、tweet_text を上書き保存（次回のNGフィルター用）
+                    _new_text: str = item.get("tweet_text", "") or ""
+                    _old_text: str = merged_items[idx].get("tweet_text", "") or ""
+                    if _new_text and len(_new_text) > len(_old_text):
+                        merged_items[idx]["tweet_text"] = _new_text
                 else:
                     merged_items.append(item)
 

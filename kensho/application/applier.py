@@ -8,12 +8,17 @@ from __future__ import annotations
 import datetime as dt
 import json
 import random
+import re
 import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+import httpx
 import psutil
+
+# ★ 複数アカウントフォロー案件検出パターン（「@A と @B をフォロー」）
+_MULTI_ACCOUNT_FOLLOW_PATTERN: re.Pattern = re.compile(r"@\w+\s+(と|&|＆|and)\s+@\w+", re.IGNORECASE)
 
 from kensho.application.actions import sort_items
 from kensho.application.actions_apply import do_follow, do_like, do_rt
@@ -38,6 +43,7 @@ from kensho.application.rate_limiter import (
     load_daily_counts,
 )
 from kensho.application.state import save_collected_safe
+from kensho.application.verifier import AccountHealthVerifier, ConsecutiveFailureTracker
 from kensho.core.config import load as load_config
 from kensho.scraping.scorer import format_prize_info, score_prize
 from kensho.utils.safety import verify_ip_separation
@@ -46,9 +52,6 @@ DATA_DIR: Path = Path(__file__).parent.parent.parent / "data"
 COLLECTED_FILE: Path = DATA_DIR / "collected.json"
 
 _DEFER_PREFIX: str = "DEFER:"
-_DEFER_HOURS_MIN: int = 4
-_DEFER_HOURS_MAX: int = 8
-_DEFER_WINDOW_HOURS: int = 6
 
 
 def _is_deferred(val: Any) -> bool:
@@ -80,9 +83,7 @@ def _save_session_cookies(ctx: Any, account_key: str, session_path: Path) -> Non
     """ブラウザコンテキストのセッションクッキーをファイルに保存する（補助機能）"""
     try:
         data = ctx.storage_state()
-        session_path.write_text(
-            json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
+        session_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     except Exception:
         pass
 
@@ -108,15 +109,11 @@ def _wait_for_memory(cfg: dict, log: Any = None) -> bool:
         if avail_mb >= reserve_mb:
             return True
         remaining: int = int(deadline - time.time())
-        out(
-            f"[MEM] 空きRAM {avail_mb}MB < {reserve_mb}MB → {min(10, remaining)}秒待機（残り{remaining}秒）"
-        )
+        out(f"[MEM] 空きRAM {avail_mb}MB < {reserve_mb}MB → {min(10, remaining)}秒待機（残り{remaining}秒）")
         time.sleep(min(10, max(1, remaining)))
 
     avail_mb = psutil.virtual_memory().available // (1024 * 1024)
-    out(
-        f"[MEM] ⚠ タイムアウト: 空きRAM {avail_mb}MB < {reserve_mb}MB → 強行（クラッシュリスク）"
-    )
+    out(f"[MEM] ⚠ タイムアウト: 空きRAM {avail_mb}MB < {reserve_mb}MB → 強行（クラッシュリスク）")
     return False
 
 
@@ -140,15 +137,10 @@ def _check_rss_threshold(p: Any, browser: Any, cfg: dict, log: Any = None) -> bo
         except Exception:
             bp = None
         if bp:
-            children_rss_mb = sum(
-                c.memory_info().rss // (1024 * 1024)
-                for c in bp.children(recursive=True)
-            )
+            children_rss_mb = sum(c.memory_info().rss // (1024 * 1024) for c in bp.children(recursive=True))
         total_rss_mb: int = self_rss_mb + children_rss_mb
         pct: float = total_rss_mb / SAFE_RSS_MB * 100
-        out(
-            f"  [MEM] RSS: Py{self_rss_mb}MB + Brw{children_rss_mb}MB = {total_rss_mb}MB ({pct:.0f}%/7GB)"
-        )
+        out(f"  [MEM] RSS: Py{self_rss_mb}MB + Brw{children_rss_mb}MB = {total_rss_mb}MB ({pct:.0f}%/7GB)")
         if total_rss_mb >= SAFE_RSS_MB:
             out(f"  [MEM] ⚠ RSS {total_rss_mb}MB≧{SAFE_RSS_MB}MB → 組み切り終了")
             return True
@@ -255,13 +247,22 @@ def apply_for_account(
 
     # ★ 安全チェック: IP分離ができているか（初回のみ + 30分キャッシュ）
     safety_enabled: bool = cfg.get("safety", {}).get("ip_separation_check", True)
-    if safety_enabled and not verify_ip_separation(cfg, log=log):
-        msg = "[SAFETY] IP分離チェック失敗 → 全アカウントの応募を中止（プロキシ設定を確認）"
-        if log:
-            log.write(msg)
-        else:
-            print(msg, flush=True)
-        return (0, 0)
+    if safety_enabled:
+        safe, blocked_accounts = verify_ip_separation(cfg, log=log)
+        if not safe:
+            msg = "[SAFETY] IP分離チェック異常 → 全アカウントの応募を中止（全プロキシ不通）"
+            if log:
+                log.write(msg)
+            else:
+                print(msg, flush=True)
+            return (0, 0)
+        if account_key in blocked_accounts:
+            msg = f"[SAFETY] {account_key}: IP重複によりブロック → この垢だけスキップ"
+            if log:
+                log.write(msg)
+            else:
+                print(msg, flush=True)
+            return (0, 0)
 
     acct: dict[str, Any] | None = None
     for a in cfg.get("accounts", []):
@@ -279,6 +280,8 @@ def apply_for_account(
     # レート制限設定
     limits: dict[str, Any] = cfg.get("rate_limits", {})
     ng_words: list[str] = cfg.get("ng_words", [])
+    required_words: dict = cfg.get("required_words", {})
+    skip_url_posts: bool = cfg.get("skip_url_posts", False)
     min_delay: float = limits.get("min_delay_between_actions", 12)
     max_delay: float = limits.get("max_delay_between_actions", 40)
     extra_long_pause_chance: float = limits.get("extra_long_pause_chance", 0.10)
@@ -290,6 +293,19 @@ def apply_for_account(
     _hourly_max: int = limits.get("max_actions_per_hour", 20)
     _hourly_start: float = time.time()
     _hourly_count: int = 0
+
+    # ★ Failure Ceiling設定読み込み（Loop Engineering）
+    fc_cfg: dict = cfg.get("failure_ceiling", {})
+    fc_enabled: bool = fc_cfg.get("enabled", True)
+    fc_max: int = fc_cfg.get("max_consecutive_failures", 3)
+    fc_cooldown: int = fc_cfg.get("cooldown_minutes", 30)
+
+    # ★ 検証設定読み込み
+    verif_cfg: dict = cfg.get("verification", {})
+    verif_account_health: bool = verif_cfg.get("verify_account_health", True)
+
+    # ★ ConsecutiveFailureTracker（このサイクル用）
+    failure_tracker = ConsecutiveFailureTracker(max_consecutive=fc_max, cooldown_minutes=fc_cooldown)
 
     def out(msg: str) -> None:
         if log:
@@ -305,9 +321,7 @@ def apply_for_account(
     work_style: str = profile.get("work_style", "steady")
     typing_speed: int = profile.get("typing_speed", 150)
 
-    out(
-        f"[PROFILE] scroll={scroll_pattern} click_delay={click_delay}ms work={work_style} type={typing_speed}ms"
-    )
+    out(f"[PROFILE] scroll={scroll_pattern} click_delay={click_delay}ms work={work_style} type={typing_speed}ms")
 
     out(f"[Kensho] アカウント: {display} ({account_key})")
 
@@ -339,7 +353,9 @@ def apply_for_account(
     out(f"[Kensho] この垢の未応募: {len(account_applied)}件")
 
     # 優先順にソート
-    account_applied = sort_items(account_applied)
+    account_applied, _removed = sort_items(account_applied)
+    if _removed > 0:
+        out(f"[索] 期限切れ除外: {_removed}件")
 
     if not account_applied:
         out("[Kensho] この垢の未応募なし。スキップ。")
@@ -354,15 +370,11 @@ def apply_for_account(
 
     # ── dry-run: 実際の応募はせず対象表示のみ ──
     if dry_run:
-        out(
-            f"[DRY-RUN] 処理対象 {min(max_n, len(account_applied))}件（実際には応募しません）"
-        )
+        out(f"[DRY-RUN] 処理対象 {min(max_n, len(account_applied))}件（実際には応募しません）")
         for di, ditem in enumerate(account_applied[: min(3, max_n)], 1):
             dx_url: str = ditem.get("x_url", "")
             ddeadline: str = ditem.get("deadline", "") or "未設定"
-            out(
-                f"  [{di}/{min(max_n, len(account_applied))}] 〆{ddeadline} {dx_url[:55]}..."
-            )
+            out(f"  [{di}/{min(max_n, len(account_applied))}] 〆{ddeadline} {dx_url[:55]}...")
         if len(account_applied) > 3:
             out(f"  ...他 {len(account_applied) - 3}件")
         out("")
@@ -406,11 +418,34 @@ def apply_for_account(
         browser = local_browser
         ctx = local_ctx
         page = local_page
-        page.set_default_timeout(30000)
+        page.set_default_timeout(60000)
 
-        if not check_x_login(page, log):
+        login_success = check_x_login(page, log)
+        if not login_success:
             out("[NG] ログイン失敗 - auth_tokenが必要")
             return (0, 1)  # finally will close browser / context
+
+        if verif_account_health and not dry_run:
+            try:
+                health_check = AccountHealthVerifier()
+                # check_x_login が成功している場合はログイン状態チェックをスキップ (UI変更対策)
+                if not login_success:
+                    login_ok = health_check.check_login_status(page)
+                    if not login_ok.success:
+                        out(f"  [HEALTH] ⚠ ログイン状態: {login_ok.detail} → この垢スキップ")
+                        return (0, 0)
+                else:
+                    out("  [HEALTH] check_x_login成功によりログイン状態チェックをスキップ")
+                rate_ok = health_check.check_rate_limit_error(page)
+                if not rate_ok.success:
+                    out(f"  [HEALTH] ⚠ レート制限: {rate_ok.detail}")
+                susp_ok = health_check.check_account_suspended(page)
+                if not susp_ok.success:
+                    out(f"  [HEALTH] ⚠ アカウント異常: {susp_ok.detail} → この垢スキップ")
+                    return (0, 0)
+                out("  [HEALTH] ✅ 健全性OK")
+            except Exception as he:
+                out(f"  [HEALTH] チェック失敗（続行）: {he}")
 
         x_api_ok = False
         try:
@@ -420,14 +455,12 @@ def apply_for_account(
         out(f"[API] X内部API: {'利用可' if x_api_ok else '利用不可 → 従来方式'}")
 
         # ★ コンソールエラー抑制：Playwright操作の痕跡をXの検出スクリプトから隠す
-        page.on(
-            "console", lambda msg: None if msg.type in ("error", "warning") else None
-        )
+        page.on("console", lambda msg: None if msg.type in ("error", "warning") else None)
         page.on("pageerror", lambda err: None)
 
         # ★ セッション実行時間制限
         session_start: float = time.time()
-        SESSION_TIMEOUT: int = 480  # 8分で強制打ち切り
+        SESSION_TIMEOUT: int = 900  # 15分で強制打ち切り
 
         success: int = 0
         errors: int = 0
@@ -436,9 +469,7 @@ def apply_for_account(
         while success < max_n and idx < len(account_applied):
             # ★ セッション時間制限チェック
             if time.time() - session_start >= SESSION_TIMEOUT:
-                out(
-                    f"  [LIMIT] セッション時間制限（{SESSION_TIMEOUT}秒）→ 打ち切り（{success}件処理済み）"
-                )
+                out(f"  [LIMIT] セッション時間制限（{SESSION_TIMEOUT}秒）→ 打ち切り（{success}件処理済み）")
                 break
 
             # ★ RSSメモリ監視（3件ごと）
@@ -460,8 +491,14 @@ def apply_for_account(
                 _hourly_start = time.time()
                 _hourly_count = 0
             elif _hourly_count >= _hourly_max:
+                out(f"[LIMIT] {account_key}: 時間あたり上限（{_hourly_max}件/時）到達 → 残りスキップ")
+                break
+
+            # ★ Failure Ceiling: 連続失敗上限に達したらスキップ
+            if fc_enabled and failure_tracker.is_ceiling_hit(account_key):
                 out(
-                    f"[LIMIT] {account_key}: 時間あたり上限（{_hourly_max}件/時）到達 → 残りスキップ"
+                    f"  [CEILING] {account_key}: 連続{failure_tracker.consecutive_count(account_key)}回失敗 → "
+                    f"このサイクル打ち切り"
                 )
                 break
 
@@ -477,17 +514,11 @@ def apply_for_account(
             clean_url: str = x_url.split("#")[0]
 
             if "/status/" not in clean_url.lower():
-                out(
-                    f"  [{global_idx}/{max_n}] [SKIP] ツイートURLではない: {clean_url[:55]}..."
-                )
+                out(f"  [{global_idx}/{max_n}] [SKIP] ツイートURLではない: {clean_url[:55]}...")
                 continue
 
             deadline_info: str = item.get("deadline", "") or "未設定"
-            wc_info: str = (
-                str(item.get("winner_count", ""))
-                if item.get("winner_count", 0) > 0
-                else "?"
-            )
+            wc_info: str = str(item.get("winner_count", "")) if item.get("winner_count", 0) > 0 else "?"
             elapsed_global: float = time.time() - t0
 
             try:
@@ -496,84 +527,169 @@ def apply_for_account(
                     f"〆{deadline_info} {wc_info}名 {clean_url[:50]}..."
                 )
 
-                # ★ 同一ツイート複数アカウント連続アクション防止
-                # 他アカウントが6時間以内に処理済みなら、自垢は4-8時間後に再試行
-                applied_dict: dict[str, Any] = item.get("applied", {})
-                now_dt: dt.datetime = dt.datetime.now()
-                window_start: dt.datetime = now_dt - dt.timedelta(
-                    hours=_DEFER_WINDOW_HOURS
-                )
-                recent_other: str | None = None
-                for other_key, other_val in applied_dict.items():
-                    if other_key == account_key:
-                        continue
-                    if other_val is None:
-                        continue
-                    if _is_deferred(other_val):
-                        continue
-                    if isinstance(other_val, str):
-                        try:
-                            other_time = dt.datetime.fromisoformat(other_val)
-                            if other_time >= window_start:
-                                recent_other = other_key
-                                break
-                        except Exception:
-                            continue
-                if recent_other:
-                    defer_hours: float = random.uniform(
-                        _DEFER_HOURS_MIN, _DEFER_HOURS_MAX
-                    )
-                    defer_until: dt.datetime = now_dt + dt.timedelta(hours=defer_hours)
-                    item.setdefault("applied", {})[account_key] = (
-                        f"{_DEFER_PREFIX}{defer_until.isoformat()}"
-                    )
-                    save_collected_safe(data, account_key, log)
-                    out(
-                        f"  [DEFER] 他垢({recent_other})が{_DEFER_WINDOW_HOURS}時間以内に処理済み → "
-                        f"{defer_hours:.1f}時間後({defer_until.strftime('%H:%M')})に再試行"
-                    )
-                    continue
-
                 # ★ URL→tweet_id/screen_name抽出
                 tweet_id, screen_name = extract_tweet_id_and_screen_name(clean_url)
                 if not tweet_id:
-                    out(
-                        f"  [{global_idx}/{max_n}] [SKIP] URL解析失敗: {clean_url[:50]}"
-                    )
+                    out(f"  [{global_idx}/{max_n}] [SKIP] URL解析失敗: {clean_url[:50]}")
                     continue
 
-                if not x_api_ok:
-                    # ★ フォールバック: 従来のpage.goto方式
-                    goto_retries = 1
-                    goto_ok = False
-                    for _gr in range(goto_retries + 1):
+                # ── 保存済みtweet_textがあれば優先利用（収集時にtwscrapeが取得）──
+                # ただし fixupx の og:description は168文字で打ち切られるため、
+                # 保存テキストが短い場合（200字未満）は X内部APIから全文を取得する
+                stored_text = item.get("tweet_text", "") or ""
+                if stored_text:
+                    body_text = stored_text
+                    _body_from_api = True
+                    _need_goto = False
+                    out(f"  [STORE] ✓ 保存済みテキスト利用（{len(body_text)}文字）")
+
+                    # ★ 保存テキストが短い場合、APIから全文を取得してNGフィルター用に上書き
+                    if x_api_ok and len(stored_text) < 200:
+                        _api_full = api_get_tweet_text(page, tweet_id, log_fn=out) or ""
+                        if _api_full and len(_api_full) > len(stored_text) + 20:
+                            body_text = _api_full
+                            item["tweet_text"] = _api_full  # 書き戻し（state.saveで保存）
+                            out(f"  [API] ⬆ 全文に置換（{len(stored_text)}→{len(body_text)}文字、NGフィルター用）")
+                else:
+                    # ── 本文取得（API優先、失敗時はpage.goto）──
+                    _need_goto = not x_api_ok
+                    _body_from_api = False
+                    body_text = ""
+
+                    if x_api_ok:
+                        out(f"  [API] fetch中（tweet_id={tweet_id}）")
+                        body_text = api_get_tweet_text(page, tweet_id, log_fn=out) or ""
+                        if body_text:
+                            _body_from_api = True
+                            item["tweet_text"] = body_text  # 書き戻し（state.saveで保存）
+                            out(f"  [API] ✓ テキスト取得成功（{len(body_text)}文字）")
+                        else:
+                            out("  [API] テキスト取得失敗 → page.gotoにフォールバック")
+                            _need_goto = True
+
+                # ── fixupx.comからツイート本文を取得（povo 30kbps / AiR-WiFi遅延: goto不可の最終手段）──
+                if not body_text and _need_goto:
+                    _fixupx_accounts = {"kudou", "atushi1840", "TankanNotes", "zin20120731"}
+                    if account_key in _fixupx_accounts:
+                        out("  [FIXUPX] 低速回線: fixupx.comでテキスト取得試行...")
                         try:
-                            _resp = page.goto(
-                                clean_url, timeout=60000, wait_until="domcontentloaded"
+                            _fx_url = clean_url.replace("x.com/", "fixupx.com/").replace("twitter.com/", "fixupx.com/")
+                            _fx_resp = httpx.get(
+                                _fx_url,
+                                headers={
+                                    "User-Agent": (
+                                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                                        "Chrome/125.0.0.0 Safari/537.36"
+                                    )
+                                },
+                                follow_redirects=True,
+                                timeout=15,
                             )
+                            if _fx_resp.status_code == 200 and _fx_resp.text:
+                                _m = re.search(
+                                    r'<meta\s+property="og:description"\s+content="([^"]*)"',
+                                    _fx_resp.text,
+                                )
+                                if _m and _m.group(1).strip():
+                                    body_text = _m.group(1).strip()
+                                    _body_from_api = True
+                                    _need_goto = False
+                                    out(f"  [FIXUPX] ✓ テキスト取得成功（{len(body_text)}文字）")
+                                else:
+                                    out("  [FIXUPX] ✗ og:descriptionなし → gotoスキップ")
+                            else:
+                                out(f"  [FIXUPX] ✗ HTTP {_fx_resp.status_code} → gotoスキップ")
+                        except Exception as _fx_e:
+                            out(f"  [FIXUPX] ✗ {type(_fx_e).__name__}: {_fx_e} → gotoスキップ")
+
+                if _need_goto:
+                    # ★ 低速回線: gotoフォールバック不可（180秒以内にページ読み込み完了しない）
+                    _fixupx_accounts = {"kudou", "atushi1840", "TankanNotes", "zin20120731"}
+                    if account_key in _fixupx_accounts:
+                        out("  [SKIP] 低速回線: goto不可（180秒以内にページ読み込み完了しない）→ 次アイテムへ")
+                        continue
+
+                    # 速度別goto設定: 速い垢(commit+30s) / 遅い垢(domcontentloaded+60s)
+                    _fast_accounts = {"atushi16"}
+                    _slow_accounts = {"kudou", "atushi1840", "TankanNotes", "zin20120731"}
+                    _is_fast = account_key in _fast_accounts
+                    _is_slow = account_key in _slow_accounts
+                    _goto_wait = "commit" if _is_fast else "domcontentloaded"
+                    _goto_timeout = 30000 if _is_fast else 180000
+                    for _gr in range(3 if _is_fast else 1):
+                        try:
+                            # wait_until="commit" → サブリソースストール回避（X Bot検出対策）
+                            _resp = page.goto(clean_url, timeout=_goto_timeout, wait_until=_goto_wait)
                             _status = _resp.status if _resp else "N/A"
                             out(f"  [GOTO] status={_status}")
-                            goto_ok = True
+                            # ★ tweetTextセレクタのレンダリングを待つ（domcontentloaded後にJSで描画される）
+                            _wait_selector_timeout = 8000 if _is_fast else (60000 if _is_slow else 15000)
+                            try:
+                                page.wait_for_selector('[data-testid="tweetText"]', timeout=_wait_selector_timeout)
+                            except Exception:
+                                out("  [GOTO] tweetText selector not rendered yet")
+                                pass
+                            # ★ ツイート本文のみ抽出（data-testid="tweetText"）— body全体だとサイドバー/メニューのテキストが混入
+                            body_text = (
+                                page.evaluate(
+                                    """() => {
+                                        const el = document.querySelector('[data-testid="tweetText"]');
+                                        return el ? el.textContent.trim() : '';
+                                    }"""
+                                )
+                                or ""
+                            )
+                            if not body_text:
+                                # フォールバック: article内のdata-testid付きdivのみ抽出（引用RT・画像alt等の混入防止）
+                                out("  [GOTO] tweetText見つからず→article内div[data-testid]から抽出")
+                                body_text = (
+                                    page.evaluate(
+                                        """() => {
+                                            const article = document.querySelector('article');
+                                            if (!article) return '';
+                                            const divs = article.querySelectorAll('div[data-testid]');
+                                            let texts = [];
+                                            for (const d of divs) {
+                                                const txt = d.textContent.trim();
+                                                if (txt && txt.length > 5) texts.push(txt);
+                                            }
+                                            return texts.join('\\n');
+                                        }"""
+                                    )
+                                    or ""
+                                )
+                                if not body_text:
+                                    out("  [GOTO] 最終フォールバック: article要素全文 (JS polling)")
+                                    _poll_timeout = 60 if _is_slow else 30
+                                    article_text = ""
+                                    for _ in range(_poll_timeout):
+                                        article_text = (
+                                            page.evaluate(
+                                                """() => {
+                                                    const art = document.querySelector('article');
+                                                    if (!art) return '';
+                                                    return art.textContent.trim();
+                                                }"""
+                                            )
+                                            or ""
+                                        )
+                                        if article_text:
+                                            break
+                                        time.sleep(1)
+                                    body_text = article_text
                             break
                         except Exception as _ge:
-                            out(
-                                f"  [NG] Page.goto attempt {_gr + 1} failed: {str(_ge)[:80]}"
-                            )
-                            if _gr < goto_retries:
+                            out(f"  [NG] Page.goto attempt {_gr + 1} failed: {str(_ge)[:80]}")
+                            if _gr < 2:
                                 time.sleep(2)
-                    if not goto_ok:
-                        raise RuntimeError(f"Goto failed for {clean_url[:60]}")
-                else:
-                    out(f"  [API] page.gotoスキップ（tweet_id={tweet_id}）")
+                    if not body_text:
+                        raise RuntimeError(f"Goto+text failed for {clean_url[:60]}")
 
-                # ★ NGワードフィルター（API経由）
+                # ★ NGワードフィルター
                 _skip_ng = False
                 if ng_words:
                     try:
-                        if x_api_ok:
-                            body_text = api_get_tweet_text(page, tweet_id) or ""
-                        else:
-                            body_text = page.text_content("body") or ""
                         for w in ng_words:
                             if w in body_text:
                                 out(f"  [{global_idx}/{max_n}] [SKIP] NGワード: {w}")
@@ -583,6 +699,43 @@ def apply_for_account(
                         pass
                 if _skip_ng:
                     continue
+
+                # ★ 複数アカウントフォローチェック（「@A と @B をフォロー」案件）
+                try:
+                    if _MULTI_ACCOUNT_FOLLOW_PATTERN.search(body_text):
+                        out(f"  [{global_idx}/{max_n}] [SKIP] 複数アカウントフォロー案件")
+                        continue
+                except Exception:
+                    pass
+
+                # ★ URLフィルター（URLを含む投稿はスキップ）
+                if skip_url_posts:
+                    try:
+                        if re.search(r"https?://", body_text):
+                            out(f"  [{global_idx}/{max_n}] [SKIP] URL含む投稿はNG")
+                            continue
+                    except Exception:
+                        pass
+
+                # ★ 必須ワードフィルター
+                # 「フォロー」を含み、かつ「リポスト」「RT」「リプライ」のいずれかを含む
+                if required_words:
+                    try:
+                        require_all = required_words.get("require_all", [])
+                        require_any = required_words.get("require_any", [])
+                        missing_all = [w for w in require_all if w not in body_text]
+                        if missing_all:
+                            out(f"  [{global_idx}/{max_n}] [SKIP] 必須ワード不足（{', '.join(missing_all)}が無い）")
+                            continue
+                        if require_any:
+                            has_any = any(w in body_text for w in require_any)
+                            if not has_any:
+                                out(
+                                    f"  [{global_idx}/{max_n}] [SKIP] 必須ワード不足（{', '.join(require_any)}のいずれかが必要）"
+                                )
+                                continue
+                    except Exception:
+                        pass
 
                 # ★ 賞品価値推定（scorer）
                 # ツイート本文から金額・アイテムを抽出し優先度を計算
@@ -597,23 +750,17 @@ def apply_for_account(
 
                 # ★ 最小RT閾値フィルタ
                 # ツイートページからエンゲージメント数を抽出し低エンゲージメントをスキップ
-                rt_threshold: int = cfg.get("collection_filter", {}).get(
-                    "min_retweet_threshold", 0
-                )
+                rt_threshold: int = cfg.get("collection_filter", {}).get("min_retweet_threshold", 0)
                 if rt_threshold > 0 and x_api_ok:
                     try:
                         # X APIからツイート詳細を取得してRT数を確認
                         _tweet_detail = api_get_tweet_text(page, tweet_id)  # HTTP get
                         # 簡易RT数抽出: bodyから"リポスト"や"件のリポスト"をスキャン
-                        _rt_match = __import__("re").search(
-                            r"([\d,]+)\s*件のリポスト", str(_tweet_detail)
-                        )
+                        _rt_match = __import__("re").search(r"([\d,]+)\s*件のリポスト", str(_tweet_detail))
                         if _rt_match:
                             _rt_count = int(_rt_match.group(1).replace(",", ""))
                             if _rt_count < rt_threshold:
-                                out(
-                                    f"  [{global_idx}/{max_n}] [SKIP] RT不足: {_rt_count} < {rt_threshold}"
-                                )
+                                out(f"  [{global_idx}/{max_n}] [SKIP] RT不足: {_rt_count} < {rt_threshold}")
                                 continue
                     except Exception:
                         pass
@@ -621,9 +768,7 @@ def apply_for_account(
                 # ── 読んだふり時間（ツイート閲覧）──
                 base_read = random.uniform(3, 8)
                 media_delay = 0.0
-                if page.query_selector(
-                    '[data-testid="tweetPhoto"]'
-                ) or page.query_selector("video"):
+                if page.query_selector('[data-testid="tweetPhoto"]') or page.query_selector("video"):
                     media_delay = random.uniform(2, 5)
                 work_coef = {
                     "steady": 1.2,
@@ -708,9 +853,33 @@ def apply_for_account(
                         )
                 time.sleep(random.uniform(0.5, 2))
 
-                skip_follow: bool = False  # BOT対策としては他の乱数要素で十分
-                skip_rt: bool = False
-                skip_like: bool = False
+                # ★ アクションスキップ確率（BOT検出回避：全アイテムに全アクションは不自然）
+                # 各アクションの実行確率。フォローが最も危険、いいねは安全。
+                _skip_chance_follow = 0.15  # 15% skip → 85%実行
+                _skip_chance_rt = 0.20  # 20% skip → 80%実行
+                # いいねは条件付き（「いいね」本文要件）＋さらに確率スキップ
+                _skip_chance_like = 0.30  # 条件満たしても30%スキップ
+
+                skip_follow: bool = random.random() < _skip_chance_follow
+                skip_rt: bool = random.random() < _skip_chance_rt
+                skip_like: bool = False  # 条件付きいいねは後で個別処理
+
+                # ★ 条件付きいいね: 本文に「いいね」要件がない時はスキップ、あっても確率スキップ
+                _like_in_text = "いいね" in body_text
+                if not _like_in_text:
+                    skip_like = True
+                    out("  [SKIP] いいね: 本文に要件なし → スキップ")
+                elif random.random() < _skip_chance_like:
+                    skip_like = True
+                    out("  [SKIP] いいね: 要件はあるが確率スキップ（自然分散）")
+
+                # ★ 稀に全アクションスキップ（人間らしい「読んだけど応募しない」動作）
+                if not skip_follow and not skip_rt and not skip_like:
+                    if random.random() < 0.05:  # 5%の確率で全部スキップ
+                        skip_follow = True
+                        skip_rt = True
+                        skip_like = True
+                        out("  [SKIP] 全アクション: 見て終わり（人間らしさ）")
 
                 # ── アクション順をランダムシャッフル（BOT対策） ──
 
@@ -719,14 +888,10 @@ def apply_for_account(
                 if not skip_follow:
                     if x_api_ok and screen_name:
                         action_queue.append(
-                            lambda sn=screen_name: api_follow_by_screen_name(
-                                page, sn, account_key, out
-                            )
+                            lambda sn=screen_name: api_follow_by_screen_name(page, sn, account_key, out)
                         )
                     else:
-                        action_queue.append(
-                            lambda: do_follow(page, click_delay, out, account_key)
-                        )
+                        action_queue.append(lambda: do_follow(page, click_delay, out, account_key))
                 if not skip_rt:
                     if x_api_ok and tweet_id:
 
@@ -752,10 +917,7 @@ def apply_for_account(
                                         out(f"  [GOTO fallback] status={_status}")
                                         break
                                     except Exception as _ge:
-                                        out(
-                                            f"  [NG] Page.goto fallback attempt "
-                                            f"{_gr + 1} failed: {str(_ge)[:60]}"
-                                        )
+                                        out(f"  [NG] Page.goto fallback attempt {_gr + 1} failed: {str(_ge)[:60]}")
                                         if _gr < 1:
                                             time.sleep(2)
                                 # ★ レンダリング待機: XのJS実行に時間がかかる ★
@@ -768,24 +930,18 @@ def apply_for_account(
                                     time.sleep(1)
                                 # 第二フェーズ: 未発見ならページリロードして再試行
                                 if not _found_rt:
-                                    out(
-                                        "  [i] RTボタン未発見、ページリロードして再試行"
-                                    )
+                                    out("  [i] RTボタン未発見、ページリロードして再試行")
                                     try:
                                         resp2 = page.goto(
                                             page.url,
                                             timeout=45000,
                                             wait_until="domcontentloaded",
                                         )
-                                        out(
-                                            f"  [RELOAD] status={resp2.status if resp2 else 'N/A'}"
-                                        )
+                                        out(f"  [RELOAD] status={resp2.status if resp2 else 'N/A'}")
                                     except Exception:
                                         out("  [i] リロード失敗、そのまま続行")
                                     for _w in range(10):
-                                        if page.query_selector(
-                                            '[data-testid="retweet"]'
-                                        ):
+                                        if page.query_selector('[data-testid="retweet"]'):
                                             break
                                         time.sleep(1)
                                 do_rt(page, click_delay, out, account_key, cfg)
@@ -793,23 +949,89 @@ def apply_for_account(
                         action_queue.append(fallback_rt)
                     else:
                         action_queue.append(
-                            lambda p=page, cd=click_delay, o=out, ak=account_key, c=cfg: (
-                                do_rt(p, cd, o, ak, c)
-                            )
+                            lambda p=page, cd=click_delay, o=out, ak=account_key, c=cfg: do_rt(p, cd, o, ak, c)
                         )
+                # ★ いいねアクション（条件付き）を別途保持
+                like_action = None
                 if not skip_like:
                     if x_api_ok and tweet_id:
-                        action_queue.append(
-                            lambda tid=tweet_id: api_like(page, tid, account_key, out)
-                        )
+                        like_action = lambda tid=tweet_id: api_like(page, tid, account_key, out)
                     else:
-                        action_queue.append(
-                            lambda: do_like(page, click_delay, out, account_key, cfg)
-                        )
-                random.shuffle(action_queue)
+                        like_action = lambda: do_like(page, click_delay, out, account_key, cfg)
+
+                # ★ アクション順: フォローは必ずRTより前。いいねだけランダム位置
+                #   パターン（重み付き＋垢別バイアス＋毎回ジッター＝自然な分布）:
+                #     フォロー→いいね→RT (45%基準): 読む→フォロー→いいね→RTの自然な流れ
+                #     いいね→フォロー→RT (25%基準): 気軽にいいね先行
+                #     フォロー→RT→いいね (30%基準): 応募優先、いいねは後回し
+                _pat_weights = [25, 45, 30]  # [like先, follow→like→RT, follow→RT→like]
+                # 垢別バイアス（人間は各自のクセがある）
+                _account_bias = {
+                    "atushi16": (+5, -5, 0),  # しっかり派: follow→like多め
+                    "kudou": (-10, +5, +5),  # 気まま: いいね先行多め
+                    "atushi1840": (0, +5, -5),  # バランス型
+                    "TankanNotes": (0, -10, +10),  # 効率重視: RT先行多め
+                    "zin20120731": (+5, 0, -5),  # 安定志向
+                }.get(account_key, (0, 0, 0))
+                _pat_weights = [max(1, w + b + random.randint(-8, 8)) for w, b in zip(_pat_weights, _account_bias)]
+                if like_action is not None:
+                    insert_pos = random.choices([0, 1, 2], weights=_pat_weights, k=1)[0]
+                    action_queue.insert(insert_pos, like_action)
+
                 for action_fn in action_queue:
                     action_fn()
                     time.sleep(random.uniform(1.0, 3.5))
+
+                # ── Post-action browser verification ──
+                # API calls may return false successes (200 with errors, 403 treated as "already done")
+                # Navigate to tweet and verify actual button states
+                time.sleep(random.uniform(1.0, 2.0))
+                total_v = 0
+                fail_v = 0
+                try:
+                    page.goto(clean_url, timeout=30000, wait_until="domcontentloaded")
+                    time.sleep(random.uniform(2.0, 3.5))
+                    from kensho.application.verifier import ActionVerifier
+
+                    if not skip_rt and tweet_id:
+                        rt_result = ActionVerifier.verify_retweet(page, tweet_id, fallback_url=clean_url)
+                        total_v += 1
+                        if not rt_result.success:
+                            fail_v += 1
+                            out(f"  [VERIFY] RT: x {rt_result.detail}")
+                        else:
+                            out("  [VERIFY] RT: ok")
+                    if not skip_like and tweet_id:
+                        like_result = ActionVerifier.verify_like(page, tweet_id, fallback_url=clean_url)
+                        total_v += 1
+                        if not like_result.success:
+                            fail_v += 1
+                            out(f"  [VERIFY] Like: x {like_result.detail}")
+                        else:
+                            out("  [VERIFY] Like: ok")
+                    if not skip_follow and screen_name:
+                        follow_result = ActionVerifier.verify_follow(page, screen_name)
+                        total_v += 1
+                        if not follow_result.success:
+                            fail_v += 1
+                            out(f"  [VERIFY] Follow: x {follow_result.detail}")
+                        else:
+                            out("  [VERIFY] Follow: ok")
+                except Exception as ve:
+                    out(f"  [VERIFY] エラー: {ve}")
+                    if fc_enabled:
+                        failure_tracker.record_failure(account_key)
+
+                # Verify全件失敗チェック
+                if total_v > 0 and fail_v == total_v:
+                    out(f"  [VERIFY] 全件失敗 ({fail_v}/{total_v}) → failure_tracker記録")
+                    if fc_enabled:
+                        failure_tracker.record_failure(account_key)
+                        fc_count = failure_tracker.consecutive_count(account_key)
+                        if fc_count >= fc_max:
+                            out(f"  [CEILING] 連続{fc_count}回失敗 → 上限到達（残りスキップ）")
+                            save_collected_safe(data, account_key, log)
+                            break
 
                 # リプライ: 応募はフォロー/いいね/RTのみで行うため無効化
                 out("  [i] リプライ: 無効化（応募はフォロー/いいね/RTのみ）")
@@ -828,6 +1050,9 @@ def apply_for_account(
                     time.sleep(distract_duration)
 
                 item["applied"][account_key] = datetime.now().isoformat()
+                # ★ 連続失敗リセット（成功）
+                if fc_enabled:
+                    failure_tracker.record_success(account_key)
                 success += 1
                 _hourly_count += 1
 
@@ -878,9 +1103,25 @@ def apply_for_account(
                     cur_url = "?"
                 out(f"  [NG] {err_msg} (url={cur_url})")
                 errors += 1
+                # ★ Failure Ceiling: 連続失敗を記録
+                if fc_enabled:
+                    failure_tracker.record_failure(account_key)
+                    fc_count = failure_tracker.consecutive_count(account_key)
+                    if fc_count >= fc_max:
+                        out(f"  [CEILING] 連続{fc_count}回失敗 → 上限到達（残りスキップ）")
+                        save_collected_safe(data, account_key, log)
+                        break
                 time.sleep(random.uniform(10, 20))
 
         save_collected_safe(data, account_key, log)
+
+        # ★ Failure Ceilingサマリー（連続失敗があった場合のみ）
+        if fc_enabled:
+            fc_count = failure_tracker.consecutive_count(account_key)
+            if fc_count > 0:
+                out(f"  [CEILING] このサイクルの連続失敗: {fc_count}回")
+                if failure_tracker.is_ceiling_hit(account_key):
+                    out(f"  [CEILING] → 上限到達のため次回{fc_cooldown}分後に再開予定")
 
         # ★ セッション状態保存（クッキー/ローカルストレージ更新）
         _save_session_cookies(ctx, account_key, session_path)

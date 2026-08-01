@@ -20,4 +20,4 @@ echo "Kensho Orchestrator"
 echo "═══════════════════════════════════════════"
 echo ""
 
-exec python orchestrator.py "$@"
+exec python kensho/orchestrator.py "$@"

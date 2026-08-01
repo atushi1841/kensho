@@ -1,4 +1,5 @@
 """invisible_playwright モジュールの単体テスト（upstream feder-cr版）"""
+
 from __future__ import annotations
 
 from invisible_playwright import InvisiblePlaywright
@@ -77,4 +78,5 @@ class TestUpstreamFeatures:
     def test_ensure_binary_exists(self) -> None:
         """ensure_binary 関数がインポート可能"""
         from invisible_playwright.download import ensure_binary
+
         assert callable(ensure_binary)

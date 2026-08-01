@@ -1,16 +1,18 @@
 """
 Tests for utils/backup.py — JSON保存・復旧・整合性チェック
 """
+
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 # ── テスト用の恒久的なプロジェクトルート設定 ──
 import sys
+from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from utils.backup import safe_save_json, verify_collected_integrity
+from kensho.utils.backup import safe_save_json, verify_collected_integrity
 
 
 class TestSafeSaveJson:
@@ -71,14 +73,10 @@ class TestVerifyCollectedIntegrity:
         col_f = tmp_path / "collected.json"
         proc_f = tmp_path / "processed.json"
         col_f.write_text(
-            json.dumps({"collected": [{"detail_url": "/a"}, {"detail_url": "/b"}]},
-                       ensure_ascii=False),
-            encoding="utf-8"
+            json.dumps({"collected": [{"detail_url": "/a"}, {"detail_url": "/b"}]}, ensure_ascii=False),
+            encoding="utf-8",
         )
-        proc_f.write_text(
-            json.dumps({"ids": ["/a", "/b", "/c"]}, ensure_ascii=False),
-            encoding="utf-8"
-        )
+        proc_f.write_text(json.dumps({"ids": ["/a", "/b", "/c"]}, ensure_ascii=False), encoding="utf-8")
         result = verify_collected_integrity(col_f, proc_f)
         assert result["ok"] is True
         assert result["collected_count"] == 2
@@ -88,10 +86,7 @@ class TestVerifyCollectedIntegrity:
         """collected.jsonが存在しない"""
         col_f = tmp_path / "collected_missing.json"
         proc_f = tmp_path / "processed.json"
-        proc_f.write_text(
-            json.dumps({"ids": ["/a", "/b"]}, ensure_ascii=False),
-            encoding="utf-8"
-        )
+        proc_f.write_text(json.dumps({"ids": ["/a", "/b"]}, ensure_ascii=False), encoding="utf-8")
         result = verify_collected_integrity(col_f, proc_f)
         assert result["ok"] is False
         assert "空" in result.get("message", "")
@@ -100,10 +95,7 @@ class TestVerifyCollectedIntegrity:
         """processed.jsonが存在しない（初期状態）"""
         col_f = tmp_path / "collected.json"
         proc_f = tmp_path / "processed_missing.json"
-        col_f.write_text(
-            json.dumps({"collected": []}, ensure_ascii=False),
-            encoding="utf-8"
-        )
+        col_f.write_text(json.dumps({"collected": []}, ensure_ascii=False), encoding="utf-8")
         result = verify_collected_integrity(col_f, proc_f)
         assert result["ok"] is True
         assert "初期状態" in result.get("message", "")

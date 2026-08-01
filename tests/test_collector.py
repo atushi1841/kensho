@@ -2,15 +2,16 @@
 Tests for scraping/collector.py — extract_deadline_and_winners v3.3,
 is_x_url, _is_expired
 """
+
 from __future__ import annotations
 
-from pathlib import Path
-from datetime import datetime, timedelta
-
 import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from scraping.collector import _is_expired, extract_deadline_and_winners, is_x_url
+from kensho.scraping.collector import _is_expired, extract_deadline_and_winners, is_x_url
 
 
 class TestIsExpired:
@@ -72,14 +73,14 @@ class TestExtractDeadline:
 
     def test_deadline_from_title(self) -> None:
         """titleタグ: 【〆切07月01日】"""
-        html = '<title>【毎日当たる】商品名を10000名様にプレゼント【〆切07月01日】提供者名</title>'
+        html = "<title>【毎日当たる】商品名を10000名様にプレゼント【〆切07月01日】提供者名</title>"
         deadline, winners = extract_deadline_and_winners(html)
         assert deadline == "2026-07-01"
         assert winners == 10000
 
     def test_deadline_bracket_title(self) -> None:
         """titleタグ: [〆切07月15日]"""
-        html = '<title>[〆切07月15日] キャンペーン名</title>'
+        html = "<title>[〆切07月15日] キャンペーン名</title>"
         deadline, winners = extract_deadline_and_winners(html)
         assert deadline == "2026-07-15"
 
@@ -98,13 +99,13 @@ class TestExtractDeadline:
 
     def test_deadline_from_text(self) -> None:
         """締切:6月30日"""
-        html = '<title>ダミー</title>  <p> 締切:6月30日 </p>'
+        html = "<title>ダミー</title>  <p> 締切:6月30日 </p>"
         deadline, winners = extract_deadline_and_winners(html)
         assert deadline == "2026-06-30"
 
     def test_deadline_with_time(self) -> None:
         """締切:6月24日 20:00"""
-        html = '<title>ダミー</title>  <p> 締切:6月24日 20:00 </p>'
+        html = "<title>ダミー</title>  <p> 締切:6月24日 20:00 </p>"
         deadline, winners = extract_deadline_and_winners(html)
         assert deadline == "2026-06-24"
 
@@ -118,13 +119,13 @@ class TestExtractDeadline:
 
     def test_winners_from_title(self) -> None:
         """titleから: 10000名様にプレゼント"""
-        html = '<title>10000名様にプレゼント【〆切07月01日】</title>'
+        html = "<title>10000名様にプレゼント【〆切07月01日】</title>"
         deadline, winners = extract_deadline_and_winners(html)
         assert winners == 10000
 
     def test_winners_commas_in_title(self) -> None:
         """titleからカンマ付き: 10,000,000名様"""
-        html = '<title>10,000,000名様に当たる【〆切06月27日】</title>'
+        html = "<title>10,000,000名様に当たる【〆切06月27日】</title>"
         deadline, winners = extract_deadline_and_winners(html)
         assert winners == 10000000
 
@@ -138,7 +139,7 @@ class TestExtractDeadline:
 
     def test_no_winners(self) -> None:
         """当選人数不明"""
-        html = '<title>ダミータイトル【〆切08月01日】</title>当選人数不明'
+        html = "<title>ダミータイトル【〆切08月01日】</title>当選人数不明"
         deadline, winners = extract_deadline_and_winners(html)
         assert deadline == "2026-08-01"
 
@@ -147,11 +148,11 @@ class TestExtractDeadline:
     def test_ignores_sidebar(self) -> None:
         """サイドバーの「応募締切日：年/月/日」を無視してtitleを優先"""
         html = (
-            '<title>【毎日当たる】限定品を500名様にプレゼント【〆切07月15日】</title>'
+            "<title>【毎日当たる】限定品を500名様にプレゼント【〆切07月15日】</title>"
             '<div class="sidebar">'
-            '<li>商品A <p>当選人数：170,000名様　締切：6月29日</p></li>'
-            '<li>商品B <p>当選人数：50,000名様　締切：6月30日</p></li>'
-            '</div>'
+            "<li>商品A <p>当選人数：170,000名様　締切：6月29日</p></li>"
+            "<li>商品B <p>当選人数：50,000名様　締切：6月30日</p></li>"
+            "</div>"
         )
         deadline, winners = extract_deadline_and_winners(html)
         assert deadline == "2026-07-15"
@@ -163,27 +164,23 @@ class TestKnpwDeadlineExtraction:
 
     # 実際のknshow詳細ページから取得したHTML断片
     KNSHOW_HTML_TITLE = (
-        '<title>【毎日・その場で当たる】'
-        'クーリッシュバニラ1個 無料引換券を10000名様にプレゼント'
-        '【〆切07月01日】ロッテ クーリッシュ</title>'
+        "<title>【毎日・その場で当たる】"
+        "クーリッシュバニラ1個 無料引換券を10000名様にプレゼント"
+        "【〆切07月01日】ロッテ クーリッシュ</title>"
     )
 
-    KNSHOW_HTML_TOUSEN = (
-        '<strong class="tousenST"> 10,000</strong>名様'
-    )
+    KNSHOW_HTML_TOUSEN = '<strong class="tousenST"> 10,000</strong>名様'
 
     KNSHOW_HTML_EXPIRY = (
-        '<p>応募締切日：<strong>'
+        "<p>応募締切日：<strong>"
         '<span class="expiredatetime-display" '
         "data-expiredatetime='2026-07-01'>2026-07-01</span>"
-        '</strong></p>'
+        "</strong></p>"
     )
 
     def test_title_deadline_extraction(self) -> None:
         """実HTMLのtitleタグから締切を正しく抽出"""
-        deadline, winners = extract_deadline_and_winners(
-            self.KNSHOW_HTML_TITLE
-        )
+        deadline, winners = extract_deadline_and_winners(self.KNSHOW_HTML_TITLE)
         assert deadline == "2026-07-01"
         assert winners == 10000
 
@@ -207,9 +204,9 @@ class TestKnpwDeadlineExtraction:
             + self.KNSHOW_HTML_EXPIRY
             + self.KNSHOW_HTML_TOUSEN
             + '<div class="sidebar">'
-            + '<p>当選人数：170,000名様　締切：6月29日</p>'
-            + '<p>当選人数：50,000名様　締切：6月30日</p>'
-            + '</div>'
+            + "<p>当選人数：170,000名様　締切：6月29日</p>"
+            + "<p>当選人数：50,000名様　締切：6月30日</p>"
+            + "</div>"
         )
         deadline, winners = extract_deadline_and_winners(html)
         assert deadline == "2026-07-01", f"Expected 2026-07-01, got {deadline}"

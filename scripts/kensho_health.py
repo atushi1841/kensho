@@ -3,38 +3,40 @@
 Kensho Health Check — システム健全性をワンコマンドで確認
 使い方: python scripts/kensho_health.py
 """
+
 from __future__ import annotations
 
-import sys
 import json
-import time
 import subprocess
-from pathlib import Path
+import sys
+import time
 from datetime import datetime
+from pathlib import Path
 
 BASE = Path(__file__).parent.parent
-DATA = BASE / 'data'
-LOGS = BASE / 'logs'
-COLLECTED = DATA / 'collected.json'
-DAILY_COUNTS = DATA / 'daily_counts.json'
-PROCESSED = DATA / 'processed.json'
+DATA = BASE / "data"
+LOGS = BASE / "logs"
+COLLECTED = DATA / "collected.json"
+DAILY_COUNTS = DATA / "daily_counts.json"
+PROCESSED = DATA / "processed.json"
 
-OK = '✅'
-WARN = '⚠️'
-ERR = '❌'
-INFO = 'ℹ️'
+OK = "✅"
+WARN = "⚠️"
+ERR = "❌"
+INFO = "ℹ️"
 
 
 def _check_daemon() -> tuple[str, str]:
     """daemon.py が実行中か確認"""
     try:
         r = subprocess.run(
-            ['tasklist', '/FI', 'IMAGENAME eq python.exe', '/FO', 'CSV', '/NH'],
-            capture_output=True, timeout=10
+            ["tasklist", "/FI", "IMAGENAME eq python.exe", "/FO", "CSV", "/NH"],
+            capture_output=True,
+            timeout=10,
         )
-        out = r.stdout.decode('cp932', errors='replace')
+        out = r.stdout.decode("cp932", errors="replace")
         python_pids = []
-        for line in out.strip().split('\n'):
+        for line in out.strip().split("\n"):
             parts = line.strip('"').split('","')
             if len(parts) >= 2:
                 try:
@@ -56,7 +58,7 @@ def _check_daemon() -> tuple[str, str]:
 
 def _check_sessions() -> str:
     """セッションファイルの有効性チェック"""
-    session_files = list(DATA.glob('x_session*.json'))
+    session_files = list(DATA.glob("x_session*.json"))
     if not session_files:
         return f"{ERR} セッションファイルなし"
 
@@ -67,17 +69,19 @@ def _check_sessions() -> str:
         try:
             with open(sf) as f:
                 data = json.load(f)
-            cookies = data.get('cookies', [])
-            has_auth = any(c.get('name') == 'auth_token' for c in cookies)
-            has_ct0 = any(c.get('name') == 'ct0' for c in cookies)
+            cookies = data.get("cookies", [])
+            has_auth = any(c.get("name") == "auth_token" for c in cookies)
+            has_ct0 = any(c.get("name") == "ct0" for c in cookies)
             if has_auth and has_ct0:
                 tag = OK
             else:
                 tag = WARN
-            lines.append(f"  {tag} {sf.name}: {days:.0f}日前 (auth={'✓' if has_auth else '✗'} ct0={'✓' if has_ct0 else '✗'})")
+            lines.append(
+                f"  {tag} {sf.name}: {days:.0f}日前 (auth={'✓' if has_auth else '✗'} ct0={'✓' if has_ct0 else '✗'})"
+            )
         except (json.JSONDecodeError, KeyError):
             lines.append(f"  {ERR} {sf.name}: 破損または形式不正")
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 def _check_collected() -> str:
@@ -91,26 +95,26 @@ def _check_collected() -> str:
     except (json.JSONDecodeError, OSError) as e:
         return f"{ERR} collected.json 読み込み失敗: {e}"
 
-    items = data.get('collected', [])
+    items = data.get("collected", [])
     if not items:
         return f"{WARN} collected.json が空です（収集を実行してください）"
 
     total = len(items)
-    timestamp = data.get('timestamp', '不明')
-    elapsed = data.get('elapsed_seconds', 0)
+    timestamp = data.get("timestamp", "不明")
+    elapsed = data.get("elapsed_seconds", 0)
 
     # 応募状態の集計
     all_applied = 0
     account_stats: dict[str, int] = {}
     for item in items:
-        applied = item.get('applied', {})
+        applied = item.get("applied", {})
         for acct, val in applied.items():
             if val is not None:
                 all_applied += 1
                 account_stats[acct] = account_stats.get(acct, 0) + 1
 
-    has_deadline = sum(1 for i in items if i.get('deadline'))
-    expired = sum(1 for i in items if i.get('days_remaining') == '期限切れ')
+    has_deadline = sum(1 for i in items if i.get("deadline"))
+    expired = sum(1 for i in items if i.get("days_remaining") == "期限切れ")
 
     total_possible = total * len(account_stats) if total > 0 and account_stats else 1
     lines = [
@@ -123,7 +127,7 @@ def _check_collected() -> str:
     if account_stats:
         acct_line = "  " + " / ".join(f"{k}: {v}件" for k, v in sorted(account_stats.items()))
         lines.append(acct_line)
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 def _check_daily_counts() -> str:
@@ -137,9 +141,9 @@ def _check_daily_counts() -> str:
     except (json.JSONDecodeError, OSError):
         return f"{ERR} daily_counts.json 読み込み失敗"
 
-    date = data.get('date', '?')
-    counts = data.get('counts', {})
-    today = datetime.now().strftime('%Y-%m-%d')
+    date = data.get("date", "?")
+    counts = data.get("counts", {})
+    today = datetime.now().strftime("%Y-%m-%d")
 
     if date != today:
         return f"{INFO} 最終記録: {date}（本日未アクション）"
@@ -151,13 +155,13 @@ def _check_daily_counts() -> str:
             lines.append(f"    {acct}: {' / '.join(parts)}")
         else:
             lines.append(f"    {acct}: アクションなし")
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 def _check_disk() -> str:
     """ディスク使用量チェック"""
-    log_size = sum(f.stat().st_size for f in LOGS.rglob('*') if f.is_file()) if LOGS.exists() else 0
-    data_size = sum(f.stat().st_size for f in DATA.rglob('*') if f.is_file()) if DATA.exists() else 0
+    log_size = sum(f.stat().st_size for f in LOGS.rglob("*") if f.is_file()) if LOGS.exists() else 0
+    data_size = sum(f.stat().st_size for f in DATA.rglob("*") if f.is_file()) if DATA.exists() else 0
     return (
         f"  {INFO} ログ: {log_size / 1024 / 1024:.1f}MB "
         f"（{len(list(LOGS.rglob('*')))}ファイル）\n"
@@ -168,7 +172,8 @@ def _check_disk() -> str:
 def _check_config_paths() -> str:
     """config.yaml のパスが有効か簡易チェック"""
     import yaml
-    config_path = BASE / 'config.yaml'
+
+    config_path = BASE / "config.yaml"
     if not config_path.exists():
         return f"{ERR} config.yaml が見つかりません"
     try:
@@ -178,27 +183,27 @@ def _check_config_paths() -> str:
         return f"{ERR} config.yaml 読み込み失敗: {e}"
 
     lines: list[str] = []
-    for acct in cfg.get('accounts', []):
-        key = acct.get('key', '?')
-        sess_rel = acct.get('session', '')
+    for acct in cfg.get("accounts", []):
+        key = acct.get("key", "?")
+        sess_rel = acct.get("session", "")
         sess_path = BASE / sess_rel
-        iface = acct.get('network_interface', '未設定')
-        batchn = len(acct.get('schedule', {}).get('batches', []))
+        iface = acct.get("network_interface", "未設定")
+        batchn = len(acct.get("schedule", {}).get("batches", []))
 
         if not sess_path.exists():
             lines.append(f"  {ERR} {key}: セッションファイルなし ({sess_rel})")
         else:
             lines.append(f"  {OK} {key}: {batchn}バッチ, IF={iface}")
 
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 def _check_forcebindip() -> str:
     """ForceBindIP の存在確認"""
-    bindip64 = BASE / 'tools' / 'ForceBindIP' / 'ForceBindIP64.exe'
+    bindip64 = BASE / "tools" / "ForceBindIP" / "ForceBindIP64.exe"
     if bindip64.exists():
         return f"{OK} ForceBindIP64.exe あり"
-    bindip = BASE / 'tools' / 'ForceBindIP' / 'ForceBindIP.exe'
+    bindip = BASE / "tools" / "ForceBindIP" / "ForceBindIP.exe"
     if bindip.exists():
         return f"{OK} ForceBindIP.exe あり（32bit版）"
     return f"{ERR} ForceBindIP が見つかりません（tools/ForceBindIP/ を確認）"
@@ -208,11 +213,12 @@ def _check_playwright() -> str:
     """Playwright Firefox がインストール済みか確認"""
     try:
         r = subprocess.run(
-            [sys.executable, '-m', 'playwright', 'install', '--dry-run', 'firefox'],
-            capture_output=True, timeout=15
+            [sys.executable, "-m", "playwright", "install", "--dry-run", "firefox"],
+            capture_output=True,
+            timeout=15,
         )
-        out = r.stdout.decode('utf-8', errors='replace')
-        if 'already' in out.lower() or not out.strip():
+        out = r.stdout.decode("utf-8", errors="replace")
+        if "already" in out.lower() or not out.strip():
             return f"{OK} Playwright Firefox インストール済み"
         return f"{INFO} Playwright Firefox 要確認（`playwright install firefox`）"
     except Exception as e:
@@ -259,16 +265,16 @@ def main() -> None:
     # 8. 型チェック結果（簡易）
     print("\n🧪 品質")
     # mypy結果があれば
-    mypy_ini = BASE / 'mypy.ini'
-    pytest_dir = BASE / 'tests'
+    mypy_ini = BASE / "mypy.ini"
+    pytest_dir = BASE / "tests"
     print(f"  {OK} mypy.ini: {'あり' if mypy_ini.exists() else 'なし'}")
-    test_count = len(list(pytest_dir.glob('test_*.py'))) if pytest_dir.exists() else 0
+    test_count = len(list(pytest_dir.glob("test_*.py"))) if pytest_dir.exists() else 0
     print(f"  {OK} テスト: {test_count}ファイル")
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("  完了")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
