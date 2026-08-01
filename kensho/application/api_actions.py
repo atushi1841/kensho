@@ -303,9 +303,7 @@ def api_get_tweet_text(page: Any, tweet_id: str, log_fn: Callable[[str], None] |
         try:
             data: dict[str, Any] = json.loads(body)
             text: str = (
-                data.get("extended_tweet", {}).get("full_text", "")
-                or data.get("full_text", "")
-                or data.get("text", "")
+                data.get("extended_tweet", {}).get("full_text", "") or data.get("full_text", "") or data.get("text", "")
             )
             if text:
                 return text
