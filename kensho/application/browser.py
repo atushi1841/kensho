@@ -687,7 +687,7 @@ def create_browser(
     return (pw, browser, ctx, page)
 
 
-def check_x_login(page: Any, log: Any = None) -> bool:
+def check_x_login(page: Any, log: Any = None, screen_name: str | None = None) -> bool:
     """X.comにログイン済みか確認。戻り値: bool"""
     if log:
         log.write("Xにログイン確認中...")
@@ -742,6 +742,30 @@ def check_x_login(page: Any, log: Any = None) -> bool:
         return False
 
     # 他のログイン誘導（i/flow/signup などは URL チェックでカバー済み）
+
+    if screen_name:
+        try:
+            page.goto(f"https://x.com/{screen_name}", timeout=15000, wait_until="domcontentloaded")
+            time.sleep(random.uniform(2, 4))
+            profile_body = page.inner_text("body")
+            profile_lower = profile_body.lower()
+            frozen_keywords = (
+                "凍結",
+                "読み取り専用",
+                "suspended",
+                "read-only",
+                "read only",
+                "restricted",
+                "制限されています",
+            )
+            if any(kw in profile_lower for kw in frozen_keywords):
+                if log:
+                    log.write("[NG] frozen: アカウント凍結（読み取り専用）が検出されました")
+                return False
+        except Exception:
+            if log:
+                log.write("[WARN] プロフィール確認失敗（続行）")
+            pass
 
     if log:
         log.write(f"[OK] ログインOK: {page.url[:50]}")

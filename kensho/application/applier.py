@@ -420,7 +420,7 @@ def apply_for_account(
         page = local_page
         page.set_default_timeout(60000)
 
-        login_success = check_x_login(page, log)
+        login_success = check_x_login(page, log, screen_name=account_key)
         if not login_success:
             out("[NG] ログイン失敗 - auth_tokenが必要")
             return (0, 1)  # finally will close browser / context
@@ -867,8 +867,12 @@ def apply_for_account(
                 # ★ 条件付きいいね: 本文に「いいね」要件がない時はスキップ、あっても確率スキップ
                 _like_in_text = "いいね" in body_text
                 if not _like_in_text:
-                    skip_like = True
-                    out("  [SKIP] いいね: 本文に要件なし → スキップ")
+                    if random.random() < 0.90:
+                        skip_like = True
+                        out("  [SKIP] いいね: 本文に要件なし → スキップ")
+                    else:
+                        skip_like = False
+                        out("  [i] いいね: 要件なしだが自然ないいね実行")
                 elif random.random() < _skip_chance_like:
                     skip_like = True
                     out("  [SKIP] いいね: 要件はあるが確率スキップ（自然分散）")
@@ -978,9 +982,25 @@ def apply_for_account(
                     insert_pos = random.choices([0, 1, 2], weights=_pat_weights, k=1)[0]
                     action_queue.insert(insert_pos, like_action)
 
-                for action_fn in action_queue:
-                    action_fn()
-                    time.sleep(random.uniform(1.0, 3.5))
+                false_count = 0
+                action_count = len(action_queue)
+                for idx, action_fn in enumerate(action_queue):
+                    result = action_fn()
+                    if result is False:
+                        false_count += 1
+                        if false_count >= 3:
+                            out("  [FROZEN] 連続失敗3回 → アカウント凍結の可能性 → バッチ中断")
+                            break
+                    else:
+                        false_count = 0
+                    if idx < action_count - 1 and action_count >= 2:
+                        if random.random() < 0.75:
+                            delay = random.uniform(6, 25)
+                        else:
+                            delay = random.uniform(30, 90)
+                        time.sleep(delay)
+                    else:
+                        time.sleep(random.uniform(1.0, 3.5))
 
                 # ── Post-action browser verification ──
                 # API calls may return false successes (200 with errors, 403 treated as "already done")

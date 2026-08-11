@@ -52,23 +52,23 @@ accounts:
         - { time: "21:30", max: 12 }
         - { time: "22:42", max: 12 }
 
-  - key: atushi1840
-    display: "@atushi1840"
-    session: "data/x_session_b.json"
-    disable_reply: true
-    schedule:
-      collects: false
-      batches:
-        - { time: "08:15", max: 12 }
-        - { time: "09:43", max: 12 }
-        - { time: "10:30", max: 12 }
-        - { time: "12:15", max: 12 }
-        - { time: "13:45", max: 12 }
-        - { time: "15:15", max: 12 }
-        - { time: "17:30", max: 12 }
-        - { time: "19:15", max: 12 }
-        - { time: "21:45", max: 12 }
-        - { time: "22:47", max: 12 }
+#   - key: atushi1840
+#     display: "@atushi1840"
+#     session: "data/x_session_b.json"
+#     disable_reply: true
+#     schedule:
+#       collects: false
+#       batches:
+#         - { time: "08:15", max: 12 }
+#         - { time: "09:43", max: 12 }
+#         - { time: "10:30", max: 12 }
+#         - { time: "12:15", max: 12 }
+#         - { time: "13:45", max: 12 }
+#         - { time: "15:15", max: 12 }
+#         - { time: "17:30", max: 12 }
+#         - { time: "19:15", max: 12 }
+#         - { time: "21:45", max: 12 }
+#         - { time: "22:47", max: 12 }
 
   # - key: zin20120731
   #   display: "@zin20120731"
@@ -104,23 +104,23 @@ accounts:
         - { time: "20:30", max: 12 }
         - { time: "22:15", max: 12 }
 
-  - key: inobase1-4
-    display: "@inobase128508"
-    session: "data/x_session_inobase1-4.json"
-    disable_reply: true
-    schedule:
-      collects: false
-      batches:
-        - { time: "09:00", max: 12 }
-        - { time: "10:07", max: 12 }
-        - { time: "11:00", max: 12 }
-        - { time: "13:00", max: 12 }
-        - { time: "15:00", max: 12 }
-        - { time: "16:27", max: 12 }
-        - { time: "17:00", max: 12 }
-        - { time: "19:00", max: 12 }
-        - { time: "21:00", max: 12 }
-        - { time: "23:00", max: 12 }
+#   - key: inobase1-4
+#     display: "@inobase128508"
+#     session: "data/x_session_inobase1-4.json"
+#     disable_reply: true
+#     schedule:
+#       collects: false
+#       batches:
+#         - { time: "09:00", max: 12 }
+#         - { time: "10:07", max: 12 }
+#         - { time: "11:00", max: 12 }
+#         - { time: "13:00", max: 12 }
+#         - { time: "15:00", max: 12 }
+#         - { time: "16:27", max: 12 }
+#         - { time: "17:00", max: 12 }
+#         - { time: "19:00", max: 12 }
+#         - { time: "21:00", max: 12 }
+#         - { time: "23:00", max: 12 }
 
 # ── 収集設定 ──
 collection:
