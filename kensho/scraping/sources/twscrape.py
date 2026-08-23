@@ -9,6 +9,7 @@ import re
 from typing import Any
 
 from twscrape import API, gather
+from twscrape.queue_client import XClIdGenStore
 
 from .common import has_skip_keyword
 
@@ -59,6 +60,16 @@ def scrape_twscrape(
         found: list[dict[str, Any]] = []
 
         for query in _TWSCRAPE_QUERIES:
+            # ★ XClIdGen生成は失敗しやすい（XのJSビルド変更追従不能）。失敗時は即スキップ。
+            try:
+                _gen = await XClIdGenStore.get("twscrape_bot", fresh=False)
+            except Exception:
+                out(
+                    "[TWSCRAPE] XClientTxId生成不能（X JS変更）→ twscrape無効化。"
+                    "cp.meikan/kenshou.clubで代替収集します。"
+                )
+                break
+
             try:
                 tweets = await gather(api.search(query, limit=10))
                 for tw in tweets:

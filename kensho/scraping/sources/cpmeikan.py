@@ -33,8 +33,14 @@ def scrape_cpmeikan(out: Any, processed_set: set[str], account_keys: list[str]) 
                 out(f"  [CPMK] ページ{page_num}: HTTP {code} - 終了")
                 break
 
-            # X URLを直接抽出
-            x_urls: list[str] = re.findall(r"https?://(?:x|twitter)\.com/[a-zA-Z0-9_]+/status/\d+", html)
+            # X URLを直接抽出（/i/web/status/ 形式にも対応。2026-08-20サイト形式変更で /i/web/ のみに）
+            x_urls_raw: list[str] = re.findall(r"https?://(?:x|twitter)\.com/[a-zA-Z0-9_]+/status/\d+", html)
+            _iweb: list[str] = re.findall(
+                r"(?:data-tweet-url=\"|href=\")(https?://(?:x|twitter)\.com/i/web/status/\d+)", html
+            )
+            x_urls_raw += _iweb
+            # 一意化（順序維持）
+            x_urls = list(dict.fromkeys(x_urls_raw))
             if not x_urls:
                 out(f"  [CPMK] ページ{page_num}: Xリンクなし - 終了")
                 break

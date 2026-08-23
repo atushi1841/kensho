@@ -65,6 +65,12 @@ select = [
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["N"]  # Allow non-PEP8 naming in tests
 "tests/measure_comprehensive.py" = ["E501"]  # Long measurement keys
+# ── 既存負債（意図的スタイルとして許容、2026-08-23）──
+# E402: guard_stdio()呼び出し後に必要な import、E731: lambda代入（組み込み委譲の既存パターン）
+# N806: 大文字の関数内定数（DATA_DIR等）、UP031: %フォーマットの既存記述
+"kensho/application/applier.py" = ["E402", "N806", "E731"]
+"kensho/application/api_actions.py" = ["UP031"]
+"kensho/scraping/collector.py" = ["N806"]
 
 [tool.ruff.format]
 preview = true

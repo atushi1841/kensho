@@ -256,29 +256,44 @@ def main() -> None:
         guard.update("network_check", "ネットワーク確認")
         _safe_step("Network Check", log, lambda: get_all_adapters())
 
-        now_str = datetime.now().strftime("%H:%M")
+        now_dt = datetime.now()
+        now_str = now_dt.strftime("%H:%M")
         collect_times = cfg.get("collection", {}).get("times", [])
 
-        # 4. 収集（該当時刻のみ）
+        # 4. 収集（該当時刻のみ / 分離cron使用時はスキップ）
         guard.update("collect", "収集")
         log.write("\n--- Step 4: Collection Check ---")
-        if should_collect(now_str, collect_times):
+        separate_cron = bool(cfg.get("collection", {}).get("separate_cron", False))
+        if separate_cron:
+            # 収集は専用cron(scripts/collect直接)で実行済み。応募に専念する。
+            log.write("  separate_cron=true → 収集は専用cronで実行（スキップ）")
+        elif should_collect(now_str, collect_times):
             last_collect = state.get("last_collect")
             do_collect = True
             if last_collect:
-                parts = last_collect.split(":")
-                if len(parts) == 2:
-                    last_m = int(parts[0]) * 60 + int(parts[1])
-                    now_parts = now_str.split(":")
-                    now_m = int(now_parts[0]) * 60 + int(now_parts[1])
-                    if now_m - last_m < 45:
+                # 新しい形式: YYYY-MM-DD HH:MM
+                try:
+                    last_dt = datetime.strptime(last_collect, "%Y-%m-%d %H:%M")
+                    diff = (now_dt - last_dt).total_seconds()
+                    if 0 <= diff <= 2700:  # 45分 = 2700秒
                         do_collect = False
+                except ValueError:
+                    # 旧形式: HH:MM のみ（日付なし）
+                    parts = last_collect.split(":")
+                    if len(parts) == 2:
+                        try:
+                            last_m = int(parts[0]) * 60 + int(parts[1])
+                            now_m = now_dt.hour * 60 + now_dt.minute
+                            if now_m >= last_m and (now_m - last_m) <= 45:
+                                do_collect = False
+                        except (ValueError, IndexError):
+                            pass
             if do_collect:
                 log.write(f"  収集時刻（{now_str}）→ 収集実行")
                 guard.update("collect", "収集実行中")
                 success, errors, total = collect(cfg, log)
                 log.write(f"  収集結果: {total}件（成功{success}/エラー{errors}）")
-                state["last_collect"] = now_str
+                state["last_collect"] = now_dt.strftime("%Y-%m-%d %H:%M")
                 save_state(state)
             else:
                 log.write(f"  収集時刻（{now_str}）→ 前回収集から45分以内のためスキップ")

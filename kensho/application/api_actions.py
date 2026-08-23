@@ -20,6 +20,20 @@ from typing import Any
 from kensho.application.audit_ledger import audit_ledger
 from kensho.application.policy_engine import PolicyDecision, policy_engine
 
+
+class TweetInaccessibleError(Exception):
+    """ツイートが恒久的にアクセス不能(削除/保護/ブロック)であることを表す。
+
+    AuthorizationError (code 327) は queryId や一時的失敗ではなく、対象ツイートが
+    恒久的に開けないことを意味する。この場合は UI フォールバックしても開けないため、
+    fail fast して即スキップする（デッドロック/ハングの温床を断つ）。
+    """
+
+    def __init__(self, tweet_id: str) -> None:
+        super().__init__(f"tweet not accessible: {tweet_id}")
+        self.tweet_id = tweet_id
+
+
 # ── Config cache (30秒) ──
 _cfg_cache: dict[str, Any] = {}
 _cfg_loaded_at: float = 0.0
@@ -385,7 +399,7 @@ def api_like(
                     return True
                 else:
                     out(
-                        f"  [WARN] FavoriteTweet GraphQL (queryId={query_id}…): 200 but no favorite_tweet key: {body_str[:200]}"
+                        f"  [WARN] FavoriteTweet GraphQL (queryId={query_id}…): 200 but no favorite_tweet key: {body_str[:200]}"  # noqa: E501
                     )
                     continue
             elif status == 403:
@@ -592,7 +606,9 @@ def api_rt(
         out("  [i] RT API: AuthorizationErrorが続いたためRESTフォールバックをスキップ")
         _delay = int((_time.time() - _t0) * 1000)
         audit_ledger.log(account_key, "rt", tweet_id, "deny", "failed", error="authorization_error", delay_ms=_delay)
-        return False
+        # 恒久的アクセス不能 → fail fast。UIフォールバックしても開けないので例外で伝播し、
+        # applier 側で UIリポスト試行を省略させる（デッドロック/ハング防止）。
+        raise TweetInaccessibleError(tweet_id)
 
     out(f"  [i] RT API: 全queryId失敗 → REST フォールバック (last body: {body_preview[:150]})")
 

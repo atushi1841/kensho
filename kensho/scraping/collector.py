@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import time
 from datetime import datetime
 from pathlib import Path
@@ -85,6 +86,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
 
     out("\n[Step 1] 一覧ページ取得...")
     all_detail_links: list[str] = []
+    consecutive_zero: int = 0  # 連続で「全リンク処理済み」のページ数（knshow早期終了用）
     page: int = 1
     while page <= max_pages:
         url: str = f"{BASE_URL}/twitter"
@@ -98,8 +100,18 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         if not links:
             out(f"  ページ{page}: リンクなし - 終了")
             break
+        page_new: int = sum(1 for link in links if link not in processed_set)
         all_detail_links.extend(links)
-        out(f"  ページ{page}: {len(links)}件（累計{len(all_detail_links)}件）")
+        out(f"  ページ{page}: {len(links)}件（累計{len(all_detail_links)}件, 新規{page_new}件）")
+        # ★ knshowは最新順ソート。連続2ページで新規ゼロ＝以降も処理済みの古い案件のみ → 打ち切り
+        #   収集を毎回全30ページスキャンして無駄な時間を使うのを防ぐ（2026-08-20最適化）
+        if page_new == 0:
+            consecutive_zero += 1
+            if consecutive_zero >= 2:
+                out(f"  ページ{page}: 連続{consecutive_zero}ページ新規ゼロ → 早期終了")
+                break
+        else:
+            consecutive_zero = 0
         time.sleep(1.5)  # ★ レート制限回避（1.5秒間隔）
         page += 1
         if len(all_detail_links) >= max_items * 2:
@@ -157,9 +169,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
                     _fx_code = _fx_resp.status_code
                     _fx_html = _fx_resp.text
                     if _fx_code == 200 and _fx_html:
-                        import re as _re
-
-                        _m = _re.search(
+                        _m = re.search(
                             r'<meta\s+property="og:description"\s+content="([^"]*)"',
                             _fx_html,
                         )
@@ -253,6 +263,13 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         if a.get("schedule", {}).get("collects", False):
             session_path = str(Path(cfg["general"]["project_dir"]) / a["session"])
             break
+    if not session_path:
+        # collects指定が無い場合でもX検索を回せるよう、自宅/最安全垢のセッションを使う（2026-08-20修正）
+        # X直接検索は読み取りのみ・低リスク。BANへの影響は応募より遥かに小さい。
+        for a in cfg.get("accounts", []):
+            if a["key"] == "atushi16":  # home_internet正規垢(凍結リスク最低)を優先
+                session_path = str(Path(cfg["general"]["project_dir"]) / a["session"])
+                break
     twscrape_items: list[dict[str, Any]] = scrape_twscrape(out, processed_set, account_keys, session_path)
     out(f"  twscrape: {len(twscrape_items)}件")
     collected.extend(twscrape_items)
@@ -294,11 +311,48 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     processed["last_updated"] = datetime.now().isoformat()
     safe_save_json(PROCESSED_FILE, processed, "processed.json")
 
-    merged: list[dict[str, Any]] = list(existing_collected)
-    existing_detail_urls: set[str] = set(existing_map.keys())
-    for item in collected:
-        if item["detail_url"] not in existing_detail_urls:
-            merged.append(item)
+    # ── マージ: 既存 + 新規を x_url 単位で一意化 ──
+    # ★ 同一Xツイートが収集ソース(knshow/kenshouclub等)ごとに別エントリとして重複登録され、
+    #   applierがdetail_url単位でしか応募済みを記録しないため、重複エントリが何度も再応募される
+    #   バグを防ぐため、マージ時に x_url で統合する（応募済み状態(applied)は union 保持）。
+    #   2026-08-20対応: 既存collectedの重複エントリも同時に解消。
+    x_url_index: dict[str, dict[str, Any]] = {}
+    # 優先順: 既存 → 新規（既存の applied / tweet_text がより確実な場合が多い）
+    _xurl_exists: set[str] = set()
+
+    for item in list(existing_collected) + collected:
+        xu: str = item.get("x_url", "")
+        if not xu:
+            # x_url無しは detail_url で維持（退避する）
+            x_url_index.setdefault(f"__no_xurl__{item.get('detail_url', '')}", item)
+            continue
+        if xu not in x_url_index:
+            x_url_index[xu] = item
+            _xurl_exists.add(xu)
+        else:
+            # 同x_urlの既存エントリに応募済み状態と本文をマージ（union）
+            base = x_url_index[xu]
+            base_applied = base.get("applied") or {}
+            new_applied = item.get("applied") or {}
+            merged_applied: dict[str, Any] = {}
+            # new → base の順で「Noneでない応募済み値」を優先マージ（応募済みを失わないように）
+            for _src in (new_applied, base_applied):
+                for _k, _v in _src.items():
+                    if _v not in (None, ""):
+                        merged_applied[_k] = _v
+                    elif _k not in merged_applied:
+                        merged_applied[_k] = _v
+            base["applied"] = merged_applied
+            # 長いほうのtweet_textを保持
+            btxt = base.get("tweet_text", "") or ""
+            itxt = item.get("tweet_text", "") or ""
+            if len(itxt) > len(btxt):
+                base["tweet_text"] = itxt
+            # deadlineが空なら埋める
+            if not base.get("deadline") and item.get("deadline"):
+                base["deadline"] = item["deadline"]
+
+    merged: list[dict[str, Any]] = list(x_url_index.values())
 
     _now: datetime = datetime.now()
     before: int = len(merged)
@@ -319,7 +373,6 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     text_fetched: int = 0
     text_skipped: int = 0
     text_errors: int = 0
-    text_unfetchable: int = 0
     text_candidates: list[dict[str, Any]] = [
         item for item in merged if not item.get("tweet_text", "").strip() and "/status/" in item.get("x_url", "")
     ]
@@ -328,7 +381,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         for idx, item in enumerate(text_candidates):
             x_url: str = item["x_url"]
             # ★ CDN優先（認証不要・全文取得・軽量） — REST v1.1死の代替
-            _tweet_id = _re.search(r"/status/(\d+)", x_url)
+            _tweet_id = re.search(r"/status/(\d+)", x_url)
             _cdn_text: str = ""
             if _tweet_id:
                 try:
@@ -362,10 +415,10 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
                         timeout=15,
                     )
                     if _fx_resp.status_code == 200 and _fx_resp.text:
-                        _m = _re.search(
+                        _m = re.search(
                             r'<meta\s+property="og:description"\s+content="([^"]*)"',
                             _fx_resp.text,
-                            _re.IGNORECASE,
+                            re.IGNORECASE,
                         )
                         if _m:
                             item["tweet_text"] = _m.group(1)
@@ -379,7 +432,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
 
             if (idx + 1) % 10 == 0:
                 out(
-                    f"  {idx + 1}/{len(text_candidates)}: 取得{text_fetched} / スキップ{text_skipped} / エラー{text_errors}"
+                    f"  {idx + 1}/{len(text_candidates)}: 取得{text_fetched} / スキップ{text_skipped} / エラー{text_errors}"  # noqa: E501
                 )
 
             # ★ 人間の閲覧ペース: CDN成功時は0.5s、フォールバック後は1.5〜2秒

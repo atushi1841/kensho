@@ -44,6 +44,16 @@ def _is_daemon_or_child(pid: int) -> bool:
 
         p = psutil.Process(pid)
         proc_name = p.name().lower()
+        try:
+            cmdline = " ".join(p.cmdline()).lower()
+        except Exception:
+            cmdline = ""
+        # Hermes 系（gateway / CLI / mcp watchdog）は絶対にkillしない。
+        # Hermes の comm 名は "hermes" に変更されるため、psutil の name()
+        # だけでは "python" を含まず、_get_linux_python_pids の cmdline 検出
+        # には引っかかるのに保護から漏れる。ここで cmdline も併せて判定する。
+        if "hermes" in cmdline or "hermes_cli" in cmdline or "mcp_stdio" in cmdline:
+            return True
         if "python" in proc_name:
             return True
         for pp in PROTECTED_PIDS:

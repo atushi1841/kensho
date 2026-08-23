@@ -23,6 +23,7 @@ _MULTI_ACCOUNT_FOLLOW_PATTERN: re.Pattern = re.compile(r"@\w+\s+(と|&|＆|and)\
 from kensho.application.actions import sort_items
 from kensho.application.actions_apply import do_follow, do_like, do_rt
 from kensho.application.api_actions import (
+    TweetInaccessibleError,
     api_follow_by_screen_name,
     api_get_tweet_text,
     api_like,
@@ -459,8 +460,11 @@ def apply_for_account(
         page.on("pageerror", lambda err: None)
 
         # ★ セッション実行時間制限
+        # 1800秒(30分)に延長（2026-08-20）: 900秒では1バッチ4〜9件しか処理できず、
+        #   max 12-14件の目標に達する前に打ち切られ、日次136枠を損失していた。
+        #   50件/日達成のため、バッチ1回で目標件数まで到達できるようにする。
         session_start: float = time.time()
-        SESSION_TIMEOUT: int = 900  # 15分で強制打ち切り
+        SESSION_TIMEOUT: int = 1800  # 15分→30分（バッチ内で目標件数を消化可能に）
 
         success: int = 0
         errors: int = 0
@@ -569,7 +573,7 @@ def apply_for_account(
 
                 # ── fixupx.comからツイート本文を取得（povo 30kbps / AiR-WiFi遅延: goto不可の最終手段）──
                 if not body_text and _need_goto:
-                    _fixupx_accounts = {"kudou", "atushi1840", "TankanNotes", "zin20120731"}
+                    _fixupx_accounts = {"kudou", "chugakujuken", "zin20120731", "TankanNotes"}
                     if account_key in _fixupx_accounts:
                         out("  [FIXUPX] 低速回線: fixupx.comでテキスト取得試行...")
                         try:
@@ -605,14 +609,14 @@ def apply_for_account(
 
                 if _need_goto:
                     # ★ 低速回線: gotoフォールバック不可（180秒以内にページ読み込み完了しない）
-                    _fixupx_accounts = {"kudou", "atushi1840", "TankanNotes", "zin20120731"}
+                    _fixupx_accounts = {"kudou", "chugakujuken", "zin20120731", "TankanNotes"}
                     if account_key in _fixupx_accounts:
                         out("  [SKIP] 低速回線: goto不可（180秒以内にページ読み込み完了しない）→ 次アイテムへ")
                         continue
 
                     # 速度別goto設定: 速い垢(commit+30s) / 遅い垢(domcontentloaded+60s)
                     _fast_accounts = {"atushi16"}
-                    _slow_accounts = {"kudou", "atushi1840", "TankanNotes", "zin20120731"}
+                    _slow_accounts = {"kudou", "chugakujuken", "zin20120731", "TankanNotes"}
                     _is_fast = account_key in _fast_accounts
                     _is_slow = account_key in _slow_accounts
                     _goto_wait = "commit" if _is_fast else "domcontentloaded"
@@ -630,7 +634,7 @@ def apply_for_account(
                             except Exception:
                                 out("  [GOTO] tweetText selector not rendered yet")
                                 pass
-                            # ★ ツイート本文のみ抽出（data-testid="tweetText"）— body全体だとサイドバー/メニューのテキストが混入
+                            # ★ ツイート本文のみ抽出（data-testid="tweetText"）— body全体だとサイドバー/メニューのテキストが混入  # noqa: E501
                             body_text = (
                                 page.evaluate(
                                     """() => {
@@ -731,7 +735,7 @@ def apply_for_account(
                             has_any = any(w in body_text for w in require_any)
                             if not has_any:
                                 out(
-                                    f"  [{global_idx}/{max_n}] [SKIP] 必須ワード不足（{', '.join(require_any)}のいずれかが必要）"
+                                    f"  [{global_idx}/{max_n}] [SKIP] 必須ワード不足（{', '.join(require_any)}のいずれかが必要）"  # noqa: E501
                                 )
                                 continue
                     except Exception:
@@ -855,10 +859,13 @@ def apply_for_account(
 
                 # ★ アクションスキップ確率（BOT検出回避：全アイテムに全アクションは不自然）
                 # 各アクションの実行確率。フォローが最も危険、いいねは安全。
-                _skip_chance_follow = 0.15  # 15% skip → 85%実行
-                _skip_chance_rt = 0.20  # 20% skip → 80%実行
-                # いいねは条件付き（「いいね」本文要件）＋さらに確率スキップ
-                _skip_chance_like = 0.30  # 条件満たしても30%スキップ
+                # 2026-08-20 スキップ率低減: 応募量を増やしつつ、日次/時間上限+不定期間隔でBOT対策を維持。
+                #   config.yaml の applier.skip_rates.{follow,rt,like,all} で調整可能（デフォルト: 15/20/30/5%）。
+                _skip_cfg: dict = cfg.get("applier", {}).get("skip_rates", {})
+                _skip_chance_follow: float = _skip_cfg.get("follow", 0.15)
+                _skip_chance_rt: float = _skip_cfg.get("rt", 0.20)
+                _skip_chance_like: float = _skip_cfg.get("like", 0.30)
+                _skip_chance_all: float = _skip_cfg.get("all", 0.05)
 
                 skip_follow: bool = random.random() < _skip_chance_follow
                 skip_rt: bool = random.random() < _skip_chance_rt
@@ -879,7 +886,7 @@ def apply_for_account(
 
                 # ★ 稀に全アクションスキップ（人間らしい「読んだけど応募しない」動作）
                 if not skip_follow and not skip_rt and not skip_like:
-                    if random.random() < 0.05:  # 5%の確率で全部スキップ
+                    if random.random() < _skip_chance_all:  # 稀に全部スキップ（人間らしさ）
                         skip_follow = True
                         skip_rt = True
                         skip_like = True
@@ -908,7 +915,12 @@ def apply_for_account(
                             clean_url=clean_url,
                             tweet_id=tweet_id,
                         ):
-                            if not api_rt(page, tweet_id, account_key, out):
+                            try:
+                                _rt_ok = api_rt(page, tweet_id, account_key, out)
+                            except TweetInaccessibleError:
+                                out("[i] RT API: アクセス不能(authorization) → UIフォールバック省略")
+                                _rt_ok = True  # 削除済み等はUIでも開けない → 再試行させない
+                            if not _rt_ok:
                                 out("[i] RT API失敗 → UIフォールバック")
                                 for _gr in range(2):
                                     try:
@@ -973,9 +985,9 @@ def apply_for_account(
                 _account_bias = {
                     "atushi16": (+5, -5, 0),  # しっかり派: follow→like多め
                     "kudou": (-10, +5, +5),  # 気まま: いいね先行多め
-                    "atushi1840": (0, +5, -5),  # バランス型
-                    "TankanNotes": (0, -10, +10),  # 効率重視: RT先行多め
+                    "chugakujuken": (0, +5, -5),  # バランス型
                     "zin20120731": (+5, 0, -5),  # 安定志向
+                    "TankanNotes": (0, -5, +5),  # ゆったり
                 }.get(account_key, (0, 0, 0))
                 _pat_weights = [max(1, w + b + random.randint(-8, 8)) for w, b in zip(_pat_weights, _account_bias)]
                 if like_action is not None:
@@ -1151,7 +1163,7 @@ def apply_for_account(
         final_counts: dict[str, int] = load_daily_counts().get(account_key, {})
         out(f"\n[OK] 完了: {success}成功 / {errors}エラー")
         out(
-            f"   本日累計: フォロー{final_counts.get('follow', 0)} RT{final_counts.get('rt', 0)} いいね{final_counts.get('like', 0)}"
+            f"   本日累計: フォロー{final_counts.get('follow', 0)} RT{final_counts.get('rt', 0)} いいね{final_counts.get('like', 0)}"  # noqa: E501
         )
         out(f"   処理時間: 約{(time.time() - t0) / 60:.1f}分")
 
