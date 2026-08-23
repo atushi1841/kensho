@@ -10,6 +10,18 @@ import time
 DATA_FILE = "/tmp/kensho_status_data.json"
 OUTPUT_FILE = "/mnt/d/Project2/kensho/kensho-status.html"
 
+ACCOUNT_ADAPTERS = {
+    "atushi16": ("自宅有線LAN", "RJ45直結"),
+    "kudou": ("kudou_RM10JE_B", "RM10JE_B"),
+    "chugakujuken": ("chugakujuken_RM10JE_S", "RM10JE_S"),
+    "zin20120731": ("zin_AW6povo", "AiR-WiFi_6_povo"),
+    "TankanNotes": ("Tankan_2_redmi_n9s", "2_redmi_n9s"),
+    "inobase1-4": ("inobase1-4", "ino1_4_oppo_r5a"),
+}
+
+# UNUSED（応募停止済み）: cron再生成でも維持されるようハードコード（2026-08-17）
+UNUSED_ADAPTERS: dict[str, tuple[str, str]] = {}
+
 
 def load_data():
     with open(DATA_FILE) as f:
@@ -23,6 +35,71 @@ def heartbeat_age(path, max_minutes=35):
         return "yes" if age < max_minutes * 60 else "no"
     except Exception:
         return "no"
+
+
+# ── Hermes LLMプロバイダ構成（config.yamlから動的読取） ──────────────
+HERMES_PROFILES = {
+    "kensho-sweeps": "/home/atushi/.hermes/profiles/kensho-sweeps/config.yaml",
+    "tai": "/home/atushi/.hermes/profiles/tai/config.yaml",
+}
+
+try:
+    import yaml
+except Exception:
+    yaml = None
+
+
+def _safe_str(v):
+    return v if isinstance(v, str) and v else "—"
+
+
+def _model_label(cfg):
+    """config['model'] → 表示用ラベル"""
+    if not isinstance(cfg, dict):
+        return "—"
+    mod = _safe_str(cfg.get("default") or cfg.get("model"))
+    base = _safe_str(cfg.get("base_url"))
+    if mod and mod != "—":
+        label = f"{mod}"
+        if base and base != "—":
+            # 冗長なscheme/pathは省く
+            host = base.replace("https://", "").replace("http://", "").split("/")[0]
+            label += f"  <span class='num'>({host})</span>"
+        return label
+    return base if base != "—" else "—"
+
+
+def load_hermes_config():
+    """各プロフィールの主モデル / フォールバック / auxiliary / vision を読取"""
+    out = {}
+    for name, path in HERMES_PROFILES.items():
+        info = {"ok": False, "primary": "—", "fallback": [], "aux": "—", "vision": "—"}
+        try:
+            with open(path) as f:
+                d = yaml.safe_load(f) or {}
+            info["ok"] = True
+            info["primary"] = _model_label(d.get("model"))
+            fb = d.get("fallback_providers") or []
+            if isinstance(fb, str):
+                fb = yaml.safe_load(fb) or []
+            info["fallback"] = [_model_label(e) for e in fb if isinstance(e, dict)] if isinstance(fb, list) else []
+            aux = d.get("auxiliary", {})
+            # auxiliary は facedsのprovider/modelで代表表示。主model継承(inherit)は主モデル表示
+            aux_prov = _safe_str((aux.get("title_generation") or {}).get("provider") if isinstance(aux, dict) else "")
+            aux_mod = ""
+            if isinstance(aux, dict) and isinstance(aux.get("title_generation"), dict):
+                aux_mod = _safe_str(aux["title_generation"].get("model"))
+            info["aux"] = (
+                f"{aux_prov}/{aux_mod}" if aux_prov and aux_mod else (f"{aux_prov} (inherit)" if aux_prov else "—")
+            )
+            vis = aux.get("vision") or {}
+            v_prov = _safe_str(vis.get("provider"))
+            v_mod = _safe_str(vis.get("model"))
+            info["vision"] = f"{v_prov}/{v_mod}" if v_prov and v_mod else (f"{v_prov} (inherit)" if v_prov else "—")
+        except Exception:
+            info["ok"] = False
+        out[name] = info
+    return out
 
 
 def generate_html(data):
@@ -133,13 +210,130 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
     rows.sort(key=lambda x: -x[6])
 
     html += '<div class="card"><div class="card-title">accounts</div><table>'
-    html += "<tr><td>account</td><td>today</td><td>total</td><td>DEFER</td><td>pending</td><td>actions</td></tr>"
+    html += "<tr><td>account</td><td>adapter / SSID</td><td>today</td><td>total</td><td>DEFER</td><td>pending</td><td>actions</td></tr>"
     for ac, at, ad, f_val, r_val, l_val, total, badge, label in rows:
         ta = ad["total_applied_all"]
         defer = ad.get("defer_count", 0)
         pending = ad["pending"]["total"]
-        html += f'<tr><td>{ac} <span class="badge {badge}">{label}</span></td><td class="accent">{at}</td><td class="num">{ta}</td><td class="num">{defer}</td><td class="num">{pending}</td><td class="num">F{f_val} RT{r_val} <3{l_val}</td></tr>'
+        adapter, ssid = ACCOUNT_ADAPTERS.get(ac, ("", ""))
+        adapter_display = f"{adapter} ({ssid})" if adapter else "—"
+        html += f'<tr><td>{ac} <span class="badge {badge}">{label}</span></td><td class="num">{adapter_display}</td><td class="accent">{at}</td><td class="num">{ta}</td><td class="num">{defer}</td><td class="num">{pending}</td><td class="num">F{f_val} RT{r_val} <3{l_val}</td></tr>'
     html += "</table></div>"
+
+    # ── WiFiテザリング状態（watchdog集計） ──
+    wifi = data.get("wifi", {})
+    if wifi:
+
+        def _sig_color(v):
+            if v is None:
+                return GRAY
+            if v < 30:
+                return RED
+            if v < 55:
+                return YELLOW
+            return GREEN
+
+        def _rssi_color(v):
+            if v is None:
+                return GRAY
+            if v < -85:
+                return RED
+            if v < -72:
+                return YELLOW
+            return GREEN
+
+        def _rate_color(r):
+            if r is None:
+                return GRAY
+            if r < 10:
+                return GREEN
+            if r < 30:
+                return YELLOW
+            return RED
+
+        html += '<div class="card"><div class="card-title">wifi テザリング状態（watchdog）</div><table>'
+        html += "<tr><td>account</td><td>adapter / SSID</td><td>現信号%</td><td>Rssi(dBm)</td><td>今日</td><td>今日障害率</td><td>7日障害率</td><td>状態</td></tr>"
+        for ac in sorted(wifi.keys()):
+            w = wifi[ac]
+            adapter = w.get("adapter") or "—"
+            ssid = w.get("ssid", "")
+            sig = w.get("signal")
+            rssi = w.get("rssi")
+            ok_t = w.get("ok_today", 0)
+            fail_t = w.get("fail_today", 0)
+            ok7 = w.get("ok_last7d", 0)
+            fail7 = w.get("fail_last7d", 0)
+            rate_t = fail_t / (ok_t + fail_t) * 100 if (ok_t + fail_t) else None
+            rate7 = fail7 / (ok7 + fail7) * 100 if (ok7 + fail7) else None
+            sig_disp = f"{sig}%" if sig is not None else "—"
+            rssi_disp = f"{rssi}" if rssi is not None else "—"
+            sig_cell = f'<span style="color:{_sig_color(sig)};font-weight:700">{sig_disp}</span>'
+            rssi_cell = f'<span style="color:{_rssi_color(rssi)}">{rssi_disp}</span>'
+            today_cell = f'<span class="accent">{fail_t}</span> / <span class="num">{ok_t}OK</span>'
+            rate_t_disp = (
+                f'<span style="color:{_rate_color(rate_t)};font-weight:700">{rate_t:.0f}%</span>'
+                if rate_t is not None
+                else '<span class="num">—</span>'
+            )
+            rate7_disp = (
+                f'<span style="color:{_rate_color(rate7)}">{rate7:.0f}%</span>'
+                if rate7 is not None
+                else '<span class="num">—</span>'
+            )
+            cn = w.get("connected_now")
+            if cn is True:
+                state = '<span class="badge bg-green">接続中</span>'
+            elif cn is False:
+                state = '<span class="badge bg-red">切断</span>'
+            else:
+                state = '<span class="num">不明</span>'
+            html += (
+                f'<tr><td>{ac}</td><td class="num">{adapter} ({ssid})</td>'
+                f"<td>{sig_cell}</td><td>{rssi_cell}</td>"
+                f"<td>{today_cell}</td><td>{rate_t_disp}</td><td>{rate7_disp}</td><td>{state}</td></tr>"
+            )
+        html += "</table></div>"
+
+    # ── UNUSED（応募停止済み）アカウント ──
+    unused = data.get("unused_accounts", [])
+    if unused:
+        html += '<div class="card"><div class="card-title">UNUSED (応募停止)</div><table>'
+        html += "<tr><td>account</td><td>adapter / SSID</td><td>status</td></tr>"
+        for u in unused:
+            key = u.get("key", "")
+            disp = u.get("display", key)
+            reason = u.get("reason", "")
+            adapter, ssid = UNUSED_ADAPTERS.get(key, ("—", "—"))
+            adapter_display = f"{adapter} ({ssid})" if adapter else "—"
+            html += f'<tr><td>{disp} <span class="badge bg-red">unused</span></td><td class="num">{adapter_display}</td><td class="num">{reason}</td></tr>'
+        html += "</table></div>"
+
+    # ── 日別×アカウント別 応募履歴 ──
+    hist = data.get("history")
+    if hist and hist.get("days"):
+        hist_accounts = [
+            ac
+            for ac in accounts
+            if any(
+                ac in hist.get("applied", {}).get(d, {}) or ac in hist.get("actions", {}).get(d, {})
+                for d in hist.get("days", [])
+            )
+        ]
+        html += '<div class="card"><div class="card-title">apply history (last 14 days) — 応募件数 / 成功アクション数</div><table>'
+        html += (
+            "<tr><td>date</td>" + "".join(f'<td style="text-align:center">{ac}</td>' for ac in hist_accounts) + "</tr>"
+        )
+        for d in reversed(hist["days"]):
+            applied_d = hist.get("applied", {}).get(d, {})
+            actions_d = hist.get("actions", {}).get(d, {})
+            cells = ""
+            for ac in hist_accounts:
+                a = applied_d.get(ac, 0)
+                act = actions_d.get(ac, 0)
+                color = "#3fb950" if a >= 15 else ("#d29922" if a >= 8 else ("#58a6ff" if a > 0 else "#8b949e"))
+                cells += f'<td style="text-align:center"><span style="color:{color};font-weight:700">{a}</span> <span class="num">/ {act}</span></td>'
+            html += f'<tr><td class="num">{d[5:]}</td>{cells}</tr>'
+        html += "</table></div>"
 
     # sources
     sd = st.get("source_dist", {})
@@ -181,6 +375,23 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
     rate = f"{ok_count / total_count * 100:.1f}" if total_count > 0 else "N/A"
     html += f'<div class="note">last {total_count} runs: ok <strong class="accent">{ok_count}</strong> / err <strong style="color:{RED}">{total_count - ok_count}</strong> — success <strong>{rate}%</strong></div>'
     html += "</div>"
+
+    # ── Hermes LLMプロバイダ構成 ──
+    hc = load_hermes_config()
+    html += '<div class="card"><div class="card-title">Hermes モデル設定 (config.yaml)</div><table>'
+    html += "<tr><td>profile</td><td>主モデル</td><td>フォールバック</td><td>auxiliary</td><td>vision</td></tr>"
+    for name, info in hc.items():
+        fb_txt = "<br>".join(info["fallback"]) if info["fallback"] else '<span class="num">—</span>'
+        badge = "" if info["ok"] else ' <span class="badge bg-red">cfg err</span>'
+        html += (
+            f'<tr><td style="font-weight:600">{name}{badge}</td>'
+            f'<td class="accent">{info["primary"]}</td>'
+            f'<td class="num">{fb_txt}</td>'
+            f'<td class="num">{info["aux"]}</td>'
+            f'<td class="num">{info["vision"]}</td></tr>'
+        )
+    html += "</table>"
+    html += '<div class="note">主モデル障害時はフォールバック→を順に自動切替。全て <strong class="accent">無料枠</strong>が含まれる（kensho主=fw有料 / tai主=OpenRouter無料）。</div></div>'
 
     html += f'<div class="footer">Kensho Dashboard v5 - {now}</div>'
     html += "</body></html>"

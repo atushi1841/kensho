@@ -2,7 +2,9 @@ import glob
 import json
 import os
 import re
+from collections import defaultdict
 from datetime import date, datetime, timedelta
+from typing import Any
 
 today = date.today()
 now = datetime.now()
@@ -14,31 +16,26 @@ COUNT_FILE = os.path.join(PROJECT_DIR, "data/daily_counts.json")
 OUTPUT_FILE = os.path.join(PROJECT_DIR, "kensho-status.html")
 LOG_DIR = os.path.join(PROJECT_DIR, "logs")
 
-accounts = ["atushi16", "kudou", "atushi1840", "zin20120731", "TankanNotes", "inobase1-4"]
+accounts = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4"]
 
+# ── UNUSED（応募停止済み）アカウント記録 ──
+# cron再生成でも維持されるようハードコード（2026-08-17現在は応募停止垢なし）
+UNUSED_ACCOUNTS: list[dict[str, str]] = []
+
+# ── 表示用フィルタ（実応募条件 = config.yaml 準拠に統一）──
+# 2026-08-20 修正: 従来は19項目NG+URL除外で厳しすぎ、実際の応募可否と乖離していた。
+# 実応募(applier.py)は config の ng_words(5項目) + skip_url_posts=false で判定されるため、
+# ダッシュボードの「有効数」もここに合わせる。
 NG_WORDS = [
     "応募フォーム",
     "クイズ",
-    "URL",
-    "問題",
-    "動画",
-    "LINE",
-    "結果を確認",
-    "画像",
-    "応募はこちら",
-    "引用",
-    "結果確認",
-    "url",
-    "リンク先",
-    "チェック",
-    "合言葉",
     "アンケート",
-    "抽選結果",
-    "リンク",
-    "シェア",
+    "合言葉",
+    "応募はこちら",
 ]
 REQUIRED_WORDS = ["フォロー"]
-SKIP_URL_POSTS = True
+# config.skip_url_posts=false → 表示でもURL投稿を除外しない
+SKIP_URL_POSTS = False
 
 
 def passes_filter(text):
@@ -69,7 +66,7 @@ try:
 except Exception:
     daily_counts = {}
 
-result = {"accounts": {}, "stats": {}}
+result: dict[str, Any] = {"accounts": {}, "stats": {}}
 
 for ac in accounts:
     today_dl = this_week_dl = future_dl = no_dl = 0
@@ -78,7 +75,11 @@ for ac in accounts:
     for it in items:
         dl = it.get("deadline", "")
         applied = it.get("applied", {})
-        is_applied = isinstance(applied, dict) and isinstance(applied.get(ac), str) and today.isoformat() in applied[ac]
+        # 2026-08-20 修正: 応募済み判定を「その垢に応募日時(DEFER含む)が記録されているか」に変更。
+        # 従来「今日日付を含むか」だったため、過去に応募済みの投稿でも期限が今日以降なら
+        # pending有効数に入ってしまい、全垢で有効数が同数(同一内訳)になる歪みがあった。
+        ap_val = applied.get(ac) if isinstance(applied, dict) else None
+        is_applied = isinstance(ap_val, str)  # 日時 or DEFER:xxx が記録済み = この垢では処理済み
         pending = not is_applied
         if dl:
             try:
@@ -314,6 +315,159 @@ for ac, data in result["accounts"].items():
     if warnings:
         over_limit[ac] = warnings
 result["over_limit"] = over_limit
+
+# ── 日別×アカウント別 応募履歴（直近14日） ──
+apply_history = defaultdict(lambda: defaultdict(int))
+for it in items:
+    ap = it.get("applied", {})
+    if isinstance(ap, dict):
+        for acct, ts in ap.items():
+            if isinstance(ts, str) and not ts.startswith("DEFER"):
+                day = ts[:10]
+                apply_history[day][acct] += 1
+
+action_history = defaultdict(lambda: defaultdict(int))
+try:
+    with open(os.path.join(PROJECT_DIR, "data/audit.jsonl"), encoding="utf-8") as f:
+        for line in f:
+            try:
+                r = json.loads(line)
+            except Exception:
+                continue
+            if r.get("status") == "success":
+                day = (r.get("timestamp") or "")[:10]
+                acct = r.get("account", "")
+                if day and acct:
+                    action_history[day][acct] += 1
+except Exception:
+    pass
+
+all_days = sorted(set(apply_history) | set(action_history))
+history_days = all_days[-14:]
+result["history"] = {
+    "days": history_days,
+    "applied": {d: dict(apply_history[d]) for d in history_days},
+    "actions": {d: dict(action_history[d]) for d in history_days},
+}
+
+# ── UNUSED（応募停止済み）アカウントをJSONに含める ──
+result["unused_accounts"] = UNUSED_ACCOUNTS
+
+# ═══════════════════════════════════════════════
+# ── WiFiテザリング状態（watchdogログから集計）──
+# 2026-08-21 追加: kensho-wifi-watchdog.sh が記録する 接続済み[信号:Rssi] / 障害@時刻 を集計
+# ═══════════════════════════════════════════════
+WIFI_ADAPTER_TO_ACCOUNT = {
+    "kudou_RM10JE_B": "kudou",
+    "chugakujuken_RM10JE_S": "chugakujuken",
+    "zin_AW6povo": "zin20120731",
+    "Tankan_2_redmi_n9s": "TankanNotes",
+    "inobase1-4": "inobase1-4",
+}
+WIFI_ACCOUNT_SSID = {
+    "kudou": "RM10JE_B",
+    "chugakujuken": "RM10JE_S",
+    "zin20120731": "AiR-WiFi_6_povo",
+    "TankanNotes": "2_redmi_n9s",
+    "inobase1-4": "ino1_4_oppo_r5a",
+}
+
+_OK_RE = re.compile(r"✅\s+(\S+)\s+->\s+接続済み")
+_SIG_RE = re.compile(r"信号:(\d+)\s*%\|(-?\d+)\b")
+_FAIL_CUT_RE = re.compile(r"❌\s+(\S+)\s+->\s+切断")
+_FAIL_FAIL_RE = re.compile(r"❌\s+(\S+)\s+->\s+再接続失敗")
+_TS_RE = re.compile(r"@(\d{2}:\d{2}:\d{2})$")
+
+
+def _wifi_date_from_name(bn: str):
+    m = re.search(r"(\d{8})", bn)
+    if not m:
+        return None
+    try:
+        return datetime.strptime(m.group(1), "%Y%m%d").date()
+    except ValueError:
+        return None
+
+
+wifi_stats: dict[str, dict[str, Any]] = {}
+for ac in WIFI_ACCOUNT_SSID:
+    wifi_stats[ac] = {
+        "adapter": "",
+        "ssid": WIFI_ACCOUNT_SSID[ac],
+        "signal": None,  # 最新の接続時 信号%
+        "rssi": None,  # 最新の接続時 Rssi(dBm)
+        "connected_now": None,  # 最新runでの接続状態 (True/False/None)
+        "ok_today": 0,
+        "fail_today": 0,
+        "ok_last7d": 0,
+        "fail_last7d": 0,
+        "last_fail_time": "",  # 最新障害の時刻 (MM-DD HH:MM)
+    }
+
+# 今日の日付文字列
+today_dt = datetime.now().date()
+today_key = today_dt.strftime("%Y%m%d")
+
+
+def _last_seen_hms_for_line(line: str) -> str | None:
+    m = _TS_RE.search(line.rstrip())
+    return m.group(1) if m else None
+
+
+wifi_log_files = sorted(glob.glob(os.path.join(LOG_DIR, "wifi_watchdog_*.log")))
+for wlf in wifi_log_files:
+    bn = os.path.basename(wlf)
+    fdate = _wifi_date_from_name(bn)
+    if fdate is None:
+        continue
+    is_today = fdate == today_dt
+    last7 = (today_dt - fdate).days <= 6
+    try:
+        with open(wlf, encoding="utf-8", errors="replace") as fh:
+            txt = fh.read()
+    except Exception:
+        continue
+    for line in txt.splitlines():
+        om = _OK_RE.search(line)
+        if om:
+            adapter = om.group(1)
+            ac = WIFI_ADAPTER_TO_ACCOUNT.get(adapter)
+            if ac is None:
+                continue
+            w = wifi_stats[ac]
+            w["adapter"] = adapter
+            # 信号値更新（同じrun内で複数回接続済みが出ても最後を採用）
+            sm = _SIG_RE.search(line)
+            if sm:
+                try:
+                    w["signal"] = int(sm.group(1))
+                except ValueError:
+                    pass
+                try:
+                    w["rssi"] = int(sm.group(2))
+                except ValueError:
+                    pass
+            w["connected_now"] = True
+            w["ok_today"] += 1 if is_today else 0
+            w["ok_last7d"] += 1 if last7 else 0
+            continue
+        fm = _FAIL_CUT_RE.search(line) or _FAIL_FAIL_RE.search(line)
+        if fm:
+            adapter = fm.group(1)
+            ac = WIFI_ADAPTER_TO_ACCOUNT.get(adapter)
+            if ac is None:
+                continue
+            w = wifi_stats[ac]
+            w["adapter"] = adapter
+            w["connected_now"] = False
+            w["fail_today"] += 1 if is_today else 0
+            w["fail_last7d"] += 1 if last7 else 0
+            hms = _last_seen_hms_for_line(line)
+            if hms:
+                w["last_fail_time"] = f"{fdate.strftime('%m-%d')} {hms}"
+            continue
+
+result["wifi"] = wifi_stats
 
 with open("/tmp/kensho_status_data.json", "w") as f:
     json.dump(result, f, ensure_ascii=False, default=str)
