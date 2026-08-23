@@ -25,9 +25,29 @@ from pathlib import Path
 
 ACCOUNTS = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4"]
 AUDIT_PATH = Path(__file__).resolve().parent.parent / "data" / "audit.jsonl"
+CONFIG_PATH = Path(__file__).resolve().parent.parent / "config.yaml"
 
-# 判定しきい値
-NIGHT_HOURS = range(0, 8)  # 00:00-07:59 を深夜とみなす
+MIN_ACTION_GAP = 5.0  # 秒。これ未満の2アクション間隔は規制違反
+
+
+def _load_night_hours() -> set[int]:
+    """config.yaml の orchestrator.no_action_window から深夜窓を読む。既定は 00:00-07:59。"""
+    try:
+        import yaml
+
+        cfg = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8")) or {}
+        win = cfg.get("orchestrator", {}).get("no_action_window")
+        if win and len(win) == 2:
+            start_h = int(str(win[0])[:2])  # "00:00" → 0
+            end_h = int(str(win[1])[:2])  # "07:00" → 7
+            if end_h < start_h:
+                end_h += 24
+            return set(h % 24 for h in range(start_h, end_h))
+    except Exception:
+        pass
+    return set(range(0, 8))
+
+
 MIN_ACTION_GAP = 5.0  # 秒。これ未満の2アクション間隔は規制違反
 MAX_FOLLOWS_PER_OWNER = 4  # 同一主催者への1日当たりフォロー上限(人間らしさ)
 MAX_ACTIONS_PER_HOUR = 15  # 時間あたり上限(config rate_limits.max_actions_per_hour)
@@ -76,15 +96,16 @@ def main() -> int:
 
     rows.sort(key=lambda x: x[0])
 
-    # 1) 深夜アクション
+    # 1) 深夜アクション（深夜窓は config no_action_window から読む）
     night = collections.Counter()
+    night_hours = _load_night_hours()
     for ts, acct, at, tgt, status in rows:
         hh = int(ts[11:13])
-        if hh in NIGHT_HOURS:
+        if hh in night_hours:
             night[(acct, at)] += 1
     if night:
         for (acct, at), c in sorted(night.items()):
-            problems.append(f"[深夜] {date_s} {acct} {at} {c}回 (深夜ガード未効? no_action_window 00-07 確認)")
+            problems.append(f"[深夜] {date_s} {acct} {at} {c}回 (深夜ガード未効? no_action_window 確認)")
 
     # 2) 5秒未満の間隔
     per_acct = collections.defaultdict(list)
