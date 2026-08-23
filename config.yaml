@@ -222,7 +222,8 @@ orchestrator:
   interval_minutes: 15
   max_accounts_per_run: 1        # 1回(1垢ワーカー)=1垢。垢別並列ワーカーが各垢の予定バッチを消化。
                                  # （2026-08-23 並列化: kensho-auto-apply.sh が垢ごとに背景起動）
-  max_concurrent_accounts: 5     # 並列垢ワーカー数。4→5(8/23: RAM空き10GB実測。垢数6を4スロットで回すと後方垢飢餓。5で緩和。現状atushi16のみ達成の111件、他垢はスケジュール枠が消化されず22〜51件に低迷。並列を増やすと後方垢も予定バッチを消化しやすくなる)。
+  max_concurrent_accounts: 6     # 並列垢ワーカー数。5→6(8/23: 垢6を5スロットで回すと後方垢(zin/Tankan/inobase)のバッチ枠が
+                                 # 常に上限到達で出発できず応募枠が消化されない。6に解放して全垢が並列で枠を消化する)。
   apply_timeout: 1800
   batch_jitter_minutes: 15      # バッチ時刻を±15分ランダム化（BOT対策）
   priority: "pending_first"
