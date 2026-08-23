@@ -52,39 +52,39 @@ accounts:
         - { time: "21:30", max: 12 }
         - { time: "22:42", max: 12 }
 
-#   - key: atushi1840
-#     display: "@atushi1840"
-#     session: "data/x_session_b.json"
-#     disable_reply: true
-#     schedule:
-#       collects: false
-#       batches:
-#         - { time: "08:15", max: 12 }
-#         - { time: "09:43", max: 12 }
-#         - { time: "10:30", max: 12 }
-#         - { time: "12:15", max: 12 }
-#         - { time: "13:45", max: 12 }
-#         - { time: "15:15", max: 12 }
-#         - { time: "17:30", max: 12 }
-#         - { time: "19:15", max: 12 }
-#         - { time: "21:45", max: 12 }
-#         - { time: "22:47", max: 12 }
+  - key: chugakujuken
+    display: "@chugakujuken"
+    session: "data/x_session_chugakujuken.json"
+    disable_reply: true
+    schedule:
+      collects: false
+      batches:
+        - { time: "08:15", max: 12 }
+        - { time: "09:43", max: 12 }
+        - { time: "10:30", max: 12 }
+        - { time: "12:15", max: 12 }
+        - { time: "13:45", max: 12 }
+        - { time: "15:15", max: 12 }
+        - { time: "17:30", max: 12 }
+        - { time: "19:15", max: 12 }
+        - { time: "21:45", max: 12 }
+        - { time: "22:47", max: 12 }
 
-  # - key: zin20120731
-  #   display: "@zin20120731"
-  #   session: "data/x_session_c.json"
-  #   disable_reply: true
-  #   schedule:
-  #     collects: false
-  #     batches:
-  #       - { time: "08:45", max: 10 }
-  #       - { time: "10:15", max: 10 }
-  #       - { time: "11:45", max: 10 }
-  #       - { time: "14:15", max: 10 }
-  #       - { time: "16:15", max: 10 }
-  #       - { time: "18:00", max: 10 }
-  #       - { time: "20:00", max: 10 }
-  #       - { time: "22:00", max: 10 }
+  - key: zin20120731
+    display: "@zin20120731"
+    session: "data/x_session_c.json"
+    disable_reply: true
+    schedule:
+      collects: false
+      batches:
+        - { time: "08:45", max: 10 }
+        - { time: "10:15", max: 10 }
+        - { time: "11:45", max: 10 }
+        - { time: "14:15", max: 10 }
+        - { time: "16:15", max: 10 }
+        - { time: "18:00", max: 10 }
+        - { time: "20:00", max: 10 }
+        - { time: "22:00", max: 10 }
 
   - key: TankanNotes
     display: "@TankanNotes"
@@ -104,23 +104,23 @@ accounts:
         - { time: "20:30", max: 12 }
         - { time: "22:15", max: 12 }
 
-#   - key: inobase1-4
-#     display: "@inobase128508"
-#     session: "data/x_session_inobase1-4.json"
-#     disable_reply: true
-#     schedule:
-#       collects: false
-#       batches:
-#         - { time: "09:00", max: 12 }
-#         - { time: "10:07", max: 12 }
-#         - { time: "11:00", max: 12 }
-#         - { time: "13:00", max: 12 }
-#         - { time: "15:00", max: 12 }
-#         - { time: "16:27", max: 12 }
-#         - { time: "17:00", max: 12 }
-#         - { time: "19:00", max: 12 }
-#         - { time: "21:00", max: 12 }
-#         - { time: "23:00", max: 12 }
+  - key: inobase1-4
+    display: "@inobase128508"
+    session: "data/x_session_inobase1-4.json"
+    disable_reply: true
+    schedule:
+      collects: false
+      batches:
+        - { time: "09:00", max: 12 }
+        - { time: "10:07", max: 12 }
+        - { time: "11:00", max: 12 }
+        - { time: "13:00", max: 12 }
+        - { time: "15:00", max: 12 }
+        - { time: "16:27", max: 12 }
+        - { time: "17:00", max: 12 }
+        - { time: "19:00", max: 12 }
+        - { time: "21:00", max: 12 }
+        - { time: "23:00", max: 12 }
 
 # ── 収集設定 ──
 collection:
@@ -128,22 +128,25 @@ collection:
   use_scrapling: false        # true: Cloudflare突破にScrapling（curl_cffi + browserforge）を使用
   times: ["03:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"]
   max_items: 500
+  # 収集を応募(orchestrator)から分離: 専用cron(crontab 0 3,9-21)で実行。
+  # orchestratorの応募処理が収集の7.5分で圧迫されなくなる。
+  separate_cron: true
 
 # ── Keepalive ──
 keepalive:
   interval_minutes: 5
   interfaces:
-    - label: "USB-B (povo/@atushi1840)"
+    - label: "USB-B (povo/@chugakujuken)"
       type: ping
     - label: "WiFi-A (@kudou_aoshi)"
       type: wifi_monitor
       wifi_profile: "a"
     - label: "WiFi-C (@zin20120731)"
       type: wifi_monitor
-      wifi_profile: "AiR-WiFi_B8W38T_ino"
-    - label: "WiFi-D (@TankanNotes)"
-      type: wifi_monitor
-      wifi_profile: "8_iP6s"
+      wifi_profile: "AiR-WiFi_6_povo"
+    # - label: "WiFi-D (@TankanNotes)"
+    #   type: wifi_monitor
+    #   wifi_profile: "8_iP6s"                 # UNUSED 2026-08-17
 
 # ── レート制限（X BAN回避）──
 # 1垢あたりの日次上限。SocialNexis 2026年推奨値に準拠。
@@ -215,33 +218,34 @@ safety:
 # ── オーケストレーター ──
 orchestrator:
   interval_minutes: 15
-  max_accounts_per_run: 5        # 全垢を毎サイクル処理
+  max_accounts_per_run: 1        # 1回=1垢。全垢を1回で処理すると1時間超かかりcronが全スキップされるため。
+                                 # 1垢ずつ確実に15分毎処理して応募量を回復する（2026-08-22）
   apply_timeout: 1800
   batch_jitter_minutes: 15      # バッチ時刻を±15分ランダム化（BOT対策）
   priority: "pending_first"
 
+# ── アクションスキップ率（applier）──
+# 2026-08-20 低減: 応募量↑。BOT対策は日次/時間上限+不定期間隔(rate_limits)で担保。
+# ※フォローが最も危険・いいねが安全なため、アンバランスに保つ。
+applier:
+  skip_rates:
+    follow: 0.08      # 15%→8%  応募1件=フォローなので応募数に直結
+    rt: 0.10          # 20%→10%
+    like: 0.15        # 30%→15%
+    all: 0.03         # 5%→3%
+
 # ── NGワード（除外フィルター）──
 # この文字列を含むツイートは応募をスキップします
+# ※本当に「手動操作/外部操作」が必要で自動応募できない案件だけに限定。
+#   クイズ/アンケート(LIKEではない回答必須) や フォーム入力・合言葉入力必須のもの。
+#   URL/リンク/動画/画像/シェア/チェック/引用 は通常の懸賞告知に高頻度で出現する
+#   ためNG対象から除外（応募最大化のため。BOT対策はIP分離が主防御）。
 ng_words:
   - "応募フォーム"
   - "クイズ"
-  - "URL"
-  - "問題"
-  - "動画"
-  - "LINE"
-  - "結果を確認"
-  - "画像"
-  - "応募はこちら"
-  - "引用"
-  - "結果確認"
-  - "url"
-  - "リンク先"
-  - "チェック"
-  - "合言葉"
   - "アンケート"
-  - "抽選結果"
-  - "リンク"
-  - "シェア"
+  - "合言葉"
+  - "応募はこちら"
 
 # ── 必須ワード（応募条件）──
 # 「フォロー」を含む投稿のみ応募
@@ -251,7 +255,9 @@ required_words:
 
 # ── URLフィルター ──
 # true: URL（http/https）を含む投稿は応募しない
-skip_url_posts: true
+# 2026-08-16: false に変更。懸賞ツイートの大半がデフォルト画像/クーポン/詳細URLを
+# 含むため、trueでは応募が実質止まる（533件/日を除外）。BOT対策はIP分離で担保。
+skip_url_posts: false
 
 # ── 収集フィルタ ──
 collection_filter:

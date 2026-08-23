@@ -53,7 +53,7 @@ def extract_handles_from_collected(collected_path: str | None = None) -> list[di
         handle = m.group(1).lower()
 
         # 自アカウントは除外
-        if handle in ("atushi16", "kudou", "atushi1840", "zin20120731", "tankan"):
+        if handle in ("atushi16", "kudou", "chugakujuken", "zin20120731", "tankan"):
             continue
 
         handle_counter[handle] += 1
@@ -115,7 +115,7 @@ def search_new_accounts(limit: int = 20) -> list[dict[str, Any]]:
                     if handle not in seen and handle not in (
                         "atushi16",
                         "kudou",
-                        "atushi1840",
+                        "chugakujuken",
                         "zin20120731",
                         "tankan",
                         "home",

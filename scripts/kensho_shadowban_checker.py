@@ -121,7 +121,7 @@ def main() -> None:
 
     health = load_health()
     accounts = health.get("accounts", {})
-    account_keys: list[str] = ["atushi16", "kudou", "atushi1840", "zin20120731"]
+    account_keys: list[str] = ["atushi16", "kudou", "chugakujuken", "zin20120731"]
 
     for key in account_keys:
         print(f"  [{key}] チェック中...")

@@ -16,18 +16,18 @@ from typing import Any
 PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
     "atushi16": (1081, "192.168.1.220"),  # wired ethernet – no restart
     "kudou": (1082, "kudou_RM10JE_B"),
-    "atushi1840": (1083, "Atushi1840_RM10JE_S"),
-    "zin20120731": (1084, "zin_AiRWiFi"),
-    "TankanNotes": (1085, "Tankan_8iP6s"),
+    "chugakujuken": (1083, "chugakujuken_RM10JE_S"),
+    "zin20120731": (1084, "zin_AW6povo"),
+    "TankanNotes": (1085, "Tankan_2_redmi_n9s"),
     "inobase1-4": (1089, "inobase1-4"),
 }
 
 # ── WiFi SSID マップ（自動再接続用）──
 WIFI_SSID_MAP: dict[str, str] = {
     "kudou": "RM10JE_B",
-    "atushi1840": "RM10JE_S",
-    "zin20120731": "AiR-WiFi_B8W38T_ino",
-    "TankanNotes": "8_iP6s",
+    "chugakujuken": "RM10JE_S",
+    "zin20120731": "AiR-WiFi_6_povo",
+    "TankanNotes": "2_redmi_n9s",
     "inobase1-4": "ino1_4_oppo_r5a",
 }
 
@@ -49,6 +49,43 @@ def _port_reachable(port: int, timeout: int = PROXY_TIMEOUT) -> bool:
             s.close()
         except Exception:
             pass
+
+
+def _adapter_ipv4(adapter: str) -> str | None:
+    """Return the first usable (non-APIPA) IPv4 of a Windows adapter, else None."""
+    cmd = [
+        "powershell.exe",
+        "-NoProfile",
+        "-Command",
+        f"(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias '{adapter}' -ErrorAction SilentlyContinue).IPAddress",
+    ]
+    try:
+        ps = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+    except (subprocess.TimeoutExpired, OSError):
+        return None
+    for line in ps.stdout.splitlines():
+        ip = line.strip()
+        # 169.254.x.x (APIPA) = no real network. Skip it.
+        if ip and not ip.startswith("169.254."):
+            return ip
+    return None
+
+
+def _wait_for_adapter_ipv4(adapter: str, wait_seconds: int = 20) -> str | None:
+    """Poll for a usable IPv4 up to wait_seconds.
+
+    Fixes a startup race: Get-NetAdapter may report ``Up`` while the WiFi
+    link is still establishing (no DHCP address yet). Restarting the proxy in
+    that window makes kensho_proxy.py resolve no IPv4 and ``exit(2)``, so the
+    proxy silently never binds. Wait for a real non-APIPA address first.
+    """
+    deadline = time.time() + wait_seconds
+    while time.time() < deadline:
+        ip = _adapter_ipv4(adapter)
+        if ip:
+            return ip
+        time.sleep(1)
+    return None
 
 
 def restore_dead_proxies(config: dict, log: Any = None) -> int:
@@ -154,15 +191,33 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
                     )
                     continue
 
-            log.info("Adapter %s is up – restarting proxy for %s", adapter, account)
+            # ── IPv4付与を待つ（WiFi確立の遅延で、アダプタUpでもIP未付与だと
+            #    kensho_proxy.py が resolve 失敗で exit(2) し bind しない → 再発防止）──
+            ip = _wait_for_adapter_ipv4(adapter, wait_seconds=20)
+            if not ip:
+                log.warning(
+                    "Adapter %s is up but has no non-APIPA IPv4 yet for %s – skipping proxy restart",
+                    adapter,
+                    account,
+                )
+                continue
+
+            log.info(
+                "Adapter %s is up (IPv4 %s) – restarting proxy for %s",
+                adapter,
+                ip,
+                account,
+            )
 
             # ------------------------------------------------------------------
             # 3. Restart via Start-Process (hidden)
+            #    Pass the resolved real IPv4 (not the adapter name) so that
+            #    kensho_proxy.py skips its fragile `ipconfig /all` parsing.
             # ------------------------------------------------------------------
             restart_script = (
                 f"Start-Process "
                 f"-FilePath 'C:\\Users\\1F\\AppData\\Local\\Programs\\Python\\Python311\\python.exe' "
-                f"-ArgumentList 'C:\\tools\\kensho-proxy\\kensho_proxy.py','{adapter}','{port}' "
+                f"-ArgumentList 'C:\\tools\\kensho-proxy\\kensho_proxy.py','{ip}','{port}' "
                 f"-WindowStyle Hidden"
             )
             restart_cmd = ["powershell.exe", "-Command", restart_script]
