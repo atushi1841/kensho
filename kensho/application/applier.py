@@ -23,7 +23,6 @@ _MULTI_ACCOUNT_FOLLOW_PATTERN: re.Pattern = re.compile(r"@\w+\s+(と|&|＆|and)\
 from kensho.application.actions import sort_items
 from kensho.application.actions_apply import do_follow, do_like, do_rt
 from kensho.application.api_actions import (
-    TweetInaccessibleError,
     api_follow_by_screen_name,
     api_get_tweet_text,
     api_like,
@@ -464,7 +463,10 @@ def apply_for_account(
         #   max 12-14件の目標に達する前に打ち切られ、日次136枠を損失していた。
         #   50件/日達成のため、バッチ1回で目標件数まで到達できるようにする。
         session_start: float = time.time()
-        SESSION_TIMEOUT: int = 1800  # 15分→30分（バッチ内で目標件数を消化可能に）
+        # 1800秒(30分)→2400秒(40分)に延長（2026-08-23）: RTフォールバック短縮後も、
+        # 低速回線垢(kudou/chugakujuken/zin/Tankan)はgoto180s・選択待ち等で1アイテム2〜3分消費し、
+        # 30分だとmax 12-14件に達せず6〜8件で打ち切られる。40分に延ばし目標件数まで到達させる。
+        SESSION_TIMEOUT: int = 2400  # 30分→40分
 
         success: int = 0
         errors: int = 0
@@ -895,85 +897,80 @@ def apply_for_account(
                 # ── アクション順をランダムシャッフル（BOT対策） ──
 
                 # ── アクションキュー: skip判定に従って全アクション（強度モード廃止）──
-                action_queue = []
+                action_queue: list[tuple[str, Any]] = []
                 if not skip_follow:
                     if x_api_ok and screen_name:
-                        action_queue.append(
-                            lambda sn=screen_name: api_follow_by_screen_name(page, sn, account_key, out)
-                        )
+                        action_queue.append((
+                            "follow",
+                            lambda sn=screen_name: api_follow_by_screen_name(page, sn, account_key, out),
+                        ))
                     else:
-                        action_queue.append(lambda: do_follow(page, click_delay, out, account_key))
+                        action_queue.append(("follow", lambda: do_follow(page, click_delay, out, account_key)))
                 if not skip_rt:
-                    if x_api_ok and tweet_id:
 
-                        def fallback_rt(
-                            page=page,
-                            click_delay=click_delay,
-                            out=out,
-                            account_key=account_key,
-                            cfg=cfg,
-                            clean_url=clean_url,
-                            tweet_id=tweet_id,
-                        ):
-                            try:
-                                _rt_ok = api_rt(page, tweet_id, account_key, out)
-                            except TweetInaccessibleError:
-                                out("[i] RT API: アクセス不能(authorization) → UIフォールバック省略")
-                                _rt_ok = True  # 削除済み等はUIでも開けない → 再試行させない
-                            if not _rt_ok:
-                                out("[i] RT API失敗 → UIフォールバック")
-                                for _gr in range(2):
+                    def fallback_rt(
+                        page=page,
+                        click_delay=click_delay,
+                        out=out,
+                        account_key=account_key,
+                        cfg=cfg,
+                        clean_url=clean_url,
+                        tweet_id=tweet_id,
+                    ):
+                        # ★ 2026-08-23修正:
+                        #   ① code327誤判定撤廃 → api_rtは原则UIフォールバックへFalseを返す
+                        #   ② UIフォールバックを「実クリックで確実化」し、RT成否をboolで返す
+                        try:
+                            _rt_ok = api_rt(page, tweet_id, account_key, out)
+                        except Exception as _re:
+                            out(f"  [i] RT API例外: {str(_re)[:40]}")
+                            _rt_ok = False
+                        if _rt_ok is True:
+                            return True
+                        if _rt_ok is None:
+                            # ツイート削除/保護(stale) → UIフォールバック(90秒goto)をスキップして次へ。
+                            # staleは何度再試しても無駄なのでRT失敗として扱う（applied付与なし・再処理対象）。
+                            out("[i] RT: ツイート非公開/削除(stale) → UIフォールバックせずスキップ")
+                            return False
+                        # APIがAuthorizationError(code327)で全クエリ失敗 → この垢のRT APIは現状不通。
+                        # UIフォールバックの90000ms×2 gotoで1アイテム90〜180秒浪費し、
+                        # セッションが「6〜8件で打ち切り」→ 日次応募が頭打ちになるのが主因。
+                        # フォールバックのgotoタイムアウトを短縮し、遅延リトライを1回に制限する。
+                        out("[i] RT API失敗 → UIフォールバック（実クリックで確実化・短縮版）")
+                        try:
+                            # RTボタン既出（イベント中・遷移済み）なら再遷移不要
+                            if not (
+                                page.query_selector('[data-testid="retweet"]')
+                                or page.query_selector('[data-testid="unretweet"]')
+                            ):
+                                _to: int = 20000 if account_key == "atushi16" else 30000
+                                for _gr in range(1):  # 90000×2 → 30000×1 に短縮（RT失敗のセッション時間を削減）
                                     try:
-                                        resp = page.goto(
-                                            clean_url,
-                                            timeout=60000,
-                                            wait_until="domcontentloaded",
-                                        )
-                                        _status = resp.status if resp else "N/A"
-                                        out(f"  [GOTO fallback] status={_status}")
+                                        page.goto(clean_url, timeout=_to, wait_until="domcontentloaded")
                                         break
                                     except Exception as _ge:
-                                        out(f"  [NG] Page.goto fallback attempt {_gr + 1} failed: {str(_ge)[:60]}")
-                                        if _gr < 1:
+                                        out(f"  [NG] RT goto attempt {_gr + 1}: {str(_ge)[:50]}")
+                                        if _gr == 0:
                                             time.sleep(2)
-                                # ★ レンダリング待機: XのJS実行に時間がかかる ★
-                                # 第一フェーズ: 最大15秒待機
-                                _found_rt = False
-                                for _w in range(15):
-                                    if page.query_selector('[data-testid="retweet"]'):
-                                        _found_rt = True
+                                # RTボタン描画待ち（最大25秒→20秒に短縮）
+                                for _w in range(20):
+                                    if page.query_selector('[data-testid="retweet"]') or page.query_selector(
+                                        '[data-testid="unretweet"]'
+                                    ):
                                         break
                                     time.sleep(1)
-                                # 第二フェーズ: 未発見ならページリロードして再試行
-                                if not _found_rt:
-                                    out("  [i] RTボタン未発見、ページリロードして再試行")
-                                    try:
-                                        resp2 = page.goto(
-                                            page.url,
-                                            timeout=45000,
-                                            wait_until="domcontentloaded",
-                                        )
-                                        out(f"  [RELOAD] status={resp2.status if resp2 else 'N/A'}")
-                                    except Exception:
-                                        out("  [i] リロード失敗、そのまま続行")
-                                    for _w in range(10):
-                                        if page.query_selector('[data-testid="retweet"]'):
-                                            break
-                                        time.sleep(1)
-                                do_rt(page, click_delay, out, account_key, cfg)
+                        except Exception as _ne:
+                            out(f"  [i] RT UI遷移エラー: {str(_ne)[:50]}")
+                        return do_rt(page, click_delay, out, account_key, cfg)
 
-                        action_queue.append(fallback_rt)
-                    else:
-                        action_queue.append(
-                            lambda p=page, cd=click_delay, o=out, ak=account_key, c=cfg: do_rt(p, cd, o, ak, c)
-                        )
+                    action_queue.append(("rt", fallback_rt))
                 # ★ いいねアクション（条件付き）を別途保持
-                like_action = None
+                like_action: tuple[str, Any] | None = None
                 if not skip_like:
                     if x_api_ok and tweet_id:
-                        like_action = lambda tid=tweet_id: api_like(page, tid, account_key, out)
+                        like_action = ("like", lambda tid=tweet_id: api_like(page, tid, account_key, out))
                     else:
-                        like_action = lambda: do_like(page, click_delay, out, account_key, cfg)
+                        like_action = ("like", lambda: do_like(page, click_delay, out, account_key, cfg))
 
                 # ★ アクション順: フォローは必ずRTより前。いいねだけランダム位置
                 #   パターン（重み付き＋垢別バイアス＋毎回ジッター＝自然な分布）:
@@ -995,9 +992,13 @@ def apply_for_account(
                     action_queue.insert(insert_pos, like_action)
 
                 false_count = 0
+                # ★ アクション成否記録（応募成立判定に使用）
+                _per_item_ok: dict[str, bool] = {"follow": False, "rt": False, "like": False}
                 action_count = len(action_queue)
-                for idx, action_fn in enumerate(action_queue):
-                    result = action_fn()
+                for idx, (_name, _fn) in enumerate(action_queue):
+                    result = _fn()
+                    _rv = bool(result)
+                    _per_item_ok[_name] = _per_item_ok.get(_name) or _rv
                     if result is False:
                         false_count += 1
                         if false_count >= 3:
@@ -1020,13 +1021,14 @@ def apply_for_account(
                 total_v = 0
                 fail_v = 0
                 if cfg.get("verification", {}).get("enabled", False):
+                    _vcfg: dict = cfg.get("verification", {})
                     time.sleep(random.uniform(1.0, 2.0))
                     try:
                         page.goto(clean_url, timeout=30000, wait_until="domcontentloaded")
                         time.sleep(random.uniform(2.0, 3.5))
                         from kensho.application.verifier import ActionVerifier
 
-                        if not skip_rt and tweet_id:
+                        if not skip_rt and tweet_id and _vcfg.get("verify_rt", False):
                             rt_result = ActionVerifier.verify_retweet(page, tweet_id, fallback_url=clean_url)
                             total_v += 1
                             if not rt_result.success:
@@ -1034,7 +1036,7 @@ def apply_for_account(
                                 out(f"  [VERIFY] RT: x {rt_result.detail}")
                             else:
                                 out("  [VERIFY] RT: ok")
-                        if not skip_like and tweet_id:
+                        if not skip_like and tweet_id and _vcfg.get("verify_like", False):
                             like_result = ActionVerifier.verify_like(page, tweet_id, fallback_url=clean_url)
                             total_v += 1
                             if not like_result.success:
@@ -1042,7 +1044,7 @@ def apply_for_account(
                                 out(f"  [VERIFY] Like: x {like_result.detail}")
                             else:
                                 out("  [VERIFY] Like: ok")
-                        if not skip_follow and screen_name:
+                        if not skip_follow and screen_name and _vcfg.get("verify_follow", False):
                             follow_result = ActionVerifier.verify_follow(page, screen_name)
                             total_v += 1
                             if not follow_result.success:
@@ -1070,11 +1072,47 @@ def apply_for_account(
                 out("  [i] リプライ: 無効化（応募はフォロー/いいね/RTのみ）")
 
                 # ── 応募結果チェック ──
+                # ★ 2026-08-23修正: 「応募成立」は最低1アクション(follow/rt/like)の実成功に限定。
+                #   ツイートが正常+1アクション成功 → ok。RT必須案件でRTだけ失敗 → rt_failedと記録
+                #   し、appliedを付けない（次サイクルで再試行）。false成立(偽装)を防ぐ。
                 tweet_result = _check_tweet_result(page, clean_url, out)
+                _qualify: bool = (tweet_result == "tweet_ok" and any(_per_item_ok.values())) or len(
+                    action_queue
+                ) == 0  # 全スキップ(見て終わり)は自然な合格扱い
                 if tweet_result and tweet_result != "tweet_ok":
                     item.setdefault("results", {})[account_key] = tweet_result
-                else:
+                    # ★ 2026-08-23修正: 削除済み/無効ツイートを DEFER で長期スキップし、
+                    #   次のサイクルで無限に再処理（重複フォロー/RT・セッション時間浪費）するのを防ぐ。
+                    #   実測: 同一ツイートへ RT を96回も失敗したケースあり。適用判定は
+                    #   _should_process_item が DEFER 期限を尊重するため安全。
+                    _defer_suppress: set[str] = {
+                        "tweet_deleted",
+                        "account_suspended",
+                        "page_not_found",
+                        "tweet_unavailable",
+                        "tweet_withheld",
+                    }
+                    if tweet_result in _defer_suppress:
+                        try:
+                            from datetime import timedelta
+
+                            _def_until = datetime.now() + timedelta(
+                                days=cfg.get("applier", {}).get("defer_deleted_days", 14)
+                            )
+                            item.setdefault("applied", {})[account_key] = f"{_DEFER_PREFIX}{_def_until.isoformat()}"
+                            out(f"  [DEFER] 削除/無効ツイート → {_def_until.date()}までスキップ")
+                        except Exception:
+                            pass
+                elif _qualify:
                     item.setdefault("results", {})[account_key] = "ok"
+                else:
+                    _rt_was_demanded: bool = not skip_rt
+                    if _rt_was_demanded and not _per_item_ok.get("rt"):
+                        item.setdefault("results", {})[account_key] = "rt_failed"
+                        out("  [RESULT] ⚠ RT未成立 → 応募成立と記録せず（再試行対象）")
+                    else:
+                        item.setdefault("results", {})[account_key] = "no_action_applied"
+                        out("  [RESULT] ⚠ アクション未成功 → 応募成立と記録せず")
 
                 # ★ 気晴らしポーズ（稀に長め休憩｜人間らしい中断）
                 if random.random() < 0.005:
@@ -1082,12 +1120,18 @@ def apply_for_account(
                     out("  [DISTRACT] 気晴らし中…👀（人間らしさ）")
                     time.sleep(distract_duration)
 
-                item["applied"][account_key] = datetime.now().isoformat()
-                # ★ 連続失敗リセット（成功）
-                if fc_enabled:
-                    failure_tracker.record_success(account_key)
-                success += 1
-                _hourly_count += 1
+                if _qualify:
+                    item["applied"][account_key] = datetime.now().isoformat()
+                    # ★ 連続失敗リセット（成功）
+                    if fc_enabled:
+                        failure_tracker.record_success(account_key)
+                    success += 1
+                    _hourly_count += 1
+                else:
+                    # 未成立: appliedを付けず次サイクルで再試行。失敗として記録。
+                    out("  [CEILING] アクション未成立 → 成功扱いせず（applied付与なし→再試行）")
+                    if fc_enabled:
+                        failure_tracker.record_failure(account_key)
 
                 if global_idx % break_after_n == 0:
                     save_collected_safe(data, account_key, log)

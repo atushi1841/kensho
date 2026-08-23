@@ -86,6 +86,8 @@ accounts:
         - { time: "20:00", max: 10 }
         - { time: "22:00", max: 10 }
 
+  # ★ 2026-08-23 復帰: 書き込みAPI認証エラーは「セッション(auth_token)失効」が原因と判明。
+  #   Chromeで通常表示(凍結なし)→ 新auth_token/ct0に更新済み(x_session_TankanNotes.json)。復帰。
   - key: TankanNotes
     display: "@TankanNotes"
     session: "data/x_session_TankanNotes.json"
@@ -200,9 +202,9 @@ failure_ceiling:
 # Loop Engineering: page.gotoによる重検証（プロフィールに遷移してボタン状態を確認）
 # コスト高いのでデフォルトOFF。必要なアクションだけONに推奨。
 verification:
-  enabled: false                   # false: 軽量チェックのみ（API戻り値）
+  enabled: true                    # true: RTのみ実機検証（Follow/LikeはAPI戻り値+UI成功で足りる）
   verify_follow: false             # true: フォロー後→プロフィール遷移で確認
-  verify_rt: false                 # true: RT後→ツイート遷移で確認
+  verify_rt: true                  # ★ 2026-08-23: RT必須案件のRT成否を必ず実機確認（RT崩壊対策）
   verify_like: false               # true: いいね後→ツイート遷移で確認
   verify_account_health: true      # true: ループ開始前にアカウント健全性チェック
 
@@ -218,11 +220,16 @@ safety:
 # ── オーケストレーター ──
 orchestrator:
   interval_minutes: 15
-  max_accounts_per_run: 1        # 1回=1垢。全垢を1回で処理すると1時間超かかりcronが全スキップされるため。
-                                 # 1垢ずつ確実に15分毎処理して応募量を回復する（2026-08-22）
+  max_accounts_per_run: 1        # 1回(1垢ワーカー)=1垢。垢別並列ワーカーが各垢の予定バッチを消化。
+                                 # （2026-08-23 並列化: kensho-auto-apply.sh が垢ごとに背景起動）
+  max_concurrent_accounts: 5     # 並列垢ワーカー数。4→5(8/23: RAM空き10GB実測。垢数6を4スロットで回すと後方垢飢餓。5で緩和。現状atushi16のみ達成の111件、他垢はスケジュール枠が消化されず22〜51件に低迷。並列を増やすと後方垢も予定バッチを消化しやすくなる)。
   apply_timeout: 1800
   batch_jitter_minutes: 15      # バッチ時刻を±15分ランダム化（BOT対策）
   priority: "pending_first"
+  # ★ 2026-08-23 BOT対策: 深夜帯は応募アクション禁止（睡眠中の人間がやらない時間帯=最強のBOT信号）。
+  #   スケジュール(8:00〜22:47)を過ぎた積み残しバッチが深夜の15分cronで飲み込まれるバグの対策。
+  #   実測: atushi16 が00:48〜05:35にフォロー47件漏出。この窓では get_pending_batches が全バッチを返さない。
+  no_action_window: ["00:00", "07:00"]
 
 # ── アクションスキップ率（applier）──
 # 2026-08-20 低減: 応募量↑。BOT対策は日次/時間上限+不定期間隔(rate_limits)で担保。

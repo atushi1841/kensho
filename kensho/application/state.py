@@ -84,7 +84,25 @@ def save_collected_safe(data: dict[str, Any], account_key: str, log: Any = None)
                 detail_url: str = item.get("detail_url", "")
                 if detail_url in merged_urls:
                     idx: int = next(i for i, it in enumerate(merged_items) if it.get("detail_url") == detail_url)
-                    merged_items[idx]["applied"] = item.get("applied", merged_items[idx].get("applied", {}))
+                    # ★ 2026-08-23修正: applied は丸ごと上書きせず垢キー単位でunion。
+                    #   並列垢プロセスが同じcollected.jsonに保存するため、後から保存する側が
+                    #   他垢のappliedスタンプ(日付なし/None化)を消して再処理+二重RTの原因になっていた。
+                    # ★ 2026-08-23 追加修正★: 素朴な {**dst, **src} マージは src の None 値が
+                    #   dst の「応募済み日付」をキー単位で上書き(=None汚染)するバグがあった。
+                    #   collector.py が収集時に全垢キーを None 初期化するため、処理中の垢以外は
+                    #   src が None になり、他垢の応募済み日付が次々と消されていた。
+                    #   → 「None 以外の値(日付/DEFER)を優先する」unionに変更。
+                    _src_applied: dict = item.get("applied") or {}
+                    _dst_applied: dict = merged_items[idx].get("applied") or {}
+                    _merged_applied: dict[str, Any] = dict(_dst_applied)
+                    for _k, _v in _src_applied.items():
+                        if _v is None:
+                            # srcがNoneでもdstに日付があるなら残す（消さない）
+                            _merged_applied.setdefault(_k, None)
+                        else:
+                            # 日付/DEFERは上書き/追加
+                            _merged_applied[_k] = _v
+                    merged_items[idx]["applied"] = _merged_applied
                     # ★ 全文取得できた場合、tweet_text を上書き保存（次回のNGフィルター用）
                     _new_text: str = item.get("tweet_text", "") or ""
                     _old_text: str = merged_items[idx].get("tweet_text", "") or ""

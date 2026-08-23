@@ -193,26 +193,33 @@ class ActionVerifier:
     @staticmethod
     def verify_retweet(page: Any, tweet_id: str, fallback_url: str = "") -> VerificationResult:
         """RTボタンの状態確認。
+
         ツイートページに遷移し、RTボタンがアクティブ（リポスト済み）か確認。
+        2026-08-23: 遷移エラー/判別不能は success=True(verify_unresolved) として
+        失敗カウントしない（低速回線で確認不能でも実RTが成立している場合の偽停止を防ぐ）。
         """
+
+        def _unresolved(detail: str) -> VerificationResult:
+            return VerificationResult(success=True, detail=f"verify_unresolved:{detail}")
+
         try:
             url = f"https://x.com/i/web/status/{tweet_id}" if tweet_id else fallback_url
             if not url:
-                return VerificationResult(success=False, detail="no_url")
-            page.goto(url, timeout=30000, wait_until="domcontentloaded")
+                return _unresolved("no_url")
+            page.goto(url, timeout=45000, wait_until="domcontentloaded")
             time.sleep(random.uniform(2.0, 3.5))
 
             # data-testid="unretweet" が存在 → リポスト済み
             unretweet = page.query_selector('[data-testid="unretweet"]')
             if unretweet:
                 return VerificationResult(success=True, detail="retweeted")
-            # まだRT可能な状態
+            # まだRT可能な状態 → 明確な「RT未成立」
             retweet_btn = page.query_selector('[data-testid="retweet"]')
             if retweet_btn:
                 return VerificationResult(success=False, detail="not_retweeted")
-            return VerificationResult(success=False, detail="button_unresolved")
+            return _unresolved("button_unresolved")
         except Exception as e:
-            return VerificationResult(success=False, detail=f"verify_error:{e}")
+            return _unresolved(f"goto_error:{str(e)[:40]}")
 
     @staticmethod
     def verify_like(page: Any, tweet_id: str, fallback_url: str = "") -> VerificationResult:

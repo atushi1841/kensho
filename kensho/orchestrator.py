@@ -8,6 +8,7 @@ v4.0: ForceBindIP廃止、サブプロセス撤廃、apply_for_account()直接�
 
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import random
@@ -22,10 +23,17 @@ from kensho.core.encoding import guard_stdio
 
 guard_stdio()
 
+# ── CLI引数: --account <key> で垢別起動（並列ワーカー用） ──
+_parser: argparse.ArgumentParser = argparse.ArgumentParser(description="Kensho Orchestrator")
+_parser.add_argument("--account", default=None, help="対象アカウントキー（指定時は垢別で起動）")
+_CLI_ARGS, _ = _parser.parse_known_args()
+
 from kensho.core.lock import acquire_pid_lock  # noqa: E402
 
-# ── PIDロック: 多重起動防止 ──
-if not acquire_pid_lock("orchestrator"):
+# ── PIDロック: 多重起動防止（垢別なら垢ごとのロックで並列可） ──
+_ACCOUNT: str | None = _CLI_ARGS.account
+_lock_name: str = f"orchestrator-{_ACCOUNT}" if _ACCOUNT else "orchestrator"
+if not acquire_pid_lock(_lock_name):
     sys.exit(0)
 
 from kensho.application.applier import apply_for_account  # noqa: E402
@@ -75,19 +83,46 @@ def should_collect(now_str: str, collect_times: list[str]) -> bool:
     return False
 
 
-def get_pending_batches(cfg: dict[str, Any], state: dict[str, Any]) -> list[tuple[str, str, int]]:
+def get_pending_batches(
+    cfg: dict[str, Any],
+    state: dict[str, Any],
+    account_key: str | None = None,
+) -> list[tuple[str, str, int]]:
     """
     スケジュール時刻を過ぎて未処理のバッチ一覧を取得。
     優先順位: round_robin（最後に処理した垢を避ける） or pending_first
+    account_key 指定時はその垢のみ対象（垢別並列ワーカー用）。
     """
     now: datetime = datetime.now()
     now_m = now.hour * 60 + now.minute
     priority = cfg.get("orchestrator", {}).get("priority", "round_robin")
 
+    # ★ 2026-08-23 BOT対策: 深夜帯は応募アクションを一切行わない（睡眠中の人間がやらない時間帯は
+    #   XのBOT検出で最も強い信号）。config: orchestrator.no_action_window = ["HH:MM","HH:MM"]。
+    #   スケジュール時刻を過ぎた積み残しバッチも深夜に飲み込まれて実行されるバグの対策。
+    #   実測: atushi16 が00:48〜05:35にフォロー47件（スケジュールは8:00開始）
+    _aw = cfg.get("orchestrator", {}).get("no_action_window") or ["00:00", "07:00"]
+    if len(_aw) == 2:
+        try:
+            _a0 = int(_aw[0].split(":")[0]) * 60 + int(_aw[0].split(":")[1])
+            _a1 = int(_aw[1].split(":")[0]) * 60 + int(_aw[1].split(":")[1])
+            # 深夜を跨ぐ窓（例 23:00-07:00）
+            if _a0 <= _a1:
+                _in_window = _a0 <= now_m < _a1
+            else:
+                _in_window = now_m >= _a0 or now_m < _a1
+            if _in_window:
+                return []  # 深夜は全バッチスキップ
+        except Exception:
+            pass
+
     pending = []  # [(account_key, batch_time_str, batch_max)]
 
     for acct in cfg.get("accounts", []):
         key = acct["key"]
+        # 垢別指定時は対象外をスキップ
+        if account_key is not None and key != account_key:
+            continue
         # ── 日別ランダムジッター（BOT対策）──
         jitter_min = cfg.get("orchestrator", {}).get("batch_jitter_minutes", 0)
         for batch in acct.get("schedule", {}).get("batches", []):
@@ -245,7 +280,15 @@ def main() -> None:
         guard.update("cleanup", "ゾンビクリーンアップ")
 
         # 各ステップを独立実行
-        _safe_step("Cleanup", log, lambda: kill_zombies(log))
+        # ★ Cleanup(kill_zombies)は直列前提の「名前/親python基準のfirefox総kill」。
+        #   並列垢ワーカー時は他垢の稼働中ブラウザを殺すためスキップ。
+        #   孤児の掃除は firewatch.sh（PPID=1のみkill、5分おき）が安全に担う。
+        if _ACCOUNT is not None:
+            log.write(
+                "  [SKIP] Cleanup(kill_zombies): 並列垢ワーカーでは他垢のFirefoxを守るため省略（孤児はfirewatchが掃除）"
+            )  # noqa: E501
+        else:
+            _safe_step("Cleanup", log, lambda: kill_zombies(log))
         log_dir = os.path.join(cfg["general"]["project_dir"], "logs")
         retention = cfg["general"].get("log_retention_days", 30)
         _safe_step("Log Cleanup", log, clean_old_logs, log_dir, retention, log)
@@ -300,9 +343,11 @@ def main() -> None:
         else:
             log.write("  収集時刻外 → スキップ")
 
-        # 5. 応募（逐次実行: OOM防止のため1垢ずつ）
+        # 5. 応募（垢別並列起動時は各垢プロセスが自分だけを処理）
         log.write("\n--- Step 5: Apply Check ---")
-        pending = get_pending_batches(cfg, state)
+        if _ACCOUNT is not None:
+            log.write(f"  垢別起動: {_ACCOUNT}")
+        pending = get_pending_batches(cfg, state, _ACCOUNT)
         max_accounts = cfg.get("orchestrator", {}).get("max_accounts_per_run", 2)
 
         if not pending:

@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import Any
 
 today = date.today()
+today_str = today.isoformat()
 now = datetime.now()
 week_end = today + timedelta(days=(6 - today.weekday()))
 
@@ -66,6 +67,28 @@ try:
 except Exception:
     daily_counts = {}
 
+# ★ 2026-08-23修正: 「本日応募」を audit.jsonl(追記専用・消えない完全履歴)から正確に算出。
+#   collected.applied は保存競合+None汚染で過小化し、実応募と乖離するため dashboard はこれを使う。
+#   フォロー成功1件 = 応募成立1件（懸賞応募の主条件）として垢別に数える。
+_applied_today_per_account: dict[str, int] = defaultdict(int)
+try:
+    _audit_file = os.path.join(PROJECT_DIR, "data/audit.jsonl")
+    with open(_audit_file, encoding="utf-8") as f:
+        for line in f:
+            try:
+                r = json.loads(line)
+            except Exception:
+                continue
+            if r.get("status") != "success":
+                continue
+            ts = r.get("timestamp", "")
+            if not ts.startswith(today_str):
+                continue
+            if r.get("action_type") == "follow":
+                _applied_today_per_account[r.get("account", "")] += 1
+except Exception:
+    pass
+
 result: dict[str, Any] = {"accounts": {}, "stats": {}}
 
 for ac in accounts:
@@ -115,13 +138,10 @@ for ac in accounts:
 
     total_pending = today_dl + this_week_dl + future_dl + no_dl
     today_str = today.isoformat()
-    applied_today = sum(
-        1
-        for it in items
-        if isinstance(it.get("applied", {}), dict)
-        and isinstance(it["applied"].get(ac), str)
-        and today_str in it["applied"][ac]
-    )
+    # ★ 2026-08-23修正: 「本日応募」を audit.jsonl(追記専用・消えない完全履歴)から算出。
+    #   従来 collected.applied ベースだったが、None汚染+保存競合で実際の応募が過小表示され、
+    #   実態(応募成功率)と大きく乖離していた。フォロー成功1件=応募成立1件として数える。
+    applied_today = _applied_today_per_account.get(ac, 0)
 
     defer_count = sum(
         1
@@ -317,15 +337,9 @@ for ac, data in result["accounts"].items():
 result["over_limit"] = over_limit
 
 # ── 日別×アカウント別 応募履歴（直近14日） ──
+# ★ 2026-08-23修正: collected.applied(None汚染)ではなく audit のフォロー成功から算出。
+#   応募成立=フォロー成功。action_history(全アクション)と区別するため apply_history はフォローのみ。
 apply_history = defaultdict(lambda: defaultdict(int))
-for it in items:
-    ap = it.get("applied", {})
-    if isinstance(ap, dict):
-        for acct, ts in ap.items():
-            if isinstance(ts, str) and not ts.startswith("DEFER"):
-                day = ts[:10]
-                apply_history[day][acct] += 1
-
 action_history = defaultdict(lambda: defaultdict(int))
 try:
     with open(os.path.join(PROJECT_DIR, "data/audit.jsonl"), encoding="utf-8") as f:
@@ -334,11 +348,15 @@ try:
                 r = json.loads(line)
             except Exception:
                 continue
-            if r.get("status") == "success":
-                day = (r.get("timestamp") or "")[:10]
-                acct = r.get("account", "")
-                if day and acct:
-                    action_history[day][acct] += 1
+            if r.get("status") != "success":
+                continue
+            day = (r.get("timestamp") or "")[:10]
+            acct = r.get("account", "")
+            at = r.get("action_type", "")
+            if day and acct:
+                action_history[day][acct] += 1
+                if at == "follow":
+                    apply_history[day][acct] += 1
 except Exception:
     pass
 

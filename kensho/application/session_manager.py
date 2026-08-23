@@ -21,9 +21,7 @@ def get_session_data(account_key: str) -> dict[str, Any] | None:
     return load_session(account_key)
 
 
-def check_sessions(
-    cfg: dict[str, Any], log: Any = None
-) -> list[tuple[str, str, float]]:
+def check_sessions(cfg: dict[str, Any], log: Any = None) -> list[tuple[str, str, float]]:
     """
     全アカウントのセッションファイルの最終更新日時を確認。
     閾値を超えているものがあれば警告をログに記録。
@@ -45,9 +43,7 @@ def check_sessions(
         if not session_path.exists():
             warnings.append((key, display, -1))  # -1 = ファイルなし
             if log:
-                log.write(
-                    f"[!] Session: {display} セッションファイルなし: {session_rel}"
-                )
+                log.write(f"[!] Session: {display} セッションファイルなし: {session_rel}")
             continue
 
         mtime = os.path.getmtime(session_path)
@@ -59,10 +55,7 @@ def check_sessions(
         if days > acct_warn:
             warnings.append((key, display, round(days, 1)))
             if log:
-                log.write(
-                    f"[!] Session: {display} のセッションが {days:.0f}日間未更新"
-                    f"（閾値: {acct_warn}日）"
-                )
+                log.write(f"[!] Session: {display} のセッションが {days:.0f}日間未更新（閾値: {acct_warn}日）")
         else:
             if log:
                 log.write(f"[OK] Session: {display} OK（最終更新: {days:.0f}日前）")

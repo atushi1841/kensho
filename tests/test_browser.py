@@ -446,9 +446,9 @@ class TestBuildStealthJs:
         assert chr(10) in js, "JS should contain real newlines"
         # リテラルな \\n や \\\\n が混入してない
         assert "\\\\n" not in js, "JS should not contain literal backslash-n"
-        # 80行前後（実際は79行）
+        # 134行（機能追加で増加）
         lines = js.split("\n")
-        assert 70 <= len(lines) <= 90, f"Expected ~80 JS lines, got {len(lines)}"
+        assert 120 <= len(lines) <= 150, f"Expected ~134 JS lines, got {len(lines)}"
 
     def test_all_10_features_present(self) -> None:
         """10個の機能すべてがJSコード内にコメントとして存在する"""

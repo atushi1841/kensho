@@ -97,3 +97,4 @@ kensho/tools/繧*
 # kensho/配下のランタイムデータ
 kensho/data/
 kensho/application/transaction_pairs.json
+.hermes_backup_rtfix/

@@ -39,15 +39,7 @@ def generate_reply(tweet_text: str) -> str:
             "気になってました✨",
         ]
     elif any(w in text for w in ["春", "夏", "秋", "冬", "季節"]):
-        season: str = (
-            "春"
-            if "春" in text
-            else "夏"
-            if "夏" in text
-            else "秋"
-            if "秋" in text
-            else "冬"
-        )
+        season: str = "春" if "春" in text else "夏" if "夏" in text else "秋" if "秋" in text else "冬"
         templates = [
             f"{season}らしい素敵な企画ですね！",
             f"{season}を感じます😊",

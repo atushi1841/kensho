@@ -20,20 +20,6 @@ from typing import Any
 from kensho.application.audit_ledger import audit_ledger
 from kensho.application.policy_engine import PolicyDecision, policy_engine
 
-
-class TweetInaccessibleError(Exception):
-    """ツイートが恒久的にアクセス不能(削除/保護/ブロック)であることを表す。
-
-    AuthorizationError (code 327) は queryId や一時的失敗ではなく、対象ツイートが
-    恒久的に開けないことを意味する。この場合は UI フォールバックしても開けないため、
-    fail fast して即スキップする（デッドロック/ハングの温床を断つ）。
-    """
-
-    def __init__(self, tweet_id: str) -> None:
-        super().__init__(f"tweet not accessible: {tweet_id}")
-        self.tweet_id = tweet_id
-
-
 # ── Config cache (30秒) ──
 _cfg_cache: dict[str, Any] = {}
 _cfg_loaded_at: float = 0.0
@@ -505,8 +491,11 @@ def api_rt(
     tweet_id: str,
     account_key: str,
     out: Callable[[str], None],
-) -> bool:
-    """X内部API経由でリポスト（RT）を実行。"""
+) -> bool | None:
+    """X内部API経由でリポスト（RT）を実行。
+
+    戻り値: True=成功 / False=一時的失敗(UI確認可) / None=ツイート消失(stale)。
+    """
     from kensho.application.rate_limiter import increment_daily_count
 
     _t0 = _time.time()
@@ -603,12 +592,22 @@ def api_rt(
             out(f"  [i] RT GraphQL (queryId={query_id[:8]}…): HTTP {status} [{body_str[:80]}] → 次を試す")
 
     if _auth_error:
-        out("  [i] RT API: AuthorizationErrorが続いたためRESTフォールバックをスキップ")
-        _delay = int((_time.time() - _t0) * 1000)
-        audit_ledger.log(account_key, "rt", tweet_id, "deny", "failed", error="authorization_error", delay_ms=_delay)
-        # 恒久的アクセス不能 → fail fast。UIフォールバックしても開けないので例外で伝播し、
-        # applier 側で UIリポスト試行を省略させる（デッドロック/ハング防止）。
-        raise TweetInaccessibleError(tweet_id)
+        # ★ 2026-08-23修正:
+        #   code327(AuthorizationError)でもCDNで本文が取れるツイート(生存)はUIフォールバックで実際のRTを試行。
+        #   一方、収集済みが削除/保護で消えたstaleツイートはUIフォールバックに走るとpage.gotoで90秒×多数を
+        #   無駄に消費しバッチが獲れなくなる。→ CDNで生存判定して、死亡なら None(=stale) を返しUIをスキップ。
+        _cdn_alive: bool = bool(_cdn_get_tweet_text(tweet_id))
+        if _cdn_alive:
+            out("  [i] RT API: AuthorizationError だがCDN生存 → UIフォールバックでRTを確実化")
+            _delay = 0
+            audit_ledger.log(
+                account_key, "rt", tweet_id, "allow", "failed", error="authorization_error_ui_fallback", delay_ms=_delay
+            )
+            return False
+        out("  [i] RT API: AuthorizationError & CDN非生存（stale）→ スキップ")
+        _delay = 0
+        audit_ledger.log(account_key, "rt", tweet_id, "allow", "failed", error="stale_authorization", delay_ms=_delay)
+        return None  # None = 削除/保護済みのstale。applierはUIフォールバックせず次へ
 
     out(f"  [i] RT API: 全queryId失敗 → REST フォールバック (last body: {body_preview[:150]})")
 

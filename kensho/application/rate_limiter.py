@@ -6,15 +6,51 @@ v3.3: application/applier.py から抽出、公開関数化
 from __future__ import annotations
 
 import json
+import os
 import random
+import time
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
+
+import psutil
 
 from kensho.utils.backup import safe_save_json
 
 DATA_DIR: Path = Path(__file__).parent.parent.parent / "data"
 DAILY_COUNTS_FILE: Path = DATA_DIR / "daily_counts.json"
+DAILY_LOCK: Path = DATA_DIR / "daily_counts.lock"
+
+
+def _lock_daily_counts(timeout: float = 15.0) -> bool:
+    """日次カウンターファイルの排他ロック（並列垢実行時の更新ロスト防止）"""
+    deadline: float = time.time() + timeout
+    _span: float = random.uniform(0.3, 0.7)
+    while time.time() < deadline:
+        try:
+            fd: int = os.open(str(DAILY_LOCK), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.write(fd, str(os.getpid()).encode())
+            os.close(fd)
+            return True
+        except (FileExistsError, OSError):
+            try:
+                with open(DAILY_LOCK) as f:
+                    _old_pid: int = int(f.read().strip())
+                if not psutil.pid_exists(_old_pid):
+                    DAILY_LOCK.unlink(missing_ok=True)
+                    continue
+            except Exception as e:
+                print(f"[LOCK] daily_counts 古いロック読み込み失敗: {e}", flush=True)
+            time.sleep(_span)
+            continue
+    return False
+
+
+def _unlock_daily_counts() -> None:
+    try:
+        DAILY_LOCK.unlink(missing_ok=True)
+    except Exception:
+        pass
 
 
 def load_daily_counts() -> dict[str, Any]:
@@ -35,9 +71,7 @@ def save_daily_counts(counts: dict[str, Any]) -> None:
     """本日のカウンター保存（公開関数、バックアップ付き）"""
     today: str = date.today().isoformat()
     DAILY_COUNTS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    safe_save_json(
-        DAILY_COUNTS_FILE, {"date": today, "counts": counts}, "daily_counts.json"
-    )
+    safe_save_json(DAILY_COUNTS_FILE, {"date": today, "counts": counts}, "daily_counts.json")
 
 
 def check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
@@ -59,9 +93,7 @@ def check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
     max_like = int(max_like * jitter)
 
     counts: dict[str, Any] = load_daily_counts()
-    acct: dict[str, Any] = counts.get(
-        account_key, {"follow": 0, "rt": 0, "like": 0, "reply": 0}
-    )
+    acct: dict[str, Any] = counts.get(account_key, {"follow": 0, "rt": 0, "like": 0, "reply": 0})
     f: int = acct.get("follow", 0)
     r: int = acct.get("rt", 0)
     lk: int = acct.get("like", 0)
@@ -85,33 +117,35 @@ def check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
     current_hour: str = datetime.now().strftime("%H")
     hour_total: int = hourly.get(current_hour, 0)
     if hour_total >= max_per_hour:
-        print(
-            f"[LIMIT] {account_key}: 時間あたり上限到達 ({hour_total}/{max_per_hour}/時)"
-        )
+        print(f"[LIMIT] {account_key}: 時間あたり上限到達 ({hour_total}/{max_per_hour}/時)")
         return True
 
     return False
 
 
 def increment_daily_count(account_key: str, action_type: str, n: int = 1) -> None:
-    """日次カウンターと時間別カウンターを増やす（公開関数）"""
-    counts: dict[str, Any] = load_daily_counts()
-    if account_key not in counts:
-        counts[account_key] = {
-            "follow": 0,
-            "rt": 0,
-            "like": 0,
-            "reply": 0,
-            "hourly": {},
-        }
-    counts[account_key][action_type] = counts[account_key].get(action_type, 0) + n
-    current_hour: str = datetime.now().strftime("%H")
-    if "hourly" not in counts[account_key]:
-        counts[account_key]["hourly"] = {}
-    counts[account_key]["hourly"][current_hour] = (
-        counts[account_key]["hourly"].get(current_hour, 0) + n
-    )
-    save_daily_counts(counts)
+    """日次カウンターと時間別カウンターを増やす（公開関数、並列更新ロスト防止）"""
+    locked: bool = _lock_daily_counts()
+    try:
+        # ロック保持中に再読込 → 他プロセスの増分をマージしてから+1
+        counts: dict[str, Any] = load_daily_counts()
+        if account_key not in counts:
+            counts[account_key] = {
+                "follow": 0,
+                "rt": 0,
+                "like": 0,
+                "reply": 0,
+                "hourly": {},
+            }
+        counts[account_key][action_type] = counts[account_key].get(action_type, 0) + n
+        current_hour: str = datetime.now().strftime("%H")
+        if "hourly" not in counts[account_key]:
+            counts[account_key]["hourly"] = {}
+        counts[account_key]["hourly"][current_hour] = counts[account_key]["hourly"].get(current_hour, 0) + n
+        save_daily_counts(counts)
+    finally:
+        if locked:
+            _unlock_daily_counts()
 
 
 def is_active_hours(cfg: dict[str, Any]) -> bool:
