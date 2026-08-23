@@ -69,8 +69,17 @@ data/dashboard.html
 data/discovered_accounts.json
 data/profiles/
 data/*.bak.*
+data/*.bak
+data/kensho_hub.html
 kensho-status.html
 .supermemory/
+
+# ── 未追跡データ（コミット対象外）──
+# 別プロジェクト(Reddit自動投稿)のデータ。cookie含むため絶対コミット禁止
+crontab_pre_ab.bak
+data/reddit/
+# 需要調査の一時データ
+demand_research.json
 
 # VirtualBox VM（誤配置防止）
 VirtualBox VMs/

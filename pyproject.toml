@@ -71,6 +71,8 @@ select = [
 "kensho/application/applier.py" = ["E402", "N806", "E731"]
 "kensho/application/api_actions.py" = ["UP031"]
 "kensho/scraping/collector.py" = ["N806"]
+# kensho_hub.py: 埋め込みHTML/CSS生成スクリプト（長い行は改行するとCSS/HTMLが壊れるため E501 許容）
+"kensho_hub.py" = ["E501"]
 
 [tool.ruff.format]
 preview = true
