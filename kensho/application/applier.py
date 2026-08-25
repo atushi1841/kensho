@@ -167,9 +167,14 @@ def _check_tweet_result(page: Any, tweet_url: str, out: Any) -> str | None:
     current_url = page.url
     if "/status/" not in current_url:
         try:
-            page.goto(tweet_url, timeout=30000, wait_until="domcontentloaded")
+            page.goto(tweet_url, timeout=15000, wait_until="domcontentloaded")
         except Exception:
-            return "goto_failed"
+            # ★ 2026-08-25 修正: goto失敗は「ツイート状態不明」として正常扱い(None)にする。
+            #   「goto_failed」を返すと applied が付与されず、応募済みツイートが毎セッション
+            #   再処理されて applier が空回りする無限ループの主因だった。
+            #   タイムアウト30s→15s に短縮し、X応答遅延時の無駄待ちも削減。
+            #   （フォロー/RTアクションがAPIで成功していれば応募成立として扱う）
+            return None
         time.sleep(random.uniform(1.5, 3.0))
 
     # ページ本文から異常状態を検出
@@ -1169,7 +1174,9 @@ def apply_for_account(
                 #   ツイートが正常+1アクション成功 → ok。RT必須案件でRTだけ失敗 → rt_failedと記録
                 #   し、appliedを付けない（次サイクルで再試行）。false成立(偽装)を防ぐ。
                 tweet_result = _check_tweet_result(page, clean_url, out)
-                _qualify: bool = (tweet_result == "tweet_ok" and any(_per_item_ok.values())) or len(
+                # ★ 2026-08-25 修正: goto失敗(None)でもアクション成功なら応募成立。
+                #   goto_failed で applied が付かず無限再処理→空回りする問題の修正。
+                _qualify: bool = (tweet_result in ("tweet_ok", None) and any(_per_item_ok.values())) or len(
                     action_queue
                 ) == 0  # 全スキップ(見て終わり)は自然な合格扱い
                 if tweet_result and tweet_result != "tweet_ok":

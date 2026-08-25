@@ -287,3 +287,56 @@ class TestLockMechanism:
         assert acquire_lock(timeout=5) is True
         assert acquire_lock(timeout=1) is False  # タイムアウトで失敗
         release_lock()
+
+
+class TestCheckTweetResult:
+    """_check_tweet_result: 応募後のツイート状態確認
+
+    2026-08-25 修正: goto失敗時は "goto_failed" でなく None(正常扱い)を返す。
+    goto_failed だと applied が付与されず、応募済みツイートが毎セッション再処理
+    される無限ループが発生するため。
+    """
+
+    def _make_page(self, url: str = "https://x.com/a/status/1", body: str = "normal") -> object:
+        class FakePage:
+            def __init__(self) -> None:
+                self._url = url
+                self._body = body
+                self._goto_ok = True
+
+            @property
+            def url(self) -> str:
+                return self._url
+
+            def goto(self, url: str, timeout: int = 30000, wait_until: str = "domcontentloaded") -> None:
+                if not self._goto_ok:
+                    raise TimeoutError("Page.goto: Timeout 15000ms exceeded.")
+                self._url = url
+
+            def inner_text(self, selector: str) -> str:
+                return self._body
+
+        return FakePage()
+
+    def _call(self, page: object, monkeypatch) -> str | None:
+        from kensho.application.applier import _check_tweet_result
+
+        monkeypatch.setattr("time.sleep", lambda s: None)
+        monkeypatch.setattr("random.uniform", lambda a, b: 1.0)
+        return _check_tweet_result(page, "https://x.com/a/status/1", lambda msg: None)
+
+    def test_goto_timeout_returns_none(self, monkeypatch) -> None:
+        """gotoタイムアウト → None(正常扱い) 応募成立に阻害しない"""
+        page = self._make_page(url="https://x.com/home", body="normal")
+        page._goto_ok = False  # type: ignore[attr-defined]
+        assert self._call(page, monkeypatch) is None
+
+    def test_normal_tweet_returns_tweet_ok(self, monkeypatch) -> None:
+        """正常ツイート → tweet_ok"""
+        page = self._make_page(body="some normal content")
+        assert self._call(page, monkeypatch) == "tweet_ok"
+
+    def test_deleted_tweet_returns_tweet_deleted(self, monkeypatch) -> None:
+        """削除済みツイート → tweet_deleted（DEFER対象）"""
+        page = self._make_page(body="This tweet has been deleted.")
+        assert self._call(page, monkeypatch) == "tweet_deleted"
