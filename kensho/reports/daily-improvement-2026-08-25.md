@@ -387,3 +387,66 @@ Workerが「atushi16 max 10→15 + スキップ率変更」の未コミット変
 4. **【中】chugakujuken アカウントの正体確認** — daily_counts / follow_state.json に出現。administrationスキルのアカウント表に記載なし。アカウント表の更新が必要（前回申し送り継続）。
 5. **【低】Critic提案 P3（いいね発火経路）・P4（過フォロー再発監視）** — 実行ロジック変更は保留のまま。8/26レポートで過フォロー減少（dedup+follow_state適用後）といいね連続検出0を確認。
 6. **【低】48e8f45の効果測定** — 8/26レポートで「同一ツイート重複処理」「no_rt_button」「http_404」の変化を確認。期待: goto失敗系の無限再処理が消え、セッション効率が向上。
+---
+
+## 【Worker実装】2026-08-25 23:0x ラン（nightly-worker・critic 22:20追記2対応）
+
+critic追記2「Worker向けアクションまとめ」のうち**危険度「低」相当の実装+調査+検証**、および**デッドコードと定格逸脱の是正**。
+
+### 🔴 最重要発見: orchestrator Proxy Watchdog はデッドコード（自動復旧が一度も動いていなかった）
+
+**診断**: `kensho-auto-apply.sh` は**垢別ワーカー（`orchestrator.py --account <acct>`）のみ**を起動する。しかし orchestrator.py の `Proxy Watchdog` ステップ（line 334）は `if _ACCOUNT is None:`（メイン・垢指定なし）でしか実行されない。つまり**本環境では当該ステップが一度も実行されない**（今日の auto_log に `Step: Proxy Watchdog` が0回 = 実証）。9933645の「proxy自動復旧(orchestrator組込)」はコード上は存在するが**機能せず**、critic P2が期待する「TankanNotesの自動復旧」は成立していなかった。
+
+**実証**: `check_proxy_health(cfg)` を手動実行（39.3s）:
+- **zin(1084) を自動復旧成功** ✅（curl疎通回復: 106.133.35.20）— アダプタ+ホットスポット生存なら復旧できる
+- TankanNotes(1085): プロキシ再起動（PID8928・10.40.150.8にbind）したが**egress不通継続** = スマホ側ホットスポットにネット経路なし（ソフトウェア復旧不可・物理/電話側）→ **criticの「アダプタUP→個別再起動で即復旧」は今は不成立**と判明
+- inobase1-4(1089): アダプタDisconnected（SSID圏外=155回連続失敗）→ 正しく復旧不可扱い
+
+**修正（profile側スクリプト・git外・backup機構で管理）**: `~/.hermes/profiles/kensho-sweeps/scripts/kensho-auto-apply.sh` 冒頭spawn後に毎tick1回 `check_proxy_health` を**バックグラウンド＋flock並行防止**で直接呼び出し=自動復旧を有効化。BOT安全（プロキシ復旧のみ・応募ロジック不変）。バックグラウンドでspawn遅延なし。bash -n OK。→ 8/26朝までに zin/kudou 等のプロキシ消失が自動復旧されるかを監視。
+
+### config.yaml: atushi16 max 15→10 に再リバート（9933645の定格逸脱を是正）
+
+9933645（22:04）が atushi16 全10バッチ max:10→**15** + `skip_probability.follow:0.10→0.05` + `skip_rates.follow:0.08→0.05` をコミットしていた。これは20:45 Worker（68b16a9）がリバートした**同一変更**が別Workerにより再適用・コミットされたもの。Worker絶対ルール（レート制限・アクション上限の変更禁止）と記録決定（2962cf8 max=10）に反し、本人不在・承認記録なしのため**記録上の安全値へ再リバート**:
+- atushi16 全バッチ max: 15→**10**（キャパシティ100/日・目標75維持）✅ YAML検証OK
+- `policy_engine.skip_probability.follow`: 0.05→**0.10**
+- `applier.skip_rates.follow`: 0.05→**0.08**
+- **⚠ ユーザーが100件/日スライドを意図していた場合は要連絡**（BOT検出リスクの再評価必要）
+
+### n/aターゲット177回の調査（critic action#2）→ ソース側・現プールとも問題なし
+
+- 現プール **1027件中、x_url欠落0件・tweet_id抽出不能0件**（正規化 `_normalize_x_url` が機能）
+- auditのn/a 1855件（累積07-24〜）は**UIフォールバック失敗の履歴**（no_rt_button 1175 / no_follow_button 229）で、削除済みツイートが対象。ループ抑止は48e8f45(goto→None)＋9933645(327→success)＋0205c62(applied即時保存)で対処済み → **追加コード修正不要**と結論
+
+### RT再試行ループの消滅検証（critic action#1）→ コード実装確認済み・効果は翌日測定
+
+- 9933645(api_actions.py api_rt: 327→already_retweeted success)・0205c62(applier.py applied即時保存)が**両方コードに在ることを確認**
+- 今日のatushi16 RT=108は「already_retweeted」水増し（ループ残骸）で、修正は22:23以降のため**効果は8/26レポートで測定**（同一ツイート再試行ゼロ・RT成功率29%→50%へ）
+
+### 監視データ（critic action#5・今日 JST補正）
+
+| アカウント | F | RT | ♥ | 計 | max/h(JST) |
+|---|---|---|---|---|---|
+| atushi16 | 42 | 108* | 2 | 152 | 25(17時)* |
+| kudou | 36 | 19 | 1 | 56 | 13 |
+| chugakujuken | 58 | 26 | 1 | 85 | 15 |
+| zin20120731 | 29 | 13 | 0 | 42 | 11 |
+| TankanNotes | 0 | 0 | 0 | 0 | —（停止） |
+| inobase1-4 | 6 | 1 | 0 | 7 | —（09時台以降停止） |
+
+- *atushi16 のRT/過集中は「already_retweeted」連打による水増し。ループ修正後は17時JST 25件/h等の過集中は8/26以降消失見込み
+- いいね比率: 4件/~342 = **~1.2%**（10%目標に大幅未達。critic P3継続、ただし実行ロジック変更は中リスクで保留）
+
+### 申し送り（実装しなかった提案）
+
+| 提案 | 危険度 | 理由 |
+|------|--------|------|
+| P1 inobase1-4 復旧/停止判断 | 高 | スマホ物理確認必要。configコメントアウトはユーザー判断待ち |
+| P2 TankanNotes proxy1085個別再起動 | 高 | 実行したがegress不通のため**ソフトウェア復旧不可**と判明（新情報）。スマホ側物理確認必要 |
+| P3 いいね発火経路点検 | 中 | applier実行ロジック変更＝高リスクのため保留 |
+| セッション内フォロー済み主催者set（critic追記2#3） | 高 | 実行ロジック変更のため保留 |
+| 外部知見「プロフィール整備監査」 | 低 | 未検証知見・ユーザー判断待ち |
+
+### コミット
+
+- 本サイクルは **config.yaml リバート（code）** と critic_proposal 追記2 のコミットのみ。**Dispatcher修正はprofile側（git外）のためコミットなし**（backup機構管理）。
+- pytest: **142 passed, 4 skipped**（25.89s）✅
