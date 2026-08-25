@@ -23,16 +23,17 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "08:00", max: 10 }
-        - { time: "09:30", max: 10 }
-        - { time: "11:00", max: 10 }
-        - { time: "12:30", max: 10 }
-        - { time: "14:00", max: 10 }
-        - { time: "16:00", max: 10 }
-        - { time: "17:22", max: 10 }
-        - { time: "19:00", max: 10 }
-        - { time: "21:00", max: 10 }
-        - { time: "22:26", max: 10 }
+        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "08:02", max: 10 }
+        - { time: "09:56", max: 10 }
+        - { time: "11:17", max: 10 }
+        - { time: "12:31", max: 10 }
+        - { time: "14:03", max: 10 }
+        - { time: "16:37", max: 10 }
+        - { time: "17:49", max: 10 }
+        - { time: "19:22", max: 10 }
+        - { time: "21:12", max: 10 }
+        - { time: "22:27", max: 10 }
 
   - key: kudou
     display: "@kudou_aoshi"
@@ -41,16 +42,17 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "08:30", max: 12 }
-        - { time: "10:00", max: 12 }
-        - { time: "12:00", max: 12 }
-        - { time: "14:00", max: 12 }
-        - { time: "15:30", max: 12 }
-        - { time: "17:00", max: 12 }
-        - { time: "18:12", max: 12 }
-        - { time: "19:30", max: 12 }
-        - { time: "21:30", max: 12 }
-        - { time: "22:42", max: 12 }
+        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "08:24", max: 12 }
+        - { time: "10:03", max: 12 }
+        - { time: "12:42", max: 12 }
+        - { time: "14:31", max: 12 }
+        - { time: "15:42", max: 12 }
+        - { time: "17:21", max: 12 }
+        - { time: "18:38", max: 12 }
+        - { time: "19:54", max: 12 }
+        - { time: "21:18", max: 12 }
+        - { time: "22:28", max: 12 }
 
   - key: chugakujuken
     display: "@chugakujuken"
@@ -59,16 +61,17 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "08:15", max: 12 }
-        - { time: "09:43", max: 12 }
-        - { time: "10:30", max: 12 }
-        - { time: "12:15", max: 12 }
-        - { time: "13:45", max: 12 }
-        - { time: "15:15", max: 12 }
-        - { time: "17:30", max: 12 }
-        - { time: "19:15", max: 12 }
-        - { time: "21:45", max: 12 }
-        - { time: "22:47", max: 12 }
+        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "08:03", max: 12 }
+        - { time: "09:48", max: 12 }
+        - { time: "10:59", max: 12 }
+        - { time: "12:18", max: 12 }
+        - { time: "13:49", max: 12 }
+        - { time: "15:08", max: 12 }
+        - { time: "17:01", max: 12 }
+        - { time: "19:14", max: 12 }
+        - { time: "21:14", max: 12 }
+        - { time: "22:24", max: 12 }
 
   - key: zin20120731
     display: "@zin20120731"
@@ -77,14 +80,15 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "08:45", max: 10 }
-        - { time: "10:15", max: 10 }
-        - { time: "11:45", max: 10 }
-        - { time: "14:15", max: 10 }
-        - { time: "16:15", max: 10 }
-        - { time: "18:00", max: 10 }
-        - { time: "20:00", max: 10 }
-        - { time: "22:00", max: 10 }
+        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "08:06", max: 10 }
+        - { time: "10:44", max: 10 }
+        - { time: "11:59", max: 10 }
+        - { time: "14:28", max: 10 }
+        - { time: "16:39", max: 10 }
+        - { time: "18:29", max: 10 }
+        - { time: "20:09", max: 10 }
+        - { time: "22:13", max: 10 }
 
   # ★ 2026-08-23 復帰: 書き込みAPI認証エラーは「セッション(auth_token)失効」が原因と判明。
   #   Chromeで通常表示(凍結なし)→ 新auth_token/ct0に更新済み(x_session_TankanNotes.json)。復帰。
@@ -95,16 +99,17 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "09:00", max: 12 }
-        - { time: "10:45", max: 12 }
-        - { time: "12:12", max: 12 }
-        - { time: "13:00", max: 12 }
-        - { time: "14:45", max: 12 }
-        - { time: "16:45", max: 12 }
-        - { time: "17:48", max: 12 }
-        - { time: "18:30", max: 12 }
-        - { time: "20:30", max: 12 }
-        - { time: "22:15", max: 12 }
+        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "09:29", max: 12 }
+        - { time: "10:52", max: 12 }
+        - { time: "12:23", max: 12 }
+        - { time: "13:43", max: 12 }
+        - { time: "14:56", max: 12 }
+        - { time: "16:08", max: 12 }
+        - { time: "17:19", max: 12 }
+        - { time: "18:44", max: 12 }
+        - { time: "20:12", max: 12 }
+        - { time: "22:07", max: 12 }
 
   - key: inobase1-4
     display: "@inobase128508"
@@ -113,16 +118,17 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "09:00", max: 12 }
-        - { time: "10:07", max: 12 }
-        - { time: "11:00", max: 12 }
-        - { time: "13:00", max: 12 }
-        - { time: "15:00", max: 12 }
-        - { time: "16:27", max: 12 }
-        - { time: "17:00", max: 12 }
-        - { time: "19:00", max: 12 }
-        - { time: "21:00", max: 12 }
-        - { time: "23:00", max: 12 }
+        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "09:38", max: 12 }
+        - { time: "10:48", max: 12 }
+        - { time: "11:58", max: 12 }
+        - { time: "13:19", max: 12 }
+        - { time: "15:13", max: 12 }
+        - { time: "16:28", max: 12 }
+        - { time: "17:51", max: 12 }
+        - { time: "19:11", max: 12 }
+        - { time: "21:17", max: 12 }
+        - { time: "22:29", max: 12 }
 
 # ── 収集設定 ──
 collection:
