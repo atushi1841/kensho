@@ -118,3 +118,16 @@ Workerの実装（コード変更なし・計測・記録）は提案内容と�
 ### 継続監視
 - いいね比率0.5%（目標10%大幅未達）・多重アクション（like+rt同時）4件のskip_like適用漏れ
 - 1085/1089はスマホ側物理確認待ち（Redmi Note 9S ×2台: テザリングデータ経路なし / 電源OFF圏外）。復旧後は個別プロキシ起動+egress確認で即復帰可
+
+---
+
+# 追記（01:30 ユーザー指示）: 提案1〜3を手動実装
+
+「危険度高もOK」の方針変更に伴い、**ユーザー指示により本サイクル外で手動実装**した。
+
+- コミット: 973efcb（セッション内RT済みtweet_id set・フォロー済み主催者set・collector tweet_id保存・監査target実値化・UIフォールバックrecord_follow）
+- コミット: 009948d（extract_tweet_id_and_screen_name誤抽出修正）
+- テスト: 148 passed, 4 skipped（+6テスト）
+- 詳細: `kensho/reports/manual-implementation-2026-08-26.md`
+
+**次サイクルは提案1〜3を「実装済み確認」に切り替えること。**
