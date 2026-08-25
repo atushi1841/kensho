@@ -174,6 +174,72 @@ def main() -> int:
         for a, h, n in sorted(hot):
             print(f"- {a} {h}時台: {n}件")
 
+    # ── セッション健全性 ──
+    print()
+    print("## セッション健全性（x_session_*.json 最終更新）")
+    now = datetime.datetime.now(JST)
+    sess_dir = ROOT / "data"
+    for f in sorted(sess_dir.glob("x_session_*.json")):
+        mtime = datetime.datetime.fromtimestamp(f.stat().st_mtime, JST)
+        age_h = (now - mtime).total_seconds() / 3600
+        flag = " ⚠️ 更新停滞（24h超）" if age_h > 24 else ""
+        print(f"- {f.name}: 更新 {mtime.strftime('%m/%d %H:%M')}（{age_h:.0f}時間前）{flag}")
+
+    # ── 時間帯分散（BOTリスク監視） ──
+    print()
+    print("## 応募時間帯分散（BOTリスク監視）")
+    acct_hours: dict[str, set[str]] = collections.defaultdict(set)
+    for (a, h), n in hourly.items():
+        if n > 0:
+            acct_hours[a].add(h)
+    for acct in ACCOUNTS:
+        hours = sorted(acct_hours.get(acct, []))
+        if not hours:
+            print(f"- {acct}: 成功アクションなし")
+            continue
+        spread = len(hours)
+        flag = " ⚠️ 1-2時間帯に集中" if spread <= 2 else ""
+        print(f"- {acct}: {spread}時間帯に分散 {hours}{flag}")
+
+    # ── バッチ計画 vs 実績 ──
+    print()
+    print("## バッチ計画 vs 実績")
+    for acct in ACCOUNTS:
+        batches: list = []
+        if isinstance(acct_cfg, list):
+            for a in acct_cfg:
+                if isinstance(a, dict) and a.get("key") == acct:
+                    batches = (a.get("schedule", {}) or {}).get("batches", []) or []
+        planned = sum(int(b.get("max", 0)) for b in batches if isinstance(b, dict))
+        n_batches = len(batches)
+        succ = sum(n for (act, s), n in by_acct[acct].items() if s == "success")
+        if planned:
+            rate = f"{succ / planned * 100:.0f}%"
+            flag = " ⚠️ 消化率50%未満" if succ < planned * 0.5 else ""
+            print(f"- {acct}: 計画{planned}件/{n_batches}バッチ → 実績{succ}件（{rate}）{flag}")
+        else:
+            print(f"- {acct}: 計画情報なし → 実績{succ}件")
+
+    # ── 収集→応募の変換率 ──
+    print()
+    print("## 収集→応募の変換率")
+    try:
+        col_path = ROOT / "data" / "collected.json"
+        if col_path.exists():
+            col = json.loads(col_path.read_text(encoding="utf-8"))
+            items = col.get("collected", []) if isinstance(col, dict) else []
+            n_new = col.get("new_items_processed", 0) if isinstance(col, dict) else 0
+            succ_all = sum(n for a in ACCOUNTS for (act, s), n in by_acct[a].items() if s == "success")
+            if items:
+                print(f"- 収集ツイート数: {len(items)}件（新規処理: {n_new}件）")
+                print(f"- 全垢応募成功合計: {succ_all}件 → 変換率: {succ_all / len(items) * 100:.1f}%")
+            else:
+                print("- 収集データなし（collected.json空）")
+        else:
+            print("- collected.json なし")
+    except Exception as e:
+        print(f"- 変換率計算失敗: {e}")
+
     print()
     print("## 前日比（参考）")
     prev = (datetime.date.fromisoformat(date_s) - datetime.timedelta(days=1)).isoformat()
