@@ -26,6 +26,7 @@ from kensho.scraping.sources import (
     scrape_cpmeikan,
     scrape_kema,
     scrape_kenkaku,
+    scrape_kensho_everyday,
     scrape_kenshouclub,
     scrape_twscrape,
     scrapling_fetch,
@@ -344,6 +345,12 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     out(f"  chance.com: {len(chancecom_items)}件")
     collected.extend(chancecom_items)
 
+    # ── Step 2h: kensho-everyday.com 収集（X懸賞カテゴリRSS）──
+    out("\n[Step 2h kensho-everyday.com] X懸賞RSSを収集...")
+    kevery_items: list[dict[str, Any]] = scrape_kensho_everyday(out, processed_set, account_keys)
+    out(f"  kensho-everyday.com: {len(kevery_items)}件")
+    collected.extend(kevery_items)
+
     if not collected and not errors:
         out("\n✅ 全ソースで新規なし。終了。")
         existing: dict[str, Any] = load_json(COLLECTED_FILE, {})
@@ -357,7 +364,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         f"\n[Step 3] 結果保存... (knshow {success}件, ken-kaku {len(kenkaku_items)}件, "
         f"kenshou.club {len(kclub_items)}件, cp.meikan {len(cpmeikan_items)}件, "
         f"ke-ma {len(kema_items)}件, twscrape {len(twscrape_items)}件, "
-        f"chance.com {len(chancecom_items)}件, "
+        f"chance.com {len(chancecom_items)}件, kensho-everyday {len(kevery_items)}件, "
         f"計{len(collected)}件)"
     )
 
