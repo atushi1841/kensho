@@ -7,7 +7,9 @@ repos:
     rev: v0.15.20
     hooks:
       - id: ruff-check
-        args: [--fix, --exit-non-zero-on-fix]
+        # --exit-non-zero-on-fix は修正時にコミットを中止してしまうため削除
+        # （自動修正はワーキングツリーに残る。次の git add で反映される）
+        args: [--fix]
         types_or: [python, pyi]
       - id: ruff-format
         types_or: [python, pyi]
