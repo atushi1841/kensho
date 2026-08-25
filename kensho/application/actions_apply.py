@@ -122,7 +122,9 @@ def do_rt(
 
     # ★ 既にリポスト済みなら成功扱い（unlikeの逆。RT済み==応募充足）★
     try:
-        if page.query_selector('[data-testid="unretweet"]'):
+        if page.query_selector('[data-testid="unretweet"]') or page.query_selector(
+            'button[aria-label="リポストを取り消す"], button[aria-label="Undo repost"]'
+        ):
             out("  [i] RT済み（unretweet検出）")
             # ★ 2026-08-25: already_retweeted は新規行動でないので日次カウント/実行に加算しない（API側と整合）。
             _delay = int((_time.time() - _t0) * 1000)
@@ -132,6 +134,11 @@ def do_rt(
         pass
 
     rt = page.query_selector('[data-testid="retweet"]')
+    if not rt:
+        # フォールバック: aria-labelの"リポスト"/"Repost"ラベル（XのDOM構成変更対策）
+        rt = page.query_selector(
+            'button[aria-label="リポスト"], button[aria-label="Repost"], button[aria-label*="Repost"]'
+        )
     if not rt:
         out("  [i] RTなし")
         _delay = int((_time.time() - _t0) * 1000)

@@ -989,16 +989,22 @@ def apply_for_account(
                                 page.query_selector('[data-testid="retweet"]')
                                 or page.query_selector('[data-testid="unretweet"]')
                             ):
-                                _to: int = 20000 if account_key == "atushi16" else 30000
-                                for _gr in range(1):  # 90000×2 → 30000×1 に短縮（RT失敗のセッション時間を削減）
+                                _to: int = 20000 if account_key == "atushi16" else 25000
+                                _goto_ok: bool = False
+                                for _gr in range(2):  # 90000×2 → 25000×2 に短縮＋失敗検出
                                     try:
                                         page.goto(clean_url, timeout=_to, wait_until="domcontentloaded")
+                                        _goto_ok = True
                                         break
                                     except Exception as _ge:
                                         out(f"  [NG] RT goto attempt {_gr + 1}: {str(_ge)[:50]}")
                                         if _gr == 0:
-                                            time.sleep(2)
-                                # RTボタン描画待ち（最大25秒→20秒に短縮）
+                                            time.sleep(3)  # 回線遅延を待って再試行
+                                if not _goto_ok:
+                                    # goto失敗＝ページ未ロード→no_rt_button量産を防ぐため次ツイートへ
+                                    out("  [i] RT goto失敗 → RT実行スキップ（次ツイートへ）")
+                                    return False
+                                # RTボタン描画待ち（最大20秒）
                                 for _w in range(20):
                                     if page.query_selector('[data-testid="retweet"]') or page.query_selector(
                                         '[data-testid="unretweet"]'
