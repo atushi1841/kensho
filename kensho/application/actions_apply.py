@@ -33,6 +33,7 @@ def do_follow(
     click_delay: int,
     out: Callable[[str], None],
     account_key: str,
+    target: str = "n/a",
 ) -> bool:
     """フォローボタンをクリック。成功(or既フォロー)ならTrue。"""
     _t0 = _time.time()
@@ -41,7 +42,7 @@ def do_follow(
     if _decision == PolicyDecision.DENY:
         out(f"  [POLICY] フォロー拒否: {_reason}")
         _delay = int((_time.time() - _t0) * 1000)
-        audit_ledger.log(account_key, "follow", "n/a", "deny", "skipped", reason=_reason, delay_ms=_delay)
+        audit_ledger.log(account_key, "follow", target, "deny", "skipped", reason=_reason, delay_ms=_delay)
         return False
 
     fb = page.query_selector('[data-testid*="follow"]')
@@ -61,7 +62,7 @@ def do_follow(
                         increment_daily_count(account_key, "follow")
                         policy_engine.mark_executed(account_key, "follow")
                         _delay = int((_time.time() - _t0) * 1000)
-                        audit_ledger.log(account_key, "follow", "n/a", "allow", "success", delay_ms=_delay)
+                        audit_ledger.log(account_key, "follow", target, "allow", "success", delay_ms=_delay)
                         _time.sleep(random.uniform(3, 7))
                         return True
                 except Exception:
@@ -73,7 +74,7 @@ def do_follow(
             audit_ledger.log(
                 account_key,
                 "follow",
-                "n/a",
+                target,
                 "allow",
                 "failed",
                 error="follow_confirm_missing",
@@ -84,13 +85,13 @@ def do_follow(
             out("  [i] フォロー済み")
             _delay = int((_time.time() - _t0) * 1000)
             audit_ledger.log(
-                account_key, "follow", "n/a", "allow", "success", reason="already_followed", delay_ms=_delay
+                account_key, "follow", target, "allow", "success", reason="already_followed", delay_ms=_delay
             )
             return True
     else:
         out("  [i] フォローボタンなし（応募対象外かも）")
         _delay = int((_time.time() - _t0) * 1000)
-        audit_ledger.log(account_key, "follow", "n/a", "allow", "failed", error="no_follow_button", delay_ms=_delay)
+        audit_ledger.log(account_key, "follow", target, "allow", "failed", error="no_follow_button", delay_ms=_delay)
         return False
 
 
@@ -100,6 +101,7 @@ def do_rt(
     out: Callable[[str], None],
     account_key: str,
     cfg: dict[str, Any],
+    target: str = "n/a",
 ) -> bool:
     """リポスト（RT）ボタンをクリック。成功(or既RT)ならTrue。"""
     _t0 = _time.time()
@@ -107,7 +109,7 @@ def do_rt(
     if _decision == PolicyDecision.DENY:
         out(f"  [POLICY] RT拒否: {_reason}")
         _delay = int((_time.time() - _t0) * 1000)
-        audit_ledger.log(account_key, "rt", "n/a", "deny", "skipped", reason=_reason, delay_ms=_delay)
+        audit_ledger.log(account_key, "rt", target, "deny", "skipped", reason=_reason, delay_ms=_delay)
         return False
 
     rt_count_before: int = load_daily_counts().get(account_key, {}).get("rt", 0)
@@ -117,7 +119,7 @@ def do_rt(
     if rt_count_before >= rt_limit:
         out("  [i] RT: 上限到達スキップ")
         _delay = int((_time.time() - _t0) * 1000)
-        audit_ledger.log(account_key, "rt", "n/a", "deny", "skipped", reason="manual_limit_reached", delay_ms=_delay)
+        audit_ledger.log(account_key, "rt", target, "deny", "skipped", reason="manual_limit_reached", delay_ms=_delay)
         return False
 
     # ★ 既にリポスト済みなら成功扱い（unlikeの逆。RT済み==応募充足）★
@@ -128,7 +130,7 @@ def do_rt(
             out("  [i] RT済み（unretweet検出）")
             # ★ 2026-08-25: already_retweeted は新規行動でないので日次カウント/実行に加算しない（API側と整合）。
             _delay = int((_time.time() - _t0) * 1000)
-            audit_ledger.log(account_key, "rt", "n/a", "allow", "success", reason="already_retweeted", delay_ms=_delay)
+            audit_ledger.log(account_key, "rt", target, "allow", "success", reason="already_retweeted", delay_ms=_delay)
             return True
     except Exception:
         pass
@@ -142,7 +144,7 @@ def do_rt(
     if not rt:
         out("  [i] RTなし")
         _delay = int((_time.time() - _t0) * 1000)
-        audit_ledger.log(account_key, "rt", "n/a", "allow", "failed", error="no_rt_button", delay_ms=_delay)
+        audit_ledger.log(account_key, "rt", target, "allow", "failed", error="no_rt_button", delay_ms=_delay)
         return False
 
     _time.sleep(random.uniform(0.5, 2))
@@ -152,7 +154,7 @@ def do_rt(
         increment_daily_count(account_key, "rt")
         policy_engine.mark_executed(account_key, "rt")
         _delay = int((_time.time() - _t0) * 1000)
-        audit_ledger.log(account_key, "rt", "n/a", "allow", "success", reason=reason, delay_ms=_delay)
+        audit_ledger.log(account_key, "rt", target, "allow", "success", reason=reason, delay_ms=_delay)
         out(f"  [OK] RT({via})")
         return True
 
@@ -199,7 +201,7 @@ def do_rt(
 
     out("  [i] RTボタン押下後の確定要素なし → 失敗扱い")
     _delay = int((_time.time() - _t0) * 1000)
-    audit_ledger.log(account_key, "rt", "n/a", "allow", "failed", error="rt_confirm_missing", delay_ms=_delay)
+    audit_ledger.log(account_key, "rt", target, "allow", "failed", error="rt_confirm_missing", delay_ms=_delay)
     return False
 
 
@@ -209,6 +211,7 @@ def do_like(
     out: Callable[[str], None],
     account_key: str,
     cfg: dict[str, Any],
+    target: str = "n/a",
 ) -> bool:
     """いいねボタンをクリック。成功(or既いいね)ならTrue。"""
     _t0 = _time.time()
@@ -216,14 +219,14 @@ def do_like(
     if _decision == PolicyDecision.DENY:
         out(f"  [POLICY] いいね拒否: {_reason}")
         _delay = int((_time.time() - _t0) * 1000)
-        audit_ledger.log(account_key, "like", "n/a", "deny", "skipped", reason=_reason, delay_ms=_delay)
+        audit_ledger.log(account_key, "like", target, "deny", "skipped", reason=_reason, delay_ms=_delay)
         return False
 
     like_count_before: int = load_daily_counts().get(account_key, {}).get("like", 0)
     if like_count_before >= cfg.get("rate_limits", {}).get("max_like_per_day", 80):
         out("  [i] いいね: 上限到達スキップ")
         _delay = int((_time.time() - _t0) * 1000)
-        audit_ledger.log(account_key, "like", "n/a", "deny", "skipped", reason="manual_limit_reached", delay_ms=_delay)
+        audit_ledger.log(account_key, "like", target, "deny", "skipped", reason="manual_limit_reached", delay_ms=_delay)
         return False
 
     like_btn = page.query_selector('[data-testid="like"]')
@@ -236,16 +239,16 @@ def do_like(
             increment_daily_count(account_key, "like")
             policy_engine.mark_executed(account_key, "like")
             _delay = int((_time.time() - _t0) * 1000)
-            audit_ledger.log(account_key, "like", "n/a", "allow", "success", delay_ms=_delay)
+            audit_ledger.log(account_key, "like", target, "allow", "success", delay_ms=_delay)
             _time.sleep(random.uniform(2, 5))
             return True
         else:
             out("  [i] いいね済み")
             _delay = int((_time.time() - _t0) * 1000)
-            audit_ledger.log(account_key, "like", "n/a", "allow", "success", reason="already_liked", delay_ms=_delay)
+            audit_ledger.log(account_key, "like", target, "allow", "success", reason="already_liked", delay_ms=_delay)
             return True
     else:
         out("  [i] いいねボタンなし")
         _delay = int((_time.time() - _t0) * 1000)
-        audit_ledger.log(account_key, "like", "n/a", "allow", "failed", error="no_like_button", delay_ms=_delay)
+        audit_ledger.log(account_key, "like", target, "allow", "failed", error="no_like_button", delay_ms=_delay)
         return False

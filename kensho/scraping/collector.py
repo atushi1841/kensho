@@ -96,6 +96,12 @@ def _dedup_x_url_merge(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
             # 正規形(/status/)の x_url を優先保持（applier が確実にパースできる表記）
             if "/i/web/status/" in (base.get("x_url", "")) and "/i/web/status/" not in (item.get("x_url", "")):
                 base["x_url"] = item["x_url"]
+    # ★ 2026-08-26: 全アイテムにtweet_idをバックフィル（監査の追跡性回復: n/a解消）
+    for it in x_url_index.values():
+        if not it.get("tweet_id"):
+            _m = re.search(r"/status/(\d+)", it.get("x_url", ""))
+            if _m:
+                it["tweet_id"] = _m.group(1)
     return list(x_url_index.values())
 
 
@@ -265,10 +271,13 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
                         pass
 
                 elapsed: float = time.time() - t1
+                _tid_m = re.search(r"/status/(\d+)", x_url)
                 collected.append({
                     "detail_url": detail_url,
                     "rd_url": rd,
                     "x_url": x_url,
+                    # ★ 2026-08-26: 監査追跡用にtweet_idを保存
+                    "tweet_id": _tid_m.group(1) if _tid_m else "",
                     "source": "knshow",
                     "time": round(elapsed, 2),
                     "deadline": deadline,

@@ -289,3 +289,31 @@ class TestDedupXUrlMerge:
         merged = _dedup_x_url_merge([a, b])
         assert len(merged) == 1
         assert set(merged[0]["applied"].keys()) == {"atushi16", "kudou"}
+
+    def test_tweet_id_backfilled(self) -> None:
+        """tweet_id未保存の既存アイテムにx_urlからバックフィルされる（2026-08-26追加）"""
+        a: dict[str, Any] = {
+            "x_url": "https://x.com/foo/status/987654321",
+            "applied": {},
+        }
+        merged = _dedup_x_url_merge([a])
+        assert merged[0]["tweet_id"] == "987654321"
+
+    def test_tweet_id_backfilled_iweb(self) -> None:
+        """/i/web/status/ 形式のx_urlからもtweet_idが抽出される（監査n/a解消）"""
+        a: dict[str, Any] = {
+            "x_url": "https://x.com/i/web/status/555444333",
+            "applied": {},
+        }
+        merged = _dedup_x_url_merge([a])
+        assert merged[0]["tweet_id"] == "555444333"
+
+    def test_tweet_id_preserved_if_present(self) -> None:
+        """既存のtweet_idフィールドは上書きされない"""
+        a: dict[str, Any] = {
+            "x_url": "https://x.com/foo/status/123",
+            "tweet_id": "custom_id",
+            "applied": {},
+        }
+        merged = _dedup_x_url_merge([a])
+        assert merged[0]["tweet_id"] == "custom_id"

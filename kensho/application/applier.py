@@ -482,6 +482,9 @@ def apply_for_account(
         success: int = 0
         errors: int = 0
         idx: int = 0  # account_applied のインデックス（補充用）
+        # ★ 2026-08-26: セッション内重複アクション防止（BOT検出回避）
+        rt_done_ids: set[str] = set()              # セッション内でRT成功したtweet_id
+        followed_owners_session: set[str] = set()  # セッション内でフォロー成功した主催者
 
         while success < max_n and idx < len(account_applied):
             # ★ セッション時間制限チェック
@@ -554,6 +557,8 @@ def apply_for_account(
 
                 # ★ URL→tweet_id/screen_name抽出
                 tweet_id, screen_name = extract_tweet_id_and_screen_name(clean_url)
+                # ★ 2026-08-26: セッション内重複アクション検出用
+                _rt_already_done = False
                 if not tweet_id:
                     out(f"  [{global_idx}/{max_n}] [SKIP] URL解析失敗: {clean_url[:50]}")
                     continue
@@ -952,6 +957,10 @@ def apply_for_account(
                     if not _fsm.should_follow(screen_name):
                         skip_follow = True
                         out(f"  [SKIP] フォロー: 同一主催者{screen_name}フォロー上限到達")
+                # ★ 2026-08-26: セッション内フォロー重複防止
+                if not skip_follow and screen_name and screen_name in followed_owners_session:
+                    skip_follow = True
+                    out(f"  [SKIP] フォロー: セッション内で既にフォロー成功済み → スキップ（重複アクション防止）")
 
                 def _make_follow_with_record(
                     _acct: str,
@@ -976,19 +985,32 @@ def apply_for_account(
                             _make_follow_with_record(account_key, screen_name, page, out),
                         ))
                     else:
-                        action_queue.append(("follow", lambda: do_follow(page, click_delay, out, account_key)))
+                        # ★ 2026-08-26: UIフォールバックでもフォロー成功を記録（過フォロー・監査n/aの根本対策）
+                        def _ui_follow_with_record() -> bool:
+                            _ok = do_follow(page, click_delay, out, account_key, target=screen_name or "")
+                            if _ok and screen_name:
+                                from kensho.application.follow_state_manager import FollowStateManager
+                                FollowStateManager(account_key).record_follow(screen_name)
+                            return _ok
+                        action_queue.append(("follow", _ui_follow_with_record))
                 if not skip_rt:
+                    # ★ 2026-08-26: セッション内RT重複防止（チェックをキュー追加前に移動）
+                    if tweet_id in rt_done_ids:
+                        skip_rt = True
+                        _rt_already_done = True
+                        out(f"  [SKIP] RT: セッション内で既にRT成功済み → スキップ（重複アクション防止）")
 
+                if not skip_rt:
                     def fallback_rt(
-                        page=page,
-                        click_delay=click_delay,
-                        out=out,
-                        account_key=account_key,
-                        cfg=cfg,
-                        clean_url=clean_url,
-                        tweet_id=tweet_id,
-                        item=item,
-                    ):
+                        page: Any = page,
+                        click_delay: int = click_delay,
+                        out: Callable[[str], None] = out,
+                        account_key: str = account_key,
+                        cfg: dict[str, Any] = cfg,
+                        clean_url: str = clean_url,
+                        tweet_id: str = tweet_id,
+                        item: dict[str, Any] = item,
+                    ) -> bool:
                         # ★ 2026-08-23修正:
                         #   ① code327誤判定撤廃 → api_rtは原则UIフォールバックへFalseを返す
                         #   ② UIフォールバックを「実クリックで確実化」し、RT成否をboolで返す
@@ -1053,7 +1075,7 @@ def apply_for_account(
                                     time.sleep(1)
                         except Exception as _ne:
                             out(f"  [i] RT UI遷移エラー: {str(_ne)[:50]}")
-                        return do_rt(page, click_delay, out, account_key, cfg)
+                        return do_rt(page, click_delay, out, account_key, cfg, target=tweet_id)
 
                     action_queue.append(("rt", fallback_rt))
                 # ★ いいねアクション（条件付き）を別途保持
@@ -1062,7 +1084,7 @@ def apply_for_account(
                     if x_api_ok and tweet_id:
                         like_action = ("like", lambda tid=tweet_id: api_like(page, tid, account_key, out))
                     else:
-                        like_action = ("like", lambda: do_like(page, click_delay, out, account_key, cfg))
+                        like_action = ("like", lambda: do_like(page, click_delay, out, account_key, cfg, target=tweet_id))
 
                 # ★ アクション順: フォローは必ずRTより前。いいねだけランダム位置
                 #   パターン（重み付き＋垢別バイアス＋毎回ジッター＝自然な分布）:
@@ -1112,6 +1134,12 @@ def apply_for_account(
                         time.sleep(delay)
                     else:
                         time.sleep(random.uniform(1.0, 3.5))
+
+                # ★ セッション内set更新（成功したアクションのみ記録）
+                if _per_item_ok.get("rt"):
+                    rt_done_ids.add(tweet_id)
+                if _per_item_ok.get("follow") and screen_name:
+                    followed_owners_session.add(screen_name)
 
                 # ── Post-action browser verification ──
                 # API calls may return false successes (200 with errors, 403 treated as "already done")
@@ -1176,7 +1204,7 @@ def apply_for_account(
                 tweet_result = _check_tweet_result(page, clean_url, out)
                 # ★ 2026-08-25 修正: goto失敗(None)でもアクション成功なら応募成立。
                 #   goto_failed で applied が付かず無限再処理→空回りする問題の修正。
-                _qualify: bool = (tweet_result in ("tweet_ok", None) and any(_per_item_ok.values())) or len(
+                _qualify: bool = (tweet_result in ("tweet_ok", None) and (any(_per_item_ok.values()) or _rt_already_done)) or len(
                     action_queue
                 ) == 0  # 全スキップ(見て終わり)は自然な合格扱い
                 if tweet_result and tweet_result != "tweet_ok":
