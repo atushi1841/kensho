@@ -9,6 +9,7 @@ v4.0: ForceBindIP廃止、サブプロセス撤廃、apply_for_account()直接�
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
 import os
 import random
@@ -33,8 +34,7 @@ from kensho.core.lock import acquire_pid_lock  # noqa: E402
 # ── PIDロック: 多重起動防止（垢別なら垢ごとのロックで並列可） ──
 _ACCOUNT: str | None = _CLI_ARGS.account
 _lock_name: str = f"orchestrator-{_ACCOUNT}" if _ACCOUNT else "orchestrator"
-if not acquire_pid_lock(_lock_name):
-    sys.exit(0)
+# ※ ロック取得は main() 内で行う（import時の副作用回避: テスト可能に）
 
 from kensho.application.applier import apply_for_account  # noqa: E402
 from kensho.application.session_manager import check_sessions  # noqa: E402
@@ -66,9 +66,31 @@ def load_state() -> dict[str, Any]:
 
 
 def save_state(state: dict[str, Any]) -> None:
-    """状態ファイル保存"""
-    with open(STATE_FILE, "w", encoding="utf-8") as f:
-        json.dump(state, f, ensure_ascii=False, indent=2)
+    """状態ファイル保存（並列プロセス間の競合防止: ファイルロック＋マージ）
+
+    並列実行される垢別プロセス間でstateファイルのlost updateを防ぐ。
+    fcntl.flockで排他ロックし、最新のstateを読み込んでからマージして保存する。
+    """
+    os.makedirs(STATE_DIR, exist_ok=True)
+    try:
+        with open(STATE_FILE, "r+", encoding="utf-8") as f:
+            fcntl.flock(f, fcntl.LOCK_EX)
+            try:
+                current = json.load(f)
+            except (json.JSONDecodeError, Exception):
+                current = {}
+            current.setdefault("last_processed", {})
+            current["last_processed"].update(state.get("last_processed", {}))
+            if "last_collect" in state:
+                current["last_collect"] = state["last_collect"]
+            f.seek(0)
+            f.truncate()
+            json.dump(current, f, ensure_ascii=False, indent=2)
+            f.flush()
+            fcntl.flock(f, fcntl.LOCK_UN)
+    except FileNotFoundError:
+        with open(STATE_FILE, "w", encoding="utf-8") as f:
+            json.dump(state, f, ensure_ascii=False, indent=2)
 
 
 def should_collect(now_str: str, collect_times: list[str]) -> bool:
@@ -240,6 +262,10 @@ def _apply_account(
 
 
 def main() -> None:
+    # ── PIDロック: 多重起動防止（import時ではなく起動時に取得） ──
+    if not acquire_pid_lock(_lock_name):
+        sys.exit(0)
+
     log_path = make_path("orchestrator")
     is_tty = hasattr(sys.stdout, "isatty") and sys.stdout.isatty()
     log = LogWriter(log_path, echo=is_tty)
