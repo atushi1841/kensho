@@ -10,6 +10,7 @@ import json
 import random
 import re
 import time
+from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -905,11 +906,37 @@ def apply_for_account(
 
                 # ── アクションキュー: skip判定に従って全アクション（強度モード廃止）──
                 action_queue: list[tuple[str, Any]] = []
+
+                # ★ 過フォロー防止: 同一主催者へのフォロー上限チェック（BOT検出回避）
+                if not skip_follow and screen_name:
+                    from kensho.application.follow_state_manager import FollowStateManager
+
+                    _fsm = FollowStateManager(account_key)
+                    if not _fsm.should_follow(screen_name):
+                        skip_follow = True
+                        out(f"  [SKIP] フォロー: 同一主催者{screen_name}フォロー上限到達")
+
+                def _make_follow_with_record(
+                    _acct: str,
+                    _sn: str,
+                    _page: Any,
+                    _out: Callable[[str], None],
+                ) -> Callable[[], bool]:
+                    def _fn() -> bool:
+                        _r = api_follow_by_screen_name(_page, _sn, _acct, _out)
+                        if _r:
+                            from kensho.application.follow_state_manager import FollowStateManager
+
+                            FollowStateManager(_acct).record_follow(_sn)
+                        return _r
+
+                    return _fn
+
                 if not skip_follow:
                     if x_api_ok and screen_name:
                         action_queue.append((
                             "follow",
-                            lambda sn=screen_name: api_follow_by_screen_name(page, sn, account_key, out),
+                            _make_follow_with_record(account_key, screen_name, page, out),
                         ))
                     else:
                         action_queue.append(("follow", lambda: do_follow(page, click_delay, out, account_key)))
@@ -923,6 +950,7 @@ def apply_for_account(
                         cfg=cfg,
                         clean_url=clean_url,
                         tweet_id=tweet_id,
+                        item=item,
                     ):
                         # ★ 2026-08-23修正:
                         #   ① code327誤判定撤廃 → api_rtは原则UIフォールバックへFalseを返す
@@ -935,9 +963,20 @@ def apply_for_account(
                         if _rt_ok is True:
                             return True
                         if _rt_ok is None:
-                            # ツイート削除/保護(stale) → UIフォールバック(90秒goto)をスキップして次へ。
-                            # staleは何度再試しても無駄なのでRT失敗として扱う（applied付与なし・再処理対象）。
-                            out("[i] RT: ツイート非公開/削除(stale) → UIフォールバックせずスキップ")
+                            # ★ 2026-08-25: ツイート削除/保護(stale) → これ以上の再試行は無駄なので
+                            #   item に直接 DEFER(14日) を書く。収集ソースが削除済みツイートを返し続けても、
+                            #   毎サイクル404アクセスするのを止める（8/24実測: 同一ツイート44回）。
+                            try:
+                                from datetime import timedelta
+
+                                item.setdefault("results", {})[account_key] = "tweet_deleted"
+                                _def_until = datetime.now() + timedelta(
+                                    days=cfg.get("applier", {}).get("defer_deleted_days", 14)
+                                )
+                                item.setdefault("applied", {})[account_key] = f"{_DEFER_PREFIX}{_def_until.isoformat()}"
+                                out(f"[DEFER] RT: 削除済み/非公開ツイート → {_def_until.date()}までスキップ")
+                            except Exception:
+                                pass
                             return False
                         # APIがAuthorizationError(code327)で全クエリ失敗 → この垢のRT APIは現状不通。
                         # UIフォールバックの90000ms×2 gotoで1アイテム90〜180秒浪費し、
@@ -1115,8 +1154,11 @@ def apply_for_account(
                 else:
                     _rt_was_demanded: bool = not skip_rt
                     if _rt_was_demanded and not _per_item_ok.get("rt"):
-                        item.setdefault("results", {})[account_key] = "rt_failed"
-                        out("  [RESULT] ⚠ RT未成立 → 応募成立と記録せず（再試行対象）")
+                        # ★ 2026-08-25: RT 404(削除済み)は fallback_rt 内で item に直接DEFER済み。
+                        #   ここでは fallback_rt がDEFERしなかった単純RT失敗のみ再試行対象にする。
+                        if item.get("results", {}).get(account_key) != "tweet_deleted":
+                            item.setdefault("results", {})[account_key] = "rt_failed"
+                            out("  [RESULT] ⚠ RT未成立 → 応募成立と記録せず（再試行対象）")
                     else:
                         item.setdefault("results", {})[account_key] = "no_action_applied"
                         out("  [RESULT] ⚠ アクション未成功 → 応募成立と記録せず")

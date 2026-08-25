@@ -549,6 +549,14 @@ def api_rt(
         if status == 200:
             if _is_api_error(body_str):
                 out(f"  [WARN] RT GraphQL (queryId={query_id}…): 200 with errors: {body_str[:200]}")
+                # ★ 2026-08-25 バグ修正: 200 with errorsでもAuthorizationError検出を通す。
+                #   従来はここでcontinueしてしまい_auth_errorが立たず、RESTフォールバック(404→
+                #   stale誤判定→DEFER)に落ちていた。RT API不通が「削除済みツイート」扱いになり、
+                #   生存ツイートまで14日スキップされ続けていた（8/23〜25 RT成功率13-24%の主因）。
+                if '"code":327' in body_str or "AuthorizationError" in body_str:
+                    _auth_error = True
+                    out("  [i] RT API: AuthorizationError → スキップ")
+                    body_preview = body_str[:200]
                 continue
             out("  [OK] RT（API）")
             increment_daily_count(account_key, "rt")
@@ -563,8 +571,9 @@ def api_rt(
                 or "AlreadyRetweet" in body_str
             ):
                 out("  [i] RT API: 403（既にリポスト済み）")
-                increment_daily_count(account_key, "rt")
-                policy_engine.mark_executed(account_key, "rt")
+                # ★ 2026-08-25: 既にRT済みは「新規行動」ではないので日次カウント/期限実行に加算しない。
+                #   従来: increment_daily_count("rt")+mark_executed → 既存58件が新規RTと同列に数えられ、
+                #   実新規RTが数件なのに「上限到達」で応募が早まって止まる(8/24実測 68/68時点で頭打ち)。
                 _delay = int((_time.time() - _t0) * 1000)
                 audit_ledger.log(
                     account_key, "rt", tweet_id, "allow", "success", reason="already_retweeted", delay_ms=_delay
@@ -638,13 +647,19 @@ def api_rt(
         _delay = int((_time.time() - _t0) * 1000)
         audit_ledger.log(account_key, "rt", tweet_id, "allow", "failed", error="unauthorized", delay_ms=_delay)
         return False
+    elif rest_status == 404:
+        # ★ 2026-08-25: 404=削除済みツイート確定。None(stale)を返し、
+        #   UIフォールバックの無駄なgotoを省き、applier側でDEFER(14日スキップ)させる。
+        out("  [i] RT REST API: 404（ツイート削除済み → stale扱い）")
+        _delay = int((_time.time() - _t0) * 1000)
+        audit_ledger.log(account_key, "rt", tweet_id, "allow", "failed", error="http_404", delay_ms=_delay)
+        return None
     elif rest_status == 403:
         if rest_body and (
             "AlreadyRetweeted" in rest_body or "already retweeted" in rest_body.lower() or "AlreadyRetweet" in rest_body
         ):
             out("  [i] RT REST API: 403（既にリポスト済み）")
-            increment_daily_count(account_key, "rt")
-            policy_engine.mark_executed(account_key, "rt")
+            # ★ 2026-08-25: already_retweetedは新規行動でないので加算しない（GraphQL側と同じ）。
             _delay = int((_time.time() - _t0) * 1000)
             audit_ledger.log(
                 account_key, "rt", tweet_id, "allow", "success", reason="already_retweeted", delay_ms=_delay

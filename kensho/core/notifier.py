@@ -52,7 +52,9 @@ def send_windows_toast(title: str, message: str) -> bool:
     safe_msg = message.replace('"', '`"').replace("'", "`'")[:80]
     ps_script = f'''
 [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] > $null
-$template = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02)
+$tm = [Windows.UI.Notifications.ToastNotificationManager]
+$type = [Windows.UI.Notifications.ToastTemplateType]::ToastText02
+$template = $tm::GetTemplateContent($type)
 $textNodes = $template.GetElementsByTagName("text")
 $textNodes.Item(0).AppendChild($template.CreateTextNode("{safe_title}")) > $null
 $textNodes.Item(1).AppendChild($template.CreateTextNode("{safe_msg}")) > $null

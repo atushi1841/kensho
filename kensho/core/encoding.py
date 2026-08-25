@@ -46,7 +46,7 @@ def cp932_safe(text: str) -> str:
         pass
 
     # 変換マップ（頻出絵文字 → ASCII代替） — 長いキー順（貪欲マッチ）
-    _EMOJI_MAP: list[tuple[str, str]] = [
+    _emoji_map: list[tuple[str, str]] = [
         ("\u26a0\ufe0f", "[!]"),  # ⚠️
         ("\u2139\ufe0f", "[i]"),  # ℹ️
         ("\u23f8\ufe0f", "[PAUSE]"),  # ⏸️
@@ -62,7 +62,7 @@ def cp932_safe(text: str) -> str:
     while i < len(text):
         # 複数文字の変換マップを先にチェック
         matched: bool = False
-        for raw, replacement in _EMOJI_MAP:
+        for raw, replacement in _emoji_map:
             if text[i : i + len(raw)] == raw:
                 result.append(replacement)
                 i += len(raw)

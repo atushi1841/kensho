@@ -170,8 +170,8 @@ def run_aider_hermes(prompt: str, files: list[str], target_dir: pathlib.Path | N
 
     # ── プログレス表示（コンソール + data/.aider-progress.txt ファイル）──
     progress_stop = threading.Event()
-    _PROGRESS_FILE = work_dir / "data" / ".aider-progress.txt"
-    _PROGRESS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    progress_file = work_dir / "data" / ".aider-progress.txt"
+    progress_file.parent.mkdir(parents=True, exist_ok=True)
 
     def _print_progress() -> None:
         t0 = time.time()
@@ -183,7 +183,7 @@ def run_aider_hermes(prompt: str, files: list[str], target_dir: pathlib.Path | N
             line = f"[{spin}] Aider実行中... {elapsed:.0f}秒経過"
             print(f"  {line}", flush=True)
             try:
-                _PROGRESS_FILE.write_text(line, encoding="utf-8")
+                progress_file.write_text(line, encoding="utf-8")
             except Exception:
                 pass
             idx += 1
@@ -205,14 +205,14 @@ def run_aider_hermes(prompt: str, files: list[str], target_dir: pathlib.Path | N
     except subprocess.TimeoutExpired:
         progress_stop.set()
         try:
-            _PROGRESS_FILE.write_text("[✗] Aiderタイムアウト (600秒)", encoding="utf-8")
+            progress_file.write_text("[✗] Aiderタイムアウト (600秒)", encoding="utf-8")
         except Exception:
             pass
         return {"status": "error", "message": "Aider timed out (600s)"}
     finally:
         progress_stop.set()
         try:
-            _PROGRESS_FILE.write_text(f"[✓] Aider完了: {round(time.time() - t0, 1)}秒", encoding="utf-8")
+            progress_file.write_text(f"[✓] Aider完了: {round(time.time() - t0, 1)}秒", encoding="utf-8")
         except Exception:
             pass
 

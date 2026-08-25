@@ -49,13 +49,37 @@ def do_follow(
         t: str = (fb.text_content() or "").strip()
         if "フォロー" in t or "Follow" in t:
             human_like_mouse(page, fb, click_delay=click_delay)
-            out("  [OK] フォロー")
-            increment_daily_count(account_key, "follow")
-            policy_engine.mark_executed(account_key, "follow")
+            # ★ 2026-08-25 反映確認を追加（フォロー空振り対策）
+            #   従来: クリック後に無条件で成功を返し、実フォローが増えていなくても
+            #   カウントだけ積み上がる（8/24実測: allow 186件のうちフォロー59件、
+            #   実フォロワー増加は約10件）。クリック後に「フォロー中(unfollow化)」へ
+            #   変わったことを確認してから success にする。
+            for _w in range(6):  # 最大~6秒ポーリング
+                try:
+                    if page.query_selector('[data-testid="unfollow"]'):
+                        out("  [OK] フォロー")
+                        increment_daily_count(account_key, "follow")
+                        policy_engine.mark_executed(account_key, "follow")
+                        _delay = int((_time.time() - _t0) * 1000)
+                        audit_ledger.log(account_key, "follow", "n/a", "allow", "success", delay_ms=_delay)
+                        _time.sleep(random.uniform(3, 7))
+                        return True
+                except Exception:
+                    pass
+                _time.sleep(1)
+            # 反映なし → 空振り。成功と誤計上しない
+            out("  [!] フォロー反映なし → 失敗扱い")
             _delay = int((_time.time() - _t0) * 1000)
-            audit_ledger.log(account_key, "follow", "n/a", "allow", "success", delay_ms=_delay)
-            _time.sleep(random.uniform(3, 7))
-            return True
+            audit_ledger.log(
+                account_key,
+                "follow",
+                "n/a",
+                "allow",
+                "failed",
+                error="follow_confirm_missing",
+                delay_ms=_delay,
+            )
+            return False
         else:
             out("  [i] フォロー済み")
             _delay = int((_time.time() - _t0) * 1000)
@@ -100,8 +124,7 @@ def do_rt(
     try:
         if page.query_selector('[data-testid="unretweet"]'):
             out("  [i] RT済み（unretweet検出）")
-            increment_daily_count(account_key, "rt")
-            policy_engine.mark_executed(account_key, "rt")
+            # ★ 2026-08-25: already_retweeted は新規行動でないので日次カウント/実行に加算しない（API側と整合）。
             _delay = int((_time.time() - _t0) * 1000)
             audit_ledger.log(account_key, "rt", "n/a", "allow", "success", reason="already_retweeted", delay_ms=_delay)
             return True

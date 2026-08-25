@@ -46,7 +46,7 @@ def _load_json(path: Path) -> dict | list:
 
 def collect_stats(collected_path: Path | None = None, dm_wins_path: Path | None = None) -> dict:
     """全統計を収集"""
-    FROZEN_ACCOUNTS = set()
+    frozen_accounts = set()
     data_dir = _get_data_dir()
 
     collected_path = collected_path or data_dir / "collected.json"
@@ -121,7 +121,7 @@ def collect_stats(collected_path: Path | None = None, dm_wins_path: Path | None 
     # アカウント別サマリー
     stats["account_summary"] = {}
     for acct_key, data in stats["accounts"].items():
-        if acct_key in FROZEN_ACCOUNTS:
+        if acct_key in frozen_accounts:
             continue
         total = data["applied"] + data["pending"]
         ok_count = data["results"].get("ok", 0)
@@ -141,7 +141,7 @@ def collect_stats(collected_path: Path | None = None, dm_wins_path: Path | None 
     # アカウント健全性
     stats["health"] = {}
     for acct_key, data in stats["accounts"].items():
-        if acct_key in FROZEN_ACCOUNTS:
+        if acct_key in frozen_accounts:
             continue
         today_str = datetime.now().strftime("%Y-%m-%d")
         today_count = data["daily"].get(today_str, 0)
@@ -223,7 +223,7 @@ def generate_html(stats: dict) -> str:
             <td>{data["pending"]}</td>
             <td>{data["ok"]}</td>
             <td>{err_detail if err_detail else "-"}</td>
-            <td>{"%d" % (data["ok"] / data["applied"] * 100 if data["applied"] > 0 else 0)}%</td>
+            <td>{"{:d}".format(data["ok"] / data["applied"] * 100 if data["applied"] > 0 else 0)}%</td>
         </tr>"""
 
     # 結果内訳（全体）
@@ -263,7 +263,6 @@ def generate_html(stats: dict) -> str:
             all_wins.append({**entry, "acct": acct_key})
     all_wins.sort(key=lambda x: x.get("detected_at", ""), reverse=True)
     for w in all_wins[:50]:
-        msg = w.get("message_text", "")[:120]
         sender = w.get("sender", "不明")
         detected = w.get("detected_at", "")[:19]
         acct = w.get("acct", w.get("account_key", "?"))

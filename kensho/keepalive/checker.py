@@ -43,7 +43,7 @@ def _resolve_interface_from_profile(profile: str) -> str:
             [
                 "powershell.exe",
                 "-Command",
-                f'$found=$false; netsh wlan show interfaces | ForEach-Object {{ if ($_ -match "^\\s+名前\\s+:\\s+(.+)$") {{ $iface=$matches[1] }}; if ($_ -match "^\\s+プロファイル\\s+:\\s+{re.escape(profile)}$") {{ $found=$iface }} }}; if ($found) {{ Write-Output $found }}',
+                f'$found=$false; netsh wlan show interfaces | ForEach-Object {{ if ($_ -match "^\\s+名前\\s+:\\s+(.+)$") {{ $iface=$matches[1] }}; if ($_ -match "^\\s+プロファイル\\s+:\\s+{re.escape(profile)}$") {{ $found=$iface }} }}; if ($found) {{ Write-Output $found }}',  # noqa: E501
             ],
             capture_output=True,
             timeout=15,
@@ -104,7 +104,7 @@ def check_interface(cfg: dict[str, Any], log: Any = None) -> tuple[str, bool, st
             return (
                 label,
                 False,
-                f"WiFiインターフェース '{cfg.get('wifi_profile', '')}' が見つかりません（スマホ側がテザリングオフかも）",
+                f"WiFiインターフェース '{cfg.get('wifi_profile', '')}' が見つかりません（スマホ側がテザリングオフかも）",  # noqa: E501
             )
 
     else:

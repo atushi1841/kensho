@@ -87,7 +87,7 @@ def fill_defaults(cfg: dict[str, Any]) -> None:
 # load_typed() で dict の代わりに KenshoConfig を取得
 # ════════════════════════════════════════════
 
-from pydantic import BaseModel
+from pydantic import BaseModel  # noqa: E402
 
 
 class BatchConfig(BaseModel):

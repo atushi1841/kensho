@@ -21,6 +21,7 @@ import collections
 import datetime
 import json
 import sys
+from datetime import timedelta, timezone
 from pathlib import Path
 
 ACCOUNTS = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4"]
@@ -80,10 +81,19 @@ def main() -> int:
             if r.get("account") not in ACCOUNTS:
                 continue
             ts = r.get("timestamp", "")
-            if ts[:10] != date_s:
+            # ★ 2026-08-25: timestampはUTC。JST(+9)へ変換し、日付・時刻判定をJSTで行う。
+            #   旧実装はUTCのまま比較 → JST昼間を「深夜」と誤警報していた。
+            try:
+                _jst = datetime.datetime.fromisoformat(ts.replace("Z", "+00:00")).astimezone(
+                    timezone(timedelta(hours=9))
+                )
+            except (ValueError, TypeError):
+                continue
+            if _jst.date().isoformat() != date_s:
                 continue
             rows.append((
                 ts,
+                _jst,  # JST対応 datetime（深夜/過集中判定に使う）
                 r.get("account", ""),
                 r.get("action_type", ""),
                 r.get("target", ""),
@@ -99,9 +109,8 @@ def main() -> int:
     # 1) 深夜アクション（深夜窓は config no_action_window から読む）
     night = collections.Counter()
     night_hours = _load_night_hours()
-    for ts, acct, at, tgt, status in rows:
-        hh = int(ts[11:13])
-        if hh in night_hours:
+    for ts, jst, acct, at, tgt, status in rows:
+        if jst.hour in night_hours:
             night[(acct, at)] += 1
     if night:
         for (acct, at), c in sorted(night.items()):
@@ -109,16 +118,12 @@ def main() -> int:
 
     # 2) 5秒未満の間隔
     per_acct = collections.defaultdict(list)
-    for ts, acct, at, tgt, status in rows:
+    for ts, jst, acct, at, tgt, status in rows:
         if status == "success":
-            per_acct[acct].append(ts)
-    for acct, tss in per_acct.items():
+            per_acct[acct].append(jst)
+    for acct, dts in per_acct.items():
         prev: datetime.datetime | None = None
-        for ts in tss:
-            try:
-                dt = datetime.datetime.fromisoformat(ts.replace("Z", "+00:00"))
-            except (ValueError, TypeError):
-                continue
+        for dt in dts:
             if prev is not None:
                 gap = (dt - prev).total_seconds()
                 if gap < MIN_ACTION_GAP:
@@ -127,7 +132,7 @@ def main() -> int:
 
     # 3) 同一ツイート(tweet_id)への複数種アクション
     tweet_actions: dict[tuple[str, str], set[str]] = collections.defaultdict(set)
-    for ts, acct, at, tgt, status in rows:
+    for ts, jst, acct, at, tgt, status in rows:
         if status == "success" and str(tgt).isdigit():
             tweet_actions[(acct, tgt)].add(at)
     for (acct, tgt), kinds in tweet_actions.items():
@@ -136,7 +141,7 @@ def main() -> int:
 
     # 4) 同一主催者へのフォロー過多
     owner_follows = collections.Counter()
-    for ts, acct, at, tgt, status in rows:
+    for ts, jst, acct, at, tgt, status in rows:
         if at == "follow" and status == "success" and not str(tgt).isdigit():
             owner_follows[(acct, tgt)] += 1
     for (acct, owner), c in owner_follows.items():
@@ -145,9 +150,9 @@ def main() -> int:
 
     # 5) 1時間あたりアクション数
     hourly = collections.Counter()
-    for ts, acct, at, tgt, status in rows:
+    for ts, jst, acct, at, tgt, status in rows:
         if status == "success":
-            hourly[(acct, ts[11:13])] += 1
+            hourly[(acct, jst.strftime("%H"))] += 1
     for (acct, hh), c in hourly.items():
         if c > MAX_ACTIONS_PER_HOUR:
             problems.append(f"[過集中] {date_s} {acct} {hh}時台に{c}アクション (上限{MAX_ACTIONS_PER_HOUR}/時)")

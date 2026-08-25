@@ -188,6 +188,21 @@ def get() -> CrashGuard | None:
     return _guard
 
 
+def _pid_is_alive(pid: int) -> bool:
+    """pid が生存しているかを確認（並列実行の進行中判定用）"""
+    if pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True  # 存在するが権限不足 → 実行中とみなす
+    except OSError:
+        return False
+
+
 def check_previous_crash() -> dict[str, Any] | None:
     """前回のクラッシュ状態を確認（次回起動時に呼ぶ）"""
     try:
@@ -195,7 +210,13 @@ def check_previous_crash() -> dict[str, Any] | None:
             with open(HEARTBEAT_FILE, encoding="utf-8") as f:
                 hb = json.load(f)
             if not hb.get("done", False):
-                return hb
+                # 並列実行中: 別垢プロセスの最後のが done:False でも、
+                # その pid がまだ生存していれば「進行中」であり異常終了ではない。
+                # 真に前回プロセスが終了(or死亡)していた場合のみクラッシュとみなす。
+                pid = hb.get("pid")
+                if isinstance(pid, int) and _pid_is_alive(pid):
+                    return None
+                return dict(hb)
     except Exception:
         pass
     return None

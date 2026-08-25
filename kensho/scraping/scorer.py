@@ -61,7 +61,6 @@ def score_prize(tweet_text: str, rt_count: int = 0, like_count: int = 0) -> dict
     if not cfg.get("enabled", True):
         return {"estimated_value_jpy": 0, "items": [], "priority": 1.0}
 
-    text = tweet_text.lower()
     result = {"estimated_value_jpy": 0, "items": [], "priority": 1.0}
 
     # ── 金額抽出 ──

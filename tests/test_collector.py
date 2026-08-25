@@ -24,9 +24,15 @@ class TestIsExpired:
         future = (datetime.now() + timedelta(days=10)).strftime("%Y-%m-%d")
         assert _is_expired(future) is False
 
-    def test_past_within_30_days(self) -> None:
+    def test_past_deadline_excluded(self) -> None:
+        # 締切日を過ぎた案件は即時除外（_EXPIRY_DAYS=0 新仕様）
         past = (datetime.now() - timedelta(days=25)).strftime("%Y-%m-%d")
-        assert _is_expired(past) is False
+        assert _is_expired(past) is True
+
+    def test_deadline_today_not_expired(self) -> None:
+        # 締切日当日は応募可能 → 除外しない
+        today = datetime.now().strftime("%Y-%m-%d")
+        assert _is_expired(today) is False
 
     def test_past_over_30_days(self) -> None:
         past = (datetime.now() - timedelta(days=31)).strftime("%Y-%m-%d")
@@ -34,8 +40,12 @@ class TestIsExpired:
 
     def test_with_custom_now(self) -> None:
         now = datetime(2026, 6, 1)
+        # 締切日を過ぎたもの(翌日以降)は除外
         assert _is_expired("2026-05-01", now) is True
-        assert _is_expired("2026-05-15", now) is False
+        assert _is_expired("2026-05-15", now) is True
+        # 締切日当日は応募可能
+        assert _is_expired("2026-06-01", now) is False
+        # 未来は応募可能
         assert _is_expired("2026-07-01", now) is False
 
 

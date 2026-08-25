@@ -31,7 +31,7 @@ from application.applier import apply_for_account  # noqa: E402
 from application.session_manager import check_sessions  # noqa: E402
 from core.cleanup import clean_old_logs, kill_zombies  # noqa: E402
 from core.config import load as load_config  # noqa: E402
-from core.crash_guard import check_previous_crash
+from core.crash_guard import check_previous_crash  # noqa: E402
 from core.crash_guard import start as start_crash_guard  # noqa: E402
 from core.logger import LogWriter, make_path, write_daily_summary  # noqa: E402
 from core.notifier import notify_error, notify_warning  # noqa: E402

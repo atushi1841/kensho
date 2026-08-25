@@ -147,7 +147,6 @@ def check_dms(
     for acct in targets:
         key = acct["key"]
         display = acct.get("display", key)
-        session_rel = acct.get("session", "")
 
         print(f"[DM Monitor] {display} のDMをチェック中...")
 
