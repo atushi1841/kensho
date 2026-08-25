@@ -34,6 +34,10 @@ WIFI_SSID_MAP: dict[str, str] = {
 PROXY_HOST = "172.26.80.1"
 PROXY_TIMEOUT = 5  # seconds
 
+# cron環境（PATH=/usr/bin:/bin）では powershell.exe が解決不能のためフルパス指定。
+# 2026-08-20 に wifi_watchdog で修正済みの既知パターン。proxy_watchdog への適用。
+PS = r"/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe"
+
 
 def _port_reachable(port: int, timeout: int = PROXY_TIMEOUT) -> bool:
     """Return True if there is a TCP listener at PROXY_HOST:port."""
@@ -87,7 +91,7 @@ def _check_egress(port: int, timeout: int = 8) -> bool:
 def _adapter_ipv4(adapter: str) -> str | None:
     """Return the first usable (non-APIPA) IPv4 of a Windows adapter, else None."""
     cmd = [
-        "powershell.exe",
+        PS,
         "-NoProfile",
         "-Command",
         f"(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias '{adapter}' -ErrorAction SilentlyContinue).IPAddress",
@@ -180,7 +184,7 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
         # ------------------------------------------------------------------
         try:
             cmd = [
-                "powershell.exe",
+                PS,
                 "-Command",
                 f"(Get-NetAdapter -Name '{adapter}').Status",
             ]
@@ -208,7 +212,7 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
                         )
                         subprocess.run(
                             [
-                                "powershell.exe",
+                                PS,
                                 "-Command",
                                 f"netsh wlan disconnect interface='{adapter}'",
                             ],
@@ -225,7 +229,7 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
                             ssid,
                         )
                     connect_cmd = [
-                        "powershell.exe",
+                        PS,
                         "-Command",
                         f"netsh wlan connect name='{ssid}' interface='{adapter}'",
                     ]
@@ -233,7 +237,7 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
                     time.sleep(3)
                     # 再接続後、再度アダプタ状態を確認
                     retry_ps = subprocess.run(
-                        ["powershell.exe", "-Command", f"(Get-NetAdapter -Name '{adapter}').Status"],
+                        [PS, "-Command", f"(Get-NetAdapter -Name '{adapter}').Status"],
                         capture_output=True,
                         text=True,
                         timeout=10,
@@ -283,7 +287,7 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
                 f"-ArgumentList 'C:\\tools\\kensho-proxy\\kensho_proxy.py','{ip}','{port}' "
                 f"-WindowStyle Hidden"
             )
-            restart_cmd = ["powershell.exe", "-Command", restart_script]
+            restart_cmd = [PS, "-Command", restart_script]
             subprocess.run(restart_cmd, timeout=10, capture_output=True, text=True)
             restored_count += 1
             log.info("Proxy for %s restarted successfully (restored %d)", account, restored_count)

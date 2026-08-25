@@ -131,3 +131,56 @@ Workerの実装（コード変更なし・計測・記録）は提案内容と�
 - 詳細: `kensho/reports/manual-implementation-2026-08-26.md`
 
 **次サイクルは提案1〜3を「実装済み確認」に切り替えること。**
+
+---
+
+# Worker 実装記録 — 2026-08-26 02:47（深夜サイクル・第2陣）
+
+## 実施サマリー
+
+Critic提案（02:30版）の提案6「proxy_watchdog.py powershell.exeフルパス化」を実装。提案1〜3は既に手動実装済み（973efcb/009948d）のため「実装済み確認」のみ。提案5（1085/1089物理復旧）はユーザー判断待ちのまま申し送り。
+
+## 実装した変更
+
+| # | 変更内容 |
+|---|---------|
+| 1 | `kensho/utils/proxy_watchdog.py`: 冒頭に `PS = r"/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe"` を定義し、**6箇所**（`_adapter_ipv4` line90 / `Get-NetAdapter` line183,236 / `netsh wlan disconnect` line211 / `netsh wlan connect` line228 / restart_cmd line286）を `powershell.exe` → `PS` に置換。wifi_watchdog（2026-08-20修正済）と同じパターン |
+| 2 | `reports/critic_proposal_2026-08-26.md`: 提案6に「実装済み」追記 + Worker向けアクション2項を更新 |
+
+## 実装の詳細（提案6の根因と修正）
+
+**根因:** `proxy_watchdog.py` の PowerShell 呼び出しは全箇所 `powershell.exe` と相対表記。cron環境（PATH=/usr/bin:/bin）では解決不能（exit 127: No such file or directory 'powershell.exe'）→ アダプタ復旧後の自動プロキシ再起動が**常に失敗**していた。2026-08-20にwifi_watchdogで修正済みの既知パターンが未適用だった。
+
+**期待効果:** アダプタ復旧→プロキシ自動再起動の循環が機能し、手動介入・スマホ復旧後の即時復帰が自動化される。
+
+**検証（cron環境を再現）:**
+```
+env -i PATH=/usr/bin:/bin で:
+  - PSフルパス存在確認: True
+  - ヘルスチェック: 1081-1084 alive / 1085,1089 dead（物理原因と整合）
+  - _adapter_ipv4("kudou_RM10JE_B") → 10.32.223.239（フルパスPowerShell実行成功）
+```
+
+**リスク評価:** 中（コード修正だが実績あるパターンの機械的適用。実行ロジック・BOT行動パターンの変更なし）。
+
+## 実装できなかった提案（申し送り）
+
+| 提案 | 危険度 | 理由・状態 |
+|------|--------|-----------|
+| 1. RTループ・セッション内RT済みset | 高 | 973efcbで手動実装済み ✅ |
+| 2. collector tweet_id保存 + 監査target実値化 | 高 | 973efcb + 009948dで手動実装済み ✅ |
+| 3. フォロー済み主催者set + record_follow | 高 | 973efcbで手動実装済み ✅ |
+| 4. atushi16バッチ15→10 | 中 | 5391cedで対応済み ✅ |
+| 5. TankanNotes(1085)/inobase1-4(1089)物理復旧 | 中 | スマホ2台（Redmi Note 9S）物理確認待ち・ユーザー判断。復旧不可ならconfigコメントアウト。復旧後は個別プロキシ起動+egress確認 |
+| 6. proxy_watchdog powershell.exeフルパス化 | 中 | **本コミットで実装** ✅ |
+
+## テスト結果
+
+- pytest: **148 passed, 4 skipped**（34.12s）✅
+- mypy: proxy_watchdog.py に新規エラーなし（既存の `config: dict` type-arg 2件のみ。変更前から存在）
+
+## 次サイクル向けメモ
+
+- **提案6の効果検証**: 8/26以降、アダプタ断線→復旧時に proxy_watchdog が自動再起動するか、orchestrator の `[WATCHDOG] ✅ 復旧：N台` ログで確認。1085/1089のスマホ復旧時に特に有効
+- 提案1〜3の効果検証（8/26 8:00バッチ後）: RT成功率31%→50% / audit target=n/a消滅 / 過フォロー・多重シグナル / いいね比率
+- 1085/1089: ユーザーがスマホ物理確認 → 復旧 or configコメントアウトを決定後、次サイクルで対応
