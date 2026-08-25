@@ -8,10 +8,17 @@ from __future__ import annotations
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from kensho.scraping.collector import _is_expired, extract_deadline_and_winners, is_x_url
+from kensho.scraping.collector import (
+    _dedup_x_url_merge,
+    _is_expired,
+    _normalize_x_url,
+    extract_deadline_and_winners,
+    is_x_url,
+)
 
 
 class TestIsExpired:
@@ -221,3 +228,64 @@ class TestKnpwDeadlineExtraction:
         deadline, winners = extract_deadline_and_winners(html)
         assert deadline == "2026-07-01", f"Expected 2026-07-01, got {deadline}"
         assert winners == 10000, f"Expected 10000, got {winners}"
+
+
+class TestNormalizeXUrl:
+    """_normalize_x_url: URL表記揺れの正規化（2026-08-25追加）"""
+
+    def test_i_web_status_normalized(self) -> None:
+        """/i/web/status/ 形式もツイートIDキーに正規化"""
+        assert _normalize_x_url("https://x.com/i/web/status/1234567890") == "x.com/status/1234567890"
+
+    def test_twitter_com_normalized(self) -> None:
+        """twitter.com もツイートIDキーに正規化"""
+        assert _normalize_x_url("https://twitter.com/foo/status/123") == "x.com/status/123"
+
+    def test_query_and_fragment_stripped(self) -> None:
+        """末尾の ?クエリ / #フラグメント を除去"""
+        assert _normalize_x_url("https://x.com/foo/status/123?s=20#x") == "x.com/status/123"
+
+    def test_username_variant_same_key(self) -> None:
+        """ユーザー名表記の有無にかかわらず同一ツイートは同一キー"""
+        assert _normalize_x_url("https://x.com/foo/status/123") == _normalize_x_url("https://x.com/i/web/status/123")
+
+
+class TestDedupXUrlMerge:
+    """_dedup_x_url_merge: URL表記揺れ重複の統合（2026-08-25追加）"""
+
+    def test_variant_entries_collapsed(self) -> None:
+        """/status/ と /i/web/status/ の同一ツイートが1エントリに統合される"""
+        a: dict[str, Any] = {
+            "x_url": "https://x.com/foo/status/123",
+            "applied": {"atushi16": "2026-08-24T00:00:00"},
+            "tweet_text": "short",
+            "deadline": "",
+        }
+        b: dict[str, Any] = {
+            "x_url": "https://x.com/i/web/status/123",
+            "applied": {"kudou": "2026-08-24T01:00:00"},
+            "tweet_text": "longer text here",
+            "deadline": "2026-09-01",
+        }
+        merged = _dedup_x_url_merge([a, b])
+        assert len(merged) == 1
+        m = merged[0]
+        assert m["applied"]["atushi16"] == "2026-08-24T00:00:00"
+        assert m["applied"]["kudou"] == "2026-08-24T01:00:00"
+        assert m["tweet_text"] == "longer text here"
+        assert m["deadline"] == "2026-09-01"
+        assert "/i/web/status/" not in m["x_url"]
+
+    def test_distinct_tweets_kept(self) -> None:
+        """別ツイートは統合されない"""
+        a = {"x_url": "https://x.com/foo/status/111", "applied": {}}
+        b = {"x_url": "https://x.com/bar/status/222", "applied": {}}
+        assert len(_dedup_x_url_merge([a, b])) == 2
+
+    def test_identical_entries_merged(self) -> None:
+        """完全一致のx_urlも従来通り統合"""
+        a = {"x_url": "https://x.com/foo/status/123", "applied": {"atushi16": "2026-08-24T00:00:00"}}
+        b = {"x_url": "https://x.com/foo/status/123", "applied": {"kudou": "2026-08-24T01:00:00"}}
+        merged = _dedup_x_url_merge([a, b])
+        assert len(merged) == 1
+        assert set(merged[0]["applied"].keys()) == {"atushi16", "kudou"}

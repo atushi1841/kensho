@@ -34,6 +34,70 @@ from kensho.scraping.sources import (
 from kensho.utils.backup import safe_save_json, try_recover_collected, verify_collected_integrity
 
 
+def _normalize_x_url(xu: str) -> str:
+    """x_url を正規化して同一ツイートの表記揺れを吸収する。
+
+    - /status/<id> のツイートIDをキーとして抽出（/i/web/status/ やユーザー名表記揺れを吸収）
+    - 末尾の #フラグメント / ?クエリ を除去
+    - twitter.com を x.com に統一
+
+    dedup のキーに使う。同一ツイートが複数ソースで別表記されても
+    重複エントリとして再応募されるのを防ぐ（2026-08-25 修正）。
+    """
+    u = xu.split("#")[0].split("?")[0].rstrip("/")
+    u = u.replace("twitter.com/", "x.com/")
+    # ツイートIDで同一視（ユーザー名の有無 / /i/web/status/ 表記を吸収）
+    m = re.search(r"/status/(\d+)", u)
+    if m:
+        return f"x.com/status/{m.group(1)}"
+    return u
+
+
+def _dedup_x_url_merge(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """x_url 単位で一意化（URL表記揺れも正規化して同一視）。
+
+    - 応募済み状態(applied) は union 保持（None以外の値を優先）
+    - 長い方の tweet_text を保持
+    - 空でない deadline を優先
+    - 正規形(/status/ 表記)の x_url を優先保持
+    - x_url 無しエントリは detail_url で退避維持
+    """
+    x_url_index: dict[str, dict[str, Any]] = {}
+    for item in items:
+        xu: str = item.get("x_url", "")
+        if not xu:
+            x_url_index.setdefault(f"__no_xurl__{item.get('detail_url', '')}", item)
+            continue
+        xu_key: str = _normalize_x_url(xu)
+        if xu_key not in x_url_index:
+            x_url_index[xu_key] = item
+        else:
+            base = x_url_index[xu_key]
+            # 応募済み状態の union（None以外を優先）
+            base_applied = base.get("applied") or {}
+            new_applied = item.get("applied") or {}
+            merged_applied: dict[str, Any] = {}
+            for _src in (new_applied, base_applied):
+                for _k, _v in _src.items():
+                    if _v not in (None, ""):
+                        merged_applied[_k] = _v
+                    elif _k not in merged_applied:
+                        merged_applied[_k] = _v
+            base["applied"] = merged_applied
+            # 長いほうのtweet_textを保持
+            btxt = base.get("tweet_text", "") or ""
+            itxt = item.get("tweet_text", "") or ""
+            if len(itxt) > len(btxt):
+                base["tweet_text"] = itxt
+            # deadlineが空なら埋める
+            if not base.get("deadline") and item.get("deadline"):
+                base["deadline"] = item["deadline"]
+            # 正規形(/status/)の x_url を優先保持（applier が確実にパースできる表記）
+            if "/i/web/status/" in (base.get("x_url", "")) and "/i/web/status/" not in (item.get("x_url", "")):
+                base["x_url"] = item["x_url"]
+    return list(x_url_index.values())
+
+
 def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int = 99) -> tuple[int, int, int]:
     """
     収集を実行。
@@ -316,43 +380,8 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     #   applierがdetail_url単位でしか応募済みを記録しないため、重複エントリが何度も再応募される
     #   バグを防ぐため、マージ時に x_url で統合する（応募済み状態(applied)は union 保持）。
     #   2026-08-20対応: 既存collectedの重複エントリも同時に解消。
-    x_url_index: dict[str, dict[str, Any]] = {}
-    # 優先順: 既存 → 新規（既存の applied / tweet_text がより確実な場合が多い）
-    _xurl_exists: set[str] = set()
-
-    for item in list(existing_collected) + collected:
-        xu: str = item.get("x_url", "")
-        if not xu:
-            # x_url無しは detail_url で維持（退避する）
-            x_url_index.setdefault(f"__no_xurl__{item.get('detail_url', '')}", item)
-            continue
-        if xu not in x_url_index:
-            x_url_index[xu] = item
-            _xurl_exists.add(xu)
-        else:
-            # 同x_urlの既存エントリに応募済み状態と本文をマージ（union）
-            base = x_url_index[xu]
-            base_applied = base.get("applied") or {}
-            new_applied = item.get("applied") or {}
-            merged_applied: dict[str, Any] = {}
-            # new → base の順で「Noneでない応募済み値」を優先マージ（応募済みを失わないように）
-            for _src in (new_applied, base_applied):
-                for _k, _v in _src.items():
-                    if _v not in (None, ""):
-                        merged_applied[_k] = _v
-                    elif _k not in merged_applied:
-                        merged_applied[_k] = _v
-            base["applied"] = merged_applied
-            # 長いほうのtweet_textを保持
-            btxt = base.get("tweet_text", "") or ""
-            itxt = item.get("tweet_text", "") or ""
-            if len(itxt) > len(btxt):
-                base["tweet_text"] = itxt
-            # deadlineが空なら埋める
-            if not base.get("deadline") and item.get("deadline"):
-                base["deadline"] = item["deadline"]
-
-    merged: list[dict[str, Any]] = list(x_url_index.values())
+    #   2026-08-25対応: URL表記揺れ(/i/web/status/ 等)も正規化して同一視（_dedup_x_url_merge）。
+    merged: list[dict[str, Any]] = _dedup_x_url_merge(list(existing_collected) + collected)
 
     _now: datetime = datetime.now()
     before: int = len(merged)
