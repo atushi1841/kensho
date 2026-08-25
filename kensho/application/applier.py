@@ -1230,6 +1230,11 @@ def apply_for_account(
                         failure_tracker.record_success(account_key)
                     success += 1
                     _hourly_count += 1
+                    # ★ 2026-08-25: applied付与を即時保存。
+                    #   並列垢ワーカーが同じcollected.jsonを保存するため、バッチ中にappliedが
+                    #   他プロセスの保存で失われる問題（実測: 応募成立10件中1件しか保存されず）。
+                    #   save_collected_safe はロック+ディスク再読込+マージで競合を防ぐ。
+                    save_collected_safe(data, account_key, log)
                 else:
                     # 未成立: appliedを付けず次サイクルで再試行。失敗として記録。
                     out("  [CEILING] アクション未成立 → 成功扱いせず（applied付与なし→再試行）")
