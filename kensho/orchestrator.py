@@ -243,6 +243,16 @@ def _apply_account(
 ) -> tuple[str, int, int]:
     """1アカウントの応募を直接apply_for_account()で実行"""
     log.write(f"\n  ▶ {key}（時刻{batch_time}、最大{batch_max}件）")
+
+    # ── ランダム秒ジッター（BOT検出回避）──
+    # 分レベルの日別ジッター（batch_jitter_minutes）に加え、実行開始の「秒」も
+    # 毎回ランダムにする。15分おきcron発火だとそのまま実行すると常に分0秒で
+    # 始まり機械的パターンになるため、0〜89秒のランダム待機を入れる。
+    sec_jitter = random.randint(0, 89)
+    if sec_jitter > 0:
+        log.write(f"  ⏱ 秒ジッター: {sec_jitter}秒待機（人間らしい開始タイミング）")
+        time.sleep(sec_jitter)
+
     try:
         acct = next((a for a in cfg.get("accounts", []) if a["key"] == key), None)
         if not acct:
@@ -367,6 +377,11 @@ def main() -> None:
                             pass
             if do_collect:
                 log.write(f"  収集時刻（{now_str}）→ 収集実行")
+                # 秒ジッター: 毎正時発火の機械的パターンを回避
+                collect_jitter = random.randint(0, 119)
+                if collect_jitter > 0:
+                    log.write(f"  ⏱ 収集ジッター: {collect_jitter}秒待機")
+                    time.sleep(collect_jitter)
                 guard.update("collect", "収集実行中")
                 success, errors, total = collect(cfg, log)
                 log.write(f"  収集結果: {total}件（成功{success}/エラー{errors}）")
