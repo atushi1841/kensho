@@ -7,6 +7,7 @@ from pathlib import Path
 
 from kensho.application.follow_state_manager import (
     MAX_FOLLOWS_PER_OWNER_PER_DAY,
+    MAX_FOLLOWS_PER_OWNER_TOTAL,
     FollowStateManager,
 )
 
@@ -61,3 +62,40 @@ def test_account_isolation(tmp_path: Path) -> None:
         m1.record_follow("ownerY")
     assert m1.should_follow("ownerY") is False
     assert m2.should_follow("ownerY") is True
+
+
+def test_total_follow_limit_across_days(tmp_path: Path) -> None:
+    """日をまたいだ通算フォローでも生涯上限(MAX_FOLLOWS_PER_OWNER_TOTAL)が効く。"""
+    m = _make_manager(tmp_path)
+    # 過去に3回フォローしていた（過去日付を直接書き込む）→ 通算3回
+    m._state.setdefault("test_acct", {}).setdefault("followed", {}).setdefault(
+        "ownerT",
+        [
+            "2026-08-01",
+            "2026-08-02",
+            "2026-08-03",
+        ],
+    )
+    # 通算3回 < 4 → 今日はまだフォロー可
+    assert m.should_follow("ownerT") is True
+    m.record_follow("ownerT")  # 通算4回到達
+    # 通算4回で生涯上限到達 → 今日の日次枠が残っていても拒否
+    assert m.should_follow("ownerT") is False
+
+
+def test_total_follow_upper_bound(tmp_path: Path) -> None:
+    """生涯上限ちょうど(MAX_FOLLOWS_PER_OWNER_TOTAL)で拒否、get_total_followsが正確。"""
+    m = _make_manager(tmp_path)
+    # 過去4日間に各1回フォローしていた（日次上限2回には抵触しない）→ 通算4回
+    m._state.setdefault("test_acct", {}).setdefault("followed", {}).setdefault(
+        "ownerL",
+        [
+            "2026-08-01",
+            "2026-08-02",
+            "2026-08-03",
+            "2026-08-04",
+        ],
+    )
+    # 通算4回 = 生涯上限到達 → 今日の日次枠が残っていても拒否
+    assert m.should_follow("ownerL") is False
+    assert m.get_total_follows("ownerL") == MAX_FOLLOWS_PER_OWNER_TOTAL

@@ -878,12 +878,19 @@ def apply_for_account(
                 _skip_chance_like: float = _skip_cfg.get("like", 0.30)
                 _skip_chance_all: float = _skip_cfg.get("all", 0.05)
 
+                # ★ いいね優先率: いいね要件ツイートで、フォロー/RTをスキップしていいねのみ実行する確率。
+                #   いいね要件ありツイートのこの割合で「いいねのみ」にする（アクション1種 = BOTリスク増加なし）。
+                _like_first_rate: float = float(cfg.get("applier", {}).get("like_first_rate", 0.3))
+
                 skip_follow: bool = random.random() < _skip_chance_follow
                 skip_rt: bool = random.random() < _skip_chance_rt
                 skip_like: bool = False  # 条件付きいいねは後で個別処理
 
                 # ★ 条件付きいいね: 本文に「いいね」要件がない時はスキップ、あっても確率スキップ
-                _like_in_text = "いいね" in body_text
+                #   2026-08-25: 検出を「いいね」単語から絵文字(♡♥❤💗)・ハート・LIKE表記まで拡張。
+                #   実際の懸賞ツイートは「♡をタップ」「♥で応募」「ハートを押す」等の表現が主流のため。
+                _like_req_pattern = re.compile(r"いいね|♡|♥|❤|💗|💖|💕|ハート|LIKE", re.IGNORECASE)
+                _like_in_text = bool(_like_req_pattern.search(body_text))
                 if not _like_in_text:
                     if random.random() < 0.90:
                         skip_like = True
@@ -904,9 +911,15 @@ def apply_for_account(
                         out("  [SKIP] 全アクション: 見て終わり（人間らしさ）")
 
                 # ★ 同一ツイートへの複数種アクション禁止（BOT検出回避・絶対ルール）
-                # フォロー or RT が実行される(=応募本体)ツイートにはいいねを混ぜない。
-                # いいねは「応募しない」ツイート(フォローもRTもしない)でのみ単独実行 = 自然な人間行動を維持。
-                if not (skip_follow and skip_rt):
+                #   2026-08-25: いいね要件ツイートでは「いいね優先」を導入。
+                #   いいねのみ実行（アクション1種）でいいね必須懸賞に応募でき、フォロー/RTより安全。
+                #   応募成立は「最低1アクション成功」なので、いいね成功でも成立する。
+                if _like_in_text and random.random() < _like_first_rate:
+                    skip_follow = True
+                    skip_rt = True
+                    skip_like = False
+                    out("  [i] いいね優先: 要件を満たすためいいねのみ実行（アクション1種）")
+                elif not (skip_follow and skip_rt):
                     skip_like = True
                     out("  [SKIP] いいね: フォロー/RT実行中 → 同一ツイート複数アクション回避")
 
@@ -999,7 +1012,10 @@ def apply_for_account(
                             ):
                                 _to: int = 20000 if account_key == "atushi16" else 25000
                                 _goto_ok: bool = False
-                                for _gr in range(2):  # 90000×2 → 25000×2 に短縮＋失敗検出
+                                # ★ 2026-08-25: 327 AuthorizationError + gotoタイムアウトが連続する環境では
+                                #   2回目のgotoはほぼ確実に同じ結果（タイムアウト）になるため1回に削減。
+                                #   バッチの時間浪費(50s→25s)を防ぎ、フォロー/いいね対象の処理量を維持する。
+                                for _gr in range(1):
                                     try:
                                         page.goto(clean_url, timeout=_to, wait_until="domcontentloaded")
                                         _goto_ok = True
@@ -1007,7 +1023,7 @@ def apply_for_account(
                                     except Exception as _ge:
                                         out(f"  [NG] RT goto attempt {_gr + 1}: {str(_ge)[:50]}")
                                         if _gr == 0:
-                                            time.sleep(3)  # 回線遅延を待って再試行
+                                            time.sleep(3)
                                 if not _goto_ok:
                                     # goto失敗＝ページ未ロード→no_rt_button量産を防ぐため次ツイートへ
                                     out("  [i] RT goto失敗 → RT実行スキップ（次ツイートへ）")

@@ -23,6 +23,9 @@ from pathlib import Path
 # 同一主催者への1日フォロー上限（これを超えたらスキップ）
 MAX_FOLLOWS_PER_OWNER_PER_DAY = 2
 
+# 同一主催者への生涯通算フォロー上限（BOTシグナル対策: 毎日キャンペーンを張る主催者への累積フォローを防ぐ）
+MAX_FOLLOWS_PER_OWNER_TOTAL = 4
+
 # フォロー状態ファイル
 _STATE_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "follow_state.json"
 
@@ -51,12 +54,19 @@ class FollowStateManager:
         self._state_path.write_text(json.dumps(self._state, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def should_follow(self, screen_name: str) -> bool:
-        """この主催者にフォローして良いか判定。上限超過ならFalse。"""
+        """この主催者にフォローして良いか判定。日次・通算の上限超過ならFalse。"""
         today = datetime.datetime.now(JST).strftime("%Y-%m-%d")
         entries = self._state.get(self._account_key, {}).get("followed", {}).get(screen_name, [])
         # 今日のフォロー回数
         today_count = sum(1 for d in entries if d == today)
-        return today_count < MAX_FOLLOWS_PER_OWNER_PER_DAY
+        # 生涯通算フォロー回数
+        total_count = len(entries)
+        return today_count < MAX_FOLLOWS_PER_OWNER_PER_DAY and total_count < MAX_FOLLOWS_PER_OWNER_TOTAL
+
+    def get_total_follows(self, screen_name: str) -> int:
+        """この主催者への生涯通算フォロー回数。"""
+        entries = self._state.get(self._account_key, {}).get("followed", {}).get(screen_name, [])
+        return len(entries)
 
     def record_follow(self, screen_name: str) -> None:
         """フォロー成功を記録。"""
