@@ -32,21 +32,23 @@ JST = datetime.timezone(datetime.timedelta(hours=9))
 class FollowStateManager:
     """アカウントごとのフォロー状態管理。"""
 
-    def __init__(self, account_key: str) -> None:
+    def __init__(self, account_key: str, state_path: Path | None = None) -> None:
         self._account_key = account_key
+        # テストでは一時パスを渡せる（グローバルパッチ不要 → 本番データ汚染防止）
+        self._state_path = state_path or _STATE_PATH
         self._state: dict = self._load()
 
     def _load(self) -> dict:
         try:
-            if _STATE_PATH.exists():
-                return json.loads(_STATE_PATH.read_text(encoding="utf-8"))
+            if self._state_path.exists():
+                return json.loads(self._state_path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
             pass
         return {}
 
     def _save(self) -> None:
-        _STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
-        _STATE_PATH.write_text(json.dumps(self._state, ensure_ascii=False, indent=2), encoding="utf-8")
+        self._state_path.parent.mkdir(parents=True, exist_ok=True)
+        self._state_path.write_text(json.dumps(self._state, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def should_follow(self, screen_name: str) -> bool:
         """この主催者にフォローして良いか判定。上限超過ならFalse。"""

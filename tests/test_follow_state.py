@@ -13,15 +13,7 @@ from kensho.application.follow_state_manager import (
 
 def _make_manager(tmp_path: Path, account: str = "test_acct") -> FollowStateManager:
     """一時ディレクトリのfollow_state.jsonを使うマネージャを返す。"""
-    import kensho.application.follow_state_manager as fsm_module
-
-    # 状態ファイルのパスを一時ディレクトリに差し替え
-    original = fsm_module._STATE_PATH
-    fsm_module._STATE_PATH = tmp_path / "follow_state.json"
-    try:
-        return FollowStateManager(account)
-    finally:
-        fsm_module._STATE_PATH = original
+    return FollowStateManager(account, state_path=tmp_path / "follow_state.json")
 
 
 def test_should_follow_initial(tmp_path: Path) -> None:
@@ -50,22 +42,15 @@ def test_other_owner_not_affected(tmp_path: Path) -> None:
 
 def test_persist_across_instances(tmp_path: Path) -> None:
     """記録はファイルに永続化され、別インスタンスからも読める。"""
-    import kensho.application.follow_state_manager as fsm_module
-
-    original = fsm_module._STATE_PATH
     path = tmp_path / "follow_state.json"
-    fsm_module._STATE_PATH = path
-    try:
-        m1 = FollowStateManager("acct1")
-        m1.record_follow("ownerX")
-        m2 = FollowStateManager("acct1")
-        assert m2.should_follow("ownerX") is True
-        m2.record_follow("ownerX")
-        # ファイルに書き込まれている
-        data = json.loads(path.read_text(encoding="utf-8"))
-        assert len(data["acct1"]["followed"]["ownerX"]) == 2
-    finally:
-        fsm_module._STATE_PATH = original
+    m1 = FollowStateManager("acct1", state_path=path)
+    m1.record_follow("ownerX")
+    m2 = FollowStateManager("acct1", state_path=path)
+    assert m2.should_follow("ownerX") is True
+    m2.record_follow("ownerX")
+    # ファイルに書き込まれている
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert len(data["acct1"]["followed"]["ownerX"]) == 2
 
 
 def test_account_isolation(tmp_path: Path) -> None:
