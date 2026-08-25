@@ -340,3 +340,30 @@ class TestCheckTweetResult:
         """削除済みツイート → tweet_deleted（DEFER対象）"""
         page = self._make_page(body="This tweet has been deleted.")
         assert self._call(page, monkeypatch) == "tweet_deleted"
+
+
+class TestExtractTweetIdAndScreenName:
+    """extract_tweet_id_and_screen_name: URLからtweet_id/screen_name抽出（2026-08-26追加）"""
+
+    def test_normal_url(self) -> None:
+        from kensho.application.api_actions import extract_tweet_id_and_screen_name
+
+        tid, sn = extract_tweet_id_and_screen_name("https://x.com/foo_bar/status/123456")
+        assert tid == "123456"
+        assert sn == "foo_bar"
+
+    def test_no_screen_name_url(self) -> None:
+        """x.com/status/123 形式ではscreen_nameを誤抽出しない"""
+        from kensho.application.api_actions import extract_tweet_id_and_screen_name
+
+        tid, sn = extract_tweet_id_and_screen_name("https://x.com/status/123456")
+        assert tid == "123456"
+        assert sn is None
+
+    def test_iweb_url(self) -> None:
+        """/i/web/status/ 形式でもtweet_idは抽出できる"""
+        from kensho.application.api_actions import extract_tweet_id_and_screen_name
+
+        tid, sn = extract_tweet_id_and_screen_name("https://x.com/i/web/status/123456")
+        assert tid == "123456"
+        assert sn is None

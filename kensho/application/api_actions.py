@@ -757,7 +757,11 @@ def extract_tweet_id_and_screen_name(x_url: str) -> tuple[str | None, str | None
         if idx >= 1 and idx + 1 < len(parts):
             tweet_id: str = parts[idx + 1]
             screen_name: str = parts[idx - 1].lstrip("@")
-            return tweet_id, screen_name
+            # ★ 2026-08-26: x.com/status/123 や x.com/i/web/status/123 形式（screen_nameなし）では
+            #   "x.com" / "web" を screen_name と誤抽出しない（フォローAPIの誤爆防止）
+            if screen_name.lower() in ("x.com", "twitter.com", "mobile.twitter.com", "www.x.com", "web"):
+                screen_name = ""
+            return tweet_id, screen_name or None
     except ValueError:
         pass
     return None, None
