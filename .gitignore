@@ -98,3 +98,4 @@ kensho/tools/繧*
 kensho/data/
 kensho/application/transaction_pairs.json
 .hermes_backup_rtfix/
+data/*.bak_*
