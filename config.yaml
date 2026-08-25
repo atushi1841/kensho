@@ -23,16 +23,16 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "08:00", max: 15 }
-        - { time: "09:30", max: 15 }
-        - { time: "11:00", max: 15 }
-        - { time: "12:30", max: 15 }
-        - { time: "14:00", max: 15 }
-        - { time: "16:00", max: 15 }
-        - { time: "17:22", max: 15 }
-        - { time: "19:00", max: 15 }
-        - { time: "21:00", max: 15 }
-        - { time: "22:26", max: 15 }
+        - { time: "08:00", max: 10 }
+        - { time: "09:30", max: 10 }
+        - { time: "11:00", max: 10 }
+        - { time: "12:30", max: 10 }
+        - { time: "14:00", max: 10 }
+        - { time: "16:00", max: 10 }
+        - { time: "17:22", max: 10 }
+        - { time: "19:00", max: 10 }
+        - { time: "21:00", max: 10 }
+        - { time: "22:26", max: 10 }
 
   - key: kudou
     display: "@kudou_aoshi"
@@ -183,7 +183,7 @@ policy_engine:
   # アクションごとの確率スキップ率（BOT対策：高リスクほど高確率でスキップ）
   skip_probability:
     like: 0.05
-    follow: 0.05      # 0.10→0.05 (2026-08-25: 100件/日スライドのため低減)
+    follow: 0.10
     rt: 0.08
   # リスクウェイト（日次上限 × この倍率 = 事実上の上限）
   risk_weights:
@@ -237,7 +237,7 @@ orchestrator:
 # ※フォローが最も危険・いいねが安全なため、アンバランスに保つ。
 applier:
   skip_rates:
-    follow: 0.05      # 8%→5% (2026-08-25: 100件/日スライドのため低減)
+    follow: 0.08      # 15%→8%  応募1件=フォローなので応募数に直結
     rt: 0.10          # 20%→10%
     like: 0.15        # 30%→15%
     all: 0.03         # 5%→3%
