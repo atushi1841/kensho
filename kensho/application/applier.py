@@ -878,9 +878,11 @@ def apply_for_account(
                 _skip_chance_like: float = _skip_cfg.get("like", 0.30)
                 _skip_chance_all: float = _skip_cfg.get("all", 0.05)
 
-                # ★ いいね優先率: いいね要件ツイートで、フォロー/RTをスキップしていいねのみ実行する確率。
-                #   いいね要件ありツイートのこの割合で「いいねのみ」にする（アクション1種 = BOTリスク増加なし）。
-                _like_first_rate: float = float(cfg.get("applier", {}).get("like_first_rate", 0.3))
+                # ★ フォロー+いいね実行率: いいね要件ツイートで「フォロー+いいね」の両方を実行する確率。
+                #   2026-08-25改修: いいね優先（フォロー/RTスキップ）は「フォロー&いいね必須ツイートの87%で
+                #   フォロー要件を満たさない」ため不適切と判明 → フォローは実行しつつ、いいねも追加する方式に変更。
+                #   当選条件（フォロー&いいね）を満たしつつ、2アクションは人間の自然な応募行動に近い。
+                _like_with_follow_rate: float = float(cfg.get("applier", {}).get("like_with_follow_rate", 0.5))
 
                 skip_follow: bool = random.random() < _skip_chance_follow
                 skip_rt: bool = random.random() < _skip_chance_rt
@@ -911,14 +913,11 @@ def apply_for_account(
                         out("  [SKIP] 全アクション: 見て終わり（人間らしさ）")
 
                 # ★ 同一ツイートへの複数種アクション禁止（BOT検出回避・絶対ルール）
-                #   2026-08-25: いいね要件ツイートでは「いいね優先」を導入。
-                #   いいねのみ実行（アクション1種）でいいね必須懸賞に応募でき、フォロー/RTより安全。
-                #   応募成立は「最低1アクション成功」なので、いいね成功でも成立する。
-                if _like_in_text and random.random() < _like_first_rate:
-                    skip_follow = True
-                    skip_rt = True
+                #   2026-08-25: いいね要件ツイートでは「フォロー+いいね」を導入。
+                #   当選条件（フォロー&いいね）を満たすため。いいねは安全なアクションで、2アクションは自然な応募行動。
+                if _like_in_text and random.random() < _like_with_follow_rate:
                     skip_like = False
-                    out("  [i] いいね優先: 要件を満たすためいいねのみ実行（アクション1種）")
+                    out("  [i] いいね要件: フォロー+いいね実行（当選条件を満たす）")
                 elif not (skip_follow and skip_rt):
                     skip_like = True
                     out("  [SKIP] いいね: フォロー/RT実行中 → 同一ツイート複数アクション回避")
