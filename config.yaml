@@ -23,16 +23,16 @@ accounts:
     schedule:
       collects: false
       batches:
-        - { time: "08:00", max: 12 }
-        - { time: "09:30", max: 12 }
-        - { time: "11:00", max: 12 }
-        - { time: "12:30", max: 12 }
-        - { time: "14:00", max: 12 }
-        - { time: "16:00", max: 12 }
-        - { time: "17:22", max: 12 }
-        - { time: "19:00", max: 12 }
-        - { time: "21:00", max: 12 }
-        - { time: "22:26", max: 12 }
+        - { time: "08:00", max: 10 }
+        - { time: "09:30", max: 10 }
+        - { time: "11:00", max: 10 }
+        - { time: "12:30", max: 10 }
+        - { time: "14:00", max: 10 }
+        - { time: "16:00", max: 10 }
+        - { time: "17:22", max: 10 }
+        - { time: "19:00", max: 10 }
+        - { time: "21:00", max: 10 }
+        - { time: "22:26", max: 10 }
 
   - key: kudou
     display: "@kudou_aoshi"
