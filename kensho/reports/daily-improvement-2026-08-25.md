@@ -91,6 +91,29 @@ critic 15:17レポートの「残調査」（同一主催者8回フォローが�
 
 ---
 
+## 【実装】collector x_url正規化dedup（2026-08-25 コミット cf18be9）
+
+critic 提案2（高・過フォロー根本原因）の調査から派生したコード修正。調査中に「現プールに94件の重複tweet_id（/status/ vs /i/web/status/ 表記揺れ）」が発見されたため、**次回収集での自動統合**を目的に実装。
+
+### 変更内容
+- `kensho/scraping/collector.py`:
+  - `_normalize_x_url(xu)`: `/status/<id>` を正規化キーに抽出（/i/web/status/ / twitter.com / 末尾クエリ / ユーザー名有無の表記揺れを吸収）
+  - `_dedup_x_url_merge(items)`: マージ処理を関数化。正規化キーで一意化し、applied は union 保持、長い tweet_text / 空でない deadline 優先、正規形 /status/ の x_url を優先
+  - collect() のインラインマージループを関数呼び出しに置き換え（デッドコード _xurl_exists 削除）
+- `tests/test_collector.py`: テスト7件追加（_normalize_x_url 4件、_dedup_x_url_merge 3件）
+- テスト: 130 passed / 4 skipped（既存34 collector tests + 新規7）
+- 実データ検証: 1119→1025件（94削減、applied union維持）
+
+### 効果
+- 次回収集（19:00 正時〜）のマージで、現プールの94件の重複が自動統合される
+- 同一ツイート携帯バリアント重複 → 無限再応募 の連鎖が途絶える
+- 過フォロー・過集中・エラー率の共通根因に対処済み（ただし収集実行後の効果）
+
+### 残課題（次サイクルへ）
+- applier 側の重複再応募防止（バッチ内重複スキップ）は未実装（実行ロジック変更 = 高リスク）。本修正で収集プールがクリーンになれば、バッチ内重複もほぼ解消される見込み
+
+---
+
 ## 【QA検証結果】2026-08-25 15:36 JST 実行
 
 ### 検証サマリ
