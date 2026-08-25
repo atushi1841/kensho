@@ -525,6 +525,14 @@ def apply_for_account(
                 continue
 
             deadline_info: str = item.get("deadline", "") or "未設定"
+            # ★ 締切切れチェック（過去日付は応募不可 → スキップ。無駄な404消費とRT失敗を防止）
+            if deadline_info != "未設定":
+                try:
+                    if datetime.strptime(deadline_info, "%Y-%m-%d").date() < datetime.now().date():
+                        out(f"  [{global_idx}/{max_n}] [SKIP] 締切切れ: {deadline_info}")
+                        continue
+                except ValueError:
+                    pass
             wc_info: str = str(item.get("winner_count", "")) if item.get("winner_count", 0) > 0 else "?"
             elapsed_global: float = time.time() - t0
 
