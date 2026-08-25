@@ -111,7 +111,8 @@ def sort_items(items: list[dict[str, Any]], now: datetime | None = None) -> tupl
         if dl:
             try:
                 dl_date: datetime = datetime.strptime(dl, "%Y-%m-%d")
-                if (now - dl_date).days > _EXPIRY_DAYS:
+                # 日付ベースで判定（時刻を無視）: 締切日を過ぎて _EXPIRY_DAYS 日以上なら除外
+                if (dl_date.date() - now.date()).days < -_EXPIRY_DAYS:
                     _removed += 1
                     continue
             except Exception:
@@ -125,7 +126,10 @@ def sort_items(items: list[dict[str, Any]], now: datetime | None = None) -> tupl
         if dl:
             try:
                 dl_date: datetime = datetime.strptime(dl, "%Y-%m-%d")
-                days_left: int = (dl_date - now).days
+                # ★ 日付ベースで計算（2026-08-25修正）:
+                #   従来は (dl_date - now).days で、締切当日の19時時点で -1日 になり
+                #   締切当日のキャンペーンが -100点（最下位）扱いになるバグがあった。
+                days_left: int = (dl_date.date() - now.date()).days
                 if days_left >= 0:
                     dl_score = 100 - min(days_left, 100)
                 else:
@@ -140,9 +144,15 @@ def sort_items(items: list[dict[str, Any]], now: datetime | None = None) -> tupl
         wc: int = item.get("winner_count", 0)
         wc_score: float = min(wc / 100, 10) if wc > 0 else 0
 
+        # ── 「その場で当たる」系ボーナス（2026-08-25追加）:
+        #   アカウントスコア（フォロワー数・インプレッション）に左右されず抽選ツールで当選するため、
+        #   フォロワーが少ないKenshoアカウントに最適。締切が同程度なら優先的に応募する。
+        _text: str = item.get("tweet_text", "") or ""
+        _instant_bonus: float = 20.0 if "その場" in _text else 0.0
+
         # ── 優先度スコア + ランダムジッター（±5点）──
         # 同じ優先度帯ならランダム順になり、アカウント間で処理する投稿が分散する
-        score: float = (dl_score * 2 + wc_score) * prize_mult
+        score: float = (dl_score * 2 + wc_score) * prize_mult + _instant_bonus
         jitter: float = random.uniform(-5.0, 5.0)
         return -(score + jitter)
 

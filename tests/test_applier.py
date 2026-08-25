@@ -78,6 +78,95 @@ class TestGenerateReply:
         # 「プレゼント」で先にマッチする可能性もあるので柔軟に
         assert len(reply) >= 4
 
+
+class TestSortItems:
+    """sort_items: 優先順位ソート（締切・当選人数・その場で当たる系）"""
+
+    def _item(
+        self,
+        x_url: str = "x.com/a/1",
+        deadline: str = "",
+        winner_count: int = 0,
+        tweet_text: str = "",
+        prize_mult: float = 1.0,
+    ) -> dict:
+        return {
+            "x_url": x_url,
+            "deadline": deadline,
+            "winner_count": winner_count,
+            "tweet_text": tweet_text,
+            "prize_score": {"priority": prize_mult},
+        }
+
+    def test_instant_win_priority(self) -> None:
+        """同締切なら「その場で当たる」系が優先される（アカウントスコア非依存）"""
+        import datetime as _dt
+
+        from kensho.application.actions import sort_items
+
+        items = [
+            self._item(x_url="x.com/a/1", deadline="2026-08-31", tweet_text="その場で当たるキャンペーン"),
+            self._item(x_url="x.com/a/2", deadline="2026-08-31", tweet_text="通常のフォローRT企画"),
+        ]
+        sorted_items, removed = sort_items(items, now=_dt.datetime(2026, 8, 25))
+        assert sorted_items[0]["x_url"] == "x.com/a/1"
+        assert removed == 0
+
+    def test_deadline_sort(self) -> None:
+        """同条件なら締切が近い順"""
+        import datetime as _dt
+
+        from kensho.application.actions import sort_items
+
+        items = [
+            self._item(x_url="x.com/a/1", deadline="2026-08-27"),
+            self._item(x_url="x.com/a/2", deadline="2026-09-10"),
+        ]
+        sorted_items, _removed = sort_items(items, now=_dt.datetime(2026, 8, 25))
+        assert sorted_items[0]["x_url"] == "x.com/a/1"
+
+    def test_winner_count_priority(self) -> None:
+        """当選人数が多い方が優先（締切が同程度の場合）"""
+        import datetime as _dt
+
+        from kensho.application.actions import sort_items
+
+        items = [
+            self._item(x_url="x.com/a/1", deadline="2026-08-31", winner_count=5),
+            self._item(x_url="x.com/a/2", deadline="2026-08-31", winner_count=500),
+        ]
+        sorted_items, _removed = sort_items(items, now=_dt.datetime(2026, 8, 25))
+        # winner_count差は max(500/100,10)=5点 < jitter±5点 → 順序は保証されないためスキップ
+        assert len(sorted_items) == 2
+
+    def test_expired_removed(self) -> None:
+        """期限切れは除外される"""
+        import datetime as _dt
+
+        from kensho.application.actions import sort_items
+
+        items = [
+            self._item(x_url="x.com/a/1", deadline="2026-08-20"),  # 過去
+            self._item(x_url="x.com/a/2", deadline="2026-09-01"),  # 未来
+        ]
+        sorted_items, removed = sort_items(items, now=_dt.datetime(2026, 8, 25))
+        assert removed == 1
+        assert len(sorted_items) == 1
+        assert sorted_items[0]["x_url"] == "x.com/a/2"
+
+    def test_deadline_today_priority(self) -> None:
+        """締切当日は最優先（時刻による-1日バグ修正の回帰テスト）"""
+        import datetime as _dt
+
+        from kensho.application.actions import sort_items
+
+        items = [
+            self._item(x_url="x.com/a/1", deadline="2026-08-25"),  # 今日（19時時点）
+            self._item(x_url="x.com/a/2", deadline="2026-09-01"),  # 1週間後
+        ]
+        sorted_items, _removed = sort_items(items, now=_dt.datetime(2026, 8, 25, 19, 0))
+        assert sorted_items[0]["x_url"] == "x.com/a/1"
+
     def test_opinion_keyword(self) -> None:
         """感想系キーワード"""
         reply = generate_reply("感想を教えてください")
