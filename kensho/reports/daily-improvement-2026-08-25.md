@@ -319,3 +319,71 @@ critic 20:20再評価のうち、**危険度「低」の実装 + 未コミット
 | P3 いいね実質未試行の調査（発火経路点検） | 中 | applier実行ロジック（skip_like経路）変更＝高リスクのため保留 |
 | P4 過フォローdedup後再発監視 | 中 | 監視のみ（8/26レポートで確認） |
 | P5 authorization_error_ui_fallback推移 | 監視 | 監視のみ |
+
+---
+
+## 【QA検証結果】2026-08-25 21:15 JST 実行（nightly-worker 後続・第4サイクル）
+
+### 検証サマリ
+
+| 項目 | 結果 |
+|------|------|
+| pytest（142 tests） | **142 passed, 4 skipped**（41.17s）✅（前回134→138→142と増加） |
+| git 最新コミット | `68b16a9` docs(report): Worker実装記録（applier goto失敗修正 + config.yamlリバート） |
+| Worker実装コミット | `48e8f45` fix(apply) 実コード差分あり ✅ / `9dc4eae` docs |
+| 未コミット変更 | **3ファイル・177 insertions**（proxy_watchdog egressチェック + orchestrator統合 + テスト4件）⚠ |
+| プロキシ | 3/5生存（atushi16/kudou/zin）。TankanNotes(1085)・inobase1-4(1089) 不通継続 |
+| BOTシグナル | code 64: 0件 / code 326: 0件（今日ログ）✅ |
+
+### Worker実装の差分確認（48e8f45）— 提案と一致 ✅
+
+**`_check_tweet_result` goto失敗→None修正**（applier.py +13 / test_applier.py +53）:
+- gotoタイムアウト 30s→15s、失敗時に `"goto_failed"` → **`None`（ツイート状態不明＝正常扱い）** に変更
+- `_qualify` 判定: `tweet_result in ("tweet_ok", None)` かつ最低1アクション成功
+- 狙い: goto失敗で applied 非付与 → 応募済みツイートが毎セッション再処理 → **同一ツイートへの重複フォロー/RT（BOTシグナル）＋セッション時間浪費** の連鎖を断つ（criticが特定した「同一ツイート無限再応募」根因への直接対処）
+- テスト3件追加（gotoタイムアウト→None / 正常→tweet_ok / 削除済み→tweet_deleted）。実行ロジック本体は不変（BOTリスク増なし）
+- **報告内容とコード差分は完全一致。虚偽コミットではない** ✅
+
+### 未コミット変更（⚠ 並行workerの実装が作業ツリーに残存）
+
+21:03〜21:12 に作業ツリーへ書き込まれた変更（kensho-worker 21:10ランの可能性大。当QAのpytest実行中にもorchestrator.pyが更新されていた）:
+- `kensho/utils/proxy_watchdog.py` +92/-15: `_check_egress()` 追加（SOCKS5経由で出口IP取得 → ポートLISTENINGでも実疎通なしの「WiFi半死」を検出）。`restore_dead_proxies` は疎通なし時「アダプタUpでも強制WiFi再接続→プロキシ再起動」、`check_proxy_health` はTCP+egressの両方で判定
+- `kensho/orchestrator.py` +8: メインサイクルに `Proxy Watchdog` ステップ追加（`check_proxy_health` 呼び出し、`_ACCOUNT is None` のメイン時のみ）
+- `tests/test_proxy_watchdog.py` +92: egressテスト4件（真/偽/ImportErrorフォールバック/no-egress復旧）
+- **pytest 142 passed にこの4テストも含まれており動作検証済み**。構文・import共にOK
+
+**評価**: critic P2（TankanNotes: アダプタUPなのにプロキシ死をwatchdogが復旧しない）への自動対処として妥当な設計。BOTシグナル増加なし（応募ロジック不変・復旧のみ）。**ただし未コミットのため、次Workerで必ずコミットすること**（作業ツリーの変更はcron実行時には有効だが、コミット漏れで失われるリスクがある）。
+
+### config.yaml リバート確認
+
+Workerが「atushi16 max 10→15 + スキップ率変更」の未コミット変更をHEADへリバート済み。現在の作業ツリーの config.yaml はクリーン（変更なし）＝実効設定は **atushi16 max=10×10バッチ（キャパシティ100/日・目標75）** に復帰 ✅
+
+### プロキシ状態（8/25 21:13 JST 実測・19:10比較）
+
+| ポート | アカウント | 19:10 | 21:13 | 変化 |
+|-------|-----------|-------|-------|------|
+| 1081 | atushi16 | ✅ OK | ✅ OK (219.104.132.236) | 維持 |
+| 1082 | kudou | ✅ OK | ✅ OK (106.146.17.90) | 維持 |
+| 1084 | zin20120731 | ✅ OK | ✅ OK (106.133.33.59) | 維持 |
+| 1085 | TankanNotes | ❌ 死 | ❌ GeneralProxyError | 維持 |
+| 1089 | inobase1-4 | ❌ 死 | ❌ ProxyConnectionError | 維持 |
+
+### 日次アクション状況（2026-08-25 21:13時点）
+
+| アカウント | 今日の成功アクション | 備考 |
+|-----------|-------------------|------|
+| atushi16 | F44 RT26 ♥1（19:10時点） | 稼働継続 |
+| chugakujuken | F51 RT10 ♥0（19:10時点） | 新垢・活発 |
+| kudou | F30 RT8 ♥0（19:10時点） | 正常 |
+| zin20120731 | F22 RT5 ♥0（19:10時点） | 正常 |
+| inobase1-4 | F6 RT1 ♥0 | 09時台以降停止（プロキシ死） |
+| TankanNotes | データなし | 全停止継続 |
+
+## 次回への申し送り（Critical優先順）
+
+1. **【高】未コミット変更3ファイルのコミット必須** — `kensho/utils/proxy_watchdog.py`（_check_egress追加）、`kensho/orchestrator.py`（Proxy Watchdogステップ）、`tests/test_proxy_watchdog.py`（テスト4件）。pytest 142 passedで検証済み・構文OK。次Workerは最初にコミットすること。
+2. **【高】TankanNotes(1085)・inobase1-4(1089) 不通継続** — 物理対応待ち（critic P1/P2）。inobase1-4はRedmi Note 9Sテザリング確認、TankanNotesはアダプタ`Tankan_2_redmi_n9s`はUPのためプロキシ個別再起動（`kensho_proxy.py "Tankan_2_redmi_n9s" 1085`）で即復旧可。**未コミットのegressチェックが有効なら次回watchdogサイクルで自動復旧が効くはず → 8/26朝に効果確認**。
+3. **【中】config.yaml増量リバートのユーザー確認** — Workerが「atushi16 max 10→15 + フォロースキップ率低減（100件/日スライド）」の未コミット変更をリバートした。**ユーザーが意図的に増量した場合は要連絡**（BOT検出リスク増大のため再評価）。記録上の決定は「目標75維持・max=10」。
+4. **【中】chugakujuken アカウントの正体確認** — daily_counts / follow_state.json に出現。administrationスキルのアカウント表に記載なし。アカウント表の更新が必要（前回申し送り継続）。
+5. **【低】Critic提案 P3（いいね発火経路）・P4（過フォロー再発監視）** — 実行ロジック変更は保留のまま。8/26レポートで過フォロー減少（dedup+follow_state適用後）といいね連続検出0を確認。
+6. **【低】48e8f45の効果測定** — 8/26レポートで「同一ツイート重複処理」「no_rt_button」「http_404」の変化を確認。期待: goto失敗系の無限再処理が消え、セッション効率が向上。

@@ -60,5 +60,97 @@ def test_restore_dead_proxies_skips_wired_ethernet():
 
 def test_restore_dead_proxies_skips_alive():
     config = {"accounts": [{"key": "kudou"}]}
-    with patch("kensho.utils.proxy_watchdog._port_reachable", return_value=True):
+    with (
+        patch("kensho.utils.proxy_watchdog._port_reachable", return_value=True),
+        patch("kensho.utils.proxy_watchdog._check_egress", return_value=True),
+    ):
         assert pw.restore_dead_proxies(config) == 0
+
+
+def test_restore_dead_proxies_recovers_no_egress():
+    """ポートLISTENINGだが疎通なし（WiFi半死）→ WiFi再接続+プロキシ再起動を試行"""
+    config = {"accounts": [{"key": "TankanNotes"}]}
+    with (
+        patch("kensho.utils.proxy_watchdog._port_reachable", return_value=True),
+        patch("kensho.utils.proxy_watchdog._check_egress", return_value=False),
+        patch("kensho.utils.proxy_watchdog._adapter_ipv4", return_value="10.0.0.9"),
+        patch("kensho.utils.proxy_watchdog._wait_for_adapter_ipv4", return_value="10.0.0.9"),
+        patch("kensho.utils.proxy_watchdog.subprocess.run") as mock_run,
+        patch("kensho.utils.proxy_watchdog.time.sleep"),
+    ):
+        # Get-NetAdapter は Up を返す
+        mock_run.return_value.stdout = "Up"
+        assert pw.restore_dead_proxies(config) == 1
+
+
+def test_egress_returns_true():
+    """SOCKS5経由で出口IP取得成功 → True"""
+    import sys
+    import types
+
+    class FakeSock:
+        def __init__(self) -> None:
+            self._data = b"HTTP/1.0 200 OK\r\n\r\n1.2.3.4"
+
+        def set_proxy(self, *a, **k) -> None: ...
+        def settimeout(self, *a, **k) -> None: ...
+        def connect(self, *a, **k) -> None: ...
+        def send(self, *a, **k) -> None: ...
+        def recv(self, n: int) -> bytes:
+            d, self._data = self._data[:n], self._data[n:]
+            return d
+
+        def close(self) -> None: ...
+
+    fake = types.ModuleType("socks")
+    fake.socksocket = lambda: FakeSock()
+    fake.SOCKS5 = 5  # proxy_watchdog が socks.SOCKS5 を参照するため必要
+    sys.modules["socks"] = fake
+    try:
+        assert pw._check_egress(1085, timeout=2) is True
+    finally:
+        del sys.modules["socks"]
+
+
+def test_egress_returns_false_on_error():
+    """SOCKS5接続失敗 → False"""
+    import sys
+    import types
+
+    class BadSock:
+        def set_proxy(self, *a, **k) -> None: ...
+        def settimeout(self, *a, **k) -> None: ...
+        def connect(self, *a, **k) -> None:
+            raise TimeoutError("timeout")
+
+        def close(self) -> None: ...
+
+    fake = types.ModuleType("socks")
+    fake.socksocket = lambda: BadSock()
+    fake.SOCKS5 = 5
+    sys.modules["socks"] = fake
+    try:
+        assert pw._check_egress(1085, timeout=2) is False
+    finally:
+        del sys.modules["socks"]
+
+
+def test_egress_import_error_returns_true():
+    """PySocks未インストール環境では従来挙動（ポート疎通のみ）"""
+    import sys
+
+    saved = sys.modules.get("socks")
+    sys.modules.pop("socks", None)
+    real_import = __import__
+
+    def fake_import(name, *args, **kwargs):
+        if name == "socks":
+            raise ImportError("no socks")
+        return real_import(name, *args, **kwargs)
+
+    try:
+        with patch("builtins.__import__", side_effect=fake_import):
+            assert pw._check_egress(1085, timeout=2) is True
+    finally:
+        if saved is not None:
+            sys.modules["socks"] = saved

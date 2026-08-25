@@ -51,6 +51,39 @@ def _port_reachable(port: int, timeout: int = PROXY_TIMEOUT) -> bool:
             pass
 
 
+def _check_egress(port: int, timeout: int = 8) -> bool:
+    """SOCKS5経由で実際にインターネットへ出られるか確認（出口IP取得）。
+
+    2026-08-25 追加: kensho-proxy-adapter-fix の「_port_reachable は TCP 疎通のみ
+    見るため、WiFi半死（アダプタUp・プロキシLISTENINGでも実データが流れない）を
+    『生きてる』と誤判定し、watchdog が復旧しない」盲点を補う。
+    例: TankanNotes(1085) はポートOPENなのに出口IP取得がタイムアウトしていた。
+    """
+    try:
+        import socks  # PySocks
+    except ImportError:
+        # PySocksが無い環境ではポート疎通のみで判定（従来挙動）
+        return True
+    try:
+        s = socks.socksocket()
+        s.set_proxy(socks.SOCKS5, PROXY_HOST, port)
+        s.settimeout(timeout)
+        s.connect(("api.ipify.org", 80))
+        s.send(b"GET / HTTP/1.0\r\nHost: api.ipify.org\r\n\r\n")
+        data = b""
+        while True:
+            chunk = s.recv(512)
+            if not chunk:
+                break
+            data += chunk
+            if len(data) > 2048:
+                break
+        s.close()
+        return len(data) > 0
+    except Exception:
+        return False
+
+
 def _adapter_ipv4(adapter: str) -> str | None:
     """Return the first usable (non-APIPA) IPv4 of a Windows adapter, else None."""
     cmd = [
@@ -117,13 +150,23 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
             continue
 
         # ------------------------------------------------------------------
-        # 1. Check whether the proxy is already alive
+        # 1. Check whether the proxy is already alive (TCP + egress)
         # ------------------------------------------------------------------
+        _need_wifi_reconnect = False
         if _port_reachable(port, 3):
-            log.debug("Proxy %s:%d is alive – skip", account, port)
-            continue
-
-        log.warning("Proxy %s:%d is dead", account, port)
+            if _check_egress(port, 6):
+                log.debug("Proxy %s:%d is alive – skip", account, port)
+                continue
+            # ★ 2026-08-25: ポートはLISTENINGだが実疎通なし（WiFi半死）
+            #   → 従来は「生きてる」と誤判定してスキップしていた。強制復旧する。
+            log.warning(
+                "Proxy %s:%d is LISTENING but has NO egress – forcing WiFi reconnect + restart",
+                account,
+                port,
+            )
+            _need_wifi_reconnect = True
+        else:
+            log.warning("Proxy %s:%d is dead", account, port)
 
         # ------------------------------------------------------------------
         # atushi16 uses a wired ethernet IP – cannot be restarted via adapter
@@ -151,16 +194,36 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
                     status,
                 )
                 continue
-            elif status != "Up":
-                # ── アダプタがDisconnected → WiFi再接続を試す ──
+            if status != "Up" or _need_wifi_reconnect:
+                # ── アダプタDisconnected or 疎通なし → WiFi再接続を試す ──
                 ssid = WIFI_SSID_MAP.get(account)
                 if ssid:
-                    log.info(
-                        "Adapter %s is '%s' – trying WiFi reconnect to '%s'",
-                        adapter,
-                        status,
-                        ssid,
-                    )
+                    if _need_wifi_reconnect:
+                        # 2026-08-25: アダプタUpでも疎通なし（WiFi半死）→ 一旦切断して
+                        # 再接続しリンクをリセットする
+                        log.info(
+                            "Adapter %s is Up but no egress – forcing WiFi reconnect to '%s'",
+                            adapter,
+                            ssid,
+                        )
+                        subprocess.run(
+                            [
+                                "powershell.exe",
+                                "-Command",
+                                f"netsh wlan disconnect interface='{adapter}'",
+                            ],
+                            timeout=10,
+                            capture_output=True,
+                            text=True,
+                        )
+                        time.sleep(2)
+                    else:
+                        log.info(
+                            "Adapter %s is '%s' – trying WiFi reconnect to '%s'",
+                            adapter,
+                            status,
+                            ssid,
+                        )
                     connect_cmd = [
                         "powershell.exe",
                         "-Command",
@@ -267,7 +330,8 @@ def check_proxy_health(config: dict, log: Any = None) -> dict:
     for account, (port, adapter) in PROXY_ADAPTER_MAP.items():
         if account not in active_set:
             continue
-        if _port_reachable(port, 3):
+        # 2026-08-25: TCP疎通に加えて出口IP確認（WiFi半死の誤判定防止）
+        if _port_reachable(port, 3) and _check_egress(port, 6):
             alive.append(port)
         else:
             dead.append(port)

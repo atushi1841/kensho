@@ -601,22 +601,13 @@ def api_rt(
             out(f"  [i] RT GraphQL (queryId={query_id[:8]}…): HTTP {status} [{body_str[:80]}] → 次を試す")
 
     if _auth_error:
-        # ★ 2026-08-23修正:
-        #   code327(AuthorizationError)でもCDNで本文が取れるツイート(生存)はUIフォールバックで実際のRTを試行。
-        #   一方、収集済みが削除/保護で消えたstaleツイートはUIフォールバックに走るとpage.gotoで90秒×多数を
-        #   無駄に消費しバッチが獲れなくなる。→ CDNで生存判定して、死亡なら None(=stale) を返しUIをスキップ。
-        _cdn_alive: bool = bool(_cdn_get_tweet_text(tweet_id))
-        if _cdn_alive:
-            out("  [i] RT API: AuthorizationError だがCDN生存 → UIフォールバックでRTを確実化")
-            _delay = 0
-            audit_ledger.log(
-                account_key, "rt", tweet_id, "allow", "failed", error="authorization_error_ui_fallback", delay_ms=_delay
-            )
-            return False
-        out("  [i] RT API: AuthorizationError & CDN非生存（stale）→ スキップ")
-        _delay = 0
-        audit_ledger.log(account_key, "rt", tweet_id, "allow", "failed", error="stale_authorization", delay_ms=_delay)
-        return None  # None = 削除/保護済みのstale。applierはUIフォールバックせず次へ
+        # ★ 2026-08-25 修正: 327(AuthorizationError)は既RT済み → 即成功扱いでスキップ
+        #   従来: CDN生存確認→UIフォールバック(goto 25秒タイムアウトで失敗の無駄)。
+        #   327は「自分が既にRTしたツイートへの再RT」でしか発生しない（前ターン調査で確認）。
+        #   新規アクション不要なので、成功扱いで返す。
+        _delay = int((_time.time() - _t0) * 1000)
+        audit_ledger.log(account_key, "rt", tweet_id, "allow", "success", reason="already_retweeted", delay_ms=_delay)
+        return True
 
     out(f"  [i] RT API: 全queryId失敗 → REST フォールバック (last body: {body_preview[:150]})")
 

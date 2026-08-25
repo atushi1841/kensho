@@ -46,6 +46,7 @@ from kensho.core.logger import LogWriter, make_path, write_daily_summary  # noqa
 from kensho.core.notifier import notify_error, notify_warning  # noqa: E402
 from kensho.scraping.collector import collect  # noqa: E402
 from kensho.utils.network import get_all_adapters  # noqa: E402
+from kensho.utils.proxy_watchdog import check_proxy_health  # noqa: E402
 
 # ── 最終処理時刻 管理ファイル ──
 STATE_DIR = os.path.join(os.path.dirname(__file__), "data")
@@ -324,6 +325,13 @@ def main() -> None:
 
         guard.update("network_check", "ネットワーク確認")
         _safe_step("Network Check", log, lambda: get_all_adapters())
+
+        # ★ 2026-08-25: プロキシ自動復旧（メインorchestratorサイクル内で実行）
+        #   垢別ワーカー(_ACCOUNT指定)は他垢のプロキシ再起動と競合するためメインのみ。
+        #   proxy_watchdog が ポート死/疎通なし(出口IP取得失敗) を検出し、
+        #   WiFi再接続→プロキシ再起動を自動実行する。
+        if _ACCOUNT is None:
+            _safe_step("Proxy Watchdog", log, lambda: check_proxy_health(cfg, log))
 
         now_dt = datetime.now()
         now_str = now_dt.strftime("%H:%M")
