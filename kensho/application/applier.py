@@ -295,6 +295,11 @@ def apply_for_account(
     _hourly_start: float = time.time()
     _hourly_count: int = 0
 
+    # ★ 連続いいねカウンタ（2026年3月Xスパム判定強化対策）:
+    #   セッション内で「いいね4〜5連続→強制ログアウト→サーチバン」が多発したため、
+    #   いいね単独連続を4件で一時停止する（フォロー/RTは続行可）。
+    consecutive_likes: int = 0
+
     # ★ Failure Ceiling設定読み込み（Loop Engineering）
     fc_cfg: dict = cfg.get("failure_ceiling", {})
     fc_enabled: bool = fc_cfg.get("enabled", True)
@@ -922,6 +927,13 @@ def apply_for_account(
                     skip_like = True
                     out("  [SKIP] いいね: フォロー/RT実行中 → 同一ツイート複数アクション回避")
 
+                # ★ 連続いいね制限（BAN祭り対策 2026-08-25）:
+                #   いいね単独連続4件に達したら一時停止（フォロー/RTは続行可）。
+                #   当選条件の「フォロー+いいね」はフォローを挟むため制限対象外。
+                if not skip_like and consecutive_likes >= 4:
+                    skip_like = True
+                    out("  [SKIP] いいね: 連続4件到達 → 一時停止（BOT検出回避）")
+
                 # ── アクション順をランダムシャッフル（BOT対策） ──
 
                 # ── アクションキュー: skip判定に従って全アクション（強度モード廃止）──
@@ -1074,6 +1086,12 @@ def apply_for_account(
                     result = _fn()
                     _rv = bool(result)
                     _per_item_ok[_name] = _per_item_ok.get(_name) or _rv
+                    # ★ 連続いいねカウンタ更新: いいね成功で+1、フォロー/RT成功でリセット
+                    if _rv:
+                        if _name == "like":
+                            consecutive_likes += 1
+                        else:
+                            consecutive_likes = 0
                     if result is False:
                         false_count += 1
                         if false_count >= 3:
