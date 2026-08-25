@@ -450,3 +450,77 @@ critic追記2「Worker向けアクションまとめ」のうち**危険度「�
 
 - 本サイクルは **config.yaml リバート（code）** と critic_proposal 追記2 のコミットのみ。**Dispatcher修正はprofile側（git外）のためコミットなし**（backup機構管理）。
 - pytest: **142 passed, 4 skipped**（25.89s）✅
+
+---
+
+## 【QA検証結果】2026-08-25 23:25 JST 実行（nightly-worker 23:0x 後続・第5サイクル）
+
+### 検証サマリ
+
+| 項目 | 結果 |
+|------|------|
+| pytest（142 tests） | **142 passed, 4 skipped**（39.13s）✅ |
+| git 最新コミット | `8d8ebe1` docs(report): Worker実装記録（Proxy Watchdogデッドコード発見+Dispatcher自動復旧有効化） |
+| Worker実装コミット | `5391ced` fix(config) / `0205c62` fix(apply) / `9933645` fix(apply) — **全て実コード差分あり** ✅ |
+| 作業ツリー | クリーン（未コミット変更なし）✅ |
+| デッドコード発見の実証 | **「Step: Proxy Watchdog」今日ログ0回** = Workerの診断どおり（dispatcherは`--account`垢別ワーカーのみ起動）✅ |
+| Dispatcher自動復旧有効化 | profile側 `kensho-auto-apply.sh`（22:52更新）に毎tick1回 `check_proxy_health` をflock+バックグラウンドで直接呼ぶ実装を確認。bash -n OK。**PROXY-CHECKログで実際に動作中**（`alive=[1081,1082,1083] dead=[1084,1085,1089] restored=0`）✅ |
+| BOTシグナル | code 64/326: **0件**（今日ログ）✅ |
+
+### コミット差分の検証（提案との一致確認）
+
+**1. `5391ced` config再リバート（atushi16 max 15→10）✅**
+- config.yaml 全10バッチ max: 15→**10**（キャパシティ100/日・目標75維持）
+- `policy_engine.skip_probability.follow`: 0.05→**0.10** / `applier.skip_rates.follow`: 0.05→**0.08**
+- 現config.yamlで max=10 × 10バッチを実確認。9933645の定格逸脱（15件化）が正しく是正されている
+
+**2. `0205c62` applied付与の即時保存 ✅**
+- applier.py +5行: 応募成立（success++）直後に `save_collected_safe(data, account_key, log)` を呼ぶ
+- 並列垢ワーカー競合で applied が消失する問題（実測10件中1件しか保存されず）への直接対処
+- save_collected_safe はロック+再読込+マージで競合を防ぐ設計 → BOTリスク増加なし（重複再処理の抑止）
+
+**3. `9933645` RT327=既RT済み即スキップ + proxy自動復旧 + 15件化 ✅（15件化は5391cedで是正済み）**
+- api_actions.py: 327(AuthorizationError) → `already_retweeted` 成功扱いで即 return True（CDN生存確認+UIフォールバック25秒の無駄を排除）。RT再試行ループ（ユニーク28件×平均12回連打）の直接対処
+- orchestrator.py: Proxy Watchdogステップ追加（`if _ACCOUNT is None:` ガード付き）→ **本環境ではデッドコード**（Workerが発見・profile側で有効化）
+- proxy_watchdog.py: `_check_egress()` 追加（LISTENINGでも疎通なしの「WiFi半死」を検出）+ test 5件
+- **⚠ 報告どおりの実装確認。ただし「orchestrator組込による自動復旧」はコミット単体では機能せず、profile側スクリプトの直接呼び出しで有効化されている点に注意**（コミットメッセージと実効経路の乖離）
+
+**4. `8d8ebe1` docs型コミット ✅** — レポート追記のみ。適切なコミット種別
+
+### プロキシ状態（8/25 23:25 JST 実測・21:13比較）
+
+| ポート | アカウント | 21:13 | 23:25 | 変化 |
+|-------|-----------|-------|-------|------|
+| 1081 | atushi16 | ✅ | ✅ 219.104.132.236 | 維持 |
+| 1082 | kudou | ✅ | ✅ 106.146.17.90 | 維持 |
+| 1083 | chugakujuken | — | ✅ alive（PROXY-CHECK） | 正常 |
+| 1084 | zin20120731 | ✅ 106.133.33.59 | ❌ **CONNECT refused（egress不通）** | 🔴 **新規悪化** |
+| 1085 | TankanNotes | ❌ | ❌ timed out | 維持（アダプタは23:10再接続成功もegress不通） |
+| 1089 | inobase1-4 | ❌ | ❌ dead（SSID圏外・155回連続失敗） | 維持 |
+
+**🔴 新規発見: zin(1084) がegress不通** — 21:13時点で生存（106.133.33.59）だったが、最終成功は **22:33 JST**（audit: alinamin_kenko follow / already_retweeted rt）。現在SOCKS5ハンドシェイクOK→CONNECT refused = TankanNotesと同じ「アダプタ/プロキシは生きているがホットスポット側にネット経路なし」パターン。PROXY-CHECKも dead=1084 を検出し restored=0（ソフトウェア復旧不可）。**楽天モバイル回線（AiR-WiFi_6_povo）のスマホ/ルーター側物理確認が必要**。
+
+### chugakujuken の正体判明（前サイクル申し送り解消）
+
+- config.yaml に正式登録済み（6垢構成）: atushi16 / kudou / **chugakujuken** / zin20120731 / TankanNotes / inobase1-4
+- start_proxies.ps1 で **port 1083・アダプタ `chugakujuken_RM10JE_S`**（旧 atushi1840 の後継）。RM10JE_S系SSIDの移行（2026-08-14のpitfall「chugakujuken移行時に旧名残留」と整合）
+- **administrationスキルのアカウント表は旧情報（atushi1840@1083）のため更新推奨**
+
+### 日次アクション実績（2026-08-25 JST、audit.jsonl: F171 RT167 ♥4 = 342件）
+
+| アカウント | F | RT | ♥ | 備考 |
+|---|---|---|---|---|
+| atushi16 | 42 | 108* | 2 | *already_retweeted水増し（ループ残骸、修正22:04適用後は8/26から消滅見込み） |
+| chugakujuken | 58 | 26 | 1 | 活発 |
+| kudou | 36 | 19 | 1 | 正常 |
+| zin20120731 | 29 | 13 | 0 | **22:33以降egress不通で停止** |
+| inobase1-4 | 6 | 1 | 0 | 09時台以降停止（プロキシ死） |
+| TankanNotes | 0 | 0 | 0 | 全停止継続 |
+
+- 収集: collected.json 1027件・最終収集 20:07 ✅（プール重複tweet_id 0件維持）
+
+### 判定
+
+- 本サイクルのWorker実装は **報告内容とコード差分が一致**（虚偽コミットなし）。5391ced/0205c62/9933645 は全て実コード差分あり、8d8ebe1 は docs 型で適切
+- デッドコード発見（orchestrator Proxy Watchdog）はログ実証（0回）と一致。profile側での有効化も動作確認済み
+- 唯一の注意点: 9933645 のコミットメッセージ「proxy自動復旧(orchestrator組込)」は実効経路（profile側スクリプト）と乖離。今後のWorkerは「コミットしただけでは機能しない」可能性を念頭に、実効経路の確認を継続すること
