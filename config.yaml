@@ -92,24 +92,27 @@ accounts:
 
   # ★ 2026-08-23 復帰: 書き込みAPI認証エラーは「セッション(auth_token)失効」が原因と判明。
   #   Chromeで通常表示(凍結なし)→ 新auth_token/ct0に更新済み(x_session_TankanNotes.json)。復帰。
-  - key: TankanNotes
-    display: "@TankanNotes"
-    session: "data/x_session_TankanNotes.json"
-    disable_reply: true
-    schedule:
-      collects: false
-      batches:
-        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "09:29", max: 12 }
-        - { time: "10:52", max: 12 }
-        - { time: "12:23", max: 12 }
-        - { time: "13:43", max: 12 }
-        - { time: "14:56", max: 12 }
-        - { time: "16:08", max: 12 }
-        - { time: "17:19", max: 12 }
-        - { time: "18:44", max: 12 }
-        - { time: "20:12", max: 12 }
-        - { time: "22:07", max: 12 }
+  # ★ 2026-08-26 一時停止: プロキシ1085が4日連続egress不通（SOCKS5ハンドシェイクOK→CONNECT不可）。
+  #   スマホ(Redmi Note 9S / SSID 2_redmi_n9s)テザリング側の実インターネット死。凍結ではない。
+  #   復旧後（check_proxies.pyで出口IP重複なし確認）にコメント解除で復帰。
+  #  - key: TankanNotes
+  #    display: "@TankanNotes"
+  #    session: "data/x_session_TankanNotes.json"
+  #    disable_reply: true
+  #    schedule:
+  #      collects: false
+  #      batches:
+  #        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+  #        - { time: "09:29", max: 12 }
+  #        - { time: "10:52", max: 12 }
+  #        - { time: "12:23", max: 12 }
+  #        - { time: "13:43", max: 12 }
+  #        - { time: "14:56", max: 12 }
+  #        - { time: "16:08", max: 12 }
+  #        - { time: "17:19", max: 12 }
+  #        - { time: "18:44", max: 12 }
+  #        - { time: "20:12", max: 12 }
+  #        - { time: "22:07", max: 12 }
 
   - key: inobase1-4
     display: "@inobase128508"
