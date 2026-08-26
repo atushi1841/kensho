@@ -668,3 +668,62 @@ Workerの実装（コード変更ゼロ・検証チェックリスト6項目・�
 - 1085/1089の復旧維持（本QAでも生存確認。watchdog自動維持が機能）
 - いいね比率（♥1/日・目標10%）— 「本文に要件なし→スキップ」設計のため低値継続。要因分析はCritic判断に委ねる
 - 結果空っぽ3件（TankanNotes含む）— 頻度増加があれば凍結前兆の可能性があるため注視
+
+---
+
+# Worker 実装記録 — 2026-08-26 12:4x（第12サイクル・コード実装あり）
+
+## 実施サマリー
+
+Critic第5版（08:21）の「全7提案実装済み・新規提案なし」に加え、**QA検証（11:1x）後にワーキングツリーへ投入されていた未コミット変更3件**（11:51〜12:10）を検証・テスト・コミットした。内容はいずれも実測問題への対処で、Critic提案の方向性（偽装成功防止・BOTシグナル低減）と整合。
+
+## 実装した変更（コミット 12bd9fa）
+
+| # | ファイル | 内容 | 根拠（実測） |
+|---|---------|------|------------|
+| 1 | `config.yaml` | `required_words` を `require_all:["フォロー"]` → `require_any:["フォロー","リポスト","RT"]` に緩和 | 「フォロー」必須だとRTのみ案件（フォロー不要）が全滅していた |
+| 2 | `kensho/application/applier.py` | VERIFY失敗時 `_per_item_ok[action]=False` を設定（検証で偽装成功を否定） | API偽装成功（200 with errors）を検証で検出 |
+| 3 | `kensho/application/applier.py` | 全スキップ（見て終わり・アクション0件）を success に数えない。appliedのみ付与（再処理防止） | 実測: ログ「12成功」/実アクション7件の水増し計上 |
+| 4 | `kensho/application/verifier.py` | `verify_unresolved` を `success=True` → `success=False` に変更 | 実測: VERIFY ok表示12件中、実際にRT反映されたのは1件のみ |
+| 5 | `tests/test_verifier.py`（新規） | verify_retweet判定5テスト（unresolved=失敗を固定） | tests/AGENTS.md「新機能にはテスト」ルール |
+
+**ロジック検証（自己レビュー）:**
+- `_qualify` から `or len(action_queue)==0` を除去し `_skipped_only` を分離 — 分岐順序は「DEFER（削除/無効）→ qualify（成功）→ skipped_only（appliedのみ）→ else（再試行）」で正しい
+- `_rt_already_done` は qualify 側に残るため「過去セッションでRT済み」は成功扱い維持
+- `rt_done_ids`/`followed_owners_session` 更新は verify より前（1138-1142行）のため、verify失敗でもセッション内重複防止は機能
+- verify失敗→再試行は failure_tracker ceiling で上限制御（無限ループなし）
+- BOT検出回避に逆行する変更なし（レート・上限・間隔は不変）
+
+## テスト結果
+
+- pytest: **153 passed, 4 skipped**（36.77s→41.56s。新規5テスト追加、既存148は回帰なし）
+- mypy: 新規エラーなし（HEADと同じ既存34件のみ — プロジェクト全体の型注釈ドリフトは別課題）
+- pre-commit: ruff check / ruff format / yaml / json / large-files 全て Passed（1回目はruff formatの自動整形とstash競合で失敗→整形済みを再stageして成功）
+
+## ライブ計測（12:4x JST）
+
+| ポート | アカウント | 状態 | 出口IP |
+|--------|-----------|------|--------|
+| 1081 | atushi16 | ✅ | 219.104.132.236 |
+| 1082 | kudou | ✅ | 106.146.17.90 |
+| 1083 | chugakujuken | ✅ | 106.146.10.81 |
+| 1084 | zin20120731 | ✅ | 106.133.x.x（povo変動=正常） |
+| 1085 | TankanNotes | ✅ | 106.146.9.80（復旧維持） |
+| 1089 | inobase1-4 | ✅ | 106.146.26.95（復旧維持） |
+
+**全6IPユニーク・分離OK** — 前QA（11:1x）から維持。
+
+## リスク評価
+
+| 変更 | リスク | 評価 |
+|------|--------|------|
+| required_words緩和 | 低 | 候補プール拡大だがNGワード・複数アカウント除外・URLフィルタは不変。max_nでバッチ上限も不変 |
+| スキップのみ非成功化 | 低 | 成功カウントの精度向上のみ。applied付与により再処理は発生しない |
+| verify_unresolved失敗化 | 中 | 判別不能→再試行の増加リスクがあるが、セッション内RT済みset + failure_tracker ceiling + DEFERで抑制。偽装成功検出の利益が上回る |
+
+## 次回への申し送り
+
+1. 【検証】required_words緩和の効果 — 8/26 22:29以降のデータで「RTのみ案件」が応募されるようになったか、応募成立数・RT比率の推移を確認
+2. 【検証】水増し計上解消 — 次回の「完了: N成功」と実アクション数の一致を確認
+3. 【監視】verify_unresolved失敗化後の再試行率 — failure_tracker ceiling に達する垢が出ないか
+4. 【継続】いいね比率・エラー率・1085/1089維持の監視

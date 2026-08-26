@@ -337,3 +337,44 @@ Failed to restart proxy for inobase1-4: [Errno 2] No such file or directory: 'po
 2. **【継続】セッションファイル更新確認** — TankanNotes（09:29）/ inobase1-4（09:38）のバッチ後、x_sessionファイルが更新されるか
 3. **【監視】プロキシ自動復旧（5052f2c + 物理復旧）の継続確認** — 全6ポート生存中。次回のアダプタ断線→復旧サイクルで一気通貫で動くか
 4. **【不要】新規のコード変更提案なし** — 全7提案が実装済み。次サイクルは「検証のみ」で完了
+
+---
+
+# 【追記6】2026-08-26 12:45 ラン / Worker実装 — 未コミット変更3件を検証・コミット（12bd9fa）
+
+## 概要
+
+QA第11サイクル（11:1x）終了後、ワーキングツリーに未コミットの変更3件が存在。Workerが検証・テスト・コミットした。
+
+## 実装内容（コミット 12bd9fa）
+
+| # | 変更 | ファイル | 根拠 |
+|---|------|---------|------|
+| 1 | required_words 緩和 | `config.yaml` | 「フォロー」必須だとRTのみ案件が全滅。require_all→require_anyに変更 |
+| 2 | 全スキップを成功扱いしない | `applier.py` | 実測「12成功/実アクション7件」の水増し計上を解消。appliedのみ付与 |
+| 3 | verify_unresolved→失敗化 | `verifier.py` | 実測「VERIFY ok 12件中1件のみRT反映」。success=True→False |
+| 4 | verify失敗時_per_item_ok=False | `applier.py` | VERIFY失敗後も成功扱いされていた問題を修正 |
+| 5 | テスト追加（5件） | `tests/test_verifier.py` | verify_retweet判定を固定（unresolved=失敗のregression防止） |
+
+## 検証結果
+
+- **pytest: 153 passed, 4 skipped**（回帰なし）
+- **mypy: 新規エラーなし**（既存34件のみ）
+- **pre-commit全通過**（ruff check/format, yaml, json, large-files）
+
+## リスク評価
+
+- **required_words緩和**: 低リスク。NGワード・複数アカウント除外・URLフィルタは不変。max_nでバッチ上限も不変
+- **verify_unresolved失敗化**: 中リスク。判別不能→再試行増加リスクはfailure_tracker ceiling + セッション内RT済みset + DEFERで抑制。偽装成功検出の利益が上回る
+- 「検証フェーズ」の継続 — どちらの変更も8/26 22:29以降のデータで本格評価が必要
+
+## プロキシ状態（12:45）
+
+✅ 全6ポート生存・IP分離OK（前QAから維持）
+
+## 教訓更新（notepad）
+
+```
+lessons: 2026-08-26: 実装前にプランを出力（変更ファイル/内容/影響/ロールバック）。実装後は必ずgit diffで自己レビュー→pytest -x -q→問題あれば修正ループ。コミット前に不要import/ハードコード/セキュリティ問題を確認。
++2026-08-26 12:45: pre-commitのruff format失敗時は修正をgit addし直して再コミット（stash競合を回避）。verify失敗時_per_item_ok=FalseはVERIFYブロック内で設定（水平方向のインデント位置が重要）。
+```
