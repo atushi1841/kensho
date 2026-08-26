@@ -66,6 +66,60 @@ def _merge_verify_result(current: bool, verify_success: bool) -> bool:
     return verify_success
 
 
+def _load_audit_done_set(account_key: str) -> tuple[set[str], set[str]]:
+    """当日(JST)のaudit.jsonlから、この垢が既に成功したRT/followのtarget setを構築する。
+
+    2026-08-26提案10: セッション跨ぎの重複アクション防止（BOT検出回避）。
+    applied(collected.json)は収集マージで消失しうるため、追記専用で消えない
+    audit.jsonl（完全履歴）を信頼源にする。当日JST分のみ対象。
+
+    Returns:
+        (rt_done, follow_done): RT成功tweet_id集合 / フォロー成功screen_name集合
+    """
+    rt_done: set[str] = set()
+    follow_done: set[str] = set()
+    audit_path: Path = DATA_DIR / "audit.jsonl"
+    if not audit_path.exists():
+        return rt_done, follow_done
+    # auditのtimestampはUTC。JST日付（UTC+9）で「当日」を判定
+    jst_today: str = (dt.datetime.now(dt.UTC) + dt.timedelta(hours=9)).strftime("%Y-%m-%d")
+    try:
+        with audit_path.open("r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    r = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if r.get("account") != account_key:
+                    continue
+                if r.get("status") != "success" or r.get("decision") != "allow":
+                    continue
+                ts = r.get("timestamp", "")
+                if len(ts) < 10 or not ts.startswith("20"):
+                    continue
+                try:
+                    utc_dt = dt.datetime.strptime(ts, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.UTC)
+                    jd = (utc_dt + dt.timedelta(hours=9)).strftime("%Y-%m-%d")
+                except ValueError:
+                    continue
+                if jd != jst_today:
+                    continue
+                tgt = r.get("target", "")
+                if not tgt or tgt == "n/a":
+                    continue
+                at = r.get("action_type", "")
+                if at == "rt":
+                    rt_done.add(tgt)
+                elif at == "follow":
+                    follow_done.add(tgt)
+    except OSError:
+        pass
+    return rt_done, follow_done
+
+
 def _is_deferred(val: Any) -> bool:
     """applied値がDEFERスキップ中か判定"""
     return val is not None and isinstance(val, str) and val.startswith(_DEFER_PREFIX)
@@ -496,6 +550,15 @@ def apply_for_account(
         # ★ 2026-08-26: セッション内重複アクション防止（BOT検出回避）
         rt_done_ids: set[str] = set()  # セッション内でRT成功したtweet_id
         followed_owners_session: set[str] = set()  # セッション内でフォロー成功した主催者
+        # ★ 2026-08-26提案10: セッション跨ぎ重複アクション防止（audit.jsonlベース）
+        #   applied(collected.json)は収集マージで消失しうるため、追記専用のaudit.jsonlから
+        #   当日JSTの成功済みtargetを読み込み、再ピックによる同一ツイートへの再アクションを防ぐ。
+        rt_done_all, follow_done_all = _load_audit_done_set(account_key)
+        if rt_done_all or follow_done_all:
+            out(
+                f"  [AUDIT] 本日成功済み: RT {len(rt_done_all)}件 / follow {len(follow_done_all)}件"
+                "（セッション跨ぎ重複防止セット）"
+            )
 
         while success < max_n and idx < len(account_applied):
             # ★ セッション時間制限チェック
@@ -972,6 +1035,10 @@ def apply_for_account(
                 if not skip_follow and screen_name and screen_name in followed_owners_session:
                     skip_follow = True
                     out("  [SKIP] フォロー: セッション内で既にフォロー成功済み → スキップ（重複アクション防止）")
+                # ★ 2026-08-26提案10: セッション跨ぎフォロー重複防止（当日audit成功済み）
+                if not skip_follow and screen_name and screen_name in follow_done_all:
+                    skip_follow = True
+                    out("  [SKIP] フォロー: 本日既にフォロー成功済み（前セッション）→ スキップ（重複アクション防止）")
 
                 def _make_follow_with_record(
                     _acct: str,
@@ -1012,6 +1079,11 @@ def apply_for_account(
                         skip_rt = True
                         _rt_already_done = True
                         out("  [SKIP] RT: セッション内で既にRT成功済み → スキップ（重複アクション防止）")
+                    # ★ 2026-08-26提案10: セッション跨ぎRT重複防止（当日audit成功済み）
+                    elif tweet_id in rt_done_all:
+                        skip_rt = True
+                        _rt_already_done = True
+                        out("  [SKIP] RT: 本日既にRT成功済み（前セッション）→ スキップ（重複アクション防止）")
 
                 if not skip_rt:
 

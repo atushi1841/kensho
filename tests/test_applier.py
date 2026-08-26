@@ -4,6 +4,8 @@ Tests for application/applier.py — ヘルパー関数・非ブラウザ部分
 
 from __future__ import annotations
 
+import datetime as _dt
+import json
 import sys
 import tempfile
 from pathlib import Path
@@ -409,3 +411,150 @@ class TestMergeVerifyResult:
         _per_item_ok = {"follow": True, "rt": False, "like": False}  # APIフォロー成功
         # VERIFY全件失敗相当（rt/like/followすべてverify_success=False）でも
         assert any(_per_item_ok.values()) is True  # API成功が維持される
+
+
+class TestLoadAuditDoneSet:
+    """_load_audit_done_set: audit.jsonlベースのセッション跨ぎ重複防止（2026-08-26提案10）
+
+    当日JST分のRT/follow成功のみを抽出し、n/aや他垢・他日は除外する。
+    実時刻（JST）からUTCタイムスタンプを逆算して検証する。
+    """
+
+    JST = _dt.timezone(_dt.timedelta(hours=9))
+
+    def _utc_ts(self, dt_jst: _dt.datetime) -> str:
+        """JST日時 → UTCタイムスタンプ文字列（audit.jsonl形式）"""
+        return dt_jst.astimezone(_dt.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    def _make_audit_line(
+        self,
+        timestamp_utc: str,
+        account: str,
+        action_type: str,
+        target: str,
+        status: str = "success",
+        decision: str = "allow",
+    ) -> str:
+        return json.dumps(
+            {
+                "timestamp": timestamp_utc,
+                "account": account,
+                "action_type": action_type,
+                "target": target,
+                "decision": decision,
+                "status": status,
+                "reason": "",
+                "error": "",
+                "delay_ms": 0,
+                "prev_hash": "0" * 64,
+                "hash": "0" * 64,
+            },
+            ensure_ascii=False,
+        )
+
+    def _write(self, monkeypatch, tmp_path: Path, lines: list[str]) -> None:
+        """DATA_DIRをtmp_pathに差し替え、audit.jsonlを書き込む"""
+        import kensho.application.applier as a
+
+        monkeypatch.setattr(a, "DATA_DIR", tmp_path)
+        if lines:
+            (tmp_path / "audit.jsonl").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    def test_returns_today_rt_success(self, monkeypatch, tmp_path: Path) -> None:
+        """当日JSTのRT成功が抽出される"""
+        import kensho.application.applier as a
+
+        now_jst = _dt.datetime.now(self.JST)
+        ts = self._utc_ts(now_jst - _dt.timedelta(minutes=5))
+        self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "rt", "123456")])
+        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        assert "123456" in rt_done
+        assert len(follow_done) == 0
+
+    def test_returns_today_follow_success(self, monkeypatch, tmp_path: Path) -> None:
+        """当日JSTのフォロー成功が抽出される"""
+        import kensho.application.applier as a
+
+        now_jst = _dt.datetime.now(self.JST)
+        ts = self._utc_ts(now_jst - _dt.timedelta(minutes=5))
+        self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "follow", "test_user")])
+        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        assert "test_user" in follow_done
+        assert len(rt_done) == 0
+
+    def test_excludes_other_account(self, monkeypatch, tmp_path: Path) -> None:
+        """他アカウントの成功は除外される"""
+        import kensho.application.applier as a
+
+        now_jst = _dt.datetime.now(self.JST)
+        ts = self._utc_ts(now_jst - _dt.timedelta(minutes=5))
+        self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "kudou", "rt", "999999")])
+        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        assert len(rt_done) == 0
+        assert len(follow_done) == 0
+
+    def test_excludes_na_target(self, monkeypatch, tmp_path: Path) -> None:
+        """target='n/a'のエントリは除外される"""
+        import kensho.application.applier as a
+
+        now_jst = _dt.datetime.now(self.JST)
+        ts = self._utc_ts(now_jst - _dt.timedelta(minutes=5))
+        self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "rt", "n/a")])
+        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        assert len(rt_done) == 0
+
+    def test_excludes_non_success(self, monkeypatch, tmp_path: Path) -> None:
+        """status='failed'や'deny'は除外される"""
+        import kensho.application.applier as a
+
+        now_jst = _dt.datetime.now(self.JST)
+        ts = self._utc_ts(now_jst - _dt.timedelta(minutes=5))
+        self._write(
+            monkeypatch,
+            tmp_path,
+            [
+                self._make_audit_line(ts, "atushi16", "rt", "123456", status="failed"),
+                self._make_audit_line(ts, "atushi16", "rt", "789012", decision="deny"),
+            ],
+        )
+        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        assert len(rt_done) == 0
+
+    def test_excludes_other_day(self, monkeypatch, tmp_path: Path) -> None:
+        """他日のエントリ（JST換算で昨日）は除外される"""
+        import kensho.application.applier as a
+
+        now_jst = _dt.datetime.now(self.JST)
+        ts = self._utc_ts(now_jst - _dt.timedelta(days=1))
+        self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "rt", "123456")])
+        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        assert len(rt_done) == 0
+
+    def test_includes_today_jst_boundary(self, monkeypatch, tmp_path: Path) -> None:
+        """JST当日07:00（前日UTC22:00）→ 当日扱い（JST日付境界）"""
+        import kensho.application.applier as a
+
+        today = _dt.datetime.now(self.JST).date()
+        ts = self._utc_ts(_dt.datetime.combine(today, _dt.time(7, 0), tzinfo=self.JST))
+        self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "rt", "123456")])
+        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        assert "123456" in rt_done
+
+    def test_excludes_tomorrow_jst(self, monkeypatch, tmp_path: Path) -> None:
+        """JST翌日分（翌日07:00）→ 翌日扱いで除外"""
+        import kensho.application.applier as a
+
+        today = _dt.datetime.now(self.JST).date()
+        ts = self._utc_ts(_dt.datetime.combine(today + _dt.timedelta(days=1), _dt.time(7, 0), tzinfo=self.JST))
+        self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "rt", "123456")])
+        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        assert len(rt_done) == 0
+
+    def test_returns_empty_when_no_file(self, monkeypatch, tmp_path: Path) -> None:
+        """audit.jsonlが存在しない場合、空のtupleを返す"""
+        import kensho.application.applier as a
+
+        monkeypatch.setattr(a, "DATA_DIR", tmp_path)
+        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        assert len(rt_done) == 0
+        assert len(follow_done) == 0

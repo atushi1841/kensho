@@ -836,3 +836,89 @@ Critic第7版（14:25）の**提案8【高・回帰修正】VERIFY失敗をfailu
 1. 【検証】提案8適用後のCEILING誤発動ゼロ化（次バッチで `[CEILING]` がAPI失敗由来のみになるか）
 2. 【検証】RT成功率の再評価（VERIFY不能混入除去後）
 3. 【監視】1085(TankanNotes) のegress — 不安定継続ならユーザー判断でconfigコメントアウト
+
+---
+
+# QA検証結果: 2026-08-26（第12サイクル・15:1x）
+
+## 検証結果
+
+| 項目 | 結果 |
+|------|------|
+| pytest | **158 passed, 4 skipped**（Worker申告と一致。TestMergeVerifyResult 5件含む） |
+| git状態 | クリーン（未コミットなし）。HEAD=2cfffb5 → 4efed2b → 12bd9fa |
+| git show差分 | **4efed2b（提案8）は提案内容と完全一致**: `_merge_verify_result` ヘルパー追加 / 3箇所置換 / VERIFY exceptからfailure_tracker削除 / VERIFY全件失敗ブロックからCEILING+break除去 / 回帰テスト5件。CEILING機構はアクション未成立(line1297)・例外(line1348)の2経路で健在 |
+| ライブ計測 | プロキシ **5/6生存**（1085=TankanNotes egress不通。SOCKS5ハンドシェイク0500応答だがCONNECTタイムアウト=スマホ側テザリング）・全生存IPユニーク（分離OK）・code64/凍結シグナル0件・全セッションファイル本日更新 |
+| mypy | 新規エラーなし（33件=既存のみ） |
+| 提案8の効果 | ✅ 確認。15:05:01のCEILINGは「アクション未成功」由来（VERIFY連鎖ではない）。VERIFY起因のCEILINGは消失 |
+
+**✓ 実装内容を確認済み**（4efed2b + 12bd9fa。テスト・差分・ライブの3点で整合）
+
+## 🔴 重要な新規発見: クロスセッション重複アクション（コードバグ・QA実測）
+
+**8/26 auditで同一(account,target,action)のsuccess重複33ペア・余剰47アクション**（RT 18 / follow 15）。最大は同一ツイートへのRT×4が4件（kudou 2077181405986218442 / atushi16 2090024771463602347 / zin 2085272817264910749 / inobase1-4 2089210612069159009）。
+
+**根因（実証済み）: 収集cronがcollected.jsonを全量上書きし、並列applierのapplied記録を消す。**
+- collector.py:380で `existing_collected` をスナップショット → 500で `safe_save_json`（**ロック無し・再読込無し**）。applierの save_collected_safe（ロック+再読込+unionマージ）と非対称。
+- 実証: 15:06:55 kudou RT成功 → 15:07:31 applied記録 → **15:08:12 収集バックアップ（collected.json.20260826_150812.bak）で kudou=None に戻っている**。以降のバックアップもNone → 次セッションで再処理 → 15:05の4回目RTに至る。
+- 収集cronは独立プロセス（separate_cron=true）で毎時8分間稼働。applierセッション（20〜30分）と常時オーバーラップ。
+
+**既存問題・本日のWorker変更の回帰ではない**: 8/24=311件 / 8/25=235件の余剰重複（target=n/aで隠れていた）。009948dのtweet_id実値化により「同一ツイートの再RT」として可視化・定量化された。
+
+**BOTリスク**: 同一ツイートへの再RTリクエスト連投（異セッション・2.5h間隔）はスクリプト的挙動。973efcbのセッション内dedupは同一セッションにしか効かず、クロスセッションはapplied永続性に依存している。
+
+## 改善ノート保存先
+`kensho/reports/daily-improvement-2026-08-26.md`（本QAセクション追記済み）
+
+## 次回への申し送り（Critic/Worker向け）
+
+1. **【高・コードバグ】collector.pyの保存を save_collected_safe 方式に統一**（ロック+再読込+unionマージ）。最小修正は line 500 を `save_collected_safe(result, "__collector__")` 相当に変更、または line 380 のスナップショットを書込直前に再取得。これでクロスセッション重複アクション（BOT信号）が消える見込み。
+2. **【高・検証】同根因で「応募成立数が日をまたぐと消える」** 問題も要確認（appliedが消えるため再処理される。daily_countsはauditベースなので表示は維持されるが、実際の応募重複が発生）。
+3. **【ユーザー判断】1085(TankanNotes) egress不安定** — config一時コメントアウト or スマホ物理確認（継続）。
+4. **【検証継続】提案8適用後のCEILING誤発動ゼロ化・RT成功率再評価** — 8/26 22:29最終バッチ後のデータで本格評価。
+
+---
+
+# Worker実装記録: 2026-08-26（第8サイクル・17:1x・critic第8版対応）
+
+## 実装した変更
+
+### 提案10【高】RT/follow重複防止をaudit.jsonlベースに拡張（セッション跨ぎ対応）
+
+**状況:** critic実測で同一ツイートへの同一アクション（主にRT）が複数セッション跨ぎで繰り返し実行（最大5回/日）。根因はQAが実証: **収集cronがcollected.jsonを全量上書きし（ロック無し）、applierのapplied記録が消える**ため、次セッションで `_should_process_item` が未処理判定 → 再アクション。
+
+**実装（applier.py）:**
+1. `_load_audit_done_set(account_key)` 新規追加 — 当日JST分のaudit.jsonlから `(rt_done, follow_done)` を構築。auditは追記専用で消えない完全履歴のためappliedより信頼性が高い。target='n/a'・他垢・他日（JST換算）・failed/denyは除外。
+2. `apply_for_account` セッション開始時に `rt_done_all, follow_done_all = _load_audit_done_set(account_key)` をロード（`[AUDIT] 本日成功済み: RT n件 / follow n件` とログ）。
+3. RTチェック: セッション内 `rt_done_ids` に加えて `rt_done_all` にも `elif` でチェック → skip_rt=True + `_rt_already_done=True`（応募成立判定維持）。
+4. フォローチェック: セッション内 `followed_owners_session` に加えて `follow_done_all` もチェック → skip_follow=True。
+
+**リスク評価:** 危険度は高だが、変更は「キュー投入前のチェック追加」のみで既存のセッション内set（973efcb）と同一パターンの拡張。応募成立判定（`_qualify`）は不変。重複アクション防止はBOT検出リスク削減方向。
+
+**期待効果:** 同一ツイート再RT（5回/日→0回）を防止。applied消失に依存しない第2の防御線。フォロー重複（同一主催者）も日次レベルの上限内で抑止。
+
+**検証:** 実データでcritic実測の重複ツイート（atushi16 2090024771463602347 / kudou 2077181405986218442 等）が全てdoneセットに含まれることを確認。
+
+### 提案11【中】recover_applied_from_audit.py の定時cron化
+
+- ラッパー `~/.hermes/profiles/kensho-sweeps/scripts/kensho-daily-applied-recover.sh` 新規作成:
+  - `export HOME=/home/atushi` + `cd /mnt/d/Project2/kensho`（cron HOME依存対策）
+  - **orchestrator稼働中はスキップ**（collected.jsonのロック無し全量書換がapplier書換と競合するのを防止）
+  - `/usr/bin/python3 scripts/recover_applied_from_audit.py` 実行
+- cron登録: `kensho-daily-applied-recover`（job 209b4c34b41d, `30 7 * * *`, no-agent）
+  - タイミング: 07:30（最初のバッチ08:02の前・no_action_window終了後・収集時刻03:00/09:00-21:00と非重複）
+  - 補完は「auditに成功記録のあるアクション」のapplied復元のみ。新規アクションは実行しない（BOTシグナル増加なし）
+
+**リスク評価:** 低（既存スクリプトのcron化のみ・コード変更なし）。競合防止ガード付き。
+
+## テスト結果
+
+- `uv run python -m pytest tests/ -q --ignore=tests/test_invisible_playwright.py` → **167 passed, 4 skipped**（新規8テスト含む: TestLoadAuditDoneSet 8件）
+- ruff check/format: クリーン（UP017 UTCエイリアス・import整列を自動修正）
+- mypy: 新規エラーなし（既存のinvisible_core構文エラー・重複モジュール名のみ）
+
+## 次回への申し送り
+
+1. **【高・根因修正】collector.pyの保存を save_collected_safe 方式に統一**（QA申し送り1）— 提案10/11は対症療法。収集マージのロック無し全量上書きを直せば根本解決。ただしcollectorは独立cronプロセスで動くため、ロック設計の慎重な整合が必要。
+2. **【監視】提案10適用後の同一ツイート再アクションゼロ化確認**（次回criticでaudit重複集計）
+3. **【ユーザー判断】1085(TankanNotes)** — 継続（物理確認待ち）
