@@ -1011,3 +1011,66 @@ Critic第7版（14:25）の**提案8【高・回帰修正】VERIFY失敗をfailu
 `uv run python -m pytest tests/ -q --ignore=tests/test_invisible_playwright.py` → **168 passed, 4 skipped**（cron稼働中でPlaywright実ブラウザ以外全通過）
 
 **コミット: `3d6c205`**（Worker実装記録確定。pre-commit全通過・ワークツリークリーン）
+
+---
+
+# QA検証結果: 2026-08-26（第9サイクル・提案12/13検証）
+
+## 検証結果
+
+### 1. pytest — ✅ 168 passed, 4 skipped（43.4s）
+`uv run python -m pytest tests/ -q --ignore=tests/test_invisible_playwright.py` 全通過。Worker記録（168/4）と一致。
+
+### 2. git状態 — ✅ クリーン / コミット確認
+- `git log --oneline -3`: `dce3d35`(docs) → `3d6c205`(提案12/13) → `ed848aa`(提案10/11)
+- `git status --short`: 変更なし
+
+### 3. git show差分確認 — ✅ 提案内容と実装が一致
+**提案12（like_done 3-tuple拡張）:**
+- `_load_audit_done_set()` → `(rt_done, follow_done, like_done)` 3-tuple。like成功tweet_idを収集 ✅
+- スキップ判定3箇所（フォロー/RT/いいね）すべてキュー投入前に追加。RTは `_rt_already_done=True` で応募成立判定維持 ✅
+- テスト: `TestLoadAuditDoneSet` を3-tuple対応 + `test_returns_today_like_success` 新規 ✅
+
+**提案13（いいねAuthエラーfail fast化）:**
+- 200-with-errorsブロックに code139/327/AuthorizationError 検出 → `_auth_error=True` ✅
+- `_auth_error` 時は「既にいいね済み」成功扱い（`reason="already_liked"`、RT経路と同一ロジック）✅
+- audit記録を `deny/failed` → `allow/success` に変更 ✅
+
+### 4. mypy strict — ⚠️ 33エラー（既存・今回のコミットで新規なし）
+`uv run mypy kensho/application/applier.py kensho/application/api_actions.py` → **33 errors in 10 files**。
+`git stash` + `git checkout 3d6c205^` で変更前も同一33エラーを確認 → **Workerコミットによる新規mypyエラーなし**（既存の `dict` type-arg違反等が残存）。AGENTS.mdの「mypy strict 0 error維持」からは乖離中。
+
+### 5. ライブ計測 — ⚠️ 1085(TankanNotes) egress不通継続 + 重複LISTENING再発
+- プロキシ出口IP（curl実測 19:10 JST）:
+  | ポート | 垢 | IP | 結果 |
+  |-------|-----|-----|------|
+  | 1081 | atushi16 | 219.104.132.236 | ✅ |
+  | 1082 | kudou | 106.146.10.71 | ✅ |
+  | 1084 | zin20120731 | 106.146.12.111 | ✅ |
+  | 1085 | TankanNotes | (不通) | ❌ |
+  | 1089 | inobase1-4 | 106.146.26.95 | ✅ |
+- **IP分離OK**（生存4プロキシは全垢別IP）
+- **1085: netstatで4重LISTENING確認** + ログ `[PROXY-CHECK] alive=[...1084,1089] dead=[1085]` + `is LISTENING but has NO egress – forcing WiFi reconnect + restart` が18:45/19:00の両サイクルで出現。**教訓notepad記録の「1085重複LISTENING（egress不通の一因）」パターン再発**（今回4重）。watchdogの再起動ループが復旧できていない
+
+### 6. 提案13の効果実測 — ✅ 改善（empty_response 30件 → 1件）
+audit.jsonl（本日JST）のlikeイベントを提案13適用時刻（18:57 JST）で前後比較:
+| 期間 | likeイベント | empty_response |
+|------|-------------|----------------|
+| 適用前（〜18:56） | 37件 | **30件** |
+| 適用後（18:57〜） | 2件 | **1件** |
+
+- 主因（GraphQL 200+Authエラー→REST空body）は潰れた。適用後はatushi16 19:07 JSTにREST経由のempty_response 1件のみ残存
+- **残余の原因**: api_actions.py 444-462行のRESTフォールバック（`favorites/create.json`）はまだ存在。GraphQL全queryId失敗→REST→200空body→`empty_response`失敗が残りうる（低頻度化は確認）
+
+### 7. 提案12の効果実測 — ✅ 多重アクション0件（サンプル少）
+提案12適用後（18:57〜）の同一(account,target)多重アクション: **0件**（成功ターゲット5件のみ。効果確認は8/27のcritic集計に継続）
+
+## 改善ノート保存先
+`kensho/reports/daily-improvement-2026-08-26.md`（QA検証結果セクションを追記）
+
+## 次回への申し送り（Critical）
+
+1. **🔴 1085重複LISTENING再発（TankanNotes）** — 教訓notepad既知パターンが再発（現在4重LISTENING）。watchdogは毎サイクル「egressなし→再接続+再起動」を試行するが復旧せず、重複プロセスが積み上がる。**対処: stop_proxies.ps1 全kill → クリーン再起動（教訓notepad 2026-08-26実績）**。ソフトウェア復旧不可のままなら config.yaml コメントアウト判断（提案14・ユーザー判断継続）。
+2. **🟡 提案13の残余empty_response** — RESTフォールバック（api_actions.py 444-462）経由の空bodyがまだ残りうる（適用後1件/2件）。完全廃止するならREST空body時も「既にいいね済み」扱い or RESTフォールバック自体の廃止を検討。次回criticで頻度再集計。
+3. **🟡 mypy strict 33エラー既存** — 今回のコミットで増えていないがAGENTS.mdの「0 error維持」と乖離。`dict` type-arg違反等の一括解消を別途検討。
+4. **🟢 提案12/13の効果継続監視** — 適用後サンプルが少ない（like 2件・成功ターゲット5件）。8/27のcriticでaudit重複集計とempty_response頻度を再検証。
