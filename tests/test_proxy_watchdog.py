@@ -154,3 +154,27 @@ def test_egress_import_error_returns_true():
     finally:
         if saved is not None:
             sys.modules["socks"] = saved
+
+
+def test_kill_listeners_invokes_powershell():
+    """_kill_listeners がコマンドライン照合でkensho_proxyを殺すPowerShellを呼ぶ"""
+    with patch("kensho.utils.proxy_watchdog.subprocess.run") as mock_run:
+        mock_run.return_value.stdout = ""
+        assert pw._kill_listeners(1085) == 1
+        cmd = " ".join(mock_run.call_args.args[0])
+        assert "1085" in cmd
+        assert "Stop-Process" in cmd
+        assert "Get-CimInstance" in cmd
+        assert "kensho_proxy" in cmd
+
+
+def test_kill_listeners_handles_timeout():
+    """PowerShellタイムアウト時は0を返す"""
+    with patch("kensho.utils.proxy_watchdog.subprocess.run", side_effect=TimeoutError()):
+        assert pw._kill_listeners(1085) == 0
+
+
+def test_kill_listeners_handles_oserror():
+    """OSError時は0を返す"""
+    with patch("kensho.utils.proxy_watchdog.subprocess.run", side_effect=OSError()):
+        assert pw._kill_listeners(1085) == 0

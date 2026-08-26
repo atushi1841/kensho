@@ -88,6 +88,35 @@ def _check_egress(port: int, timeout: int = 8) -> bool:
         return False
 
 
+def _kill_listeners(port: int) -> int:
+    """Kill all kensho_proxy processes bound to the given port (Windows).
+
+    2026-08-27追加・強化: 単にLISTENING PIDを殺すだけでは、kensho_proxy.pyが複数
+    プロセスで並行稼働してLISTENING PIDが次々と入れ替わるため(1085型で13+プロセス
+    積み上がる)取り残しが生じる。CommandLineに `kensho_proxy` + ポート番号を含む
+    プロセスを全部killする方が確実。skill「プロキシ多重起動の掃除方法」の方式を採用。
+    """
+    cmd = (
+        "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'kensho_proxy' "
+        f"-and $_.CommandLine -match ' {port}\\s*$' }} | "
+        "ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; "
+        f"Get-NetTCPConnection -LocalPort {port} -State Listen -ErrorAction SilentlyContinue "
+        "| Select-Object -ExpandProperty OwningProcess -Unique "
+        "| ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }"
+    )
+    cmd_list = [
+        PS,
+        "-NoProfile",
+        "-Command",
+        cmd,
+    ]
+    try:
+        subprocess.run(cmd_list, capture_output=True, text=True, timeout=15)
+        return 1
+    except (subprocess.TimeoutExpired, OSError):
+        return 0
+
+
 def _adapter_ipv4(adapter: str) -> str | None:
     """Return the first usable (non-APIPA) IPv4 of a Windows adapter, else None."""
     cmd = [
@@ -275,6 +304,9 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
                 ip,
                 account,
             )
+
+            # ── 再起動前に既存LISTENINGプロセスをkill（多重LISTENING積み上がり防止。2026-08-27追加）──
+            _kill_listeners(port)
 
             # ------------------------------------------------------------------
             # 3. Restart via Start-Process (hidden)
