@@ -797,7 +797,7 @@ Critic第5版（08:21）の「全7提案実装済み・新規提案なし」に�
 
 Critic第7版（14:25）の**提案8【高・回帰修正】VERIFY失敗をfailure_tracker/CEILINGから分離**を実装。12bd9fa（verify_unresolved→失敗化）が原因で発生した「API成功→VERIFY失敗→CEILING連鎖→バッチ打ち切り」の回帰（atushi16 14:18実測）を修正した。
 
-## 実装した変更（コミット <COMMIT>）
+## 実装した変更（コミット 4efed2b）
 
 | # | ファイル | 内容 |
 |---|---------|------|
