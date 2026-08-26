@@ -483,7 +483,7 @@ def apply_for_account(
         errors: int = 0
         idx: int = 0  # account_applied のインデックス（補充用）
         # ★ 2026-08-26: セッション内重複アクション防止（BOT検出回避）
-        rt_done_ids: set[str] = set()              # セッション内でRT成功したtweet_id
+        rt_done_ids: set[str] = set()  # セッション内でRT成功したtweet_id
         followed_owners_session: set[str] = set()  # セッション内でフォロー成功した主催者
 
         while success < max_n and idx < len(account_applied):
@@ -960,7 +960,7 @@ def apply_for_account(
                 # ★ 2026-08-26: セッション内フォロー重複防止
                 if not skip_follow and screen_name and screen_name in followed_owners_session:
                     skip_follow = True
-                    out(f"  [SKIP] フォロー: セッション内で既にフォロー成功済み → スキップ（重複アクション防止）")
+                    out("  [SKIP] フォロー: セッション内で既にフォロー成功済み → スキップ（重複アクション防止）")
 
                 def _make_follow_with_record(
                     _acct: str,
@@ -990,17 +990,20 @@ def apply_for_account(
                             _ok = do_follow(page, click_delay, out, account_key, target=screen_name or "")
                             if _ok and screen_name:
                                 from kensho.application.follow_state_manager import FollowStateManager
+
                                 FollowStateManager(account_key).record_follow(screen_name)
                             return _ok
+
                         action_queue.append(("follow", _ui_follow_with_record))
                 if not skip_rt:
                     # ★ 2026-08-26: セッション内RT重複防止（チェックをキュー追加前に移動）
                     if tweet_id in rt_done_ids:
                         skip_rt = True
                         _rt_already_done = True
-                        out(f"  [SKIP] RT: セッション内で既にRT成功済み → スキップ（重複アクション防止）")
+                        out("  [SKIP] RT: セッション内で既にRT成功済み → スキップ（重複アクション防止）")
 
                 if not skip_rt:
+
                     def fallback_rt(
                         page: Any = page,
                         click_delay: int = click_delay,
@@ -1084,7 +1087,10 @@ def apply_for_account(
                     if x_api_ok and tweet_id:
                         like_action = ("like", lambda tid=tweet_id: api_like(page, tid, account_key, out))
                     else:
-                        like_action = ("like", lambda: do_like(page, click_delay, out, account_key, cfg, target=tweet_id))
+                        like_action = (
+                            "like",
+                            lambda: do_like(page, click_delay, out, account_key, cfg, target=tweet_id),
+                        )
 
                 # ★ アクション順: フォローは必ずRTより前。いいねだけランダム位置
                 #   パターン（重み付き＋垢別バイアス＋毎回ジッター＝自然な分布）:
@@ -1159,6 +1165,7 @@ def apply_for_account(
                             total_v += 1
                             if not rt_result.success:
                                 fail_v += 1
+                                _per_item_ok["rt"] = False
                                 out(f"  [VERIFY] RT: x {rt_result.detail}")
                             else:
                                 out("  [VERIFY] RT: ok")
@@ -1167,6 +1174,7 @@ def apply_for_account(
                             total_v += 1
                             if not like_result.success:
                                 fail_v += 1
+                                _per_item_ok["like"] = False
                                 out(f"  [VERIFY] Like: x {like_result.detail}")
                             else:
                                 out("  [VERIFY] Like: ok")
@@ -1175,6 +1183,7 @@ def apply_for_account(
                             total_v += 1
                             if not follow_result.success:
                                 fail_v += 1
+                                _per_item_ok["follow"] = False
                                 out(f"  [VERIFY] Follow: x {follow_result.detail}")
                             else:
                                 out("  [VERIFY] Follow: ok")
@@ -1204,9 +1213,12 @@ def apply_for_account(
                 tweet_result = _check_tweet_result(page, clean_url, out)
                 # ★ 2026-08-25 修正: goto失敗(None)でもアクション成功なら応募成立。
                 #   goto_failed で applied が付かず無限再処理→空回りする問題の修正。
-                _qualify: bool = (tweet_result in ("tweet_ok", None) and (any(_per_item_ok.values()) or _rt_already_done)) or len(
-                    action_queue
-                ) == 0  # 全スキップ(見て終わり)は自然な合格扱い
+                # ★ 2026-08-26 修正: 「全スキップ(見て終わり)」は成功扱いしない。
+                #   従来 len(action_queue)==0 でも success 扱いになり、実際はアクション0件なのに
+                #   「12成功」と水増し計上されていた（atushi16実測: ログ12成功/実アクション7件）。
+                #   スキップのみは applied 付与（再処理防止）するが success には数えない。
+                _qualify: bool = tweet_result in ("tweet_ok", None) and (any(_per_item_ok.values()) or _rt_already_done)
+                _skipped_only: bool = len(action_queue) == 0
                 if tweet_result and tweet_result != "tweet_ok":
                     item.setdefault("results", {})[account_key] = tweet_result
                     # ★ 2026-08-23修正: 削除済み/無効ツイートを DEFER で長期スキップし、
@@ -1233,6 +1245,11 @@ def apply_for_account(
                             pass
                 elif _qualify:
                     item.setdefault("results", {})[account_key] = "ok"
+                elif _skipped_only:
+                    # ★ 2026-08-26: スキップのみ（アクション0件）は「見て終わり」。
+                    #   appliedは付与（再処理防止）するが success にはカウントしない。
+                    item.setdefault("results", {})[account_key] = "skipped"
+                    out("  [RESULT] ⏭ スキップのみ → 成功扱いせず（applied付与のみ）")
                 else:
                     _rt_was_demanded: bool = not skip_rt
                     if _rt_was_demanded and not _per_item_ok.get("rt"):
@@ -1262,6 +1279,11 @@ def apply_for_account(
                     #   並列垢ワーカーが同じcollected.jsonを保存するため、バッチ中にappliedが
                     #   他プロセスの保存で失われる問題（実測: 応募成立10件中1件しか保存されず）。
                     #   save_collected_safe はロック+ディスク再読込+マージで競合を防ぐ。
+                    save_collected_safe(data, account_key, log)
+                elif _skipped_only:
+                    # ★ 2026-08-26: スキップのみは再処理防止のため applied のみ付与。
+                    #   success にはカウントしない（実アクション0件の水増し防止）。
+                    item["applied"][account_key] = datetime.now().isoformat()
                     save_collected_safe(data, account_key, log)
                 else:
                     # 未成立: appliedを付けず次サイクルで再試行。失敗として記録。

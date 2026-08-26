@@ -195,12 +195,14 @@ class ActionVerifier:
         """RTボタンの状態確認。
 
         ツイートページに遷移し、RTボタンがアクティブ（リポスト済み）か確認。
-        2026-08-23: 遷移エラー/判別不能は success=True(verify_unresolved) として
-        失敗カウントしない（低速回線で確認不能でも実RTが成立している場合の偽停止を防ぐ）。
+        2026-08-26 修正: 判別不能(unresolved)は success=False に変更。
+          従来 success=True(verify_unresolved) として成功扱いし、API偽装成功(RT未反映)を
+          検出できていなかった。実測: VERIFY ok表示12件中、実際にRT反映されたのは1件のみ。
+          確認不能は「未成立」として再試行対象にし、連続失敗はfailure_trackerで上限制御する。
         """
 
         def _unresolved(detail: str) -> VerificationResult:
-            return VerificationResult(success=True, detail=f"verify_unresolved:{detail}")
+            return VerificationResult(success=False, detail=f"verify_unresolved:{detail}")
 
         try:
             url = f"https://x.com/i/web/status/{tweet_id}" if tweet_id else fallback_url
