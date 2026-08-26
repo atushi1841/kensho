@@ -628,6 +628,11 @@ def apply_for_account(
             wc_info: str = str(item.get("winner_count", "")) if item.get("winner_count", 0) > 0 else "?"
             elapsed_global: float = time.time() - t0
 
+            # ★ 引用RT・コメント応募のスキップ（AI対応不可 — 通常RT/フォローでは当選条件を満たせない）
+            if item.get("keyword_flag", False):
+                out(f"  [{global_idx}/{max_n}] [SKIP] 引用/コメント応募 → AI対応不可のためスキップ")
+                continue
+
             try:
                 out(
                     f"[{global_idx}/{max_n}] ⏱{elapsed_global / 60:.0f}分 "
@@ -1199,7 +1204,7 @@ def apply_for_account(
                 # ★ 2026-08-26提案12: セッション跨ぎ多重アクション防止
                 #   本日既にRT/いいね成功済み（前セッション）のツイートへのいいねをスキップ。
                 #   RT済みツイートへの再いいね（kudou rt→like 8分)・いいね済みツイートへの再いいねを防止。
-                if not skip_like and tweet_id and (tweet_id in rt_done_all or tweet_id in like_done_all):
+                if not skip_like and tweet_id and (tweet_id in rt_done_all or tweet_id in like_done_all or tweet_id in rt_done_ids):  # noqa: E501
                     skip_like = True
                     out(
                         "  [SKIP] いいね: 本日既にRT/いいね成功済み（前セッション）→ スキップ（同一ツイート多重アクション防止）"  # noqa: E501
