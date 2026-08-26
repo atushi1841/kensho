@@ -1074,3 +1074,17 @@ audit.jsonl（本日JST）のlikeイベントを提案13適用時刻（18:57 JST
 2. **🟡 提案13の残余empty_response** — RESTフォールバック（api_actions.py 444-462）経由の空bodyがまだ残りうる（適用後1件/2件）。完全廃止するならREST空body時も「既にいいね済み」扱い or RESTフォールバック自体の廃止を検討。次回criticで頻度再集計。
 3. **🟡 mypy strict 33エラー既存** — 今回のコミットで増えていないがAGENTS.mdの「0 error維持」と乖離。`dict` type-arg違反等の一括解消を別途検討。
 4. **🟢 提案12/13の効果継続監視** — 適用後サンプルが少ない（like 2件・成功ターゲット5件）。8/27のcriticでaudit重複集計とempty_response頻度を再検証。
+
+## 19:44 追記 — ユーザー報告「atushi16剥離（記録32件/実態8件）」の対応（commit 22cddca）
+
+**原因分析（実データ検証済み）**:
+- システム記録32件の内訳: 同日重複フォロー8件（5垢×2回）+ already_retweeted 14件 + like empty_response失敗9件 + 実新規~8件
+- 同日重複は**17:07適用の提案10（ed848aa・follow_done_all）より前**に全件発生 → 修正後は重複ゼロ確認済み
+- 残余の剥離源: follow_done_allは当日のみ。**前日以前にフォロー済みの垢を再フォロー**（yodobashi_kawa等）するとX上で無効なのに記録される
+
+**修正（commit 22cddca）**: applier.py に `_follow_already_done` を追加
+- follow_state.json の全履歴（`get_total_follows >= 1`）で再フォローをスキップ → `_follow_already_done=True` で応募成立を維持（`_rt_already_done` と同型）
+- `_qualify` に `_follow_already_done` を組込
+- test_follow_state.py に根拠テスト追加（49 passed）
+
+**申し送り**: 明日以降、auditの「同日重複」と「過去フォロー済みへの再フォロー」が0件であることをcriticで確認。daily_counts の follow 数は「X上で新規のフォロー」に近づくはず（応募成立数は要件充足含みで維持）。
