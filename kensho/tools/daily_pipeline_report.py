@@ -202,6 +202,9 @@ def main() -> int:
         print(f"- {acct}: {spread}時間帯に分散 {hours}{flag}")
 
     # ── バッチ計画 vs 実績 ──
+    # 計画数は config の daily_target（未設定ならデフォルト）を使用。
+    # 従来は sum(batches[].max)（1バッチ上限の合計）だったが、実目標と乖離し
+    # 「消化率50%未満」の誤警告を生んでいた（提案28, 2026-08-27）。
     print()
     print("## バッチ計画 vs 実績")
     for acct in ACCOUNTS:
@@ -210,15 +213,15 @@ def main() -> int:
             for a in acct_cfg:
                 if isinstance(a, dict) and a.get("key") == acct:
                     batches = (a.get("schedule", {}) or {}).get("batches", []) or []
-        planned = sum(int(b.get("max", 0)) for b in batches if isinstance(b, dict))
         n_batches = len(batches)
         succ = sum(n for (act, s), n in by_acct[acct].items() if s == "success")
+        planned = targets.get(acct, 50)  # 日次目標（daily_target or デフォルト）
         if planned:
             rate = f"{succ / planned * 100:.0f}%"
             flag = " ⚠️ 消化率50%未満" if succ < planned * 0.5 else ""
-            print(f"- {acct}: 計画{planned}件/{n_batches}バッチ → 実績{succ}件（{rate}）{flag}")
+            print(f"- {acct}: 目標{planned}件/{n_batches}バッチ → 実績{succ}件（{rate}）{flag}")
         else:
-            print(f"- {acct}: 計画情報なし → 実績{succ}件")
+            print(f"- {acct}: 目標情報なし → 実績{succ}件")
 
     # ── 収集→応募の変換率 ──
     print()

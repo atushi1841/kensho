@@ -20,6 +20,7 @@ accounts:
     display: "@atushi16"
     session: "data/x_session.json"
     disable_reply: true
+    daily_target: 75
     schedule:
       collects: false
       batches:
@@ -39,6 +40,7 @@ accounts:
     display: "@kudou_aoshi"
     session: "data/x_session_kudou.json"
     disable_reply: true
+    daily_target: 50
     schedule:
       collects: false
       batches:
@@ -58,6 +60,7 @@ accounts:
     display: "@chugakujuken"
     session: "data/x_session_chugakujuken.json"
     disable_reply: true
+    daily_target: 50
     schedule:
       collects: false
       batches:
@@ -77,6 +80,7 @@ accounts:
     display: "@zin20120731"
     session: "data/x_session_c.json"
     disable_reply: true
+    daily_target: 50
     schedule:
       collects: false
       batches:
@@ -99,6 +103,7 @@ accounts:
   #    display: "@TankanNotes"
   #    session: "data/x_session_TankanNotes.json"
   #    disable_reply: true
+  #    daily_target: 50
   #    schedule:
   #      collects: false
   #      batches:
@@ -118,6 +123,7 @@ accounts:
     display: "@inobase128508"
     session: "data/x_session_inobase1-4.json"
     disable_reply: true
+    daily_target: 50
     schedule:
       collects: false
       batches:
