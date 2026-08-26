@@ -47,6 +47,7 @@ from kensho.application.state import save_collected_safe
 from kensho.application.verifier import AccountHealthVerifier, ConsecutiveFailureTracker
 from kensho.core.config import load as load_config
 from kensho.scraping.scorer import format_prize_info, score_prize
+from kensho.scraping.sources.common import has_skip_keyword
 from kensho.utils.safety import verify_ip_separation
 
 DATA_DIR: Path = Path(__file__).parent.parent.parent / "data"
@@ -630,8 +631,23 @@ def apply_for_account(
 
             # ★ 引用RT・コメント応募のスキップ（AI対応不可 — 通常RT/フォローでは当選条件を満たせない）
             if item.get("keyword_flag", False):
-                out(f"  [{global_idx}/{max_n}] [SKIP] 引用/コメント応募 → AI対応不可のためスキップ")
-                continue
+                # ★ 2026-08-27提案24: 収集時のHTMLコンテキスト判定は過検出する場合があるため、
+                #   CDN tweet-textで再判定する（cpmeikan/kenkakuの記事ナビ/フッター誤判定を是正）
+                _flag_tweet_id, _ = extract_tweet_id_and_screen_name(clean_url)
+                _flag_recheck_text = ""
+                if _flag_tweet_id:
+                    try:
+                        _flag_recheck_text = api_get_tweet_text(page, _flag_tweet_id, log_fn=out)
+                    except Exception:
+                        _flag_recheck_text = ""
+                if _flag_recheck_text and not has_skip_keyword(_flag_recheck_text):
+                    # CDN本文にキーワードなし → 収集時の誤判定（過検出）。応募機会を損失しないため処理継続
+                    out(f"  [{global_idx}/{max_n}] [INFO] 引用/コメント判定をCDN再判定で解除（収集時誤判定）→ 処理継続")
+                    if not item.get("tweet_text"):
+                        item["tweet_text"] = _flag_recheck_text  # NGフィルター用に書き戻し（state.saveで保存）
+                else:
+                    out(f"  [{global_idx}/{max_n}] [SKIP] 引用/コメント応募 → AI対応不可のためスキップ")
+                    continue
 
             try:
                 out(
@@ -1204,7 +1220,11 @@ def apply_for_account(
                 # ★ 2026-08-26提案12: セッション跨ぎ多重アクション防止
                 #   本日既にRT/いいね成功済み（前セッション）のツイートへのいいねをスキップ。
                 #   RT済みツイートへの再いいね（kudou rt→like 8分)・いいね済みツイートへの再いいねを防止。
-                if not skip_like and tweet_id and (tweet_id in rt_done_all or tweet_id in like_done_all or tweet_id in rt_done_ids):  # noqa: E501
+                if (
+                    not skip_like
+                    and tweet_id
+                    and (tweet_id in rt_done_all or tweet_id in like_done_all or tweet_id in rt_done_ids)
+                ):  # noqa: E501
                     skip_like = True
                     out(
                         "  [SKIP] いいね: 本日既にRT/いいね成功済み（前セッション）→ スキップ（同一ツイート多重アクション防止）"  # noqa: E501

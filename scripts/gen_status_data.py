@@ -341,6 +341,9 @@ result["over_limit"] = over_limit
 #   応募成立=フォロー成功。action_history(全アクション)と区別するため apply_history はフォローのみ。
 apply_history = defaultdict(lambda: defaultdict(int))
 action_history = defaultdict(lambda: defaultdict(int))
+# ★ 2026-08-27提案25: auditは重複RT等を全て記録するため、同一(垢,種別,対象)への
+#   重複アクションは1回に数える（daily_countsが重複を除外して記録する実アクション数に揃える）。
+_seen_actions: set[tuple[str, str, str, str]] = set()
 try:
     with open(os.path.join(PROJECT_DIR, "data/audit.jsonl"), encoding="utf-8") as f:
         for line in f:
@@ -353,7 +356,12 @@ try:
             day = (r.get("timestamp") or "")[:10]
             acct = r.get("account", "")
             at = r.get("action_type", "")
+            tgt = r.get("target", "")
             if day and acct:
+                _k = (day, acct, at, tgt)
+                if _k in _seen_actions:
+                    continue
+                _seen_actions.add(_k)
                 action_history[day][acct] += 1
                 if at == "follow":
                     apply_history[day][acct] += 1

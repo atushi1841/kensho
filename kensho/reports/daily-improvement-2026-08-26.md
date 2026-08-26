@@ -1149,3 +1149,38 @@ audit.jsonl（本日JST）のlikeイベントを提案13適用時刻（18:57 JST
 - test_follow_state.py に根拠テスト追加（49 passed）
 
 **申し送り**: 明日以降、auditの「同日重複」と「過去フォロー済みへの再フォロー」が0件であることをcriticで確認。daily_counts の follow 数は「X上で新規のフォロー」に近づくはず（応募成立数は要件充足含みで維持）。
+
+## QA検証結果 — 2026-08-26 23:2x（第11サイクル・Worker: ee6072c 検証）
+
+### 検証結果
+
+| 検証項目 | 結果 |
+|---------|------|
+| pytest | **169 passed, 4 skipped**（70.4秒・失敗なし・コミットメッセージ記載と一致）✅ |
+| git状態 | HEAD=ee6072c（Workerコミット確認）。**⚠ ワーキングツリー非クリーン**: scraping変更3ファイル + recompute_keyword_flag.py + critic_proposal_2026-08-27.md が未コミット |
+| 差分確認 | ee6072c（提案20: line 1202 rt_done_ids追加）を確認 ✅ |
+| ライブ計測 | 1081/1082/1083/1089生存（IP重複なし）・**1084(zin)不通**（critic 22:20報告と一致・監視中）・1085(TankanNotes)不通（コメントアウト済みのまま）⚠️ |
+
+### 差分確認詳細
+
+**ee6072c（22:59・提案20）**: Critic提案（22:30）と一致することを確認。
+- applier.py line 1202: `tweet_id in rt_done_all or tweet_id in like_done_all` → `... or tweet_id in rt_done_ids` を追加（同一セッション内RT→like多重防止・zin 21:21 RT→21:30 likeの実証対応）
+- 同一コミット内で line ~628 に `keyword_flag` による引用RT/コメント応募スキップ（AI対応不可案件の事前除外）も追加
+- ✓ 実装内容を確認済み（修正は1条件追加のみ・既存ロジックへの副作用なし）
+
+### ⚠ 新規発見: keyword_flag機構が「applier側のみコミット・collector側未コミット」の不整合
+
+- ee6072c のapplierスキップロジックは `item.get("keyword_flag", False)` に依存するが、**keyword_flagを生成するcollector側変更が未コミット**:
+  - `kensho/scraping/collector.py`（keyword_flagフィールド追加）
+  - `kensho/scraping/sources/common.py`（スキップキーワード過検出是正: 裸の「引用」「コメント」「チェック」「ページ」等を削除し条件語に限定）
+  - `kensho/scraping/sources/kenshouclub.py`（記事HTML全体→X URL周辺800+300文字で判定する過検出是正）
+  - `recompute_keyword_flag.py`（既存collected.json再計算スクリプト・未追跡）
+- **ただし動作はライブ**: collected.json に keyword_flag フィールド1101件（うち329件 true）が既に存在 → 未コミットコードで収集が実行済み
+- **リスク**: ワーキングツリーがリセットされると keyword_flag 生成が停止 → applierのスキップが恒久no-op化（引用RT案件が再処理される）
+- **推奨**: 次回Workerサイクルで scraping側変更 + recompute_keyword_flag.py をコミット（プロセス改善: 実装後は即コミットを徹底）
+
+### 次回への申し送り
+
+1. **🔴【高・プロセス】scraping側 keyword_flag 変更（3ファイル）+ recompute_keyword_flag.py をコミット** — applier(ee6072c)はコミット済みだがcollector側が未コミットのため依存不整合。ワーキングツリーリセットでスキップ機構が恒久停止するリスク。
+2. **🟡【中・監視】1084(zin) WiFi切断継続** — critic提案21通り監視。wifi_watchdog自動復旧を待つ。8/27も不通ならconfigコメントアウト検討。
+3. **🟢【低・監視】提案20の効果** — 8/27のcriticで同一ツイートlike+rt多重0件を確認（proposal 23）。本日はno_action_window中でアクション0件のため判定不可。
