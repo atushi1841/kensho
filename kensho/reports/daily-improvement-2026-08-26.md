@@ -1,5 +1,66 @@
 # Worker 実装記録 — 2026-08-26 00:46（深夜サイクル）
 
+## QA検証結果 — 2026-08-26 21:1x（第10サイクル・Worker: 22cddca / f196ee7 / 13c244f 検証）
+
+### 検証結果
+
+| 検証項目 | 結果 |
+|---------|------|
+| pytest | **169 passed, 4 skipped**（前回168→169、test_follow_state.pyに1件追加 = 22cddcaの根拠テストと一致）✅ |
+| git状態 | ワーキングツリークリーン ✅ |
+| 差分確認 | 22cddca（_follow_already_done）/ f196ee7（docs）/ 13c244f（提案16 TankanNotesコメントアウト）を確認 ✅ |
+| mypy | invisible_coreの環境起因パースエラーで全コード型チェック不可（worker変更と無関係・既存33エラーと同種）⚠️ |
+| ライブ計測 | 1081/1084/1089生存・1082再試行で復旧・1085不通（コメントアウト通り）→ IP重複なし ✅ |
+
+### 差分確認詳細
+
+**22cddca（19:45・atushi16剥離対応）**: 提案内容（19:44追記）と一致。
+- applier.py: `_follow_already_done` 初期化 + `FollowStateManager.get_total_follows >= 1` で過去フォロー済みスキップ + `_qualify` に組込
+- test_follow_state.py: 前日履歴を要件充足と判定するテスト追加
+- ✓ 実装内容を確認済み
+
+**13c244f（20:49・提案16）**: TankanNotes(1085)をconfig.yamlから一時コメントアウト。
+- YAMLパース確認: アクティブ5アカウント（atushi16/kudou/chugakujuken/zin20120731/inobase1-4）、TankanNotes非アクティブ確認済み ✅
+- SAFETYログ21:15「5アカウント（不通1スキップ）」は新構成のkudou一時不通由来（再試行で復旧確認済み）
+
+### ライブ計測詳細
+
+| port | account | 結果 |
+|------|---------|------|
+| 1081 | atushi16 | 219.104.132.236 ✅ |
+| 1082 | kudou | 初回タイムアウト → **再試行3回で106.146.10.71復旧** ✅（単発8sタイムアウト誤判定・教訓通り） |
+| 1084 | zin20120731 | 106.146.15.209 ✅ |
+| 1085 | TankanNotes | 不通（コメントアウト通り・期待動作） |
+| 1089 | inobase1-4 | 106.146.26.95 ✅ |
+
+- 生存4プロキシは全垢別IP（IP分離OK）
+
+### 🔴 重大問題発見: プロキシ多重起動の悪化（Worker変更とは無関係・既知パターンの再発）
+
+netstat + Win32_Process 実測（21:10）:
+- **1085 (TankanNotes): 10+プロセスが多重LISTENING**（教訓notepad「1085が4重LISTENING」からさらに悪化）
+- 1082 (kudou): 2重 LISTENING（PID 17140 + 3300）
+- 1083 (atushi1840): 2重 LISTENING（PID 10328 + 15088）
+- 1089 (inobase1-4): プロセス2個（LISTENINGは1つのみ）
+
+**原因**: watchdogの「LISTENINGのみでegress死活未確認」再起動ループが、egress不通（1085）を再起動し続け多重起動が積み上がる。1082/1083/1089の2重はegressは生存しているのに再起動された残骸の可能性。
+
+**影響**: 多重起動プロセスはリソース無駄 + 教訓notepad通り「SOCKS5ハンドシェイクOKでもCONNECTがタイムアウト」を引き起こすリスク。1085はTankanNotesコメントアウト済みでKenshoからは使用されないが、プロセスは生き続ける。
+
+**対処（申し送り）**: `stop_proxies.ps1` 全kill → クリーン再起動（教訓notepad 2026-08-26実績）。watchdogの再起動判定に「egress死活確認」を入れる修正が恒久対策。
+
+## 改善ノート保存先
+`kensho/reports/daily-improvement-2026-08-26.md`（上記QA検証結果を追記）
+
+## 次回への申し送り（Critical）
+
+1. **🔴 1085多重LISTENING悪化（10+プロセス）** — 既知パターンが悪化。TankanNotesはコメントアウト済みだが、多重プロセスが残存。`stop_proxies.ps1` 全kill → クリーン再起動が必要。1082/1083/1089の2重起動も同時に解消される。watchdogの再起動判定にegress死活チェックを組み込む恒久修正をCritic/Workerに申し送り。
+2. **🟡 kudou(1082)単発タイムアウト誤判定再発** — 単発8s curlでは「不通」に見えたが再試行で復旧。教訓notepadの「check_proxies.py単発10sタイムアウト誤判定」パターンが再発。SAFETYログの「不通1スキップ」もこれ由来。プロキシ死活判定は必ず再試行 or orchestrator SAFETYログで裏取りすること。
+3. **🟡 mypy全コード型チェック不可** — invisible_core(prefs.py)のパースエラーでapplier.py/test_follow_state.pyの型チェックが実行できない。既存33エラーと同種の環境問題だが、AGENTS.md「mypy strict 0 error」維持のためにはinvisible_core除外設定（exclude or follow_imports=skip）が必要。
+4. **🟢 22cddca（_follow_already_done）効果検証は明日8/27** — 提案17の通り。auditで「過去フォロー済みへの再フォロー」0件を確認。daily_countsのfollowが「X上で新規フォロー」に近づくはず。
+
+
+
 ## 実施サマリー
 
 Critic提案（2026-08-26版）の全5提案は**危険度「高」×3・「中」×2**で、Worker絶対ルール（実行ロジック変更禁止・レート/上限変更禁止）により**コード実装なし**。ただし前Worker（8/25 23:0x）が対処済みの提案4を実測確認し、提案5のプロキシ状況をライブ再計測した。
