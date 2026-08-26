@@ -55,6 +55,17 @@ COLLECTED_FILE: Path = DATA_DIR / "collected.json"
 _DEFER_PREFIX: str = "DEFER:"
 
 
+def _merge_verify_result(current: bool, verify_success: bool) -> bool:
+    """VERIFY結果をアクション成否に反映する（2026-08-26提案8）。
+
+    API成功(current=True)はVERIFY失敗で覆されない。VERIFYは「偽装成功の
+    検出器」であり「成功の取り消し器」ではない。API未成功時のみVERIFY結果で確定する。
+    """
+    if current:
+        return True
+    return verify_success
+
+
 def _is_deferred(val: Any) -> bool:
     """applied値がDEFERスキップ中か判定"""
     return val is not None and isinstance(val, str) and val.startswith(_DEFER_PREFIX)
@@ -1165,7 +1176,9 @@ def apply_for_account(
                             total_v += 1
                             if not rt_result.success:
                                 fail_v += 1
-                                _per_item_ok["rt"] = False
+                                # ★ 2026-08-26提案8: API成功(_per_item_ok["rt"]=True)をVERIFY失敗で覆さない。
+                                #   VERIFYは「偽装成功の検出器」であり「成功の取り消し器」ではない。
+                                _per_item_ok["rt"] = _merge_verify_result(_per_item_ok.get("rt", False), False)
                                 out(f"  [VERIFY] RT: x {rt_result.detail}")
                             else:
                                 out("  [VERIFY] RT: ok")
@@ -1174,7 +1187,8 @@ def apply_for_account(
                             total_v += 1
                             if not like_result.success:
                                 fail_v += 1
-                                _per_item_ok["like"] = False
+                                # ★ 2026-08-26提案8: API成功をVERIFY失敗で覆さない（rtと同じ）。
+                                _per_item_ok["like"] = _merge_verify_result(_per_item_ok.get("like", False), False)
                                 out(f"  [VERIFY] Like: x {like_result.detail}")
                             else:
                                 out("  [VERIFY] Like: ok")
@@ -1183,25 +1197,25 @@ def apply_for_account(
                             total_v += 1
                             if not follow_result.success:
                                 fail_v += 1
-                                _per_item_ok["follow"] = False
+                                # ★ 2026-08-26提案8: API成功をVERIFY失敗で覆さない（rt/likeと同じ）。
+                                _per_item_ok["follow"] = _merge_verify_result(_per_item_ok.get("follow", False), False)
                                 out(f"  [VERIFY] Follow: x {follow_result.detail}")
                             else:
                                 out("  [VERIFY] Follow: ok")
                     except Exception as ve:
-                        out(f"  [VERIFY] エラー: {ve}")
-                        if fc_enabled:
-                            failure_tracker.record_failure(account_key)
+                        # ★ 2026-08-26提案8: Page.gotoタイムアウト等のナビゲーションエラーは
+                        #   アクション失敗ではない（X側遅延・プロキシ不安定）。failure_tracker/CEILING除外。
+                        out(f"  [VERIFY] エラー: {ve}（ナビゲーションエラー → failure_tracker除外）")
 
                 # Verify全件失敗チェック
+                # ★ 2026-08-26提案8: VERIFY失敗はfailure_tracker/CEILINGの対象外。
+                #   CEILINGは「アクション実行自体の失敗」（API失敗・UIフォールバック失敗）に限定。
+                #   VERIFYは成功判定に不参加（API成功の維持・監視のみ）。
                 if total_v > 0 and fail_v == total_v:
-                    out(f"  [VERIFY] 全件失敗 ({fail_v}/{total_v}) → failure_tracker記録")
-                    if fc_enabled:
-                        failure_tracker.record_failure(account_key)
-                        fc_count = failure_tracker.consecutive_count(account_key)
-                        if fc_count >= fc_max:
-                            out(f"  [CEILING] 連続{fc_count}回失敗 → 上限到達（残りスキップ）")
-                            save_collected_safe(data, account_key, log)
-                            break
+                    if any(_per_item_ok.values()):
+                        out(f"  [VERIFY] 全件失敗 ({fail_v}/{total_v}) → API成功のため応募成立維持")
+                    else:
+                        out(f"  [VERIFY] 全件失敗 ({fail_v}/{total_v}) → failure_tracker記録なし（VERIFYは監視のみ）")
 
                 # リプライ: 応募はフォロー/いいね/RTのみで行うため無効化
                 out("  [i] リプライ: 無効化（応募はフォロー/いいね/RTのみ）")

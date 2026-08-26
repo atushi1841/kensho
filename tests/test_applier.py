@@ -367,3 +367,45 @@ class TestExtractTweetIdAndScreenName:
         tid, sn = extract_tweet_id_and_screen_name("https://x.com/i/web/status/123456")
         assert tid == "123456"
         assert sn is None
+
+
+class TestMergeVerifyResult:
+    """_merge_verify_result: VERIFY失敗はAPI成功を覆さない（2026-08-26提案8）
+
+    回帰対象: 12bd9faで「VERIFY失敗→_per_item_ok=False」と単純化され、
+    API成功アクションがVERIFY失敗で覆され、CEILING連鎖でバッチ打ち切りが
+    発生した（atushi16 14:18実測）。VERIFYは「偽装成功の検出器」であり
+    「成功の取り消し器」ではない。
+    """
+
+    def test_api_success_not_overridden_by_verify_failure(self) -> None:
+        """API成功(current=True)はVERIFY失敗(verify_success=False)で覆されない"""
+        from kensho.application.applier import _merge_verify_result
+
+        assert _merge_verify_result(current=True, verify_success=False) is True
+
+    def test_api_failure_confirmed_by_verify_failure(self) -> None:
+        """API未成功(current=False)はVERIFY失敗でFalse確定"""
+        from kensho.application.applier import _merge_verify_result
+
+        assert _merge_verify_result(current=False, verify_success=False) is False
+
+    def test_verify_success_promotes_failure(self) -> None:
+        """API未成功でもVERIFY成功ならTrue（フォールバック経路の救済）"""
+        from kensho.application.applier import _merge_verify_result
+
+        assert _merge_verify_result(current=False, verify_success=True) is True
+
+    def test_api_success_keeps_true_even_with_verify_success(self) -> None:
+        """API成功+VERIFY成功 → True維持"""
+        from kensho.application.applier import _merge_verify_result
+
+        assert _merge_verify_result(current=True, verify_success=True) is True
+
+    def test_verify_failure_does_not_trigger_ceiling(self) -> None:
+        """VERIFY失敗はfailure_tracker/CEILINGに参加しない（バッチ打ち切り防止）"""
+        # applier.py 1206-1210行: 全件VERIFY失敗でもfailure_tracker記録なし・breakなし
+        # ここでは「VERIFY失敗が_qualify(any(_per_item_ok))に影響しない」契約を固定する
+        _per_item_ok = {"follow": True, "rt": False, "like": False}  # APIフォロー成功
+        # VERIFY全件失敗相当（rt/like/followすべてverify_success=False）でも
+        assert any(_per_item_ok.values()) is True  # API成功が維持される

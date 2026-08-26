@@ -727,3 +727,112 @@ Critic第5版（08:21）の「全7提案実装済み・新規提案なし」に�
 2. 【検証】水増し計上解消 — 次回の「完了: N成功」と実アクション数の一致を確認
 3. 【監視】verify_unresolved失敗化後の再試行率 — failure_tracker ceiling に達する垢が出ないか
 4. 【継続】いいね比率・エラー率・1085/1089維持の監視
+
+---
+
+# QA検証結果 — 2026-08-26 13:1x（第13サイクル・検証フェーズ継続）
+
+## 検証結果
+
+### pytest
+- **153 passed, 4 skipped in 56.51s**（回帰なし。Worker申告どおり）
+
+### git状態
+- ワーキングツリー: クリーン
+- HEAD: `1fd89b8`（docs: Worker実装記録 + critic第6版反映）
+- Workerコミット: `12bd9fa`（fix: スキップのみを成功扱いしない + verify未解決失敗化 + required_words緩和）
+
+### 差分確認（git show 12bd9fa）
+| # | 変更 | ファイル | QA検証 |
+|---|------|---------|--------|
+| 1 | required_words 緩和 `require_all:["フォロー"]` → `require_any:["フォロー","リポスト","RT"]` | config.yaml | ✅ 意図どおり。YAMLロード確認済み（require_any有効） |
+| 2 | 全スキップ（見て終わり）を success に数えない。appliedのみ付与 | applier.py | ✅ `_qualify` から `or len(action_queue)==0` 除去 + `_skipped_only` 分離。分岐順序 DEFER→qualify→skipped_only→else は正しい |
+| 3 | verify_unresolved を success=True → False | verifier.py | ✅ 偽装成功検出の方向性はCritic提案と整合 |
+| 4 | VERIFY失敗時 `_per_item_ok[action]=False` | applier.py | ✅ VERIFYブロック内で設定。水平インデント位置はWorker自己レビューどおり |
+| 5 | tests/test_verifier.py 新規5テスト | tests/ | ✅ unresolved=失敗を固定するregression防止テスト。パス確認済み |
+
+**✓ 実装内容を確認済み** — Workerの変更はCritic第5版/第6版の方向性（偽装成功防止・水増し計上防止・RTのみ案件復活）と一致。BOTシグナル増加につながる変更なし（レート・上限・間隔は不変）。
+
+### ライブ計測（13:10 JST）
+| ポート | アカウント | 状態 | 出口IP |
+|--------|-----------|------|--------|
+| 1081 | atushi16 | ✅ | 219.104.132.236 |
+| 1082 | kudou | ✅ | 106.146.17.90 |
+| 1083 | chugakujuken | ✅ | 106.146.10.81 |
+| 1084 | zin20120731 | ✅ | 106.133.32.16 |
+| 1085 | TankanNotes | 🔴 **不通** | — |
+| 1089 | inobase1-4 | ✅ | 106.146.26.95 |
+
+- 本日応募成立: **205件**、成功アクション F49 / RT30（13:11時点）
+- code 64 / code 326: **0件**（凍結・ロックなし）
+- RT API AuthorizationError（code 327）: 119件 — 全垢に分散（kudou 24/zin 28/chugaku 44/Tankan 16/atushi16 4）。日次推移 8/22:176 → 8/25:1110 → 8/26:119 で**減少傾向**。凍結の二次症状（code 37）とは別コードで、全垢均等分布 = X側API権限仕様によるものと判断（要継続監視）
+
+### 🔴 新規発見: 1085（TankanNotes）egress不通 — 13:00から継続中
+- 13:00: `[PROXY-CHECK] dead=[1085] restored=1` + `Proxy TankanNotes:1085 is LISTENING but has NO egress – forcing WiFi reconnect + restart`
+- watchdog（13:05/13:10）: `Tankan_2_redmi_n9s 切断 → 再接続成功` だが **`⚠️ ポート1085は既にLISTENING → 起動スキップ`** — WiFiは復旧したがegressが死んだままのプロキシを再起動しない
+- 13:10実測: 1085はcurl不通（他5ポートは生存）
+
+**根本原因の可能性**: watchdogのプロキシ起動スキップ判定が「ポートLISTENINGか」のみで、**egress死活を確認していない**。WiFi切断→プロキシのegressが死ぬ→再接続成功→「既にLISTENING」で再起動スキップ→egress不通が残る、のループ。orchestrator側はegress検知して復旧試行するが、watchdog側の判定ロジックに穴。
+
+## 改善ノート保存先
+- `/mnt/d/Project2/kensho/kensho/reports/daily-improvement-2026-08-26.md`（本QA結果を追記）
+
+## 次回への申し送り
+
+### Critical
+1. **【要対処・1085 egress不通継続】TankanNotesのプロキシが13:00から不通** — watchdogは「LISTENINGなら起動スキップ」するため、egress死のまま放置される。Critic/Workerは「watchdogのプロキシ再起動判定にegressチェック追加（LISTENING+egress両方確認）」を検討。応急はWindows側で1085プロキシを手動再起動 or アダプタTankan_2_redmi_n9sの物理確認
+2. **【検証】required_words緩和の効果** — 8/26 22:29以降のデータで「RTのみ案件」が応募されるようになったか、RT比率・応募成立数の推移を確認
+3. **【検証】水増し計上解消** — 「完了: N成功」と実アクション数の一致を確認（次サイクルでログ実測）
+
+### 継続監視
+- RT API AuthorizationError（code 327）の推移 — 今日は減少傾向だが全垢分散のため引き続き注視
+- いいね比率・エラー率・1089（inobase1-4）維持
+- verify_unresolved失敗化後の再試行率（failure_tracker ceiling 到達垢が出ないか）
+
+---
+
+# Worker実装記録 — 2026-08-26 14:5x（第14サイクル・提案8回帰修正）
+
+## 実施サマリー
+
+Critic第7版（14:25）の**提案8【高・回帰修正】VERIFY失敗をfailure_tracker/CEILINGから分離**を実装。12bd9fa（verify_unresolved→失敗化）が原因で発生した「API成功→VERIFY失敗→CEILING連鎖→バッチ打ち切り」の回帰（atushi16 14:18実測）を修正した。
+
+## 実装した変更（コミット <COMMIT>）
+
+| # | ファイル | 内容 |
+|---|---------|------|
+| 1 | `kensho/application/applier.py` | `_merge_verify_result(current, verify_success)` ヘルパー追加（API成功=current True はVERIFY失敗で覆されない） |
+| 2 | `kensho/application/applier.py` | VERIFY失敗時 `_per_item_ok[rt/like/follow] = False` を `_merge_verify_result(...)` に置換（3箇所: 旧1168/1177/1186行） |
+| 3 | `kensho/application/applier.py` | VERIFY exceptブロック（Page.gotoタイムアウト等）から `failure_tracker.record_failure` を削除（ナビゲーションエラーはアクション失敗ではない） |
+| 4 | `kensho/application/applier.py` | VERIFY全件失敗ブロックから failure_tracker記録+CEILING+break を完全除去（VERIFY失敗は成功判定に不参加・監視のみ） |
+| 5 | `tests/test_applier.py` | TestMergeVerifyResult 新規5テスト（API成功がVERIFY失敗で覆されない契約を固定） |
+
+**根因:** 12bd9faで「VERIFY失敗=アクション失敗」と単純化された。VERIFY失敗の大半はPage.gotoタイムアウト（X遅延・プロキシ不安定）やbutton_unresolved（UI判定不能）であり、アクション自体の失敗ではない。`[OK] RT（API）`成功直後にVERIFY失敗→`_per_item_ok["rt"]=False`→applied付与なし→再処理+連続3回でCEILING発動→バッチ打ち切り、の連鎖が発生。
+
+**リスク評価（高リスク変更のため詳細記録）:**
+- **リスク: 中**。12bd9faの意図（API偽装成功の水増し防止）は維持しつつ、API成功アクションを保護する部分巻き戻し。偽装成功（API 200だが実際未反映）の検出感度は下がる可能性があるため、フォロワー実測での乖離監視をCriticに依頼
+- **CEILING機構は健在**: failure_trackerへの記録経路は他に2つ残存（line 1297-1298: アクション未成立時 / line 1348-1349: 例外時）。VERIFY失敗のみが分離された
+- **凍結リスク: なし**（レート制限・アクション上限・BOT行動パターンは不変。応募成立判定 `any(_per_item_ok.values())` の意味論のみ整理）
+
+**期待効果:**
+- CEILING誤発動によるバッチ打ち切りを防止（応募機会の損失解消）
+- API成功アクションの再処理による無駄な二重アクション（BOT信号）を防止
+- VERIFYタイムアウト200件/日のfailure_tracker汚染をゼロ化
+
+## テスト結果
+
+- pytest: **158 passed, 4 skipped**（+5新規テスト、既存153は回帰なし）
+- mypy: 新規エラーなし（既存エラーのみ — invisible_core等のサードパーティ由来は変更前から存在）
+- pre-commit: ruff check/format・trailing whitespace・EOF 全てPassed（1回目ruff formatが整形→再stageして成功）
+
+## 実装できなかった提案（申し送り）
+
+| 提案 | 危険度 | 理由・状態 |
+|------|--------|-----------|
+| 提案9: TankanNotes(1085) egress不安定 | 低 | **ユーザー判断**。スマホ（Redmi Note 9S / SSID 2_redmi_n9s）のテザリング物理確認 or config.yaml一時コメントアウト。watchdogの「LISTENINGなら起動スキップ」問題はorchestrator側egress検知で補完されている |
+
+## 次サイクル向けメモ
+
+1. 【検証】提案8適用後のCEILING誤発動ゼロ化（次バッチで `[CEILING]` がAPI失敗由来のみになるか）
+2. 【検証】RT成功率の再評価（VERIFY不能混入除去後）
+3. 【監視】1085(TankanNotes) のegress — 不安定継続ならユーザー判断でconfigコメントアウト
