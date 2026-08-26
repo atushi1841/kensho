@@ -9,9 +9,40 @@
 ## Worker実装（コミット済み）
 | コミット | 内容 | 提案対応 |
 |---------|------|---------|
-| b70b5d4 (8/26 23:30) | keyword_flag実装: collector.py設定 + common.py _SKIP_KEYWORDS精緻化 + kenshouclub.pyコンテキスト判定化 + applierスキップ | 前日提案（引用RT/コメント除外） |
+| b70b5d4 (8/26 23:30) | keyword_flag実装: collector.py設定 + common.py _SKIP_KEYWORDS精緻化 + kenshouclub.pyコンテキスト判定化 + applierスキップ | 前日提案(引用RT/コメント除外) |
 | f4c2ce1 (8/27 01:21) | 提案24: applier CDN再判定 + 提案25: action_history重複除外 | 24, 25 |
 | 70f5174 (8/27 01:22) | 実装記録の報告追記 | — |
+| 2e7fb31 (8/27 02:49) | 提案28: daily_target導入 + レポート基準変更 | 28 |
+| f3d39f4 (8/27 05:05) | watchdog egress死活チェック + 多重LISTENING掃除の恒久化(申し送り#3実装) | 申し送り#3 |
+
+## Worker実装記録(2026-08-27 05:05・申し送り#3・f3d39f4)
+
+### 背景(申し送り#3)
+「watchdog再起動判定にegress死活チェック(SOCKS5 CONNECT試行)を組み込む恒久対策が未実装。1085型の多重LISTENING積み上がり再発防止のためWorkerに優先実装を依頼」
+
+### 実測で確認した問題(実装前に発見・スコープ拡大)
+wifi_watchdogをcroneq環境(env -i PATH=/usr/bin:/bin)で実行したところ、**1085にkensho_proxy.pyが13+プロセス多重稼働**(全PIDがLISTENINGを回し合い、LISTENING PIDが次々入れ替わる)を確認。LISTENING PIDだけをkillする方式では取り残しが生じ、無限に積み上がる。TankanNotes(1085)はconfigコメントアウト中なのにwatchdogがポートを監視し続け、「LISTENINGだがegress不通→kill→再起動」のチャーンも誘発していた。
+
+### 変更内容
+| ファイル | 変更 |
+|---------|------|
+| `kensho/utils/proxy_watchdog.py` | `_kill_listeners`を強化: LISTENING PIDのみでなく、**CommandLineに `kensho_proxy` + ポート番号を含む全プロセスをkill**(Get-CimInstance方式)。`restore_dead_proxies`再起動前に呼ぶ |
+| `tests/test_proxy_watchdog.py` | 新規テスト3件(killコマンド照合/タイムアウト/OSError) |
+| `~/.hermes/profiles/kensho-sweeps/scripts/kensho-wifi-watchdog.sh` | 生存判定を「netstat LISTENINGのみ」→「SOCKS5 egress死活」に変更。egress不通のLISTENINGはkillして再起動。inactiveなTankanNotesをADAPTERSから除外 |
+
+### 期待効果
+- 1085型の「LISTENINGだが実疎通なし」を確実に検出して復旧
+- 再起動前の全kensho_proxy killで多重LISTENING積み上がりを恒久防止
+- 死んだinactiveスクの無限チャーン停止(リソース節約)
+
+### 実測証跡
+- `_kill_listeners(1085)`後: listeners 0 / 該当kensho_proxy 0(WSL→Windowsで確認)
+- watchdog実行: active垢(kudou/chugakujuken/inobase1-4)を「egress OK」で生存判定、zin(1084)はバックオフ継続、TankanNotesはチャーンなし
+
+### リスク評価
+- 【低】タイムアウト時は0返却でkillしない(fail-safe)
+- 【低】venv消失(127)時は生存扱いで従来挙動維持(誤キル防止)
+- 対象はkensho_proxy.pyプロセスのみ。他プロセスには影響なし
 
 ## QA検証結果（01:23-01:35 実施）
 
