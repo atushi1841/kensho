@@ -1184,3 +1184,22 @@ audit.jsonl（本日JST）のlikeイベントを提案13適用時刻（18:57 JST
 1. **🔴【高・プロセス】scraping側 keyword_flag 変更（3ファイル）+ recompute_keyword_flag.py をコミット** — applier(ee6072c)はコミット済みだがcollector側が未コミットのため依存不整合。ワーキングツリーリセットでスキップ機構が恒久停止するリスク。
 2. **🟡【中・監視】1084(zin) WiFi切断継続** — critic提案21通り監視。wifi_watchdog自動復旧を待つ。8/27も不通ならconfigコメントアウト検討。
 3. **🟢【低・監視】提案20の効果** — 8/27のcriticで同一ツイートlike+rt多重0件を確認（proposal 23）。本日はno_action_window中でアクション0件のため判定不可。
+
+## Worker実装記録 — 2026-08-27 01:00（深夜サイクル・提案24/25実装）
+
+### 提案24【高】keyword_flag過検出是正 — applier CDN再判定（f4c2ce1）
+- applier.py: keyword_flag=True時に`api_get_tweet_text`(REST死→CDNフォールバック)で再判定。
+  CDN本文に`has_skip_keyword`ヒット無し=収集時HTMLコンテキスト誤判定 → 処理継続（応募機会回復）。
+  ヒット有り or 取得失敗 → 従来通りスキップ。取得したtweet_textはitemに書き戻しNGフィルターで活用。
+- 検証: cpmeikan過検出サンプル（「6つフォローし、この投稿をリポスト」「フォロー+この投稿をリポスト」）が
+  keyword=Falseと正しく判定されることを確認。キーワードリスト自体はb70b5d4の剪定を維持（裸コメント等の
+  再追加はしない — CDN再判定が過検出を吸収するため）。
+
+### 提案25【中】action_history重複除外 — gen_status_data.py（f4c2ce1）
+- audit.jsonlからaction_history構築時に(day, account, action_type, target)重複排除を追加。
+- 効果: 8/26のaction計 254（重複RT55含む）→ 165（daily_counts 204に近接）。apply_historyも同時保護。
+
+### 監視項目
+- 1084(zin): 01:00時点も不通（35+回バックオフ継続）。no_action_window中なので深夜バッチはない。
+  08:00の最初のバッチ前に復旧していなければconfigコメントアウト検討（提案26、明日のcriticで判断）。
+- テスト: 169 passed / 4 skipped（変更なし）
