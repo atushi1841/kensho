@@ -66,21 +66,24 @@ def _merge_verify_result(current: bool, verify_success: bool) -> bool:
     return verify_success
 
 
-def _load_audit_done_set(account_key: str) -> tuple[set[str], set[str]]:
-    """当日(JST)のaudit.jsonlから、この垢が既に成功したRT/followのtarget setを構築する。
+def _load_audit_done_set(account_key: str) -> tuple[set[str], set[str], set[str]]:
+    """当日(JST)のaudit.jsonlから、この垢が既に成功したRT/follow/likeのtarget setを構築する。
 
     2026-08-26提案10: セッション跨ぎの重複アクション防止（BOT検出回避）。
+    提案12: like_doneも追加し、同一ツイートへのlike+rt/follow多重を防止。
     applied(collected.json)は収集マージで消失しうるため、追記専用で消えない
     audit.jsonl（完全履歴）を信頼源にする。当日JST分のみ対象。
 
     Returns:
-        (rt_done, follow_done): RT成功tweet_id集合 / フォロー成功screen_name集合
+        (rt_done, follow_done, like_done):
+            RT成功tweet_id集合 / フォロー成功screen_name集合 / いいね成功tweet_id集合
     """
     rt_done: set[str] = set()
     follow_done: set[str] = set()
+    like_done: set[str] = set()
     audit_path: Path = DATA_DIR / "audit.jsonl"
     if not audit_path.exists():
-        return rt_done, follow_done
+        return rt_done, follow_done, like_done
     # auditのtimestampはUTC。JST日付（UTC+9）で「当日」を判定
     jst_today: str = (dt.datetime.now(dt.UTC) + dt.timedelta(hours=9)).strftime("%Y-%m-%d")
     try:
@@ -115,9 +118,11 @@ def _load_audit_done_set(account_key: str) -> tuple[set[str], set[str]]:
                     rt_done.add(tgt)
                 elif at == "follow":
                     follow_done.add(tgt)
+                elif at == "like":
+                    like_done.add(tgt)
     except OSError:
         pass
-    return rt_done, follow_done
+    return rt_done, follow_done, like_done
 
 
 def _is_deferred(val: Any) -> bool:
@@ -553,10 +558,10 @@ def apply_for_account(
         # ★ 2026-08-26提案10: セッション跨ぎ重複アクション防止（audit.jsonlベース）
         #   applied(collected.json)は収集マージで消失しうるため、追記専用のaudit.jsonlから
         #   当日JSTの成功済みtargetを読み込み、再ピックによる同一ツイートへの再アクションを防ぐ。
-        rt_done_all, follow_done_all = _load_audit_done_set(account_key)
-        if rt_done_all or follow_done_all:
+        rt_done_all, follow_done_all, like_done_all = _load_audit_done_set(account_key)
+        if rt_done_all or follow_done_all or like_done_all:
             out(
-                f"  [AUDIT] 本日成功済み: RT {len(rt_done_all)}件 / follow {len(follow_done_all)}件"
+                f"  [AUDIT] 本日成功済み: RT {len(rt_done_all)}件 / follow {len(follow_done_all)}件 / like {len(like_done_all)}件"  # noqa: E501
                 "（セッション跨ぎ重複防止セット）"
             )
 
@@ -1039,6 +1044,13 @@ def apply_for_account(
                 if not skip_follow and screen_name and screen_name in follow_done_all:
                     skip_follow = True
                     out("  [SKIP] フォロー: 本日既にフォロー成功済み（前セッション）→ スキップ（重複アクション防止）")
+                # ★ 2026-08-26提案12: いいね済みツイートへのフォロー禁止（同一ツイート多重アクション防止）
+                #   すでにいいねで応募完了しているツイートへのフォローはBOT検出リスクを上げるだけ。
+                if not skip_follow and tweet_id and tweet_id in like_done_all:
+                    skip_follow = True
+                    out(
+                        "  [SKIP] フォロー: 本日既にいいね成功済み（前セッション）→ スキップ（同一ツイート多重アクション防止）"  # noqa: E501
+                    )
 
                 def _make_follow_with_record(
                     _acct: str,
@@ -1084,6 +1096,13 @@ def apply_for_account(
                         skip_rt = True
                         _rt_already_done = True
                         out("  [SKIP] RT: 本日既にRT成功済み（前セッション）→ スキップ（重複アクション防止）")
+                    # ★ 2026-08-26提案12: いいね済みツイートへのRT禁止（同一ツイート多重アクション防止）
+                    elif tweet_id in like_done_all:
+                        skip_rt = True
+                        _rt_already_done = True
+                        out(
+                            "  [SKIP] RT: 本日既にいいね成功済み（前セッション）→ スキップ（同一ツイート多重アクション防止）"  # noqa: E501
+                        )
 
                 if not skip_rt:
 
@@ -1164,6 +1183,14 @@ def apply_for_account(
                         return do_rt(page, click_delay, out, account_key, cfg, target=tweet_id)
 
                     action_queue.append(("rt", fallback_rt))
+                # ★ 2026-08-26提案12: セッション跨ぎ多重アクション防止
+                #   本日既にRT/いいね成功済み（前セッション）のツイートへのいいねをスキップ。
+                #   RT済みツイートへの再いいね（kudou rt→like 8分)・いいね済みツイートへの再いいねを防止。
+                if not skip_like and tweet_id and (tweet_id in rt_done_all or tweet_id in like_done_all):
+                    skip_like = True
+                    out(
+                        "  [SKIP] いいね: 本日既にRT/いいね成功済み（前セッション）→ スキップ（同一ツイート多重アクション防止）"  # noqa: E501
+                    )
                 # ★ いいねアクション（条件付き）を別途保持
                 like_action: tuple[str, Any] | None = None
                 if not skip_like:

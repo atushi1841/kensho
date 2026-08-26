@@ -373,6 +373,16 @@ def api_like(
                     out(f"  [WARN] FavoriteTweet GraphQL (queryId={query_id}…): 空レスポンス")
                     continue
                 if _is_api_error(body_str):
+                    # ★ 2026-08-26提案13: 200 with errorsでもAuthorizationError検出を通す。
+                    #   従来はここでcontinueしてしまい_auth_errorが立たず、RESTフォールバック
+                    #   (200空body自動失敗)に落ちていた。→ empty_response 30件/日の主因。
+                    #   code139=「既にいいね済み」・code327=権限エッジ（生存ツイート確認済み）。
+                    #   RT経路(2026-08-25)と同一ロジックでfail fast化。
+                    if '"code":139' in body_str or '"code":327' in body_str or "AuthorizationError" in body_str:
+                        _auth_error = True
+                        out("  [i] いいねAPI: AuthorizationError → スキップ")
+                        body_preview = body_str[:200]
+                        continue
                     out(f"  [WARN] FavoriteTweet GraphQL (queryId={query_id}…): 200 with errors: {body_str[:200]}")
                     continue
                 # 200 かつ body に "favorite_tweet" キーがあれば成功
@@ -422,12 +432,14 @@ def api_like(
                 out(f"  [i] いいね GraphQL (queryId={query_id[:8]}…): HTTP {status} [{body_str[:80]}] → 次を試す")
 
         if _auth_error:
-            out("  [i] いいねAPI: AuthorizationErrorが続いたためRESTフォールバックをスキップ")
+            # ★ 2026-08-26提案13: AuthorizationError(139/327)は「既にいいね済み」→ 成功扱いでスキップ
+            #   RT経路(2026-08-25)と同一ロジック。生存ツイートがCDNで確認できるのにGraphQLが
+            #   Authエラーを返すのは「自分が既にいいねしたツイートへの再いいね」が主因。
+            #   新規アクション不要なので成功扱いで返す（empty_response RESTフォールバック廃止）。
+            out("  [i] いいねAPI: AuthorizationError → 既にいいね済みとして成功扱い（RESTフォールバック省略）")
             _delay = int((_time.time() - _t0) * 1000)
-            audit_ledger.log(
-                account_key, "like", tweet_id, "deny", "failed", error="authorization_error", delay_ms=_delay
-            )
-            return False
+            audit_ledger.log(account_key, "like", tweet_id, "allow", "success", reason="already_liked", delay_ms=_delay)
+            return True
 
         out(f"  [i] いいね GraphQL: 全queryId失敗 → REST フォールバック (last body: {body_preview[:150]})")
 

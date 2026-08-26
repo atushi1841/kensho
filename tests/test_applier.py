@@ -416,7 +416,7 @@ class TestMergeVerifyResult:
 class TestLoadAuditDoneSet:
     """_load_audit_done_set: audit.jsonlベースのセッション跨ぎ重複防止（2026-08-26提案10）
 
-    当日JST分のRT/follow成功のみを抽出し、n/aや他垢・他日は除外する。
+    当日JST分のRT/follow/like成功（提案12でlike追加）のみを抽出し、n/aや他垢・他日は除外する。
     実時刻（JST）からUTCタイムスタンプを逆算して検証する。
     """
 
@@ -467,9 +467,10 @@ class TestLoadAuditDoneSet:
         now_jst = _dt.datetime.now(self.JST)
         ts = self._utc_ts(now_jst - _dt.timedelta(minutes=5))
         self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "rt", "123456")])
-        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        rt_done, follow_done, like_done = a._load_audit_done_set("atushi16")
         assert "123456" in rt_done
         assert len(follow_done) == 0
+        assert len(like_done) == 0
 
     def test_returns_today_follow_success(self, monkeypatch, tmp_path: Path) -> None:
         """当日JSTのフォロー成功が抽出される"""
@@ -478,9 +479,22 @@ class TestLoadAuditDoneSet:
         now_jst = _dt.datetime.now(self.JST)
         ts = self._utc_ts(now_jst - _dt.timedelta(minutes=5))
         self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "follow", "test_user")])
-        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        rt_done, follow_done, like_done = a._load_audit_done_set("atushi16")
         assert "test_user" in follow_done
         assert len(rt_done) == 0
+        assert len(like_done) == 0
+
+    def test_returns_today_like_success(self, monkeypatch, tmp_path: Path) -> None:
+        """当日JSTのいいね成功（提案12のlike_done）が抽出される"""
+        import kensho.application.applier as a
+
+        now_jst = _dt.datetime.now(self.JST)
+        ts = self._utc_ts(now_jst - _dt.timedelta(minutes=5))
+        self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "like", "555111")])
+        rt_done, follow_done, like_done = a._load_audit_done_set("atushi16")
+        assert "555111" in like_done
+        assert len(rt_done) == 0
+        assert len(follow_done) == 0
 
     def test_excludes_other_account(self, monkeypatch, tmp_path: Path) -> None:
         """他アカウントの成功は除外される"""
@@ -489,7 +503,7 @@ class TestLoadAuditDoneSet:
         now_jst = _dt.datetime.now(self.JST)
         ts = self._utc_ts(now_jst - _dt.timedelta(minutes=5))
         self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "kudou", "rt", "999999")])
-        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        rt_done, follow_done, like_done = a._load_audit_done_set("atushi16")
         assert len(rt_done) == 0
         assert len(follow_done) == 0
 
@@ -500,7 +514,7 @@ class TestLoadAuditDoneSet:
         now_jst = _dt.datetime.now(self.JST)
         ts = self._utc_ts(now_jst - _dt.timedelta(minutes=5))
         self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "rt", "n/a")])
-        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        rt_done, follow_done, like_done = a._load_audit_done_set("atushi16")
         assert len(rt_done) == 0
 
     def test_excludes_non_success(self, monkeypatch, tmp_path: Path) -> None:
@@ -517,7 +531,7 @@ class TestLoadAuditDoneSet:
                 self._make_audit_line(ts, "atushi16", "rt", "789012", decision="deny"),
             ],
         )
-        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        rt_done, follow_done, like_done = a._load_audit_done_set("atushi16")
         assert len(rt_done) == 0
 
     def test_excludes_other_day(self, monkeypatch, tmp_path: Path) -> None:
@@ -527,7 +541,7 @@ class TestLoadAuditDoneSet:
         now_jst = _dt.datetime.now(self.JST)
         ts = self._utc_ts(now_jst - _dt.timedelta(days=1))
         self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "rt", "123456")])
-        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        rt_done, follow_done, like_done = a._load_audit_done_set("atushi16")
         assert len(rt_done) == 0
 
     def test_includes_today_jst_boundary(self, monkeypatch, tmp_path: Path) -> None:
@@ -537,7 +551,7 @@ class TestLoadAuditDoneSet:
         today = _dt.datetime.now(self.JST).date()
         ts = self._utc_ts(_dt.datetime.combine(today, _dt.time(7, 0), tzinfo=self.JST))
         self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "rt", "123456")])
-        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        rt_done, follow_done, like_done = a._load_audit_done_set("atushi16")
         assert "123456" in rt_done
 
     def test_excludes_tomorrow_jst(self, monkeypatch, tmp_path: Path) -> None:
@@ -547,7 +561,7 @@ class TestLoadAuditDoneSet:
         today = _dt.datetime.now(self.JST).date()
         ts = self._utc_ts(_dt.datetime.combine(today + _dt.timedelta(days=1), _dt.time(7, 0), tzinfo=self.JST))
         self._write(monkeypatch, tmp_path, [self._make_audit_line(ts, "atushi16", "rt", "123456")])
-        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        rt_done, follow_done, like_done = a._load_audit_done_set("atushi16")
         assert len(rt_done) == 0
 
     def test_returns_empty_when_no_file(self, monkeypatch, tmp_path: Path) -> None:
@@ -555,6 +569,6 @@ class TestLoadAuditDoneSet:
         import kensho.application.applier as a
 
         monkeypatch.setattr(a, "DATA_DIR", tmp_path)
-        rt_done, follow_done = a._load_audit_done_set("atushi16")
+        rt_done, follow_done, like_done = a._load_audit_done_set("atushi16")
         assert len(rt_done) == 0
         assert len(follow_done) == 0

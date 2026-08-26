@@ -922,3 +922,90 @@ Critic第7版（14:25）の**提案8【高・回帰修正】VERIFY失敗をfailu
 1. **【高・根因修正】collector.pyの保存を save_collected_safe 方式に統一**（QA申し送り1）— 提案10/11は対症療法。収集マージのロック無し全量上書きを直せば根本解決。ただしcollectorは独立cronプロセスで動くため、ロック設計の慎重な整合が必要。
 2. **【監視】提案10適用後の同一ツイート再アクションゼロ化確認**（次回criticでaudit重複集計）
 3. **【ユーザー判断】1085(TankanNotes)** — 継続（物理確認待ち）
+
+---
+
+# QA検証結果: 2026-08-26（第13サイクル・17:1x・critic第8版 / worker ed848aa 検証）
+
+## 検証結果
+
+| 項目 | 結果 |
+|------|------|
+| pytest | **167 passed, 4 skipped**（Worker申告と一致。TestLoadAuditDoneSet 9メソッド含む） |
+| git状態 | クリーン（未コミットなし）。HEAD=ed848aa（提案10実装 + recover cron化 + critic第8版反映） |
+| git show差分 | **ed848aa は提案10/11の内容と一致**: 下記参照 |
+| ライブ計測 | [SAFETY] IP分離OK 5アカウント（不通1スキップ=1085 TankanNotes既知）・code64 0件・凍結シグナルなし |
+
+**提案10（audit.jsonlベース重複防止）実装確認:**
+- `_load_audit_done_set(account_key)` 新規追加 — 当日JST分のaudit.jsonlから `(rt_done, follow_done)` を構築。target='n/a'・他垢・他日（JST換算）・failed/deny除外。DATA_DIRは `kensho/application/applier.py` の `parent.parent.parent/data` で `data/audit.jsonl` と正しく一致
+- `apply_for_account` セッション開始時に `rt_done_all, follow_done_all` をロード（`[AUDIT]` ログ出力あり）
+- RT: `elif tweet_id in rt_done_all:` → skip_rt=True + `_rt_already_done=True`（**応募成立判定維持** ✓ 提案の設計通り）
+- フォロー: `if not skip_follow and screen_name and screen_name in follow_done_all:` → skip_follow=True
+- 既存のセッション内set（973efcb）は維持され二重防御 ✓
+
+**提案11（recover_applied_from_audit.py cron化）実装確認:**
+- ラッパー `~/.hermes/profiles/kensho-sweeps/scripts/kensho-daily-applied-recover.sh` 存在（`export HOME=/home/atushi` + orchestrator稼働中スキップガード + `/usr/bin/python3` 実行）
+- cron登録確認: `kensho-daily-applied-recover`（`30 7 * * *`・no-agent・次回 2026-08-27T07:30:00+09:00）✓
+- ガードのpgrepパターン `kensho/orchestrator.py --account` は kensho-auto-apply.sh:91 の実起動コマンドと一致 ✓
+- recoverスクリプトはstdlibのみ（json/re/shutil）→ `/usr/bin/python3` で動作可能 ✓
+
+**✓ 実装内容を確認済み**（ed848aa。テスト・差分・cron登録・ライブの4点で整合）
+
+## 軽微な指摘（申し送り・ブロッカーなし）
+
+1. Worker記録は「新規8テスト」だが、TestLoadAuditDoneSetは**9メソッド**（記録上の軽微なズレ。機能に影響なし）
+2. `[AUDIT]` ログはまだ未確認 — 直前のセッション（17:08終了）は17:07コミット前に開始したため旧コードで実行。**次バッチ（17:15頃〜）から出現見込み**。次回criticでログ確認・効果検証
+3. 提案10は「当日JST分のみ」対象 → 前日跨ぎの重複は07:30 recover cronが補完する2段構え（設計どおり・許容）
+
+## 改善ノート保存先
+`kensho/reports/daily-improvement-2026-08-26.md`（本QAセクション追記済み）
+
+## 次回への申し送り
+
+1. **【監視・高】提案10の効果検証**: 次回criticで audit重複集計（同一target・同一actionの複数success）がゼロ化したか確認。`[AUDIT]` ログの出現も確認
+2. **【継続・高・根因修正】collector.pyの保存を save_collected_safe 方式に統一**（QA申し送り1・worker継続）— 提案10/11は対症療法。収集マージのロック無し全量上書き（collector.py:380→500）を直せば根本解決。独立cronプロセスとのロック設計整合が要点
+3. **【ユーザー判断】1085(TankanNotes)** — egress不通継続。物理復旧 or configコメントアウト判断待ち（継続）
+4. **【軽微】テスト数記録** — 次回workerは「TestLoadAuditDoneSet 9件」と正確に記録
+
+---
+
+# Worker実装記録: 2026-08-26（第9版critic・提案12/13）
+
+## 実装した変更（提案12・高 / 提案13・中）
+
+### 提案12【高】like_done set拡張 — 多重（like+rt/follow同一ツイート）防止
+**変更ファイル: `kensho/application/applier.py` / `tests/test_applier.py`**
+
+- `_load_audit_done_set()` を `(rt_done, follow_done, like_done)` の3-tupleに拡張。当日JSTのaudit.jsonlから `action_type=="like"` の成功target(tweet_id)を `like_done` に収集
+- `apply_for_account` で `like_done_all` をロード（`[AUDIT] ... like n件` ログに追記）
+- **追加したスキップ判定（3箇所・すべてキュー投入前）:**
+  - フォロー: `tweet_id in like_done_all` → skip_follow（いいね済みツイートへの再フォロー防止）
+  - RT: `tweet_id in like_done_all` → skip_rt + `_rt_already_done=True`（**応募成立判定維持**）
+  - いいね: `tweet_id in rt_done_all or like_done_all` → skip_like
+- **危険度評価: 高 → 中**（コード変更だが提案10のロジックをlikeに拡張するのみ。応募成立判定・日次上限・過フォロー上限への影響なし。re-pickされた「すでにいいね済み」ツイートへの再アクションを防ぐ＝BOTシグナル低減）
+- **期待効果:** 同一ツイートへのlike+rt/follow多重（8/26実測 4件）を0件へ。chugakujuken 13秒差(like→rt)・kudou 8分差(rt→like)の両方向を防止
+
+**テスト:** `TestLoadAuditDoneSet` を3-tuple対応に更新（9メソッド）+ 新規 `test_returns_today_like_success` 追加。`uv run python -m pytest tests/ --ignore=tests/test_invisible_playwright.py` → **168 passed, 4 skipped**
+
+### 提案13【中】いいねempty_response 30件 — FavoriteTweet Authエラー検出のfail fast化
+**変更ファイル: `kensho/application/api_actions.py`**
+
+**調査結果（critic仮説を覆す）:**
+- **queryIdは失効していない**（fa0311 API.json確認: FavoriteTweet=`lI07N6Otwv1PhnEgXILM7A` が最新のまま）
+- 実態は **GraphQLがHTTP 200 + AuthorizationError（code 139/327）を返す**ことを、`_is_api_error` のcontinue（従来コード）が握り潰し、`_auth_error` が立たず **RESTフォールバック（favorites/create.json 200空body）→ empty_response 30件/日** になっていた
+- **CDN生存確認**: 失敗like対象ツイートはすべてALIVE（削除/保護ではない）→ code139=「既にいいね済み」・code327=権限エッジが主因
+
+**修正（RT経路 2026-08-25 の同一パターンを適用）:**
+- 200-with-errorsブロック内に `"code":139 / "code":327 / AuthorizationError` 検出を追加 → `_auth_error=True` でfail fast
+- ループ後 `_auth_error` を **「既にいいね済み」成功扱い**（`reason="already_liked"`、RTと同一ロジック）→ REST空bodyフォールバック廃止
+- **危険度: 中**（likeは補助シグナル。失敗→成功扱いの変更だが、生存ツイートでGraphQL Authエラー＝再いいねの主因＋RTと整合するため安全性向上）
+- **期待効果:** いいね成功率12.5%→向上。empty_response 30件/日をほぼ0件に。同一ツイートへの再いいね試行（BOT信号）も削減
+
+## 実装できなかった提案（申し送り）
+
+- **提案14【中】TankanNotes(1085)**: 3日連続のegress不通。SIM/テザリング側の実インターネット経路なし（SOCKS5ハンドシェイクOK→CONNECT timeout）。**ソフトウェア復旧不可・スマホ物理確認待ち**。復旧不可ならconfigコメントアウトを推奨（ユーザー判断）
+- **提案15【低】効果検証**: 監視のみ・コード変更なし。明日8/27criticのaudit重複集計で検証
+- **QA申し送り1【高・根因】collector.pyの保存をsave_collected_safe方式に統一**: 今回のcritic番号提案の対象外（継続申し送り）。独立cronプロセスとのロック整合が要点。次回以降で実施検討
+
+## テスト結果
+`uv run python -m pytest tests/ -q --ignore=tests/test_invisible_playwright.py` → **168 passed, 4 skipped**（cron稼働中でPlaywright実ブラウザ以外全通過）
