@@ -91,6 +91,12 @@ def scrape_kenshouclub(out: Any, processed_set: set[str], account_keys: list[str
                     applied: dict[str, None] = {k: None for k in account_keys}
                     article_id: str = str(article_url).split("/")[-1]
                     detail_url: str = f"/kenshouclub/archives/{article_id}"
+                    # ★ 2026-08-26: 過検出是正 — 記事HTML全体ではなくX URL周辺テキストで判定
+                    #   （記事ページのナビ/コメント欄に「コメント」「ページ」等が常にあるため全233件がtrue化していた）
+                    kctx: str = ""
+                    _kpos: int = html2.find(x_url)
+                    if _kpos > 0:
+                        kctx = html2[max(0, _kpos - 800) : min(len(html2), _kpos + 300)]
                     items.append({
                         "detail_url": detail_url,
                         "x_url": x_url,
@@ -100,7 +106,7 @@ def scrape_kenshouclub(out: Any, processed_set: set[str], account_keys: list[str
                         "winner_count": winner_count,
                         "days_remaining": "",
                         "applied": applied,
-                        "keyword_flag": has_skip_keyword(html2),
+                        "keyword_flag": has_skip_keyword(kctx),
                     })
                     out(f"    ✅ {x_url[:65]}...")
                 except Exception as e:

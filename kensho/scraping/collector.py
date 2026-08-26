@@ -19,6 +19,7 @@ from kensho.scraping.sources import (
     extract_detail_links,
     extract_rd_link,
     fetch,
+    has_skip_keyword,
     is_x_url,
     load_json,
     resolve_redirect,
@@ -286,6 +287,8 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
                     "prize_score": prize_score,
                     "applied": applied,
                     "tweet_text": tweet_text,
+                    # ★ 2026-08-26: 引用RT・コメント応募のフラグ（applierでスキップする）
+                    "keyword_flag": has_skip_keyword(tweet_text),
                 })
                 success += 1
 
