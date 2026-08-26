@@ -638,6 +638,7 @@ def apply_for_account(
                 tweet_id, screen_name = extract_tweet_id_and_screen_name(clean_url)
                 # ★ 2026-08-26: セッション内重複アクション検出用
                 _rt_already_done = False
+                _follow_already_done = False
                 if not tweet_id:
                     out(f"  [{global_idx}/{max_n}] [SKIP] URL解析失敗: {clean_url[:50]}")
                     continue
@@ -1051,6 +1052,18 @@ def apply_for_account(
                     out(
                         "  [SKIP] フォロー: 本日既にいいね成功済み（前セッション）→ スキップ（同一ツイート多重アクション防止）"  # noqa: E501
                     )
+                # ★ 2026-08-26: 過去フォロー済みアカウントへの再フォロー防止
+                #   follow_done_all は当日のみ。前日以前にフォロー済みの垢は要件充足済みなので
+                #   再フォローせず _follow_already_done=True で応募成立を維持（_rt_already_done と同型）。
+                #   X上で無効なアクション（既フォローへの再フォロー）を排除し、記録と実態の剥離を防ぐ。
+                if not skip_follow and screen_name:
+                    from kensho.application.follow_state_manager import FollowStateManager
+
+                    _fsm_hist = FollowStateManager(account_key)
+                    if _fsm_hist.get_total_follows(screen_name) >= 1:
+                        skip_follow = True
+                        _follow_already_done = True
+                        out(f"  [SKIP] フォロー: {screen_name}は過去にフォロー済み → 要件充足（スキップ）")
 
                 def _make_follow_with_record(
                     _acct: str,
@@ -1330,7 +1343,9 @@ def apply_for_account(
                 #   従来 len(action_queue)==0 でも success 扱いになり、実際はアクション0件なのに
                 #   「12成功」と水増し計上されていた（atushi16実測: ログ12成功/実アクション7件）。
                 #   スキップのみは applied 付与（再処理防止）するが success には数えない。
-                _qualify: bool = tweet_result in ("tweet_ok", None) and (any(_per_item_ok.values()) or _rt_already_done)
+                _qualify: bool = tweet_result in ("tweet_ok", None) and (
+                    any(_per_item_ok.values()) or _rt_already_done or _follow_already_done
+                )
                 _skipped_only: bool = len(action_queue) == 0
                 if tweet_result and tweet_result != "tweet_ok":
                     item.setdefault("results", {})[account_key] = tweet_result

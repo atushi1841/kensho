@@ -99,3 +99,23 @@ def test_total_follow_upper_bound(tmp_path: Path) -> None:
     # 通算4回 = 生涯上限到達 → 今日の日次枠が残っていても拒否
     assert m.should_follow("ownerL") is False
     assert m.get_total_follows("ownerL") == MAX_FOLLOWS_PER_OWNER_TOTAL
+
+
+def test_prior_history_treated_as_already_followed(tmp_path: Path) -> None:
+    """前日以前のフォロー履歴がある垢は「要件充足」判定（applierの再フォロー防止）。
+
+    2026-08-26追加: applier.py が get_total_follows >= 1 でフォローをスキップし
+    _follow_already_done=True とする根拠を保証する。前日以前にフォロー済みの垢への
+    再フォローはX上で無効なアクション（新規フォローにならない）ため、
+    記録と実態の剥離を防ぐのが目的。
+    """
+    m = _make_manager(tmp_path)
+    # 昨日フォロー済み（前日以前の履歴のみ・今日の履歴なし）
+    m._state.setdefault("test_acct", {}).setdefault("followed", {}).setdefault(
+        "ownerPrev",
+        ["2026-08-25"],
+    )
+    # 従来の日次/通算上限チェック（should_follow）では今日まだフォロー可と判定されるが、
+    # applierの新チェックは get_total_follows >= 1 で再フォローをスキップする（要件充足）。
+    assert m.should_follow("ownerPrev") is True
+    assert m.get_total_follows("ownerPrev") >= 1
