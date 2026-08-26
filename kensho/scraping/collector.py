@@ -474,8 +474,10 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
                         else:
                             text_skipped += 1  # no og:description meta
                     else:
+                        out(f"    [ERROR] fixupx: {x_url} (HTTP {_fx_resp.status_code})")
                         text_errors += 1
                 except Exception:
+                    out(f"    [ERROR] fixupx例外: {x_url}")
                     text_errors += 1
 
             if (idx + 1) % 10 == 0:
@@ -489,6 +491,21 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         out(f"  Tweet Text一括取得完了: 成功{text_fetched} / スキップ{text_skipped} / エラー{text_errors}")
     else:
         out("\n[Step 4 Tweet Text Fetch] 未取得アイテムなし（スキップ）")
+
+    # ★ 提案39: Step 4終了後、tweet_textベースでkeyword_flagを再評価（cpmeikan/kenkakuのHTMLコンテキスト過検出是正）
+    rechecked: int = 0
+    cleared: int = 0
+    for item in merged:
+        if item.get("keyword_flag") and item.get("tweet_text"):
+            rechecked += 1
+            if not has_skip_keyword(item["tweet_text"]):
+                item["keyword_flag"] = False
+                cleared += 1
+    if rechecked > 0:
+        out(
+            f"  [keyword_flag再評価] {rechecked}件中{cleared}件の過検出を解除"
+            f"（残り{rechecked - cleared}件が正当な引用/コメント）"
+        )
 
     result: dict[str, Any] = {
         "timestamp": datetime.now().isoformat(),

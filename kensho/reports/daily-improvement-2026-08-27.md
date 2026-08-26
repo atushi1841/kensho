@@ -142,3 +142,100 @@ wifi_watchdogをcroneq環境(env -i PATH=/usr/bin:/bin)で実行したところ�
 ### 6. 新規発見・注意点
 - 収集プール枯渇傾向は継続（8/26 21:00 0新規）。8/27朝〜昼の収集で新規が入らなければ応募数低下の要因。→ 前回申し送り#5のとおり
 - 提案28の `targets.get(acct, 50)` は未設定アカウントを暗黙に50で扱う。将来ACCOUNTSに垢を追加する際はconfigの `daily_target` も同時に設定すること（設定漏れでもクラッシュしないが、目標値がデフォルト50になる）。
+
+---
+
+## QA検証結果（3回目: 05:10-05:20 実施・watchdog egress恒久化 f3d39f4検証）
+
+### 対象: 申し送り「watchdog再起動判定にegress死活チェック（LISTENINGのみの再起動防止）」（commit f3d39f4 @ 05:01）
+
+### 1. pytest
+```
+172 passed, 4 skipped in 44.13s
+```
+前回（03:10）169→172に+3（新規テスト3件）。全通過・回帰なし。
+
+### 2. git状態
+- ワーキングツリー: クリーン ✅
+- 最新コミット: 7eb934a（Worker実装記録追記）
+- 実装コミット: f3d39f4（watchdog egress恒久化）
+
+### 3. 差分確認（申し送り vs 実装）
+- **申し送り「watchdog再起動判定にegress死活チェック」✅ 一致**:
+  - `_kill_listeners(port)` 新規追加（proxy_watchdog.py line 91-119）: `Get-CimInstance` でCommandLineに `kensho_proxy` + ` <port>\s*$` を含むプロセスを全てkill → その後 `Get-NetTCPConnection` のLISTENING PIDもkill。1085型13重起動の掃除方式（skill「プロキシ多重起動の掃除方法」）を採用
+  - `restore_dead_proxies` の再起動前に `_kill_listeners(port)` を呼ぶ（line 309）— 多重LISTENING積み上がり防止
+  - `PS` 定数（フルパス、line 39）使用 — cron環境（PATH=/usr/bin:/bin）対応
+  - テスト3件: `test_kill_listeners_invokes_powershell` / `test_kill_listeners_handles_timeout` / `test_kill_listeners_handles_oserror` — 全通過 ✅
+  - 意図しない副作用なし（_check_egress・_adapter_ipv4・_restoreロジックは不変）
+
+### 4. ライブ計測（05:15実施）
+```
+1081 atushi16:     219.104.132.236 ✅
+1082 kudou:        106.146.10.71   ✅
+1083 chugakujuken: 106.146.25.190  ✅
+1084 zin20120731:  不通（継続）     ❌
+1089 inobase1-4:   106.146.26.95   ✅
+```
+- 生存4/5、出口IPは全てユニーク（IP分離維持）✅
+- **注意**: 1082/1083/1089に各2重のkensho_proxyプロセスが残存（旧多重起動の残骸）。`_kill_listeners`は「再起動時」にのみ発動するため、egress生存中の残骸は自動掃除されない。実害なし（LISTENINGは機能・IP分離も正常）だが、恒久クリーンアップを望むなら再起動トリガーだけでなく定周期の掃除パスも検討余地あり
+
+### 5. 前回申し送りの状態
+| 申し送り | 状態 |
+|---------|------|
+| watchdog egress死活チェック恒久化 | ✅ f3d39f4で実装・検証済み（本ラン） |
+| 提案27（keyword_flag効果監視） | ⏳ 8/27朝バッチ後（08:00以降）で確認 |
+| 1084(zin)不通 | ⏳ 夜間切断継続（05:15時点も不通・78回超バックオフ） |
+| RESTフォールバックempty_response | ⏳ 継続監視（8/26最終: 31件） |
+| mypy strict 33エラー | ⏳ 既知の技術負債 |
+
+### 6. 新規発見・注意点
+- **既存の多重プロセス残骸は自動掃除されない**: `_kill_listeners`は再起動時にのみ発動。egress生存中の多重プロセス（1082/1083/1089各2重）はそのまま残る。BOT検出リスクはないが、リソース上の雑味。stop_proxies.ps1全kill→クリーン再起動で解消可能
+- **1084(zin) 78回超バックオフ継続**: 朝08:00バッチで復旧確認。不通継続ならconfigコメントアウト検討（Critic提案29のとおり）
+- **TankanNotesアダプタ名変更**（Tankan_8iP6s → Tankan_2_redmi_n9s）: proxy_watchdog.py の PROXY_ADAPTER_MAP/WIFI_SSID_MAP には反映済み（line 21, 30）✅。start_proxies系とgen_status_html.pyの更新は未確認（コメントアウト中で実害なし・優先度低）
+
+---
+
+## QA検証結果（4回目: 07:20-07:35 実施・夜間worker 06:48出力検証）
+
+### 対象: nightly-worker 06:48出力（コミット新規なし・報告追記のみ）
+
+### 1. pytest
+```
+172 passed, 4 skipped in 32.96s
+```
+前回（05:10）と同数。新規コード変更なしのため回帰なし。
+
+### 2. git状態
+- 最新コミット: 7eb934a（05:05、Worker実装記録追記）— 06:48 workerは新規コミットなし
+- ワーキングツリー: `kensho/reports/daily-improvement-2026-08-27.md`（05:10 QA追記分）+ `reports/critic_proposal_2026-08-27.md` が未コミット。**QA追記分をコミットし忘れている状態**（実害なし・次回workerコミット時に含まれる見込み）
+
+### 3. 差分確認（提案 vs 実装）
+- 06:48 worker出力は既存内容の再掲（f3d39f4 watchdog egress恒久化の報告）。新規実装なし → 差分確認対象なし
+
+### 4. ライブ計測（07:25実施）
+```
+1081 atushi16:     219.104.132.236 ✅
+1082 kudou:        106.146.10.71   ✅
+1083 chugakujuken: 106.146.25.190  ✅
+1084 zin20120731:  106.146.14.220  ✅ ← ★復旧（8/26 22:20切断 → 8/27 06:25回復）
+1085 TankanNotes:  不通（コメントアウト中・想定内）❌
+1089 inobase1-4:   106.146.26.95   ✅
+```
+- 生存4/5、出口IP全てユニーク（IP分離維持）✅
+- **★ zin(1084)復旧を確認**: wifi_watchdogログで 06:25 に `✅ zin_AW6povo -> 接続済み` + `✅ プロキシ1084(zin_AW6povo) 生存（egress OK）`。f3d39f4のegress死活チェックが正常動作し「接続済みだがegress不通」を正しく判定→復旧検出。プロセスは同一PID 17128のまま（アダプタ側の復旧でありプロセス再起動なし）
+- **プロキシ多重プロセス**: 1082/1083/1089の各2重残骸は依然残存（05:10と同じ・`_kill_listeners`は再起動時のみ発動のため）
+- **1086(inobase1-1)**: LISTENING 1だがegress不通（凍結垢の残骸プロキシ。configからは除去済みのため実害なし）
+
+### 5. 前回申し送りの状態
+| 申し送り | 状態 |
+|---------|------|
+| watchdog egress死活チェック恒久化 | ✅ f3d39f4で実装・検証済み（本ランでzin復旧検出を実証） |
+| 提案27（keyword_flag効果監視） | ⏳ 8/27朝バッチ後（08:00以降）で確認 |
+| **1084(zin)不通** | ✅ **復旧（06:25）**。申し送りクローズ。08:06最初のバッチで動作確認予定 |
+| RESTフォールバックempty_response | ⏳ 継続監視 |
+| mypy strict 33エラー | ⏳ 既知の技術負債 |
+
+### 6. 新規発見・注意点
+- **zin復旧により5垢全部がアクティブに**: atushi16/kudou/chugakujuken/zin/inobase1-4 の5垢で08:00以降のバッチがフル稼働見込み。zinの最終応募は8/26 21:17（切断前）なので、8/27 08:06バッチで再開確認
+- **06:48 workerは報告のみで新規実装なし** — 2時間おきworkerのうち実装は05:01(f3d39f4)で完了。次回実装は次サイクルのcritic提案待ち
+- **未コミットのQA追記**: daily-improvement-2026-08-27.md にQA検証結果（05:10/07:20分）が未コミット。次回workerのコミットに含まれる想定だが、QA側でコミットする運用に変更しても良い（検討事項）

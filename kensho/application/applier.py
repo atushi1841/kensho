@@ -631,18 +631,21 @@ def apply_for_account(
 
             # ★ 引用RT・コメント応募のスキップ（AI対応不可 — 通常RT/フォローでは当選条件を満たせない）
             if item.get("keyword_flag", False):
-                # ★ 2026-08-27提案24: 収集時のHTMLコンテキスト判定は過検出する場合があるため、
-                #   CDN tweet-textで再判定する（cpmeikan/kenkakuの記事ナビ/フッター誤判定を是正）
+                # ★ 2026-08-27提案38: 収集時tweet_textを優先で再判定（281件の過検出を確実に解除）
+                #   収集時tweet_textが全件存在するため、CDN再フェッチ（ネットワーク依存）はフォールバックに
                 _flag_tweet_id, _ = extract_tweet_id_and_screen_name(clean_url)
-                _flag_recheck_text = ""
-                if _flag_tweet_id:
+                # 収集時tweet_textを優先（CDN再フェッチ不要）
+                _flag_recheck_text = item.get("tweet_text", "") or ""
+                if not _flag_recheck_text and _flag_tweet_id:
                     try:
                         _flag_recheck_text = api_get_tweet_text(page, _flag_tweet_id, log_fn=out)
                     except Exception:
                         _flag_recheck_text = ""
                 if _flag_recheck_text and not has_skip_keyword(_flag_recheck_text):
-                    # CDN本文にキーワードなし → 収集時の誤判定（過検出）。応募機会を損失しないため処理継続
-                    out(f"  [{global_idx}/{max_n}] [INFO] 引用/コメント判定をCDN再判定で解除（収集時誤判定）→ 処理継続")
+                    # tweet_textにキーワードなし → 収集時の誤判定（過検出）。応募機会を損失しないため処理継続
+                    out(
+                        f"  [{global_idx}/{max_n}] [INFO] 引用/コメント判定を収集時tweet_textで解除（過検出）→ 処理継続"  # noqa: E501
+                    )
                     if not item.get("tweet_text"):
                         item["tweet_text"] = _flag_recheck_text  # NGフィルター用に書き戻し（state.saveで保存）
                 else:
