@@ -1009,3 +1009,5 @@ Critic第7版（14:25）の**提案8【高・回帰修正】VERIFY失敗をfailu
 
 ## テスト結果
 `uv run python -m pytest tests/ -q --ignore=tests/test_invisible_playwright.py` → **168 passed, 4 skipped**（cron稼働中でPlaywright実ブラウザ以外全通過）
+
+**コミット: `3d6c205`**（Worker実装記録確定。pre-commit全通過・ワークツリークリーン）
