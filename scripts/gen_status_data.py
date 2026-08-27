@@ -388,14 +388,15 @@ WIFI_ADAPTER_TO_ACCOUNT = {
     "chugakujuken_RM10JE_S": "chugakujuken",
     "zin_AW6povo": "zin20120731",
     "Tankan_2_redmi_n9s": "TankanNotes",  # 旧アダプタ名（2_povo_tankanに改名済み・参照残は実害なし）
-    "2_povo_tankan": "TankanNotes",
+    "2_povo_tankan": "TankanNotes",  # 旧アダプタ名（Tankan_HR01に改名済み・参照残は実害なし）
+    "Tankan_HR01": "TankanNotes",  # 2026-08-27: ワイモバイルHR01切替
     "inobase1-4": "inobase1-4",
 }
 WIFI_ACCOUNT_SSID = {
     "kudou": "RM10JE_B",
     "chugakujuken": "RM10JE_S",
     "zin20120731": "AiR-WiFi_6_povo",
-    "TankanNotes": "2_povo_HR01",
+    "TankanNotes": "10_ymo_HR01",  # 2026-08-27: ワイモバイルHR01 (旧 2_povo_HR01)
     "inobase1-4": "ino1_4_oppo_r5a",
 }
 

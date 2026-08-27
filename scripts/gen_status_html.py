@@ -11,16 +11,21 @@ DATA_FILE = "/tmp/kensho_status_data.json"
 OUTPUT_FILE = "/mnt/d/Project2/kensho/kensho-status.html"
 
 ACCOUNT_ADAPTERS = {
-    "atushi16": ("自宅有線LAN", "RJ45直結"),
-    "kudou": ("kudou_RM10JE_B", "RM10JE_B"),
-    "chugakujuken": ("chugakujuken_RM10JE_S", "RM10JE_S"),
-    "zin20120731": ("zin_AW6povo", "AiR-WiFi_6_povo"),
-    "TankanNotes": ("2_povo_tankan", "2_povo_HR01"),
-    "inobase1-4": ("inobase1-4", "ino1_4_oppo_r5a"),
+    # account: (アダプタ名, SSID, 回線種別)
+    "atushi16": ("自宅有線LAN", "RJ45直結", "自宅"),
+    "kudou": ("kudou_RM10JE_B", "RM10JE_B", "povo"),
+    "chugakujuken": ("chugakujuken_RM10JE_S", "RM10JE_S", "povo"),
+    "zin20120731": ("zin_AW6povo", "AiR-WiFi_6_povo", "povo"),
+    "TankanNotes": (
+        "Tankan_HR01",
+        "10_ymo_HR01",
+        "ワイモバイル",
+    ),  # 2026-08-27: povo HR01(2_povo_tankan)から切替。アダプタ名もWi-Fi→Tankan_HR01にリネーム
+    "inobase1-4": ("inobase1-4", "ino1_4_oppo_r5a", "povo"),
 }
 
 # UNUSED（応募停止済み）: cron再生成でも維持されるようハードコード（2026-08-17）
-UNUSED_ADAPTERS: dict[str, tuple[str, str]] = {}
+UNUSED_ADAPTERS: dict[str, tuple[str, str, str]] = {}
 
 
 def load_data():
@@ -210,13 +215,13 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
     rows.sort(key=lambda x: -x[6])
 
     html += '<div class="card"><div class="card-title">accounts</div><table>'
-    html += "<tr><td>account</td><td>adapter / SSID</td><td>today</td><td>total</td><td>DEFER</td><td>pending</td><td>actions</td></tr>"
+    html += "<tr><td>account</td><td>回線 / adapter / SSID</td><td>today</td><td>total</td><td>DEFER</td><td>pending</td><td>actions</td></tr>"
     for ac, at, ad, f_val, r_val, l_val, total, badge, label in rows:
         ta = ad["total_applied_all"]
         defer = ad.get("defer_count", 0)
         pending = ad["pending"]["total"]
-        adapter, ssid = ACCOUNT_ADAPTERS.get(ac, ("", ""))
-        adapter_display = f"{adapter} ({ssid})" if adapter else "—"
+        adapter, ssid, carrier = ACCOUNT_ADAPTERS.get(ac, ("", "", ""))
+        adapter_display = f"[{carrier}] {adapter} ({ssid})" if adapter else "—"
         html += f'<tr><td>{ac} <span class="badge {badge}">{label}</span></td><td class="num">{adapter_display}</td><td class="accent">{at}</td><td class="num">{ta}</td><td class="num">{defer}</td><td class="num">{pending}</td><td class="num">F{f_val} RT{r_val} <3{l_val}</td></tr>'
     html += "</table></div>"
 
@@ -252,11 +257,20 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
             return RED
 
         html += '<div class="card"><div class="card-title">wifi テザリング状態（watchdog）</div><table>'
-        html += "<tr><td>account</td><td>adapter / SSID</td><td>現信号%</td><td>Rssi(dBm)</td><td>今日</td><td>今日障害率</td><td>7日障害率</td><td>状態</td></tr>"
+        html += "<tr><td>account</td><td>回線 / adapter / SSID</td><td>現信号%</td><td>Rssi(dBm)</td><td>今日</td><td>今日障害率</td><td>7日障害率</td><td>状態</td></tr>"
         for ac in sorted(wifi.keys()):
             w = wifi[ac]
-            adapter = w.get("adapter") or "—"
-            ssid = w.get("ssid", "")
+            # ACCOUNT_ADAPTERSを優先表示（現在の正しい構成）。実測adapter/ssidはwatchdog次回集計まで古いことがある
+            acc = ACCOUNT_ADAPTERS.get(ac)
+            if acc:
+                adapter = acc[0]
+                ssid = acc[1]
+                carrier = acc[2]
+            else:
+                adapter = w.get("adapter") or "—"
+                ssid = w.get("ssid", "")
+                carrier = ""
+            carrier_tag = f"[{carrier}] " if carrier else ""
             sig = w.get("signal")
             rssi = w.get("rssi")
             ok_t = w.get("ok_today", 0)
@@ -288,7 +302,7 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
             else:
                 state = '<span class="num">不明</span>'
             html += (
-                f'<tr><td>{ac}</td><td class="num">{adapter} ({ssid})</td>'
+                f'<tr><td>{ac}</td><td class="num">{carrier_tag}{adapter} ({ssid})</td>'
                 f"<td>{sig_cell}</td><td>{rssi_cell}</td>"
                 f"<td>{today_cell}</td><td>{rate_t_disp}</td><td>{rate7_disp}</td><td>{state}</td></tr>"
             )
@@ -303,8 +317,10 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
             key = u.get("key", "")
             disp = u.get("display", key)
             reason = u.get("reason", "")
-            adapter, ssid = UNUSED_ADAPTERS.get(key, ("—", "—"))
-            adapter_display = f"{adapter} ({ssid})" if adapter else "—"
+            adapter, ssid, carrier = UNUSED_ADAPTERS.get(key, ("—", "—", ""))
+            adapter_display = (
+                f"[{carrier}] {adapter} ({ssid})" if adapter and carrier else f"{adapter} ({ssid})" if adapter else "—"
+            )
             html += f'<tr><td>{disp} <span class="badge bg-red">unused</span></td><td class="num">{adapter_display}</td><td class="num">{reason}</td></tr>'
         html += "</table></div>"
 

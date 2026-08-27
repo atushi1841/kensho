@@ -18,21 +18,28 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
     "kudou": (1082, "kudou_RM10JE_B"),
     "chugakujuken": (1083, "chugakujuken_RM10JE_S"),
     "zin20120731": (1084, "zin_AW6povo"),
-    "TankanNotes": (1085, "2_povo_tankan"),
+    # 2026-08-27: povo HR01(2_povo_tankan)からワイモバイルHR01(Tankan_HR01 / 10_ymo_HR01)へ切替。
+    #   アダプタ名: Wi-Fi → Tankan_HR01 にリネーム済み。bind方式(IP直指定)で起動（2026-08-27 17:10）。
+    #   ※ --no-bind不可: メトリック最下位によりデフォルトルート=自宅有線のため、--no-bindだと自宅IPリーク。
+    "TankanNotes": (1085, "Tankan_HR01"),
     "inobase1-4": (1089, "inobase1-4"),
 }
 
 # ── WiFi SSID マップ（自動再接続用）──
+# 2026-08-27: TankanNotes → ワイモバイルHR01(10_ymo_HR01)へ切替
 WIFI_SSID_MAP: dict[str, str] = {
     "kudou": "RM10JE_B",
     "chugakujuken": "RM10JE_S",
     "zin20120731": "AiR-WiFi_6_povo",
-    "TankanNotes": "2_povo_HR01",
+    "TankanNotes": "10_ymo_HR01",
     "inobase1-4": "ino1_4_oppo_r5a",
 }
 
 PROXY_HOST = "172.26.80.1"
 PROXY_TIMEOUT = 5  # seconds
+
+# --no-bind 必須アカウント（2026-08-27: ワイモバイルHR01はbind方式で解決したため
+#   TankanNotesを除外。--no-bindは全垢で不使用）
 
 # cron環境（PATH=/usr/bin:/bin）では powershell.exe が解決不能のためフルパス指定。
 # 2026-08-20 に wifi_watchdog で修正済みの既知パターン。proxy_watchdog への適用。
@@ -314,11 +321,13 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
             # 3. Restart via Start-Process (hidden)
             #    Pass the resolved real IPv4 (not the adapter name) so that
             #    kensho_proxy.py skips its fragile `ipconfig /all` parsing.
+            #    全垢 bind方式（IP直指定）で起動。--no-bindは不使用（2026-08-27: IP分離維持のため）
             # ------------------------------------------------------------------
+            no_bind_arg = ""
             restart_script = (
                 f"Start-Process "
                 f"-FilePath 'C:\\Users\\1F\\AppData\\Local\\Programs\\Python\\Python311\\python.exe' "
-                f"-ArgumentList 'C:\\tools\\kensho-proxy\\kensho_proxy.py','{ip}','{port}' "
+                f"-ArgumentList 'C:\\tools\\kensho-proxy\\kensho_proxy.py'{no_bind_arg},'{ip}','{port}' "
                 f"-WindowStyle Hidden"
             )
             restart_cmd = [PS, "-Command", restart_script]

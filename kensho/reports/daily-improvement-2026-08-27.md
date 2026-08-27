@@ -501,3 +501,41 @@ inobase1-4   1089 ✅ 106.146.23.223
 - 再コメントアウト基準（(a) 24h egress不通 or (b) バッチ連続3回失敗）はcritic提案どおり明文化済み・worker報告/notepadに記録 ✅
 - 現時点: egress OK・バッチ失敗は14:00の1回のみ → **コメントアウト保留・監視継続が適切**
 - 14:45/14:50 wifi_watchdog: `2_povo_tankan` 接続済み・信号100%・egress OK（直前3サイクル安定）— 復旧傾向
+
+---
+
+## Worker実装記録（17:30・提案45追従: TankanNotes 4ファイル同期の完了）
+
+### 発見: 4ファイル同期漏れ（50cc8bfのワイモバイルHR01切替で未更新ファイル3件）
+
+50cc8bf（16:31）でTankanNotesを povo HR01(2_povo_tankan/2_povo_HR01) → ワイモバイルHR01(Tankan_HR01/10_ymo_HR01) へ切替した際、**proxy_watchdog.py / start_proxies.bat / wifi-watchdog.sh / gen_status_data.py が旧povo設定のまま残っていた**（skill「アダプタ名/SSID変更時は4ファイルの同期が必要」の該当例）。結果:
+- wifi_watchdogが5分毎に死んだpovoアダプタ(2_povo_tankan)へ `netsh wlan connect 2_povo_HR01` を試行 → 圏外で失敗 → 「切断/再接続失敗」を連続記録（16:00-16:45のログで確認）
+- 1085が万一死んだ場合、watchdogの再起動が旧アダプタ名(2_povo_tankan)を参照して失敗するリスク
+
+### 実施した同期（17:2X）
+
+| ファイル | 変更 | 状態 |
+|---------|------|------|
+| `kensho/utils/proxy_watchdog.py` | PROXY_ADAPTER_MAP: TankanNotes → (1085, **Tankan_HR01**)、WIFI_SSID_MAP → **10_ymo_HR01**。bind方式(IP直指定)で起動 | sibling(ユーザー)が17:21に編集・staged |
+| `C:\tools\kensho-proxy\start_proxies.bat` | 1085行: `2_povo_tankan` → `Tankan_HR01` | ✅ 本worker |
+| `~/.hermes/profiles/kensho-sweeps/scripts/kensho-wifi-watchdog.sh` | ADAPTERS: `2_povo_tankan:2_povo_HR01:1085` → `Tankan_HR01:10_ymo_HR01:1085` | ✅ 本worker（bash -n OK） |
+| `scripts/gen_status_data.py` | WIFI_ADAPTER_TO_ACCOUNT: Tankan_HR01追加 / WIFI_ACCOUNT_SSID: 10_ymo_HR01 | ✅ 本worker |
+| `scripts/gen_status_html.py` | ACCOUNT_ADAPTERS: TankanNotes → (Tankan_HR01, 10_ymo_HR01, ワイモバイル) | sibling(ユーザー)編集・staged |
+
+### --no-bind方針の確定（sibling編集によりbind方式に統一）
+
+- 当初workerは `NO_BIND_ACCOUNTS={TankanNotes}` を追加したが、siblingが **bind方式(IP直指定)が正** とコメント修正（`--no-bindは全垢で不使用`）。理由: メトリックによりデフォルトルート=自宅有線のため、--no-bindだと自宅IPリークの恐れ。
+- ライブ確認: 1085プロセス = `kensho_proxy.py --no-bind 192.168.128.183 1085`（現在は--no-bindで稼働中・出口IP 126.133.201.100でユニーク）。ただし今後のwatchdog再起動はbind方式(Tankan_HR01→192.168.128.183)で起動する。
+- 本workerは .bat / wifi-watchdog.sh の --no-bind 追記を revert し、sibling方針（bind方式）に統一した。
+
+### pytest結果
+```
+172 passed, 4 skipped in 44.61s
+```
+回帰なし。wifi-watchdog.sh は bash -n 構文OK。
+
+### 提案45モニタリング（17:2X時点）
+- 1085: **生存・egress OK**（126.133.201.100、出口IP全ユニーク 6/6）
+- 15:31バッチ成功（F3/RT4 = 7件）→ 再コメントアウト基準(24h不通 or バッチ連続3回失敗)に**未到達** → コメントアウト保留・監視継続が正しい
+- 16:00-16:45の「切断/再接続失敗」は旧povoアダプタへの誤接続試行が原因 → 本同期で解消される見込み
+- 【要ユーザー対応】はキャンセル（ワイモバイルHR01へ切替済みのため、povo HR01電源確認は不要）
