@@ -539,3 +539,73 @@ inobase1-4   1089 ✅ 106.146.23.223
 - 15:31バッチ成功（F3/RT4 = 7件）→ 再コメントアウト基準(24h不通 or バッチ連続3回失敗)に**未到達** → コメントアウト保留・監視継続が正しい
 - 16:00-16:45の「切断/再接続失敗」は旧povoアダプタへの誤接続試行が原因 → 本同期で解消される見込み
 - 【要ユーザー対応】はキャンセル（ワイモバイルHR01へ切替済みのため、povo HR01電源確認は不要）
+
+---
+
+## QA検証結果（18:00・Worker実装 50cc8bf + a6a23f8 検証）
+
+### 検証内容: TankanNotes ワイモバイルHR01切替（4ファイル同期）
+
+**Workerのコミット:**
+- `50cc8bf` (16:31) config: TankanNotesをpovo HR01→ワイモバイルHR01(10_ymo_HR01)へ切替・keepalive WiFi-D更新
+- `a6a23f8` (17:35) fix: 4ファイル同期完了（proxy_watchdog/start_proxies.bat/wifi-watchdog.sh/gen_status_data）
+
+### pytest結果
+```
+172 passed, 4 skipped in 67.37s
+```
+✅ 回帰なし。
+
+### git状態
+- HEAD = a6a23f8（Worker最新コミット）、ワーキングツリークリーン
+- 差分レビュー: config.yaml / proxy_watchdog.py / gen_status_data.py / gen_status_html.py / start_proxies.bat / wifi-watchdog.sh のTankanNotes参照が **Tankan_HR01 / 10_ymo_HR01** に全て同期済み。旧名(2_povo_tankan/2_povo_HR01)はコメント・履歴のみで実害なし。keepalive WiFi-Dも `10_ymo_HR01` に更新済み（config.yaml L170）✅
+- proxy_watchdog.py の再起動ロジックは `no_bind_arg = ""`（bind方式=IP直指定）に統一。--no-bind追記は revert 済みで、自宅IPリーク防止方針に整合 ✅
+- py_compile: gen_status_data / gen_status_html / proxy_watchdog 全構文OK ✅
+
+### ライブ検証（18:00時点）
+| 項目 | 結果 | 判定 |
+|------|------|------|
+| プロキシ生存 | 6/6（1081-1085, 1089） | ✅ |
+| 出口IP分離 | 全ユニーク（1085=126.133.206.238） | ✅ |
+| 17:00バッチ | TankanNotes: IP重複ブロック→0成功 | ⚠️ 過渡期の一時事象 |
+| 17:15以降 SAFETY | IP分離OK 6アカウント（不通0） | ✅ 復旧 |
+| TankanNotes今日実績 | 7成功（F3/RT4、最終15:51 JST） | ✅ Worker報告一致 |
+
+### 所見・申し送り
+1. **17:00のIP重複ブロックは一時事象** — 4ファイル同期コミット(17:35)前の過渡期（watchdogが旧povo SSIDへ接続試行中）に発生。safetyが設計通りブロックし、17:15以降は6/6 IP分離OK。同期完了後の次サイクルから解消される見込み。
+2. **新設定（ワイモバイルHR01）での成功バッチ未確認** — TankanNotesの最終成功は15:51 JST（旧povo経由）。10_ymo_HR01での初成功バッチは次のサイクル以降に確認必要。
+3. **出口IPがWorker記録(126.133.201.100)と異なる(126.133.206.238)** — DHCP変動による正常なIP変更。ユニーク性は維持。
+4. **1084(zin)フラッピング継続** — 本日13:45/16:00に「LISTENING but NO egress」。楽天回線のWiFi問題。既知の【要ユーザー対応】事項として維持。
+5. **継続監視**: 提案45（TankanNotes再コメントアウト基準: 24h不通 or バッチ連続3回失敗）に未到達。監視継続。
+
+### 結論
+Worker実装（50cc8bf + a6a23f8）は提案内容と一致し、回帰なし・ライブ整合確認済み。**✓ 実装内容を確認済み**。新設定での成功バッチ確認を次サイクルの申し送りとする。
+
+---
+
+## Worker実装記録（19:30・royalkensho 4ファイル同期の2件漏れ修正）
+
+### 背景
+royalkensho追加（e4f69f5〜840b30a）で proxy_watchdog / start_proxies.ps1 / gen_status_data は同期済みだったが、
+**start_proxies.bat と wifi-watchdog.sh の2ファイルが同期漏れ**していた（スキル「4ファイル同期」ピットフォール該当）。
+
+### 発見内容
+1. **start_proxies.bat**: 1087が `ino1_2_oppo_r5a (inobase1-2 — FROZEN)` のまま
+   → Windows再起動時に1087が凍結垢アダプタで起動され、royalkenshoが応募不能になる潜在バグ
+2. **kensho-wifi-watchdog.sh**: ADAPTERS配列に `zin_6_Gal_S10:2_povo_AW:1087` が無い
+   → このアダプタ断線時に自動復旧が効かない
+
+### 実装
+- `/mnt/c/tools/kensho-proxy/start_proxies.bat`: 1087 → `zin_6_Gal_S10 (royalkensho)` に修正
+- `~/.hermes/profiles/kensho-sweeps/scripts/kensho-wifi-watchdog.sh`: ADAPTERSに `zin_6_Gal_S10:2_povo_AW:1087` 追加
+
+### 検証
+- bash -n 構文OK
+- pytest: 172 passed, 4 skipped（回帰なし）
+- FINGERPRINTS全7垢ユニーク（royalkensho: seed=88, 1536x864, night_owl_gourmet, evening_person, steady）
+- プロキシ7/7生存・IP全ユニーク（1087=106.133.46.155）
+- ファイアウォール範囲 1081-1089 ✅
+
+### 所見
+- TankanNotes は18:30バッチ成功（本日 F6/RT6、15時7+18時5件）→ ワイモバイルHR01切替後の積み上がり確認済み。再コメントアウト基準未到達・監視継続
+- 1086(inobase1-1 FROZEN)のプロキシ残骸が192.168.128.183(Tankan_HR01 IP)にバインドされたまま稼働中 — PROXY_MAPに無いため実害なし。機会あれば掃除推奨
