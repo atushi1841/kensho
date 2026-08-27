@@ -99,6 +99,10 @@ accounts:
   # ★ 2026-08-26 一時停止: プロキシ1085が4日連続egress不通（SOCKS5ハンドシェイクOK→CONNECT不可）。
   #   スマホ(Redmi Note 9S / SSID 2_redmi_n9s)テザリング側の実インターネット死。凍結ではない。
   # ★ 2026-08-27 復帰: povo HR01ルーター(SSID 2_povo_HR01)へ切替。アダプタ=2_povo_tankan、出口IP=106.133.43.14、重複なし確認済み。
+  # ★ 2026-08-27 15:55: ワイモバイルHR01(SSID 10_ymo_HR01, アダプタ=Wi-Fi RTL8188EU#2)へ切替。
+  #   原因: povo無課金が76-200Kbpsの速度制限で応募困難。ワイモバイルは直接アクセス確認済み(72.2Mbps)。
+  #   対策: 過去のnetsh portproxy(172.26.80.1:1086→192.168.125.5:1086)残骸がWSL接続を横取りしていた→削除。
+  #   kensho_proxy.pyに--no-bind追加(Wi-Fiアダプタはデフォルトルート経由で正常動作)。出口IP=126.133.201.100。
   - key: TankanNotes
     display: "@TankanNotes"
     session: "data/x_session_TankanNotes.json"
@@ -163,7 +167,7 @@ keepalive:
       wifi_profile: "AiR-WiFi_6_povo"
     - label: "WiFi-D (@TankanNotes)"
       type: wifi_monitor
-      wifi_profile: "2_povo_HR01"      # 2026-08-27 povo HR01切替 (旧 8_iP6s)
+      wifi_profile: "10_ymo_HR01"      # 2026-08-27 ワイモバイルHR01切替 (旧 2_povo_HR01)
 
 # ── レート制限（X BAN回避）──
 # 1垢あたりの日次上限。SocialNexis 2026年推奨値に準拠。
