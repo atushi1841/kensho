@@ -747,3 +747,91 @@ Worker実装（e4f69f5〜fcd0d1b）は提案内容と一致し、回帰なし・
 - 提案46（UA修正）: 実装・効果確認済み。
 - スループット(1)早期判定・(2)収集フィルタ: 実動確認済み。
 - フォロー超過6件: 複数垢×各1回の正常動作。
+
+---
+
+## QA検証結果（11回目: 2026-08-27 23:1X JST・worker 22:52出力 = 提案50 検証）
+
+### Worker実装検証: 1コミット（提案50 + 提案46 追認）
+
+| コミット | 時刻 | 内容 | 提案対応 |
+|---------|------|------|---------|
+| 4b45488 | 22:52 | 当日監査ギャップ是正（提案50）+ royalkensho監査カバレッジ追加 | 提案50 |
+
+※ 提案46（addfa18, royalkensho UA修正）は10回目で検証済み。今回追認: browser.py L230 `rv:151.0` が実バイナリ（firefox-1532 = 151.0）と一致。
+
+### pytest: 172 passed / 4 skipped (49.08s) ✅
+
+### 差分確認（4b45488）
+
+#### 提案50 — ✓ 実装内容を確認済み
+
+| 変更 | 内容 | 検証結果 |
+|------|------|---------|
+| scripts/audit_bot_safety.py | `--today`/`--state` フラグ追加。stateファイル(data/.audit_bot_safety_state.json)で既報シグナル抑制、NEW分のみ出力 | ✅ 実装妥当。`--state`単独=今日を意味する後方互換設計 |
+| scripts/audit_bot_safety.py | ACCOUNTSに `royalkensho` 追加（以前は監査対象外で28行がスキップ） | ✅ audit.jsonlにroyalkensho 28行存在（ただし全て監査済みになるのは今回から） |
+| cron新設 | `kensho-hourly-bot-safety-check`（5 * * * *、script: kensho-hourly-bot-audit.sh, no_agent） | ✅ cron登録確認・23:05実行済み ok |
+| .gitignore | stateファイルをランタイムデータとして追加 | ✅ |
+
+### cron登録確認（「機能はあるがcron未登録」のサイレント障害防止）
+
+```
+kensho-hourly-bot-safety-check   Schedule: 5 * * * *   Last run: 2026-08-27T23:05:45 ok
+kensho-daily-bot-safety-audit    Schedule: 0 1 * * *   （既存・翌日1:00に完全監査）
+```
+
+### 動作検証（--today --state 手動実行）
+
+```
+[audit_bot_safety] 2026-08-27: BOTシグナルなし (深夜ゼロ・連続なし・単独アクション)
+exit=0
+```
+- stateファイル生成確認: `data/.audit_bot_safety_state.json`（09:50多重が既報として記録済み）
+- 完全監査（--today、stateなし）では1件検出: `[多重] inobase1-4 2088792867397627932 (like+rt)`
+  - 実測: 09:50:51Z like / 09:52:30Z rt = **JST 09:50-09:52 = fb54962（10:54）修正前イベント**。既知・修正後0件維持 ✅
+  - hourly監査ではstate抑制によりNEWとして出ない = 設計通り
+
+### BOT安全監査（8/27 audit 264行: success 219 / skipped 28 / failed 17）
+
+| 指標 | 結果 | 判定 |
+|------|------|------|
+| 深夜(JST 00-06)アクション | 0件 | ✅ no_action_window正常 |
+| 同一ツイート多重 | 1件（inobase1-4 09:50 = 修正前） | ⚠️ 既知・新規0件 |
+| 同一主催者フォロー>4 | 0件 | ✅ |
+| 過集中・いいね単独連続 | 0件 | ✅ |
+| アカウント別成功 | atushi16 53 / kudou 54 / inobase1-4 42 / chugakujuken 35 / zin 28 / TankanNotes 24 / royalkensho 28 | ✅ 全7垢稼働 |
+
+### ライブ計測（23:1X時点）: 7/7生存・IP全ユニーク ✅
+
+| ポート | アカウント | IP | 結果 |
+|--------|-----------|-----|------|
+| 1081 | atushi16 | 219.104.132.236 | ✅ |
+| 1082 | kudou | 106.146.19.143 | ⚠️ 一時timed out → 再チェックで復旧 |
+| 1083 | chugakujuken | 106.146.1.156 | ✅ |
+| 1084 | zin20120731 | 106.146.25.56 | ✅ |
+| 1085 | TankanNotes | 126.133.207.113 | ✅ |
+| 1087 | royalkensho | 106.133.46.18 | ✅ **フラッピング後自動復旧** |
+| 1089 | inobase1-4 | 106.146.23.223 | ✅ |
+
+- **royalkensho(1087)復旧確認** — 10回目(21:15)のDisconnectedから自動復旧済み（watchdogのバックオフ試行が成功）。2_povo_AWの物理確認は再発リスク低減のため引き続き推奨。
+- **kudou(1082)一時不通** — check_proxiesでtimed out後、2回連続curlで復旧（信号46%と弱い）。watchdogログ23:05時点では「接続済み・egress OK」。一時的なPOVO揺らぎと判断。監視継続。
+
+### git状態
+- ワーキングツリークリーン（git status 空）
+- HEAD: 4b45488（提案50）
+
+### 次回への申し送り
+
+#### 🔴 Critical
+1. **kudou(1082) 一時不通・信号46%弱** — 23時台にtimed out発生（watchdogログ23:05では生存、check_proxiesではtimed out→即復旧）。POVOテザリング（kudou_RM10JE_B）の信号劣化。再発時は物理確認（スマホの場所/電波）を検討。BOT検出リスクなし（プロキシ生存）。
+
+#### 🟡 監視項目
+2. **royalkensho(1087) 2_povo_AWフラッピング** — 本日自動復旧済み（106.133.46.18）だが、21:05-21:15のフラッピング再発リスク。Galaxy S10のテザリング/省電力設定はユーザーに引き続き推奨。
+3. **収集新規0件（提案48）** — 13:00以降全ソース新規なし。明日の収集で継続なら原因調査。
+4. **inobase1-4 http_0×3（提案47）** — 監視継続。
+5. **hourly監査のstate運用** — STATE_KEEP_DAYS=3で自動掃除。初日動作確認済み。日次監査(1:00)との二重報告なしを確認済み。
+
+#### ✅ 確認済み
+- 提案50（当日監査ギャップ是正）: 実装・cron登録・動作（state抑制含む）確認済み。
+- royalkensho監査カバレッジ追加: audit.jsonlに28行存在、ACCOUNTS追加確認済み。
+- pytest 172 pass。BOT監査パス（新規多重0・深夜0）。
