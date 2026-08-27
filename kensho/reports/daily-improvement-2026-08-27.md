@@ -292,3 +292,50 @@ wifi_watchdogをcroneq環境(env -i PATH=/usr/bin:/bin)で実行したところ�
 ### 6. 新規発見・注意点
 - **QAの検証記録の未コミット問題を解消**: 本QAは追記後にコミットまで実行（notepad教訓「QA追記が未コミットになりがち」への対処。05:10/07:20分はworker b24b779が拾い上げ済み）
 - **提案39の再評価は収集cronでのみ発動**（`separate_cron=true` のためorchestratorのStep 4は収集を実行しない）。収集ログの `[keyword_flag再評価]` 行が毎回出るか監視継続
+
+---
+
+## Worker実装記録(2026-08-27 11:1x・提案41&42・commit fb54962)
+
+### 対象提案
+| 提案 | 危険度 | 内容 | 実装 |
+|------|--------|------|------|
+| 40 | 高 | inobase1-4(1089) プロキシ不安定 | ⏳ **コード変更なし**・調査のみ(下記) |
+| 41 | 中 | 引用ポスト案件のlike+rt多重(8/27 09:50) | ✅ applier.py |
+| 42 | 中 | 引用ポスト案件のkeyword_flag漏れ | ✅ common.py + 既存データ再付与 |
+
+### 提案40: inobase1-4(1089) プロキシ不安定 — 調査結果
+- **本Worker実行時点(11:1x)でcheck_proxies.pyが✅生存(106.146.23.223, 0.5s)**
+- watchdogログ(10:45まで)に「LISTENINGだがegress不通→kill→再起動→復旧→生存OK」のフラッピング記録あり(Ethernetアダプタ名 `Tankan_2_redmi_n9s` 由来の1085型と同型の一時的不安定パターン)
+- config.yamlのinobase1-4ブロックは**アクティブのまま**（daily_target=50、10バッチ@12件）
+- **結論**: 現時点で生存確認済みのためコメントアウトは保留。但し2週連続でフラッピング記録があるため、**再び長時間不通に陥る場合はTankanNotes同様の一時コメントアウトを検討**。スマホ(Redmi Note 9S/SSID ino1_4_oppo_r5a)のテザリング物理確認が必要な状態。
+
+### 提案41: like+rt多重防止(applier.py)
+- **原因特定**: `_like_in_text` 正規表現が景品説明の「💖」「❤」絵文字にマッチ → skip_like=Falseのまま、RTがキューに積まれていてもいいねが実行される経路。
+  - 実証: tweet 2088792867397627932 本文「...#マツココちいかわ をつけて引用ポスト」+「💖」。auditで like(09:50) → rt(09:52) の多重。
+- **修正**: いいね→フォロー切替ロジックに `skip_rt` 条件を追加
+  ```python
+  # 修正前
+  if _like_in_text and random.random() < _like_with_follow_rate:
+  # 修正後
+  if _like_in_text and skip_rt and random.random() < _like_with_follow_rate:
+  ```
+- **効果**: RTがキューにある案件はいいねをスキップ → RT+いいねの機械的多重を永久排除。フォロー+いいね(当選条件を満たす安全な2アクション)は従来通り維持(skip_rt=True時)。
+- **リスク評価**: 低。当選確率ほぼ不変(引用ポスト案件は元々AI応募不可)、BOT信号削減。
+
+### 提案42: 引用ポスト案件のフラグ漏れ(common.py)
+- **原因**: `_SKIP_KEYWORDS` に新UI用語「引用ポスト」「引用リポスト」「引用投稿」が不足。XのUI本文は「引用RT」→「引用リポスト/引用ポスト」に移行中。
+  - 実測: collected.jsonで「引用ポスト」19件「引用リポスト/引用投稿」計79件がkeyword_flag=Falseのまま = applierが処理(無駄なフォロー/RT)。
+- **修正**: 3フレーズを `_SKIP_KEYWORDS` に追加(フレーズ完全一致のみ。裸の「引用」は過検出を再発させるため追加しない)。
+- **既存データ再付与**: tweet_textベースで80件にフラグ追加(引用リポスト50/引用ポスト14/引用投稿3+組合せ)。source内訳: knshow36/cpmeikan28/kenshouclub9/ken-kaku1/kema1/None4。
+- **リスク評価**: 低-中。過検出281件解除(38&39)は維持(フレーズ一致に限定のため)、todo引用ポスト案件のフラグ漏れを塞ぐ。
+
+### テスト結果
+```
+172 passed, 4 skipped in 58.78s
+```
+回帰なし。コミット: fb54962(pre-commit通過)
+
+### 備考
+- data/collected.json はgitignore対象のランタイムデータ。再付与はライブデータのみ適用(コミット外)。
+- 収集cronのStep4再評価で将来の新規引用ポスト案件も自動フラグ付けされる(collector.py 提案39修正済み)。
