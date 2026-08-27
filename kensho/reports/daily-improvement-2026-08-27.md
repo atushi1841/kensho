@@ -339,3 +339,34 @@ wifi_watchdogをcroneq環境(env -i PATH=/usr/bin:/bin)で実行したところ�
 ### 備考
 - data/collected.json はgitignore対象のランタイムデータ。再付与はライブデータのみ適用(コミット外)。
 - 収集cronのStep4再評価で将来の新規引用ポスト案件も自動フラグ付けされる(collector.py 提案39修正済み)。
+
+---
+
+## QA検証結果(6回目: 11:00-11:10 実施・worker 10:56出力=提案41&42実装 fb54962 検証)
+
+### 検証対象
+- Worker実装: `fb54962`(提案41&42: like+rt多重防止 + 引用ポスト用語フラグ追加)
+- Worker記録: `86919a9`(daily-improvement追記)
+
+### pytest結果
+```
+172 passed, 4 skipped in 41.93s
+```
+Worker報告(172 passed, 4 skipped)と完全一致。回帰なし。mypy含むpre-commit通貨をWorkerが報告済み。
+
+### 差分確認(git show fb54962)
+| ファイル | 変更 | 判定 |
+|---------|------|------|
+| `kensho/application/applier.py` | 提案41: いいね実行に `skip_rt` 条件追加。RTがキューにある案件はいいねスキップ → RT+いいねの機械的多重を永久排除 | ✓ 妥当 |
+| `kensho/scraping/sources/common.py` | 提案42: `_SKIP_KEYWORDS` に「引用ポスト/引用リポスト/引用投稿」追加。フレーズ完全一致で過検出再発防止 | ✓ 妥当 |
+
+コード変更は提案内容と一致。意図しない副作用なし。BOT検出回避の観点で正しい方向(同一ツイートへ2種アクションの機械的パターン排除)。
+
+### 実データ検証(ライブcollected.json)
+- 引用ポスト系本文あり **80件** すべて keyword_flag=True(漏れ0)。Worker報告の「既存80件再付与」を確認
+- keyword_flag=True 合計: 127件(80件+他のスキップ語分)
+- audit.jsonl(2483ペア)で同一(account,target)への複数種アクション成功 **0件** — 多重防止が機能
+
+### 次回への申し送り
+- 提案40(inobase1-4/1089 プロキシ不安定)は**コード変更なし調査のみ**。「再び長時間不通ならTankanNotes同様コメントアウト検討」の判断が今後要。
+- zin20120731(1084)egress不安定継続(notepad教訓: 08:55再切断、WiFi信号23-45%)。スマホ物理確認が必要だが、watchdog(f3d39f4)がkill→再起動を継続動作。監視継続。
