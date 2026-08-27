@@ -211,6 +211,12 @@ rate_limits:
   break_after_n_items: 7          # 5→7（休憩頻度を約30%減。実測222回/日・5.4時間は過剰。7ツイート毎なら人間らしさ維持）
   break_min_seconds: 40           # 45→40（休憩時間を微縮小、実測平均88秒→約75秒に）
   break_max_seconds: 120          # 90→120
+  # ★ 2026-08-28提案53: セッション内速度ガード（Error 226対策）
+  #   Xは2-3分で20件超の連続アクションをトリガーに検出。既存の時間あたり上限(15件/時)に加え、
+  #   直近window_sec以内にmax_actions件を超えたらpause_sec秒の強制休止を入れる最終防衛線。
+  speed_guard_window_sec: 180     # 監視窓（3分）
+  speed_guard_max_actions: 15     # 窓内の上限アクション数
+  speed_guard_pause_sec: 30       # 超過時の強制休止秒数
   memory_reserve_mb: 2048
 
 # ── PolicyEngine（アクション実行前ポリシー評価）──
@@ -274,6 +280,19 @@ orchestrator:
   #   スケジュール(8:00〜22:47)を過ぎた積み残しバッチが深夜の15分cronで飲み込まれるバグの対策。
   #   実測: atushi16 が00:48〜05:35にフォロー47件漏出。この窓では get_pending_batches が全バッチを返さない。
   no_action_window: ["00:00", "07:00"]
+
+# ── 凍結祭りモニタリング（提案52, 2026-08-28）──
+# Xの凍結の波（凍結祭り）を日次Web検索で監視し、観測時は全垢のバッチサイズを
+# scale倍に減速する（例 0.5 = 50%減）。research-agent知見（2026年3/4/6/7月に凍結の波）。
+# 実装: kensho/utils/freeze_festival.py。state: data/freeze_festival_state.json
+# ⚠ デフォルト無効（enabled: false）: Web検索は日付情報が無く過去の波記事を拾う
+#   リスクがあり、誤検知時に本番出力を半減させてしまう。critic/research-agentが
+#   実際の波を観測したら enabled: true に変更して有効化する。
+freeze_festival:
+  enabled: false       # trueで有効化（観測時バッチサイズをscale倍に減速）
+  scale: 0.5           # 観測時のアクション量スケール
+  valid_days: 3        # 観測情報の有効日数（超過で通常運用に戻る）
+  search_query: "凍結祭り"  # SearXNG検索クエリ
 
 # ── アクションスキップ率（applier）──
 # 2026-08-20 低減: 応募量↑。BOT対策は日次/時間上限+不定期間隔(rate_limits)で担保。

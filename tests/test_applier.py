@@ -572,3 +572,48 @@ class TestLoadAuditDoneSet:
         rt_done, follow_done, like_done = a._load_audit_done_set("atushi16")
         assert len(rt_done) == 0
         assert len(follow_done) == 0
+
+
+class TestSpeedGuard:
+    """_speed_guard_needed: セッション内速度ガード（提案53, 2026-08-28）"""
+
+    def test_empty_deque_no_guard(self) -> None:
+        """空のdeque → ガード不要"""
+        from collections import deque
+
+        import kensho.application.applier as a
+
+        assert a._speed_guard_needed(deque(), 180, 15) is False
+
+    def test_below_max_no_guard(self) -> None:
+        """窓内10件（上限15） → ガード不要"""
+        import time
+        from collections import deque
+
+        import kensho.application.applier as a
+
+        dq = deque(time.time() - i * 5 for i in range(10))
+        assert a._speed_guard_needed(dq, 180, 15) is False
+
+    def test_at_max_guard(self) -> None:
+        """窓内15件（上限15） → ガード必要"""
+        import time
+        from collections import deque
+
+        import kensho.application.applier as a
+
+        dq = deque(time.time() - i * 5 for i in range(15))
+        assert a._speed_guard_needed(dq, 180, 15) is True
+
+    def test_stale_entries_pruned(self) -> None:
+        """窓より古い記録は除去され、窓内が上限未満ならガード不要"""
+        import time
+        from collections import deque
+
+        import kensho.application.applier as a
+
+        dq = deque()
+        dq.append(time.time() - 1000)  # 古すぎ
+        dq.extend(time.time() - i * 10 for i in range(5))  # 直近
+        assert a._speed_guard_needed(dq, 180, 15) is False
+        assert len(dq) == 5  # 古い1件が除去されている

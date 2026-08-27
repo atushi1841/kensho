@@ -10,6 +10,7 @@ import json
 import random
 import re
 import time
+from collections import deque
 from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
@@ -65,6 +66,18 @@ def _merge_verify_result(current: bool, verify_success: bool) -> bool:
     if current:
         return True
     return verify_success
+
+
+def _speed_guard_needed(recent_times: deque[float], window_sec: float, max_actions: int) -> bool:
+    """★ 2026-08-28提案53: セッション内速度ガード判定（Error 226対策）。
+
+    - 直近window_sec秒より古い記録を除去（スライディングウィンドウ）
+    - 残り件数がmax_actions以上ならTrue（強制休止すべき）
+    """
+    now = time.time()
+    while recent_times and now - recent_times[0] > window_sec:
+        recent_times.popleft()
+    return len(recent_times) >= max_actions
 
 
 def _load_audit_done_set(account_key: str) -> tuple[set[str], set[str], set[str]]:
@@ -370,6 +383,14 @@ def apply_for_account(
     _hourly_max: int = limits.get("max_actions_per_hour", 20)
     _hourly_start: float = time.time()
     _hourly_count: int = 0
+
+    # ★ 2026-08-28提案53: セッション内速度ガード（Error 226対策）
+    #   Xは2-3分で20件超の連続アクションを検出する。既存の時間あたり上限に加え、
+    #   直近window_sec秒以内にmax_actions件を超えたらpause_sec秒の強制休止を入れる最終防衛線。
+    _speed_window: float = limits.get("speed_guard_window_sec", 180)
+    _speed_max: int = limits.get("speed_guard_max_actions", 15)
+    _speed_pause: float = limits.get("speed_guard_pause_sec", 30)
+    _recent_action_times: deque[float] = deque()
 
     # ★ 連続いいねカウンタ（2026年3月Xスパム判定強化対策）:
     #   セッション内で「いいね4〜5連続→強制ログアウト→サーチバン」が多発したため、
@@ -1305,8 +1326,20 @@ def apply_for_account(
                 _per_item_ok: dict[str, bool] = {"follow": False, "rt": False, "like": False}
                 action_count = len(action_queue)
                 for idx, (_name, _fn) in enumerate(action_queue):
+                    # ★ 2026-08-28提案53: 速度ガード（直近3分で15件超なら強制休止）
+                    #   通常の間隔（12-40秒×各アクション）では到達しないが、
+                    #   API高速成功が連続した最悪ケースの最終防衛線。
+                    if _speed_guard_needed(_recent_action_times, _speed_window, _speed_max):
+                        out(
+                            f"  [SPEED] 直近{int(_speed_window)}秒で{len(_recent_action_times)}件"
+                            f" → 強制休止{int(_speed_pause)}秒（Error 226対策）"
+                        )
+                        time.sleep(_speed_pause)
+                        _recent_action_times.clear()
                     result = _fn()
                     _rv = bool(result)
+                    if _rv:
+                        _recent_action_times.append(time.time())
                     _per_item_ok[_name] = _per_item_ok.get(_name) or _rv
                     # ★ 連続いいねカウンタ更新: いいね成功で+1、フォロー/RT成功でリセット
                     if _rv:

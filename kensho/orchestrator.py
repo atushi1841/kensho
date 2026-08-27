@@ -45,6 +45,7 @@ from kensho.core.crash_guard import start as start_crash_guard  # noqa: E402
 from kensho.core.logger import LogWriter, make_path, write_daily_summary  # noqa: E402
 from kensho.core.notifier import notify_error, notify_warning  # noqa: E402
 from kensho.scraping.collector import collect  # noqa: E402
+from kensho.utils.freeze_festival import check_and_update, get_action_scale  # noqa: E402
 from kensho.utils.network import get_all_adapters  # noqa: E402
 from kensho.utils.proxy_watchdog import check_proxy_health  # noqa: E402
 
@@ -120,6 +121,10 @@ def get_pending_batches(
     now_m = now.hour * 60 + now.minute
     priority = cfg.get("orchestrator", {}).get("priority", "round_robin")
 
+    # ★ 2026-08-28提案52: 凍結祭り観測時の減速（バッチサイズをscale倍に）
+    #   stateファイル読取のみ（軽量）。観測中でなければ1.0 = 影響なし。
+    _ff_scale: float = get_action_scale(cfg)
+
     # ★ 2026-08-23 BOT対策: 深夜帯は応募アクションを一切行わない（睡眠中の人間がやらない時間帯は
     #   XのBOT検出で最も強い信号）。config: orchestrator.no_action_window = ["HH:MM","HH:MM"]。
     #   スケジュール時刻を過ぎた積み残しバッチも深夜に飲み込まれて実行されるバグの対策。
@@ -182,6 +187,10 @@ def get_pending_batches(
             # 効果: max=12のとき実効10〜14件 → 5バッチで1日50〜70件に自然分散
             base_max = batch.get("max", 10)
             batch_max = max(3, base_max + random.randint(-2, 2))
+            # ★ 2026-08-28提案52: 凍結祭り観測中は全垢のバッチサイズをscale倍に減速
+            #   （例 0.5 → max=12のとき実効5〜7件 → 1日25〜35件）
+            if _ff_scale < 1.0:
+                batch_max = max(2, int(batch_max * _ff_scale))
             pending.append((key, batch["time"], batch_max))
 
     if not pending:
@@ -335,6 +344,16 @@ def main() -> None:
 
         guard.update("network_check", "ネットワーク確認")
         _safe_step("Network Check", log, lambda: get_all_adapters())
+
+        # ★ 2026-08-28提案52: 凍結祭り日次チェック（メインorchestratorのみ）
+        #   内部で「当日チェック済み」ガードがあるため実質1日1回だけWeb検索する。
+        #   観測時は get_pending_batches がバッチサイズを自動減速する。
+        if _ACCOUNT is None:
+            _safe_step(
+                "Freeze Festival Check",
+                log,
+                lambda: check_and_update(cfg, log.write),
+            )
 
         # ★ 2026-08-25: プロキシ自動復旧（メインorchestratorサイクル内で実行）
         #   垢別ワーカー(_ACCOUNT指定)は他垢のプロキシ再起動と競合するためメインのみ。
