@@ -426,3 +426,44 @@ inobase1-4   1089 ✅ 106.146.23.223
 - **TankanNotes(1085)がconfigアクティブなのにプロキシ不通**: ルーター(2_povo_HR01)不安定（DHCP不応答APIPA・L2切断繰返し）でプロキシ未起動。各バッチで無駄なブラウザ起動→ログイン失敗ループのリスク。watchdogが自動復旧を試行中。**復旧確認は check_proxies.py。長時間（24h超）不通が続くなら再コメントアウトを検討。** ルーター/スマホ側の物理確認が必要。
 - zin20120731(1084)は現時点✅だが本日フラッピング履歴あり（08:55再切断・信号23-45%）。watchdog継続監視。
 - ルート `scraping/`（0byte collector.py）とルート `orchestrator.py` は実運用で未使用の死骸（cronは `kensho/orchestrator.py` を使用）。mypy除外で静的解析は通るが、将来の混乱防止に削除検討（低優先）。
+
+---
+
+## Worker実装記録(2026-08-27 14:46・提案44検証 + 提案45監視基準設定・commit a7f3b19確認)
+
+### 対象提案（critic_proposal 第19版・14:20）
+
+| 提案 | 危険度 | 内容 | 対応 |
+|------|--------|------|------|
+| 44 | 中 | proxy_watchdog subprocess cp932デコードエラー（UnicodeDecodeError×3、12:45-12:58） | ✅ **commit a7f3b19で実装済みを確認** |
+| 45 | 低 | TankanNotes(1085) 復帰したが不安定（フラッピング） | ⏳ **監視基準を設定**（下記） |
+
+### 提案44: proxy_watchdog cp932デコードエラー — 実装済み確認
+
+- **commit a7f3b19（14:44:53）** で全 `subprocess.run(..., text=True)` 7箇所（L114/L129/L220/L250/L266/L272/L325）に `errors="replace"` 追加済み。実コード確認で**全7箇所に追加を確認** ✅
+- 解析対象（`status`="Up"/IP/件数）は全てASCIIのため、置換（U+FFFD）による挙動変化なし
+- **pytest**: 172 passed, 4 skipped（回帰なし）
+- 提案の期待効果どおり、今後は日本語Windows（cp932）出力でプロキシ再起動が失敗しない
+
+### 提案45: TankanNotes(1085) 監視基準の設定
+
+**14:46時点のライブ状態:**
+- `check_proxies.py`: **6/6全プロキシ生存・出口IP全ユニーク**（1085 TankanNotes = 106.133.39.72, 0.3s ✅）
+- wifi_watchdog（14:45/14:50）: `2_povo_tankan -> 接続済み [信号:100%|-43〜-49]` + `プロキシ1085 生存（egress OK）` — 直前3サイクル連続で安定
+- ただし **TankanNotesは本日0成功**（daily_countsに未登場）。14:00バッチは `NS_ERROR_CONNECTION_REFUSED`×3 → 0成功/1エラー（43秒）。14:15以降はSession OK・垢順ローテーションに含まれるが、成功バッチ未確認（14:45サイクル進行中）
+
+**再コメントアウト基準（critic提案45の通り、明文化）:**
+| 基準 | 閾値 | 対応 |
+|------|------|------|
+| (a) プロキシ不通継続 | 24時間以上 egress不通（check_proxies.py で確認） | config.yaml から一時コメントアウト |
+| (b) バッチ連続失敗 | 3回連続で NS_ERROR_CONNECTION_REFUSED / ログイン失敗（0成功） | config.yaml から一時コメントアウト |
+
+- 現時点: (a)不該当（egress OK）、(b)は1回のみ（14:00）→ **コメントアウト保留・監視継続**
+- 復旧確認は必ず `check_proxies.py` で egress まで確認してから（LISTENINGのみでは不十分）
+- ルーター（2_povo_HR01：DHCP不応答APIPA・L2切断繰返し）はwatchdogで解決不能 — スマホ側の物理確認が最終手段
+
+### テスト結果
+```
+172 passed, 4 skipped in 57.98s
+```
+回帰なし。gitワーキングツリー: クリーン（提案44実装済み・本記録は報告コミットで反映）
