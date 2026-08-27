@@ -17,7 +17,7 @@ COUNT_FILE = os.path.join(PROJECT_DIR, "data/daily_counts.json")
 OUTPUT_FILE = os.path.join(PROJECT_DIR, "kensho-status.html")
 LOG_DIR = os.path.join(PROJECT_DIR, "logs")
 
-accounts = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4"]
+accounts = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4", "royalkensho"]
 
 # ── UNUSED（応募停止済み）アカウント記録 ──
 # cron再生成でも維持されるようハードコード（2026-08-17現在は応募停止垢なし）
@@ -391,6 +391,7 @@ WIFI_ADAPTER_TO_ACCOUNT = {
     "2_povo_tankan": "TankanNotes",  # 旧アダプタ名（Tankan_HR01に改名済み・参照残は実害なし）
     "Tankan_HR01": "TankanNotes",  # 2026-08-27: ワイモバイルHR01切替
     "inobase1-4": "inobase1-4",
+    "zin_6_Gal_S10": "royalkensho",  # 2026-08-27: air-tra1/povo追加
 }
 WIFI_ACCOUNT_SSID = {
     "kudou": "RM10JE_B",
@@ -398,6 +399,7 @@ WIFI_ACCOUNT_SSID = {
     "zin20120731": "AiR-WiFi_6_povo",
     "TankanNotes": "10_ymo_HR01",  # 2026-08-27: ワイモバイルHR01 (旧 2_povo_HR01)
     "inobase1-4": "ino1_4_oppo_r5a",
+    "royalkensho": "2_povo_AW",  # 2026-08-27: air-tra1/povo追加
 }
 
 _OK_RE = re.compile(r"✅\s+(\S+)\s+->\s+接続済み")
