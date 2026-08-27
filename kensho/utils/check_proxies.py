@@ -13,6 +13,7 @@ v1.0: メモリ節約のため1ポートずつ順次チェック、curl/並列�
 
 from __future__ import annotations
 
+import socket
 import sys
 import time
 from typing import Any
@@ -29,10 +30,54 @@ PROXY_MAP: dict[str, str] = {
 }
 
 
+def _recv_exact(s: socket.socket, n: int) -> bytes:
+    """ちょうどnバイト読み切る（SOCKS5ヘッダ用）。"""
+    data = b""
+    while len(data) < n:
+        chunk = s.recv(n - len(data))
+        if not chunk:
+            raise RuntimeError("SOCKS5: connection closed")
+        data += chunk
+    return data
+
+
+def _socks5_connect(host: str, port: int, timeout: int) -> socket.socket:
+    """生SOCKS5ハンドシェイク（stdlibのみ、PySocks不要）。接続済みsocketを返す。
+
+    socks5h 相当: CONNECT要求はドメイン名のまま送り、DNS解決はプロキシ側に任せる。
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(timeout)
+    s.connect((host, port))
+
+    # 挨拶: SOCKS5, 1メソッド, 認証なし
+    s.sendall(b"\x05\x01\x00")
+    resp = _recv_exact(s, 2)
+    if resp[0] != 0x05 or resp[1] != 0x00:
+        raise RuntimeError(f"SOCKS5 auth method rejected: {resp[1]!r}")
+
+    # CONNECT要求（ドメイン名 → リモートDNS）
+    target = b"api.ipify.org"
+    req = b"\x05\x01\x00\x03" + bytes([len(target)]) + target + (80).to_bytes(2, "big")
+    s.sendall(req)
+    resp = _recv_exact(s, 4)
+    if resp[1] != 0x00:
+        raise RuntimeError(f"SOCKS5 connect failed: code={resp[1]!r}")
+
+    # BND.ADDR + BND.PORT を読み捨て
+    atyp = resp[3]
+    if atyp == 0x01:  # IPv4
+        _recv_exact(s, 4 + 2)
+    elif atyp == 0x03:  # ドメイン
+        ln = _recv_exact(s, 1)[0]
+        _recv_exact(s, ln + 2)
+    elif atyp == 0x04:  # IPv6
+        _recv_exact(s, 16 + 2)
+    return s
+
+
 def check_one(account_key: str, proxy_url: str, timeout: int = 10) -> dict[str, Any]:
     """1アカウントのプロキシをチェック。戻り値: {key, proxy, ip, ok, elapsed, error}"""
-    import socks
-
     start = time.time()
     result: dict[str, Any] = {
         "key": account_key,
@@ -49,11 +94,8 @@ def check_one(account_key: str, proxy_url: str, timeout: int = 10) -> dict[str, 
         host, port_str = clean.rsplit(":", 1)
         port = int(port_str)
 
-        # SOCKS5接続（逐次: 1回だけ）
-        s = socks.socksocket()
-        s.set_proxy(socks.SOCKS5, host, port)
-        s.settimeout(timeout)
-        s.connect(("api.ipify.org", 80))
+        # SOCKS5接続（逐次: 1回だけ、stdlibハンドシェイク）
+        s = _socks5_connect(host, port, timeout)
         s.send(b"GET / HTTP/1.0\r\nHost: api.ipify.org\r\n\r\n")
         resp = b""
         while True:
