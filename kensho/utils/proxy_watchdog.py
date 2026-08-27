@@ -111,7 +111,7 @@ def _kill_listeners(port: int) -> int:
         cmd,
     ]
     try:
-        subprocess.run(cmd_list, capture_output=True, text=True, timeout=15)
+        subprocess.run(cmd_list, capture_output=True, text=True, errors="replace", timeout=15)
         return 1
     except (subprocess.TimeoutExpired, OSError):
         return 0
@@ -126,7 +126,7 @@ def _adapter_ipv4(adapter: str) -> str | None:
         f"(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias '{adapter}' -ErrorAction SilentlyContinue).IPAddress",
     ]
     try:
-        ps = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+        ps = subprocess.run(cmd, capture_output=True, text=True, errors="replace", timeout=10)
     except (subprocess.TimeoutExpired, OSError):
         return None
     for line in ps.stdout.splitlines():
@@ -217,7 +217,7 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
                 "-Command",
                 f"(Get-NetAdapter -Name '{adapter}').Status",
             ]
-            ps_result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            ps_result = subprocess.run(cmd, capture_output=True, text=True, errors="replace", timeout=10)
             status = ps_result.stdout.strip()
             if status == "Disabled":
                 log.warning(
@@ -248,6 +248,7 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
                             timeout=10,
                             capture_output=True,
                             text=True,
+                            errors="replace",
                         )
                         time.sleep(2)
                     else:
@@ -262,13 +263,14 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
                         "-Command",
                         f"netsh wlan connect name='{ssid}' interface='{adapter}'",
                     ]
-                    subprocess.run(connect_cmd, timeout=15, capture_output=True, text=True)
+                    subprocess.run(connect_cmd, timeout=15, capture_output=True, text=True, errors="replace")
                     time.sleep(3)
                     # 再接続後、再度アダプタ状態を確認
                     retry_ps = subprocess.run(
                         [PS, "-Command", f"(Get-NetAdapter -Name '{adapter}').Status"],
                         capture_output=True,
                         text=True,
+                        errors="replace",
                         timeout=10,
                     )
                     status = retry_ps.stdout.strip()
@@ -320,7 +322,7 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
                 f"-WindowStyle Hidden"
             )
             restart_cmd = [PS, "-Command", restart_script]
-            subprocess.run(restart_cmd, timeout=10, capture_output=True, text=True)
+            subprocess.run(restart_cmd, timeout=10, capture_output=True, text=True, errors="replace")
             restored_count += 1
             log.info("Proxy for %s restarted successfully (restored %d)", account, restored_count)
 
