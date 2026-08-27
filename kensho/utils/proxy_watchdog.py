@@ -18,7 +18,7 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
     "kudou": (1082, "kudou_RM10JE_B"),
     "chugakujuken": (1083, "chugakujuken_RM10JE_S"),
     "zin20120731": (1084, "zin_AW6povo"),
-    "TankanNotes": (1085, "Tankan_2_redmi_n9s"),
+    "TankanNotes": (1085, "2_povo_tankan"),
     "inobase1-4": (1089, "inobase1-4"),
 }
 
@@ -27,7 +27,7 @@ WIFI_SSID_MAP: dict[str, str] = {
     "kudou": "RM10JE_B",
     "chugakujuken": "RM10JE_S",
     "zin20120731": "AiR-WiFi_6_povo",
-    "TankanNotes": "2_redmi_n9s",
+    "TankanNotes": "2_povo_HR01",
     "inobase1-4": "ino1_4_oppo_r5a",
 }
 

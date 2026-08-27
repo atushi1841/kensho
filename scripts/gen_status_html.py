@@ -15,7 +15,7 @@ ACCOUNT_ADAPTERS = {
     "kudou": ("kudou_RM10JE_B", "RM10JE_B"),
     "chugakujuken": ("chugakujuken_RM10JE_S", "RM10JE_S"),
     "zin20120731": ("zin_AW6povo", "AiR-WiFi_6_povo"),
-    "TankanNotes": ("Tankan_2_redmi_n9s", "2_redmi_n9s"),
+    "TankanNotes": ("2_povo_tankan", "2_povo_HR01"),
     "inobase1-4": ("inobase1-4", "ino1_4_oppo_r5a"),
 }
 

@@ -98,26 +98,26 @@ accounts:
   #   Chromeで通常表示(凍結なし)→ 新auth_token/ct0に更新済み(x_session_TankanNotes.json)。復帰。
   # ★ 2026-08-26 一時停止: プロキシ1085が4日連続egress不通（SOCKS5ハンドシェイクOK→CONNECT不可）。
   #   スマホ(Redmi Note 9S / SSID 2_redmi_n9s)テザリング側の実インターネット死。凍結ではない。
-  #   復旧後（check_proxies.pyで出口IP重複なし確認）にコメント解除で復帰。
-  #  - key: TankanNotes
-  #    display: "@TankanNotes"
-  #    session: "data/x_session_TankanNotes.json"
-  #    disable_reply: true
-  #    daily_target: 50
-  #    schedule:
-  #      collects: false
-  #      batches:
-  #        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-  #        - { time: "09:29", max: 12 }
-  #        - { time: "10:52", max: 12 }
-  #        - { time: "12:23", max: 12 }
-  #        - { time: "13:43", max: 12 }
-  #        - { time: "14:56", max: 12 }
-  #        - { time: "16:08", max: 12 }
-  #        - { time: "17:19", max: 12 }
-  #        - { time: "18:44", max: 12 }
-  #        - { time: "20:12", max: 12 }
-  #        - { time: "22:07", max: 12 }
+  # ★ 2026-08-27 復帰: povo HR01ルーター(SSID 2_povo_HR01)へ切替。アダプタ=2_povo_tankan、出口IP=106.133.43.14、重複なし確認済み。
+  - key: TankanNotes
+    display: "@TankanNotes"
+    session: "data/x_session_TankanNotes.json"
+    disable_reply: true
+    daily_target: 50
+    schedule:
+      collects: false
+      batches:
+        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "09:29", max: 12 }
+        - { time: "10:52", max: 12 }
+        - { time: "12:23", max: 12 }
+        - { time: "13:43", max: 12 }
+        - { time: "14:56", max: 12 }
+        - { time: "16:08", max: 12 }
+        - { time: "17:19", max: 12 }
+        - { time: "18:44", max: 12 }
+        - { time: "20:12", max: 12 }
+        - { time: "22:07", max: 12 }
 
   - key: inobase1-4
     display: "@inobase128508"
@@ -161,9 +161,9 @@ keepalive:
     - label: "WiFi-C (@zin20120731)"
       type: wifi_monitor
       wifi_profile: "AiR-WiFi_6_povo"
-    # - label: "WiFi-D (@TankanNotes)"
-    #   type: wifi_monitor
-    #   wifi_profile: "8_iP6s"                 # UNUSED 2026-08-17
+    - label: "WiFi-D (@TankanNotes)"
+      type: wifi_monitor
+      wifi_profile: "2_povo_HR01"      # 2026-08-27 povo HR01切替 (旧 8_iP6s)
 
 # ── レート制限（X BAN回避）──
 # 1垢あたりの日次上限。SocialNexis 2026年推奨値に準拠。
