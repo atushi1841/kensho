@@ -219,6 +219,35 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
             "security.ssl.enable_ocsp_must_staple": False,
         },
     },
+    "royalkensho": {
+        "seed": 88,
+        "accept_language": "ja,en-US;q=0.9,en;q=0.8,zh;q=0.6",
+        "screen_width": 1536,
+        "screen_height": 864,
+        "pixel_ratio": 1.25,
+        "locale": "ja-JP",
+        "timezone_id": "Asia/Tokyo",
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0",
+        "webgl_vendor": "Google Inc. (AMD)",
+        "webgl_renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "profile": {
+            "active_hours": ("09:30", "22:30"),
+            "max_per_day": {"follow": 35, "rt": 14, "like": 65},
+            "skip_rate": {"follow": 0.05, "rt": 0.03, "like": 0.05},
+            "persona": "night_owl_gourmet",
+            "work_style": "evening_person",
+            "typing_speed": 130,
+            "click_delay": 80,
+            "scroll_pattern": "steady",
+        },
+        "tls": {
+            "security.tls.version.min": 3,
+            "security.tls.version.max": 4,
+            "security.tls.hello_downgrade": False,
+            "security.ssl.enable_ocsp_stapling": True,
+            "security.ssl.enable_ocsp_must_staple": True,
+        },
+    },
 }
 
 # ★ 垢別SOCKS5プロキシ（Windows物理回線個別ルーティング）
@@ -229,6 +258,7 @@ PROXY_MAP: dict[str, str] = {
     "zin20120731": "socks5h://172.26.80.1:1084",
     "TankanNotes": "socks5h://172.26.80.1:1085",
     "inobase1-4": "socks5h://172.26.80.1:1089",
+    "royalkensho": "socks5h://172.26.80.1:1087",
 }
 
 # ☆ プロキシ有効/無効フラグ（True=有効、False=バイパス）

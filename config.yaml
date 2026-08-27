@@ -143,6 +143,27 @@ accounts:
         - { time: "21:17", max: 12 }
         - { time: "22:29", max: 12 }
 
+  - key: royalkensho
+    display: "@royalkensho"
+    session: "data/x_session_royalkensho.json"
+    disable_reply: true
+    daily_target: 50
+    schedule:
+      collects: false
+      batches:
+        # 2026-08-27 追加: 2_povo_AW(air-tra1 / povo無料回線, アダプタ=zin_6_Gal_S10)で運用。
+        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "09:46", max: 12 }
+        - { time: "11:03", max: 12 }
+        - { time: "12:31", max: 12 }
+        - { time: "13:58", max: 12 }
+        - { time: "15:22", max: 12 }
+        - { time: "16:47", max: 12 }
+        - { time: "18:07", max: 12 }
+        - { time: "19:29", max: 12 }
+        - { time: "21:05", max: 12 }
+        - { time: "22:21", max: 12 }
+
 # ── 収集設定 ──
 collection:
   source: "https://knshow.com"
@@ -168,6 +189,9 @@ keepalive:
     - label: "WiFi-D (@TankanNotes)"
       type: wifi_monitor
       wifi_profile: "10_ymo_HR01"      # 2026-08-27 ワイモバイルHR01切替 (旧 2_povo_HR01)
+    - label: "WiFi-E (@royalkensho)"
+      type: wifi_monitor
+      wifi_profile: "2_povo_AW"        # 2026-08-27 air-tra1 / povo無料回線
 
 # ── レート制限（X BAN回避）──
 # 1垢あたりの日次上限。SocialNexis 2026年推奨値に準拠。

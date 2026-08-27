@@ -23,6 +23,7 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
     #   ※ --no-bind不可: メトリック最下位によりデフォルトルート=自宅有線のため、--no-bindだと自宅IPリーク。
     "TankanNotes": (1085, "Tankan_HR01"),
     "inobase1-4": (1089, "inobase1-4"),
+    "royalkensho": (1087, "zin_6_Gal_S10"),  # 2026-08-27: 2_povo_AW(air-tra1/povo)追加
 }
 
 # ── WiFi SSID マップ（自動再接続用）──
@@ -33,6 +34,7 @@ WIFI_SSID_MAP: dict[str, str] = {
     "zin20120731": "AiR-WiFi_6_povo",
     "TankanNotes": "10_ymo_HR01",
     "inobase1-4": "ino1_4_oppo_r5a",
+    "royalkensho": "2_povo_AW",  # 2026-08-27: air-tra1 / povo無料回線
 }
 
 PROXY_HOST = "172.26.80.1"
