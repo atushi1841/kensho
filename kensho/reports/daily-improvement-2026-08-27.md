@@ -238,4 +238,57 @@ wifi_watchdogをcroneq環境(env -i PATH=/usr/bin:/bin)で実行したところ�
 ### 6. 新規発見・注意点
 - **zin復旧により5垢全部がアクティブに**: atushi16/kudou/chugakujuken/zin/inobase1-4 の5垢で08:00以降のバッチがフル稼働見込み。zinの最終応募は8/26 21:17（切断前）なので、8/27 08:06バッチで再開確認
 - **06:48 workerは報告のみで新規実装なし** — 2時間おきworkerのうち実装は05:01(f3d39f4)で完了。次回実装は次サイクルのcritic提案待ち
-- **未コミットのQA追記**: daily-improvement-2026-08-27.md にQA検証結果（05:10/07:20分）が未コミット。次回workerのコミットに含まれる想定だが、QA側でコミットする運用に変更しても良い（検討事項）
+- **未コミットのQA追記**: daily-improvement-2026-08-27.md にQA検証結果（05:10/07:20分）が未コミット。次回workerのコミットに含まれる想定だが、QA側でコミットする運用に変更しても良い（検討事項）→ **08:53 workerコミットb24b779で解消（QA追記分を含めてコミット済み）**
+
+---
+
+## QA検証結果（5回目: 09:30-09:40 実施・worker 08:54出力＝提案38&39実装 b24b779 検証）
+
+### 対象: nightly-worker 08:54出力 → コミット b24b779（提案38&39: keyword_flag過検出是正）
+
+### 1. pytest
+```
+172 passed, 4 skipped in 53.69s
+```
+全通過・回帰なし（前回07:20と同数、新規テスト追加なし）。
+
+### 2. git状態
+- 最新コミット: b24b779（08:53、提案38&39実装 + 未コミットQA追記分のコミット）
+- ワーキングツリー: クリーン ✅
+
+### 3. 差分確認（提案 vs 実装）
+- **提案38【中】applier keyword_flag再判定のtweet_text優先化 ✅ 一致**:
+  - `applier.py` L631-649: `_flag_recheck_text = item.get("tweet_text", "") or ""` を優先ソースに変更。tweet_textが無い場合のみCDN再フェッチ（`api_get_tweet_text`）にフォールバック。CDNネットワーク依存を排除
+  - 過検出解除時のtweet_text書き戻しは維持（NGフィルター用）
+  - ログ文言を「収集時tweet_textで解除」に更新
+- **提案39【低】collector.py keyword_flag再評価の恒久対策 ✅ 一致**:
+  - `collector.py` L495-509: Step 4終了後、`merged` 内の `keyword_flag=True` かつ `tweet_text` 所有アイテムを `has_skip_keyword(tweet_text)` で再評価し、該当しなければ `keyword_flag=False` に解除
+  - `has_skip_keyword` import済み（L22）✅ / `_fx_resp` 変数スコープ内（L453→L477）✅
+  - fixupxエラーログ追加（`[ERROR] fixupx: {x_url} (HTTP {status})`）— 診断性向上。既存未コミット分の拾い上げ
+- **実動確認（★最重要）**: 09:00収集（collect_20260827_090001.log）で `[keyword_flag再評価] 327件中281件の過検出を解除（残り46件が正当な引用/コメント）` を確認。Workerのドライラン（1106件中327件→281解除/85.9%）と完全一致
+- 意図しない副作用なし（applierのCDNフォールバックはtweet_text欠落時のみ発動、collectorの再評価はデータ書き換えのみで構造不変）
+
+### 4. ライブ計測（09:35実施）
+```
+1081 atushi16:     219.104.132.236 ✅
+1082 kudou:        106.146.10.71   ✅
+1083 chugakujuken: 106.146.25.190  ✅
+1084 zin20120731:  FAIL (egress不安定) ⚠️
+1085 TankanNotes:  不通（コメントアウト中・想定内）❌
+1089 inobase1-4:   106.146.23.223  ✅
+```
+- 生存4/5、出口IP全てユニーク（IP分離維持）✅
+- **★ zin(1084)は07:25時点で復旧していたが08:55に再切断**: wifi_watchdogログで `❌ zin_AW6povo -> 切断（SSID: AiR-WiFi_6_povo）@08:55:08` → 再接続試行も信号23-45%で不安定。watchdogのegress死活チェック（f3d39f4）が「LISTENINGだがegress不通→kill→再起動」を正しく検出・継続動作中（09:15にも `LISTENING but has NO egress – forcing WiFi reconnect + restart`）。**コード問題ではなくWiFi信号/物理回線の問題**。smartphone側（楽天モバイル回線）の物理確認が必要
+
+### 5. 前回申し送りの状態
+| 申し送り | 状態 |
+|---------|------|
+| 提案27（keyword_flag効果監視） | ✅ 提案38/39（b24b779）で対応・281件過検出解除を実動確認 |
+| 1084(zin)不通 | ⚠️ 06:25復旧→08:55再切断→egress不安定継続（watchdogは正常動作） |
+| RESTフォールバックempty_response | ⏳ 継続監視 |
+| mypy strict 33エラー | ⏳ 既知の技術負債 |
+| 多重プロセス残骸（1082/1083/1089各2重） | ⏳ 残存（`_kill_listeners`は再起動時のみ発動） |
+
+### 6. 新規発見・注意点
+- **QAの検証記録の未コミット問題を解消**: 本QAは追記後にコミットまで実行（notepad教訓「QA追記が未コミットになりがち」への対処。05:10/07:20分はworker b24b779が拾い上げ済み）
+- **提案39の再評価は収集cronでのみ発動**（`separate_cron=true` のためorchestratorのStep 4は収集を実行しない）。収集ログの `[keyword_flag再評価]` 行が毎回出るか監視継続
