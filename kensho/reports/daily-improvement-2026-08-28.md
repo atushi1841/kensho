@@ -119,3 +119,65 @@
 #### ✅ 確認済み
 - 提案52/53: 実装・テスト（+13）・動作確認済み。BOT検出リスクなし。
 - mypy: 新規エラー0（43件は親から継続の既存エラー）。
+
+---
+
+# QA検証結果: 2026-08-28（13回目）
+
+## 検証結果
+
+### pytest
+- `uv run python -m pytest tests/ -q --ignore=tests/test_invisible_playwright.py` → **185 passed / 4 skipped**（前回185から変化なし）
+- 提案54/55は新規テスト追加なし（どちらも設定・ユーティリティ変更のため既存テストでカバー）
+
+### git状態
+- HEAD: `9b32303`（Worker実装コミット、2026-08-28 02:51 JST）
+- ワーキングツリー: クリーン
+
+### 差分確認（Worker実装 vs 提案内容） — ✓ 実装内容を確認済み
+
+| 提案 | 実装 | 判定 |
+|------|------|------|
+| 提案54【低】daily_pipeline_reportにroyalkensho追加 | `kensho/tools/daily_pipeline_report.py`: ACCOUNTSに`"royalkensho"`追加 + DEFAULT_TARGETに`"royalkensho": 50`追加 | ✅ 提案通り |
+| 提案55【低】check_proxies.py stdlib-only SOCKS5 | `kensho/utils/check_proxies.py`: `import socks`(PySocks)削除 → `_recv_exact()` + `_socks5_connect()`（生SOCKS5ハンドシェイク、socks5h相当＝リモートDNS）で置換 | ✅ 提案通り（選択肢B「socks非依存に変更」を採用） |
+
+- mypy: **新規エラーなし**。`check_proxies.py` は0エラー。`daily_pipeline_report.py` の8エラー（Counter/Path/TextIOWrapper型注釈）は親コミットf609f43から継続の**既存エラー**（Worker変更行はACCOUNTS/DEFAULT_TARGETのみで型注釈に影響なし）。
+- 不要コード残存なし: `socks` 参照はPROXY_MAPのURL文字列とコメントのみ（`import socks` は完全削除済み）。
+
+### ライブ計測（03:10 JST）— 提案55の実効確認（重要）
+
+**新stdlib SOCKS5実装で check_proxies.py を実際に実行 → 7/7生存・IP全ユニーク:**
+
+| ポート | アカウント | IP | 結果 |
+|--------|-----------|-----|------|
+| 1081 | atushi16 | 219.104.132.236 | ✅ |
+| 1082 | kudou | 106.146.19.143 | ✅ |
+| 1083 | chugakujuken | 106.146.1.156 | ✅ |
+| 1084 | zin20120731 | 106.146.25.231 | ✅ |
+| 1085 | TankanNotes | 126.133.201.77 | ✅ |
+| 1087 | royalkensho | 106.133.46.14 | ✅ フラッピング後も生存継続 |
+| 1089 | inobase1-4 | 106.146.23.223 | ✅ |
+
+- 提案55の目的（cron環境でPySocksが無くても動く）を実機で実証。ハンドシェイク成功〜HTTP応答まで完全動作。
+- 深夜アクション(8/28 00-06 JST): **0件**（no_action_window正常）
+- プール: 967件中953件未応募（健康・枯渇なし）。収集timestamp 03:11 = 正常稼働
+
+**BOT検出リスク評価:**
+- 提案54: 日次レポートの可視化のみ。X API・セッション不使用。リスクなし。
+- 提案55: 手動診断ツールの依存解消。Xへの追加リクエストなし。リスクなし。
+
+## 改善ノート保存先
+- `kensho/reports/daily-improvement-2026-08-28.md`（本ファイルのQAセクション追記）
+
+## 次回への申し送り
+
+#### 🔴 Critical
+1. **提案49（要ユーザー対応）継続**: royalkensho(1087) 2_povo_AWフラッピング。03:10時点で生存（106.133.46.14）・7/7全生存だが、Galaxy S10テザリングの物理確認をユーザーに継続推奨。**提案54で日次レポート監視に追加されたため、以降は日次レポートでフラッピングを追跡可能。**
+
+#### 🟡 監視項目
+2. **提案55の運用確認**: check_proxies.py はcron環境（PySocksなし）でも動作するようになった。実際のcron実行で `ModuleNotFoundError: No module named 'socks'` が解消されたか、次回の手動実行/ヘルスチェックで確認。
+3. **提案52有効化判断**・**提案53速度ガード**・**TankanNotes達成率**・**kudou信号劣化**は前回申し送り通り継続監視。
+
+#### ✅ 確認済み
+- 提案54/55: 実装・ライブ検証済み。BOT検出リスクなし。
+- mypy新規エラー0。pytest 185 pass。
