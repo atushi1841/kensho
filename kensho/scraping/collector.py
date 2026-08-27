@@ -507,6 +507,32 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
             f"（残り{rechecked - cleared}件が正当な引用/コメント）"
         )
 
+    # ★ 2026-08-27 スループット改善②: 必須ワードなしツイートを収集から除外
+    #    applier側（①）でも収集時tweet_textで早期スキップするが、収集データ自体を
+    #    絞ることで保存・可視化・処理対象を軽くする。tweet_textが空の項目は判定不能のため保持。
+    _drop_missing = (cfg or {}).get("collection_filter", {}).get("drop_without_must_word", False)
+    if _drop_missing:
+        _req_any = (cfg or {}).get("required_words", {}).get("require_any", [])
+        _req_all = (cfg or {}).get("required_words", {}).get("require_all", [])
+        _before_n = len(merged)
+        _kept: list[dict[str, Any]] = []
+        _dropped_n = 0
+        for item in merged:
+            _txt = item.get("tweet_text", "") or ""
+            if not _txt:
+                _kept.append(item)  # 判定不能 → 保持（後で本文取得）
+                continue
+            if _req_any and not any(w in _txt for w in _req_any):
+                _dropped_n += 1
+                continue
+            if _req_all and not all(w in _txt for w in _req_all):
+                _dropped_n += 1
+                continue
+            _kept.append(item)
+        merged = _kept
+        if _dropped_n:
+            out(f"  [収集フィルタ②] 必須ワードなしを除外: {_dropped_n}件（{_before_n}→{len(merged)}件）")
+
     result: dict[str, Any] = {
         "timestamp": datetime.now().isoformat(),
         "total_on_page": len(unique_links),

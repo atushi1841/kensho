@@ -677,6 +677,19 @@ def apply_for_account(
                     _need_goto = False
                     out(f"  [STORE] ✓ 保存済みテキスト利用（{len(body_text)}文字）")
 
+                    # ★ 2026-08-27 スループット改善①: 収集時tweet_textで必須ワード早期判定
+                    #    必須ワードなしのツイートは本文取得（API全文/goto）をせずに即スキップ。
+                    #    実測: 181件/1186件が必須ワードなし。全垢で毎バッチ開かれていた無駄を排除。
+                    if required_words:
+                        _req_any = required_words.get("require_any", [])
+                        _req_all = required_words.get("require_all", [])
+                        if _req_any and not any(w in stored_text for w in _req_any):
+                            out(f"  [{global_idx}/{max_n}] [SKIP] 必須ワード不足（早期判定）")
+                            continue
+                        if _req_all and not all(w in stored_text for w in _req_all):
+                            out(f"  [{global_idx}/{max_n}] [SKIP] 必須ワード不足（早期判定）")
+                            continue
+
                     # ★ 保存テキストが短い場合、APIから全文を取得してNGフィルター用に上書き
                     if x_api_ok and len(stored_text) < 200:
                         _api_full = api_get_tweet_text(page, tweet_id, log_fn=out) or ""
@@ -703,7 +716,14 @@ def apply_for_account(
 
                 # ── fixupx.comからツイート本文を取得（povo 30kbps / AiR-WiFi遅延: goto不可の最終手段）──
                 if not body_text and _need_goto:
-                    _fixupx_accounts = {"kudou", "chugakujuken", "zin20120731", "TankanNotes"}
+                    _fixupx_accounts = {
+                        "kudou",
+                        "chugakujuken",
+                        "zin20120731",
+                        "TankanNotes",
+                        "inobase1-4",
+                        "royalkensho",
+                    }  # 2026-08-27: povo低速垢も追加
                     if account_key in _fixupx_accounts:
                         out("  [FIXUPX] 低速回線: fixupx.comでテキスト取得試行...")
                         try:
@@ -738,20 +758,36 @@ def apply_for_account(
                             out(f"  [FIXUPX] ✗ {type(_fx_e).__name__}: {_fx_e} → gotoスキップ")
 
                 if _need_goto:
-                    # ★ 低速回線: gotoフォールバック不可（180秒以内にページ読み込み完了しない）
-                    _fixupx_accounts = {"kudou", "chugakujuken", "zin20120731", "TankanNotes"}
+                    # ★ 低速回線: gotoフォールバック不可（60秒以内にページ読み込み完了しない）
+                    _fixupx_accounts = {
+                        "kudou",
+                        "chugakujuken",
+                        "zin20120731",
+                        "TankanNotes",
+                        "inobase1-4",
+                        "royalkensho",
+                    }  # 2026-08-27: povo低速垢も追加
                     if account_key in _fixupx_accounts:
                         out("  [SKIP] 低速回線: goto不可（180秒以内にページ読み込み完了しない）→ 次アイテムへ")
                         continue
 
-                    # 速度別goto設定: 速い垢(commit+30s) / 遅い垢(domcontentloaded+60s)
+                    # 速度別goto設定: 全垢commitに統一（2026-08-27 スループット改善③）
+                    #   domcontentloadedだとサブリソースストール（X Bot検出）でタイムアウトしやすい。
+                    #   commitで速攻レスポンス取得→tweetTextセレクタ待ちに変更。低速も180s→60sに短縮。
                     _fast_accounts = {"atushi16"}
-                    _slow_accounts = {"kudou", "chugakujuken", "zin20120731", "TankanNotes"}
+                    _slow_accounts = {
+                        "kudou",
+                        "chugakujuken",
+                        "zin20120731",
+                        "TankanNotes",
+                        "inobase1-4",
+                        "royalkensho",
+                    }
                     _is_fast = account_key in _fast_accounts
                     _is_slow = account_key in _slow_accounts
-                    _goto_wait = "commit" if _is_fast else "domcontentloaded"
-                    _goto_timeout = 30000 if _is_fast else 180000
-                    for _gr in range(3 if _is_fast else 1):
+                    _goto_wait = "commit"  # 全垢commit統一（サブリソースストール回避）
+                    _goto_timeout = 30000 if _is_fast else 60000  # 低速も60s（旧180s）
+                    for _gr in range(3 if _is_fast else 2):
                         try:
                             # wait_until="commit" → サブリソースストール回避（X Bot検出対策）
                             _resp = page.goto(clean_url, timeout=_goto_timeout, wait_until=_goto_wait)

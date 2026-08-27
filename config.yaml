@@ -207,9 +207,9 @@ rate_limits:
   active_hours_end: "23:00"
   min_delay_between_actions: 20   # 12→20（基本間隔を拡大）
   max_delay_between_actions: 60   # 45→60
-  extra_long_pause_chance: 0.25   # 0.20→0.25（長休憩確率up）
-  break_after_n_items: 5          # 3→5（休憩頻度は減らすが、休憩時間を長く）
-  break_min_seconds: 45           # 30→45
+  extra_long_pause_chance: 0.20   # 0.25→0.20（長休憩確率微減。①のスキップ削減で自然間隔が広がるため）
+  break_after_n_items: 7          # 5→7（休憩頻度を約30%減。実測222回/日・5.4時間は過剰。7ツイート毎なら人間らしさ維持）
+  break_min_seconds: 40           # 45→40（休憩時間を微縮小、実測平均88秒→約75秒に）
   break_max_seconds: 120          # 90→120
   memory_reserve_mb: 2048
 
@@ -319,6 +319,7 @@ collection_filter:
   min_retweet_threshold: 3       # RT数がこれ未満はスキップ（偽懸賞対策）
   min_like_threshold: 1          # いいね数がこれ未満はスキップ
   max_tweet_age_hours: 72        # 3日以上前のツイートは応募しない
+  drop_without_must_word: true   # 2026-08-27: 必須ワード(フォロー/リポスト/RT)なしツイートを収集から除外（スループット改善②）
 
 # ── 賞品価値推定 ──
 prize_scoring:
