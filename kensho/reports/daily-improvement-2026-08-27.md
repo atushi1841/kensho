@@ -370,3 +370,59 @@ Worker報告(172 passed, 4 skipped)と完全一致。回帰なし。mypy含むpr
 ### 次回への申し送り
 - 提案40(inobase1-4/1089 プロキシ不安定)は**コード変更なし調査のみ**。「再び長時間不通ならTankanNotes同様コメントアウト検討」の判断が今後要。
 - zin20120731(1084)egress不安定継続(notepad教訓: 08:55再切断、WiFi信号23-45%)。スマホ物理確認が必要だが、watchdog(f3d39f4)がkill→再起動を継続動作。監視継続。
+
+---
+
+## QA検証結果(7回目: 13:10-13:20 実施・worker 12:58出力=TankanNotes復帰 6af66a7 + mypy修正 c720e3d 検証)
+
+### 検証対象
+- Worker実装: `6af66a7`(TankanNotes復帰・povo HR01切替 + 4ファイル同期) + `c720e3d`(mypy exclude修正)
+- Worker記録: critic_proposal 第18版
+
+### pytest結果
+```
+172 passed, 4 skipped in 36.65s
+```
+回帰なし。Workerがコミット前にpre-commit通過を報告済み。
+
+### mypy修正の検証 (c720e3d)
+- ルート `scraping/collector.py`(0byte)が `kensho/scraping/collector.py` と二重モジュール化 → "Source file found twice"でmypy全体スキャンがブロックされていた
+- `mypy.ini` の exclude に `|scraping/` 追加で解消
+- **実測**: `mypy .` が66ファイルをチェック完了（従来は致命的エラーで停止）。残198エラーは `no-untyped-def`/`type-arg`等の型注釈負債で構造的問題なし
+- **注**: excludeパターンはルートの `scraping/` のみを除外。`kensho/scraping/` は引き続き型チェック対象（scorer.py/collector.py のエラーは検出され続ける）— 意図通り
+- ✓ 妥当
+
+### TankanNotes復帰の差分確認 (6af66a7) — 6垢化
+| ファイル | 変更 | 判定 |
+|---------|------|------|
+| `config.yaml` | TankanNotesコメント解除（10バッチ@12件、daily_target=50）。keepalive WiFi-D再有効化(2_povo_HR01) | ✓ 妥当 |
+| `kensho/utils/proxy_watchdog.py` | PROXY_ADAPTER_MAP(1085→2_povo_tankan) + WIFI_SSID_MAP(2_povo_HR01) | ✓ 妥当 |
+| `scripts/gen_status_data.py` | WIFI_ADAPTER_TO_ACCOUNT / WIFI_ACCOUNT_SSID 更新（旧名Tankan_2_redmi_n9sは参照残コメント） | ✓ 妥当 |
+| `scripts/gen_status_html.py` | ACCOUNT_ADAPTERS 更新(2_povo_tankan / 2_povo_HR01) | ✓ 妥当 |
+
+### 4ファイル同期の検証（プロジェクト分離の要）
+- `browser.py`: FINGERPRINTS(line 135) + PROXY_MAP(line 230, socks5h://172.26.80.1:1085) ✓
+- `check_proxies.py`: PROXY_MAP(line 26) ✓
+- `keyring.py`: セッションマッピング(line 30) + migrate_all(line 106) ✓
+- `start_proxies.bat`(Windows): 1085 → `2_povo_tankan` ✓
+- `start_proxies.ps1`(Windows): `@{adapter='2_povo_tankan'; port=1085; name='TankanNotes'}` ✓
+- wifi-watchdog(profile側): ADAPTERSに `2_povo_tankan:2_povo_HR01:1085` 再追加(line 86) ✓
+- セッションファイル: `data/x_session_TankanNotes.json` 存在 + auth_token/ct0両方あり（8/26更新）✓
+
+全ファイルでアダプタ名・SSIDが一致。プロキシポート1085も矛盾なし。
+
+### ライブ状態（check_proxies.py 13:1x）
+```
+atushi16     1081 ✅ 219.104.132.236
+kudou        1082 ✅ 106.146.10.71
+chugakujuken 1083 ✅ 106.146.25.190
+zin20120731  1084 ✅ 106.146.13.249
+TankanNotes  1085 ❌ Connection refused
+inobase1-4   1089 ✅ 106.146.23.223
+```
+5/6生存・出口IP全ユニーク。TankanNotes(1085)は**想定内の不通**（ルーター2_povo_HR01不安定のためプロキシ未起動）。watchdogが自動復旧監視中。
+
+### 次回への申し送り
+- **TankanNotes(1085)がconfigアクティブなのにプロキシ不通**: ルーター(2_povo_HR01)不安定（DHCP不応答APIPA・L2切断繰返し）でプロキシ未起動。各バッチで無駄なブラウザ起動→ログイン失敗ループのリスク。watchdogが自動復旧を試行中。**復旧確認は check_proxies.py。長時間（24h超）不通が続くなら再コメントアウトを検討。** ルーター/スマホ側の物理確認が必要。
+- zin20120731(1084)は現時点✅だが本日フラッピング履歴あり（08:55再切断・信号23-45%）。watchdog継続監視。
+- ルート `scraping/`（0byte collector.py）とルート `orchestrator.py` は実運用で未使用の死骸（cronは `kensho/orchestrator.py` を使用）。mypy除外で静的解析は通るが、将来の混乱防止に削除検討（低優先）。
