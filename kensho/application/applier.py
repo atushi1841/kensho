@@ -1034,9 +1034,11 @@ def apply_for_account(
                 # ★ 同一ツイートへの複数種アクション禁止（BOT検出回避・絶対ルール）
                 #   2026-08-25: いいね要件ツイートでは「フォロー+いいね」を導入。
                 #   当選条件（フォロー&いいね）を満たすため。いいねは安全なアクションで、2アクションは自然な応募行動。
-                if _like_in_text and random.random() < _like_with_follow_rate:
+                #   2026-08-27提案41: RTがキューにある場合はいいねをスキップ（RT+いいね多重防止）。
+                #   RT必須案件ではRT成立後にいいねが実行される機械的パターンがBOT信号になるため。
+                if _like_in_text and skip_rt and random.random() < _like_with_follow_rate:
                     skip_like = False
-                    out("  [i] いいね要件: フォロー+いいね実行（当選条件を満たす）")
+                    out("  [i] いいね要件: フォロー+いいね実行（RTなし・当選条件を満たす）")
                 elif not (skip_follow and skip_rt):
                     skip_like = True
                     out("  [SKIP] いいね: フォロー/RT実行中 → 同一ツイート複数アクション回避")
