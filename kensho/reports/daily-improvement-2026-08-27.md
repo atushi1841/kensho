@@ -609,3 +609,63 @@ royalkensho追加（e4f69f5〜840b30a）で proxy_watchdog / start_proxies.ps1 /
 ### 所見
 - TankanNotes は18:30バッチ成功（本日 F6/RT6、15時7+18時5件）→ ワイモバイルHR01切替後の積み上がり確認済み。再コメントアウト基準未到達・監視継続
 - 1086(inobase1-1 FROZEN)のプロキシ残骸が192.168.128.183(Tankan_HR01 IP)にバインドされたまま稼働中 — PROXY_MAPに無いため実害なし。機会あれば掃除推奨
+
+---
+
+## QA検証結果（19:15・Worker実装 e4f69f5〜fcd0d1b 検証）
+
+### 検証内容: @royalkensho オンボーディング（5コミット）+ max_concurrent 6→7
+
+**Workerのコミット（本ラン）:**
+| コミット | 内容 |
+|---------|------|
+| `e4f69f5` (17:51) | onboard @royalkensho — config.yaml(バッチ10枠) / browser.py(PROXY_MAP+FINGERPRINTS) / proxy_watchdog.py / gen_status_html.py |
+| `e69117b` (18:15) | keyring.py(_get_session_path + migrate_all) / check_proxies.py(PROXY_MAP) |
+| `5cb868b` (18:25) | gen_status_data.py(accounts + WIFIマップ) |
+| `840b30a` (18:38) | max_concurrent_accounts 6→7 |
+| `fcd0d1b` (18:52) | 4ファイル同期の2件漏れ修正（start_proxies.bat + wifi-watchdog.sh） |
+
+### pytest結果
+```
+172 passed, 4 skipped in 53.83s
+```
+✅ 回帰なし（前回も172pass、テスト数176収集で変化なし）。
+
+### git状態
+- HEAD = `fcd0d1b`、ワーキングツリークリーン ✅
+- 差分レビュー: 5コミット全て提案（royalkensho追加）と一致。意図しない変更なし。
+
+### 実装内容の検証（提案 vs 実装）
+| 項目 | 検証結果 | 判定 |
+|------|---------|------|
+| config.yaml royalkensho | バッチ10枠(09:46-22:21, 非キリ番, max=12) + keepalive WiFi-E | ✅ |
+| browser.py FINGERPRINTS | 7垢、seed全ユニーク {42,77,68,66,55,44,88}。royalkensho=88/1536x864/night_owl_gourmet/evening_person/steady。TLSは既存と**異なる**組み合わせ(hello_downgrade=False, ocsp=True/True) | ⚠️ 注記参照 |
+| browser.py PROXY_MAP | 7垢、royalkensho=172.26.80.1:1087 | ✅ |
+| proxy_watchdog.py | PROXY_ADAPTER_MAP=(1087, zin_6_Gal_S10) + WIFI_SSID_MAP=2_povo_AW | ✅ |
+| keyring.py | セッションマップ + migrate_allに追加、`.get()`コール維持 | ✅ |
+| check_proxies.py | PROXY_MAPに1087追加 | ✅ |
+| gen_status_data/html | accounts + WIFIマップ + ACCOUNT_ADAPTERS | ✅ |
+| start_proxies.bat | 1087 → zin_6_Gal_S10 (royalkensho)（実ファイル確認） | ✅ |
+| start_proxies.ps1 | @{adapter='zin_6_Gal_S10'; port=1087; name='royalkensho'}（実ファイル確認） | ✅ |
+| wifi-watchdog.sh | ADAPTERSに `zin_6_Gal_S10:2_povo_AW:1087`（実ファイル確認） | ✅ |
+| セッションファイル | data/x_session_royalkensho.json 存在（2,403B） | ✅ |
+
+### ライブ検証（19:10-19:15時点）
+| 項目 | 結果 | 判定 |
+|------|------|------|
+| プロキシ生存 | 6/7（1082 kudouのみcheck_proxiesタイムアウト） | ⚠️ 下記 |
+| 出口IP分離 | 生存6ポート全ユニーク（1087=106.133.47.112） | ✅ |
+| 1087 royalkensho | ✅ 生存・egress OK（watchdog 19:10 確認） | ✅ |
+| wifi_watchdog 19:10 | 全6アダプタ接続済み + 全プロキシ egress OK | ✅ |
+| FINGERPRINTS/PROXY_MAP読み込み | count 7 / count 7 | ✅ |
+| RAM | 残り6GB、RAMガード(3GB)稼働中 | ✅ |
+
+### 所見・申し送り
+1. **kudou(1082) のcheck_proxiesタイムアウトは一時事象** — 19:10のcheck_proxiesで10.2sタイムアウトしたが、直後のwifi_watchdog(19:10:19)では「✅ プロキシ1082(kudou_RM10JE_B) 生存（egress OK）」+ netstatでESTABLISHED確認。実行タイミング重複による一時的な遅延と判断。次サイクルで再確認すること。
+2. **royalkenshoのTLS設定は他垢と非統一** — hello_downgrade=False / ocsp_stapling=True / must_staple=True は、他垢（True/False/False）と異なる。スキル「TLS fingerprintは全垢で統一」に反するため、**指摘事項として記録**（seed/persona等の個別性はOK）。即時の凍結リスクは低いが、次回criticで統一の是非を検討。
+3. **max_concurrent 7でピークRAM監視** — 7垢同時スポーン時はFirefox 7台(最大14-21GB想定)。RAMガード(3GB)が安全弁として機能する設計だが、WSLの空きは現在6GB。OOM→スポーン抑制→7垢目が後回し（修正前の問題再発）のループに注意。1-2日監視して問題なければ維持。
+4. **1086(inobase1-1 FROZEN)のプロキシ残骸** — Tankan_HR01 IP(192.168.128.183)にバインドされたまま稼働中。PROXY_MAPに無いため実害なし。機会あれば掃除（Worker報告と一致）。
+5. **継続監視**: TankanNotesは18:30バッチ成功後も順調。提案45の再コメントアウト基準未到達。
+
+### 結論
+Worker実装（e4f69f5〜fcd0d1b）は提案内容と一致し、回帰なし・4ファイル同期の実ファイル確認まで完了。**✓ 実装内容を確認済み**。指摘事項は上記2件（TLS非統一・kudou一時タイムアウト）を次回criticへ申し送り。
