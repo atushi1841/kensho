@@ -25,6 +25,7 @@ PROXY_MAP: dict[str, str] = {
     "zin20120731": "socks5h://172.26.80.1:1084",
     "TankanNotes": "socks5h://172.26.80.1:1085",
     "inobase1-4": "socks5h://172.26.80.1:1089",
+    "royalkensho": "socks5h://172.26.80.1:1087",
 }
 
 
