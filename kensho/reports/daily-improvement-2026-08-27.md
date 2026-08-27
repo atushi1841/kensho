@@ -467,3 +467,37 @@ inobase1-4   1089 ✅ 106.146.23.223
 172 passed, 4 skipped in 57.98s
 ```
 回帰なし。gitワーキングツリー: クリーン（提案44実装済み・本記録は報告コミットで反映）
+
+---
+
+## QA検証結果（2026-08-27 15:1X・Workerラン 14:52 対応）
+
+### 検証対象
+- Worker実装: **提案44**（proxy_watchdog cp932デコードエラー）→ commit `a7f3b19`（14:44:53）
+- Worker報告: **提案45**（TankanNotes 1085 再コメントアウト基準設定）→ commit `125ee1e`（14:52:04）
+
+### pytest結果
+```
+172 passed, 4 skipped in 53.21s
+```
+**回帰なし**（QA独自再実行）。test_proxy_watchdog.py含む全テスト通過。
+
+### git状態
+- `git log --oneline -3`: `125ee1e`（Worker報告）→ `a7f3b19`（提案44実装）→ `55186f1`（QA検証7回目）
+- ワーキングツリー: クリーン
+
+### 差分検証（提案44 = a7f3b19）
+- `git show a7f3b19`: proxy_watchdog.py の `subprocess.run(..., text=True)` 計**7箇所**（L114/L129/L220/L250/L266/L272/L325）に `errors="replace"` 追加 — **提案内容と完全一致** ✅
+- 実コードgrepで確認: `errors="replace"` = **7件**、`text=True` 全7箇所すべてに付与済み（漏れなし）
+- 解析対象（status="Up"/IP/件数）はASCIIのため置換による挙動変化なし（提案の見込みどおり）
+- mypy: proxy_watchdog.py に **type-arg警告2件（既存・本変更による新規エラーなし）** — `errors="replace"`追加は型に影響しない
+
+### ライブ計測（15:1X時点）
+- `check_proxies.py`: **6/6全プロキシ生存・出口IP全ユニーク**（TankanNotes 1085 = 106.133.39.72, 0.3s ✅）
+- 本日audit: atushi16=38 / kudou=31 / inobase1-4=20 / chugakujuken=19 / zin=19 success
+- **TankanNotes: 本日0成功**（auditにエントリなし）— 14:00バッチは `NS_ERROR_CONNECTION_REFUSED`×3 → ログイン失敗 → Verifyタイムアウト。`[RESULT] ✅ ツイート正常（応募成立）`は付いたが実アクション0（既知の偽陽性パターン・applied増加のみ）。**提案45の監視継続が正しい判断**
+
+### 提案45の妥当性
+- 再コメントアウト基準（(a) 24h egress不通 or (b) バッチ連続3回失敗）はcritic提案どおり明文化済み・worker報告/notepadに記録 ✅
+- 現時点: egress OK・バッチ失敗は14:00の1回のみ → **コメントアウト保留・監視継続が適切**
+- 14:45/14:50 wifi_watchdog: `2_povo_tankan` 接続済み・信号100%・egress OK（直前3サイクル安定）— 復旧傾向
