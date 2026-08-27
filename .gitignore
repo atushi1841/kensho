@@ -71,6 +71,7 @@ data/profiles/
 data/*.bak.*
 data/*.bak
 data/kensho_hub.html
+data/.audit_bot_safety_state.json
 kensho-status.html
 .supermemory/
 

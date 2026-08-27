@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""BOT安全監査 — 前日のaudit.jsonlに対して以下のBOTシグナルを検査する。
+"""BOT安全監査 — audit.jsonlに対して以下のBOTシグナルを検査する。
 
 1. 深夜(00:00-07:59)のアクション     → 深夜ガード(no_action_window 00-07)の機能確認
 2. 5秒未満のアクション間隔           → ACCOUNT_SAFETY_RULESの連続アクション規制確認
@@ -8,8 +8,12 @@
 5. 同一垢の1時間あたりアクション数   → hourly上限(max_actions_per_hour)確認
 
 使い方:
-    python3 scripts/audit_bot_safety.py [date]
+    python3 scripts/audit_bot_safety.py [date] [--today] [--state]
     date省略時は「昨日」を検査。dateはYYYY-MM-DD形式。
+    --today : date省略時の対象を「今日」にする（時間毎監視用）
+    --state : 既報シグナルをstateファイルで抑制し、NEW分のみ出力（時間毎監視用）
+              date省略+--state のときは --today を意味する
+    date省略+フラグなし = 昨日の完全監査（毎日1:00の確定監査と互換）
 
 出力: 問題がなければ何も出さない(終了コード0)。問題があれば該当行を出力(終了コード1)。
       cronのmonitor判定: 出力が空=安全 / 出力あり=要確認。
@@ -24,9 +28,11 @@ import sys
 from datetime import timedelta, timezone
 from pathlib import Path
 
-ACCOUNTS = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4"]
+ACCOUNTS = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4", "royalkensho"]
 AUDIT_PATH = Path(__file__).resolve().parent.parent / "data" / "audit.jsonl"
 CONFIG_PATH = Path(__file__).resolve().parent.parent / "config.yaml"
+STATE_PATH = Path(__file__).resolve().parent.parent / "data" / ".audit_bot_safety_state.json"
+STATE_KEEP_DAYS = 3  # state保持日数（それより古い日付は掃除）
 
 MIN_ACTION_GAP = 5.0  # 秒。これ未満の2アクション間隔は規制違反
 
@@ -55,9 +61,44 @@ MAX_ACTIONS_PER_HOUR = 15  # 時間あたり上限(config rate_limits.max_action
 
 
 def _load_target_date() -> str:
-    if len(sys.argv) > 1:
-        return sys.argv[1]
+    """対象日付を決定する。--todayがあれば今日、なければ昨日（後方互換）。"""
+    use_today = "--today" in sys.argv
+    # --state のみの場合は --today を意味する
+    if not use_today and "--state" in sys.argv and len(sys.argv) <= 2:
+        use_today = True
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if args:
+        return args[0]
+    if use_today:
+        return datetime.date.today().isoformat()
     return (datetime.date.today() - datetime.timedelta(days=1)).isoformat()
+
+
+def _load_state() -> dict[str, list[str]]:
+    """stateファイルを読み込む。存在しない/破損時は空dict。"""
+    if not STATE_PATH.exists():
+        return {}
+    try:
+        return json.loads(STATE_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def _save_state(state: dict[str, list[str]]) -> None:
+    """stateファイルを書き込む。古い日付は掃除。"""
+    try:
+        today = datetime.date.today()
+        keep = {}
+        for d, lines in state.items():
+            try:
+                dt = datetime.date.fromisoformat(d)
+                if (today - dt).days <= STATE_KEEP_DAYS:
+                    keep[d] = lines
+            except (ValueError, TypeError):
+                continue
+        STATE_PATH.write_text(json.dumps(keep, ensure_ascii=False), encoding="utf-8")
+    except Exception:
+        pass
 
 
 def main() -> int:
@@ -156,6 +197,16 @@ def main() -> int:
     for (acct, hh), c in hourly.items():
         if c > MAX_ACTIONS_PER_HOUR:
             problems.append(f"[過集中] {date_s} {acct} {hh}時台に{c}アクション (上限{MAX_ACTIONS_PER_HOUR}/時)")
+
+    # ★ 2026-08-27: --state 時は既報シグナルを抑制し、NEW分のみ報告（時間毎監視用）
+    if "--state" in sys.argv:
+        state = _load_state()
+        known = set(state.get(date_s, []))
+        new_problems = [p for p in problems if p not in known]
+        if problems:
+            state[date_s] = sorted(set(known) | set(problems))
+            _save_state(state)
+        problems = new_problems
 
     if problems:
         print(f"[audit_bot_safety] {date_s}: {len(problems)}件のBOTシグナル検出")
