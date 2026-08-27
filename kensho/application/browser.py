@@ -227,7 +227,7 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
         "pixel_ratio": 1.25,
         "locale": "ja-JP",
         "timezone_id": "Asia/Tokyo",
-        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0",
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0",
         "webgl_vendor": "Google Inc. (AMD)",
         "webgl_renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
         "profile": {
