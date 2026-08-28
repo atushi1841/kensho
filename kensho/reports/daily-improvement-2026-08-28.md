@@ -289,3 +289,74 @@
 - 提案57（--dry-run）: 実装確認・BOTリスクなし。テスト185 pass回帰なし。
 - 追加改善（like_done_ids / orchestrator再試行 / JST変換 / backup掃除）: 差分確認済み・適切。
 - 深夜アクション0件・プール枯渇なし・6/7プロキシIP分離OK。
+
+---
+
+# QA検証結果: 2026-08-28（16回目・12:53 Worker実行検証）
+
+## 検証結果
+
+### Worker実装（コミット 3c2905e, 12:53 JST）
+`feat: 提案58(chugakujukenフラッピング監視注記) + royalkenshoアダプタリネーム追従` — 5ファイル変更を確認:
+
+| # | 変更 | 提案対応 | 検証 |
+|---|------|---------|------|
+| 1 | `kensho/utils/proxy_watchdog.py` — PROXY_ADAPTER_MAPにchugakujuken(1083)のフラッピング監視注記追加 + royalkenshoアダプタ名 `zin_6_Gal_S10`→`royalkensho_airtra1` | **提案58【低】** ✅ | コメント注記のみ（コードロジック変更なし）。注記内容は「Galaxy S10系アダプタはroyalkenshoと同系構成でフラッピング前歴あり。watchdog復旧ログ頻発・http_0増加が出たら要ユーザー対応へ格上げ」で提案通り。リネームも実アダプタ名と一致（8/28リネーム実効） |
+| 2 | `config.yaml` — royalkenshoのバッチコメント更新（アダプタ名リネーム反映） | 追従 ✅ | コメントのみ・スケジュール変更なし |
+| 3 | `scripts/gen_status_data.py` — `WIFI_ADAPTER_TO_ACCOUNT` リネーム追従 + `_SIG_RE` 正規表現修正（Rssi欠損許容 `\|(-?\d+?|-)` 末尾`\b`削除） | 追従+追加改善 ✅ | RTL8188EU系アダプタ（netshがRssi非報告）でダッシュボードのRssi「—」表示を可能にする修正。既知のroyalkensho特性（memory: netshでRssi非報告）と一致 |
+| 4 | `scripts/gen_status_html.py` — `ACCOUNT_ADAPTERS` リネーム追従 | 追従 ✅ | アダプタ表示名 `royalkensho_airtra1`（SSID 2_povo_AW）に更新 |
+| 5 | `reports/critic_proposal_2026-08-28.md` — 第27版（12:20 JST）反映 | docs ✅ | 提案58/59新規、56継続、57クローズ確認 |
+
+- **提案59**: 「記録のみ・コード変更不要」— Workerコミットのコメントで言及あり。コード変更なしで正しい。
+- **提案56【中】（recover cron 07:50検証）**: Workerは「Next=2026-08-29T07:50」を確認済みと明記。**明日07:50のcron Last run確認が最終判定**（次回QA）。
+
+### pytest
+- `python -m pytest tests/ -q --ignore=tests/test_invisible_playwright.py` → **185 passed / 4 skipped**（QA15と同値・回帰なし）
+- 全変更ファイルのsyntax確認OK（gen_status_data.py / gen_status_html.py ast.parse通過）
+- `python scripts/gen_status_data.py` → `DATA_OK`（exit 0）— リネーム+Rssi正規表現変更後も正常動作
+
+### git状態
+- HEAD: `3c2905e`（Worker実装コミット、2026-08-28 12:53 JST）
+- ワーキングツリー: **クリーン**
+
+### ライブ計測（13:10 JST）
+**プロキシ 7/7生存・IP全ユニーク（curl実測）:**
+| ポート | アカウント | IP | 結果 |
+|--------|-----------|-----|------|
+| 1081 | atushi16 | 219.104.132.236 | ✅ |
+| 1082 | kudou | 106.146.19.143 | ✅ |
+| 1083 | chugakujuken | 106.146.1.156 | ✅ 復旧（QA15の不通から回復） |
+| 1084 | zin20120731 | 106.146.24.208 | ✅ |
+| 1085 | TankanNotes | 126.133.204.68 | ✅ |
+| 1087 | royalkensho | 106.133.46.61 | ✅ **Worker報告の12:47不通から復旧（フラッピング継続中）** |
+| 1089 | inobase1-4 | 106.146.21.209 | ✅ |
+
+- **Workerが12:47に報告した1087不通は13:10時点で復旧**（106.133.46.61）— フラッピング継続の一環。critic第27版の「1087安定（12:20時点）」観測と併せ、**短時間のフラップを繰り返している状態**。
+- daily_counts (8/28, 13:10時点): 全7垢合計**94アクション**（F45 RT49 L0）。royalkensho F8RT7=15件（8/27終日11件を13時で突破）、TankanNotes F7RT8=15件、inobase1-4 F9RT10=19件と健常。
+- RT 327: `grep -cE "code.:327" logs/auto_20260828.log` = **30**（10:49以降増加なし — 手動復元の効果継続）。
+- プール: 1023件 / 717件未応募（枯渇なし・健康）。収集timestamp 09:12 ✅
+
+**BOT検出リスク評価:**
+- 提案58: 監視注記（コメント）のみ。X API・セッション不使用。リスクなし。
+- リネーム追従: アダプタ名の文字列更新のみ。プロキシ設定・動作ロジック不変。リスクなし。
+- Rssi正規表現: ダッシュボード表示のみ。リスクなし。
+
+## 改善ノート保存先
+- `kensho/reports/daily-improvement-2026-08-28.md`（本ファイルのQAセクション追記）
+
+## 次回への申し送り
+
+#### 🔴 Critical
+1. **royalkensho(1087) フラッピング継続（要ユーザー対応の可能性・要監視）**: 12:47にWorkerが不通観測→13:10に復旧。critic第27版（12:20安定）と合わせ、**短時間のフラップを繰り返す不安定状態が継続中**。8/28はF8RT7=15件とアクションは健常だが、フラップが長時間化したら（watchdog復旧ログ頻発・http_0増加）config.yaml一時コメントアウト or スマホ側（air-tra1/2_povo_AW）物理確認を推奨。提案58の監視基準で格上げ判定。
+
+#### 🟡 監視項目
+2. **提案56（recover cron 07:50検証・最終判定）**: WorkerがNext=2026-08-29T07:50を確認済み。**明日07:50後のQAで cron list の Last run=07:50 を確認**。8/29の `grep -cE "code.:327" logs/auto_20260829.log` が5件程度（8/27ベースライン）に戻れば完全。8/28は30件のまま（10:49以降増加なし）。
+3. **提案51（TankanNotes達成率判定）**: 8/28は13:10時点で15件（target 50の30%）。全日終了後に50%超ならクローズ判定。
+4. **chugakujuken(1083)**: QA15の不通は13:10時点で復旧（106.146.1.156, 0.5s以下）・IP分離OK。一過性のフラップだった可能性大。提案58の監視注記で継続監視。
+5. **kudou信号劣化（継続）**: 8/28はF5RT5=10件と健常。プロキシ応答正常。
+
+#### ✅ 確認済み
+- 提案58（chugakujuken監視注記）: 実装確認・BOTリスクなし。
+- royalkenshoアダプタリネーム（4ファイル）: 一貫性確認済み・gen_status_data.py 実動作OK（DATA_OK）。
+- Rssi欠損許容の正規表現修正: ダッシュボード表示のみで安全。
+- pytest 185 pass回帰なし・ワーキングツリークリーン・プロキシ7/7生存・IP全ユニーク。
