@@ -270,7 +270,7 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
                 return YELLOW
             return RED
 
-        html += '<div class="card"><div class="card-title">WiFi テザリング状態（watchdog）</div><table>'
+        html += '<div class="card"><div class="card-title">WiFi テザリング状態（常時監視）</div><table>'
         html += "<tr><td>アカウント</td><td>回線 / アダプタ / SSID</td><td>現信号%</td><td>Rssi(dBm)</td><td>本日</td><td>本日障害率</td><td>7日間障害率</td><td>状態</td></tr>"
         for ac in sorted(wifi.keys()):
             w = wifi[ac]
@@ -371,7 +371,8 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
     html += '<div class="card"><div class="card-title">収集元</div><div class="grid-2">'
     for src, cnt in sorted(sd.items(), key=lambda x: -x[1]):
         pct = cnt / total_src * 100
-        html += f'<div class="stat-card"><div class="stat-val" style="font-size:1.1rem;color:{BLUE}">{cnt}</div><div class="stat-label">{src} ({pct:.0f}%)</div></div>'
+        src_disp = "不明" if src == "unknown" else src
+        html += f'<div class="stat-card"><div class="stat-val" style="font-size:1.1rem;color:{BLUE}">{cnt}</div><div class="stat-label">{src_disp} ({pct:.0f}%)</div></div>'
     html += "</div></div>"
 
     # prize
