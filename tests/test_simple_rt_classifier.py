@@ -75,7 +75,7 @@ class TestClassifyTexts:
             api_key="sk-test",
         )
         assert res == {"t1": "FLAG", "t2": "OK"}
-        assert called and called[0]["model"] == "deepseek-v4-flash"
+        assert called and called[0]["model"] == "deepseek-chat"
         assert called[0]["messages"][0]["role"] == "system"
 
     def test_fail_open_on_error(self, monkeypatch: Any) -> None:

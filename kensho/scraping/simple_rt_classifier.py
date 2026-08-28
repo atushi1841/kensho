@@ -5,8 +5,9 @@
   実際には追加操作（外部サイトX連携・動画認証・キーワード入力・診断・写真/ハッシュタグ投稿等）を
   必要としており、無駄なRT/フォローを消費していた（25件サンプルでFLAG率52%）。
 - キーワードの付け外しはいたちごっこ（「結果をチェック」削除→漏れ 等）のため、
-  LLM（DeepSeek v4-flash）による自然言語判定に切り替える。
-- 実測: 対象4件(FLAG)+正常3件(OK) = 7/7正解。8件/バッチなら推論トークン枯渇なし。
+  LLM（DeepSeek）による自然言語判定に切り替える。
+- 実測: 対象4件(FLAG)+正常3件(OK) = 7/7正解（deepseek-chat採用）。
+- 8件/バッチ・非推論モデルでコスト・速度・精度のバランスが最適。
 
 fail-open 設計: どんな失敗でも UNKNOWN を返し、応募側は従来挙動（応募継続）になる。
 """
@@ -23,7 +24,11 @@ from typing import Any
 import httpx
 
 API_URL: str = "https://api.deepseek.com/chat/completions"
-DEFAULT_MODEL: str = "deepseek-v4-flash"
+# ★ 2026-08-28: deepseek-chat（非推論V3）を採用 — 実測比較:
+#   deepseek-chat: 7/7正解・1.5s・1119tokens（推論なし）
+#   deepseek-v4-flash: 6/7正解（不安定）・5.6s・1710tokens（推論357+でトークン浪費）
+#   分類タスクは推論不要のため、安価で高速・高精度な非推論モデルが最適。
+DEFAULT_MODEL: str = "deepseek-chat"
 DEFAULT_BATCH_SIZE: int = 8
 
 # 判定プロンプト（実測で7/7正解のものを使用）

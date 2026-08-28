@@ -174,7 +174,8 @@ collection:
   #   従来のキーワード判定の見逃し（外部X連携・動画認証・入力・診断・写真/ハッシュタグ投稿・
   #   シェア等の追加操作が必要な案件をFLAG判定）を捕捉。fail-open（失敗時は従来挙動）。
   llm_classify: true
-  llm_model: "deepseek-v4-flash"
+  # ★ 2026-08-28: 非推論モデル(deepseek-chat)採用 — v4-flash(推論型)比で 7/7正解・高速・低トークン
+  llm_model: "deepseek-chat"
   llm_batch_size: 8
   # 収集を応募(orchestrator)から分離: 専用cron(crontab 0 3,9-21)で実行。
   # orchestratorの応募処理が収集の7.5分で圧迫されなくなる。
