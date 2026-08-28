@@ -226,3 +226,66 @@
 
 #### ✅ 確認済み
 - Worker変更なし・pytest 185 pass・プロキシ7/7生存・IP分離OK・深夜アクション0件（no_action_window正常）。BOTシグナルなし。
+
+---
+
+# QA検証結果: 2026-08-28（15回目・11:16 Worker実行検証）
+
+## 検証結果
+
+### Worker実装（コミット 528ed5c, 11:14 JST）
+`feat(recover): --dry-run flag追加 + 未コミット改善を取り込み` — 6項目の変更を確認:
+
+| # | 変更 | 提案対応 | 検証 |
+|---|------|---------|------|
+| 1 | `scripts/recover_applied_from_audit.py` — **--dry-run追加**（argparse・書込みなし・バックアップなし）+ follow_state.json からのフォロー済み復元 | **提案57【低】** ✅ | --dry-run時はバックアップ作成・write_text・shutil.copyをスキップし復元予定表示のみ。実装は提案と一致 |
+| 2 | `kensho/application/applier.py` — **like_done_ids追加**（セッション内いいね重複防止） | 追加改善（提案12のセッション内版）✅ | フォロー/RT/いいねの3箇所のスキップ条件に tweet_id in like_done_ids を追記、成功時 like_done_ids.add(tweet_id)。後方互換（set初期化のみ）で安全 |
+| 3 | `kensho/orchestrator.py` — **結果空っぽ時 last_processed 更新なし**（再試行可能化） | 追加改善 ✅ | [WARN] 結果空っぽ → 再試行可能としてキープ。ログイン失敗等でも次サイクルでリトライ可。BOTリスク影響なし |
+| 4 | `scripts/gen_status_data.py` + `gen_status_html.py` — **audit JST変換（_audit_jst_date）+ 健全性警告バナー** | 追加改善 ✅ | UTC→JST変換を全audit集計に適用（日付境界のズレ修正）。health check（復元漏れ検知+recover cronスキップ検知）を追加しHTMLにバナー表示 |
+| 5 | `scripts/kensho_maintenance.py` — **data/backups の古い.bak掃除（keep=15）** | 追加改善 ✅ | cleanup_old_backups() 追加、main() の[2/5]で呼び出し。31MB/73ファイルのbackups肥大対策 |
+| 6 | `reports/critic_proposal_2026-08-28.md` — 第26版（10:50 JST）反映 | docs ✅ | 提案56/57新規、49/51継続、50/52/53/54/55クローズ確認 |
+
+- **提案56【中】（recover cron 07:50実行検証）**: Workerは本コミットで未対応（明日07:50実行確認が必要 — cron listのLast run=07:50を次回QAで確認）
+- **提案49（royalkensho物理）**: 要ユーザー対応のまま継続
+- **提案51（TankanNotes達成率）**: 8/28データで判定待ち（下記ライブ計測参照）
+
+### pytest
+- `uv run python -m pytest tests/ -q --ignore=tests/test_invisible_playwright.py` → **185 passed / 4 skipped**（QA14と同値・回帰なし）
+
+### ライブ計測（11:1x JST）
+**プロキシ 6/7生存 — chugakujuken(1083)が新規不通:**
+| ポート | アカウント | IP | 結果 |
+|--------|-----------|-----|------|
+| 1081 | atushi16 | 219.104.132.236 | ✅ |
+| 1082 | kudou | 106.146.19.143 | ✅ |
+| 1083 | chugakujuken | (不通) 10.1s timed out | ❌ **新規** |
+| 1084 | zin20120731 | 106.146.27.220 | ✅ |
+| 1085 | TankanNotes | 126.133.206.243 | ✅ |
+| 1087 | royalkensho | 106.133.47.106 | ✅ |
+| 1089 | inobase1-4 | 106.146.21.209 | ✅ |
+
+**1083診断**: アダプタ chugakujuken_RM10JE_S は Get-NetAdapter で Status=Up、プロキシプロセス（PID 13048, kensho_proxy.py chugakujuken_RM10JE_S 1083）も LISTENING だが CONNECTがタイムアウト → **「SOCKS5ハンドシェイクOKでもCONNECT不可 = テザリング側の実インターネット死」パターン**（既知pitfall・スマホ側の問題）。ただし daily_counts では11時台にF3RT3=6件記録されており、**10-11時台のセッション中に途中死した可能性**。WSLからは復旧不可 — スマホ（Redmi RM10JE_Sテザリング）側のモバイルデータ/APN確認が必要。
+
+- 深夜アクション(8/28 00-06 JST): **0件** ✅（no_action_window正常）
+- 8/28 RT 327 AuthorizationError: **30件**（critic第26版指摘の通り、recover cron未実行が主因）
+- プール: 1017件（749件全垢未応募・枯渇なし）。収集timestamp 09:12 ✅
+- daily_counts (8/28, 11:0x時点): 全7垢合計42アクション。atushi16 F5RT5、inobase1-4 F4RT4、royalkensho F4RT3（7件・健常）、TankanNotes F1RT1（2件）
+
+## 改善ノート保存先
+- `kensho/reports/daily-improvement-2026-08-28.md`（本ファイルのQAセクション追記）
+
+## 次回への申し送り
+
+#### 🔴 Critical
+1. **chugakujuken(1083) プロキシ不通（新規・11:1x発見）**: アダプタはUp・プロキシはLISTEN中だがCONNECT不可 → テザリング側（Redmi RM10JE_Sホットスポット）の実インターネット死。**【要ユーザー対応】スマホ側のモバイルデータ/APN(dun)確認が必要**。WSLからは復旧不可。次回QAで check_proxies.py 再確認。
+2. **提案49（要ユーザー対応）継続**: royalkensho(1087)。8/28はF4RT3=7件と健常（今朝から好調継続）。物理確認は継続推奨だが優先度は低いまま。
+
+#### 🟡 監視項目
+3. **提案56（recover cron 07:50検証）**: Worker未対応 → **次回QA（7:50以降の実行）で cron list の Last run=07:50 を確認**。8/28朝のRT 327 30件が明日5件程度に戻るかで効果検証。
+4. **提案51（TankanNotes達成率判定）**: 8/28は現時点F1RT1=2件のみ（まだ朝のバッチ序盤）。8/28全日終了後に50%以上ならクローズ判定。
+5. **RT 327 30件**: recover cron実行後の推移を監視（applierはalready_retweetedをsuccess化するため自己修復はするが、セッション時間を浪費）。
+
+#### ✅ 確認済み
+- 提案57（--dry-run）: 実装確認・BOTリスクなし。テスト185 pass回帰なし。
+- 追加改善（like_done_ids / orchestrator再試行 / JST変換 / backup掃除）: 差分確認済み・適切。
+- 深夜アクション0件・プール枯渇なし・6/7プロキシIP分離OK。
