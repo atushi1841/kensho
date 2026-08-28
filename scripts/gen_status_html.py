@@ -22,7 +22,11 @@ ACCOUNT_ADAPTERS = {
         "ワイモバイル",
     ),  # 2026-08-27: povo HR01(2_povo_tankan)から切替。アダプタ名もWi-Fi→Tankan_HR01にリネーム
     "inobase1-4": ("inobase1-4", "ino1_4_oppo_r5a", "povo"),
-    "royalkensho": ("royalkensho_airtra1", "2_povo_AW", "povo"),  # 2026-08-28: 旧zin_6_Gal_S10→リネーム。air-tra1モバイルWiFi
+    "royalkensho": (
+        "royalkensho_airtra1",
+        "2_povo_AW",
+        "povo",
+    ),  # 2026-08-28: 旧zin_6_Gal_S10→リネーム。air-tra1モバイルWiFi
 }
 
 # UNUSED（応募停止済み）: cron再生成でも維持されるようハードコード（2026-08-17）
@@ -140,7 +144,7 @@ def generate_html(data):
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Kensho Dashboard v5</title>
+<title>Kensho ダッシュボード</title>
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
 body{{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:{BG};color:#c9d1d9;padding:20px;max-width:960px;margin:auto}}
@@ -173,13 +177,13 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
 </style>
 </head>
 <body>
-<h1>Kensho Dashboard v5</h1>
-<div class="sub">更新: {now} | Cron: {"🟢" if cron_running == "yes" else "🔴"} | Orch: {"🟢" if orch_running == "yes" else "🔴"}</div>
-<div class="card"><div class="card-title">summary</div><div class="grid-5">
-<div class="stat-card"><div class="stat-val" style="color:{GREEN}">{sm["total_items"]}</div><div class="stat-label">items</div></div>
-<div class="stat-card"><div class="stat-val" style="color:{BLUE}">{sm["total_applied"]}</div><div class="stat-label">applied</div></div>
-<div class="stat-card"><div class="stat-val" style="color:{YELLOW}">{sm["total_pending"]}</div><div class="stat-label">pending</div></div>
-<div class="stat-card"><div class="stat-val" style="color:{PURPLE}">{sm["total_today"]}</div><div class="stat-label">today</div></div>
+<h1>Kensho ダッシュボード</h1>
+<div class="sub">更新: {now} | 収集cron: {"🟢" if cron_running == "yes" else "🔴"} | 応募: {"🟢" if orch_running == "yes" else "🔴"}</div>
+<div class="card"><div class="card-title">概要</div><div class="grid-5">
+<div class="stat-card"><div class="stat-val" style="color:{GREEN}">{sm["total_items"]}</div><div class="stat-label">件数</div></div>
+<div class="stat-card"><div class="stat-val" style="color:{BLUE}">{sm["total_applied"]}</div><div class="stat-label">応募済</div></div>
+<div class="stat-card"><div class="stat-val" style="color:{YELLOW}">{sm["total_pending"]}</div><div class="stat-label">未応募</div></div>
+<div class="stat-card"><div class="stat-val" style="color:{PURPLE}">{sm["total_today"]}</div><div class="stat-label">本日</div></div>
 </div></div>
 """
 
@@ -192,13 +196,13 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
 
     # deadline
     dl = st.get("deadline_dist", {})
-    html += '<div class="card"><div class="card-title">deadline</div><div class="grid-5">'
+    html += '<div class="card"><div class="card-title">締切</div><div class="grid-5">'
     for label, key, color in [
-        ("expired", "expired", RED),
-        ("today", "today", YELLOW),
-        ("3days", "3days", GREEN),
-        ("week", "week", BLUE),
-        ("future", "future", GRAY),
+        ("期限切", "expired", RED),
+        ("本日", "today", YELLOW),
+        ("3日", "3days", GREEN),
+        ("1週", "week", BLUE),
+        ("先", "future", GRAY),
     ]:
         val = dl.get(key, 0)
         html += f'<div class="stat-card"><div class="stat-val" style="color:{color}">{val}</div><div class="stat-label">{label}</div></div>'
@@ -214,18 +218,18 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
         at = ad["applied_today"]
         if total_actions > 20:
             badge = "bg-green"
-            label = "many"
+            label = "多"
         elif total_actions > 5:
             badge = "bg-yellow"
-            label = "mid"
+            label = "中"
         else:
             badge = "bg-red"
-            label = "new"
+            label = "低"
         rows.append((ac, at, ad, f_val, r_val, l_val, total_actions, badge, label))
     rows.sort(key=lambda x: -x[6])
 
-    html += '<div class="card"><div class="card-title">accounts</div><table>'
-    html += "<tr><td>account</td><td>回線 / adapter / SSID</td><td>today</td><td>total</td><td>DEFER</td><td>pending</td><td>actions</td></tr>"
+    html += '<div class="card"><div class="card-title">アカウント</div><table>'
+    html += "<tr><td>アカウント</td><td>回線 / アダプタ / SSID</td><td>本日</td><td>累計</td><td>延期</td><td>未応募</td><td>アクション</td></tr>"
     for ac, at, ad, f_val, r_val, l_val, total, badge, label in rows:
         ta = ad["total_applied_all"]
         defer = ad.get("defer_count", 0)
@@ -266,8 +270,8 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
                 return YELLOW
             return RED
 
-        html += '<div class="card"><div class="card-title">wifi テザリング状態（watchdog）</div><table>'
-        html += "<tr><td>account</td><td>回線 / adapter / SSID</td><td>現信号%</td><td>Rssi(dBm)</td><td>今日</td><td>今日障害率</td><td>7日障害率</td><td>状態</td></tr>"
+        html += '<div class="card"><div class="card-title">WiFi テザリング状態（watchdog）</div><table>'
+        html += "<tr><td>アカウント</td><td>回線 / アダプタ / SSID</td><td>現信号%</td><td>Rssi(dBm)</td><td>本日</td><td>本日障害率</td><td>7日間障害率</td><td>状態</td></tr>"
         for ac in sorted(wifi.keys()):
             w = wifi[ac]
             # ACCOUNT_ADAPTERSを優先表示（現在の正しい構成）。実測adapter/ssidはwatchdog次回集計まで古いことがある
@@ -321,8 +325,8 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
     # ── UNUSED（応募停止済み）アカウント ──
     unused = data.get("unused_accounts", [])
     if unused:
-        html += '<div class="card"><div class="card-title">UNUSED (応募停止)</div><table>'
-        html += "<tr><td>account</td><td>adapter / SSID</td><td>status</td></tr>"
+        html += '<div class="card"><div class="card-title">応募停止アカウント</div><table>'
+        html += "<tr><td>アカウント</td><td>アダプタ / SSID</td><td>状態</td></tr>"
         for u in unused:
             key = u.get("key", "")
             disp = u.get("display", key)
@@ -331,7 +335,7 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
             adapter_display = (
                 f"[{carrier}] {adapter} ({ssid})" if adapter and carrier else f"{adapter} ({ssid})" if adapter else "—"
             )
-            html += f'<tr><td>{disp} <span class="badge bg-red">unused</span></td><td class="num">{adapter_display}</td><td class="num">{reason}</td></tr>'
+            html += f'<tr><td>{disp} <span class="badge bg-red">停止</span></td><td class="num">{adapter_display}</td><td class="num">{reason}</td></tr>'
         html += "</table></div>"
 
     # ── 日別×アカウント別 応募履歴 ──
@@ -345,9 +349,9 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
                 for d in hist.get("days", [])
             )
         ]
-        html += '<div class="card"><div class="card-title">apply history (last 14 days) — 応募件数 / 成功アクション数</div><table>'
+        html += '<div class="card"><div class="card-title">応募履歴（14日）— 応募件数 / 成功アクション数</div><table>'
         html += (
-            "<tr><td>date</td>" + "".join(f'<td style="text-align:center">{ac}</td>' for ac in hist_accounts) + "</tr>"
+            "<tr><td>日付</td>" + "".join(f'<td style="text-align:center">{ac}</td>' for ac in hist_accounts) + "</tr>"
         )
         for d in reversed(hist["days"]):
             applied_d = hist.get("applied", {}).get(d, {})
@@ -364,7 +368,7 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
     # sources
     sd = st.get("source_dist", {})
     total_src = sum(sd.values()) or 1
-    html += '<div class="card"><div class="card-title">sources</div><div class="grid-2">'
+    html += '<div class="card"><div class="card-title">収集元</div><div class="grid-2">'
     for src, cnt in sorted(sd.items(), key=lambda x: -x[1]):
         pct = cnt / total_src * 100
         html += f'<div class="stat-card"><div class="stat-val" style="font-size:1.1rem;color:{BLUE}">{cnt}</div><div class="stat-label">{src} ({pct:.0f}%)</div></div>'
@@ -372,21 +376,21 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
 
     # prize
     pd = st.get("prize_dist", {})
-    html += '<div class="card"><div class="card-title">prize value</div><div class="grid-4">'
+    html += '<div class="card"><div class="card-title">賞品価格</div><div class="grid-4">'
     for label, key, color in [
-        ("high", "high(3.0)", PURPLE),
-        ("mid", "mid_high(2.5)", BLUE),
-        ("midlo", "mid(2.0)", GREEN),
-        ("low", "low(1.5)", YELLOW),
-        ("none", "none(1.0)", GRAY),
-        ("unscored", "unscored", "#484f58"),
+        ("高", "high(3.0)", PURPLE),
+        ("中高", "mid_high(2.5)", BLUE),
+        ("中", "mid(2.0)", GREEN),
+        ("低", "low(1.5)", YELLOW),
+        ("無", "none(1.0)", GRAY),
+        ("未評価", "unscored", "#484f58"),
     ]:
         val = pd.get(key, 0)
         html += f'<div class="stat-card"><div class="stat-val" style="font-size:1.1rem;color:{color}">{val}</div><div class="stat-label">{label}</div></div>'
     html += "</div></div>"
 
     # recent runs
-    html += '<div class="card"><div class="card-title">recent runs</div><table><tr><td>time</td><td>result</td><td>ok</td><td>err</td><td>act</td><td>F</td><td>RT</td><td><3</td></tr>'
+    html += '<div class="card"><div class="card-title">直近実行</div><table><tr><td>時刻</td><td>結果</td><td>成功</td><td>エラー</td><td>アカウント</td><td>F</td><td>RP</td><td>❤</td></tr>'
     for entry in data.get("recent_runs", [])[:25]:
         if entry["status"] == "ok":
             icon = "OK"
@@ -399,16 +403,16 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
     ok_count = sum(1 for e in data.get("recent_runs", []) if e["status"] == "ok")
     total_count = len(data.get("recent_runs", []))
     rate = f"{ok_count / total_count * 100:.1f}" if total_count > 0 else "N/A"
-    html += f'<div class="note">last {total_count} runs: ok <strong class="accent">{ok_count}</strong> / err <strong style="color:{RED}">{total_count - ok_count}</strong> — success <strong>{rate}%</strong></div>'
+    html += f'<div class="note">直近{total_count}回: 成功 <strong class="accent">{ok_count}</strong> / 失敗 <strong style="color:{RED}">{total_count - ok_count}</strong> — 成功率 <strong>{rate}%</strong></div>'
     html += "</div>"
 
     # ── Hermes LLMプロバイダ構成 ──
     hc = load_hermes_config()
     html += '<div class="card"><div class="card-title">Hermes モデル設定 (config.yaml)</div><table>'
-    html += "<tr><td>profile</td><td>主モデル</td><td>フォールバック</td><td>auxiliary</td><td>vision</td></tr>"
+    html += "<tr><td>プロフィール</td><td>主モデル</td><td>フォールバック</td><td>補助</td><td>視覚</td></tr>"
     for name, info in hc.items():
         fb_txt = "<br>".join(info["fallback"]) if info["fallback"] else '<span class="num">—</span>'
-        badge = "" if info["ok"] else ' <span class="badge bg-red">cfg err</span>'
+        badge = "" if info["ok"] else ' <span class="badge bg-red">設定エラー</span>'
         html += (
             f'<tr><td style="font-weight:600">{name}{badge}</td>'
             f'<td class="accent">{info["primary"]}</td>'
@@ -417,9 +421,9 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
             f'<td class="num">{info["vision"]}</td></tr>'
         )
     html += "</table>"
-    html += '<div class="note">主モデル障害時はフォールバック→を順に自動切替。全て <strong class="accent">無料枠</strong>が含まれる（kensho主=fw有料 / tai主=OpenRouter無料）。</div></div>'
+    html += '<div class="note">主モデル障害時はフォールバックを順に自動切替。全て <strong class="accent">無料枠</strong>が含まれる（kensho主=Fireworks有料 / tai主=OpenRouter無料）。</div></div>'
 
-    html += f'<div class="footer">Kensho Dashboard v5 - {now}</div>'
+    html += f'<div class="footer">Kensho ダッシュボード v5 - {now}</div>'
     html += "</body></html>"
     return html
 
