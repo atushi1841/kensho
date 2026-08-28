@@ -152,6 +152,25 @@ def _get_defer_time(val: str) -> dt.datetime | None:
         return None
 
 
+def _is_defer_expired(val: Any) -> bool:
+    """applied値が「期限切れDEFER」か判定（2026-08-29提案63 root-cause fix）
+
+    `_is_deferred` はプレフィクス判定のみのため、期限切れDEFER文字列でも True を返す。
+    期限切れDEFERは `_should_process_item` で再ピック対象になるが、失敗ハンドラ側の
+    `not _is_deferred(...)` ガードでは再DEFER/appliedが書かれず「30分ごと再ピックループ」が
+    発生する。ここでは `_get_defer_time` で実際の期限を比較し、期限切れのみ True を返す。
+    """
+    if not isinstance(val, str) or not val.startswith(_DEFER_PREFIX):
+        return False
+    t = _get_defer_time(val)
+    if t is None:
+        return False
+    # 保存形式は naive(datetime.now().isoformat()) だが、テスト等でtz付きもあり得る。
+    # 比較は同一tzinfoで行う（naiveはそのまま、awareは同一tzでnowを生成）。
+    now = dt.datetime.now(t.tzinfo) if t.tzinfo else dt.datetime.now()
+    return now >= t
+
+
 def _should_process_item(item: dict[str, Any], account_key: str) -> bool:
     """ツイートを処理すべきか判定（DEFER解除も考慮）"""
     val = item.get("applied", {}).get(account_key)
@@ -1568,8 +1587,12 @@ def apply_for_account(
                     #   が同一バッチ内で連続アクセス → 機械的パターンのBOT検出リスクあり。
                     #   root cause: line 1551 旧 `is None` 判定は、DEFER(30分)期限切れ後の再ピックのたびに
                     #   DEFERを上書きせず素通り → 無限ループ。`not _is_deferred(val)` でDEFER期限切れも対象に。
+                    # ★ 2026-08-29提案63 root-cause fix: `_is_deferred` はプレフィクス判定のみで
+                    #   DEFER期限切れ文字列でも True を返すため、`not _is_deferred(...)` では
+                    #   「期限切れDEFER→再ピック→失敗→素通り→30分ごと再ピックループ」が残る。
+                    #   `_is_defer_expired` で実際の期限を比較し、期限切れDEFERのみ再対象化する。
                     _cur_applied_val = item.get("applied", {}).get(account_key)
-                    if _cur_applied_val is None or not _is_deferred(_cur_applied_val):
+                    if _cur_applied_val is None or _is_defer_expired(_cur_applied_val):
                         try:
                             from datetime import timedelta
 
@@ -1580,7 +1603,10 @@ def apply_for_account(
                             _is_waste_failure = _follow_error_code in _waste_failure_codes
                             if _is_waste_failure:
                                 item["applied"][account_key] = datetime.now().isoformat()
-                                out(f"  [APPLIED] 無駄な失敗({_follow_error_code}) → 即時 applied 付与（再処理停止・提案68）")
+                                out(
+                                    f"  [APPLIED] 無駄な失敗({_follow_error_code})"
+                                    " → 即時 applied 付与（再処理停止・提案68）"
+                                )
                             else:
                                 _short_def_until: dt.datetime = datetime.now() + timedelta(
                                     minutes=cfg.get("applier", {}).get("retry_defer_minutes", 30)

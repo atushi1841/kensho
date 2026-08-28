@@ -413,6 +413,50 @@ class TestMergeVerifyResult:
         assert any(_per_item_ok.values()) is True  # API成功が維持される
 
 
+class TestIsDeferExpired:
+    """_is_defer_expired: 期限切れDEFER判定（2026-08-29提案63 root-cause fix）
+
+    回帰対象: 旧ガード `not _is_deferred(...)` はプレフィクス判定のみで期限切れDEFERも
+    True を返し、「期限切れDEFER→再ピック→失敗→素通り→30分ごと再ピックループ」が
+    発生した。期限を実際に比較して期限切れのみ True を返すこと。
+    """
+
+    def test_none(self) -> None:
+        from kensho.application.applier import _is_defer_expired
+
+        assert _is_defer_expired(None) is False
+
+    def test_normal_applied_timestamp(self) -> None:
+        """通常のapplied日時（DEFERでない）は期限切れ扱いしない"""
+        from kensho.application.applier import _is_defer_expired
+
+        assert _is_defer_expired("2026-08-29T00:00:00+09:00") is False
+
+    def test_active_defer_not_expired(self) -> None:
+        """有効期限内のDEFERは期限切れでない"""
+        from datetime import datetime, timedelta
+
+        from kensho.application.applier import _DEFER_PREFIX, _is_defer_expired
+
+        future = datetime.now(_dt.UTC) + timedelta(minutes=30)
+        assert _is_defer_expired(f"{_DEFER_PREFIX}{future.isoformat()}") is False
+
+    def test_expired_defer(self) -> None:
+        """期限切れDEFERはTrue"""
+        from datetime import datetime, timedelta
+
+        from kensho.application.applier import _DEFER_PREFIX, _is_defer_expired
+
+        past = datetime.now(_dt.UTC) - timedelta(minutes=30)
+        assert _is_defer_expired(f"{_DEFER_PREFIX}{past.isoformat()}") is True
+
+    def test_malformed_defer(self) -> None:
+        """パース不能なDEFER文字列は期限切れ扱いしない（安全側）"""
+        from kensho.application.applier import _DEFER_PREFIX, _is_defer_expired
+
+        assert _is_defer_expired(f"{_DEFER_PREFIX}garbage") is False
+
+
 class TestLoadAuditDoneSet:
     """_load_audit_done_set: audit.jsonlベースのセッション跨ぎ重複防止（2026-08-26提案10）
 
