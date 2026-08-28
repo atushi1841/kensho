@@ -16,6 +16,9 @@ from typing import Any
 PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
     "atushi16": (1081, "192.168.1.220"),  # wired ethernet – no restart
     "kudou": (1082, "kudou_RM10JE_B"),
+    # 2026-08-28(提案58): フラッピング監視対象 — Galaxy S10系アダプタ(RM10JE_S)で
+    #   royalkensho(air-tra1)と同系構成。watchdog復旧ログ頻発・http_0増加が出たら
+    #   要ユーザー対応(提案49方式)へ格上げすること。
     "chugakujuken": (1083, "chugakujuken_RM10JE_S"),
     "zin20120731": (1084, "zin_AW6povo"),
     # 2026-08-27: povo HR01(2_povo_tankan)からワイモバイルHR01(Tankan_HR01 / 10_ymo_HR01)へ切替。
@@ -23,7 +26,7 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
     #   ※ --no-bind不可: メトリック最下位によりデフォルトルート=自宅有線のため、--no-bindだと自宅IPリーク。
     "TankanNotes": (1085, "Tankan_HR01"),
     "inobase1-4": (1089, "inobase1-4"),
-    "royalkensho": (1087, "zin_6_Gal_S10"),  # 2026-08-27: 2_povo_AW(air-tra1/povo)追加
+    "royalkensho": (1087, "royalkensho_airtra1"),  # 2026-08-28: 旧zin_6_Gal_S10→リネーム。2_povo_AW(air-tra1/povo)
 }
 
 # ── WiFi SSID マップ（自動再接続用）──

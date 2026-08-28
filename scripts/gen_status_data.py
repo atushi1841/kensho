@@ -480,7 +480,7 @@ WIFI_ADAPTER_TO_ACCOUNT = {
     "2_povo_tankan": "TankanNotes",  # 旧アダプタ名（Tankan_HR01に改名済み・参照残は実害なし）
     "Tankan_HR01": "TankanNotes",  # 2026-08-27: ワイモバイルHR01切替
     "inobase1-4": "inobase1-4",
-    "zin_6_Gal_S10": "royalkensho",  # 2026-08-27: air-tra1/povo追加
+    "royalkensho_airtra1": "royalkensho",  # 2026-08-28: 旧zin_6_Gal_S10→リネーム。air-tra1/povo
 }
 WIFI_ACCOUNT_SSID = {
     "kudou": "RM10JE_B",
@@ -492,7 +492,9 @@ WIFI_ACCOUNT_SSID = {
 }
 
 _OK_RE = re.compile(r"✅\s+(\S+)\s+->\s+接続済み")
-_SIG_RE = re.compile(r"信号:(\d+)\s*%\|(-?\d+)\b")
+# 2026-08-28: Rssi欠損を許容（一部RTL8188EUはnetshでRssiを返さない → "-"）。
+# 末尾\bは「-」の直後が「]」だと単語境界にならず失敗するため使用しない
+_SIG_RE = re.compile(r"信号:(\d+)\s*%\|(-?\d+|-)")
 _FAIL_CUT_RE = re.compile(r"❌\s+(\S+)\s+->\s+切断")
 _FAIL_FAIL_RE = re.compile(r"❌\s+(\S+)\s+->\s+再接続失敗")
 _TS_RE = re.compile(r"@(\d{2}:\d{2}:\d{2})$")

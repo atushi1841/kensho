@@ -151,7 +151,7 @@ accounts:
     schedule:
       collects: false
       batches:
-        # 2026-08-27 追加: 2_povo_AW(air-tra1 / povo無料回線, アダプタ=zin_6_Gal_S10)で運用。
+        # 2026-08-28: アダプタ名をroyalkensho_airtra1にリネーム(旧zin_6_Gal_S10)。2_povo_AW(air-tra1 / povo無料回線)で運用。
         # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
         - { time: "09:46", max: 12 }
         - { time: "11:03", max: 12 }
