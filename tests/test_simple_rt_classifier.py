@@ -17,8 +17,9 @@ from kensho.scraping.simple_rt_classifier import (  # noqa: E402
 
 
 class _FakeResp:
-    def __init__(self, json_data: dict[str, Any]) -> None:
+    def __init__(self, json_data: dict[str, Any], status_code: int = 200) -> None:
         self._json = json_data
+        self.status_code = status_code
 
     def raise_for_status(self) -> None:
         pass
@@ -52,12 +53,35 @@ class TestExtractJson:
 
 
 class TestLoadApiKey:
-    def test_bom_env_file(self, tmp_path: Path) -> None:
-        p = tmp_path / ".env"
-        p.write_bytes(b"\xef\xbb\xbfDEEPSEEK_API_KEY=sk-test123\n")
-        assert _load_api_key(tmp_path) == "sk-test123"
+    """APIキー取得のテスト。
 
-    def test_missing_key(self, tmp_path: Path) -> None:
+    PROFILE_ENV_FILE は本番の絶対パスを指すため、テストでは monkeypatch で
+    存在しないパスに差し替えて分離する（本機の実キーが漏れないようにする）。
+    """
+
+    @staticmethod
+    def _patch_profile_env(monkeypatch: Any, tmp_path: Path) -> None:
+        monkeypatch.setattr(
+            "kensho.scraping.simple_rt_classifier.PROFILE_ENV_FILE",
+            tmp_path / "no_such_profile.env",
+        )
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+
+    def test_bom_env_file(self, monkeypatch: Any, tmp_path: Path) -> None:
+        p = tmp_path / ".env"
+        p.write_bytes(b"\xef\xbb\xbfOPENROUTER_API_KEY=sk-or-v1-test123\n")
+        self._patch_profile_env(monkeypatch, tmp_path)
+        assert _load_api_key(tmp_path) == "sk-or-v1-test123"
+
+    def test_ignores_deepseek_key(self, monkeypatch: Any, tmp_path: Path) -> None:
+        """最後の砦のDEEPSEEK_API_KEYは絶対に使わない（フォールバックしない）"""
+        p = tmp_path / ".env"
+        p.write_bytes(b"DEEPSEEK_API_KEY=sk-deepseek-secret\n")
+        self._patch_profile_env(monkeypatch, tmp_path)
+        assert _load_api_key(tmp_path) == ""
+
+    def test_missing_key(self, monkeypatch: Any, tmp_path: Path) -> None:
+        self._patch_profile_env(monkeypatch, tmp_path)
         assert _load_api_key(tmp_path) == ""
 
 
@@ -75,7 +99,7 @@ class TestClassifyTexts:
             api_key="sk-test",
         )
         assert res == {"t1": "FLAG", "t2": "OK"}
-        assert called and called[0]["model"] == "deepseek-chat"
+        assert called and called[0]["model"] == "minimax/minimax-m3:free"
         assert called[0]["messages"][0]["role"] == "system"
 
     def test_fail_open_on_error(self, monkeypatch: Any) -> None:

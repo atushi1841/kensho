@@ -5,9 +5,10 @@
   実際には追加操作（外部サイトX連携・動画認証・キーワード入力・診断・写真/ハッシュタグ投稿等）を
   必要としており、無駄なRT/フォローを消費していた（25件サンプルでFLAG率52%）。
 - キーワードの付け外しはいたちごっこ（「結果をチェック」削除→漏れ 等）のため、
-  LLM（DeepSeek）による自然言語判定に切り替える。
-- 実測: 対象4件(FLAG)+正常3件(OK) = 7/7正解（deepseek-chat採用）。
-- 8件/バッチ・非推論モデルでコスト・速度・精度のバランスが最適。
+  LLM（OpenRouter無料モデル）による自然言語判定に切り替える。
+- 実測: 対象4件(FLAG)+正常3件(OK) = 7/7正解（minimax/minimax-m3:free 採用）。
+- ★ 公式DeepSeek APIキーは最後の砦のため**絶対に使わない**（ユーザー指摘 2026-08-28）。
+  OpenRouter の :free モデル（cost=0）のみ使用。
 
 fail-open 設計: どんな失敗でも UNKNOWN を返し、応募側は従来挙動（応募継続）になる。
 """
@@ -23,13 +24,18 @@ from typing import Any
 
 import httpx
 
-API_URL: str = "https://api.deepseek.com/chat/completions"
-# ★ 2026-08-28: deepseek-chat（非推論V3）を採用 — 実測比較:
-#   deepseek-chat: 7/7正解・1.5s・1119tokens（推論なし）
-#   deepseek-v4-flash: 6/7正解（不安定）・5.6s・1710tokens（推論357+でトークン浪費）
-#   分類タスクは推論不要のため、安価で高速・高精度な非推論モデルが最適。
-DEFAULT_MODEL: str = "deepseek-chat"
+API_URL: str = "https://openrouter.ai/api/v1/chat/completions"
+# ★ 2026-08-28: OpenRouter無料モデル採用 — 実測比較:
+#   minimax/minimax-m3:free: 7/7正解・cost=0・非推論（788tokens）
+#   z-ai/glm-5.2:free: 429（一時レート制限）
+#   nvidia/nemotron-3-ultra-550b-a55b:free: 推論トークン枯渇で本文空
+#   deepseek-chat(公式): 7/7だが課金（最後の砦なので不採用）
+DEFAULT_MODEL: str = "minimax/minimax-m3:free"
 DEFAULT_BATCH_SIZE: int = 8
+
+# Hermes profile側 .env（本番実行時はここに OPENROUTER_API_KEY がある。2026-08-28）
+# テストで monkeypatch できるようモジュール定数化（テスト分離のため）
+PROFILE_ENV_FILE: Path = Path("/home/atushi/.hermes/profiles/kensho-sweeps/.env")
 
 # 判定プロンプト（実測で7/7正解のものを使用）
 PROMPT: str = """あなたはX(Twitter)の懸賞応募条件を判定するシステムです。
@@ -47,22 +53,29 @@ JSON の配列のみを出力:
 """
 
 
+_PROJECT_ENV_NAME: str = ".env"
+
+
 def _load_api_key(project_root: str | Path | None = None) -> str:
-    """DEEPSEEK_API_KEY を .env（BOM対応）→ 環境変数 の順で取得。"""
-    env_key: str | None = os.environ.get("DEEPSEEK_API_KEY")
-    if env_key:
-        return env_key
+    """OPENROUTER_API_KEY を プロジェクト.env → Hermes profile .env → 環境変数 の順で取得。
+
+    ★ 公式DeepSeek APIキー（DEEPSEEK_API_KEY）は使わない（最後の砦）。
+    """
     root = Path(project_root) if project_root else Path(__file__).resolve().parent.parent.parent
-    env_file = root / ".env"
-    if env_file.exists():
+    candidates = [
+        root / _PROJECT_ENV_NAME,
+        PROFILE_ENV_FILE,
+    ]
+    for env_file in candidates:
         try:
             text = env_file.read_text(encoding="utf-8-sig")
-            m = re.search(r"DEEPSEEK_API_KEY\s*=\s*[\"']?([A-Za-z0-9_\-]+)", text)
+            m = re.search(r"OPENROUTER_API_KEY\s*=\s*[\"']?([A-Za-z0-9_\-]+)", text)
             if m:
                 return m.group(1)
         except OSError:
-            pass
-    return ""
+            continue
+    # 最後の手段として環境変数（本番実行時は.profile等に設定してある想定）
+    return os.environ.get("OPENROUTER_API_KEY", "")
 
 
 def _extract_json(content: str) -> list[dict[str, Any]] | None:
@@ -101,13 +114,19 @@ def _call_api(
         "temperature": 0.1,
         "max_tokens": max_tokens,
     }
-    resp = httpx.post(
-        API_URL,
-        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-        json=payload,
-        timeout=timeout,
-    )
-    resp.raise_for_status()
+    # OpenRouter無料モデルは 429（レート制限）が頻発する → 指数バックオフで2回再試行
+    for attempt in range(3):
+        resp = httpx.post(
+            API_URL,
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json=payload,
+            timeout=timeout,
+        )
+        if resp.status_code == 429 and attempt < 2:
+            time.sleep(3 * (attempt + 1))
+            continue
+        resp.raise_for_status()
+        break
     data = resp.json()
     return data["choices"][0]["message"].get("content", "") or ""
 
@@ -124,9 +143,9 @@ def classify_texts(
 
     Returns:
         {id: "OK" | "FLAG" | "UNKNOWN"}
-    - 例外・パース失敗・本文空（推論トークン枯渇）は UNKNOWN（fail-open）
-    - 小バッチ（既定8件）で送るのは deepseek-v4-flash が推論型で思考トークンを
-      大量に消費し、max_tokens 内で本文が空になる（finish_reason=length）のを防ぐため。
+    - 例外・パース失敗・本文空は UNKNOWN（fail-open）
+    - 小バッチ（既定8件）で送るのは、OpenRouter無料モデルのレート制限(429)と
+      推論型モデルのトークン枯渇（本文空）を避けるため。
     """
     if not pairs:
         return {}
@@ -134,7 +153,7 @@ def classify_texts(
         api_key = _load_api_key(project_root)
     if not api_key:
         if log:
-            log.write("[simple_rt] DEEPSEEK_API_KEY なし → 全UNKNOWN（fail-open）")
+            log.write("[simple_rt] OPENROUTER_API_KEY なし → 全UNKNOWN（fail-open）")
         return {pid: "UNKNOWN" for pid, _ in pairs}
 
     result: dict[str, str] = {pid: "UNKNOWN" for pid, _ in pairs}
@@ -154,7 +173,7 @@ def classify_texts(
         except Exception as e:  # noqa: BLE001 — fail-open
             if log:
                 log.write(f"[simple_rt] batch {i // batch_size + 1} 失敗 → UNKNOWN: {e}")
-        time.sleep(0.2)  # API負荷のゆらぎ
+        time.sleep(0.5)  # OpenRouter無料モデルのレート制限対策（0.5秒間隔）
     return result
 
 
