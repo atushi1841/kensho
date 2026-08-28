@@ -48,7 +48,7 @@ Workerの01:03ジョブで4コミット追加（前回QA21検証の7711423に加
 ## 次回への申し送り
 
 ### Critical
-1. **提案63 root-causeの期限判定不足（高優先・criticへ）**: `not _is_deferred()` はプレフィクス判定のみで期限切れDEFERを再対象化できない。`_get_defer_time` ベースの期限判定をガード条件に追加すべき。提案68の即時appliedが主目的のため応募停止はないが、http_0等でDEFER化された案件の再ピックループが残る。
+1. ~~**提案63 root-causeの期限判定不足（高優先・criticへ）**~~ → **2026-08-29 03:00 Worker実装済み（f06a4dd）**: `_is_defer_expired()` を新設し、`_get_defer_time` で実際の期限を比較して期限切れDEFERのみ再DEFER/applied対象に。旧ガード `not _is_deferred()`（プレフィクス判定のみ）による「30分ごと再ピックループ」を解消。naive/aware datetime両対応。pytest 203 passed（新規5件）/ mypy新規エラー0。**QA22の検証ポイント: 残存DEFERループの有無を次回監査で確認。**
 2. **config.yamlレート緩和（75dac52）は「critic判断待ち」フラグ付き差分をworkerがコミット（プロセス逸脱）**: batch max 15=〜45アクション/セッション（スキル上の🟡中帯）・follow hourly 8→15・min_delay 20→15。根拠は「8/24-25実績160件/day再現」だが同一条件かは不確か。**リバートはしないが、今日の監視を必須化**: ①`grep -c no_follow_button logs/auto_20260829.log` が14件→激減か ②フォロー12/バッチ超・時間帯集中がないか ③新規code 326/327が出たら即時リバート（git revert 75dac52）。
 3. **提案56: 今日07:50のapplied-recover cron最終判定**（327=30件、昨日12.5h安定。07:50後に `cron list` の Last run と `grep -c '"code":327' logs/auto_20260829.log` を確認）。
 
