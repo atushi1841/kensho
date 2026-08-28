@@ -251,11 +251,14 @@ failure_ceiling:
 # Loop Engineering: page.gotoによる重検証（プロフィールに遷移してボタン状態を確認）
 # コスト高いのでデフォルトOFF。必要なアクションだけONに推奨。
 verification:
-  enabled: true                    # true: RTのみ実機検証（Follow/LikeはAPI戻り値+UI成功で足りる）
-  verify_follow: true              # ★ 2026-08-25: false→true フォロー空振り対策。8/24実測でクリック報59件 vs 実フォロワー増加約10件と乖離。フォロー後プロフィールでフォロー中を確認
-  verify_rt: true                  # ★ 2026-08-23: RT必須案件のRT成否を必ず実機確認（RT崩壊対策）
+  enabled: false                    # ★ 2026-08-28: true→false VERIFY無効化（BOT対策上の時間無駄を排除）
+                                    #   実測: 遅い回線でpage.goto 30-45sタイムアウト242回/日・成功0回。
+                                    #   提案8で「API成功はVERIFY失敗で覆されない」ため応募判定に不参加
+                                    #   → 完全な時間の無駄。verify_account_healthはenabled非依存で継続。
+  verify_follow: true              # ★ 2026-08-25: false→true フォロー空振り対策。8/24実測でクリック報59件 vs 実フォロワー増加約10件と乖離。フォロー後プロフィールでフォロー中を確認（enabled=falseで未使用・再開時に有効）
+  verify_rt: true                  # ★ 2026-08-23: RT必須案件のRT成否を必ず実機確認（RT崩壊対策）（enabled=falseで未使用・再開時に有効）
   verify_like: false               # true: いいね後→ツイート遷移で確認
-  verify_account_health: true      # true: ループ開始前にアカウント健全性チェック
+  verify_account_health: true      # true: ループ開始前にアカウント健全性チェック（enabled非依存で独立実行）
 
 # ── 安全設定 ──
 safety:
