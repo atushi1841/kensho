@@ -672,3 +672,55 @@ Critical:
 
 確認済:
 - pytest 198/4skip(3回連続回帰なし). proxy 7/7. 327=30安定. 提案63発火2件. Worker失败=コード問題なし.
+
+---
+
+# QA21: 2026-08-28 (23:15 JST) — Worker実装検証（提案68/63/69）
+
+## 検証結果
+
+### Worker: 今週期は実装成功（前回20:45 FAILEDから復帰）
+- コミット **7711423**（23:01:38）: `fix+feat: proposal 63 root-cause fix, proposal 68 no_follow_button applied, proposal 69 inobase1-4 flapping`
+- 変更4ファイル: actions_apply.py / applier.py / proxy_watchdog.py / critic_proposal_2026-08-28.md
+- 前回QA20の「提案67未実装」は**提案68として実装済み**に進展
+
+### 実装内容（git show 7711423 で差分確認）
+| ファイル | 変更 | 検証 |
+|---------|------|------|
+| actions_apply.py | `do_follow` の戻り値を `bool` → `(success, error_code)` タプルに変更。no_follow_button / follow_confirm_missing / policy_denied 等を区別 | ✅ 全リターンパス網羅（policy_denied/成功/already_followed/no_follow_button/follow_confirm_missing） |
+| applier.py | `_ui_follow_with_record` がタプルを返す。`_follow_error_code` を保持し、失敗ハンドラで `_waste_failure_codes`（no_follow_button/follow_confirm_missing/policy_denied）なら**即時 applied 付与**、それ以外は30分DEFER（提案63）。加えて `is None` → `is None or not _is_deferred()` に変更 | ✅ コード追跡で確認。呼び出し側はタプル展開に対応 |
+| proxy_watchdog.py | inobase1-4(1089) にフラッピング監視コメント追加（提案69） | ✅ コメントのみ・コード実害なし |
+
+### 論理検証（提案68の核心）
+- `do_follow` が no_follow_button を返す→ `_follow_error_code="no_follow_button"` → 失敗ハンドラで即時 `applied` 付与 → 再ピック停止。**korehamiro×3 / Rakuten_Wallet×4 の再ピックループを止める設計** ✅
+- 懸念点1: `_waste_failure_codes` に `policy_denied` を含むが、policy_deniedはポリシー評価による拒否で**永久に再試行しても無駄**なため即時appliedは妥当 ✅
+- 懸念点2: タプル非対応の他アクション（do_rt/do_like）はboolのまま。`isinstance(result, tuple)` で後方互換 ✅
+- 懸念点3: `not _is_deferred()` の追加は「期限切れDEFERも再DEFER対象に」という提案63 root-cause修正。実測: 期限切れDEFER文字列は `_is_deferred`=True（プレフィクス判定のみ）のため `not` でFalse → **再DEFER書き込みは発生しない**。ただし即時applied（提案68）が主目的のため実害は限定的。※要再考余地あり（critic向け申し送り）
+
+### pytest
+`198 passed / 4 skipped`（80.6s、回帰なし・QA20と同一水準）
+
+### git
+- HEAD = 7711423（workerコミット確認）
+- 作業ツリー: **config.yaml が未コミット差分**（max_actions_per_hour 15→25, min_delay 20→15）— workerコミットには含まれない。**レート制限緩和（BOTシグナル増加方向）のため要確認**
+
+### ライブ実測（23:1x JST）
+- プロキシ **7/7生存・IP全ユニーク**: 1081=219.104.132.236, 1082=106.146.15.188, 1083=106.146.1.85, 1084=106.146.0.168, 1085=126.133.201.100, 1087=106.146.8.111, 1089=106.146.21.209
+- audit今日（8/28）: **成功344件**（chugakujuken 60 / TankanNotes 48 / inobase1-4 68 / royalkensho 42 / atushi16 52 / kudou 34 / zin 40）／失敗28（no_follow_button=14, http_0=11, http_403=2, rt_confirm_missing=1）
+- 327: **30件のまま**（10:49:53以降12.5h安定）
+- no_follow_button失敗14件は今日の累積（実装前）— 実装後の効果は明日のauditで判定
+
+## 改善ノート保存先
+`kensho/reports/daily-improvement-2026-08-28.md` に追記（QA21セクション）
+
+## 次回への申し送り
+
+Critical:
+1. **提案68は実装済み・検証済み** — no_follow_button即時applied。**効果は明日（8/29）のauditで確認**: `grep -c "no_follow_button" logs/auto_20260829.log` が14件→激減しているか
+2. **未コミット config.yaml 差分あり**（max_actions_per_hour 15→25 / min_delay 20→15）— レート制限緩和。workerコミットに含まれない。**BOT検出リスク増加方向のため、criticで妥当性判断 or リバート要検討**
+3. **提案56: 明日07:50のapplied-recover cron最終判定**（327=30件、12.5h安定。明日の自動実行が最終実証）
+
+監視:
+4. 提案63 root-cause修正の `not _is_deferred()` は期限切れDEFERを再対象化できていない（プレフィクス判定のみ）。提案68の即時appliedが主目的のため実害軽微だが、期限切れDEFER再試行ループが残る場合は `_get_defer_time` を使った期限判定が必要
+5. kudou 1082フラッピング（今日2回・要ユーザー対応候補のまま）、inobase1-4 1089もフラッピング監視対象に追加済み（提案69）
+
