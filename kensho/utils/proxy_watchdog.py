@@ -327,15 +327,15 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
 
             # ------------------------------------------------------------------
             # 3. Restart via Start-Process (hidden)
-            #    Pass the resolved real IPv4 (not the adapter name) so that
-            #    kensho_proxy.py skips its fragile `ipconfig /all` parsing.
-            #    全垢 bind方式（IP直指定）で起動。--no-bindは不使用（2026-08-27: IP分離維持のため）
+            #    Pass the adapter name so that kensho_proxy.py resolves the
+            #    current IPv4 at startup (auto-handles DHCP changes).
+            #    # 2026-08-29: Changed from IP bind to adapter name bind (提案62)
             # ------------------------------------------------------------------
             no_bind_arg = ""
             restart_script = (
                 f"Start-Process "
                 f"-FilePath 'C:\\Users\\1F\\AppData\\Local\\Programs\\Python\\Python311\\python.exe' "
-                f"-ArgumentList 'C:\\tools\\kensho-proxy\\kensho_proxy.py'{no_bind_arg},'{ip}','{port}' "
+                f"-ArgumentList 'C:\\tools\\kensho-proxy\\kensho_proxy.py'{no_bind_arg},'{adapter}','{port}' "
                 f"-WindowStyle Hidden"
             )
             restart_cmd = [PS, "-Command", restart_script]
