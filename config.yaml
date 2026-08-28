@@ -24,17 +24,20 @@ accounts:
     schedule:
       collects: false
       batches:
-        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "08:02", max: 10 }
-        - { time: "09:56", max: 10 }
-        - { time: "11:17", max: 10 }
-        - { time: "12:31", max: 10 }
-        - { time: "14:03", max: 10 }
-        - { time: "16:37", max: 10 }
-        - { time: "17:49", max: 10 }
-        - { time: "19:22", max: 10 }
-        - { time: "21:12", max: 10 }
-        - { time: "22:27", max: 10 }
+        # 2026-08-28 増量対応: 10→12バッチ・max 10→15（8/24-25実績160件/dayを再現）
+        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "08:02", max: 15 }
+        - { time: "09:12", max: 15 }
+        - { time: "10:27", max: 15 }
+        - { time: "11:47", max: 15 }
+        - { time: "12:56", max: 15 }
+        - { time: "14:12", max: 15 }
+        - { time: "15:37", max: 15 }
+        - { time: "16:47", max: 15 }
+        - { time: "18:02", max: 15 }
+        - { time: "19:22", max: 15 }
+        - { time: "20:47", max: 15 }
+        - { time: "22:17", max: 15 }
 
   - key: kudou
     display: "@kudou_aoshi"
@@ -44,17 +47,18 @@ accounts:
     schedule:
       collects: false
       batches:
-        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "08:24", max: 12 }
-        - { time: "10:03", max: 12 }
-        - { time: "12:42", max: 12 }
-        - { time: "14:31", max: 12 }
-        - { time: "15:42", max: 12 }
-        - { time: "17:21", max: 12 }
-        - { time: "18:38", max: 12 }
-        - { time: "19:54", max: 12 }
-        - { time: "21:18", max: 12 }
-        - { time: "22:28", max: 12 }
+        # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
+        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "08:24", max: 15 }
+        - { time: "10:03", max: 15 }
+        - { time: "12:42", max: 15 }
+        - { time: "14:31", max: 15 }
+        - { time: "15:42", max: 15 }
+        - { time: "17:21", max: 15 }
+        - { time: "18:38", max: 15 }
+        - { time: "19:54", max: 15 }
+        - { time: "21:18", max: 15 }
+        - { time: "22:28", max: 15 }
 
   - key: chugakujuken
     display: "@chugakujuken"
@@ -64,17 +68,18 @@ accounts:
     schedule:
       collects: false
       batches:
-        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "08:03", max: 12 }
-        - { time: "09:48", max: 12 }
-        - { time: "10:59", max: 12 }
-        - { time: "12:18", max: 12 }
-        - { time: "13:49", max: 12 }
-        - { time: "15:08", max: 12 }
-        - { time: "17:01", max: 12 }
-        - { time: "19:14", max: 12 }
-        - { time: "21:14", max: 12 }
-        - { time: "22:24", max: 12 }
+        # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
+        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "08:03", max: 15 }
+        - { time: "09:48", max: 15 }
+        - { time: "10:59", max: 15 }
+        - { time: "12:18", max: 15 }
+        - { time: "13:49", max: 15 }
+        - { time: "15:08", max: 15 }
+        - { time: "17:01", max: 15 }
+        - { time: "19:14", max: 15 }
+        - { time: "21:14", max: 15 }
+        - { time: "22:24", max: 15 }
 
   - key: zin20120731
     display: "@zin20120731"
@@ -84,15 +89,16 @@ accounts:
     schedule:
       collects: false
       batches:
-        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "08:06", max: 10 }
-        - { time: "10:44", max: 10 }
-        - { time: "11:59", max: 10 }
-        - { time: "14:28", max: 10 }
-        - { time: "16:39", max: 10 }
-        - { time: "18:29", max: 10 }
-        - { time: "20:09", max: 10 }
-        - { time: "22:13", max: 10 }
+        # 2026-08-28 増量対応: max 10→15（8/24-25実績160件/dayを再現）
+        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "08:06", max: 15 }
+        - { time: "10:44", max: 15 }
+        - { time: "11:59", max: 15 }
+        - { time: "14:28", max: 15 }
+        - { time: "16:39", max: 15 }
+        - { time: "18:29", max: 15 }
+        - { time: "20:09", max: 15 }
+        - { time: "22:13", max: 15 }
 
   # ★ 2026-08-23 復帰: 書き込みAPI認証エラーは「セッション(auth_token)失効」が原因と判明。
   #   Chromeで通常表示(凍結なし)→ 新auth_token/ct0に更新済み(x_session_TankanNotes.json)。復帰。
@@ -111,17 +117,18 @@ accounts:
     schedule:
       collects: false
       batches:
-        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "09:29", max: 12 }
-        - { time: "10:52", max: 12 }
-        - { time: "12:23", max: 12 }
-        - { time: "13:43", max: 12 }
-        - { time: "14:56", max: 12 }
-        - { time: "16:08", max: 12 }
-        - { time: "17:19", max: 12 }
-        - { time: "18:44", max: 12 }
-        - { time: "20:12", max: 12 }
-        - { time: "22:07", max: 12 }
+        # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
+        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "09:29", max: 15 }
+        - { time: "10:52", max: 15 }
+        - { time: "12:23", max: 15 }
+        - { time: "13:43", max: 15 }
+        - { time: "14:56", max: 15 }
+        - { time: "16:08", max: 15 }
+        - { time: "17:19", max: 15 }
+        - { time: "18:44", max: 15 }
+        - { time: "20:12", max: 15 }
+        - { time: "22:07", max: 15 }
 
   - key: inobase1-4
     display: "@inobase128508"
@@ -131,17 +138,18 @@ accounts:
     schedule:
       collects: false
       batches:
-        # 2026-08-26 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "09:38", max: 12 }
-        - { time: "10:48", max: 12 }
-        - { time: "11:58", max: 12 }
-        - { time: "13:19", max: 12 }
-        - { time: "15:13", max: 12 }
-        - { time: "16:28", max: 12 }
-        - { time: "17:51", max: 12 }
-        - { time: "19:11", max: 12 }
-        - { time: "21:17", max: 12 }
-        - { time: "22:29", max: 12 }
+        # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
+        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+        - { time: "09:38", max: 15 }
+        - { time: "10:48", max: 15 }
+        - { time: "11:58", max: 15 }
+        - { time: "13:19", max: 15 }
+        - { time: "15:13", max: 15 }
+        - { time: "16:28", max: 15 }
+        - { time: "17:51", max: 15 }
+        - { time: "19:11", max: 15 }
+        - { time: "21:17", max: 15 }
+        - { time: "22:29", max: 15 }
 
   - key: royalkensho
     display: "@royalkensho"
@@ -152,17 +160,18 @@ accounts:
       collects: false
       batches:
         # 2026-08-28: アダプタ名をroyalkensho_airtra1にリネーム(旧zin_6_Gal_S10)。2_povo_AW(air-tra1 / povo無料回線)で運用。
+        # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
         # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "09:46", max: 12 }
-        - { time: "11:03", max: 12 }
-        - { time: "12:31", max: 12 }
-        - { time: "13:58", max: 12 }
-        - { time: "15:22", max: 12 }
-        - { time: "16:47", max: 12 }
-        - { time: "18:07", max: 12 }
-        - { time: "19:29", max: 12 }
-        - { time: "21:05", max: 12 }
-        - { time: "22:21", max: 12 }
+        - { time: "09:46", max: 15 }
+        - { time: "11:03", max: 15 }
+        - { time: "12:31", max: 15 }
+        - { time: "13:58", max: 15 }
+        - { time: "15:22", max: 15 }
+        - { time: "16:47", max: 15 }
+        - { time: "18:07", max: 15 }
+        - { time: "19:29", max: 15 }
+        - { time: "21:05", max: 15 }
+        - { time: "22:21", max: 15 }
 
 # ── 収集設定 ──
 collection:
@@ -210,10 +219,10 @@ rate_limits:
   max_rt_per_day: 80                # そのまま
   max_like_per_day: 250            # 200→250（いいねは安全、増やす）
   max_reply_per_day: 10
-  max_actions_per_hour: 15         # 30→15（アイテム数基準、15件×3=45アクション/時に分散）
+  max_actions_per_hour: 25         # 15→25（アイテム数基準、25件×3=75アクション/時に分散。8/24-25実績160件/dayを参考に余裕を持たせる）
   active_hours_start: "08:00"
   active_hours_end: "23:00"
-  min_delay_between_actions: 20   # 12→20（基本間隔を拡大）
+  min_delay_between_actions: 15   # 20→15（基本間隔を微縮小。実測で一度もrate制限に引っかかっていないため）
   max_delay_between_actions: 60   # 45→60
   extra_long_pause_chance: 0.20   # 0.25→0.20（長休憩確率微減。①のスキップ削減で自然間隔が広がるため）
   break_after_n_items: 7          # 5→7（休憩頻度を約30%減。実測222回/日・5.4時間は過剰。7ツイート毎なら人間らしさ維持）
@@ -232,16 +241,16 @@ rate_limits:
 # PolicyEngineで各アクション前にチェック: 日次上限→時間あたり上限→最低間隔→確率スキップ→アクティブ時間
 # 注意: 日次上限の実制御は rate_limits 配下。PolicyEngineの時間あたり上限は補助的な上乗せレイヤー。
 policy_engine:
-  # リスククラス別の1時間あたり上限（確実性重視の値）
+  # リスククラス別の1時間あたり上限（確実性重視の値）→ 2026-08-28増量: 8/24-25実績160件/dayに到達可能なよう緩和
   hourly_limits:
-    like: 20
-    follow: 8
-    rt: 12
-  # アクションごとの確率スキップ率（BOT対策：高リスクほど高確率でスキップ）
+    like: 30            # 20→30
+    follow: 15          # 8→15
+    rt: 20              # 12→20
+  # アクションごとの確率スキップ率（BOT対策：高リスクほど高確率でスキップ）→ 2026-08-28増量: スキップ率半減
   skip_probability:
-    like: 0.05
-    follow: 0.10
-    rt: 0.08
+    like: 0.03          # 0.05→0.03
+    follow: 0.05        # 0.10→0.05
+    rt: 0.05            # 0.08→0.05
   # リスクウェイト（日次上限 × この倍率 = 事実上の上限）
   risk_weights:
     like: 1.0
