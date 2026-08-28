@@ -456,6 +456,10 @@ def apply_for_account(
             _pre_text = item.get("tweet_text", "") or ""
             if _pre_text and has_skip_keyword(_pre_text):
                 continue
+        # ★ 2026-08-28: LLM判定FLAG（追加操作が必要な案件）をバッチ候補から除外
+        #   simple_rt_ok == "FLAG" はフォロー+RTでは当選条件を満たせないため処理しない
+        if item.get("simple_rt_ok") == "FLAG":
+            continue
         if check_rate_limit(account_key, cfg):
             out(f"[LIMIT] {account_key}: 処理中に上限到達 → 残りスキップ")
             break
@@ -658,6 +662,11 @@ def apply_for_account(
                     pass
             wc_info: str = str(item.get("winner_count", "")) if item.get("winner_count", 0) > 0 else "?"
             elapsed_global: float = time.time() - t0
+
+            # ★ 2026-08-28: LLM判定で「追加操作が必要」な案件はスキップ（フォロー+RTでは当選条件を満たせない）
+            if item.get("simple_rt_ok") == "FLAG":
+                out(f"  [{global_idx}/{max_n}] [SKIP] simple_rt=FLAG（追加操作必要）→ スキップ")
+                continue
 
             # ★ 引用RT・コメント応募のスキップ（AI対応不可 — 通常RT/フォローでは当選条件を満たせない）
             if item.get("keyword_flag", False):

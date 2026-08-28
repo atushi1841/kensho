@@ -170,6 +170,12 @@ collection:
   use_scrapling: false        # true: Cloudflare突破にScrapling（curl_cffi + browserforge）を使用
   times: ["03:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"]
   max_items: 500
+  # ★ 2026-08-28: LLMで「フォロー+RTだけで応募完了か」を判定（simple_rt_ok）
+  #   従来のキーワード判定の見逃し（外部X連携・動画認証・入力・診断・写真/ハッシュタグ投稿・
+  #   シェア等の追加操作が必要な案件をFLAG判定）を捕捉。fail-open（失敗時は従来挙動）。
+  llm_classify: true
+  llm_model: "deepseek-v4-flash"
+  llm_batch_size: 8
   # 収集を応募(orchestrator)から分離: 専用cron(crontab 0 3,9-21)で実行。
   # orchestratorの応募処理が収集の7.5分で圧迫されなくなる。
   separate_cron: true

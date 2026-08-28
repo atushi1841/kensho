@@ -507,6 +507,24 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
             f"（残り{rechecked - cleared}件が正当な引用/コメント）"
         )
 
+    # ★ 2026-08-28: LLMによる「フォロー+RTだけで応募完了か」判定（simple_rt_ok）
+    #   従来のキーワード・ブラックリストは過検出/見逃しのいたちごっこ（例: 「結果をチェック」削除→
+    #   外部X連携案件の見逃し）。LLM（DeepSeek v4-flash）で追加操作（外部サイト/動画認証/入力/
+    #   診断/写真投稿/シェア等）が必要な案件を捕捉する。実測7/7正解。
+    #   fail-open: LLM失敗・APIキーなし・未設定は従来挙動（応募継続）のまま。
+    _llm_classify: bool = (cfg or {}).get("collection", {}).get("llm_classify", False)
+    if _llm_classify:
+        try:
+            from kensho.scraping.simple_rt_classifier import classify_collected_items
+
+            _llm_model: str = (cfg or {}).get("collection", {}).get("llm_model", "deepseek-v4-flash")
+            _llm_batch: int = int((cfg or {}).get("collection", {}).get("llm_batch_size", 8))
+            _c_n, _f_n, _u_n = classify_collected_items(merged, model=_llm_model, batch_size=_llm_batch, log=log)
+            if _c_n:
+                out(f"  [simple_rt LLM判定] {_c_n}件（FLAG={_f_n} / OK={_c_n - _f_n - _u_n} / UNKNOWN={_u_n}）")
+        except Exception as e:  # noqa: BLE001 — fail-open
+            out(f"  [simple_rt LLM判定] 失敗（fail-open・応募継続）: {e}")
+
     # ★ 2026-08-27 スループット改善②: 必須ワードなしツイートを収集から除外
     #    applier側（①）でも収集時tweet_textで早期スキップするが、収集データ自体を
     #    絞ることで保存・可視化・処理対象を軽くする。tweet_textが空の項目は判定不能のため保持。
