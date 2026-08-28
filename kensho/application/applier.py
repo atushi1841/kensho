@@ -448,6 +448,14 @@ def apply_for_account(
     for item in items:
         if not _should_process_item(item, account_key):
             continue
+        # ★ 2026-08-28提案54: 事前フィルタリング — 引用/コメント応募（keyword_flag+スキップKW）を
+        #   バッチ候補から除外。処理中SKIPで枠と時間を消費するのを防ぐ。
+        #   過検出（収集時tweet_textにキーワードなし）は処理継続するため、
+        #   ここでは「収集時tweet_textで確定SKIP」だけ除外する。
+        if item.get("keyword_flag", False):
+            _pre_text = item.get("tweet_text", "") or ""
+            if _pre_text and has_skip_keyword(_pre_text):
+                continue
         if check_rate_limit(account_key, cfg):
             out(f"[LIMIT] {account_key}: 処理中に上限到達 → 残りスキップ")
             break
@@ -1525,6 +1533,28 @@ def apply_for_account(
                     out("  [CEILING] アクション未成立 → 成功扱いせず（applied付与なし→再試行）")
                     if fc_enabled:
                         failure_tracker.record_failure(account_key)
+                    # ★ 2026-08-28提案63: 失敗アクションの短時間DEFER（30分）で同一ターゲット再ピックを抑制。
+                    #   フォロー/RT失敗は applied 未書き込みのため次バッチで再ピックされ、ネットワーク不安定期に
+                    #   同一ターゲットへ複数回アクセス（実測: kudou comicowl_fg×3/10分、zin HMV_Japan×2）する
+                    #   機械的パターンになる。DEFER:now+30min を書くことで30分以内の再ピックを防ぎ、
+                    #   30分後は自然再試行（プロキシ復旧後の再試行を阻害しない）。
+                    #   既存のDEFER（削除済み14日等・fallback_rt が書いた長期DEFER）は上書きしない。
+                    if item.get("applied", {}).get(account_key) is None:
+                        try:
+                            from datetime import timedelta
+
+                            _short_def_until: dt.datetime = datetime.now() + timedelta(
+                                minutes=cfg.get("applier", {}).get("retry_defer_minutes", 30)
+                            )
+                            item.setdefault("applied", {})[account_key] = (
+                                f"{_DEFER_PREFIX}{_short_def_until.isoformat()}"
+                            )
+                            _short_def_ts: str = _short_def_until.strftime("%H:%M")
+                            out(f"  [DEFER] 失敗アクション → {_short_def_ts}まで再試行抑制（提案63）")
+                            # 即時保存: 次バッチ（別プロセス）がディスクから再読込する前にDEFERを永続化。
+                            save_collected_safe(data, account_key, log)
+                        except Exception:
+                            pass
 
                 if global_idx % break_after_n == 0:
                     save_collected_safe(data, account_key, log)
