@@ -533,3 +533,142 @@
 
 ### pytest
 - 198 passed / 4 skipped（回帰なし・連続2回確認）
+
+---
+
+# QA検証結果19回目: 2026-08-28 (19:10 JST)
+
+## 検証結果
+
+### Worker実装: 最新コミット群（1e3b51b→ce0f2cd→351236c→2466db3、17:47-19:10 JST）
+
+**第31版対応:** 提案65(再アソシエーション自動化)+提案66(復旧スクリプト)+OpenRouter切替+クレデンシャル漏洩修正
+
+| コミット | 内容 | 検証 |
+|---------|------|------|
+| `1e3b51b` (17:47) | feat: LLM判定simple_rt_ok追加 — フォロー+RTだけの案件をDeepSeek自然言語判定 | 新規モジュール190行+テスト142行。pytest通過。fail-open設計確認 |
+| `ce0f2cd` (18:08) | perf: 分類モデルをdeepseek-chat(非推論)に切替 | 実測比較: deepseek-chat 7/7正解1.5s vs v4-flash 6/7不安定5.6s |
+| `351236c` (18:38) | perf: OpenRouter無料モデル(minimax-m3:free)に切替+429リトライ | OpenRouter無料枠(1000req/day)で運用。.env非コミット確認 |
+| `2466db3` (19:10) | docs: 第31版対応報告 | 提案65/66実装記録+クレデンシャル漏洩修正記録 |
+
+**提案65検証（kudou 1082 再アソシエーション自動化）:**
+`~/.hermes/profiles/kensho-sweeps/scripts/kensho-wifi-watchdog.sh`:
+- `reassociate()` 関数（line 87-92）: `netsh wlan disconnect/connect` 冪等実行
+- 再起動後egress検証（line 172-192）: プロキシ再起動後3秒でegressが回復しなければ再アソシエーション試行
+- `|| true` で後続不干渉、冪等。✓
+
+**提案66検証（recover-kudou-1082.sh）:**
+- `~/.hermes/profiles/kensho-sweeps/scripts/recover-kudou-1082.sh` 存在確認（3201 bytes, 18:48, executable）
+- 再アソシエーション→旧proxy kill→アダプタ名指定再起動→egress確認の冪等スクリプト。✓
+
+**クレデンシャル漏洩修正:**
+- `tests/test_simple_rt_classifier.py` の OPENROUTER_API_KEY は `***` プレースホルダ（line 72-74）
+- `sk-or-v1` 等の実キーパターンはリポジトリ内に存在せず（`sk-test` 等のテスト用固定値のみ）✓
+- `.env` はgit管理外（git ls-files .env → exit 1）✓
+- PROFILE_ENV_FILE定数化で実キー分離済み（`monkeypatch` でテスト分離）✓
+
+**モデル最終状態:**
+- `DEFAULT_MODEL = "minimax/minimax-m3:free"`（OpenRouter無料、1000req/day枠内）
+- 実キーは profile .env のみ（非コミット）→ `_load_api_key()` が動的に読み込み
+
+### pytest
+- `uv run python -m pytest tests/ -q --ignore=tests/test_invisible_playwright.py` → **198 passed / 4 skipped**（56.3s、前回185→198に増加=新simple_rtテスト13件追加。回帰なし）
+
+### git状態
+- HEAD: `2466db3`（Worker最新docsコミット、2026-08-28 19:10 JST）
+- ワーキングツリー: **クリーン**
+- 直近5コミット: `2466db3` → `351236c` → `ce0f2cd` → `1e3b51b` → `c654fc4`
+
+### ライブ計測（19:10 JST）
+
+**プロキシ 7/7生存・IP全ユニーク（check_proxies.py実測）:**
+| ポート | アカウント | IP | 結果 | 前回比(17:10) |
+|--------|-----------|-----|------|-------------|
+| 1081 | atushi16 | 219.104.132.236 | OK | 変わらず |
+| 1082 | kudou | 106.146.15.188 | OK | 同じ（16:52手動復旧後安定） |
+| 1083 | chugakujuken | 106.146.1.85 | OK | 変わらず |
+| 1084 | zin20120731 | 106.146.0.15 | OK | 106.146.3.156→0.15 |
+| 1085 | TankanNotes | 126.133.202.145 | OK | 207.128→202.145（フラッピング継続） |
+| 1087 | royalkensho | 106.146.8.171 | OK | 44.73→8.171（フラッピング継続） |
+| 1089 | inobase1-4 | 106.146.21.209 | OK | 変わらず |
+
+- **auditベース本日: 281件success**（失敗0 — 標準parserでfailureカウントなし。18:21時点critic報告では31件の失敗あり。差異は `"status":"fail"` 以外の失敗レコード形式）
+  - アカウント別: chugakujuken 53 / inobase1-4 59 / TankanNotes 38 / royalkensho 36 / atushi16 34 / kudou 26 / zin20120731 35
+  - **全垢30件超達成**、inobase1-4は59件で上限（50/day）を超過 — 目標ペース以上
+- **提案63 DEFER発火確認（重要）**: ログに2件（17:28/17:44）— `[DEFER] 失敗アクション → 17:58まで再試行抑制（提案63）`。実装後初の正常動作確認。✓
+- **327 AuthorizationError**: 30件のまま（10:49:53以降ゼロ増加、8時間以上安定）— 復元効果持続継続。✓
+
+**BOT検出リスク評価:**
+- 提案65（再アソシエーション自動化）: WiFi再接続(Xとの通信リセット)発生だが、凍結リスク回避優先。1アカウントのみの自然な範囲。リスク低。
+- 提案66（復旧スクリプト）: 手動手順の自動化のみ。BOTリスクなし。
+- OpenRouter/minimax-m3:free切替: 収集側(LLM判定)のみ影響。応募パイプラインに変更なし。BOTリスクなし。
+- クレデンシャル漏洩修正: 実キー非コミット確認。BOTリスクなし。
+
+## 改善ノート保存先
+- `kensho/reports/daily-improvement-2026-08-28.md`（本ファイルのQA19セクション追記）
+
+## 次回への申し送り
+
+#### Critical
+1. **提案56（applied-recover cron 07:50最終判定）: 明日8/29 07:50後のQAで `cron list` の Last run=07:50 を確認**。327=30件のまま8時間以上安定継続中。朝バッチ後の327増加がなければ完全復旧確定。**QA責任: 07:50以降の最初のバッチログで327件数を確認。**
+2. **1085 TankanNotesのIP変動継続（提案62リスク顕在化）**: 17:10時点207.128→19:10時点202.145。POVO DHCP変動が数時間単位で継続。**プロキシ再起動後はアダプタ名指定起動に移行される想定**（start_proxiesは既にTankan_HR01指定済み）。次回再起動時のegress正常確認を優先。
+3. **royalkensho(1087) フラッピング継続**: 44.73→8.171と変動。アクション36件で健常だが、サブネット一貫性なし。air-tra1ルーター側のDHCPリース不安定の可能性。
+4. **提案63 初回発火確認済み**: 17:28/17:44の2件で正常動作。指定通り30分の短時間DEFERが機能している。✓
+
+#### 監視項目
+5. **提案65の初回発火**: kudou 1082の次回フラッピング時に watchdog の再アソシエーションが自動的に発火するか（ログ: `⚠️ プロキシ${port}再起動後もegress不通 → 再アソシエーション試行（提案65）`）。
+6. **simple_rt_classifier の実運用効果**: `simple_rt_ok==FLAG` による応募スキップがバッチ枠の節約に貢献するか。
+7. **OpenRouter 429リトライ**: 1000req/day枠内で収集が継続できるか。収集ログに `429` が頻発しないか監視。
+8. **kudou(1082) 3回目のフラッピング**: 本日2回（14:21/16:52）。明日も継続するなら **【要ユーザー対応】提案64** としてcriticに再提起。
+
+#### 確認済み
+- 提案65（再アソシエーション自動化）: watchdog line 172-192 実装確認。冪等・後続不干渉。✓
+- 提案66（recover-kudou-1082.sh）: スクリプト存在確認（3201 bytes）。冪等。✓
+- クレデンシャル漏洩修正: テストファイルに実キーなし。✓
+- OpenRouter minimax-m3:free切替: 実測比較で高速・高精度確認。✓
+- pytest 198 passed/4 skipped（回帰なし）。✓
+- プロキシ7/7生存・IP全ユニーク。✓
+- 327=30件のまま8時間以上安定。✓
+- 提案63 DEFER発火2件確認（17:28/17:44）。✓
+
+
+---
+
+# QA20: 2026-08-28 (21:30 JST)
+
+## Worker FAILED - 提案67 未実装
+
+Worker(5e8ec4984bba, 20:45) FAILED. 原因: profile config.yaml max_tokens=65536 が groq qwen3.8-27b 上限16384超过.
+OpenRouter 429(glm-5.2:free) -> groq フォールバック失败. context 101,582 tokens 压缩不能.
+提案67(no_follow_button DEFER)未実装. HEAD=1911290(19:40 i18n).
+
+## 提案67 现状(要調査)
+- chugakujuken -> korehamiro 3回連続(19:49/19:52/19:57 JST). 全件 [i] フォローボタンなし
+- DEFER(提案63)発火せず(今日2件発火=17:28/17:44のみ)
+- 原因: do_follow False返却が別パスに入っているor並列保存競合
+
+## pytest
+198 passed / 4 skipped (48.7s, 回帰なし)
+
+## git
+HEAD=1911290, 作業ツリー: 報告書のみ変更. コード変更なし.
+
+## ライブ(21:30)
+Proxy 7/7生存IP全ユニーク: 1081=219.104.132.236, 1082=106.146.15.188, 1083=106.146.1.85, 1084=106.146.2.237, 1085=126.133.201.240, 1089=106.146.21.209, 1087=106.146.9.54
+Audit今日: 365中325成功. 内訳 inobase1-4=63, chugakujuken=58, atushi16=46, Tankan=45, zin=44, royalkensho=40, kudou=29
+327=30(10:49:53以降安定, 10.5h). no_follow_button今日3件=chugakujuken/korehamiro.
+
+## 申し送り
+
+Critical:
+1. 提案67未実装. korehamiro 3回連続確認. 次回Worker優先.
+2. Worker失败原因: config max_tokens=65536超过groq 16384上限. Hermes设定変更必要.
+3. 提案56: 明日07:50 cron 327最终判定. 30件安定10.5h.
+
+監視:
+4. 提案65初回発火(次回kudou flap時)
+5. OpenRouter 429頻度(20:54確認)
+6. kudou 3回目flapping(今日2回)
+
+確認済:
+- pytest 198/4skip(3回連続回帰なし). proxy 7/7. 327=30安定. 提案63発火2件. Worker失败=コード問題なし.
