@@ -168,6 +168,8 @@ h1{{font-size:1.3rem;margin-bottom:4px;color:{BLUE}}}
 .note{{color:{GRAY};font-size:0.75rem;margin-top:8px}}
 table{{width:100%;border-collapse:collapse}}
 td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
+.warning-banner{{background:#412b1b;border:1px solid {YELLOW};border-radius:8px;padding:10px 14px;margin-bottom:12px;color:{YELLOW};font-size:0.85rem;line-height:1.5}}
+.warning-banner strong{{color:{RED}}}
 </style>
 </head>
 <body>
@@ -180,6 +182,13 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
 <div class="stat-card"><div class="stat-val" style="color:{PURPLE}">{sm["total_today"]}</div><div class="stat-label">today</div></div>
 </div></div>
 """
+
+    # ── 健全性警告バナー（2026-08-28追加）──
+    health = data.get("health", {})
+    if health.get("warnings"):
+        for w in health["warnings"]:
+            prefix = "<strong>⚠️ 要対応</strong> " if not health.get("ok", True) else "ℹ️ "
+            html += f'<div class="warning-banner">{prefix}{w}</div>\n'
 
     # deadline
     dl = st.get("deadline_dist", {})

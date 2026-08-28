@@ -576,6 +576,7 @@ def apply_for_account(
         idx: int = 0  # account_applied のインデックス（補充用）
         # ★ 2026-08-26: セッション内重複アクション防止（BOT検出回避）
         rt_done_ids: set[str] = set()  # セッション内でRT成功したtweet_id
+        like_done_ids: set[str] = set()  # セッション内でいいね成功したtweet_id（2026-08-28追加）
         followed_owners_session: set[str] = set()  # セッション内でフォロー成功した主催者
         # ★ 2026-08-26提案10: セッション跨ぎ重複アクション防止（audit.jsonlベース）
         #   applied(collected.json)は収集マージで消失しうるため、追記専用のaudit.jsonlから
@@ -1130,7 +1131,7 @@ def apply_for_account(
                     out("  [SKIP] フォロー: 本日既にフォロー成功済み（前セッション）→ スキップ（重複アクション防止）")
                 # ★ 2026-08-26提案12: いいね済みツイートへのフォロー禁止（同一ツイート多重アクション防止）
                 #   すでにいいねで応募完了しているツイートへのフォローはBOT検出リスクを上げるだけ。
-                if not skip_follow and tweet_id and tweet_id in like_done_all:
+                if not skip_follow and tweet_id and (tweet_id in like_done_all or tweet_id in like_done_ids):
                     skip_follow = True
                     out(
                         "  [SKIP] フォロー: 本日既にいいね成功済み（前セッション）→ スキップ（同一ツイート多重アクション防止）"  # noqa: E501
@@ -1193,7 +1194,7 @@ def apply_for_account(
                         _rt_already_done = True
                         out("  [SKIP] RT: 本日既にRT成功済み（前セッション）→ スキップ（重複アクション防止）")
                     # ★ 2026-08-26提案12: いいね済みツイートへのRT禁止（同一ツイート多重アクション防止）
-                    elif tweet_id in like_done_all:
+                    elif tweet_id in like_done_all or tweet_id in like_done_ids:
                         skip_rt = True
                         _rt_already_done = True
                         out(
@@ -1285,11 +1286,16 @@ def apply_for_account(
                 if (
                     not skip_like
                     and tweet_id
-                    and (tweet_id in rt_done_all or tweet_id in like_done_all or tweet_id in rt_done_ids)
+                    and (
+                        tweet_id in rt_done_all
+                        or tweet_id in like_done_all
+                        or tweet_id in rt_done_ids
+                        or tweet_id in like_done_ids
+                    )
                 ):  # noqa: E501
                     skip_like = True
                     out(
-                        "  [SKIP] いいね: 本日既にRT/いいね成功済み（前セッション）→ スキップ（同一ツイート多重アクション防止）"  # noqa: E501
+                        "  [SKIP] いいね: 本日既にRT/いいね成功済み（前セッション/同セッション）→ スキップ（同一ツイート多重アクション防止）"  # noqa: E501
                     )
                 # ★ いいねアクション（条件付き）を別途保持
                 like_action: tuple[str, Any] | None = None
@@ -1366,6 +1372,8 @@ def apply_for_account(
                 # ★ セッション内set更新（成功したアクションのみ記録）
                 if _per_item_ok.get("rt"):
                     rt_done_ids.add(tweet_id)
+                if _per_item_ok.get("like") and tweet_id:
+                    like_done_ids.add(tweet_id)  # 2026-08-28追加: いいね済みツイートの再アクション防止
                 if _per_item_ok.get("follow") and screen_name:
                     followed_owners_session.add(screen_name)
 

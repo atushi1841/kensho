@@ -440,10 +440,10 @@ def main() -> None:
                     state["last_processed"][key_res] = f"{datetime.now().strftime('%Y-%m-%d')}:{bt}"
                     save_state(state)
                 else:
-                    state.setdefault("last_processed", {})
-                    state["last_processed"][key_res] = f"{datetime.now().strftime('%Y-%m-%d')}:{bt}"
-                    save_state(state)
-                    log.write(f"  [WARN] {key_res}: 結果空っぽ → スキップ済みとして記録（次回は再試行せず）")
+                    # 結果空っぽ(0成功/0エラー)でも再試行できるよう、last_processedは更新しない
+                    # ※ログイン失敗等で0成功/1エラーの場合もここに来るが、エラーはauditに記録済み
+                    #   次回サイクルでリトライ可能にするため last_processed 更新なし
+                    log.write(f"  [WARN] {key_res}: 結果空っぽ → 再試行可能としてキープ（last_processed更新なし）")
 
             log.write(f"\n  今回処理: {processed}垢")
 

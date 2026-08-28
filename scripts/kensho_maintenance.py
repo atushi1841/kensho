@@ -82,6 +82,33 @@ def cleanup_old_logs() -> int:
     return removed
 
 
+def cleanup_old_backups(keep: int = 15) -> int:
+    """data/backups の .bak を直近 keep 個だけ残して削除（2026-08-28追加）"""
+    backups_dir = PROJECT_DIR / "data" / "backups"
+    if not backups_dir.is_dir():
+        return 0
+    try:
+        baks = sorted(
+            backups_dir.glob("collected.json.*.bak"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+    except OSError:
+        return 0
+    removed = 0
+    for old in baks[keep:]:
+        try:
+            old.unlink()
+            removed += 1
+        except OSError:
+            pass
+    if removed > 0:
+        log(f"🧹 古いcollectedバックアップ {removed} 個削除（直近{keep}個保持）")
+    else:
+        log(f"🗄 collectedバックアップ: 直近{keep}個保持（問題なし）")
+    return removed
+
+
 def check_disk_space() -> bool:
     """ログディレクトリのサイズを確認（100MB超で警告）"""
     total_size = 0
@@ -140,6 +167,7 @@ def main() -> int:
     log("")
     log("--- [2/5] Log Cleanup ---")
     cleanup_old_logs()
+    cleanup_old_backups()
 
     # 3. ディスク容量
     log("")

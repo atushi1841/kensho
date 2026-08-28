@@ -3,8 +3,22 @@ import json
 import os
 import re
 from collections import defaultdict
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from typing import Any
+
+JST = timezone(timedelta(hours=9))
+
+
+def _audit_jst_date(ts: str) -> str:
+    """audit.jsonlのUTCタイムスタンプ(例: 2026-08-28T00:22:12Z)をJST日付文字列に変換"""
+    if not ts:
+        return ""
+    try:
+        dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        return dt.astimezone(JST).date().isoformat()
+    except Exception:
+        return ts[:10]
+
 
 today = date.today()
 today_str = today.isoformat()
@@ -82,7 +96,7 @@ try:
             if r.get("status") != "success":
                 continue
             ts = r.get("timestamp", "")
-            if not ts.startswith(today_str):
+            if _audit_jst_date(ts) != today_str:
                 continue
             if r.get("action_type") == "follow":
                 _applied_today_per_account[r.get("account", "")] += 1
@@ -353,7 +367,7 @@ try:
                 continue
             if r.get("status") != "success":
                 continue
-            day = (r.get("timestamp") or "")[:10]
+            day = _audit_jst_date(r.get("timestamp") or "")
             acct = r.get("account", "")
             at = r.get("action_type", "")
             tgt = r.get("target", "")
@@ -378,6 +392,81 @@ result["history"] = {
 
 # ── UNUSED（応募停止済み）アカウントをJSONに含める ──
 result["unused_accounts"] = UNUSED_ACCOUNTS
+
+# ═══════════════════════════════════════════════
+# ── データ健全性（2026-08-28追加）──
+#   applied=null汚染の再発検知 + 復元cronスキップ検知
+# ═══════════════════════════════════════════════
+_health: dict[str, Any] = {"ok": True, "warnings": []}
+try:
+    # audit全体を1回読んで「この垢が成功アクションをしたtarget」を収集
+    _rt_ok_map: dict[str, set[str]] = defaultdict(set)
+    _follow_ok_map: dict[str, set[str]] = defaultdict(set)
+    with open(os.path.join(PROJECT_DIR, "data/audit.jsonl"), encoding="utf-8") as f:
+        for line in f:
+            try:
+                r = json.loads(line)
+            except Exception:
+                continue
+            if r.get("status") != "success":
+                continue
+            ac = r.get("account", "")
+            at = r.get("action_type", "")
+            tgt = r.get("target", "") or ""
+            if not ac or not tgt or tgt == "n/a":
+                continue
+            if at == "rt":
+                _rt_ok_map[ac].add(tgt)
+            elif at == "follow":
+                _follow_ok_map[ac].add(tgt)
+
+    # 復元漏れ（audit成功あり なのに applied=null）をカウント
+    _recoverable: dict[str, int] = defaultdict(int)
+    _items_for_health = items
+    for it in _items_for_health:
+        xurl = it.get("x_url") or ""
+        m = re.search(r"x\.com/([^/]+)/status/(\d+)", xurl)
+        if not m:
+            continue
+        sn, tid = m.group(1), m.group(2)
+        ap = it.get("applied") or {}
+        for ac in ap:
+            if ap.get(ac) is not None:
+                continue
+            if ac in _rt_ok_map and tid in _rt_ok_map[ac]:
+                _recoverable[ac] += 1
+            elif ac in _follow_ok_map and sn in _follow_ok_map[ac]:
+                _recoverable[ac] += 1
+    if _recoverable:
+        # 10件未満は過渡的なもの（ワーカー稼働中に未保存のapplied）として無視
+        _recoverable_filtered = {k: v for k, v in _recoverable.items() if v >= 10}
+        if _recoverable_filtered:
+            _worst = max(_recoverable_filtered.items(), key=lambda kv: kv[1])
+            _health["warnings"].append(
+                f"applied復元漏れ: {_worst[0]} {_worst[1]}件 (audit成功済みなのにapplied=null)。"
+                "kensho-daily-applied-recover の動作を確認"
+            )
+            _health["ok"] = False
+    result["health_recoverable"] = dict(_recoverable)
+
+    # 復元cron(07:50)が今日スキップされたかを確認
+    _cron_out = os.path.expanduser("~/.hermes/profiles/kensho-sweeps/cron/output/209b4c34b41d")
+    _skipped_today = False
+    if os.path.isdir(_cron_out):
+        for fn in os.listdir(_cron_out):
+            if fn.startswith(today_str + "_07-5"):
+                try:
+                    with open(os.path.join(_cron_out, fn), encoding="utf-8") as f:
+                        if "orchestrator稼働中" in f.read():
+                            _skipped_today = True
+                except Exception:
+                    pass
+    if _skipped_today:
+        _health["warnings"].append("本日のapplied復元cron(07:50)が「orchestrator稼働中」でスキップされました")
+        _health["ok"] = False
+    result["health"] = _health
+except Exception as _he:
+    result["health"] = {"ok": True, "warnings": [], "error": str(_he)[:100]}
 
 # ═══════════════════════════════════════════════
 # ── WiFiテザリング状態（watchdogログから集計）──

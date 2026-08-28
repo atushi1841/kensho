@@ -6,13 +6,15 @@
     （本修正で解決済みだが、既存データの消滅分を今ここで救済する）
   - audit.jsonl は追記専用で消えない → RT成功(tweet_id) / フォロー成功(screen_name) が真の応募記録
 
-復元規則 (安全側):
-  - x_url から tweet_id と screen_name を抽出
-  - audit にその垢が RT成功 → applied[ac]=その日時(follow成功より確実)
-  - audit にフォロー成功があるが RT記録なし → applied[ac]=フォロー日時
-  - applied[ac] がすでに日付strなら触らない（現在値優先）
+# 復元規則 (安全側):
+#  - x_url から tweet_id と screen_name を抽出
+#  - audit にその垢が RT成功 → applied[ac]=その日時(follow成功より確実)
+#  - audit にフォロー成功があるが RT記録なし → applied[ac]=フォロー日時
+#  - follow_state.json にフォロー成功がある → applied[ac]=その日時
+#  - applied[ac] がすでに日付strなら触らない（現在値優先）
 """
 
+import argparse
 import collections
 import json
 import re
@@ -20,18 +22,31 @@ import shutil
 from datetime import datetime
 from pathlib import Path
 
+# ── 引数解析 ──
+parser = argparse.ArgumentParser(description="collected.json の None 汚染を audit.jsonl から復元する。")
+parser.add_argument(
+    "--dry-run",
+    action="store_true",
+    help="復元内容を表示するのみで、実際の書込みは行わない。バックアップも作成しない。",
+)
+args = parser.parse_args()
+
 PROJECT = Path(__file__).resolve().parent.parent
 DATA = PROJECT / "data"
 COLLECTED = DATA / "collected.json"
 AUDIT = DATA / "audit.jsonl"
+FOLLOW_STATE = DATA / "follow_state.json"
 BACKUP_DIR = DATA / "backups"
 
-# バックアップ
-BACKUP_DIR.mkdir(exist_ok=True)
-ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-bak = BACKUP_DIR / f"collected.json.{ts}.bak"
-shutil.copy(COLLECTED, bak)
-print(f"[BACKUP] {bak}")
+# バックアップ（--dry-run 時は作成しない）
+if args.dry_run:
+    print("[DRY-RUN] 書込みなし・バックアップなし（--dry-run）")
+else:
+    BACKUP_DIR.mkdir(exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    bak = BACKUP_DIR / f"collected.json.{ts}.bak"
+    shutil.copy(COLLECTED, bak)
+    print(f"[BACKUP] {bak}")
 
 # 1) audit 読み込み: RT成功 / follow成功 を垢別に
 rt_ok = collections.defaultdict(set)  # account -> set(tweet_id)
@@ -68,7 +83,29 @@ with open(AUDIT, encoding="utf-8") as f:
 data = json.loads(COLLECTED.read_text(encoding="utf-8"))
 items = data.get("collected", [])
 restored = 0
+restored_follow_state = 0
 skipped_had_date = 0
+
+# 2.5) follow_state.json から垢別のフォロー済み screen_name セットを構築
+follow_state_done: dict[str, set[str]] = collections.defaultdict(set)
+if FOLLOW_STATE.exists():
+    try:
+        with FOLLOW_STATE.open(encoding="utf-8") as f:
+            fs_data = json.load(f)
+        for ac, ac_data in fs_data.items():
+            if isinstance(ac_data, dict):
+                followed = ac_data.get("followed", {})
+                if isinstance(followed, dict):
+                    for screen_name, dates in followed.items():
+                        if dates:  # 配列に1件以上あれば
+                            follow_state_done[ac].add(screen_name)
+    except Exception as e:
+        print(f"[WARN] follow_state.json 読み込み失敗: {e}", flush=True)
+if follow_state_done:
+    print(
+        f"  [follow_state] {sum(len(v) for v in follow_state_done.values())}垢のフォロー済みアカウント読み込み",
+        flush=True,
+    )
 
 for it in items:
     x_url = it.get("x_url") or ""
@@ -82,7 +119,7 @@ for it in items:
         ap = it["applied"]
 
     for ac in list(ap.keys()):
-        if isinstance(ap.get(ac), str) and not str(ap[ac]).startswith("DEFER"):
+        if isinstance(ap.get(ac), str) and not str(ap.get(ac)).startswith("DEFER"):
             skipped_had_date += 1
             continue  # 有効な日付が既にある → 触らない
         # この垢がRT成功してるか
@@ -96,14 +133,30 @@ for it in items:
             fts = follow_ts.get(ac, {}).get(screen)
             ap[ac] = fts if fts else f"{datetime.now().isoformat(timespec='seconds')}Z"
             restored += 1
+            continue
+        # ★ 2026-08-28追加: follow_state.json にこの垢のフォロー記録がある
+        if ac in follow_state_done and screen in follow_state_done[ac]:
+            fts = follow_ts.get(ac, {}).get(screen)
+            ap[ac] = fts if fts else f"{datetime.now().isoformat(timespec='seconds')}Z"
+            restored += 1
+            restored_follow_state += 1
 
-COLLECTED.write_text(
-    json.dumps(data, ensure_ascii=False, indent=1),
-    encoding="utf-8",
-)
-print(f"[DONE] 復元 {restored} エントリ / 既に日付ありスキップ {skipped_had_date}")
-print("垢別復元内訳を表示（下部）:")
-after = json.loads(COLLECTED.read_text(encoding="utf-8"))["collected"]
+if args.dry_run:
+    print(
+        f"[DRY-RUN] 復元予定 {restored} エントリ (うちfollow_state由来 {restored_follow_state}) / 既に日付ありスキップ {skipped_had_date}"
+    )
+    print("垢別 復元後(予定)内訳:")
+    after = data.get("collected", [])
+else:
+    COLLECTED.write_text(
+        json.dumps(data, ensure_ascii=False, indent=1),
+        encoding="utf-8",
+    )
+    print(
+        f"[DONE] 復元 {restored} エントリ (うちfollow_state由来 {restored_follow_state}) / 既に日付ありスキップ {skipped_had_date}"
+    )
+    print("垢別復元内訳を表示（下部）:")
+    after = json.loads(COLLECTED.read_text(encoding="utf-8"))["collected"]
 for ac in ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4"]:
     d = sum(1 for it in after if isinstance((it.get("applied") or {}).get(ac), str))
     n = sum(1 for it in after if (it.get("applied") or {}).get(ac) is None)
