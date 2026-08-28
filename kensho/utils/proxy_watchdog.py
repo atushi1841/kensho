@@ -25,6 +25,9 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
     #   アダプタ名: Wi-Fi → Tankan_HR01 にリネーム済み。bind方式(IP直指定)で起動（2026-08-27 17:10）。
     #   ※ --no-bind不可: メトリック最下位によりデフォルトルート=自宅有線のため、--no-bindだと自宅IPリーク。
     "TankanNotes": (1085, "Tankan_HR01"),
+    # 2026-08-28(提案69): inobase1-4(1089)もフラッピング監視対象に追加。
+    #   8/28 22:19-22:23 に1回フラップ（自己復旧・POVO系テザリング一時不安定）。
+    #   頻発（1日2回以上）する場合は要ユーザー対応（提案49方式）へ格上げ。
     "inobase1-4": (1089, "inobase1-4"),
     "royalkensho": (1087, "royalkensho_airtra1"),  # 2026-08-28: 旧zin_6_Gal_S10→リネーム。2_povo_AW(air-tra1/povo)
 }

@@ -34,8 +34,13 @@ def do_follow(
     out: Callable[[str], None],
     account_key: str,
     target: str = "n/a",
-) -> bool:
-    """フォローボタンをクリック。成功(or既フォロー)ならTrue。"""
+) -> tuple[bool, str | None]:
+    """フォローボタンをクリック。成功(or既フォロー)ならTrue。
+
+    Returns:
+        (success, error_code) — error_code は失敗時の短い識別子。
+        呼び出し側がエラー種別を見て applied 付与の判断に使う（提案68）。
+    """
     _t0 = _time.time()
     _cfg_here = _ensure_cfg()
     _decision, _reason = policy_engine.evaluate(account_key, "follow", _cfg_here)
@@ -43,7 +48,7 @@ def do_follow(
         out(f"  [POLICY] フォロー拒否: {_reason}")
         _delay = int((_time.time() - _t0) * 1000)
         audit_ledger.log(account_key, "follow", target, "deny", "skipped", reason=_reason, delay_ms=_delay)
-        return False
+        return (False, "policy_denied")
 
     fb = page.query_selector('[data-testid*="follow"]')
     if fb:
@@ -64,7 +69,7 @@ def do_follow(
                         _delay = int((_time.time() - _t0) * 1000)
                         audit_ledger.log(account_key, "follow", target, "allow", "success", delay_ms=_delay)
                         _time.sleep(random.uniform(3, 7))
-                        return True
+                        return (True, None)
                 except Exception:
                     pass
                 _time.sleep(1)
@@ -80,19 +85,19 @@ def do_follow(
                 error="follow_confirm_missing",
                 delay_ms=_delay,
             )
-            return False
+            return (False, "follow_confirm_missing")
         else:
             out("  [i] フォロー済み")
             _delay = int((_time.time() - _t0) * 1000)
             audit_ledger.log(
                 account_key, "follow", target, "allow", "success", reason="already_followed", delay_ms=_delay
             )
-            return True
+            return (True, "already_followed")
     else:
         out("  [i] フォローボタンなし（応募対象外かも）")
         _delay = int((_time.time() - _t0) * 1000)
         audit_ledger.log(account_key, "follow", target, "allow", "failed", error="no_follow_button", delay_ms=_delay)
-        return False
+        return (False, "no_follow_button")
 
 
 def do_rt(

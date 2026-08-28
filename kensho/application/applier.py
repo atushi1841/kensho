@@ -1190,13 +1190,16 @@ def apply_for_account(
                         ))
                     else:
                         # ★ 2026-08-26: UIフォールバックでもフォロー成功を記録（過フォロー・監査n/aの根本対策）
-                        def _ui_follow_with_record() -> bool:
-                            _ok = do_follow(page, click_delay, out, account_key, target=screen_name or "")
+                        # ★ 2026-08-28提案68: do_follow戻り値を (success, error_code) タプルに変更し、
+                        #   失敗時のエラー種別を上位に伝える。no_follow_button 等の「再試行しても無駄な失敗」を
+                        #   当該バッチ内で再ピックせず applied を即時付与する判定に使う。
+                        def _ui_follow_with_record() -> tuple[bool, str | None]:
+                            _ok, _err = do_follow(page, click_delay, out, account_key, target=screen_name or "")
                             if _ok and screen_name:
                                 from kensho.application.follow_state_manager import FollowStateManager
 
                                 FollowStateManager(account_key).record_follow(screen_name)
-                            return _ok
+                            return (_ok, _err)
 
                         action_queue.append(("follow", _ui_follow_with_record))
                 if not skip_rt:
@@ -1346,7 +1349,10 @@ def apply_for_account(
 
                 false_count = 0
                 # ★ アクション成否記録（応募成立判定に使用）
+                # ★ 2026-08-28提案68: フォロー失敗時のエラーコード(no_follow_button等)を保持し、
+                #   下の失敗ハンドラで「再試行しても無駄な失敗」を即時 applied 付与する判定に使う。
                 _per_item_ok: dict[str, bool] = {"follow": False, "rt": False, "like": False}
+                _follow_error_code: str | None = None
                 action_count = len(action_queue)
                 for idx, (_name, _fn) in enumerate(action_queue):
                     # ★ 2026-08-28提案53: 速度ガード（直近3分で15件超なら強制休止）
@@ -1360,7 +1366,15 @@ def apply_for_account(
                         time.sleep(_speed_pause)
                         _recent_action_times.clear()
                     result = _fn()
-                    _rv = bool(result)
+                    # ★ 2026-08-28提案68: do_follow は (success, error_code) タプルを返す。
+                    #   他の関数(bool)との後方互換を保つ: タプルは展開し、それ以外は bool 化。
+                    if isinstance(result, tuple) and len(result) == 2:
+                        _raw_ok, _raw_err = result
+                        if _name == "follow":
+                            _follow_error_code = _raw_err if not _raw_ok else None
+                        result = _raw_ok
+                    # result is True なら成功、それ以外(False/タプル等)は失敗
+                    _rv = result is True
                     if _rv:
                         _recent_action_times.append(time.time())
                     _per_item_ok[_name] = _per_item_ok.get(_name) or _rv
@@ -1548,18 +1562,34 @@ def apply_for_account(
                     #   機械的パターンになる。DEFER:now+30min を書くことで30分以内の再ピックを防ぎ、
                     #   30分後は自然再試行（プロキシ復旧後の再試行を阻害しない）。
                     #   既存のDEFER（削除済み14日等・fallback_rt が書いた長期DEFER）は上書きしない。
-                    if item.get("applied", {}).get(account_key) is None:
+                    # ★ 2026-08-28提案68: no_follow_button 等の「再試行しても無駄な失敗」は
+                    #   30分DEFERでも無駄（同結果を返す）なので即時 applied 付与で完全停止する。
+                    #   実測: korehamiro×3回/chugakujuken・Rakuten_Wallet×4回/zin・steakgusto029×2回/zin
+                    #   が同一バッチ内で連続アクセス → 機械的パターンのBOT検出リスクあり。
+                    #   root cause: line 1551 旧 `is None` 判定は、DEFER(30分)期限切れ後の再ピックのたびに
+                    #   DEFERを上書きせず素通り → 無限ループ。`not _is_deferred(val)` でDEFER期限切れも対象に。
+                    _cur_applied_val = item.get("applied", {}).get(account_key)
+                    if _cur_applied_val is None or not _is_deferred(_cur_applied_val):
                         try:
                             from datetime import timedelta
 
-                            _short_def_until: dt.datetime = datetime.now() + timedelta(
-                                minutes=cfg.get("applier", {}).get("retry_defer_minutes", 30)
-                            )
-                            item.setdefault("applied", {})[account_key] = (
-                                f"{_DEFER_PREFIX}{_short_def_until.isoformat()}"
-                            )
-                            _short_def_ts: str = _short_def_until.strftime("%H:%M")
-                            out(f"  [DEFER] 失敗アクション → {_short_def_ts}まで再試行抑制（提案63）")
+                            # 提案68: no_follow_button / follow_confirm_missing / policy_denied 等の
+                            # 「再試行しても無駄な失敗」は即時 applied(現在時刻) を付与して完全停止。
+                            # 一方 http_0 / ネットワークエラー等の一時的失敗は30分DEFERで再試行可能に。
+                            _waste_failure_codes = {"no_follow_button", "follow_confirm_missing", "policy_denied"}
+                            _is_waste_failure = _follow_error_code in _waste_failure_codes
+                            if _is_waste_failure:
+                                item["applied"][account_key] = datetime.now().isoformat()
+                                out(f"  [APPLIED] 無駄な失敗({_follow_error_code}) → 即時 applied 付与（再処理停止・提案68）")
+                            else:
+                                _short_def_until: dt.datetime = datetime.now() + timedelta(
+                                    minutes=cfg.get("applier", {}).get("retry_defer_minutes", 30)
+                                )
+                                item.setdefault("applied", {})[account_key] = (
+                                    f"{_DEFER_PREFIX}{_short_def_until.isoformat()}"
+                                )
+                                _short_def_ts: str = _short_def_until.strftime("%H:%M")
+                                out(f"  [DEFER] 失敗アクション → {_short_def_ts}まで再試行抑制（提案63）")
                             # 即時保存: 次バッチ（別プロセス）がディスクから再読込する前にDEFERを永続化。
                             save_collected_safe(data, account_key, log)
                         except Exception:
