@@ -26,6 +26,12 @@ MAX_FOLLOWS_PER_OWNER_PER_DAY = 2
 # 同一主催者への生涯通算フォロー上限（BOTシグナル対策: 毎日キャンペーンを張る主催者への累積フォローを防ぐ）
 MAX_FOLLOWS_PER_OWNER_TOTAL = 4
 
+# 無駄な失敗（no_follow_button等）後にブロックする主催者を記録するキー
+# 提案87: 同一主催者の別ツイートでフォロー要件が繰り返し判定され、失敗が連続する
+# （実測: zinがmonteur_mr_shuuに08:33-08:52で14回no_follow_button）BOT検出リスク対策。
+# 一度「無駄な失敗」した主催者は当日中ブロックし、同一主催者への再試行を防止する。
+_BLOCK_KEY: str = "blocked_owners"
+
 # フォロー状態ファイル
 _STATE_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "follow_state.json"
 
@@ -74,6 +80,28 @@ class FollowStateManager:
         self._state.setdefault(self._account_key, {}).setdefault("followed", {}).setdefault(screen_name, [])
         self._state[self._account_key]["followed"][screen_name].append(today)
         self._save()
+
+    # ★ 2026-08-30提案87: 無駄な失敗主催者の当日ブロック（同一主催者への重複フォロー試行防止）
+    #   no_follow_button 等の「再試行しても無駄な失敗」が同一主催者の別ツイートで繰り返される
+    #   （実測: zinがmonteur_mr_shuuに14回）とBOTシグナルになる。一度無駄な失敗した主催者は
+    #   当日中ブロックし、同一主催者への再試行を完全防止する。
+    _WASTE_FAILURE_CODES: set[str] = {"no_follow_button", "follow_confirm_missing", "policy_denied"}
+
+    def record_follow_failure(self, screen_name: str, error_code: str | None = None) -> None:
+        """無駄な失敗（再試行しても無駄なエラー）でフォローを当日ブロック。
+
+        一時的失敗（http_0 等）はブロックせず、次回再試行を許容する。
+        """
+        if error_code not in self._WASTE_FAILURE_CODES:
+            return
+        today = datetime.datetime.now(JST).strftime("%Y-%m-%d")
+        self._state.setdefault(self._account_key, {}).setdefault(_BLOCK_KEY, {})[screen_name] = today
+        self._save()
+
+    def is_blocked(self, screen_name: str) -> bool:
+        """この主催者へのフォローが当日ブロックされているか。"""
+        today = datetime.datetime.now(JST).strftime("%Y-%m-%d")
+        return self._state.get(self._account_key, {}).get(_BLOCK_KEY, {}).get(screen_name) == today
 
     def get_today_follows(self, screen_name: str | None = None) -> list[str]:
         """今日フォローした主催者一覧（または特定主催者の今日のフォロー日時）。"""

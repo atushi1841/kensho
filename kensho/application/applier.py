@@ -1262,6 +1262,10 @@ def apply_for_account(
                     if not _fsm.should_follow(screen_name):
                         skip_follow = True
                         out(f"  [SKIP] フォロー: 同一主催者{screen_name}フォロー上限到達")
+                    # ★ 2026-08-30提案87: 無駄な失敗（no_follow_button等）で当日ブロックされた主催者への再試行防止
+                    elif _fsm.is_blocked(screen_name):
+                        skip_follow = True
+                        out(f"  [SKIP] フォロー: 主催者{screen_name}は当日ブロック済み（無駄な失敗防止・提案87）")
                 # ★ 2026-08-26: セッション内フォロー重複防止
                 if not skip_follow and screen_name and screen_name in followed_owners_session:
                     skip_follow = True
@@ -1706,6 +1710,14 @@ def apply_for_account(
                                     f"  [APPLIED] 無駄な失敗({_follow_error_code})"
                                     " → 即時 applied 付与（再処理停止・提案68）"
                                 )
+                                # ★ 2026-08-30提案87: 無駄な失敗主催者を当日ブロック
+                                from kensho.application.follow_state_manager import FollowStateManager
+
+                                if screen_name:
+                                    FollowStateManager(account_key).record_follow_failure(
+                                        screen_name, _follow_error_code
+                                    )
+                                    out(f"  [BLOCK] 主催者{screen_name}を当日ブロック（提案87）")
                             else:
                                 _short_def_until: dt.datetime = datetime.now() + timedelta(
                                     minutes=cfg.get("applier", {}).get("retry_defer_minutes", 30)

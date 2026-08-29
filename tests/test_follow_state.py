@@ -23,6 +23,28 @@ def test_should_follow_initial(tmp_path: Path) -> None:
     assert m.should_follow("mobage_campaign") is True
 
 
+def test_record_follow_failure_waste_code_blocks(tmp_path: Path) -> None:
+    """無駄な失敗（no_follow_button等）で主催者が当日ブロックされる（提案87）。"""
+    m = _make_manager(tmp_path)
+    assert m.is_blocked("owner_waste") is False
+    m.record_follow_failure("owner_waste", "no_follow_button")
+    assert m.is_blocked("owner_waste") is True
+
+
+def test_record_follow_failure_transient_not_blocked(tmp_path: Path) -> None:
+    """一時的失敗（http_0等）はブロックしない（再試行を許容）。"""
+    m = _make_manager(tmp_path)
+    m.record_follow_failure("owner_net", "http_0")
+    assert m.is_blocked("owner_net") is False
+
+
+def test_record_follow_failure_none_code_not_blocked(tmp_path: Path) -> None:
+    """エラーコードなしの失敗はブロックしない。"""
+    m = _make_manager(tmp_path)
+    m.record_follow_failure("owner_unknown", None)
+    assert m.is_blocked("owner_unknown") is False
+
+
 def test_follow_limit_enforced(tmp_path: Path) -> None:
     """同一主催者へのフォローは上限まで許可、超過は拒否。"""
     m = _make_manager(tmp_path)

@@ -219,7 +219,7 @@ rate_limits:
   max_rt_per_day: 80                # そのまま
   max_like_per_day: 250            # 200→250（いいねは安全、増やす）
   max_reply_per_day: 10
-  max_actions_per_hour: 25         # 15→25（アイテム数基準、25件×3=75アクション/時に分散。8/24-25実績160件/dayを参考に余裕を持たせる）
+  max_actions_per_hour: 15         # 25→15（2026-08-30提案86: 1時間15件超過のBOTリスク対策。8/29実測でTankanNotes 12時20件・chugakujuken 13時17件・inobase1-4 12時19件+19時16件が超過。speed_guard(15件/180s)と併用）
   active_hours_start: "08:00"
   active_hours_end: "23:00"
   min_delay_between_actions: 15   # 20→15（基本間隔を微縮小。実測で一度もrate制限に引っかかっていないため）
