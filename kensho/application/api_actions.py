@@ -9,6 +9,7 @@ import base64
 import hashlib
 import json
 import math
+import os
 import random
 import ssl
 import time as _time
@@ -139,6 +140,86 @@ def _is_api_error(body_str: str) -> bool:
     except (json.JSONDecodeError, TypeError):
         pass
     return False
+
+
+# ── Error 226（automated request block）検知＋自動一時停止（提案76・2026-08-29）──
+# Xは速度検知（2〜3分で15〜20アクション）でError 226を返す。
+# 再試行するたびにブロック延長されるため、検出時は即セッション停止＋15〜60分待機。
+_AUTOMATION_BLOCK_FILE: str = os.path.join(os.path.dirname(__file__), "..", "..", "data", "automation_block.json")
+
+
+def _is_automation_block(body_str: str) -> bool:
+    """Error 226（automated request block）判定。"""
+    if not body_str:
+        return False
+    if '"code":226' in body_str or 'code":226' in body_str:
+        return True
+    low = body_str.lower()
+    return any(
+        s in low
+        for s in (
+            "looks like it might be automated",
+            "automated request",
+            "this request looks automated",
+        )
+    )
+
+
+def _load_automation_blocks() -> dict[str, float]:
+    try:
+        with open(_AUTOMATION_BLOCK_FILE, encoding="utf-8") as f:
+            data = json.load(f)
+        return {str(k): float(v) for k, v in data.items() if isinstance(v, (int, float))}
+    except (FileNotFoundError, json.JSONDecodeError, TypeError, ValueError):
+        return {}
+
+
+def _save_automation_blocks(blocks: dict[str, float]) -> None:
+    try:
+        os.makedirs(os.path.dirname(_AUTOMATION_BLOCK_FILE), exist_ok=True)
+        tmp = _AUTOMATION_BLOCK_FILE + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(blocks, f, ensure_ascii=False)
+        os.replace(tmp, _AUTOMATION_BLOCK_FILE)
+    except OSError:
+        pass  # 記録失敗しても応募継続
+
+
+def mark_automation_block(account_key: str, out: Callable[[str], None] | None = None) -> None:
+    """Error 226（automated request block）検出 → 15〜60分ブロック（自動再開）。"""
+    _now = _time.time()
+    until = _now + random.uniform(15 * 60, 60 * 60)
+    blocks = _load_automation_blocks()
+    blocks[account_key] = until
+    _save_automation_blocks(blocks)
+    if out:
+        out(
+            f"  [AUTOBLOCK] {account_key}: Error 226（automated block）検出 → "
+            f"約{int((until - _now) // 60)}分後に自動再開"
+        )
+
+
+def is_automation_blocked(account_key: str) -> bool:
+    """ブロック中ならTrue（期限切れは自動クリア＝自動再開）。"""
+    blocks = _load_automation_blocks()
+    until = blocks.get(account_key)
+    if until is None:
+        return False
+    if _time.time() >= until:
+        blocks.pop(account_key, None)
+        _save_automation_blocks(blocks)
+        return False
+    return True
+
+
+def get_automation_block_minutes(account_key: str) -> int:
+    """ブロック残り分数（0=非ブロック）。"""
+    blocks = _load_automation_blocks()
+    until = blocks.get(account_key)
+    if until is None:
+        return 0
+    rem = int((until - _time.time()) // 60)
+    return max(1, rem) if rem > 0 else 0
 
 
 def _make_js_fetch(
@@ -373,6 +454,20 @@ def api_like(
                     out(f"  [WARN] FavoriteTweet GraphQL (queryId={query_id}…): 空レスポンス")
                     continue
                 if _is_api_error(body_str):
+                    # ★ 2026-08-29提案76: Error 226（automated block）→ 即停止＋待機
+                    if _is_automation_block(body_str):
+                        mark_automation_block(account_key, out)
+                        _delay = int((_time.time() - _t0) * 1000)
+                        audit_ledger.log(
+                            account_key,
+                            "like",
+                            tweet_id,
+                            "allow",
+                            "failed",
+                            error="automation_blocked",
+                            delay_ms=_delay,
+                        )
+                        return False
                     # ★ 2026-08-26提案13: 200 with errorsでもAuthorizationError検出を通す。
                     #   従来はここでcontinueしてしまい_auth_errorが立たず、RESTフォールバック
                     #   (200空body自動失敗)に落ちていた。→ empty_response 30件/日の主因。
@@ -399,6 +494,20 @@ def api_like(
                     )
                     continue
             elif status == 403:
+                if _is_automation_block(body_str):
+                    # ★ 2026-08-29提案76: Error 226（automated block）→ 即停止＋待機
+                    mark_automation_block(account_key, out)
+                    _delay = int((_time.time() - _t0) * 1000)
+                    audit_ledger.log(
+                        account_key,
+                        "like",
+                        tweet_id,
+                        "allow",
+                        "failed",
+                        error="automation_blocked",
+                        delay_ms=_delay,
+                    )
+                    return False
                 if body_str and ("AlreadyLiked" in body_str or "already liked" in body_str.lower()):
                     out("  [i] いいね GraphQL: 403（既にいいね済み）")
                     increment_daily_count(account_key, "like")
@@ -475,6 +584,20 @@ def api_like(
         audit_ledger.log(account_key, "like", tweet_id, "allow", "success", delay_ms=_delay)
         return True
     elif status == 403:
+        if _is_automation_block(body_str):
+            # ★ 2026-08-29提案76: Error 226（automated block）→ 即停止＋待機
+            mark_automation_block(account_key, out)
+            _delay = int((_time.time() - _t0) * 1000)
+            audit_ledger.log(
+                account_key,
+                "like",
+                tweet_id,
+                "allow",
+                "failed",
+                error="automation_blocked",
+                delay_ms=_delay,
+            )
+            return False
         if body_str and ("AlreadyLiked" in body_str or "already liked" in body_str.lower()):
             out("  [i] いいねREST API: 403（既にいいね済み）")
             increment_daily_count(account_key, "like")
@@ -560,6 +683,20 @@ def api_rt(
 
         if status == 200:
             if _is_api_error(body_str):
+                # ★ 2026-08-29提案76: Error 226（automated block）→ 即停止＋待機
+                if _is_automation_block(body_str):
+                    mark_automation_block(account_key, out)
+                    _delay = int((_time.time() - _t0) * 1000)
+                    audit_ledger.log(
+                        account_key,
+                        "rt",
+                        tweet_id,
+                        "allow",
+                        "failed",
+                        error="automation_blocked",
+                        delay_ms=_delay,
+                    )
+                    return False
                 out(f"  [WARN] RT GraphQL (queryId={query_id}…): 200 with errors: {body_str[:200]}")
                 # ★ 2026-08-25 バグ修正: 200 with errorsでもAuthorizationError検出を通す。
                 #   従来はここでcontinueしてしまい_auth_errorが立たず、RESTフォールバック(404→
@@ -577,6 +714,20 @@ def api_rt(
             audit_ledger.log(account_key, "rt", tweet_id, "allow", "success", delay_ms=_delay)
             return True
         elif status == 403:
+            if _is_automation_block(body_str):
+                # ★ 2026-08-29提案76: Error 226（automated block）→ 即停止＋待機
+                mark_automation_block(account_key, out)
+                _delay = int((_time.time() - _t0) * 1000)
+                audit_ledger.log(
+                    account_key,
+                    "rt",
+                    tweet_id,
+                    "allow",
+                    "failed",
+                    error="automation_blocked",
+                    delay_ms=_delay,
+                )
+                return False
             if body_str and (
                 "AlreadyRetweeted" in body_str
                 or "already retweeted" in body_str.lower()
@@ -714,6 +865,20 @@ def api_follow_by_screen_name(
     body_str: str = result.get("body", "")
     if status == 200:
         if _is_api_error(body_str):
+            # ★ 2026-08-29提案76: Error 226（automated block）→ 即停止＋待機
+            if _is_automation_block(body_str):
+                mark_automation_block(account_key, out)
+                _delay = int((_time.time() - _t0) * 1000)
+                audit_ledger.log(
+                    account_key,
+                    "follow",
+                    screen_name,
+                    "allow",
+                    "failed",
+                    error="automation_blocked",
+                    delay_ms=_delay,
+                )
+                return False
             out(f"  [WARN] フォローAPI: 200 エラー応答: {body_str[:200]}")
             _delay = int((_time.time() - _t0) * 1000)
             audit_ledger.log(
@@ -732,6 +897,20 @@ def api_follow_by_screen_name(
         audit_ledger.log(account_key, "follow", screen_name, "allow", "failed", error="unauthorized", delay_ms=_delay)
         return False
     elif status == 403:
+        if _is_automation_block(body_str):
+            # ★ 2026-08-29提案76: Error 226（automated block）→ 即停止＋待機
+            mark_automation_block(account_key, out)
+            _delay = int((_time.time() - _t0) * 1000)
+            audit_ledger.log(
+                account_key,
+                "follow",
+                screen_name,
+                "allow",
+                "failed",
+                error="automation_blocked",
+                delay_ms=_delay,
+            )
+            return False
         if body_str and (
             "already follows" in body_str.lower()
             or "AlreadyFollowing" in body_str

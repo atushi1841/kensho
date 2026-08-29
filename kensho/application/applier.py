@@ -30,6 +30,8 @@ from kensho.application.api_actions import (
     api_like,
     api_rt,
     extract_tweet_id_and_screen_name,
+    get_automation_block_minutes,
+    is_automation_blocked,
     verify_x_api_works,
 )
 from kensho.application.browser import (
@@ -646,6 +648,12 @@ def apply_for_account(
             )
 
         while success < max_n and idx < len(account_applied):
+            # ★ 2026-08-29提案76: Error 226（automated block）ブロック中なら即停止
+            if is_automation_blocked(account_key):
+                rem = get_automation_block_minutes(account_key)
+                out(f"  [AUTOBLOCK] {account_key}: 自動ブロック中（残り約{rem}分）→ このバッチ打ち切り")
+                break
+
             # ★ セッション時間制限チェック
             if time.time() - session_start >= SESSION_TIMEOUT:
                 out(f"  [LIMIT] セッション時間制限（{SESSION_TIMEOUT}秒）→ 打ち切り（{success}件処理済み）")
