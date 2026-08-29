@@ -67,3 +67,43 @@
 1. **chugakujuken(1083) フラッピング**: 信号25-42%/-85〜-92dBm。wifi_watchdog自動復旧は機能中。chugakujuken_RM10JE_Sの弱信号問題。必要なら物理確認（スマホ側）
 2. **zin1084(air-tra1)**: 106.146.3.140で安定。F0 RT1（08:00バッチのみ）。11:03バッチは未確認
 3. **新ロジック（応募成立=フォロー+いいね）効果**: いいね成功数が本日応募数の基準になる。12:20時点でのいいね件数とフォロー件数の比率（95%目標）を確認
+
+---
+
+# QA26 検証結果: 2026-08-29 13:10
+
+## 検証結果
+
+### 1. pytest
+- **211 passed, 4 skipped**（53.76s）— 回帰なし（QA25と同数）
+
+### 2. Workerコミット検証: 8cbc746（12:52, 提案76+78）
+- **提案76（Error 226検知+自動一時停止）** — ✓ 実装内容を確認済み
+  - `api_actions.py`: `_is_automation_block`（code 226+文言パターン） / `mark_automation_block`（15〜60分ランダム、tmp+os.replace原子書込） / `is_automation_blocked`（期限切れ自動クリア） / `get_automation_block_minutes` 追加
+  - 検知組込: api_like（GraphQL 200-errors / GraphQL 403 / REST 403 の3点）、api_rt（2点）、api_follow_by_screen_name（2点）＝計7検知点
+  - `applier.py`: ループ開始時に `is_automation_blocked` チェック → ブロック中は即打ち切り
+  - 実装は提案内容と一致。検知→即停止→15〜60分待機の設計どおり
+- **提案78（連座リスク棚卸し文書化）** — ✓ 実装内容を確認済み
+  - `docs/ACCOUNT_LINKAGE_ANALYSIS.md`（122行）: 7垢のリンク要因表・atushi16分離戦略・凍結シナリオ損失限定・防御11項目・緊急時チェックリスト
+  - 最重要リスク「同一WSLゲートウェイIP（172.26.80.1）」明記、ゲートウェイ分離が次の鍵
+
+### 3. ライブ状態（13:10時点）
+- **automation_block.json なし** = Error 226未発火（正常。検知機構は待機状態）
+- **royalkensho: daily_counts反映確認** ✅ — F4 RT4 L7（hourly 11:9 / 12:6）。12:20判定項目クリア
+- **L/F比率: 74%**（F66 / L49）— 12:20時点66%→上昇。目標95%未達のため22:30判定継続
+- daily_counts: 全7垢動作中（chugakujuken F9 RT9 L3, atushi16 F13 RT15 L6, kudou F9 RT7 L2, TankanNotes F10 RT12 L12, inobase1-4 F12 RT12 L12, zin F9 RT10 L7）
+
+## 改善ノート保存先
+- `reports/daily-improvement-2026-08-29.md`（本ファイル・QA26追記）
+- `reports/improvement-anchor.md`（outcomes/next steps 更新）
+
+## 次回への申し送り
+
+### Critical
+1. **提案77（L/F比率）: 22:30終日判定** — 13:10時点74%（12:20時点66%から上昇）。atushi16(46%)/kudou(22%)が低い。22:30まで監視継続
+2. **chugakujuken(1083) フラッピング継続監視** — アクションは正常（F9 RT9 L3）だが信号弱のため物理確認候補【要ユーザー対応候補】
+
+### 監視継続
+1. **提案76（Error 226）初発動の監視** — 検知機構は実装済・未発火。発動時は `data/automation_block.json` と audit error="automation_blocked" を確認
+2. **zin1084(air-tra1)**: 本日F9 RT10 L7で活発。安定
+3. **新ロジック効果**: L/F比率95%目標への追い込み状況を22:30判定に反映
