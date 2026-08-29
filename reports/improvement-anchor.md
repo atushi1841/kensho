@@ -19,7 +19,7 @@
 
 | 日付 | 提案# | 内容 | コミット | 状態 |
 |------|-------|------|---------|------|
-| 08/29 | 81 | **state.pyメタフィールド永続化（QA27）: save_collected_safeが診断メタ消滅** | — | 🟡 新規・高優先 |
+| 08/29 | 81 | **state.pyメタフィールド永続化（QA27）: save_collected_safeが診断メタ消滅** | 71c098c | ✅ 実装済（pytest213pass） |
 | 08/29 | 79 | **収集新規0件問題: 調査→メトリクス修正** | 1fec812 | ✅ 実装済 |
 | 08/29 | 80 | **chugakujuken(1083) フラッピング根本対策** | — | 🟡 新規・中優先【要ユーザー対応候補】 |
 | 08/29 | 77 | **いいね伴走率終日確認（16:20時点86.7%・目標95%）** | — | ⚠️ 22:30再判定 |
@@ -54,7 +54,7 @@
 
 | 優先度 | アクション | 担当 | 期限 | 備考 |
 |--------|-----------|------|------|------|
-| 🔴高 | **提案81（state.pyメタ永続化）: 実装** | Worker | 次回 | save_collected_safeで new_items_processed/new_items_by_source/total_on_page/collected_at をディスクcurrentから補完 |
+| 🔴高 | **提案81（state.pyメタ永続化）: ✅ 実装済** | Worker | 08/29 完了 | save_collected_safeで new_items_processed/new_items_by_source/total_on_page/timestamp をディスクcurrentから補完（71c098c）。QA検証待ち |
 | 🔴高 | **提案77（L/F比率）: 終日判定 22:30** | Critic | 08/29 22:30 | 15:10時点81%（12:20時点66%→上昇継続）。kudou(50%)/chugakujuken(50%)/atushi16(68%)が低く要因切り分け対象 |
 | 🔴高 | **提案79（収集新規0件）: ✅ 解決** | Worker | 08/29 完了 | メトリクス誤診。収集は正常（14:00/15:00に他ソース434/363件取得）。1fec812で修正。⚠️残課題は提案81 |
 | 🟡中 | **提案80（chugakujukenフラッピング）: 物理確認** | QA/ユーザー | 継続 | 信号25-42%/-85〜-92dBm。wifi_watchdog自動復旧は機能。頻発時は物理確認【要ユーザー対応候補】 |
@@ -73,13 +73,14 @@
 | **71** | **75dac52(レート緩和)** | 08/28 | 08/29 14:20 | 413件記録+8/29半日エラー0。基準全クリア | ✅ **継続確定** |
 | **75** | **inobase/royal朝バッチ遅延** | — | 08/29 12:20 | royalkensho 11時台F2RT2L5反映・セッション更新 | ✅ 解消 |
 | **77** | **応募成立=フォロー+いいね（新ロジック）** | 08/29 | 08/29 14:20 | L/F=78.2%（F87/L68）。前日L14→14:20 L68 | ⚠️ 22:30再判定 |
-| **79** | **収集新規0件=メトリクス誤診** | 08/29 | 08/29 | 14:00収集: knshow0(処理済)+他ソース434件取得・収集正常。15:00収集も363件確認。new_items_processed修正。**⚠️ 新問題: メタフィールドがapplier保存で上書き消滅（QA27発見）** | ✅ 解決（診断フィールドの永続化は要修正） |
+| **79** | **収集新規0件=メトリクス誤診** | 08/29 | 08/29 | 14:00収集: knshow0(処理済)+他ソース434件取得・収集正常。15:00収集も363件確認。new_items_processed修正。**⚠️ 新問題: メタフィールドがapplier保存で上書き消滅（QA27発見）** | ✅ 解決（診断フィールドの永続化は要修正→提案81） |
 | **68** | **no_follow_button即時applied** | 08/29 | 08/29 | 8/28:14件→8/29:1件（安定） | ✅ 効果確認 |
 | **70** | 07:50 applied-recover cron | 08/29 | 08/29 | 327=0、朝バッチ再発なし | ✅ 達成クローズ |
 | **63** | 失敗時30分DEFER | 08/29 | 08/29 | DEFER発動確認 | ✅ 有効 |
 | **62** | proxy_watchdog adapter bind | 08/29 | 08/29 | DHCP変動追従確認 | ✅ 有効 |
 | **76** | **Error 226検知+自動一時停止** | 08/29 | 08/29 13:10 QA26検証 | pytest211pass/4skip・7検知点確認・automation_block.json未発火(正常) | ✅ QA検証済 |
 | **78** | **連座リスク棚卸し文書化** | 08/29 | 08/29 13:10 QA26検証 | docs/ACCOUNT_LINKAGE_ANALYSIS.md 122行・防御11項目・ゲートウェイ分離が次鍵 | ✅ QA検証済 |
+| **81** | **state.pyメタ永続化（QA27）** | 08/29 | 08/29 worker | save_collected_safeで new_items_processed/new_items_by_source/total_on_page/timestamp をディスクcurrentから補完。実測で collected.json の new_items_by_source=None を確認済 | ✅ 実装済（71c098c）・QA検証待ち |
 
 ---
 
@@ -88,7 +89,7 @@
 - 📊 **提案77（L/F比率）: 22:30 runで終日判定** — 16:20時点86.7%（15:10時点81%→上昇継続）。kudou(55.6%)/chugakujuken(71.4%)/atushi16(68.4%)が低く要因切り分け対象
 - ✅ **提案76（Error 226監視）: 実装完了** — api_actions.py/applier.py に検知組込、自動15〜60分待機でブロック延長防止
 - ✅ **提案79（収集新規0件）: 調査完了・メトリクス修正** — 収集は正常動作（14:00で他ソース434件取得、15:00で363件）。new_items_processed=len(collected)に修正
-- 🔴 **提案81（QA27）: 収集メタフィールドがapplier保存で消滅** — `new_items_by_source` が `save_collected_safe`（state.py:56）の古いin-memory data上書きで消える（16:20実測でNone確認）。メタ4キーをディスクcurrentから補完マージするstate.py修正が必要
+- ✅ **提案81（QA27）: 実装済（71c098c）** — save_collected_safeが new_items_processed/new_items_by_source/total_on_page/timestamp をディスクcurrentから補完。pytest213pass。QA検証（collected.jsonの new_items_by_source が残るか）待ち
 - ⚠️ **提案80（chugakujuken(1083) フラッピング）**: 信号25-42%/-85〜-92dBm（弱い）。wifi_watchdog自動復旧は正常動作中。chugakujuken_RM10JE_S。頻発時は【要ユーザー対応】
 - ✅ zin1084(air-tra1): 106.146.3.140で安定継続
 - ✅ royalkensho遅延: 解消（11時台反映確認）
