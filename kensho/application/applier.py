@@ -1116,6 +1116,10 @@ def apply_for_account(
                 _skip_chance_rt: float = _skip_cfg.get("rt", 0.20)
                 _skip_chance_like: float = _skip_cfg.get("like", 0.30)
                 _skip_chance_all: float = _skip_cfg.get("all", 0.05)
+                # ★ 2026-08-29: フォロー+いいね伴走のいいねスキップ率。
+                #   応募成立=フォロー状態+いいねのため、通常いいねスキップ(30%)より低くし
+                #   完了率を上げる。5%残すのは「たまにいいね忘れ」の人間らしさ（BOT対策）。
+                _like_with_follow_skip: float = float(cfg.get("applier", {}).get("like_with_follow_skip", 0.05))
 
                 # ★ 応募成立条件: フォロー状態+いいね（2026-08-29改修）
                 #   従来は「いいね要件が本文にないと90%スキップ」で、フォロー応募の当選条件
@@ -1147,7 +1151,7 @@ def apply_for_account(
 
                 if _follow_already_done:
                     # 既フォロー: いいねのみで応募成立。自然分散のため少量スキップ可
-                    if random.random() < _skip_chance_like:
+                    if random.random() < _like_with_follow_skip:
                         skip_like = True
                         out("  [SKIP] いいね: フォロー済みだが確率スキップ（自然分散）")
                     else:
@@ -1155,7 +1159,7 @@ def apply_for_account(
                         out("  [i] いいね: フォロー済み → いいねのみで応募成立")
                 elif _follow_relevant:
                     # フォロー実行: いいねを伴走（応募成立条件を満たす）
-                    if random.random() < _skip_chance_like:
+                    if random.random() < _like_with_follow_skip:
                         skip_like = True
                         out("  [SKIP] いいね: フォロー+いいねだが確率スキップ（自然分散）")
                     else:
