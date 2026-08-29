@@ -24,6 +24,7 @@ from kensho.application.reply_generator import generate_reply
 from kensho.application.state import (
     acquire_lock,
     release_lock,
+    save_collected_safe,
 )
 
 
@@ -289,6 +290,90 @@ class TestLockMechanism:
         assert acquire_lock(timeout=5) is True
         assert acquire_lock(timeout=1) is False  # タイムアウトで失敗
         release_lock()
+
+
+class TestSaveCollectedSafeMeta:
+    """save_collected_safe: 診断メタフィールドの永続化（提案81）"""
+
+    def _setup(self, tmp_path: Path, monkeypatch: object) -> tuple[Path, Path]:
+        """COLLECTED_FILE/LOCK を tmp に差し替えてパスを返す"""
+        import kensho.application.state as state_mod
+
+        col_file = tmp_path / "collected.json"
+        col_lock = tmp_path / "collected.lock"
+        monkeypatch.setattr(state_mod, "COLLECTED_FILE", col_file)
+        monkeypatch.setattr(state_mod, "COLLECTED_LOCK", col_lock)
+        return col_file, col_lock  # type: ignore[return-value]
+
+    def test_meta_preserved_from_disk(self, tmp_path: Path, monkeypatch: object) -> None:
+        """applierの古いin-memory data(None/0メタ)でもディスクcurrentのメタを保持"""
+        col_file, _ = self._setup(tmp_path, monkeypatch)
+        # collectorが書いた新鮮なメタ（ディスク）
+        col_file.write_text(
+            json.dumps({
+                "timestamp": "2026-08-29T15:00:00",
+                "total_on_page": 363,
+                "new_items_processed": 363,
+                "new_items_by_source": {"knshow": 0, "ken-kaku": 24},
+                "collected": [
+                    {
+                        "detail_url": "https://x.com/a/status/1",
+                        "applied": {"atushi16": "2026-08-29T14:00:00"},
+                    }
+                ],
+            }),
+            encoding="utf-8",
+        )
+        # applierの古いin-memory data（収集前ロード・メタが消えている）
+        stale = {
+            "new_items_processed": 0,
+            "new_items_by_source": None,
+            "total_on_page": 43,
+            "collected": [
+                {
+                    "detail_url": "https://x.com/a/status/1",
+                    "applied": {"atushi16": "2026-08-29T14:30:00"},
+                }
+            ],
+        }
+        save_collected_safe(stale, "atushi16")
+        saved = json.loads(col_file.read_text(encoding="utf-8"))
+        assert saved["new_items_processed"] == 363
+        assert saved["new_items_by_source"] == {"knshow": 0, "ken-kaku": 24}
+        assert saved["total_on_page"] == 363
+        assert saved["timestamp"] == "2026-08-29T15:00:00"
+        # collected マージは従来通り（applied は None でない値が優先）
+        assert saved["collected"][0]["applied"]["atushi16"] == "2026-08-29T14:30:00"
+
+    def test_applied_union_still_works(self, tmp_path: Path, monkeypatch: object) -> None:
+        """メタ補完後も applied の None汚染防止unionが機能する（回帰確認）"""
+        col_file, _ = self._setup(tmp_path, monkeypatch)
+        col_file.write_text(
+            json.dumps({
+                "new_items_processed": 100,
+                "collected": [
+                    {
+                        "detail_url": "https://x.com/a/status/1",
+                        "applied": {"kudou": "2026-08-29T12:00:00"},
+                    }
+                ],
+            }),
+            encoding="utf-8",
+        )
+        # 別垢applierがapplied=Noneで保存しようとしても他垢の日付は消えない
+        data = {
+            "collected": [
+                {
+                    "detail_url": "https://x.com/a/status/1",
+                    "applied": {"kudou": None, "atushi16": "2026-08-29T13:00:00"},
+                }
+            ]
+        }
+        save_collected_safe(data, "atushi16")
+        saved = json.loads(col_file.read_text(encoding="utf-8"))
+        assert saved["collected"][0]["applied"]["kudou"] == "2026-08-29T12:00:00"
+        assert saved["collected"][0]["applied"]["atushi16"] == "2026-08-29T13:00:00"
+        assert saved["new_items_processed"] == 100  # メタも保持
 
 
 class TestCheckTweetResult:

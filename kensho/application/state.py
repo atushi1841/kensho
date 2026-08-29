@@ -112,6 +112,23 @@ def save_collected_safe(data: dict[str, Any], account_key: str, log: Any = None)
                     merged_items.append(item)
 
             data["collected"] = merged_items
+
+            # ★ 2026-08-29 提案81: 診断メタフィールドをディスク current から補完。
+            #   collector.py が収集時に new_items_processed / new_items_by_source /
+            #   total_on_page / timestamp を書く唯一の書き込み元。applier の in-memory
+            #   data は収集前にロードした古い値（None/0/空）を持ち、save_collected_safe
+            #   の `data` 丸ごと保存でメタを上書き消滅させていた
+            #   （QA27実測: new_items_by_source=None / new_items_processed=0）。
+            #   → マージ後に current 側の値で補完（current にあれば current 優先、
+            #      current になければ data の値を維持）＝収集供給モニタリングの回復。
+            _meta_keys: tuple[str, ...] = (
+                "new_items_processed",
+                "new_items_by_source",
+                "total_on_page",
+                "timestamp",
+            )
+            for _k in _meta_keys:
+                data[_k] = current.get(_k, data.get(_k))
         except Exception as e:
             print(f"[SAVE] マージ読み込み失敗: {e}", flush=True)
 
