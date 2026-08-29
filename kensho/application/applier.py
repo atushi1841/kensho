@@ -173,6 +173,31 @@ def _is_defer_expired(val: Any) -> bool:
     return now >= t
 
 
+def _dedupe_batch_items(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """バッチ候補を x_url/tweet_id 単位で一意化する（2026-08-29提案82）。
+
+    collector は収集マージ時に _dedup_x_url_merge で一意化するが、applierロード時点の
+    collected.json に重複が残っていると1バッチ内で同一ツイートを複数回ピックする
+    （実測: inobase1-4 が geass_survivor を1バッチ内7回ピック → BOT検出リスク）。
+    ここでは正規化x_url（または tweet_id）単位で先頭エントリのみ残す。
+    """
+    seen: set[str] = set()
+    out_items: list[dict[str, Any]] = []
+    for _item in items:
+        _xu = _item.get("x_url", "") or ""
+        _xu_key = _xu.split("#")[0].split("?")[0].rstrip("/")
+        _tid_m = re.search(r"/status/(\d+)", _xu_key)
+        if _tid_m:
+            _xu_key = f"tweet_id:{_tid_m.group(1)}"
+        elif _xu_key:
+            _xu_key = f"x_url:{_xu_key}"
+        if _xu_key in seen:
+            continue
+        seen.add(_xu_key)
+        out_items.append(_item)
+    return out_items
+
+
 def _should_process_item(item: dict[str, Any], account_key: str) -> bool:
     """ツイートを処理すべきか判定（DEFER解除も考慮）"""
     val = item.get("applied", {}).get(account_key)
@@ -518,6 +543,17 @@ def apply_for_account(
         account_applied.append(item)
 
     out(f"[Kensho] この垢の未応募: {len(account_applied)}件")
+
+    # ★ 2026-08-29提案82: バッチ構築時の x_url/tweet_id dedupe
+    #   collectorは収集マージ時に _dedup_x_url_merge で一意化するが、applierロード時点の
+    #   collected.jsonに重複が残っていると1バッチ内で同一ツイートを複数回ピックする
+    #   （実測: inobase1-4 がgeass_survivorを1バッチ内7回ピック・18:01）。
+    #   → バッチ効率低下 + 同一ツイート短時間反復アクセス = BOT検出リスク。
+    #   ここで正規化x_url（またはtweet_id）単位で先頭エントリのみ残す。
+    _dup_removed: int = len(account_applied) - len(_dedupe_batch_items(account_applied))
+    if _dup_removed > 0:
+        out(f"[DEDUPE] バッチ内同一ツイート重複 {_dup_removed}件を除外（提案82）")
+        account_applied = _dedupe_batch_items(account_applied)
 
     # 優先順にソート
     account_applied, _removed = sort_items(account_applied)
@@ -1724,6 +1760,26 @@ def apply_for_account(
                     cur_url = "?"
                 out(f"  [NG] {err_msg} (url={cur_url})")
                 errors += 1
+                # ★ 2026-08-29提案82: 例外時も失敗ハンドラを必ず実行し、当該アイテムへ
+                #   DEFER(短時間)を書く。exceptパスにハンドラが無いと applied/DEFER が未書き込みの
+                #   まま残り、次サイクルで同一ツイートが再ピックされて反復アクセスになる
+                #   （実測: geass_survivor 1バッチ内7回ピック = 同一ツイート短時間反復 → BOT検出リスク）。
+                #   例外は一時的失敗(プロキシ不安定等)の可能性が高いため30分DEFERで再試行可能にし、
+                #   無闇な即時appliedはしない（_is_defer_expired で期限切れ後は自然再試行）。
+                try:
+                    _cur_exc_applied = item.get("applied", {}).get(account_key)
+                    if _cur_exc_applied is None or _is_defer_expired(_cur_exc_applied):
+                        from datetime import timedelta as _td
+
+                        _exc_def_until: dt.datetime = datetime.now() + _td(
+                            minutes=cfg.get("applier", {}).get("retry_defer_minutes", 30)
+                        )
+                        item.setdefault("applied", {})[account_key] = f"{_DEFER_PREFIX}{_exc_def_until.isoformat()}"
+                        _exc_def_ts: str = _exc_def_until.strftime("%H:%M")
+                        out(f"  [DEFER] 例外(再試行抑制) → {_exc_def_ts}（提案82）")
+                        save_collected_safe(data, account_key, log)
+                except Exception:
+                    pass
                 # ★ Failure Ceiling: 連続失敗を記録
                 if fc_enabled:
                     failure_tracker.record_failure(account_key)

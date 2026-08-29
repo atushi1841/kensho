@@ -170,6 +170,24 @@ class TestSortItems:
         sorted_items, _removed = sort_items(items, now=_dt.datetime(2026, 8, 25, 19, 0))
         assert sorted_items[0]["x_url"] == "x.com/a/1"
 
+    def test_dedupe_batch_items(self) -> None:
+        """バッチ候補の x_url/tweet_id 重複を除外する（提案82）"""
+        from kensho.application.applier import _dedupe_batch_items
+
+        items = [
+            self._item(x_url="x.com/user/status/12345"),
+            self._item(x_url="x.com/user/status/12345?foo=1"),  # 同一 tweet_id
+            self._item(x_url="x.com/other/status/67890"),  # 別ツイート
+            self._item(x_url="x.com/other/status/67890#bar"),  # 同一 tweet_id
+            self._item(x_url="x.com/third/status/99999"),  # 別ツイート
+        ]
+        deduped = _dedupe_batch_items(items)
+        assert len(deduped) == 3
+        # 先頭エントリが保持される
+        assert deduped[0]["x_url"] == "x.com/user/status/12345"
+        assert deduped[1]["x_url"] == "x.com/other/status/67890"
+        assert deduped[2]["x_url"] == "x.com/third/status/99999"
+
     def test_opinion_keyword(self) -> None:
         """感想系キーワード"""
         reply = generate_reply("感想を教えてください")
