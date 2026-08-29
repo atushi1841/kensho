@@ -107,3 +107,53 @@
 1. **提案76（Error 226）初発動の監視** — 検知機構は実装済・未発火。発動時は `data/automation_block.json` と audit error="automation_blocked" を確認
 2. **zin1084(air-tra1)**: 本日F9 RT10 L7で活発。安定
 3. **新ロジック効果**: L/F比率95%目標への追い込み状況を22:30判定に反映
+
+---
+
+# QA検証結果: 2026-08-29 15:10 (QA27)
+
+## 検証結果
+
+### 1. pytest
+- **211 passed, 4 skipped** OK（QA26から回帰なし）
+
+### 2. git状態・Workerコミット検証
+- **HEAD**: d66c6b1 (docs anchor 提案79反映, 14:50)
+- **QA26(13:10)以降のWorker変更**（5コミット）:
+  | コミット | 内容 | 検証 |
+  |---------|------|------|
+  | `a3d5990` 14:08 | applier: フォロー+いいね時RTスキップ（BOTシグナル58件→0） | 注意: 後で2019715で巻き戻し |
+  | `2019715` 14:19 | **巻き戻し**: RTスキップ削除。audit_bot_safety.pyの多重検出を「リプライ含むもののみ」に変更 | OK 妥当（フォロー/RT/いいね複合は当選条件充足の正常行動。ユーザー定義に整合） |
+  | `5d8dd3d` 14:20 | .hermes.md 絶対ルール修正（複合アクション=正常行動） | OK 実態に整合 |
+  | `dec356b` 14:32 | リプライ/返信要件ツイートを全てスキップ（ユーザー指示） | OK common.py 14語追加 + applier.py 常時フィルタ |
+  | `1fec812` 14:49 | **提案79**: collector new_items_processed=全ソース合計 + new_items_by_source | OK 実装確認（下記3に問題） |
+- **ワーキングツリー**: クリーン OK
+
+### 3. 提案79の実装検証（重要）
+- **collector.py 変更**: `new_items_processed = len(collected)`（全ソース合計）+ `new_items_by_source` 診断フィールド追加 — コードは正しい
+- **ライブ確認**: 15:00収集ログ `collect_20260829_150001.log` で「Step 3 (knshow 0, ken-kaku 24, kenshou.club 231, cp.meikan 100, ke-ma 4, twscrape 0, chance.com 0, kensho-everyday 4, 計363件)」— **収集は正常動作を確認**（新規0件は誤診が正しかった）
+- 赤 **問題発見**: バックアップ `collected.json.20260829_150824.bak` には `new_items: 363 / new_items_by_source: {...}` が記録されているのに、**現在の collected.json は `new_items_processed: 0 / new_items_by_source: None` に戻っている**。原因: applierの `save_collected_safe` がディスク再読込+マージ後に `data["collected"]=merged_items` を書き込むが、**data のメタフィールド（new_items_by_source等）は applier 側の古い in-memory data のままで上書き保存**されるため、collectorが書いた新フィールドが消える。→ 15:08:24以降の applier 保存（15:09-15:12 の多数）で上書きされた
+- **影響**: 診断用メタフィールドが恒常的に消える。収集そのものは正常（バックアップに363件記録済み）。**コード修正はしない（QAは記録のみ）→ criticへ申し送り**
+
+### 4. ライブ状態（15:10時点）
+- **プロキシ: 7垢全て動作** OK — 1081=219.104.132.236 / 1082=106.146.15.188 / 1083=106.146.1.85 / 1084=106.146.2.109 / 1085=126.133.207.159 / 1089=106.146.16.128（IP分離OK）
+- **L/F比率: 81.0%**（F100 / L81）— 13:10時点74%→14:20時点78.2%→**81%上昇**。目標95%未達、22:30判定へ
+  - 低: chugakujuken(50%)/kudou(50%)/atushi16(68%) 高: royalkensho(171%)/TankanNotes(107%)/inobase1-4(94%)
+- daily_counts: 全7垢アクションあり（chugakujuken F16RT16L8, zin F12RT13L10, atushi16 F19RT22L13, kudou F16RT14L8, TankanNotes F14RT16L15, inobase1-4 F16RT13L15, royalkensho F7RT4L12）
+- automation_block.json: なし（提案76未発火=正常）
+
+## 改善ノート保存先
+- `reports/daily-improvement-2026-08-29.md`（本ファイル・QA27追記）
+- `reports/improvement-anchor.md`（outcomes/next steps 更新）
+
+## 次回への申し送り
+
+### Critical
+1. **提案79のメタフィールドがapplier保存で消える（新発見）** — collectorが `new_items_by_source` を書いても、applierの `save_collected_safe`（state.py）が古い in-memory data を保存するため上書き消滅。診断フィールドが機能しない。修正候補: `save_collected_safe` でメタフィールドをディスクから保持（`data` の該当キーが無い場合 `current` の値を使う）or collectorの保存を最後に行う
+2. **提案77（L/F比率）: 22:30終日判定** — 15:10時点81%（上昇継続）。kudou(50%)/chugakujuken(50%)/atushi16(68%)が低く要因切り分け
+3. **chugakujuken(1083) フラッピング継続監視** — 【要ユーザー対応候補】
+
+### 監視継続
+1. **提案76（Error 226）初発動の監視** — 未発火（正常）。発動時は `data/automation_block.json` 確認
+2. **zin1084(air-tra1)**: 安定（106.146.2.109）
+3. **リプライ/返信スキップ（dec356b）**: 収集17件が対象・うち6件は無駄応募済み。今後のSKIP増加を監視
