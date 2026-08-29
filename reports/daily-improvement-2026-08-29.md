@@ -196,3 +196,42 @@
 1. **提案76（Error 226）初発動の監視** - 未発火（正常）
 2. **zin1084(air-tra1)**: 安定（106.146.29.40）
 3. **提案79の残課題**: 提案81で解決予定。次サイクルで確認
+
+---
+
+## QA29 検証結果（19:10）
+
+### 1. pytest
+- **214 passed, 4 skipped**（49.5秒）— 提案82追加の `test_dedupe_batch_items` 含め全パス。前回QA28(213pass)から+1テスト・回帰なし
+
+### 2. Worker実装確認（提案82, 93d51f2）
+- **差分検証OK**: `_dedupe_batch_items`（x_url正規化→tweet_id/x_url単位で先頭のみ保持）+ バッチ構築時に適用（`[DEDUPE]`ログ）+ exceptパスにDEFER 30分書き戻し（config `applier.retry_defer_minutes: 30` 存在確認）
+- 意図どおりの実装。ハードコード値なし・セキュリティ問題なし・既存テスト非破壊
+- アンカー監視項目（geass_survivor 1バッチ7回ピック）への直接対処。exceptパスDEFERは「再試行可能(30分)で無闇な即時appliedをしない」設計が妥当
+
+### 3. 実環境効果（19:10時点）
+- **提案81: 実環境確定✅** — 19:09:08保存で `new_items_by_source` が dict 残存（knshow:0, ken-kaku:24, kenshou.club:302, cp.meikan:100, ke-ma:2, kensho-everyday:4, collected 1086件）。QA27で問題だった「17:11台のNone戻り」は古いコードプロセス混在が原因で、現在は発生せず
+- **提案82: 実環境確認は次サイクル** — 19:03コミット後に起動したorchestrator（18:45/chugakujuken, 19:00/TankanNotes）は旧コードで動作中のため、新コードは19:15以降のバッチから適用。`[DEDUPE]`/`[DEFER]`ログは現時点0件（新コード未実行のため正常）
+- **chugakujuken(1083): 復旧確認** — 106.146.24.53（17:10不通→19:10動作）。ただしフラッピング継続の可能性あり、継続監視【要ユーザー対応候補】
+- **L/F比率: 86.5%**（19:10時点、F133/RT134/L115）— 18:21の85.5%から微増。低: chugakujuken(57.1%)/kudou(69.6%)/atushi16(78.3%)。高: royalkensho(145.5%)/TankanNotes(105.3%)/inobase1-4(95.5%)。目標95%未達 → 22:30終日判定
+- daily_counts: 全7垢アクションあり・BOTシグナルなし・automation_block.json なし（提案76未発火=正常）
+
+### 4. git状態
+- HEAD: `517be86`（docs anchor 提案82反映）/ 実装コミット `93d51f2`（提案82）
+- ワーキングツリー: クリーン
+
+## 改善ノート保存先（QA29）
+- `reports/daily-improvement-2026-08-29.md`（本ファイル・QA29追記）
+- `reports/improvement-anchor.md`（outcomes/next steps 更新）
+
+## 次回への申し送り（QA29）
+
+### Critical
+1. **提案82の実環境効果確認（次サイクル19:15以降）** — 新コードバッチで `[DEDUPE] バッチ内同一ツイート重複N件` と `[DEFER] 例外(再試行抑制)` ログが出るか、geass_survivorのような同一ツイート反復ピックが消えたかを確認。ログ0件は「重複なし=正常」だが、確認のため `grep -c "DEDUPE\|DEFER.*提案82" logs/auto_20260829.log` を実施
+2. **提案77（L/F比率）: 22:30終日判定** — 19:10時点86.5%（目標95%未達）。chugakujuken(57.1%)/kudou(69.6%)/atushi16(78.3%)が低く要因切り分け継続
+3. **chugakujuken(1083)**: 19:10に復旧確認（106.146.24.53）だがフラッピング継続の可能性【要ユーザー対応候補】
+
+### 監視継続
+1. **提案76（Error 226）**: 未発火（正常）
+2. **zin1084(air-tra1)**: 安定継続
+3. **提案81**: 実環境確定。今後 nibs が None に戻る場合は並列プロセスの in-memory 競合を再疑
