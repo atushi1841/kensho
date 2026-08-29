@@ -499,6 +499,11 @@ def apply_for_account(
         #   バッチ候補から除外。処理中SKIPで枠と時間を消費するのを防ぐ。
         #   過検出（収集時tweet_textにキーワードなし）は処理継続するため、
         #   ここでは「収集時tweet_textで確定SKIP」だけ除外する。
+        # ★ 2026-08-29: keyword_flag有無にかかわらず、リプライ/返信要件ツイートは常に除外
+        #   （ユーザー指示: リプライは自動で行わない → リプライ必須の懸賞は応募しない）
+        _pre_text2 = item.get("tweet_text", "") or ""
+        if _pre_text2 and has_skip_keyword(_pre_text2):
+            continue
         if item.get("keyword_flag", False):
             _pre_text = item.get("tweet_text", "") or ""
             if _pre_text and has_skip_keyword(_pre_text):
