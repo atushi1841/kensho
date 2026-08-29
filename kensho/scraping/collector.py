@@ -369,6 +369,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         existing["timestamp"] = datetime.now().isoformat()
         existing["total_on_page"] = len(unique_links)
         existing["new_items_processed"] = 0
+        existing["new_items_by_source"] = {}
         safe_save_json(COLLECTED_FILE, existing, "collected.json")
         return (0, 0, len(existing.get("collected", [])))
 
@@ -554,12 +555,22 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     result: dict[str, Any] = {
         "timestamp": datetime.now().isoformat(),
         "total_on_page": len(unique_links),
-        "new_items_processed": len(new_links),
+        "new_items_processed": len(collected),  # 全ソース合計の新規取得数（knshowのみ→全ソースに修正）
         "success": success,
         "errors": len(errors),
         "collected": merged,
         "error_details": errors,
         "elapsed_seconds": round(time.time() - t0, 1),
+        "new_items_by_source": {  # 診断用: ソース別新規取得数
+            "knshow": success,
+            "ken-kaku": len(kenkaku_items),
+            "kenshou.club": len(kclub_items),
+            "cp.meikan": len(cpmeikan_items),
+            "ke-ma": len(kema_items),
+            "twscrape": len(twscrape_items),
+            "chance.com": len(chancecom_items),
+            "kensho-everyday": len(kevery_items),
+        },
     }
     safe_save_json(COLLECTED_FILE, result, "collected.json")
 
