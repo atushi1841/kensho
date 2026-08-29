@@ -157,3 +157,42 @@
 1. **提案76（Error 226）初発動の監視** — 未発火（正常）。発動時は `data/automation_block.json` 確認
 2. **zin1084(air-tra1)**: 安定（106.146.2.109）
 3. **リプライ/返信スキップ（dec356b）**: 収集17件が対象・うち6件は無駄応募済み。今後のSKIP増加を監視
+
+---
+
+# QA検証結果: 2026-08-29 (QA28 - 17:15)
+
+## 検証結果
+
+### 1. pytest
+- **213 passed, 4 skipped** OK（前回211->+2 = 提案81のテスト2件追加、回帰なし）
+
+### 2. Worker実装確認（提案81, 71c098c）
+- **差分検証OK**: `kensho/application/state.py` の `save_collected_safe` に、マージ後に `new_items_processed / new_items_by_source / total_on_page / timestamp` をディスク current から補完するロジック追加（16:51コミット）。テスト `TestSaveCollectedSafeMeta` 2件追加。提案QA27の申し送りと一致する意図どおりの実装
+
+### 3. ライブ計測（17:10）
+- **L/F比率: 83.9%**（F118 / RT116 / L99、audit JST集計）: 15:10時点81%->83.9%上昇継続。低: chugakujuken(55.6%)/kudou(60%)/atushi16(72.7%)。高: royalkensho(155.6%)/inobase1-4(100%)/TankanNotes(105.9%)
+- **proxy: 6/7垢OK** - **chugakujuken(1083)が不通**（SOCKS5 connect failed code=5）。15:10時点では動作していたが17:10で不通。フラッピング悪化の可能性【要ユーザー対応候補】
+- **提案81の実環境効果: 未確定** - 17:10:07の収集保存では new_items_by_source=dict（433件）が書かれたが、17:11台の保存で None に戻ったケースあり。16:45起動の古いプロセス（kudouバッチ）が補完なしで上書きした可能性。次サイクル（全プロセス新コード化）後の再検証が必要
+- daily_counts: 全7垢アクションあり・error=0・BOTシグナルなし
+- automation_block.json: なし（提案76未発火=正常）
+
+### 4. git状態
+- HEAD: `4fefd9a`（docs anchor 提案81反映）/ 直前 `71c098c`（提案81実装）/ `d27f028`（QA27 report）
+- ワーキングツリー: クリーン
+
+## 改善ノート保存先
+- `reports/daily-improvement-2026-08-29.md`（本ファイル・QA28追記）
+- `reports/improvement-anchor.md`（outcomes/next steps 更新）
+
+## 次回への申し送り
+
+### Critical
+1. **提案81（メタ永続化）: 実環境効果の再確認が必要** - コード実装は正しいが、17:11台の保存で new_items_by_source が None に戻るケースを確認（バックアップ171147=None, 171148=dict と混在）。16:45起動の古いコードプロセス（kudou）が補完なしで上書きした可能性が高い。**次サイクル（17:15以降・全プロセス新コード）で collected.json の new_items_by_source が残存するか再検証**。消える場合は並列プロセスの in-memory data 競合 or 補完コードの例外パスを疑う
+2. **chugakujuken(1083): 17:10時点で不通**（SOCKS5 code=5、15:10は動作）: フラッピング悪化【要ユーザー対応候補】。wifi_watchdog の自動復旧を監視
+3. **提案77（L/F比率）: 22:30終日判定** - 17:10時点83.9%（上昇継続、目標95%未達）。kudou(60%)/chugakujuken(55.6%)/atushi16(72.7%)が低く要因切り分け
+
+### 監視継続
+1. **提案76（Error 226）初発動の監視** - 未発火（正常）
+2. **zin1084(air-tra1)**: 安定（106.146.29.40）
+3. **提案79の残課題**: 提案81で解決予定。次サイクルで確認

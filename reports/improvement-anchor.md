@@ -54,10 +54,10 @@
 
 | 優先度 | アクション | 担当 | 期限 | 備考 |
 |--------|-----------|------|------|------|
-| 🔴高 | **提案81（state.pyメタ永続化）: ✅ 実装済** | Worker | 08/29 完了 | save_collected_safeで new_items_processed/new_items_by_source/total_on_page/timestamp をディスクcurrentから補完（71c098c）。QA検証待ち |
+| **🔴高** | **提案81（state.pyメタ永続化）: ✅ 実装済・QA28検証: コードOK（pytest213pass）** 実環境効果は次サイクル再検証待ち（17:11台の保存で古いプロセス混在による上書き確認） | QA/Worker | 08/29 次サイクル | save_collected_safeでディスクcurrentから補完（71c098c）。⚠️ 17:11台のバックアップ時系列で nibs が途中で None に戻るケースあり。**次サイクル（全プロセス新コード）で collected.json の new_items_by_source が残存するか確認** |
 | 🔴高 | **提案77（L/F比率）: 終日判定 22:30** | Critic | 08/29 22:30 | 15:10時点81%（12:20時点66%→上昇継続）。kudou(50%)/chugakujuken(50%)/atushi16(68%)が低く要因切り分け対象 |
 | 🔴高 | **提案79（収集新規0件）: ✅ 解決** | Worker | 08/29 完了 | メトリクス誤診。収集は正常（14:00/15:00に他ソース434/363件取得）。1fec812で修正。⚠️残課題は提案81 |
-| 🟡中 | **提案80（chugakujukenフラッピング）: 物理確認** | QA/ユーザー | 継続 | 信号25-42%/-85〜-92dBm。wifi_watchdog自動復旧は機能。頻発時は物理確認【要ユーザー対応候補】 |
+| 🟡中 | **提案80（chugakujukenフラッピング）: 物理確認** | QA/ユーザー | 継続 | 信号25-42%/-85〜-92dBm。**17:10時点で不通（SOCKS5 code=5）**。wifi_watchdog自動復旧は機能。頻発時は物理確認【要ユーザー対応候補】 |
 | 🟡中 | zin1084(air-tra1) 安定監視 | QA | 継続 | 106.146.3.140で安定 |
 | 🟢低 | ~~提案73 Camoufox PoC~~ — 却下済み（以後提案禁止） | — | — | — |
 
@@ -67,6 +67,7 @@
 
 | 提案# | 目的 | 実装日 | 効果測定 | 結果 | 状態 |
 |-------|------|--------|---------|------|------|
+| **総合** | **8/29 17:10実績** | 08/29 | 17:10 | **L/F=83.9%（F118/RT116/L99）・error=0・BOT0・proxy6/7垢（chugakujuken1083不通）・提案81メタ永続化は実環境再検証待ち** | ⚠️ 監視中 |
 | **総合** | **8/29 16:20実績** | 08/29 | 16:20 | **L/F=86.7%（F105/L91）・BOT0・226未発火・エラーほぼ0（zin http_0=2のみ）・automation_block未発火** | ⚠️ 監視中 |
 | **総合** | **8/29 15:10実績** | 08/29 | 15:10 | **F100 RT98 L81・L/F=81.0%・BOT0・proxy7垢OK・collect正常(15:00 363件)** | ⚠️ 監視中 |
 | **総合** | **8/28確定実績** | 08/28 | 08/29 | **413件（355成功+30skip+28失敗=6.6%）、BOT0** | ✅ 過去最高 |
@@ -80,16 +81,16 @@
 | **62** | proxy_watchdog adapter bind | 08/29 | 08/29 | DHCP変動追従確認 | ✅ 有効 |
 | **76** | **Error 226検知+自動一時停止** | 08/29 | 08/29 13:10 QA26検証 | pytest211pass/4skip・7検知点確認・automation_block.json未発火(正常) | ✅ QA検証済 |
 | **78** | **連座リスク棚卸し文書化** | 08/29 | 08/29 13:10 QA26検証 | docs/ACCOUNT_LINKAGE_ANALYSIS.md 122行・防御11項目・ゲートウェイ分離が次鍵 | ✅ QA検証済 |
-| **81** | **state.pyメタ永続化（QA27）** | 08/29 | 08/29 worker | save_collected_safeで new_items_processed/new_items_by_source/total_on_page/timestamp をディスクcurrentから補完。実測で collected.json の new_items_by_source=None を確認済 | ✅ 実装済（71c098c）・QA検証待ち |
+| **81** | **state.pyメタ永続化（QA27）** | 08/29 | 08/29 worker | save_collected_safeで new_items_processed/new_items_by_source/total_on_page/timestamp をディスクcurrentから補完。実測で collected.json の new_items_by_source=None を確認済 | ✅ 実装済（71c098c）・QA28検証: コードOK・pytest213pass・**実環境効果は次サイクル再検証待ち** |
 
 ---
 
 ## 監視対象アラート
 
-- 📊 **提案77（L/F比率）: 22:30 runで終日判定** — 16:20時点86.7%（15:10時点81%→上昇継続）。kudou(55.6%)/chugakujuken(71.4%)/atushi16(68.4%)が低く要因切り分け対象
+- 📊 **提案77（L/F比率）: 22:30 runで終日判定** — 17:10時点83.9%（15:10時点81%→上昇継続）。kudou(60%)/chugakujuken(55.6%)/atushi16(72.7%)が低く要因切り分け対象
 - ✅ **提案76（Error 226監視）: 実装完了** — api_actions.py/applier.py に検知組込、自動15〜60分待機でブロック延長防止
 - ✅ **提案79（収集新規0件）: 調査完了・メトリクス修正** — 収集は正常動作（14:00で他ソース434件取得、15:00で363件）。new_items_processed=len(collected)に修正
-- ✅ **提案81（QA27）: 実装済（71c098c）** — save_collected_safeが new_items_processed/new_items_by_source/total_on_page/timestamp をディスクcurrentから補完。pytest213pass。QA検証（collected.jsonの new_items_by_source が残るか）待ち
-- ⚠️ **提案80（chugakujuken(1083) フラッピング）**: 信号25-42%/-85〜-92dBm（弱い）。wifi_watchdog自動復旧は正常動作中。chugakujuken_RM10JE_S。頻発時は【要ユーザー対応】
+- ✅ **提案81: 実装済（71c098c）・QA28検証: コードOK（pytest213pass）** — save_collected_safeが new_items_processed/new_items_by_source/total_on_page/timestamp をディスクcurrentから補完。**⚠️ 実環境効果は次サイクル再検証待ち（17:11台の保存で古いコード混在によりnibs=Noneに戻るケース確認）**
+- ⚠️ **提案80（chugakujuken(1083) フラッピング）**: 信号25-42%/-85〜-92dBm（弱い）。**17:10時点で不通（SOCKS5 code=5）**。wifi_watchdog自動復旧は正常動作中。chugakujuken_RM10JE_S。頻発時は【要ユーザー対応】
 - ✅ zin1084(air-tra1): 106.146.3.140で安定継続
 - ✅ royalkensho遅延: 解消（11時台反映確認）
