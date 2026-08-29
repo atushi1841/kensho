@@ -172,13 +172,16 @@ def main() -> int:
             prev = dt
 
     # 3) 同一ツイート(tweet_id)への複数種アクション
+    #   ★ 2026-08-29: フォロー/RT/いいねの複数実行は当選条件（フォロー&RT&いいね）を
+    #   満たすために必要な正常行動のため、シグナルにしない（ユーザー定義）。
+    #   ただし「リプライ+他のアクション」は絶対ルール（いいね＋リプライ同時NG）違反なので検出する。
     tweet_actions: dict[tuple[str, str], set[str]] = collections.defaultdict(set)
     for ts, jst, acct, at, tgt, status in rows:
         if status == "success" and str(tgt).isdigit():
             tweet_actions[(acct, tgt)].add(at)
     for (acct, tgt), kinds in tweet_actions.items():
-        if len(kinds) >= 2:
-            problems.append(f"[多重] {date_s} {acct} 同一ツイート{tgt}に複数アクション {sorted(kinds)}")
+        if len(kinds) >= 2 and "reply" in kinds:
+            problems.append(f"[多重] {date_s} {acct} 同一ツイート{tgt}にリプライを含む複数アクション {sorted(kinds)}")
 
     # 4) 同一主催者へのフォロー過多
     owner_follows = collections.Counter()
