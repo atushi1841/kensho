@@ -57,7 +57,7 @@ def _load_night_hours() -> set[int]:
 
 MIN_ACTION_GAP = 5.0  # 秒。これ未満の2アクション間隔は規制違反
 MAX_FOLLOWS_PER_OWNER = 4  # 同一主催者への1日当たりフォロー上限(人間らしさ)
-MAX_ACTIONS_PER_HOUR = 15  # 時間あたり上限(config rate_limits.max_actions_per_hour)
+MAX_ACTIONS_PER_HOUR: int = 25  # 時間あたり上限(config rate_limits.max_actions_per_hour=25)
 
 
 def _load_target_date() -> str:

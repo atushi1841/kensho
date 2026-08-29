@@ -1186,6 +1186,14 @@ def apply_for_account(
                         skip_like = True
                         out("  [SKIP] いいね: 要件はあるが確率スキップ（自然分散）")
 
+                # ★ 2026-08-29: フォロー+いいねの場合、RTは不要（応募成立条件はフォロー状態+いいねで充足）
+                #   RTを追加すると同一ツイートに['like','rt']の多重アクションとなり、
+                #   監査(audit_bot_safety)がBOTシグナルとして検出する（実測58件/日）。
+                #   フォロー非関連(RTのみ案件)では従来通りRTを実行。
+                if (_follow_relevant or _follow_already_done) and not skip_rt:
+                    skip_rt = True
+                    out("  [SKIP] RT: フォロー+いいねで応募成立 → RT不要（多重アクション防止）")
+
                 # ★ 稀に全アクションスキップ（人間らしい「読んだけど応募しない」動作）
                 if not skip_follow and not skip_rt and not skip_like:
                     if random.random() < _skip_chance_all:  # 稀に全部スキップ（人間らしさ）
