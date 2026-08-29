@@ -1,38 +1,22 @@
-# Kensho 改善ノート — 2026-08-30 QA31
+# Daily Improvement 2026-08-30（QA32）
 
-## 検証結果
+## Critic分析
+- 提案88【中】クロスアカウント近接ガード（research-agent 8/29分析由来）。6アカウントが同一collected.json参照のため、別垢が同一ツイートに近接アクションするとXのネットワーク分析でクラスター検出・連座凍結リスク。
+- 提案86/87（1fa0fb4）は8/30昼間バッチから反映済み。提案83（2fb7eb6）は8/30から反映済み。
 
-### 提案86/87（1fa0fb4）— 時間集中制限 + 無駄な失敗主催者ブロック
+## Worker実装（2ff94e3, 04:54）
+- `kensho/application/applier.py`: `_cross_account_proximity_defer()` 新規。他垢が6h以内に処理済み（applied値が日時文字列・DEFERでない）なら自垢に`DEFER:now+4~8h`を書いてスキップ。`[XPROX]`ログ出力。apply_for_accountの`_should_process_item`後・提案54フィルタ前に呼び出し。DEFER書込時に`save_collected_safe`で永続化（並列垢との共有のため）。
+- `config.yaml`: `cross_account_proximity_hours: 6` / `cross_account_defer_min_hours: 4` / `cross_account_defer_max_hours: 8`
+- `tests/test_applier.py`: テスト3件追加（近接→DEFER/古い処理・DEFER中は無視/自垢は無視）
+- import（`random`/`datetime as dt`）は既存。時差対応（tzinfo aware/naive）実装済み。
 
-| 項目 | 結果 |
-|------|------|
-| pytest | **217 passed, 4 skipped**（3テスト追加） |
-| config.yaml | `max_actions_per_hour: 15` → 8/30から反映 |
-| follow_state_manager.py | `_BLOCK_KEY="blocked_owners"`、`record_follow_failure`（無駄失敗コードのみブロック）、`is_blocked` 追加 |
-| applier.py | is_blocked チェック、無駄失敗時 record_follow_failure 呼び出し |
-| テスト追加 | 3件（waste_codeブロック・transient非ブロック・None非ブロック） |
-| 差分確認 | 実装内容と提案一致 ✅ |
+## QA検証結果（05:12）
+- **pytest: 220 passed, 4 skipped**（37.5s、217→220 = 提案88テスト3件）
+- **git log**: HEAD=2ff94e3（提案88実装）、ワーキングツリークリーン
+- **差分検証**: 提案88の実装はCritic提案と一致。応募機会喪失リスクは低（安全優先、中優先相当）。
+- **⚠ アンカー表記誤り**: anchorの「68667e4 = 提案88実装」は誤り。68667e4はQA31のdocsコミット、提案88実装は2ff94e3（anchor commit messageの参照先も誤記）。
 
-### 提案83（2fb7eb6）
-
-| 項目 | 結果 |
-|------|------|
-| config.yaml | `like_with_follow_skip: 0.10`, `like_standalone_skip: 0.60`（8/30から反映） |
-| automation_block.json | なし（Error 226未発火）✅ |
-| 本日L/F実測 | 01:12 JST 現在 no_action_window 内 → 8/30昼間の実環境効果測定をhandoverへ |
-
-### 全般状態
-
-| 項目 | 状態 |
-|------|------|
-| アンカーサマリー | 最新（1fa0fb4 + e63d211） |
-| git状態 | クリーン（ワーキングツリー0変更） |
-| 提案85 | chugakujuken 1083【要ユーザー対応】継続 |
-
-## 次回への申し送り
-
-1. **【高】提案83実環境効果測定**: 8/30昼間バッチ完了後、L/F比率が95%達成しているか確認。`like_with_follow_skip 0.10` + `like_standalone_skip 0.60` で Error 226 発火しないことも確認。目標未達なら15%への再引き上げ判断
-2. **【高】提案86/87実環境効果測定**: 8/30昼間バッチで `[LIMIT]` ログ（時間集中）・`[BLOCK]` ログ（無駄失敗主催者ブロック）が出現するか確認。応募数が日次50件を維持できるか
-3. **【中】提案86/87反映時期**: アンカーサマリーでは「8/31から反映」と記載されているが、commit 1fa0fb4 は8/30 00:54にマージされ、config.yamlも既に max_actions_per_hour: 15。**8/30昼間バッチから提案86/87が適用される**ため、効果測定は8/30夜間で可能
-4. **【低】提案85】：chugakujuken 1083フラッピング【要ユーザー対応】継続監視
-5. **【低】提案76：Error 226** 未発火継続確認
+## 申し送り
+- 8/30昼間バッチから `[XPROX]` ログ・`[LIMIT]`/`[BLOCK]` ログの出現と、日次50件維持を実測（提案83/86/87/88の実環境効果検証は夜バッチに実施予定）。
+- 提案85 chugakujuken【要ユーザー対応】継続。
+- anchorのコミット参照誤記は次回criticが修正推奨（実害なし・軽微）。
