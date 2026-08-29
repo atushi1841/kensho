@@ -1169,6 +1169,10 @@ def apply_for_account(
                 #   応募成立=フォロー状態+いいねのため、通常いいねスキップ(30%)より低くし
                 #   完了率を上げる。5%残すのは「たまにいいね忘れ」の人間らしさ（BOT対策）。
                 _like_with_follow_skip: float = float(cfg.get("applier", {}).get("like_with_follow_skip", 0.05))
+                # ★ 2026-08-29 提案83: フォロー非関連（RTのみ等）ツイートへのいいね単独実行スキップ率。
+                #   speed_guard(15件/180s) + 連続いいね4件カウンタ制限内で単独いいねを許可し、
+                #   L/F比率95%以上達成に寄与する。10%実行→40%実行に引き上げ（configで調整可）。
+                _like_standalone_skip: float = float(cfg.get("applier", {}).get("like_standalone_skip", 0.60))
 
                 # ★ 応募成立条件: フォロー状態+いいね（2026-08-29改修）
                 #   従来は「いいね要件が本文にないと90%スキップ」で、フォロー応募の当選条件
@@ -1215,14 +1219,17 @@ def apply_for_account(
                         skip_like = False
                         out("  [i] いいね: フォロー+いいね実行（応募成立条件を満たす）")
                 else:
-                    # フォロー非関連（RTのみ等）: 従来通り本文要件で判定
+                    # フォロー非関連（RTのみ等）: 従来通り本文要件で判定。
+                    # ★ 2026-08-29 提案83: 本文に要件なしでもいいね単独実行を許可
+                    #   （旧: 90%スキップ=10%実行 → 新: like_standalone_skip 60%スキップ=40%実行）。
+                    #   speed_guard + 連続いいね4件カウンタ（下段）がBOT検出の最終防衛線。
                     if not _like_in_text:
-                        if random.random() < 0.90:
+                        if random.random() < _like_standalone_skip:
                             skip_like = True
                             out("  [SKIP] いいね: 本文に要件なし → スキップ")
                         else:
                             skip_like = False
-                            out("  [i] いいね: 要件なしだが自然ないいね実行")
+                            out("  [i] いいね: 要件なしだがいいね単独実行（提案83・L/F比率向上）")
                     elif random.random() < _skip_chance_like:
                         skip_like = True
                         out("  [SKIP] いいね: 要件はあるが確率スキップ（自然分散）")
