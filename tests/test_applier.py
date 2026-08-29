@@ -661,3 +661,51 @@ class TestSpeedGuard:
         dq.extend(time.time() - i * 10 for i in range(5))  # 直近
         assert a._speed_guard_needed(dq, 180, 15) is False
         assert len(dq) == 5  # 古い1件が除去されている
+
+
+class TestIsApplicationComplete:
+    """_is_application_complete: 応募成立判定（2026-08-29ユーザー定義: フォロー状態+いいね）
+
+    ルール:
+    - フォロー実行/既フォロー + いいね成功（またはBOT対策の自然スキップ）→ 成立
+    - フォロー実行/既フォロー + いいね実失敗 → 不成立（再試行）
+    - RTのみ成功（フォロー非関与）→ 成立
+    - いいねのみ・何もなし → 不成立
+    """
+
+    def _c(self, follow_ok=False, follow_already=False, rt_ok=False, like_ok=False, like_skipped=False):
+        from kensho.application.applier import _is_application_complete
+
+        return _is_application_complete(follow_ok, follow_already, rt_ok, like_ok, like_skipped)
+
+    def test_follow_plus_like_success(self) -> None:
+        """フォロー成功+いいね成功 → 応募成立"""
+        assert self._c(follow_ok=True, like_ok=True) is True
+
+    def test_follow_plus_like_failed(self) -> None:
+        """フォロー成功+いいね実失敗 → 不成立（再試行対象）"""
+        assert self._c(follow_ok=True, like_ok=False, like_skipped=False) is False
+
+    def test_follow_plus_like_skipped_natural(self) -> None:
+        """フォロー成功+いいね意図的スキップ(BOT対策) → 成立扱い（無限リトライ防止）"""
+        assert self._c(follow_ok=True, like_skipped=True) is True
+
+    def test_already_followed_like_success(self) -> None:
+        """既フォロー+いいね成功 → 成立"""
+        assert self._c(follow_already=True, like_ok=True) is True
+
+    def test_already_followed_like_failed(self) -> None:
+        """既フォロー+いいね実失敗 → 不成立（再試行）"""
+        assert self._c(follow_already=True, like_ok=False, like_skipped=False) is False
+
+    def test_rt_only_success(self) -> None:
+        """RTのみ成功（フォロー非関与）→ 成立（従来通り）"""
+        assert self._c(rt_ok=True) is True
+
+    def test_like_only_not_enough(self) -> None:
+        """いいねのみ（フォローなし・RTなし）→ 不成立"""
+        assert self._c(like_ok=True) is False
+
+    def test_no_actions(self) -> None:
+        """何も成功していない → 不成立"""
+        assert self._c() is False

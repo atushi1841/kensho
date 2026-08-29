@@ -309,6 +309,32 @@ def _check_tweet_result(page: Any, tweet_url: str, out: Any) -> str | None:
     return "tweet_ok"
 
 
+def _is_application_complete(
+    follow_ok: bool,
+    follow_already_done: bool,
+    rt_ok: bool,
+    like_ok: bool,
+    like_skipped: bool,
+) -> bool:
+    """応募成立判定（2026-08-29ユーザー定義: フォロー状態+いいね）
+
+    ルール:
+    - フォローを実行/既フォロー → いいね成功で成立。
+      いいねが意図的スキップ(BOT対策の自然分散)なら成立扱い、実失敗なら不成立。
+    - RTのみの案件（フォロー非関与） → RT成功で成立（従来通り）。
+    - いいねのみ・何もアクションなし → 不成立。
+
+    like_skipped: いいねが「意図的にスキップされた」か（skip_like=True）。
+        Trueなら実失敗(False)と区別し成立扱いとする（無限リトライ防止）。
+    """
+    like_settled = like_ok or like_skipped
+    if follow_ok or follow_already_done:
+        return like_settled
+    if rt_ok:
+        return True
+    return False
+
+
 def apply_for_account(
     account_key: str,
     max_n: int,
@@ -1091,31 +1117,62 @@ def apply_for_account(
                 _skip_chance_like: float = _skip_cfg.get("like", 0.30)
                 _skip_chance_all: float = _skip_cfg.get("all", 0.05)
 
-                # ★ フォロー+いいね実行率: いいね要件ツイートで「フォロー+いいね」の両方を実行する確率。
-                #   2026-08-25改修: いいね優先（フォロー/RTスキップ）は「フォロー&いいね必須ツイートの87%で
-                #   フォロー要件を満たさない」ため不適切と判明 → フォローは実行しつつ、いいねも追加する方式に変更。
-                #   当選条件（フォロー&いいね）を満たしつつ、2アクションは人間の自然な応募行動に近い。
-                _like_with_follow_rate: float = float(cfg.get("applier", {}).get("like_with_follow_rate", 0.5))
-
+                # ★ 応募成立条件: フォロー状態+いいね（2026-08-29改修）
+                #   従来は「いいね要件が本文にないと90%スキップ」で、フォロー応募の当選条件
+                #   （フォロー&いいね）を満たせていなかった（実測: いいね成功が日0〜1件）。
+                #   → フォロー実行/既フォローの場合はいいねを伴走実行し、応募を完了させる。
+                #   BOT対策は「いつ応募するか」の確率分散（skip_rates）+ランダム遅延+セッション上限で担保し、
+                #   応募したのに要件未達という実態との剥離を解消する。
                 skip_follow: bool = random.random() < _skip_chance_follow
                 skip_rt: bool = random.random() < _skip_chance_rt
-                skip_like: bool = False  # 条件付きいいねは後で個別処理
+                skip_like: bool = False  # 後で条件確定
 
-                # ★ 条件付きいいね: 本文に「いいね」要件がない時はスキップ、あっても確率スキップ
-                #   2026-08-25: 検出を「いいね」単語から絵文字(♡♥❤💗)・ハート・LIKE表記まで拡張。
-                #   実際の懸賞ツイートは「♡をタップ」「♥で応募」「ハートを押す」等の表現が主流のため。
+                # 既フォローの検出（いいね伴走判定に使用）
+                #   従来は後段(1179行)で判定していたため、いいねの決定より遅く参照できなかった。
+                #   ここで先行判定し、既フォローなら「いいねのみで応募成立」を決める。
+                _follow_relevant = not skip_follow
+                _follow_already_done = False
+                if _follow_relevant and screen_name:
+                    from kensho.application.follow_state_manager import FollowStateManager
+
+                    _fsm = FollowStateManager(account_key)
+                    if _fsm.get_total_follows(screen_name) >= 1:
+                        _follow_already_done = True
+                        skip_follow = True
+                        out(f"  [SKIP] フォロー: {screen_name}は過去にフォロー済み → いいねのみで応募成立")
+
+                # ★ いいね伴走実行（応募成立条件: フォロー状態+いいね）
                 _like_req_pattern = re.compile(r"いいね|♡|♥|❤|💗|💖|💕|ハート|LIKE", re.IGNORECASE)
                 _like_in_text = bool(_like_req_pattern.search(body_text))
-                if not _like_in_text:
-                    if random.random() < 0.90:
+
+                if _follow_already_done:
+                    # 既フォロー: いいねのみで応募成立。自然分散のため少量スキップ可
+                    if random.random() < _skip_chance_like:
                         skip_like = True
-                        out("  [SKIP] いいね: 本文に要件なし → スキップ")
+                        out("  [SKIP] いいね: フォロー済みだが確率スキップ（自然分散）")
                     else:
                         skip_like = False
-                        out("  [i] いいね: 要件なしだが自然ないいね実行")
-                elif random.random() < _skip_chance_like:
-                    skip_like = True
-                    out("  [SKIP] いいね: 要件はあるが確率スキップ（自然分散）")
+                        out("  [i] いいね: フォロー済み → いいねのみで応募成立")
+                elif _follow_relevant:
+                    # フォロー実行: いいねを伴走（応募成立条件を満たす）
+                    if random.random() < _skip_chance_like:
+                        skip_like = True
+                        out("  [SKIP] いいね: フォロー+いいねだが確率スキップ（自然分散）")
+                    else:
+                        skip_like = False
+                        out("  [i] いいね: フォロー+いいね実行（応募成立条件を満たす）")
+                else:
+                    # フォロー非関連（RTのみ等）: 従来通り本文要件で判定
+                    if not _like_in_text:
+                        if random.random() < 0.90:
+                            skip_like = True
+                            out("  [SKIP] いいね: 本文に要件なし → スキップ")
+                        else:
+                            skip_like = False
+                            out("  [i] いいね: 要件なしだが自然ないいね実行")
+                    elif random.random() < _skip_chance_like:
+                        skip_like = True
+                        out("  [SKIP] いいね: 要件はあるが確率スキップ（自然分散）")
 
                 # ★ 稀に全アクションスキップ（人間らしい「読んだけど応募しない」動作）
                 if not skip_follow and not skip_rt and not skip_like:
@@ -1124,18 +1181,6 @@ def apply_for_account(
                         skip_rt = True
                         skip_like = True
                         out("  [SKIP] 全アクション: 見て終わり（人間らしさ）")
-
-                # ★ 同一ツイートへの複数種アクション禁止（BOT検出回避・絶対ルール）
-                #   2026-08-25: いいね要件ツイートでは「フォロー+いいね」を導入。
-                #   当選条件（フォロー&いいね）を満たすため。いいねは安全なアクションで、2アクションは自然な応募行動。
-                #   2026-08-27提案41: RTがキューにある場合はいいねをスキップ（RT+いいね多重防止）。
-                #   RT必須案件ではRT成立後にいいねが実行される機械的パターンがBOT信号になるため。
-                if _like_in_text and skip_rt and random.random() < _like_with_follow_rate:
-                    skip_like = False
-                    out("  [i] いいね要件: フォロー+いいね実行（RTなし・当選条件を満たす）")
-                elif not (skip_follow and skip_rt):
-                    skip_like = True
-                    out("  [SKIP] いいね: フォロー/RT実行中 → 同一ツイート複数アクション回避")
 
                 # ★ 連続いいね制限（BAN祭り対策 2026-08-25）:
                 #   いいね単独連続4件に達したら一時停止（フォロー/RTは続行可）。
@@ -1172,18 +1217,7 @@ def apply_for_account(
                     out(
                         "  [SKIP] フォロー: 本日既にいいね成功済み（前セッション）→ スキップ（同一ツイート多重アクション防止）"  # noqa: E501
                     )
-                # ★ 2026-08-26: 過去フォロー済みアカウントへの再フォロー防止
-                #   follow_done_all は当日のみ。前日以前にフォロー済みの垢は要件充足済みなので
-                #   再フォローせず _follow_already_done=True で応募成立を維持（_rt_already_done と同型）。
-                #   X上で無効なアクション（既フォローへの再フォロー）を排除し、記録と実態の剥離を防ぐ。
-                if not skip_follow and screen_name:
-                    from kensho.application.follow_state_manager import FollowStateManager
-
-                    _fsm_hist = FollowStateManager(account_key)
-                    if _fsm_hist.get_total_follows(screen_name) >= 1:
-                        skip_follow = True
-                        _follow_already_done = True
-                        out(f"  [SKIP] フォロー: {screen_name}は過去にフォロー済み → 要件充足（スキップ）")
+                # （過去フォロー済みの検出はいいね判定のため前段で実施済み。_follow_already_done を参照）
 
                 def _make_follow_with_record(
                     _acct: str,
@@ -1490,7 +1524,9 @@ def apply_for_account(
                 out("  [i] リプライ: 無効化（応募はフォロー/いいね/RTのみ）")
 
                 # ── 応募結果チェック ──
-                # ★ 2026-08-23修正: 「応募成立」は最低1アクション(follow/rt/like)の実成功に限定。
+                # ★ 2026-08-29改修: 「応募成立」= フォロー状態+いいね（ユーザー定義）。
+                #   フォローを実行/既フォローの場合、いいね成功（またはBOT対策の自然分散スキップ）で成立。
+                #   RTのみの案件はRT成功で成立（従来通り）。いいねのみ・何もなしは成立扱いしない。
                 #   ツイートが正常+1アクション成功 → ok。RT必須案件でRTだけ失敗 → rt_failedと記録
                 #   し、appliedを付けない（次サイクルで再試行）。false成立(偽装)を防ぐ。
                 tweet_result = _check_tweet_result(page, clean_url, out)
@@ -1500,8 +1536,11 @@ def apply_for_account(
                 #   従来 len(action_queue)==0 でも success 扱いになり、実際はアクション0件なのに
                 #   「12成功」と水増し計上されていた（atushi16実測: ログ12成功/実アクション7件）。
                 #   スキップのみは applied 付与（再処理防止）するが success には数えない。
-                _qualify: bool = tweet_result in ("tweet_ok", None) and (
-                    any(_per_item_ok.values()) or _rt_already_done or _follow_already_done
+                _follow_ok = bool(_per_item_ok.get("follow"))
+                _rt_ok = bool(_per_item_ok.get("rt")) or _rt_already_done
+                _like_ok = bool(_per_item_ok.get("like"))
+                _qualify = tweet_result in ("tweet_ok", None) and _is_application_complete(
+                    _follow_ok, _follow_already_done, _rt_ok, _like_ok, skip_like
                 )
                 _skipped_only: bool = len(action_queue) == 0
                 if tweet_result and tweet_result != "tweet_ok":

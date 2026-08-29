@@ -83,8 +83,12 @@ except Exception:
 
 # ★ 2026-08-23修正: 「本日応募」を audit.jsonl(追記専用・消えない完全履歴)から正確に算出。
 #   collected.applied は保存競合+None汚染で過小化し、実応募と乖離するため dashboard はこれを使う。
-#   フォロー成功1件 = 応募成立1件（懸賞応募の主条件）として垢別に数える。
-_applied_today_per_account: dict[str, int] = defaultdict(int)
+# ★ 2026-08-29改修: 「応募成立」= フォロー状態+いいね（ユーザー定義）。
+#   フォロー実行/既フォローの上にいいね成功が揃って初めて応募成立。
+#   → いいね成功数を「本日応募成立」の実数として扱う（いいねが要件充足の最終アクション）。
+#   フォロー成功数は参照用に併記。
+_follow_today_per_account: dict[str, int] = defaultdict(int)
+_like_today_per_account: dict[str, int] = defaultdict(int)
 try:
     _audit_file = os.path.join(PROJECT_DIR, "data/audit.jsonl")
     with open(_audit_file, encoding="utf-8") as f:
@@ -99,7 +103,9 @@ try:
             if _audit_jst_date(ts) != today_str:
                 continue
             if r.get("action_type") == "follow":
-                _applied_today_per_account[r.get("account", "")] += 1
+                _follow_today_per_account[r.get("account", "")] += 1
+            elif r.get("action_type") == "like":
+                _like_today_per_account[r.get("account", "")] += 1
 except Exception:
     pass
 
@@ -152,10 +158,11 @@ for ac in accounts:
 
     total_pending = today_dl + this_week_dl + future_dl + no_dl
     today_str = today.isoformat()
-    # ★ 2026-08-23修正: 「本日応募」を audit.jsonl(追記専用・消えない完全履歴)から算出。
-    #   従来 collected.applied ベースだったが、None汚染+保存競合で実際の応募が過小表示され、
-    #   実態(応募成功率)と大きく乖離していた。フォロー成功1件=応募成立1件として数える。
-    applied_today = _applied_today_per_account.get(ac, 0)
+    # ★ 2026-08-29改修: 「本日応募」= いいね成功数（応募成立の最終アクション）。
+    #   フォロー状態+いいねが応募成立の定義。フォロー成功数は参照用に保持。
+    follow_today = _follow_today_per_account.get(ac, 0)
+    like_today = _like_today_per_account.get(ac, 0)
+    applied_today = like_today  # 応募成立 = フォロー状態+いいね → いいね成功が成立実数
 
     defer_count = sum(
         1
