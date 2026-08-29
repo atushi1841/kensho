@@ -188,6 +188,63 @@ class TestSortItems:
         assert deduped[1]["x_url"] == "x.com/other/status/67890"
         assert deduped[2]["x_url"] == "x.com/third/status/99999"
 
+    def test_cross_account_proximity_defers_recent(self) -> None:
+        """別垢が6時間以内に処理済み → DEFERを書きTrue（提案88）"""
+        import datetime as _dt
+
+        from kensho.application.applier import _DEFER_PREFIX, _cross_account_proximity_defer
+
+        recent = (_dt.datetime.now() - _dt.timedelta(hours=1)).isoformat()
+        item = self._item(x_url="x.com/a/status/111")
+        item["applied"] = {"atushi16": recent}
+        cfg = {"applier": {}}
+        log = []
+
+        class _LogStub:
+            def write(self, m: str) -> None:
+                log.append(m)
+
+        result = _cross_account_proximity_defer(item, "kudou", cfg, _LogStub())
+        assert result is True
+        val = item["applied"]["kudou"]
+        assert val.startswith(_DEFER_PREFIX)
+        # DEFER期限は未来（4〜8時間後）
+        from kensho.application.applier import _get_defer_time
+
+        defer_ts = _get_defer_time(val)
+        assert defer_ts is not None
+        assert defer_ts > _dt.datetime.now()
+
+    def test_cross_account_proximity_ignores_old_and_defer(self) -> None:
+        """別垢処理が6時間超 or DEFER中ならスキップしない（提案88）"""
+        import datetime as _dt
+
+        from kensho.application.applier import _cross_account_proximity_defer
+
+        old = (_dt.datetime.now() - _dt.timedelta(hours=12)).isoformat()
+        cfg = {"applier": {}}
+        # 12時間前処理 → 近接ではない → False
+        item_old = self._item(x_url="x.com/a/status/111")
+        item_old["applied"] = {"atushi16": old}
+        assert _cross_account_proximity_defer(item_old, "kudou", cfg, []) is False
+        # 他垢がDEFER中（未処理）→ 近接ではない → False
+        defer_val = f"DEFER:{(_dt.datetime.now() + _dt.timedelta(hours=5)).isoformat()}"
+        item_defer = self._item(x_url="x.com/a/status/222")
+        item_defer["applied"] = {"atushi16": defer_val}
+        assert _cross_account_proximity_defer(item_defer, "kudou", cfg, []) is False
+
+    def test_cross_account_proximity_same_account_ignored(self) -> None:
+        """自分自身のappliedは近接判定に含めない（提案88）"""
+        import datetime as _dt
+
+        from kensho.application.applier import _cross_account_proximity_defer
+
+        recent = (_dt.datetime.now() - _dt.timedelta(minutes=5)).isoformat()
+        item = self._item(x_url="x.com/a/status/333")
+        item["applied"] = {"kudou": recent}  # 自分自身のみ
+        cfg = {"applier": {}}
+        assert _cross_account_proximity_defer(item, "kudou", cfg, []) is False
+
     def test_opinion_keyword(self) -> None:
         """感想系キーワード"""
         reply = generate_reply("感想を教えてください")

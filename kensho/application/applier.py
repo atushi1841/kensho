@@ -210,6 +210,48 @@ def _should_process_item(item: dict[str, Any], account_key: str) -> bool:
     return False  # 処理済み または DEFER有効中
 
 
+def _cross_account_proximity_defer(item: dict[str, Any], account_key: str, cfg: dict, log: Any) -> bool:
+    """クロスアカウント近接ガード（2026-08-30提案88）。
+
+    別垢が6時間以内に同一ツイートを処理済みなら、自垢にDEFER(4〜8h)を書いてスキップする。
+    Xのネットワーク分析は「複数アカウントが同一投稿クラスタと短時間に相互作用」を
+    リンク判定に使うため、別垢の近接アクションを防止する（連座凍結対策）。
+
+    戻り値: True=近接検出でDEFERを書いた（このitemはスキップすべき）。
+    """
+    proximity_hours: float = float(cfg.get("applier", {}).get("cross_account_proximity_hours", 6))
+    defer_min: float = float(cfg.get("applier", {}).get("cross_account_defer_min_hours", 4))
+    defer_max: float = float(cfg.get("applier", {}).get("cross_account_defer_max_hours", 8))
+    applied: dict = item.get("applied") or {}
+    now: datetime = datetime.now()
+    window: dt.timedelta = dt.timedelta(hours=proximity_hours)
+
+    for other_key, val in applied.items():
+        if other_key == account_key:
+            continue
+        if val is None or not isinstance(val, str) or val.startswith(_DEFER_PREFIX):
+            continue  # 未処理 or DEFER中（他垢が実際にアクションしていない）
+        try:
+            other_dt: datetime = dt.datetime.fromisoformat(val)
+        except Exception:
+            continue
+        # aware/naive → nowを合わせる
+        now_cmp: datetime = datetime.now(other_dt.tzinfo) if other_dt.tzinfo else now
+        if now_cmp - other_dt <= window:
+            # 近接検出 → 自垢にDEFER(4〜8hランダム)
+            defer_hours: float = random.uniform(defer_min, defer_max)
+            defer_until: datetime = now + dt.timedelta(hours=defer_hours)
+            item.setdefault("applied", {})[account_key] = f"{_DEFER_PREFIX}{defer_until.isoformat()}"
+            _msg = (
+                f"  [XPROX] 他垢({other_key})が{proximity_hours}h以内処理済み"
+                f" → DEFER {defer_until.strftime('%H:%M')}までスキップ（提案88）"
+            )
+            if log is not None:
+                log.write(_msg)
+            return True
+    return False
+
+
 def _save_session_cookies(ctx: Any, account_key: str, session_path: Path) -> None:
     """ブラウザコンテキストのセッションクッキーをファイルに保存する（補助機能）"""
     try:
@@ -517,8 +559,15 @@ def apply_for_account(
     out(f"[Kensho] 全収集: {len(items)}件")
 
     account_applied: list[dict[str, Any]] = []
+    _xprox_deferred: bool = False
     for item in items:
         if not _should_process_item(item, account_key):
+            continue
+        # ★ 2026-08-30提案88: クロスアカウント近接ガード
+        #   別垢が6時間以内に同一ツイートを処理済みなら、自垢にDEFER(4〜8h)を書いて
+        #   バッチ候補から除外。Xのネットワーク分析（クラスター検出）による連座凍結防止。
+        if _cross_account_proximity_defer(item, account_key, cfg, log):
+            _xprox_deferred = True
             continue
         # ★ 2026-08-28提案54: 事前フィルタリング — 引用/コメント応募（keyword_flag+スキップKW）を
         #   バッチ候補から除外。処理中SKIPで枠と時間を消費するのを防ぐ。
@@ -543,6 +592,12 @@ def apply_for_account(
         account_applied.append(item)
 
     out(f"[Kensho] この垢の未応募: {len(account_applied)}件")
+
+    # ★ 2026-08-30提案88: 近接ガードでDEFERを書いた分を永続化。
+    #   collected.json は並列垢プロセスと共有。次バッチが読む前に保存しておく。
+    if _xprox_deferred:
+        save_collected_safe(data, account_key, log)
+        out("[XPROX] 近接ガードDEFERを保存（提案88）")
 
     # ★ 2026-08-29提案82: バッチ構築時の x_url/tweet_id dedupe
     #   collectorは収集マージ時に _dedup_x_url_merge で一意化するが、applierロード時点の
