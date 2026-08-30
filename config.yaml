@@ -151,27 +151,29 @@ accounts:
         - { time: "21:17", max: 15 }
         - { time: "22:29", max: 15 }
 
-  - key: royalkensho
-    display: "@royalkensho"
-    session: "data/x_session_royalkensho.json"
-    disable_reply: true
-    daily_target: 50
-    schedule:
-      collects: false
-      batches:
-        # 2026-08-28: アダプタ名をroyalkensho_airtra1にリネーム(旧zin_6_Gal_S10)。2_povo_AW(air-tra1 / povo無料回線)で運用。
-        # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
-        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "09:46", max: 15 }
-        - { time: "11:03", max: 15 }
-        - { time: "12:31", max: 15 }
-        - { time: "13:58", max: 15 }
-        - { time: "15:22", max: 15 }
-        - { time: "16:47", max: 15 }
-        - { time: "18:07", max: 15 }
-        - { time: "19:29", max: 15 }
-        - { time: "21:05", max: 15 }
-        - { time: "22:21", max: 15 }
+  # 2026-08-30: royalkensho 凍結確定（code 64 suspended ×6 + fixupx "Sorry, that user is suspended"）。
+  # 復旧（異議申し立て成功 or 新垢）までコメントアウト。復帰時は行頭コメント解除のみ。
+  # - key: royalkensho
+  #   display: "@royalkensho"
+  #   session: "data/x_session_royalkensho.json"
+  #   disable_reply: true
+  #   daily_target: 50
+  #   schedule:
+  #     collects: false
+  #     batches:
+  #       # 2026-08-28: アダプタ名をroyalkensho_airtra1にリネーム(旧zin_6_Gal_S10)。2_povo_AW(air-tra1 / povo無料回線)で運用。
+  #       # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
+  #       # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+  #       - { time: "09:46", max: 15 }
+  #       - { time: "11:03", max: 15 }
+  #       - { time: "12:31", max: 15 }
+  #       - { time: "13:58", max: 15 }
+  #       - { time: "15:22", max: 15 }
+  #       - { time: "16:47", max: 15 }
+  #       - { time: "18:07", max: 15 }
+  #       - { time: "19:29", max: 15 }
+  #       - { time: "21:05", max: 15 }
+  #       - { time: "22:21", max: 15 }
 
 # ── 収集設定 ──
 collection:
