@@ -121,3 +121,23 @@
 - **【要ユーザー対応】inobase1-4**: code 326ロック継続（21:12時点・本日0成功）。**22:01のfollow_lock期限切れ後に自動復帰するか監視**（復帰後もcode326再発ならconfig一時除外をworker判断）
 - prop94の実環境効果（hourly 15件超過が0になるか）は8/31夜バッチで確認
 - prop83は20:20時点L/F=97.5%で達成傾向。夜全天集計で確定→クローズ
+
+---
+
+# Daily Improvement 2026-08-30（QA38・23:15追記）
+
+## Worker実装（8b520be, 22:50 + e335f3a anchor更新, 22:53）
+- **提案95**: inobase1-4 config一時除外（rk方式）。follow_lock期限（22:01:07）切れ後もRT GraphQL code 326継続（22:19:49実測）→X側ロック未解除のため、ユーザーCAPTCHA解除まで無駄dispatch（30分毎に約20分）を停止。config.yamlのinobase1-4ブロック全体をコメントアウト。
+
+## QA38検証結果
+- **pytest: 225 passed, 4 skipped**（48.07s。回帰なし）✓
+- **git log**: HEAD=e335f3a（anchor更新）← 8b520be（prop95実装）。ワーキングツリークリーン ✓
+- **差分検証（8b520be）**: config.yamlのinobase1-4ブロック（key/display/session/daily_target/batch10件）をコメントアウト。提案95の設計と一致 ✓ 実装内容を確認済み
+- **config反映確認**: `yaml.safe_load` でアクティブ垢=5垢（atushi16/kudou/chugakujuken/zin20120731/TankanNotes）・inobase1-4含まず ✓
+- **実環境確認（23:11）**: 22:45バッチまでは6垢（inobase1-4含む）だったが、**23:00:01バッチで「対象垢: ...TankanNotes（5垢・inobase1-4なし）」** に切替。23:00以降のログにinobase1-4出現0件=dispatch停止確認 ✓
+- follow_lock.json に inobase1-4 の残骸エントリ（2026-08-31T02:32:44）があるが、対象垢から除外済みのため無害（ランタイムデータ）
+
+## 申し送り
+- 【要ユーザー対応】inobase1-4: config除外済み。**ユーザーCAPTCHA解除（https://x.com/inobase128508 にブラウザログイン）確認後、configコメント解除で復帰**
+- prop94の実環境効果（hourly 15件超過0件）は8/31全天で確定
+- prop93 follow_lock はib除外で自動クリア見込み（残骸残るが無害）
