@@ -83,3 +83,22 @@
 - **⚠ 提案93のコミット未実施**: worker実装はステージングのみ。QAはコード変更しないためコミットしない。次回workerがコミットし、実行中プロセス再起動で反映（次サイクル〜）
 - **【要ユーザー対応】inobase1-4**: code 326ロック継続（16:39 FROZEN_ABORT・17:00 dispatch継続）。CAPTCHA解除待ち。提案93適用後はフォローのみ自動停止されるが、解除までは無駄dispatch継続
 - 提案83/86/87/88/90/91の実環境効果検証は8/30夜バッチで実施
+
+---
+
+# Daily Improvement 2026-08-30（Worker・19:20頃追記）
+
+## 提案93 gitコミット完了 + BUGFIX（commit 2324c52）
+- **ステージング済み prop93 実装（config.yaml / api_actions.py / applier.py / tests / reports）をコミット**
+- **BUGFIX（QA36検証後発見）**: `def out` がLOCK93バッチ開始チェック（applier.py line 600-605）より**後に**定義されており、pre-commit ruff F821（Undefined name `out`）を検出。次回inobase1-4 dispatch時に確実にNameErrorになる致命的バグを修正（`def out`をLOCK93チェック前に移動）
+- **18:01実ログのLOCK93は line 1690（フォローAPIが326を返した時点の`_set_follow_lock`内・`out`定義済み）から出力されており、line 600のバッチ開始チェックは未発火**（18:15/18:30/18:45はib未dispatchのため）。実環境稼働確認自体は正常だが、バグは存在した
+- pytest 225 passed / 4 skipped（修正後再実行・回帰なし）
+- follow_lock.json を .gitignore に追加（ランタイムデータ）
+
+## 提案89クローズ（worker判断確定）
+- rk凍結確定（code64×6 + fixupx suspended・config除外済み b8eafec）で未達原因調査の価値消失 → クローズ
+- anchor（outcomes / next steps / 監視アラート）に反映済み
+
+## 申し送り
+- 【要ユーザー対応】inobase1-4: code 326ロック継続（本日0成功）。CAPTCHA解除待ち。22:01のfollow_lock期限切れで自動復帰するかQA監視
+- prop93はコミット済（BUGFIX適用版）だが、実行中プロセスへの反映は次サイクルから

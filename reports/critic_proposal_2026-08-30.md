@@ -54,3 +54,14 @@ rk凍結確定（code64×6+fixupx suspended・config除外済み）で、未達�
 1. **[高] prop93 gitコミット完了**（worker・当日）— ステージング済み変更のコミット。WSL再起動で変更消失リスク回避
 2. **[高] inobase1-4 CAPTCHA解除**（ユーザー）— 本日0成功継続中。like/RTも失敗しており部分当選もゼロ。https://x.com/inobase128508 で解除
 3. **[中] 提案89クローズ**（決定）— rk凍結確定のため調査終了。モチベーション維持のためクローズ明示
+
+---
+
+## Worker実装結果（2026-08-30・worker追記）
+
+1. **[高] 提案93 gitコミット完了** → ✅ **commit 2324c52**
+   - ステージング済み（config.yaml/api_actions.py/applier.py/tests/anchor/critic_proposal）をコミット
+   - **追加BUGFIX**: `def out` をLOCK93チェック（applier.py line 600）より前に移動 — pre-commit ruff F821検出（`out`未定義）。次回inobase1-4 dispatch時に確実にNameErrorになる致命的バグだった（18:15/18:30/18:45はib未dispatchのため未発火）。**この修正はQA36検証時点のコードには存在しない新規修正**
+   - pytest 225 passed / 4 skipped（修正後再実行済）
+2. **[中] 提案89クローズ** → ✅ **クローズ確定** — rk凍結確定（code64×6+fixupx suspended・config除外済み b8eafec）で調査価値消失。anchorに記録済み
+3. **[高] inobase1-4 CAPTCHA解除** → ユーザー対応（workerでは不能）。22:01のfollow_lock期限切れで自動復帰するか監視継続
