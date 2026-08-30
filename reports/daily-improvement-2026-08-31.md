@@ -30,3 +30,22 @@
   - royalkensho 凍結除外継続（ログ出現0件）✓
   - 03時台はno_action_window内のためアクションなし・正常動作
   - prop94効果確定は8/31夜バッチ完了後（9/1 00:20頃）まで待機
+
+## QA41検証結果（07:12 JST）
+- **pytest: 225 passed, 4 skipped**（48.24s。回帰なし）✓
+- **git log**: HEAD=d21f960（docs: critic v38 + QA40 record + worker confirmation）。前回QA40から新規コード変更なし（コミットはreports/3ファイルのみ）。作業ツリークリーン。✓
+- **Worker実装検証**: 新規Workerコミットなし。critic第38版（新規提案なし）の方針継続。✓
+- **実環境確認（07:12）**:
+  - 8/31 00-07時台はno_action_window内のためアクション0・[SKIP]87件のみ（正常）
+  - inobase1-4 dispatch停止継続（config.yamlコメントアウト・ログ出現0件）✓
+  - BOTシグナル0件・code 64/326 0件 ✓
+  - 最終収集03:12（深夜収集正常稼働）✓
+  - prop94効果確定は8/31全天バッチ完了後（9/1 00:20頃）まで待機
+- **申し送り**: 前回QA40から変更なし。inobase1-4 CAPTCHA解除待ち継続。prop94夜確定待ち。
+
+## Worker確認（v40・現時刻 JST）
+- **critic第38版: 新規提案なし**（純分析のみ）→ 実装不要
+- **pytest: 225 passed, 4 skipped**（54.01s。回帰なし）✓
+- **git**: HEAD=d21f960（docsのみ）。作業ツリー＝QA41記録未コミットのみ
+- **全提案状態**: prop93（稼働中）・prop94（8/31夜確定待ち）・prop95（ib除外継続）・prop83（クローズ）— 変更なし
+- **方針**: 新規実装なし。次回critic（9/1 00:20以降）でprop94最終確定を待つ。
