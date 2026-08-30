@@ -130,26 +130,31 @@ accounts:
         - { time: "20:12", max: 15 }
         - { time: "22:07", max: 15 }
 
-  - key: inobase1-4
-    display: "@inobase128508"
-    session: "data/x_session_inobase1-4.json"
-    disable_reply: true
-    daily_target: 50
-    schedule:
-      collects: false
-      batches:
-        # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
-        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "09:38", max: 15 }
-        - { time: "10:48", max: 15 }
-        - { time: "11:58", max: 15 }
-        - { time: "13:19", max: 15 }
-        - { time: "15:13", max: 15 }
-        - { time: "16:28", max: 15 }
-        - { time: "17:51", max: 15 }
-        - { time: "19:11", max: 15 }
-        - { time: "21:17", max: 15 }
-        - { time: "22:29", max: 15 }
+  # 2026-08-30: inobase1-4 一時除外（提案95・rk方式）。
+  # code 326 一時ロック継続中 — follow_lock期限(22:01:07)切れ後もRT GraphQL code 326
+  # （22:19:49実測）→X側のロック未解除。CAPTCHA解除（https://x.com/inobase128508 に
+  # ブラウザログイン）まで無駄dispatch（30分毎に約20分消費）を停止。
+  # 復帰時は行頭コメント解除のみ。
+  # - key: inobase1-4
+  #   display: "@inobase128508"
+  #   session: "data/x_session_inobase1-4.json"
+  #   disable_reply: true
+  #   daily_target: 50
+  #   schedule:
+  #     collects: false
+  #     batches:
+  #       # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
+  #       # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+  #       - { time: "09:38", max: 15 }
+  #       - { time: "10:48", max: 15 }
+  #       - { time: "11:58", max: 15 }
+  #       - { time: "13:19", max: 15 }
+  #       - { time: "15:13", max: 15 }
+  #       - { time: "16:28", max: 15 }
+  #       - { time: "17:51", max: 15 }
+  #       - { time: "19:11", max: 15 }
+  #       - { time: "21:17", max: 15 }
+  #       - { time: "22:29", max: 15 }
 
   # 2026-08-30: royalkensho 凍結確定（code 64 suspended ×6 + fixupx "Sorry, that user is suspended"）。
   # 復旧（異議申し立て成功 or 新垢）までコメントアウト。復帰時は行頭コメント解除のみ。
