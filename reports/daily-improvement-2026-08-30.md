@@ -41,3 +41,22 @@
 - 提案89の未処理item数は**実測1052件**（critic記載924件と差異）。次回criticがanchorの数字を実測値に修正推奨
 - 提案89の原因調査（仮説: simple_rt_ok FLAG過多/フォロー済み主催者/appliedキー未初期化659件）は8/31までに実施
 - 提案83/86/87/88の実環境効果検証は8/30夜バッチで実施（`[LIMIT]`/`[BLOCK]`/`[XPROX]`ログ・L/F 95%・日次50件維持）
+
+---
+
+# Daily Improvement 2026-08-30（QA35・15:16追記）
+
+## Worker実装（b8eafec, 14:51）
+- **提案92**: royalkensho凍結確定（code 64 suspended ×6 + fixupx "Sorry, that user is suspended"）→ config.yamlでコメントアウト（復帰は行頭コメント解除のみ）。inobase1-4は一時ロック（code 326）のみのため**アクティブ維持**。
+
+## QA35検証結果
+- **pytest: 222 passed, 4 skipped**（91.70s。回帰なし）
+- **git log**: HEAD=7033db6（anchor更新）。QA34以降のWorker新規コミット = **b8eafec（prop92）** のみ
+- **差分検証（b8eafec）**: config.yamlでroyalkenshoブロック全体をコメントアウト。コード変更なし・他垢への影響なし ✓ 実装内容を確認済み
+- **実環境反映確認（重要）**: ログで「対象垢」一覧を確認 → **15:00サイクルからroyalkenshoが除外**（14:45までは7垢・15:00以降6垢 = atushi16/kudou/chugakujuken/zin20120731/TankanNotes/inobase1-4）。14:52:41までroyalkenshoのFROZEN_ABORTが出ていたが、15:00以降の垢別起動なし = **config反映が実環境で確認された**。毎バッチの無駄ループ防止が機能
+- **inobase1-4**: 14:40/15:00にFROZEN_ABORT継続（code 326ロック継続中）→ 提案91の即時中断が正常動作しつつ、ユーザーのCAPTCHA解除待ち【要ユーザー対応】
+
+## 申し送り
+- **【要ユーザー対応】inobase1-4**: code 326ロック継続（14:40/15:00 FROZEN_ABORT）。ブラウザで https://x.com/inobase128508 にログインしCAPTCHA解除が必要。解除後は自動復帰
+- 提案83/86/87/88/90/91の実環境効果検証は8/30夜バッチで実施（L/F 95%・`[LIMIT]`/`[BLOCK]`/`[XPROX]`/FROZEN_ABORT・日次50件維持）
+- royalkenshoは凍結確定のため復旧（異議申し立て or 新垢）まで監視のみ
