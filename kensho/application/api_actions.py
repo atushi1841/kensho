@@ -835,8 +835,14 @@ def api_follow_by_screen_name(
     screen_name: str,
     account_key: str,
     out: Callable[[str], None],
-) -> bool:
-    """X内部API経由でscreen_name指定でフォロー。"""
+) -> tuple[bool, str | None]:
+    """X内部API経由でscreen_name指定でフォロー。
+
+    Returns:
+        (success, error_code) — error_code は失敗時の短い識別子
+        （http_403, unauthorized, automation_blocked, errors_in_response, http_<status>）。
+        成功時は (True, None)。呼び出し側がフォロー制限検出（提案90）に使う。
+    """
     from kensho.application.rate_limiter import increment_daily_count
 
     _t0 = _time.time()
@@ -846,7 +852,7 @@ def api_follow_by_screen_name(
         out(f"  [POLICY] フォロー拒否: {_reason}")
         _delay = int((_time.time() - _t0) * 1000)
         audit_ledger.log(account_key, "follow", screen_name, "deny", "skipped", reason=_reason, delay_ms=_delay)
-        return False
+        return (False, "policy_denied")
 
     token: str = _get_csrf_token(page)
 
@@ -878,24 +884,24 @@ def api_follow_by_screen_name(
                     error="automation_blocked",
                     delay_ms=_delay,
                 )
-                return False
+                return (False, "automation_blocked")
             out(f"  [WARN] フォローAPI: 200 エラー応答: {body_str[:200]}")
             _delay = int((_time.time() - _t0) * 1000)
             audit_ledger.log(
                 account_key, "follow", screen_name, "allow", "failed", error="errors_in_response", delay_ms=_delay
             )
-            return False
+            return (False, "errors_in_response")
         out("  [OK] フォロー（API）")
         increment_daily_count(account_key, "follow")
         policy_engine.mark_executed(account_key, "follow")
         _delay = int((_time.time() - _t0) * 1000)
         audit_ledger.log(account_key, "follow", screen_name, "allow", "success", delay_ms=_delay)
-        return True
+        return (True, None)
     elif status == 401:
         out("  [WARN] フォローAPI: 認証エラー")
         _delay = int((_time.time() - _t0) * 1000)
         audit_ledger.log(account_key, "follow", screen_name, "allow", "failed", error="unauthorized", delay_ms=_delay)
-        return False
+        return (False, "unauthorized")
     elif status == 403:
         if _is_automation_block(body_str):
             # ★ 2026-08-29提案76: Error 226（automated block）→ 即停止＋待機
@@ -910,7 +916,7 @@ def api_follow_by_screen_name(
                 error="automation_blocked",
                 delay_ms=_delay,
             )
-            return False
+            return (False, "automation_blocked")
         if body_str and (
             "already follows" in body_str.lower()
             or "AlreadyFollowing" in body_str
@@ -923,16 +929,16 @@ def api_follow_by_screen_name(
             audit_ledger.log(
                 account_key, "follow", screen_name, "allow", "success", reason="already_followed", delay_ms=_delay
             )
-            return True
+            return (True, None)
         out(f"  [WARN] フォローAPI: HTTP 403 (body: {body_str[:200]})")
         _delay = int((_time.time() - _t0) * 1000)
         audit_ledger.log(account_key, "follow", screen_name, "allow", "failed", error="http_403", delay_ms=_delay)
-        return False
+        return (False, "http_403")
     else:
         out(f"  [WARN] フォローAPI: HTTP {status} (body: {body_str[:200]})")
         _delay = int((_time.time() - _t0) * 1000)
         audit_ledger.log(account_key, "follow", screen_name, "allow", "failed", error=f"http_{status}", delay_ms=_delay)
-        return False
+        return (False, f"http_{status}")
 
 
 def extract_tweet_id_and_screen_name(x_url: str) -> tuple[str | None, str | None]:

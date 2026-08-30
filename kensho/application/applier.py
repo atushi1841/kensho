@@ -511,6 +511,12 @@ def apply_for_account(
     #   いいね単独連続を4件で一時停止する（フォロー/RTは続行可）。
     consecutive_likes: int = 0
 
+    # ★ 2026-08-30提案90: フォロー403専用カウンタ（バッチ単位）
+    #   フォローHTTP 403はアカウント制限の初動シグナル（atushi1840凍結時8/9-11に21件）。
+    #   既存false_countは全アクション連続失敗を数えRT/いいね成功でリセットされるため、
+    #   フォロー特化の403（8/30朝ib×6/rk×2）を検出できない。専用カウンタで3回で中断。
+    _follow_403_count: int = 0
+
     # ★ Failure Ceiling設定読み込み（Loop Engineering）
     fc_cfg: dict = cfg.get("failure_ceiling", {})
     fc_enabled: bool = fc_cfg.get("enabled", True)
@@ -1343,14 +1349,14 @@ def apply_for_account(
                     _sn: str,
                     _page: Any,
                     _out: Callable[[str], None],
-                ) -> Callable[[], bool]:
-                    def _fn() -> bool:
-                        _r = api_follow_by_screen_name(_page, _sn, _acct, _out)
-                        if _r:
+                ) -> Callable[[], tuple[bool, str | None]]:
+                    def _fn() -> tuple[bool, str | None]:
+                        _ok, _err = api_follow_by_screen_name(_page, _sn, _acct, _out)
+                        if _ok:
                             from kensho.application.follow_state_manager import FollowStateManager
 
                             FollowStateManager(_acct).record_follow(_sn)
-                        return _r
+                        return (_ok, _err)
 
                     return _fn
 
@@ -1561,8 +1567,30 @@ def apply_for_account(
                         if false_count >= 3:
                             out("  [FROZEN] 連続失敗3回 → アカウント凍結の可能性 → バッチ中断")
                             break
+                        # ★ 2026-08-30提案90: フォロー403専用カウンタ
+                        #   フォローHTTP 403のみカウント。他エラー/成功でリセット。
+                        #   フォロー403はアカウント制限の初動シグナル（atushi1840凍結時の先触れ）。
+                        #   既存false_countはRT/いいね成功でリセットされ検出不能なため専用カウンタで中断。
+                        if _name == "follow" and _follow_error_code == "http_403":
+                            _follow_403_count += 1
+                            out(
+                                f"  [i] フォロー403検出 {_follow_403_count}回目"
+                                "（フォロー制限シグナル・提案90）"
+                            )
+                            if _follow_403_count >= 3:
+                                out(
+                                    "  [FROZEN] フォロー403連続3回 → フォロー制限/アカウント制限検出"
+                                    " → バッチ中断（提案90）"
+                                )
+                                break
+                        elif _name == "follow":
+                            # フォローが403以外のエラー → カウンタリセット
+                            _follow_403_count = 0
                     else:
                         false_count = 0
+                        # ★ フォロー成功 → カウンタリセット（提案90）
+                        if _name == "follow":
+                            _follow_403_count = 0
                     if idx < action_count - 1 and action_count >= 2:
                         if random.random() < 0.75:
                             delay = random.uniform(6, 25)
