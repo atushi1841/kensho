@@ -245,6 +245,57 @@ class TestSortItems:
         cfg = {"applier": {}}
         assert _cross_account_proximity_defer(item, "kudou", cfg, []) is False
 
+    def test_follow_403_abort_flag_set_on_three_consecutive(self) -> None:
+        """提案91: フォロー403が3回連続したら _frozen_by_follow_403 が立つ
+        （内側action_queueループを抜けた後、外側whileループ頭でbreakするためのフラグ）。
+
+        提案90の `break` は内側 for ループしか抜けず、外側 while は継続→[FROZEN]が
+        11回連続出るバグ（実測: 8/30 inobase1-4）があった。本テストは内側の
+        follow 403 カウンタ3回でフラグが True になる構造を保証する。
+        """
+        import inspect
+
+        from kensho.application import applier
+
+        src = inspect.getsource(applier)
+        # 1. フラグが外側whileループ内でチェックされる
+        assert "_frozen_by_follow_403" in src, "フラグ _frozen_by_follow_403 がソースに存在しない"
+        # 2. チェック構文: 外側while内で `if _frozen_by_follow_403: break` がある
+        #    "  while success < max_n" を含むチャンクに `if _frozen_by_follow_403` が
+        #    直前に存在することを確認（外側while専用チェック）
+        #    提案91で導入した FROZEN_ABORT ログマーカー
+        assert "[FROZEN_ABORT]" in src, "[FROZEN_ABORT] ログマーカーが存在しない"
+        # 3. 内側ループで `_frozen_by_follow_403 = True` の代入がある
+        #    提案90の [FROZEN] ログ直後にフラグを立てる
+        _frozen_idx = src.find("[FROZEN] フォロー403連続3回")
+        assert _frozen_idx > 0, "[FROZEN] フォロー403連続3回のログが見つからない"
+        # 代入が [FROZEN] ログより後に出現
+        _assign_idx = src.find("_frozen_by_follow_403 = True", _frozen_idx)
+        assert _assign_idx > _frozen_idx, "_frozen_by_follow_403 = True の代入が[FROZEN]ログより前にある"
+
+    def test_follow_403_resets_on_non_403_follow_error(self) -> None:
+        """提案90: フォローが403以外のエラーなら _follow_403_count はリセットされる。
+        リファクタ後も維持されているか（提案91の追加で挙動が変わってないか）を保証。
+        """
+        import inspect
+
+        from kensho.application import applier
+
+        src = inspect.getsource(applier)
+        # 1) 初期化: 関数ローカルで `_follow_403_count: int = 0` がある
+        assert "_follow_403_count: int = 0" in src, (
+            "フォロー403カウンタの初期化 `_follow_403_count: int = 0` が見つからない"
+        )
+        # 2) リセット: `_follow_403_count = 0`（代入）が2箇所
+        #    - 403以外のフォローエラー（elif節）
+        #    - フォロー成功時（else節）
+        _reset_count = src.count("_follow_403_count = 0")
+        assert _reset_count == 2, f"_follow_403_count = 0 の代入回数が想定外: {_reset_count}（期待: 2）"
+        # 3) インクリメント: `_follow_403_count += 1` が1箇所（403検出）
+        assert src.count("_follow_403_count += 1") == 1, (
+            f"_follow_403_count += 1 のインクリメント箇所が想定外: {src.count('_follow_403_count += 1')}"
+        )
+
     def test_opinion_keyword(self) -> None:
         """感想系キーワード"""
         reply = generate_reply("感想を教えてください")

@@ -516,6 +516,12 @@ def apply_for_account(
     #   既存false_countは全アクション連続失敗を数えRT/いいね成功でリセットされるため、
     #   フォロー特化の403（8/30朝ib×6/rk×2）を検出できない。専用カウンタで3回で中断。
     _follow_403_count: int = 0
+    # ★ 2026-08-30提案91: フォロー403による凍結疑いフラグ（外側ループ伝播用）。
+    #   提案90の `break` (line 1585 旧) は内側 action_queue ループのみ抜ける。
+    #   外側 `while success < max_n and idx < len(account_applied)` (line 752) は継続するため、
+    #   凍結疑い垢で残りの item を全部処理しログに [FROZEN] がN回連続出る（実測: 8/30昼 ib×11回）。
+    #   フラグで外側ループの頭で break し、提案90の意図通りバッチ即時中断する。
+    _frozen_by_follow_403: bool = False
 
     # ★ Failure Ceiling設定読み込み（Loop Engineering）
     fc_cfg: dict = cfg.get("failure_ceiling", {})
@@ -750,6 +756,16 @@ def apply_for_account(
             )
 
         while success < max_n and idx < len(account_applied):
+            # ★ 2026-08-30提案91: 提案90の `break` は内側 action_queue ループしか抜けず、
+            #   外側 `while` (line 752) は継続→凍結疑い垢で残 item を全部処理し[FROZEN]がN回出る。
+            #   内側で立てたフラグを外側ループ頭で検知して即時バッチ終了する。
+            if _frozen_by_follow_403:
+                out(
+                    f"  [FROZEN_ABORT] 提案91: フォロー403凍結疑いフラグ検知"
+                    f" → {account_key} バッチ即時中断（残item処理スキップ）"
+                )
+                break
+
             # ★ 2026-08-29提案76: Error 226（automated block）ブロック中なら即停止
             if is_automation_blocked(account_key):
                 rem = get_automation_block_minutes(account_key)
@@ -1573,15 +1589,16 @@ def apply_for_account(
                         #   既存false_countはRT/いいね成功でリセットされ検出不能なため専用カウンタで中断。
                         if _name == "follow" and _follow_error_code == "http_403":
                             _follow_403_count += 1
-                            out(
-                                f"  [i] フォロー403検出 {_follow_403_count}回目"
-                                "（フォロー制限シグナル・提案90）"
-                            )
+                            out(f"  [i] フォロー403検出 {_follow_403_count}回目（フォロー制限シグナル・提案90）")
                             if _follow_403_count >= 3:
                                 out(
                                     "  [FROZEN] フォロー403連続3回 → フォロー制限/アカウント制限検出"
                                     " → バッチ中断（提案90）"
                                 )
+                                # ★ 2026-08-30提案91: 内側ループbreakのみでは外側 `while` が
+                                #   残りitemを全部処理して[FROZEN]がN回連続する（実測: 8/30 ib×11回）。
+                                #   フラグを立てて外側ループ頭で即時中断させる。
+                                _frozen_by_follow_403 = True
                                 break
                         elif _name == "follow":
                             # フォローが403以外のエラー → カウンタリセット
