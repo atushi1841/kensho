@@ -36,7 +36,7 @@
 | 08/30 | 89 | **【中】royalkensho未達(44/50=88%)の原因調査** | — | 🆕 調査中（QA33: 未処理item実測1052件、供給不足でない） |
 | 08/30 | 90 | **【高】follow 403専用カウンタ→バッチ中断**（ib×6+rk×2/8/30朝、現状false_countはRT/いいね成功でリセットされ検出不能） | e48a6a0 | ✅ 実装済・QA検証済（差分+pytest222pass+実環境検出確認） |
 | 08/30 | 91 | **【高】提案90バグ修正: breakが外側ループを抜けない**（8/30昼間inobase1-4で[FROZEN]×11回連続=本来1回で停止。外側`for item in items`にフラグ伝播が必要） | 06092b9 | ✅ 実装済・QA検証済・**実環境検証済（13:35 [FROZEN_ABORT] royalkensho即時中断を確認）** |
-| 08/30 | 92 | **【高】inobase1-4＋royalkensho 2垢同時ロック（code 326 / 8/30 09:45-13:15）【要ユーザー対応】**（ib=40回+rk=19回。follow全件失敗→応募数大幅低下。ログイン解除試行が必要。rkはcode 64×6混在=凍結の可能性も） | — | 🆕 要ユーザー対応 |
+| 08/30 | 92 | **【高】inobase1-4＋royalkensho 2垢同時ロック（code 326 / 8/30 09:45-13:15）**（ib=40回+rk=19回。follow全件失敗→応募数大幅低下。ログイン解除試行が必要。rkはcode 64×6混在=凍結の可能性も） | — | 🆕 要ユーザー対応 → **worker確認: rk凍結確定・configコメントアウト済（b8eafec）** |
 
 ---
 
@@ -46,6 +46,7 @@
 |------|------|------|
 | 08/30 | **提案91実環境検証完了（クローズ相当）** | 13:35:59 `[FROZEN_ABORT]` royalkensho バッチ即時中断を確認。旧コード（12:45起動）は13:12までFROZEN連発、新コード（13:30起動）で1回のFROZEN→即中断。設計意図達成 |
 | 08/30 | **提案92拡張: 2垢同時ロック確定** | code 326: inobase1-4=40回（09:47-13:15）+ royalkensho=19回（10:19-13:15）。royalkenshoはcode 64（suspended）×6回混在→凍結の可能性。atushi16もcode 64×3回（13:32-13:35）だがフォロー対象suspendedの可能性高（自垢は14:05以降正常） |
+| 08/30 | **【worker確認】royalkensho凍結確定・configコメントアウト（b8eafec）** | fixupxが「Sorry, that user is suspended」を返しcode 64×6と整合 → 凍結確定。毎バッチ無駄ループ防止のためconfig.yamlでコメントアウト（復帰はコメント解除のみ）。inobase1-4はfixupx生存・一時ロックのみのため**アクティブ維持**（ユーザーのCAPTCHA解除で自動復帰） |
 | 08/30 | **8/30昼間 効果検証** | prop86[LIMIT]11件✅ / prop87[BLOCK]0件✅ / prop88[XPROX]14件✅ / prop82 no_follow_button 0件✅ / zin http_0 0件✅（1084復旧）。L/F・応募数は夜実測 |
 | 08/30 | **提案86/87実装（1fa0fb4・QA検証済）** | 8/29全天で時間集中4件・同一主催者14回失敗を検出。max_actions_per_hour 25→15＋無駄な失敗主催者の当日ブロックでBOTリスク軽減。commitは8/30 00:54で**8/30昼間バッチから反映**（anchor「8/31から反映」記載は誤り・修正済み） |
 | 08/30 | **提案88実装・QA検証済（2ff94e3）** | 8/29 research-agent分析でXのネットワーク分析リスクを確認。6アカウントが同一ツイートに近接アクションするとクラスター検出される。`_cross_account_proximity_defer`（他垢6h以内処理済み→自垢DEFER 4-8h）実装。QA32で差分検証OK・pytest220pass/4skip・テスト3件追加。8/30昼間バッチから反映。 |
@@ -64,7 +65,7 @@
 
 | 優先度 | アクション | 担当 | 期限 | 備考 |
 |--------|-----------|------|------|------|
-| **🔴高** | **提案92: inobase1-4 + royalkensho 2垢同時ロック解除** | ユーザー | 即時 | ブラウザでhttps://x.com/inobase128508 と https://x.com/royalkensho にログインしてロック解除（CAPTCHA確認）。rkはcode 64混在＝凍結の可能性も確認。解除後configに復帰。 |
+| **🔴高** | **提案92: inobase1-4ロック解除のみ（royalkenshoは凍結確定・configコメントアウト済 b8eafec）** | ユーザー | 即時 | ブラウザでhttps://x.com/inobase128508 にログインしてCAPTCHA解除（一時ロックcode 326）。解除後は自動復帰（config変更不要）。royalkenshoは復旧（異議申し立て成功 or 新垢）まで放置。 |
 | **🔴高** | **提案86/87実環境効果検証: `max_actions_per_hour: 15`＋無駄失敗主催者当日ブロック** | QA | 08/30夜 | 1fa0fb4で実装済・QA検証済（pytest217pass）。**8/30昼間バッチから反映**（commit 8/30 00:54）。1時間15件超過で `[LIMIT]`・無駄失敗で `[BLOCK]` ログが出るか・応募数が日次50件を維持できるかを実測 |
 | **🔴高** | **提案83実環境効果検証: `like_with_follow_skip: 0.10` ＋ `like_standalone_skip: 0.60`（いいね単独40%実行）** | QA | 08/30夜 | 8/29全天L/F=92.3%<95%。8/30バッチでL/F 95%達成・Error 226未発火・連続いいねカウンタ機能を実測。15%への再引き上げは8/30夜L/F実測で判断 |
 | **🔴高** | **提案85【要ユーザー対応】**: chugakujuken物理対応（室内移動・アダプタ交換・SIM清掃） | ユーザー | 継続 | watchdog再接続12回/日。対応確認までクローズしない |
@@ -90,7 +91,7 @@
 | **89** | **royalkensho未達原因調査** | 08/30 | QA33 | 8/29成功44件（最下位）・未処理item実測1052件（供給不足でない）・applied KEY_ABSENT 659件（cpmeikan 307=100%） | 🟡 調査中（8/31期限） |
 | **90** | **follow 403専用カウンタ** | 08/30 | QA34検証 | api_follow_by_screen_nameを(ok, err)タプル返しに変更。applierに`_follow_403_count`追加。フォロー403×3で`[FROZEN]`バッチ中断。pytest222pass。差分検証OK（policy_denied/automation_blocked/errors_in_response/unauthorized/http_403/http_<status> の6種エラーコードを正しく伝播）。実環境で[FROZEN]多数検出（inobase1-4 code326）。 | ✅ 実装済・QA検証済（差分+pytest+実環境検出確認） |
 | **91** | **提案90バグ修正（break外側伝播）** | 08/30 | QA34→実環境 | `_frozen_by_follow_403` フラグ追加→外側while冒頭で`if _frozen_by_follow_403: break`。`[FROZEN_ABORT]`ログマーカー。pytest222pass。**13:35:59 royalkenshoで[FROZEN_ABORT]発動確認。旧コード(12:45起動)は13:12までFROZEN連発、新コード(13:30起動)で1回のFROZEN→即中断。設計意図達成。** | ✅ **実環境検証済み（クローズ相当）** |
-| **92** | **inobase1-4 + royalkensho 2垢同時ロック（code326）** | 08/30 | — | code 326: ib=40回（09:47-13:15）+ rk=19回（10:19-13:15）。rkはcode 64（suspended）×6混在=凍結の可能性。atushi16 code64×3（13:32-13:35）はフォロー対象suspendedの可能性（自垢は正常）。ログイン解除が必要 | 🔴 要ユーザー対応（2垢） |
+| **92** | **inobase1-4 + royalkensho 2垢同時ロック（code326）** | 08/30 | fixupx+ログ | code 326: ib=40回（09:47-13:15）+ rk=19回（10:19-13:15）。**worker確認（14:46）: rk=fixupx suspended＋code64×6で凍結確定→configコメントアウト済（b8eafec・pytest222pass）。ib=fixupx生存・一時ロックのみ→アクティブ維持（CAPTCHA解除待ち）** | 🔴 要ユーザー対応（ibのみ）＋rk凍結確定 |
 | **83** | **L/F 95%対策（10%+単独40%）** | 08/29 | QA31 | 2fb7eb6差分検証OK・config反映済（0.10/0.60）・226未発火。01:12時点no_action_window内で実測データなし | ⚠️ 8/30昼間実測待ち |
 | **82** | **バッチ内重複ピック防止** | 08/29 | 19:15以降 | DEDUPE 0件・inobase1-4含めno_follow_button 0件・21時台4バッチ0エラー | ✅ 効果確定 |
 | **77** | **応募成立=フォロー+いいね** | 08/29 | 全天 | L/F=92.3%（目標95%未達）。低: chugakujuken/kudou/atushi16 | 🔴 83で改善 |
@@ -104,7 +105,7 @@
 ## 監視対象アラート
 
 - ✅ **提案91（提案90のbreakバグ修正）: 実環境検証済み・クローズ相当** — `_frozen_by_follow_403` フラグ＋`[FROZEN_ABORT]`ログ（commit 06092b9）。**13:35:59 royalkenshoで[FROZEN_ABORT]発動確認**。旧コード(12:45起動)は13:12までFROZEN連発、新コード(13:30起動)で1回のFROZEN→即中断。設計意図「ロック検出後即時バッチ終了」達成
-- 🔴 **提案92（inobase1-4 + royalkensho 2垢同時ロック code 326）: 【要ユーザー対応】** — ib=40回（09:47-13:15）+ rk=19回（10:19-13:15）。rkはcode 64（suspended）×6混在＝**凍結の可能性**。ブラウザで両垢ログイン→CAPTCHA解除。atushi1840凍結時の前兆パターンと同型
+- 🔴 **提案92（inobase1-4 + royalkensho 2垢同時ロック code 326）: 【要ユーザー対応】** — ib=40回（09:47-13:15）+ rk=19回（10:19-13:15）。**worker確認（14:46）: royalkensho凍結確定**（fixupx "Sorry, that user is suspended" + code64×6）→ configコメントアウト済（b8eafec）。**inobase1-4は生存（一時ロックのみ）** → ブラウザで https://x.com/inobase128508 にログインしCAPTCHA解除が必要。atushi1840凍結時の前兆パターンと同型
 - 🟡 **atushi16 code64（13:32-13:35×3回）: 監視** — フォロー対象suspendedの可能性（自垢は14:05以降フォロー成功・正常）。自垢凍結の前兆なら重大なので、code64発生時のフォロー対象を特定して確認
 - 🔴 **提案83（L/F 92.3%<95%）: 実装済（2fb7eb6, 8/30から反映）** — like_with_follow_skip 10%＋いいね単独40%実行。8/30夜にL/F 95%達成・Error 226未発火・連続いいねカウンタ機能を検証。夜に15%再引き上げ判断
 - 🔴 **提案86/87（時間集中制限+無駄失敗主催者ブロック）: 実装済・QA検証済（1fa0fb4, pytest217pass）** — 8/30昼間バッチから反映。8/30昼間実測: `[LIMIT]`11件✅・`[BLOCK]`0件✅。夜に応募数維持を実測
