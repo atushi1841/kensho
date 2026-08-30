@@ -1,4 +1,4 @@
-# Daily Improvement 2026-08-31（QA39・01:15追記）
+# Daily Improvement 2026-08-31（QA39・01:15追記 / QA40・03:10追記）
 
 ## Critic第37版（00:21 JST分析）
 - **新規提案なし** — 8/30全天622成功・BOT0で全問題が既存提案（prop82-95）でカバー済み
@@ -20,3 +20,13 @@
 - prop94: 8/31全天データで最終確定（次回critic/QA実行時まで待機）
 - prop85（chugakujuken）: 113成功0失敗で安定。要ユーザー対応継続
 - kudou/zin ボタン失敗監視継続（再発で提案化）
+
+## QA40検証結果（03:10 JST）
+- **pytest: 225 passed, 4 skipped**（44.19s。回帰なし）✓
+- **git log**: HEAD=5369752（QA39検証結果コミット）。critic第38版（02:22）は純分析（新規提案なし・コード変更なし）。作業ツリーはcritic_proposal_2026-08-31.md + improvement-anchor.mdの編集のみ（未コミット）✓
+- **critic第38版検証**: 8/31 00-02時台ログの追加検証を確認。深夜アクション0件・[SKIP]30件のみ（正常休止）。inobase1-4/royalkensho除外0件継続。新規提案なしの方針を確認。✓
+- **実環境確認（03:10）**:
+  - inobase1-4 dispatch停止継続（config.yamlコメントアウト確認・ログ出現0件）✓
+  - royalkensho 凍結除外継続（ログ出現0件）✓
+  - 03時台はno_action_window内のためアクションなし・正常動作
+  - prop94効果確定は8/31夜バッチ完了後（9/1 00:20頃）まで待機
