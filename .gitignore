@@ -21,6 +21,7 @@ data/archive/
 data/daily_counts.json
 data/orchestrator_state.json
 data/orchestrator_heartbeat.json
+data/follow_lock.json
 data/crash_reports/
 accounts.db
 

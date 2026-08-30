@@ -165,6 +165,15 @@ def _is_automation_block(body_str: str) -> bool:
     )
 
 
+def _is_temp_lock_326(body_str: str) -> bool:
+    """code 326（一時ロック・temporarily locked）判定。フォローAPIでのみ使用。"""
+    if not body_str:
+        return False
+    if '"code":326' in body_str or 'code":326' in body_str:
+        return True
+    return False
+
+
 def _load_automation_blocks() -> dict[str, float]:
     try:
         with open(_AUTOMATION_BLOCK_FILE, encoding="utf-8") as f:
@@ -917,6 +926,16 @@ def api_follow_by_screen_name(
                 delay_ms=_delay,
             )
             return (False, "automation_blocked")
+        if _is_temp_lock_326(body_str):
+            # ★ 2026-08-30提案93: code 326（一時ロック）→ フォロー停止マーカー用エラーコード
+            #   凍結（code 64）ではなく一時ロックのため、FROZEN_ABORT（提案90/91）ではなく
+            #   applier側で「フォローのみスキップ・like/RTは継続」の分岐に使う。
+            out(f"  [WARN] フォローAPI: HTTP 403 code 326（一時ロック: {body_str[:200]})")
+            _delay = int((_time.time() - _t0) * 1000)
+            audit_ledger.log(
+                account_key, "follow", screen_name, "allow", "failed", error="temp_lock_326", delay_ms=_delay
+            )
+            return (False, "temp_lock_326")
         if body_str and (
             "already follows" in body_str.lower()
             or "AlreadyFollowing" in body_str

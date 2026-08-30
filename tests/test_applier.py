@@ -286,11 +286,12 @@ class TestSortItems:
         assert "_follow_403_count: int = 0" in src, (
             "フォロー403カウンタの初期化 `_follow_403_count: int = 0` が見つからない"
         )
-        # 2) リセット: `_follow_403_count = 0`（代入）が2箇所
+        # 2) リセット: `_follow_403_count = 0`（代入）が3箇所
+        #    - 提案93: code 326（一時ロック）検出時（凍結ではないため）
         #    - 403以外のフォローエラー（elif節）
         #    - フォロー成功時（else節）
         _reset_count = src.count("_follow_403_count = 0")
-        assert _reset_count == 2, f"_follow_403_count = 0 の代入回数が想定外: {_reset_count}（期待: 2）"
+        assert _reset_count == 3, f"_follow_403_count = 0 の代入回数が想定外: {_reset_count}（期待: 3）"
         # 3) インクリメント: `_follow_403_count += 1` が1箇所（403検出）
         assert src.count("_follow_403_count += 1") == 1, (
             f"_follow_403_count += 1 のインクリメント箇所が想定外: {src.count('_follow_403_count += 1')}"
@@ -920,3 +921,51 @@ class TestIsApplicationComplete:
     def test_no_actions(self) -> None:
         """何も成功していない → 不成立"""
         assert self._c() is False
+
+
+class TestFollowLock93:
+    """code 326 一時ロック垢のフォロー停止（提案93・2026-08-30）"""
+
+    def test_get_set_clear_lock(self, tmp_path) -> None:
+        """ロックの設定・取得・クリア"""
+        from kensho.application.applier import (
+            _clear_follow_lock,
+            _get_follow_lock,
+            _set_follow_lock,
+        )
+
+        path = tmp_path / "follow_lock.json"
+        # ロックなし → None
+        assert _get_follow_lock("atushi16", state_path=path) is None
+        # ロック設定（4時間）→ 解除予定時刻が返る
+        _set_follow_lock("atushi16", hours=4, state_path=path)
+        until = _get_follow_lock("atushi16", state_path=path)
+        assert until is not None
+        # クリア → None
+        _clear_follow_lock("atushi16", state_path=path)
+        assert _get_follow_lock("atushi16", state_path=path) is None
+
+    def test_expired_lock_auto_cleared(self, tmp_path) -> None:
+        """期限切れロックは自動クリアされる"""
+        import datetime as _dt
+
+        from kensho.application.applier import _get_follow_lock
+
+        path = tmp_path / "follow_lock.json"
+        # 既に期限切れのロックを書き込む
+        path.write_text(json.dumps({"atushi16": (_dt.datetime.now() - _dt.timedelta(hours=1)).isoformat()}))
+        # 取得時に期限切れ判定 → 自動クリア → None
+        assert _get_follow_lock("atushi16", state_path=path) is None
+        # ファイルもクリアされている
+        data = json.loads(path.read_text())
+        assert "atushi16" not in data
+
+    def test_is_temp_lock_326_detects_code(self) -> None:
+        """api_actions._is_temp_lock_326: code 326 検出"""
+        from kensho.application.api_actions import _is_temp_lock_326
+
+        assert _is_temp_lock_326('{"errors":[{"code":326,"message":"temporarily locked"}]}') is True
+        assert _is_temp_lock_326('code":326') is True
+        assert _is_temp_lock_326('{"code":64,"message":"Your account is suspended"}') is False
+        assert _is_temp_lock_326("") is False
+        assert _is_temp_lock_326("normal response") is False

@@ -60,3 +60,26 @@
 - **【要ユーザー対応】inobase1-4**: code 326ロック継続（14:40/15:00 FROZEN_ABORT）。ブラウザで https://x.com/inobase128508 にログインしCAPTCHA解除が必要。解除後は自動復帰
 - 提案83/86/87/88/90/91の実環境効果検証は8/30夜バッチで実施（L/F 95%・`[LIMIT]`/`[BLOCK]`/`[XPROX]`/FROZEN_ABORT・日次50件維持）
 - royalkenshoは凍結確定のため復旧（異議申し立て or 新垢）まで監視のみ
+
+---
+
+# Daily Improvement 2026-08-30（QA36・17:20追記）
+
+## Worker実装（提案93・ステージング済み・未コミット）
+- **提案93**: code 326 一時ロック垢の自動フォロー停止（当日）。`api_actions._is_temp_lock_326()` 追加 → フォローAPIが code 326 返却時 `(False, "temp_lock_326")`。`applier._get_follow_lock/_set_follow_lock/_clear_follow_lock` で `data/follow_lock.json` に `{account: ISO datetime}` 記録（4h）。バッチ開始時に期限確認→ロック中は `skip_follow=True` 強制（like/RT継続）。フォロー成功時に自動解除。config `applier.follow_lock_hours=4`。テスト3件追加。
+
+## QA36検証結果
+- **pytest: 225 passed, 4 skipped**（37.88s。提案93テスト3件含む。回帰なし）✓
+- **git log**: HEAD=e03685e（QA35 docs）。**提案93はステージング済み・未コミット**（git diff --cached で config.yaml/api_actions.py/applier.py/tests/test_applier.py/anchor/critic_proposal に存在）
+- **差分検証（提案93・ステージング）**:
+  - config.yaml: `follow_lock_hours: 4` 追加 ✓
+  - api_actions.py: `_is_temp_lock_326()` 追加（code 326 検出→`(False, "temp_lock_326")`、audit ledgerに `error="temp_lock_326"` 記録）✓
+  - applier.py: `_FOLLOW_LOCK_FILE` + get/set/clear 3関数（期限切れ自動クリア・OSError握りつぶし）+ バッチ開始時 `[LOCK93]` ログ + skip_follow強制 + フォロー成功時自動解除 ✓
+  - tests: TestFollowLock93 3件（get/set/clear・期限切れ自動クリア・code 326検出=code 64と区別）✓
+  - **設計整合性確認**: 凍結（code 64）≠一時ロック（code 326）を分離し、FROZEN_ABORT（提案90/91）とは独立。code 326検出時は `_follow_403_count=0` リセット（凍結と誤認しない）。✓ 実装内容を確認済み
+- **⚠ 実環境未反映**: ログに LOCK93/temp_lock_326 0件。実行中のorchestrator（16:45/17:00サイクル起動）は**未コミットのため旧コード**。inobase1-4は16:39 FROZEN_ABORT継続・17:00時点も対象垢に含まれ dispatch継続（=提案93が効くべき穴がまだ開いている）
+
+## 申し送り
+- **⚠ 提案93のコミット未実施**: worker実装はステージングのみ。QAはコード変更しないためコミットしない。次回workerがコミットし、実行中プロセス再起動で反映（次サイクル〜）
+- **【要ユーザー対応】inobase1-4**: code 326ロック継続（16:39 FROZEN_ABORT・17:00 dispatch継続）。CAPTCHA解除待ち。提案93適用後はフォローのみ自動停止されるが、解除までは無駄dispatch継続
+- 提案83/86/87/88/90/91の実環境効果検証は8/30夜バッチで実施

@@ -59,6 +59,77 @@ COLLECTED_FILE: Path = DATA_DIR / "collected.json"
 _DEFER_PREFIX: str = "DEFER:"
 
 
+# ★ 2026-08-30提案93: code 326 一時ロック用ファイル
+#   フォローAPIが code 326（一時ロック）を返したアカウントのフォローを期限付きで停止する。
+#   データ形式: {account_key: "ISO datetime (locked_until)"}
+_FOLLOW_LOCK_FILE: Path = DATA_DIR / "follow_lock.json"
+
+
+def _get_follow_lock(account_key: str, state_path: Path | None = None) -> datetime | None:
+    """code 326一時ロックの解除予定時刻を返す。期限切れなら自動クリアしてNone。
+
+    Args:
+        account_key: アカウントキー
+        state_path: テスト用パス（デフォルトは _FOLLOW_LOCK_FILE）
+    Returns:
+        解除予定時刻（datetime）、または None（ロックなし/期限切れ）
+    """
+    path = state_path or _FOLLOW_LOCK_FILE
+    try:
+        if not path.exists():
+            return None
+        data = json.loads(path.read_text(encoding="utf-8"))
+        raw = data.get(account_key)
+        if not raw:
+            return None
+        until = datetime.fromisoformat(raw)
+        if until > datetime.now():
+            return until
+        # 期限切れ → 自動クリア
+        data.pop(account_key, None)
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    except (json.JSONDecodeError, OSError, ValueError):
+        pass
+    return None
+
+
+def _set_follow_lock(account_key: str, hours: float = 4.0, state_path: Path | None = None) -> None:
+    """code 326一時ロックを記録（有効期限 = 現在時刻 + hours）。
+
+    Args:
+        account_key: アカウントキー
+        hours: ロック時間（デフォルト4時間）
+        state_path: テスト用パス（デフォルトは _FOLLOW_LOCK_FILE）
+    """
+    path = state_path or _FOLLOW_LOCK_FILE
+    try:
+        data: dict = {}
+        if path.exists():
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                data = {}
+        until = datetime.now() + dt.timedelta(hours=hours)
+        data[account_key] = until.isoformat()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    except OSError:
+        pass
+
+
+def _clear_follow_lock(account_key: str, state_path: Path | None = None) -> None:
+    """アカウントのフォローロックを強制クリア（フォロー成功時の自動解除用）。"""
+    path = state_path or _FOLLOW_LOCK_FILE
+    try:
+        if path.exists():
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if account_key in data:
+                del data[account_key]
+                path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    except (json.JSONDecodeError, OSError):
+        pass
+
+
 def _merge_verify_result(current: bool, verify_success: bool) -> bool:
     """VERIFY結果をアクション成否に反映する（2026-08-26提案8）。
 
@@ -523,6 +594,22 @@ def apply_for_account(
     #   フラグで外側ループの頭で break し、提案90の意図通りバッチ即時中断する。
     _frozen_by_follow_403: bool = False
 
+    def out(msg: str) -> None:
+        if log:
+            log.write(msg)
+        else:
+            print(msg, flush=True)
+
+    # ★ 2026-08-30提案93: code 326 一時ロックによるフォロー停止（バッチ開始時に読み込み）
+    #   フォローAPIが code 326（temporarily locked）を返した垢は、当日中フォローのみ停止し、
+    #   like/RTは継続する。ロック中は skip_follow を強制し、API無駄打ちを防ぐ。
+    _follow_locked_until: datetime | None = _get_follow_lock(account_key)
+    if _follow_locked_until is not None:
+        out(
+            f"  [LOCK93] code 326 一時ロック検出 → {account_key} フォローのみ停止"
+            f"（{_follow_locked_until.strftime('%H:%M')}まで・提案93）。like/RTは継続"
+        )
+
     # ★ Failure Ceiling設定読み込み（Loop Engineering）
     fc_cfg: dict = cfg.get("failure_ceiling", {})
     fc_enabled: bool = fc_cfg.get("enabled", True)
@@ -535,12 +622,6 @@ def apply_for_account(
 
     # ★ ConsecutiveFailureTracker（このサイクル用）
     failure_tracker = ConsecutiveFailureTracker(max_consecutive=fc_max, cooldown_minutes=fc_cooldown)
-
-    def out(msg: str) -> None:
-        if log:
-            log.write(msg)
-        else:
-            print(msg, flush=True)
 
     # ★ ACCOUNT_PROFILESから行動パラメータ抽出
     fp: dict[str, Any] | None = FINGERPRINTS.get(account_key)
@@ -1261,6 +1342,15 @@ def apply_for_account(
                 skip_rt: bool = random.random() < _skip_chance_rt
                 skip_like: bool = False  # 後で条件確定
 
+                # ★ 2026-08-30提案93: code 326 一時ロック中はフォローのみ強制スキップ
+                #   like/RTは継続し、部分当選のチャンスを維持する。ロックは期限切れで自動復帰。
+                if _follow_locked_until is not None and not skip_follow:
+                    skip_follow = True
+                    out(
+                        "  [SKIP] フォロー: code 326 一時ロック中（提案93）"
+                        f" → {_follow_locked_until.strftime('%H:%M')}までフォローのみ停止（like/RT継続）"
+                    )
+
                 # 既フォローの検出（いいね伴走判定に使用）
                 #   従来は後段(1179行)で判定していたため、いいねの決定より遅く参照できなかった。
                 #   ここで先行判定し、既フォローなら「いいねのみで応募成立」を決める。
@@ -1587,7 +1677,20 @@ def apply_for_account(
                         #   フォローHTTP 403のみカウント。他エラー/成功でリセット。
                         #   フォロー403はアカウント制限の初動シグナル（atushi1840凍結時の先触れ）。
                         #   既存false_countはRT/いいね成功でリセットされ検出不能なため専用カウンタで中断。
-                        if _name == "follow" and _follow_error_code == "http_403":
+                        if _name == "follow" and _follow_error_code == "temp_lock_326":
+                            # ★ 2026-08-30提案93: code 326（一時ロック）→ フォロー停止マーカー書込
+                            #   凍結（code 64・提案90/91のFROZEN_ABORT対象）ではなく一時ロックなので、
+                            #   バッチ中断せずフォローのみ停止して like/RT を継続する。
+                            _lock_hours = float(cfg.get("applier", {}).get("follow_lock_hours", 4))
+                            _set_follow_lock(account_key, _lock_hours)
+                            _follow_locked_until = _get_follow_lock(account_key)
+                            # 326は凍結でないので403カウンタはリセット
+                            _follow_403_count = 0
+                            out(
+                                f"  [LOCK93] code 326 一時ロック検出 → {account_key}"
+                                f" フォローを{int(_lock_hours)}時間停止（like/RT継続・提案93）"
+                            )
+                        elif _name == "follow" and _follow_error_code == "http_403":
                             _follow_403_count += 1
                             out(f"  [i] フォロー403検出 {_follow_403_count}回目（フォロー制限シグナル・提案90）")
                             if _follow_403_count >= 3:
@@ -1608,6 +1711,13 @@ def apply_for_account(
                         # ★ フォロー成功 → カウンタリセット（提案90）
                         if _name == "follow":
                             _follow_403_count = 0
+                            # ★ 2026-08-30提案93: フォロー成功 → 一時ロック自動解除
+                            #   ロック中はフォローがスキップされるため、ここに到達できるのは
+                            #   ロック期限切れ後にフォローが成功したケース（自動復帰の完了）。
+                            if _follow_locked_until is not None:
+                                _clear_follow_lock(account_key)
+                                _follow_locked_until = None
+                                out("  [LOCK93] フォロー成功 → code 326 一時ロック解除（自動復帰・提案93）")
                     if idx < action_count - 1 and action_count >= 2:
                         if random.random() < 0.75:
                             delay = random.uniform(6, 25)

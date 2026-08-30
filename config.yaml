@@ -342,6 +342,12 @@ applier:
   #   → 6アカウントが同じcollected.jsonを参照するため、別垢の近接アクションを分散させる。
   cross_account_proximity_hours: 6
   cross_account_defer_min_hours: 4
+  # ★ 2026-08-30提案93: code 326（一時ロック）垢のフォロー停止時間。
+  #   Xの「Your account is temporarily locked」エラー後、フォローのみ停止して
+  #   like/RTは継続する期間。凍結（code 64・FROZEN_ABORT）とは別に扱い、
+  #   期限切れで自動復帰する。8/30実測: inobase1-4がcode326で6.5時間ロック中も
+  #   dispatch継続 → 提案93で修正。
+  follow_lock_hours: 4
   cross_account_defer_max_hours: 8
 
 # ── NGワード（除外フィルター）──
