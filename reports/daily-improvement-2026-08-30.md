@@ -102,3 +102,22 @@
 ## 申し送り
 - 【要ユーザー対応】inobase1-4: code 326ロック継続（本日0成功）。CAPTCHA解除待ち。22:01のfollow_lock期限切れで自動復帰するかQA監視
 - prop93はコミット済（BUGFIX適用版）だが、実行中プロセスへの反映は次サイクルから
+
+---
+
+# Daily Improvement 2026-08-30（QA37・21:15追記）
+
+## Worker実装（bca4c18, 20:51）
+- **提案94**: hourly上限をアクション単位で厳格チェック。`rate_limiter.hourly_limit_reached()` 新設（hourlyのみ判定・日次上限不考慮。check_rate_limitと分離）＋ `applier.action_queue` ループ内で各アクション実行前にチェック → `hour_total >= max_actions_per_hour(15)` で残りアクションをスキップ。`[LIMIT]`ログ出力。
+
+## QA37検証結果
+- **pytest: 225 passed, 4 skipped**（50.73s。回帰なし）✓
+- **git log**: HEAD=bca4c18（提案94実装）。ワーキングツリーは anchor.md のみ変更（workerのprop94追記分・未コミット）
+- **差分検証（bca4c18）**: rate_limiter.py に `hourly_limit_reached()`（hourlyのみ・日次上限不考慮）追加、applier.py の action_queueループ（line 1643付近）で各アクション実行前にチェックし15超でbreak。提案94の設計と一致 ✓ 実装内容を確認済み
+- **実環境確認（21:12）**: 実行中orchestrator（21:00起動）は bca4c18 を反映済み（20:51コミット後の起動）。prop94の`[LIMIT]`発火0件は上限未到達の正常状態（inobase1-4はLOCK93でフォロー停止中のため）
+- **提案93実環境稼働継続確認**: 21:01 LOCK93発動 → 21:12 `[SKIP] フォロー: code 326 一時ロック中（提案93）→ 22:01まで` を確認。follow_lock.json に `inobase1-4: 2026-08-30T22:01:07` が記録され、期限22:01で自動復帰予定
+
+## 申し送り
+- **【要ユーザー対応】inobase1-4**: code 326ロック継続（21:12時点・本日0成功）。**22:01のfollow_lock期限切れ後に自動復帰するか監視**（復帰後もcode326再発ならconfig一時除外をworker判断）
+- prop94の実環境効果（hourly 15件超過が0になるか）は8/31夜バッチで確認
+- prop83は20:20時点L/F=97.5%で達成傾向。夜全天集計で確定→クローズ
