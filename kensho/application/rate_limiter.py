@@ -123,6 +123,27 @@ def check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
     return False
 
 
+def hourly_limit_reached(account_key: str, cfg: dict[str, Any]) -> bool:
+    """時間あたり上限に達したかチェック（hourlyのみ・アクション単位で使う）。
+
+    check_rate_limit は日次上限（フォロー50等）も含むため、action_queueループ内で
+    使うと「フォロー上限到達」でRT/いいねまで止まる。hourly 専用に分離した。
+    （2026-08-30提案94: 従来はitem単位チェックのため1item内の複数アクション
+    F+R+Lでhourly counterが15→17まで跳ねた。実測: kudou 08時=17）
+    """
+    limits: dict[str, Any] = cfg.get("rate_limits", {})
+    max_per_hour: int = limits.get("max_actions_per_hour", 15)
+    counts: dict[str, Any] = load_daily_counts()
+    acct: dict[str, Any] = counts.get(account_key, {})
+    hourly: dict[str, int] = acct.get("hourly", {})
+    current_hour: str = datetime.now().strftime("%H")
+    hour_total: int = hourly.get(current_hour, 0)
+    if hour_total >= max_per_hour:
+        print(f"[LIMIT] {account_key}: 時間あたり上限到達 ({hour_total}/{max_per_hour}/時)")
+        return True
+    return False
+
+
 def increment_daily_count(account_key: str, action_type: str, n: int = 1) -> None:
     """日次カウンターと時間別カウンターを増やす（公開関数、並列更新ロスト防止）"""
     locked: bool = _lock_daily_counts()

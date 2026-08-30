@@ -43,6 +43,7 @@ from kensho.application.browser import (
 )
 from kensho.application.rate_limiter import (
     check_rate_limit,
+    hourly_limit_reached,
     is_active_hours,
     load_daily_counts,
 )
@@ -1639,6 +1640,16 @@ def apply_for_account(
                 _follow_error_code: str | None = None
                 action_count = len(action_queue)
                 for idx, (_name, _fn) in enumerate(action_queue):
+                    # ★ 2026-08-30提案94: hourly上限をアクション単位で厳格チェック
+                    #   item単位チェック（check_rate_limit）は1item内の複数アクション
+                    #   （F+R+L）でhourly counterが15→17まで跳ねる（実測: kudou 08時=17）。
+                    #   各アクション実行前にhourly専用チェックで15超を防止する。
+                    if hourly_limit_reached(account_key, cfg):
+                        out(
+                            f"  [LIMIT] {account_key}: 時間あたり上限（15件/時）到達"
+                            f" → 残り{action_count - idx}アクションをスキップ（提案94）"
+                        )
+                        break
                     # ★ 2026-08-28提案53: 速度ガード（直近3分で15件超なら強制休止）
                     #   通常の間隔（12-40秒×各アクション）では到達しないが、
                     #   API高速成功が連続した最悪ケースの最終防衛線。
