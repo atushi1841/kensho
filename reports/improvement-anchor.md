@@ -34,8 +34,8 @@
 | 08/30 | 87 | **【中】同一主催者重複アクション防止（monteur_mr_shuuに14回no_follow_button）** | 1fa0fb4 | ✅ 実装済・QA検証済（8/30から反映） |
 | 08/30 | 88 | **【中】クロスアカウント近接ガード（同一ツイートへ別垢が近接アクションしない）** | 2ff94e3 | ✅ 実装済・QA検証済（QA32, pytest220pass） |
 | 08/30 | 89 | **【中】royalkensho未達(44/50=88%)の原因調査** | — | 🆕 調査中（QA33: 未処理item実測1052件、供給不足でない） |
-| 08/30 | 90 | **【高】follow 403専用カウンタ→バッチ中断**（ib×6+rk×2/8/30朝、現状false_countはRT/いいね成功でリセットされ検出不能） | e48a6a0 | ✅ 実装済（pytest220pass） |
-| 08/30 | 91 | **【高】提案90バグ修正: breakが外側ループを抜けない**（8/30昼間inobase1-4で[FROZEN]×11回連続=本来1回で停止。外側`for item in items`にフラグ伝播が必要） | (このcommit) | ✅ 実装済・QA検証待ち |
+| 08/30 | 90 | **【高】follow 403専用カウンタ→バッチ中断**（ib×6+rk×2/8/30朝、現状false_countはRT/いいね成功でリセットされ検出不能） | e48a6a0 | ✅ 実装済・QA検証済（差分+pytest222pass+実環境検出確認） |
+| 08/30 | 91 | **【高】提案90バグ修正: breakが外側ループを抜けない**（8/30昼間inobase1-4で[FROZEN]×11回連続=本来1回で停止。外側`for item in items`にフラグ伝播が必要） | 06092b9 | ✅ 実装済・QA検証済（差分+pytest222pass。実環境効果は次プロセス起動から: 12:45起動の旧コードプロセスが13:12まで[FROZEN]継続中） |
 | 08/30 | 92 | **【高】inobase1-4 一時ロック（code 326×21件/8/30 09:45-11:54）【要ユーザー対応】**（follow全件失敗→応募数大幅低下。ログイン解除試行が必要） | — | 🆕 要ユーザー対応 |
 
 ---
@@ -64,14 +64,14 @@
 
 | 優先度 | アクション | 担当 | 期限 | 備考 |
 |--------|-----------|------|------|------|
-| ~~**🔴高**~~ | ~~**提案91: 提案90のbreakバグ修正（フラグ伝播で外側ループも中断）**~~ → ✅ 実装済 | Worker | — | 実装: `_frozen_by_follow_403` フラグ追加→外側while冒頭で `if _frozen_by_follow_403: break`。内側action_queueのbreakは維持。8/30夜間バッチから反映（commit 06092b9）。 |
+| ~~**🔴高**~~ | ~~**提案91: 提案90のbreakバグ修正（フラグ伝播で外側ループも中断）**~~ → ✅ QA検証済 | Worker | — | 実装: `_frozen_by_follow_403` フラグ追加→外側while冒頭で `if _frozen_by_follow_403: break`。内側action_queueのbreakは維持（commit 06092b9）。QA34で差分+pytest222pass検証OK。⚠ 実環境反映は次プロセス起動から（12:45旧コードプロセスが13:12まで[FROZEN]継続）。効果確認: `[FROZEN]` が1バッチ1回になるか |
 | **🔴高** | **提案92: inobase1-4 一時ロック（code 326）対応** | ユーザー | 即時 | ブラウザでhttps://x.com/inobase128508 にログインしてロック解除（CAPTCHA確認）。解除後configに復帰。提案91修正前はconfig一時除外推奨。 |
 | **🔴高** | **提案86/87実環境効果検証: `max_actions_per_hour: 15`＋無駄失敗主催者当日ブロック** | QA | 08/30夜 | 1fa0fb4で実装済・QA検証済（pytest217pass）。**8/30昼間バッチから反映**（commit 8/30 00:54）。1時間15件超過で `[LIMIT]`・無駄失敗で `[BLOCK]` ログが出るか・応募数が日次50件を維持できるかを実測 |
 | **🔴高** | **提案83実環境効果検証: `like_with_follow_skip: 0.10` ＋ `like_standalone_skip: 0.60`（いいね単独40%実行）** | QA | 08/30夜 | 8/29全天L/F=92.3%<95%。8/30バッチでL/F 95%達成・Error 226未発火・連続いいねカウンタ機能を実測。15%への再引き上げは8/30夜L/F実測で判断 |
 | **🔴高** | **提案85【要ユーザー対応】**: chugakujuken物理対応（室内移動・アダプタ交換・SIM清掃） | ユーザー | 継続 | watchdog再接続12回/日。対応確認までクローズしない |
 | 🟡中 | **zin http_0監視**: 1084(air-tra1)一時不通（10件/日・22:37-22:51クラスタ6件） | QA | 継続 | 頻発なら提案84を別観点で再提案 |
 | **🔴高** | **提案88実環境効果検証: `[XPROX]` ログ出現・応募数維持** | QA | 08/30夜 | 2ff94e3で実装済・QA検証済（pytest220pass）。別垢処理済みツイートが6h以内に近接ピックされず`[XPROX]`ログが出るか・応募数が日次50件を維持できるかを実測 |
-| **🔴高** | **提案90実環境効果検証: follow 403専用カウンタの稼働** | QA | 08/30夜 | api_follow_by_screen_nameが(ok, err)タプル返しで`_follow_error_code`="http_403"を伝播 → `_follow_403_count`が3回で`[FROZEN]`中断。ib×6/rk×2相当の再発が検出されるか実測確認 |
+| **🔴高** | **提案90実環境効果検証: follow 403専用カウンタの稼働** | QA | 08/30夜 | api_follow_by_screen_nameが(ok, err)タプル返しで`_follow_error_code`="http_403"を伝播 → `_follow_403_count`が3回で`[FROZEN]`中断。QA34: 実環境で[FROZEN]多数検出確認済（inobase1-4 code326）・差分+pytest222pass検証済。提案91の実環境反映後、`[FROZEN]`が1バッチ1回で止まることを確認 |
 | 🟡中 | **提案89調査: royalkensho 44/50=88%未達の原因**（未処理item実測1052件・QA33確認。供給不足ではない） | QA | 08/31 | 仮説: simple_rt_ok FLAG過多/フォロー済み主催者/appliedキー未初期化659件。バッチログとitem内訳の確認。**QA33検証済: 8/29成功44件（他垢63-102件より最下位）・未処理1052件（atushi16 802/kudou 827/inobase1-4 873より多い）** |
 | 🟢低 | 提案56/68/70/71/76/78/81/82/84 — クローズ・確定済み | — | — | 再提案禁止（74のみ） |
 
@@ -88,8 +88,8 @@
 | **86/87** | **時間集中制限＋無駄失敗主催者ブロック** | 08/30 | QA31 | 1fa0fb4差分検証OK・pytest217pass/4skip・テスト3件追加。config反映済（max_actions_per_hour 15） | ✅ 実装検証済（8/30実測待ち） |
 | **88** | **クロスアカウント近接ガード** | 08/30 | QA32 | `_cross_account_proximity_defer` 実装。別垢6h以内処理済み→自垢DEFER(4-8h)書込。差分検証OK・pytest220pass/4skip・テスト3件追加。config反映済（6h/4-8h）。 | ✅ 実装検証済（8/30実測待ち） |
 | **89** | **royalkensho未達原因調査** | 08/30 | QA33 | 8/29成功44件（最下位）・未処理item実測1052件（供給不足でない）・applied KEY_ABSENT 659件（cpmeikan 307=100%） | 🟡 調査中（8/31期限） |
-| **90** | **follow 403専用カウンタ** | 08/30 | Worker実装 | api_follow_by_screen_nameを(ok, err)タプル返しに変更。applierに`_follow_403_count`追加。フォロー403×3で`[FROZEN]`バッチ中断。pytest220pass。 | ✅ 実装済（QA検証待ち） |
-| **91** | **提案90バグ修正（break外側伝播）** | 08/30 | Worker実装 | `_frozen_by_follow_403` フラグ追加→外側while冒頭で`if _frozen_by_follow_403: break`。内側action_queueのbreakは維持。フラグ立て+`[FROZEN_ABORT]`ログマーカー追加。テスト2件追加・pytest222pass/4skip。 | ✅ 実装済（QA検証待ち） |
+| **90** | **follow 403専用カウンタ** | 08/30 | QA34検証 | api_follow_by_screen_nameを(ok, err)タプル返しに変更。applierに`_follow_403_count`追加。フォロー403×3で`[FROZEN]`バッチ中断。pytest222pass。差分検証OK（policy_denied/automation_blocked/errors_in_response/unauthorized/http_403/http_<status> の6種エラーコードを正しく伝播）。実環境で[FROZEN]多数検出（inobase1-4 code326）。 | ✅ 実装済・QA検証済（差分+pytest+実環境検出確認） |
+| **91** | **提案90バグ修正（break外側伝播）** | 08/30 | QA34検証 | `_frozen_by_follow_403` フラグ追加→外側while冒頭で`if _frozen_by_follow_403: break`。内側action_queueのbreakは維持。フラグ立て+`[FROZEN_ABORT]`ログマーカー追加。テスト2件追加・pytest222pass/4skip。差分検証OK。**実環境では[FROZEN_ABORT]0件（12:45起動旧コードプロセスが稼働中）。次プロセス起動から反映。** | ✅ 実装済・QA検証済（差分+pytest。実環境効果は次プロセス起動から） |
 | **92** | **inobase1-4 一時ロック（code326）** | 08/30 | — | code 326 ×21件（09:45-11:54）。follow全件失敗→応募数大幅低下。ログイン解除が必要 | 🆕 要ユーザー対応 |
 | **83** | **L/F 95%対策（10%+単独40%）** | 08/29 | QA31 | 2fb7eb6差分検証OK・config反映済（0.10/0.60）・226未発火。01:12時点no_action_window内で実測データなし | ⚠️ 8/30昼間実測待ち |
 | **82** | **バッチ内重複ピック防止** | 08/29 | 19:15以降 | DEDUPE 0件・inobase1-4含めno_follow_button 0件・21時台4バッチ0エラー | ✅ 効果確定 |
@@ -103,7 +103,7 @@
 
 ## 監視対象アラート
 
-- ✅ **提案91（提案90のbreakバグ修正）: 実装済（commit 06092b9）** — `_frozen_by_follow_403` フラグ追加→外側while冒頭で`if _frozen_by_follow_403: break`＋`[FROZEN_ABORT]`ログマーカー。8/30夜間バッチから反映。効果検証は8/30夜〜8/31で `[FROZEN]` 連続が1回で止まるか・同等の code326/403 が再発した場合の動作確認 |
+- ✅ **提案91（提案90のbreakバグ修正）: 実装済・QA検証済（commit 06092b9, pytest222pass）** — `_frozen_by_follow_403` フラグ追加→外側while冒頭で`if _frozen_by_follow_403: break`＋`[FROZEN_ABORT]`ログマーカー。差分検証OK。⚠ **実環境反映は次プロセス起動から**（QA34実測: 12:45起動の旧コードプロセスがflock保持のまま13:12まで[FROZEN]継続、[FROZEN_ABORT]は0件）。効果検証は `[FROZEN]` が1バッチ1回で止まるか |
 - 🔴 **提案92（inobase1-4 一時ロック code 326×21件/8/30 09:45-11:54）: 【要ユーザー対応】** — follow全件失敗→応募数大幅低下。ログイン解除（CAPTCHA等）が必要。atushi1840凍結時の前兆パターンと同型
 - 🔴 **提案83（L/F 92.3%<95%）: 実装済（2fb7eb6, 8/30から反映）** — like_with_follow_skip 10%＋いいね単独40%実行。8/30夜にL/F 95%達成・Error 226未発火・連続いいねカウンタ機能を検証。夜に15%再引き上げ判断
 - 🔴 **提案86/87（時間集中制限+無駄失敗主催者ブロック）: 実装済・QA検証済（1fa0fb4, pytest217pass）** — 8/30昼間バッチから反映。8/30昼間実測: `[LIMIT]`11件✅・`[BLOCK]`0件✅。夜に応募数維持を実測
