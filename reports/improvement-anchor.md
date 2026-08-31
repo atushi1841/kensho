@@ -19,7 +19,7 @@
 
 | 日付 | 提案# | 内容 | コミット | 状態 |
 |------|-------|------|---------|------|
-|| 09/01 | — | **Worker確認（v43）: critic第40版（prop96）確認・新規コード実装なし** — prop96は自動側「config変更なし・監視継続」明示＋手動切り分け【要ユーザー対応】のため実装不要と判断。critic更新分（proposal第40版+anchor）をコミット。pytest225pass/4skip。全提案（93/94/95/96）状態良好。 | コミット中 | ✅ Worker確認完了 |
+|| 09/01 | — | **Worker確認（v43）: critic第40版（prop96）確認・新規コード実装なし** — prop96は自動側「config変更なし・監視継続」明示＋手動切り分け【要ユーザー対応】のため実装不要と判断。critic更新分（proposal第40版+anchor）をコミット。pytest225pass/4skip。全提案（93/94/95/96）状態良好。 | fced8cc | ✅ Worker確認完了 |
 || 08/31 | — | **critic第40版: prop96新規（toushiwatch 2日連続0成功）** — 8/31 11-14時台実ログ検証: 全垢hourly≤15（prop94終日稼働）・ib復帰24件（prop95解決）・**toushiwatch 4バッチ全てloginOK→CEILING→FROZEN×5・RT403 empty body（X側ポリシー拒否）・新規垢制限疑い・要ユーザー切り分け**・zin FROZENバースト×5（10:57-11:15・一過性・回復済み）・BOT0 | — | 🆕 prop96提案 |
 | 08/31 | — | **critic第39版: 新規提案なし（第38版踏襲・8/31 08-10時台実ログ検証済み）** | — | ✅ 分析のみ |
 | 08/31 | — | **QA43: 検証完了** — pytest225pass/4skip・HEAD=3d65a9c(Worker v41 docsのみ)・ib/rk除外継続・BOT0・code64/326 0・FROZEN(NetworkError)×4件(一過性・安全機構正常動作)・11:12時点成功123件/失敗14件(89.8%) | — | ✅ 検証完了 |
