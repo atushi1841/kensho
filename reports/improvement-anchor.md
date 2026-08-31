@@ -21,6 +21,8 @@
 |------|-------|------|---------|------|
 | 08/31 | — | **critic第38版: 新規提案なし** — 第37版踏襲＋8/31 00-02時台追加検証（深夜アクション0・SKIP30のみ・BOT0・ib/rk除外0件再確認・5垢セッションOK） | — | ✅ 分析のみ |
 | 08/31 | — | **QA43: 検証完了** — pytest225pass/4skip・HEAD=3d65a9c(Worker v41 docsのみ)・ib/rk除外継続・BOT0・code64/326 0・FROZEN(NetworkError)×4件(一過性・安全機構正常動作)・11:12時点成功123件/失敗14件(89.8%) | — | ✅ 検証完了 |
+| 08/31 | — | **Worker prop95実装コミット（0e43390）** — inobase1-4コメント解除（復帰）＋royalkensho→toushiwatch置換（11ファイル・config/browser/applier/check_proxies/keyring/proxy_watchdog/audit/gen_status_*同期） | 0e43390 | 🟢 実装済・コミット済 |
+| 08/31 | — | **QA44: 検証完了** — pytest225pass/4skip・HEAD=0e43390(Worker prop95実装コミット差分検証OK・11ファイル)・**inobase1-4復帰確認（12:32 loginOK・13件記録）**・**toushiwatch初日0件（no_follow_button×4/no_like_button×5/RT403×4→CEILING・新規垢制限 or 低速回線疑い）**・BOT0・code64/326 0・成功221件 | — | ✅ 検証完了 |
 | 08/31 | — | **critic第39版: 新規提案なし（第38版踏襲・10時台実ログ検証済み）** — 08/09/10時台 hourly全垢≤15（prop94稼働・[LIMIT]発動2件）・FROZEN/326/403 0・WiFi watchdog 6プロキシ生存・再接続0（prop85今日安定）・ib/rk出現0・8/31累計成功502件 | — | ✅ 分析のみ |
 | 08/31 | — | **Worker確認（v41）: 新規提案なし・実装不要** — critic第39版純分析確認・pytest225pass/4skip・HEAD=1718e89→新コミット（docsのみ・新規コード実装なし）・全提案（93/94/95）状態良好・prop94は9/1 00:20確定待ち | — | ✅ Worker確認完了 |
 | 08/31 | 95/新 | **inobase1-4 復帰（CAPTCHA解除）＋ royalkensho→toushiwatch 置換** — ユーザーCAPTCHA解除確認（memory+fixupx+proxy1089生存+loginOK）。凍結確定のroyalkenshoを破棄し後継@toushiwatch新設。全ファイル同期（config/10files+Windows+profile）。pytest225pass/4skip。orchestrator_state royalkensho削除。 | コミット中 | 🟢 実装済・コミット未 |
@@ -78,7 +80,7 @@
 | 優先度 | アクション | 担当 | 期限 | 備考 |
 |--------|-----------|------|------|------|
 | **🔴高** | **prop95: inobase1-4 復帰（CAPTCHA解除）→ 実環境稼働確認** | QA | 8/31夜 | 8/31午後から復帰（12:02 loginOK・12:32 loginOK・アクション記録あり）。8/31夜バッチで正常稼働（code64/326無し）を確認。 |
-| **🔴高** | **toushiwatch（royalkensho後継）: 初日稼働確認** | QA | 8/31夜 | 8/31午後から稼働（12:31 loginOK・12:46 loginOK）。後継垢の新fingerprint(seed=13)・スケジュール継承の実効確認。 |
+| **🔴高** | **toushiwatch（royalkensho後継）: 初日稼働0件の原因究明** | QA/critic | 8/31夜 | 8/31午後から稼働（12:31/12:46 loginOK・seed=13適用）だが**成功0件**: no_follow_button×4/no_like_button×5/RT http_403×4→CEILING打ち切り×2。delay_ms<600ms＝ページ読込前検出。新規垢ウォームアップ or povo低速回線のページ読込問題の疑い。code64/326なし＝凍結ではない。次バッチ/明日も0件なら提案化。 |
 | **🔴高** | **prop85【要ユーザー対応】: chugakujuken物理対応** | ユーザー | 継続 | watchdog再接続12回/日だが応募は113成功0失敗で安定。 |
 | **🔴高** | **prop94: 8/31 08/09/10時台 hourly超過0件実測済み（prop94稼働✅）→ 9/1 00:20全天データで最終確定** | QA | 9/1 00:20 | 8/31朝〜昼時台のhourly最大15件・[LIMIT]発動2件（atushi16 10:14/chugakujuken 10:20）＝上限厳守確認。8/31夜バッチ完了後の全天データで超過0件を最終確定。 |
 | 🟢低 | **kudou/zin ボタン失敗監視** | 監視 | 継続 | 8/30: kudou 11件(12:02-12:21 JST)、zin 8件(20:35-20:52 JST)。1バッチ集中・delay_ms<300ms＝ページ読込前検出の可能性。再発したら提案化。 |
@@ -93,8 +95,9 @@
 | 提案# | 目的 | 実装日 | 効果測定 | 結果 | 状態 |
 |-------|------|--------|---------|------|------|
 | **総合** | **8/30 全天確定（00:20実測）** | 08/30 | audit JST集計 | **747アクション・622成功（ib60/rk22含む）・BOT0**。F174 RT175 L166・L/F=95.4%✅・5垢全て日次目標超過。hourly超過6箇所は全08-18時台（prop94稼働前）・21時台以降超過0。kudou no_follow_button 11件(12:02-12:21 JSTの1バッチ集中)・監視継続。 | ✅ prop94早期効果確定・prop95稼働中・新規提案なし |
+| **総合** | **8/31 13:10実測（QA44）** | 08/31 | audit+daily_counts | **audit: 成功221件/失敗53件**（うちtoushiwatch 0件・失敗14件を除くと成功率~84%）。Tankan52/atushi16 51/chugaku48/zin31/kudou26/ib13。**inobase1-4復帰確認（13件）**。**toushiwatch初日0件（no_follow_button×4/no_like_button×5/RT403×4→CEILING）**。BOT0・code64/326/403/429 0・hourly全垢≤15・最終収集03:12 | ✅ 検証完了（toushiwatch監視追加） |
 | **総合** | **8/31 11時台 実ログ実測（11:14 JST）** | 08/31 | audit+orchestratorログ | **audit: 成功123件/失敗14件(89.8%)**・BOT0・密code64/326/403/429 0・hourly全垢≤15（prop94稼働・[LIMIT]18件発動）・FROZEN(NetworkError)×4件(一過性・安全機構動作)・WiFi watchdog 6プロキシ生存・ib/rk出現0・CDN timeout×3(収集側一過性) | ✅ 検証完了（新規提案なし・監視継続事項としてFROZEN追加） |
-| 08/30 | 95 | **inobase1-4 config一時除外（rk方式）** | 08/30 | config反映 | **worker実装済（8b520be）・QA38実環境確認済（23:00バッチからdispatch停止確認）**。ユーザーCAPTCHA解除まで除外維持。 | ✅ **実装済・QA検証済（実環境確認済）** |
+| 08/30 | 95 | **inobase1-4 config一時除外（rk方式）** | 08/30 | config反映 | **worker実装済（8b520be）→ 0e43390で復帰（CAPTCHA解除）・QA44実環境確認済（12:32 loginOK・13件記録）**。 | ✅ **実装済・復帰確認済（QA44）** |
 | **83** | **L/F 95%対策（10%+単独40%）** | 08/29 | 8/30全天 | **L/F=95.4%達成**（8/29 92.3%→95.4%）。Error 226未発火 | ✅ **クローズ確定** |
 | **94** | **hourly上限をアクション単位で厳格チェック** | 08/30 | QA37+実測 | bca4c18差分検証OK・pytest225pass/4skip・21:00稼働。**8/30 21/22時台は全垢15件未満（超過0件・早期効果確定）**。8/30全天の超過6箇所は全てprop94稼働前。8/31全天で最終確定。 | ✅ 実装済・QA検証済・早期効果確定 |
 | **総合** | **8/30昼間ログ実測（11:00-12:00→14:23追記）** | 08/30 | orchestratorログ | **[LIMIT]11件✅ / [XPROX]14件✅ / [BLOCK]0✅ / [FROZEN]11件(旧コード)⚠️ / [FROZEN_ABORT]1件✅（13:35 royalkensho即中断・提案91実環境検証完了） / no_follow_button 0✅ / http_0 0✅（zin1084復旧）** | ✅ 提案91実環境検証済み |
@@ -120,7 +123,7 @@
 
 ## 監視対象アラート
 
-- ✅ **prop95: inobase1-4 復帰（CAPTCHA解除）** — 8/31午後から復帰（loginOK確認済み・アクション記録あり）。除外解除。
+- ✅ **prop95: inobase1-4 復帰（CAPTCHA解除）** — 8/31午後から復帰（12:02/12:32 loginOK確認・daily_counts 8/31に13件記録）。正常稼働確認済み。
 - 🔴 **prop92（inobase1-4 ロック code 326）→ prop95: 解決済み（CAPTCHA解除で復帰）**
 - ✅ **prop93: code 326 自動フォロー停止 — 実環境稼働確認済**
 - 🟢 **prop83（L/F 95%対策）: クローズ確定** — 8/30 L/F=95.4%達成
@@ -128,3 +131,4 @@
 - 🟢 **kudou/zin ボタン失敗監視** — 8/30: kudou 11件(12:02-12:21 JST)、zin 8件(20:35-20:52 JST)。1バッチ集中・一過性。再発で提案化
 - 🟢 **FROZEN(NetworkError) 監視** — **QA43新規: 8/31 10:57/11:03/11:07/11:12に[FROZEN]連続失敗3回×4件** — HTTP 0 NetworkError + NS_ERROR_CONNECTION_REFUSED（一過性・凍結でない・安全機構正常動作）。次バッチで自然回復確認要。再発で特定アダプタ/プロキシの接続問題として提案化。
 - 🟡 **prop85（chugakujuken 1083）: 【要ユーザー対応】継続** — watchdog再接続12回/日だが応募は113成功0失敗で安定。物理対応待ち
+- 🔴 **toushiwatch 初日稼働0件（監視継続）** — 12:31/12:46 loginOKだが全アクション失敗（no_follow_button×4/no_like_button×5/RT403×4→CEILING）。新規垢制限 or 低速回線問題の疑い。code64/326なし＝凍結ではない。次バッチ/明日も0件なら提案化。

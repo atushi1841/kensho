@@ -74,3 +74,20 @@
   - **新規観測: [FROZEN]連続失敗3回×4件（10:57/11:03/11:07/11:12）** — 原因はHTTP 0 NetworkError + NS_ERROR_CONNECTION_REFUSED（ネットワーク一過性）。**code 64/326ではない＝凍結ではない**。提案90/91のFROZEN_ABORT（連続失敗検出→即中断）機構が期待通り動作。次バッチで自然回復見込み。監視継続。
   - 最終収集03:12（深夜収集正常）✓
 - **申し送り**: inobase1-4 CAPTCHA解除待ち継続。prop94最終確定は9/1 00:20（8/31全天データ）待ち。**FROZEN(NetworkError)×4件の監視追加** — 特定アダプタ/プロキシの一時的な接続問題の可能性。再発で提案化検討。
+
+## QA44検証結果（13:12 JST）
+- **pytest: 225 passed, 4 skipped**（42.53s。回帰なし）
+- **git log**: HEAD=0e43390（**Worker prop95実装コミット**: inobase1-4復帰＋royalkensho→toushiwatch置換、11ファイル・87+/90-）。前回QA43（8ed5682 docs）から**新規コード変更あり**（初の実装系コミット）
+- **Worker差分検証（0e43390）**: 提案内容と一致
+  - config.yaml: inobase1-4コメント解除（復帰）・royalkensho削除→toushiwatch新設（スケジュール継承）
+  - browser.py: FINGERPRINTS royalkensho(seed=88)→toushiwatch(seed=13)・PROXY_MAP置換
+  - applier.py: 低速回線リスト3箇所 royalkensho→toushiwatch
+  - check_proxies/keyring/proxy_watchdog/audit_bot_safety/gen_status_*: royalkensho→toushiwatch同期
+  - Windows start_proxies・profile wifi-watchdog はコミット外（Windows側・worker申告）
+- **実環境確認（13:10）**:
+  - **inobase1-4 復帰確認**: 12:02/12:32 ログインOK・FINGERPRINT seed=44適用・daily_counts 8/31に follow5/rt6/like2=13件記録（CAPTCHA解除の効果確認）
+  - **toushiwatch 初日稼働・成功0件**: ログインOK・セッションOK・seed=13適用だが、アクション全滅（no_follow_button×4 / no_like_button×5 / RT http_403×4 → CEILING連続3回失敗で2バッチ打ち切り）。delay_ms<600ms＝ページ読込前検出の可能性。**新規アカウント制限 or 低速回線(povo)のページ読込問題の疑い**。code 64/326ではない＝凍結ではない。
+  - 今日audit: 成功221件（Tankan52/atushi16 51/chugaku48/zin31/kudou26/ib13）/ toushiwatch 0件
+  - BOTシグナル0・code64/326 0件・hourly全垢≤15
+  - 最終収集03:12
+- **申し送り**: toushiwatch初日0件を監視（次バッチ/明日も0件なら新規垢ウォームアップ or 低速回線問題として提案化）。orchestrator_stateにroyalkenshoエントリ残存（実害なし・config除外済み）。
