@@ -97,6 +97,7 @@
 
 | 提案# | 目的 | 実装日 | 効果測定 | 結果 | 状態 |
 |-------|------|--------|---------|------|------|
+| **総合** | **8/31 15:12実測（QA45）** | 08/31 | audit+daily_counts | **成功328件**（Tankan72/chugaku70/atushi16 65/kudou47/zin47/ib27）。**hourly全垢≤15（prop94終日稼働確認・15時台まで）**。**ib復帰継続27件（prop95）**。**toushiwatch 2日連続0成功継続（audit失敗33件・no_like_button14/http_403 11/no_follow_button 6→FROZEN打ち切り・code64/326なし＝prop96）**。zin 47成功/26失敗（11:15 FROZEN×1一過性・1084フラッピング系）。BOT0・最終収集15:11。 | ✅ prop94/95確認・prop96要ユーザー対応継続 |
 | **総合** | **8/31 14:20実測（critic第40版）** | 08/31 | daily_counts+orchestratorログ | **8/31成功332件**（chugaku70/Tankan71/atushi16 63/zin61/kudou43/ib24）。hourly全垢≤15（prop94終日稼働✅）。**ib復帰24件でprop95解決**。**toushiwatch 2日連続0成功**（4バッチloginOK→CEILING→FROZEN×5・RT403 empty body＝新規垢制限疑い→prop96）。**zin 1084フラッピング検出**（本日再接続7回・失敗2回@11:15/12:00・FROZENバースト5回はNS_ERROR_CONNECTION_REFUSEDと一致・その後回復）。BOT0。 | ⚠️ prop96新規・zin 1084監視 |
 | **総合** | **8/30 全天確定（00:20実測）** | 08/30 | audit JST集計 | **747アクション・622成功（ib60/rk22含む）・BOT0**。F174 RT175 L166・L/F=95.4%✅・5垢全て日次目標超過。hourly超過6箇所は全08-18時台（prop94稼働前）・21時台以降超過0。kudou no_follow_button 11件(12:02-12:21 JSTの1バッチ集中)・監視継続。 | ✅ prop94早期効果確定・prop95稼働中・新規提案なし |
 | **総合** | **8/31 13:10実測（QA44）** | 08/31 | audit+daily_counts | **audit: 成功221件/失敗53件**（うちtoushiwatch 0件・失敗14件を除くと成功率~84%）。Tankan52/atushi16 51/chugaku48/zin31/kudou26/ib13。**inobase1-4復帰確認（13件）**。**toushiwatch初日0件（no_follow_button×4/no_like_button×5/RT403×4→CEILING）**。BOT0・code64/326/403/429 0・hourly全垢≤15・最終収集03:12 | ✅ 検証完了（toushiwatch監視追加） |

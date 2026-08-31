@@ -91,3 +91,17 @@
   - BOTシグナル0・code64/326 0件・hourly全垢≤15
   - 最終収集03:12
 - **申し送り**: toushiwatch初日0件を監視（次バッチ/明日も0件なら新規垢ウォームアップ or 低速回線問題として提案化）。orchestrator_stateにroyalkenshoエントリ残存（実害なし・config除外済み）。
+
+## QA45検証結果（15:12 JST）
+- **pytest: 225 passed, 4 skipped**（51.61s。回帰なし）
+- **git log**: HEAD=3af814d（docs(worker): v43 anchorコミットハッシュ確定）。前回QA44（fbdb470）以降のコミットは2件とも**docsのみ**（fced8cc: worker v43 critic第40版確認＋pytest225pass＋critic更新分コミット / 3af814d: anchorハッシュ確定）。**新規コード変更なし**（prop95実装0e43390はQA44で検証済み）。作業ツリークリーン
+- **Worker差分検証（fced8cc）**: critic第40版（prop96要ユーザー対応・自動側変更不要）の確認コミットで実装なし。提案内容と一致 ✓
+- **実環境確認（15:12）**:
+  - **toushiwatch 2日連続0成功継続（prop96）**: 8/31 audit失敗33件（no_like_button×14 / http_403×11 / no_follow_button×6 / skipped×2）・成功0件。daily_countsにエントリなし。FROZEN連発（12:33/12:36/12:51/14:02/14:06）でバッチ打ち切り継続。code64/326なし＝凍結でない・要ユーザー切り分け待ち
+  - **inobase1-4 復帰継続（prop95）**: 8/31成功27件（F10/R11/L6）・12:05/12:07 FROZEN×2は一過性・その後回復。daily_counts hourly 12=13/13=10/14=4
+  - **zin 47成功/26失敗**: FROZEN 11:15×1（一過性・その後回復）。失敗多めだがBOT検出ではない（コード64/326 0件）
+  - **今日audit成功328件**（Tankan72/chugaku70/atushi16 65/kudou47/zin47/ib27）
+  - **hourly全垢≤15（prop94終日稼働確認・15時台まで）**: chugaku 08=15/10=15/11=15/13=15、atushi16 10=15/12=15、kudou 10=15/13=15、Tankan 09=15/10=15/12=15/13=15、zin 08=15/13=15、ib 12=13
+  - **BOTシグナル0**（audit_bot_safety --today: 「BOTシグナルなし」）✓
+  - code 64/326 0件 ✓・最終収集15:11（正常）・ログ15:12更新（バッチ稼働継続中）
+- **申し送り**: prop96（toushiwatch）要ユーザー対応待ち継続・自動側は監視のみ。prop94最終確定は9/1 00:20（8/31全天データ）。zin失敗26件（1084フラッピング系）は一過性だが継続監視。orchestrator_state royalkensho残存（実害なし）。
