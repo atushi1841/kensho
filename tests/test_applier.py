@@ -400,6 +400,54 @@ class TestCheckRateLimit:
             save_daily_counts({"test_acct": {"follow": 0, "rt": 80, "like": 0}})
             assert check_rate_limit("test_acct", self.make_cfg(rt=80)) is True
 
+    def test_total_over_limit(self, monkeypatch: object) -> None:
+        """日次総量上限（提案98）: follow+rt+like 合計が100超 → True"""
+        monkeypatch.setattr("random.uniform", lambda a, b: 1.0)
+        cfg = self.make_cfg(follow=100, rt=80, like=250)
+        cfg["rate_limits"]["max_total_actions_per_day"] = 100
+        with tempfile.TemporaryDirectory() as tmpdir_str:
+            counts_dir = Path(tmpdir_str)
+            counts_file = counts_dir / "daily_counts.json"
+            monkeypatch.setattr(
+                "kensho.application.rate_limiter.DAILY_COUNTS_FILE",
+                counts_file,
+            )
+            # 種別上限は未達（follow60/rt30/like15）だが合計105 → 停止
+            save_daily_counts({"test_acct": {"follow": 60, "rt": 30, "like": 15}})
+            assert check_rate_limit("test_acct", cfg) is True
+
+    def test_total_under_limit(self, monkeypatch: object) -> None:
+        """日次総量上限（提案98）: 合計100未満 → False（続行）"""
+        monkeypatch.setattr("random.uniform", lambda a, b: 1.0)
+        cfg = self.make_cfg(follow=100, rt=80, like=250)
+        cfg["rate_limits"]["max_total_actions_per_day"] = 100
+        with tempfile.TemporaryDirectory() as tmpdir_str:
+            counts_dir = Path(tmpdir_str)
+            counts_file = counts_dir / "daily_counts.json"
+            monkeypatch.setattr(
+                "kensho.application.rate_limiter.DAILY_COUNTS_FILE",
+                counts_file,
+            )
+            # 合計95 → 続行（種別上限も未達）
+            save_daily_counts({"test_acct": {"follow": 60, "rt": 30, "like": 5}})
+            assert check_rate_limit("test_acct", cfg) is False
+
+    def test_total_disabled_by_default(self, monkeypatch: object) -> None:
+        """max_total_actions_per_day未設定（旧config互換）: 総量チェックなし → False"""
+        monkeypatch.setattr("random.uniform", lambda a, b: 1.0)
+        # 種別上限を大きくして総量だけ見る
+        cfg = self.make_cfg(follow=1000, rt=1000, like=1000)
+        with tempfile.TemporaryDirectory() as tmpdir_str:
+            counts_dir = Path(tmpdir_str)
+            counts_file = counts_dir / "daily_counts.json"
+            monkeypatch.setattr(
+                "kensho.application.rate_limiter.DAILY_COUNTS_FILE",
+                counts_file,
+            )
+            # 合計150でも設定がなければ停止しない
+            save_daily_counts({"test_acct": {"follow": 60, "rt": 30, "like": 60}})
+            assert check_rate_limit("test_acct", cfg) is False
+
 
 class TestLockMechanism:
     """acquire_lock / release_lock: 排他ロック"""

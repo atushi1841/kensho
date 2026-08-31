@@ -113,3 +113,19 @@
   - **BOTシグナル0**（audit_bot_safety --today: 「BOTシグナルなし」）✓
   - code 64/326 0件 ✓・最終収集15:11（正常）・ログ15:12更新（バッチ稼働継続中）
 - **申し送り**: prop96（toushiwatch）要ユーザー対応待ち継続・自動側は監視のみ。prop94最終確定は9/1 00:20（8/31全天データ）。zin失敗26件（1084フラッピング系）は一過性だが継続監視。orchestrator_state royalkensho残存（実害なし）。
+
+## QA46検証結果（17:10 JST）
+- **pytest: 229 passed, 4 skipped**（88.82s。回帰なし・Worker主張と一致）✓
+- **git log**: HEAD=4391019（docs(worker): v44 prop97実装完了anchor更新）← fb34540（**prop97実装コミット**）← ca231b9（QA45）。前回QA45（3af814d）から**新規コード実装あり**（prop97: 6ファイル・171+/71-）
+- **Worker差分検証（fb34540）**: 提案内容と一致 ✓
+  - browser.py: `_session_has_auth_cookies()` 新設（session_manager経由でauth_token/ct0存在検証・例外/欠落はFalse）+ check_x_loginに screen_name 指定時 goto 前検証追加 → 欠落なら `[NG] no_auth_session` 即False。**未認証のまま「ログインOK」誤判定→アクション連打→FROZEN連発の根本防止**（設計意図通り）
+  - config.yaml: toushiwatch コメントアウト（15:21手動対応・「auth_token/ct0欠落・セッション再取得後に復帰」注記）をコミット
+  - tests/test_browser.py: テスト5件追加（no_auth_session/auth_session_present/cookies欠落・存在）— カバレッジ適切
+- **実環境確認（17:10）**:
+  - **セッション検証（prop97真因の直接実測）**: toushiwatch のみ auth_ok=False（auth_token/ct0欠落・guest cookieのみ）＝critic分析の正しさを再確認。**アクティブ6垢（atushi16/kudou/chugaku/zin/Tankan/ib）は全て auth_ok=True → prop97による誤SKIPなし** ✓
+  - **no_auth_session マーカー未出現は正常**: toushiwatchはconfig除外済みでdispatchされず、他垢は全員認証済みのためトリガーされない。将来toushiwatch復帰時に機能する防御機構
+  - 今日audit（17:10時点）: **成功381件**（Tankan89/atushi16 74/chugaku71/kudou54/zin52/ib41）。toushiwatch失敗31件は全て15:21コメントアウト前の旧失敗（prop97で将来防止）
+  - zin 失敗23件＝QA45監視中の1084フラッピング系深夜失敗（一過性・現在52成功で解消）・ib失敗18件は復帰直後の調整期（41成功で前進）
+  - **BOTシグナル0・code64/326 0** ✓・パイプライン正常（17:13ログ更新・collected.json保存完了1130件）
+  - 未コミット: config.yaml.bak_20260831_152136（バックアップ・実害なし）
+- **申し送り**: prop97はQA検証完了（実装適切・誤SKIPなし・テスト5件パス）。toushiwatch復帰条件=ブラウザでログイン→auth_token/ct0保存（要ユーザー対応）。prop94最終確定は9/1 00:20（8/31全天データ）。zin 1084フラッピング【要ユーザー対応】継続。

@@ -223,6 +223,7 @@ rate_limits:
   max_rt_per_day: 80                # そのまま
   max_like_per_day: 250            # 200→250（いいねは安全、増やす）
   max_reply_per_day: 10
+  max_total_actions_per_day: 100   # 2026-08-31提案98: 日次総アクション上限（KPI 100件/日整合）。follow+rt+like+reply の合計が100超で打ち止め。8/30実績でkudou 126等が超過（種別上限のみだと理論上430件/日まで可能→過剰エンゲージメント=deboost/摘発リスク）
   max_actions_per_hour: 15         # 25→15（2026-08-30提案86: 1時間15件超過のBOTリスク対策。8/29実測でTankanNotes 12時20件・chugakujuken 13時17件・inobase1-4 12時19件+19時16件が超過。speed_guard(15件/180s)と併用）
   active_hours_start: "08:00"
   active_hours_end: "23:00"

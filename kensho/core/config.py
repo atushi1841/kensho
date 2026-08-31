@@ -121,6 +121,7 @@ class RateLimitConfig(BaseModel):
     max_rt_jitter: int = 5
     max_like_per_day: int = 80
     max_reply_per_day: int = 10
+    max_total_actions_per_day: int = 100  # 2026-08-31提案98: 日次総アクション上限（KPI 100件/日整合）
     max_actions_per_hour: int = 15
     active_hours_start: str = "09:00"
     active_hours_end: str = "22:00"

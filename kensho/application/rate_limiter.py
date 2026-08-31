@@ -84,6 +84,7 @@ def check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
     max_rt: int = limits.get("max_rt_per_day", 15)
     max_like: int = limits.get("max_like_per_day", 80)
     max_reply: int = limits.get("max_reply_per_day", 10)
+    max_total: int = limits.get("max_total_actions_per_day", 0)  # 0=無効（旧config互換）
     max_per_hour: int = limits.get("max_actions_per_hour", 15)
 
     # ★ 日次ジッター（毎回±15%変動：BOT対策）
@@ -111,6 +112,13 @@ def check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
     if rep >= max_reply:
         print(f"[LIMIT] {account_key}: リプライ上限到達 ({rep}/{max_reply})")
         return True
+
+    # ★ 2026-08-31提案98: 日次総アクション上限（follow+rt+like+reply の合計）
+    if max_total > 0:
+        total: int = f + r + lk + rep
+        if total >= max_total:
+            print(f"[LIMIT] {account_key}: 日次総量上限到達 ({total}/{max_total})")
+            return True
 
     # 時間あたり上限
     hourly: dict[str, int] = acct.get("hourly", {})
