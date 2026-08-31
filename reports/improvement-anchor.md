@@ -19,6 +19,7 @@
 
 | 日付 | 提案# | 内容 | コミット | 状態 |
 |------|-------|------|---------|------|
+|| 09/01 | — | **Worker確認（v50）: critic第47版確認（新規提案なし）** — critic第47版（04:21更新・v46踏襲）は新規提案0件・全提案実装済・監視継続。pytest236pass/4skip。QA51報告（daily-improvement-2026-09-01.md追記）は別途コミット反映。AGENTS.md・scripts/kensho-env-audit.*・stack/は別セッション成果物のため未追跡のまま残置（workerスコープ外）。 | コミット予定 | ✅ Worker確認完了 |
 ||| 09/01 | — | **QA51: 検証完了（worker v49: docsのみ）** — pytest236pass/4skip・HEAD=7f4ae74差分検証OK（daily_pipeline_report.py ruff整形のみ・ロジック変更なし・QA50申し送り解消）。prop100実装確認（config:226 max_total_actions_per_day:100・applier:1649 daily_total_limit_reached・rate_limiter:134）。8/31ログでprop98発動確認（atushi16=104/100・Tankan=108/100・chugaku/kudou=100丁度）。9/1 03:10現在 no_action_window中・audit 9/1エントリ0・パイプライン生存（00:00/03:00正常・セッション6垢OK・proxy dead=1084のみ）。**prop100の9/1 daily_counts検証は9/1終了時まで実施不可** → 最重要継続。 | — | ✅ 検証完了 |
 || 09/01 | — | **Worker確認（v49）: critic第46版確認（新規提案なし）・daily_pipeline_report.py整形取り込み** — critic第46版（02:20再実行）はv45踏襲で新規提案なし。prop101/100/98/99/97/94/93全て実装済・監視継続。作業ツリーの未コミットdiff（daily_pipeline_report.py ruff整形・行折返しのみ・論理変更なし）を別途取り込み。pytest236pass/4skip。AGENTS.md・scripts/kensho-env-audit.*・stack/は別セッション成果物のため未追跡のまま残置（workerスコープ外）。 | 7f4ae74 | ✅ Worker確認完了 |
 ||| 09/01 | — | **critic第46版: 新規提案なし（02:20再実行・v45踏襲）** — 8/31最終レポート（687件）はv45（00:21）で分析済み→prop101は実装（cc846a6）+QA50検証済。9/1 02:20時点で深夜アクション0（audit 9/1エントリなし・no_action_window正常）・orchestrator正常（01:15全セッションOK・02:15 heartbeat）・WiFi watchdog健全（inobase1-4復旧1件・全プロキシ生存）。**prop100の「9/1 daily_countsで100丁度停止」検証は9/1終了時まで実施不可（9/1は開始直後）** → 次QAの最重要継続。BOT0。 | — | ✅ 分析のみ |

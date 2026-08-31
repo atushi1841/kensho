@@ -49,3 +49,51 @@
 
 ### 🟢 軽微
 - **worker: daily_pipeline_report.py の ruff整形差分が未コミット**（1行→複数行のみ・ロジック変更なし）。次回コミット時に対象に含めること。未追跡の AGENTS.md / scripts/kensho-env-audit.* / stack/ は引き続きworkerスコープ外（別セッション成果物）として残置。
+
+---
+
+# QA検証結果: 2026-09-01 (QA51・03:10実行)
+
+## 検証結果
+
+### pytest
+- **236 passed, 4 skipped**（51.44s、test_invisible_playwright.py 除外）
+- 失敗なし。Worker v49 後の回帰なし。
+
+### git状態
+- HEAD = `7f4ae74` docs(worker): v49 critic第46版確認（新規提案なし）・daily_pipeline_report.py整形取り込み（2026-09-01 02:47）
+- 直前: `736bf29`(critic v46) / `8ca6464`(QA50) / `5b09d74`(v48 anchor) / `cc846a6`(prop101)
+- トラッキング差分なし。未追跡のみ: AGENTS.md / scripts/kensho-env-audit.* / stack/（別セッション成果物・workerスコープ外）
+
+### 差分検証（Worker v49）
+- `kensho/tools/daily_pipeline_report.py`: **ruff整形のみ**（real_success dict 定義の行折返し1行→複数行、ロジック変更なし）
+- `reports/improvement-anchor.md`: v49 行の追記のみ
+- **✓ 新規コード実装なし（docsのみ）**。critic第46版「新規提案なし」と整合。QA50申し送り（ruff整形未コミット）が本コミットで解消済みを確認。
+
+### prop100 実装状態（9/1 効果確認の前提）
+- config.yaml:226 `max_total_actions_per_day: 100` ✅
+- applier.py:1649 `daily_total_limit_reached()` 呼び出し（アクション単位チェック・提案100コメントあり）✅
+- rate_limiter.py:134 `def daily_total_limit_reached` ✅
+- 8/31ログ実測: `[LIMIT] atushi16: 日次総量上限到達 (104/100)` / `TankanNotes (108/100)` / `chugakujuken/kudou (100/100)` — **prop98発動・prop100は9/1から本格効果**
+- **9/1 daily_counts での100丁度停止確認は 9/1 終了時まで実施不可**（現在03:10・no_action_window中・audit 9/1エントリ0件）→ 次QAの最重要継続
+
+### パイプライン生存確認（9/1）
+- 00:00/03:00 サイクル正常終了・セッション6垢全OK・no_action_window正常（深夜アクション0）
+- プロキシ: alive=[1081,1082,1083,1085,1089] dead=[1084]（zin 1084 要ユーザー対応継続）
+
+## 改善ノート保存先
+- `reports/daily-improvement-2026-09-01.md`（本ファイルに追記）
+- `reports/improvement-anchor.md` を更新（changes / outcomes / next steps）
+
+## 次回への申し送り
+
+### 🔴 重要
+- **prop100: 9/1 daily_counts で全垢が100丁度で停止することを確認（最重要・継続）** — 8/31は atushi16=104/Tankan=108 とオーバーシュート（prop100未発効）。9/1 07:00以降のバッチから prop100 が発動するため、9/1 終了時に daily_counts で 100丁度停止（atushi16/Tankan 含む全垢≤100）を実測確認すること。
+
+### 🟡 継続
+- **toushiwatch セッション再取得【要ユーザー対応】**
+- **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 03:00 時点で dead 確認）
+- **prop94（hourly≤15）9/1 も継続確認**
+
+### 🟢 軽微
+- なし（QA50申し送りの ruff 整形未コミットは v49 で解消済み）
