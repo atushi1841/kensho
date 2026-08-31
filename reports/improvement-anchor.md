@@ -9,7 +9,7 @@
 ## intent（現在の方向性）
 
 - **Kensho目標**: 各アカウント50〜75件/日をBOT判定されず安定達成
-- **現在のフォーカス**: 提案96（toushiwatch 2日連続0成功・新規垢制限疑い・要ユーザー切り分け） + 提案95（inobase1-4復帰済み・**実装済 + 8/31 24件成功で解決確認**） + 提案94（**8/31 08-13時台 hourly≤15・9/1 00:20最終確定待ち**） + 提案93（code 326自動フォロー停止・稼働中） + 提案83 L/F=95.4%達成✅クローズ + 提案85(chugakujuken【要ユーザー対応】) + 提案89クローズ✅
+- **現在のフォーカス**: 提案97（**toushiwatch真因判明: セッション未認証・check_x_login誤判定・configコメントアウト対応済み・check_x_loginにセッション検証追加**） + 提案96（**クローズ: 真因確定によりprop97へ統合**） + 提案95（**実装済 + 8/31 37件成功で解決確認**） + 提案94（**8/31終日 hourly≤15・9/1 00:20最終確定待ち**） + 提案93（code 326自動フォロー停止・稼働中） + 提案83 L/F=95.4%達成✅クローズ + 提案85(chugakujuken【要ユーザー対応】) + **zin 1084フラッピング【要ユーザー対応】格上げ**
 - **KPI**: 応募成功率80%以上、BOTシグナル0、エラー率20%未満、L/F比率95%以上
 - **制約**: 自宅IPはatushi16のみ。凍結リスクは絶対回避。コストは無料/従量課金のみ
 
@@ -20,6 +20,7 @@
 | 日付 | 提案# | 内容 | コミット | 状態 |
 |------|-------|------|---------|------|
 || 09/01 | — | **Worker確認（v43）: critic第40版（prop96）確認・新規コード実装なし** — prop96は自動側「config変更なし・監視継続」明示＋手動切り分け【要ユーザー対応】のため実装不要と判断。critic更新分（proposal第40版+anchor）をコミット。pytest225pass/4skip。全提案（93/94/95/96）状態良好。 | fced8cc | ✅ Worker確認完了 |
+|| 08/31 | — | **critic第41版: prop97新規（toushiwatch真因判明・check_x_loginセッション検証追加）** — 16:20実測: **toushiwatch 0成功の真因は「新規垢制限」ではなく「セッション未認証」（x_session_toushiwatch.jsonにauth_token/ct0なし・guest cookieのみ）**。check_x_loginはscreen_name付きでプロフィールにgotoし未ログインでも閲覧可→「ログインOK」誤判定→未認証のままアクション連打→no_follow/no_like/RT403→CEILING→FROZEN×5。**config.yamlは15:21に手動コメントアウト済み（未コミット・「セッション再取得後に復帰」注記）**。prop97: check_x_loginにauth_token/ct0セッション検証を追加。prop96は真因確定によりクローズ。zin 1084切断12回/日（16:15再発）→【要ユーザー対応】格上げ。prop94 8/31終日hourly≤15・9/1 00:20確定待ち。BOT0。 | — | 🆕 prop97提案・prop96クローズ |
 || 08/31 | — | **critic第40版: prop96新規（toushiwatch 2日連続0成功）** — 8/31 11-14時台実ログ検証: 全垢hourly≤15（prop94終日稼働）・ib復帰24件（prop95解決）・**toushiwatch 4バッチ全てloginOK→CEILING→FROZEN×5・RT403 empty body（X側ポリシー拒否）・新規垢制限疑い・要ユーザー切り分け**・zin FROZENバースト×5（10:57-11:15・一過性・回復済み）・BOT0 | — | 🆕 prop96提案 |
 | 08/31 | — | **critic第39版: 新規提案なし（第38版踏襲・8/31 08-10時台実ログ検証済み）** | — | ✅ 分析のみ |
 | 08/31 | — | **QA43: 検証完了** — pytest225pass/4skip・HEAD=3d65a9c(Worker v41 docsのみ)・ib/rk除外継続・BOT0・code64/326 0・FROZEN(NetworkError)×4件(一過性・安全機構正常動作)・11:12時点成功123件/失敗14件(89.8%) | — | ✅ 検証完了 |
@@ -48,7 +49,7 @@
 
 | 日付 | 決定 | 理由 |
 |------|------|------|
-| 08/31 | **critic第40版: prop96新規提案（toushiwatch 2日連続0成功）** | 8/31 11-14時台実測でtoushiwatchの**2日連続0成功を確定**（4バッチ全てloginOK→no_follow/no_like/RT403 empty body→CEILING→FROZEN×5）。code64/326なし＝凍結でなく**新規垢のエンゲージメント制限**と判断。RT403 body空はX側ポリシー拒否の特徴。回線は2_povo_AW（前rk引き継ぎ）。【要ユーザー対応】手動ログインで①手動RT/いいね可否 ②メール認証確認を依頼。自動側はCEILINGで無駄dispatch制限済みのためconfig変更なし・監視継続。zin FROZENバースト×5（10:57-11:15）はRT goto Timeoutの一過性・回復済みで監視継続のみ。prop94は8/31 08-13時台hourly≤15確認→9/1 00:20最終確定待ち。 |
+| 08/31 | **critic第41版: prop96クローズ（真因=セッション未認証）→ prop97新規（check_x_loginにauth_token/ct0検証追加）** | 16:20実測でtoushiwatchのx_sessionに**auth_token/ct0が存在せずguest cookieのみ**（他垢はauth_token+ct0保有）＝「新規垢制限」仮説は誤り。check_x_loginがscreen_name付きでプロフィールにgotoするため、未ログインでも閲覧可能→「ログインOK」誤判定→未認証のまま全アクション失敗（no_follow/no_like/RT403 empty body）→CEILING→FROZEN×5。**config.yamlは15:21に手動コメントアウト済み（auth_token/ct0欠落の注記あり・未コミット）**＝応募停止は正しく対応済み。prop97で「セッションファイルにauth_token/ct0が無ければバッチ開始前にSKIP」を実装し再発防止。**zin 1084: 切断12回/日（16:15再発・再接続済み）→【要ユーザー対応】格上げ**（prop85と同系統の物理層）。prop94は8/31終日hourly≤15確認→9/1 00:20確定待ち。BOT0。 |
 | 08/31 | **critic第38版: 新規提案なし（第37版踏襲・8/31早朝追加検証済み）** | 8/30全天622成功・BOT0で全問題が既存提案（prop82-95）でカバー済み。8/31 00-02時台はアクション0・[SKIP]30のみ（深夜休止正常）・inobase1-4/royalkensho除外0件再確認・kudou/zinボタン再発なし。research-agentのScrapling提案は前回判断（保留継続）を踏襲。 |
 | 08/30 | **prop95実装（worker 8b520be）・inobase1-4 config一時除外** | follow_lock期限（22:01:07）切れ後もRT code 326継続（22:19:49実測）→X側ロック未解除。30分毎の無駄dispatch（22:00バッチ=21分・16件ほぼ全SKIP）を止めるためrk方式で除外。CAPTCHA解除確認まで。 |
 | 08/30 | **prop83クローズ確定（L/F=95.4%達成）** | 8/30実測 F174/L166=95.4% ≥95%。8/29 92.3%→95.4%へ改善。like_with_follow_skip 10%＋いいね単独40%の効果実証。 |
@@ -81,15 +82,13 @@
 
 | 優先度 | アクション | 担当 | 期限 | 備考 |
 |--------|-----------|------|------|------|
-| **🔴高** | **prop96: toushiwatch 2日連続0成功 → 手動切り分け【要ユーザー対応】** | ユーザー/QA | 8/31夜〜9/1 | x.com/toushiwatchにログインし①手動RT/いいね可否 ②メール認証済みかを確認。可能なら自動化側・不可なら新規垢制限確定。自動側は監視継続のみ（CEILINGで無駄dispatch制限済み）。 |
-| **🔴高** | **prop94: 8/31 08-13時台 hourly超過0件実測済み → 9/1 00:20全天データで最終確定** | QA | 9/1 00:20 | 8/31 08〜13時台は全垢≤15（prop94稼働✅）。夜バッチ完了後の全天データで超過0件を最終確定。 |
-| **🔴高** | **prop85【要ユーザー対応】: chugakujuken物理対応** | ユーザー | 継続 | watchdog再接続12回/日だが応募は113成功0失敗で安定。 |
-| 🟡中 | **zin FROZENバースト監視** | 監視 | 継続 | 8/31 10:57-11:15に5回（RT goto Timeout 25s・一過性・回復済み・61件成功）。再発3回以上ならpovo/AiR-WiFi_6アダプタ問題として提案化。 |
-| ✅済 | **prop95: inobase1-4復帰** | — | 8/31 | 8/31 24件成功・12:05 FROZEN×1は一過性。解決確定。 |
-| 🟢低 | **kudou/zin ボタン失敗監視** | 監視 | 継続 | 8/30: kudou 11件(12:02-12:21 JST)、zin 8件(20:35-20:52 JST)。1バッチ集中・一過性。再発したら提案化。 |
-| 🟢低 | **FROZEN(NetworkError) 監視** | 監視 | 継続 | QA43既知（8/31 10:57-11:15）。本runでtoushiwatch起因のRT goto Timeout多数確認→prop96に集約。 |
-| 🟢低 | prop83クローズ | — | ✅ | 8/30 L/F=95.4%達成確定。 |
-| 🟢低 | 提案56/68/70/71/76/78/81/82/84/89/91 — クローズ確定 | — | — | 再提案禁止（74のみ） |
+| **🔴高** | **prop97: check_x_loginにauth_token/ct0セッション検証追加（実装）** | worker | 9/1 | check_x_login成功判定前にsession_manager経由でauth_token/ct0クッキー存在を確認。欠落なら「[NG] no_auth_session」でFalse。config.yamlのtoushiwatchコメントアウトをコミット。復帰条件=ブラウザでログイン→auth_token/ct0保存。 |
+| **🔴高** | **prop94: 8/31終日 hourly≤15確認済み → 9/1 00:20全天データで最終確定** | QA | 9/1 00:20 | 8/31 08〜16時台全垢≤15（prop94終日稼働✅）。夜バッチ完了後の全天データで超過0件を最終確定。 |
+| **🔴高** | **zin 1084 フラッピング【要ユーザー対応】格上げ** | ユーザー | 継続 | 切断12回/日（16:15再発）。prop85（1083）と同系統。SSID圏外or電源オフ。テザリング元スマホの電源・WiFi物理確認依頼。 |
+| 🟡中 | **prop85【要ユーザー対応】: chugakujuken物理対応** | ユーザー | 継続 | watchdog再接続12回/日だが応募は85成功0失敗で安定。 |
+| 🟢低 | prop96クローズ（真因確定・対応済み） | — | 8/31 | セッション未認証が真因。configコメントアウト対応済み。prop97に統合。 |
+| 🟢低 | kudou/zin ボタン失敗監視 | 監視 | 継続 | 8/30: kudou 11件(12:02-12:21)、zin 8件(20:35-20:52)。1バッチ集中・一過性。 |
+| 🟢低 | prop94最終確定通知 | — | 9/1 00:20 | 8/31終日hourly≤15確認済み。最終確定後クローズ。 |
 
 ---
 
@@ -97,7 +96,7 @@
 
 | 提案# | 目的 | 実装日 | 効果測定 | 結果 | 状態 |
 |-------|------|--------|---------|------|------|
-| **総合** | **8/31 15:12実測（QA45）** | 08/31 | audit+daily_counts | **成功328件**（Tankan72/chugaku70/atushi16 65/kudou47/zin47/ib27）。**hourly全垢≤15（prop94終日稼働確認・15時台まで）**。**ib復帰継続27件（prop95）**。**toushiwatch 2日連続0成功継続（audit失敗33件・no_like_button14/http_403 11/no_follow_button 6→FROZEN打ち切り・code64/326なし＝prop96）**。zin 47成功/26失敗（11:15 FROZEN×1一過性・1084フラッピング系）。BOT0・最終収集15:11。 | ✅ prop94/95確認・prop96要ユーザー対応継続 |
+| **総合** | **8/31 16:20実測（critic第41版）** | 08/31 | daily_counts+orchestratorログ+session実測 | **8/31成功412件**（chugaku85/Tankan83/atushi16 83/zin67/kudou57/ib37）。hourly全垢≤15（prop94終日稼働✅）。**toushiwatch真因判明: セッション未認証**（x_session_toushiwatch.jsonにauth_token/ct0なし・guest cookieのみ）＝「新規垢制限」は誤り。check_x_login誤判定→未認証のまま失敗連打→FROZEN×5（12:33-14:06）。**config 15:21手動コメントアウト済み**。zin 1084切断12回/日（16:15再発）→【要ユーザー対応】格上げ。FROZEN 14:06以降0件。BOT0。 | 🔴 prop97新規・prop96クローズ・zin格上げ |
 | **総合** | **8/31 14:20実測（critic第40版）** | 08/31 | daily_counts+orchestratorログ | **8/31成功332件**（chugaku70/Tankan71/atushi16 63/zin61/kudou43/ib24）。hourly全垢≤15（prop94終日稼働✅）。**ib復帰24件でprop95解決**。**toushiwatch 2日連続0成功**（4バッチloginOK→CEILING→FROZEN×5・RT403 empty body＝新規垢制限疑い→prop96）。**zin 1084フラッピング検出**（本日再接続7回・失敗2回@11:15/12:00・FROZENバースト5回はNS_ERROR_CONNECTION_REFUSEDと一致・その後回復）。BOT0。 | ⚠️ prop96新規・zin 1084監視 |
 | **総合** | **8/30 全天確定（00:20実測）** | 08/30 | audit JST集計 | **747アクション・622成功（ib60/rk22含む）・BOT0**。F174 RT175 L166・L/F=95.4%✅・5垢全て日次目標超過。hourly超過6箇所は全08-18時台（prop94稼働前）・21時台以降超過0。kudou no_follow_button 11件(12:02-12:21 JSTの1バッチ集中)・監視継続。 | ✅ prop94早期効果確定・prop95稼働中・新規提案なし |
 | **総合** | **8/31 13:10実測（QA44）** | 08/31 | audit+daily_counts | **audit: 成功221件/失敗53件**（うちtoushiwatch 0件・失敗14件を除くと成功率~84%）。Tankan52/atushi16 51/chugaku48/zin31/kudou26/ib13。**inobase1-4復帰確認（13件）**。**toushiwatch初日0件（no_follow_button×4/no_like_button×5/RT403×4→CEILING）**。BOT0・code64/326/403/429 0・hourly全垢≤15・最終収集03:12 | ✅ 検証完了（toushiwatch監視追加） |
@@ -128,12 +127,13 @@
 
 ## 監視対象アラート
 
-- ✅ **prop95: inobase1-4 復帰（CAPTCHA解除）** — 8/31 24件成功（12:05 FROZEN×1は一過性）。**解決確定**。
-- 🔴 **prop96: toushiwatch 2日連続0成功 — 新規提案【要ユーザー対応】** — 4バッチ全てloginOK→no_follow/no_like/RT403 empty body→CEILING→FROZEN×5。code64/326なし＝凍結でなく**新規垢のエンゲージメント制限**の疑い。手動ログインで①手動RT/いいね可否 ②メール認証を確認。自動側は監視継続のみ。
-- 🟡 **zin 1084フラッピング（新規検出）** — 本日再接続7回・失敗2回（@11:15/12:00 SSID圏外or電源オフ）。10:57-11:15のFROZENバースト×5（NS_ERROR_CONNECTION_REFUSED）と一致。その後回復・61件成功。prop85（1083）と同系統の物理層問題の可能性。再発時は【要ユーザー対応】に格上げ。
+- ✅ **prop95: inobase1-4 復帰（CAPTCHA解除）** — 8/31 37件成功（16:20時点）。**解決確定**。
+- 🔴 **prop97: check_x_loginセッション検証追加（新規・高）** — toushiwatch真因=**セッション未認証**（auth_token/ct0欠落）を実測確定。check_x_loginが未ログインでもプロフィール閲覧可で「ログインOK」誤判定→未認証のまま全アクション失敗→FROZEN連発。configは15:21手動コメントアウト済み（未コミット）。worker実装待ち。
+- ✅ **prop96: クローズ** — toushiwatch 0成功の真因確定（セッション未認証）によりprop97へ統合。
+- 🔴 **zin 1084 フラッピング【要ユーザー対応】格上げ** — 本日切断12回（16:15再発・再接続済み）。SSID圏外or電源オフ。prop85（1083）と同系統の物理層問題。テザリング元スマホの電源・WiFi確認をユーザーへ依頼。
 - ✅ **prop93: code 326 自動フォロー停止 — 実環境稼働確認済**
 - 🟢 **prop83（L/F 95%対策）: クローズ確定** — 8/30 L/F=95.4%達成
-- ✅ **prop94: hourly 15件超過 → アクション単位チェック実装済・QA検証済（QA37）** — **8/31 08〜13時台全垢≤15・超過0件（終日稼働）**。9/1 00:20全天データで最終確定
+- ✅ **prop94: hourly 15件超過 → アクション単位チェック実装済・QA検証済（QA37）** — **8/31 08〜16時台全垢≤15・超過0件（終日稼働）**。9/1 00:20全天データで最終確定
 - 🟢 **kudou/zin ボタン失敗監視** — 8/30: kudou 11件(12:02-12:21 JST)、zin 8件(20:35-20:52 JST)。1バッチ集中・一過性。再発で提案化
-- 🟢 **FROZEN(NetworkError) 監視** — QA43既知（8/31 10:57-11:15）→ **本runで原因特定: zin 1084フラッピング（上記）**。toushiwatch起因のRT goto Timeout多数はprop96に集約
-- 🟡 **prop85（chugakujuken 1083）: 【要ユーザー対応】継続** — watchdog再接続12回/日だが応募は113成功0失敗で安定。物理対応待ち
+- 🟢 **FROZEN(NetworkError) 監視** — 14:06以降0件。toushiwatch起因のFROZEN×5はprop97で根本解決（セッション検証）
+- 🟡 **prop85（chugakujuken 1083）: 【要ユーザー対応】継続** — watchdog再接続12回/日だが応募は85成功0失敗で安定。物理対応待ち

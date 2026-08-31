@@ -352,6 +352,55 @@ class TestCheckXLogin:
         assert mock_sleep.call_count == 2
         mock_sleep.assert_has_calls([call(5), call(5)])
 
+    @patch("kensho.application.browser._session_has_auth_cookies", return_value=False)
+    def test_no_auth_session(self, mock_session: MagicMock) -> None:
+        """セッションに auth_token/ct0 がない（prop97）→ goto前に False"""
+        page = MagicMock()
+
+        result = check_x_login(page, log=None, screen_name="toushiwatch")
+
+        mock_session.assert_called_once_with("toushiwatch")
+        page.goto.assert_not_called()
+        assert result is False
+
+    @patch("kensho.application.browser._session_has_auth_cookies", return_value=True)
+    @patch("application.browser.time.sleep")
+    @patch("application.browser.random.uniform")
+    def test_auth_session_present_continues(
+        self, mock_uniform: MagicMock, mock_sleep: MagicMock, mock_session: MagicMock
+    ) -> None:
+        """auth_token/ct0 あり → 通常フロー継続（goto実行）"""
+        page = MagicMock()
+        page.url = "https://x.com/home"
+        page.query_selector.return_value = None
+
+        result = check_x_login(page, log=None, screen_name="kudou")
+
+        page.goto.assert_any_call("https://x.com/home", timeout=30000, wait_until="commit")
+        assert result is True
+
+    def test_session_has_auth_cookies_missing(self) -> None:
+        """_session_has_auth_cookies: guest cookieのみ → False"""
+        data = {"cookies": [{"name": "guest_id", "value": "x"}, {"name": "lang", "value": "ja"}]}
+        with patch("kensho.application.session_manager.get_session_data", return_value=data):
+            from kensho.application.browser import _session_has_auth_cookies
+
+            assert _session_has_auth_cookies("toushiwatch") is False
+
+    def test_session_has_auth_cookies_present(self) -> None:
+        """_session_has_auth_cookies: auth_token+ct0あり → True"""
+        data = {
+            "cookies": [
+                {"name": "auth_token", "value": "x"},
+                {"name": "ct0", "value": "y"},
+                {"name": "lang", "value": "ja"},
+            ]
+        }
+        with patch("kensho.application.session_manager.get_session_data", return_value=data):
+            from kensho.application.browser import _session_has_auth_cookies
+
+            assert _session_has_auth_cookies("kudou") is True
+
 
 # ═══════════════════════════════════════════════════════════════
 # TestCloseBrowser — 3 tests

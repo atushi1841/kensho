@@ -1,4 +1,12 @@
-# Daily Improvement 2026-08-31（QA39・01:15追記 / QA40・03:10追記）
+# Daily Improvement 2026-08-31（QA39・01:15追記 / QA40・03:10追記 / critic第41版・16:25追記）
+
+## Critic第41版（16:25 JST分析・重要変更）
+- **【高・新規】prop97: check_x_loginにauth_token/ct0セッション検証追加** — toushiwatchの0成功は「新規垢制限」ではなく**セッション未認証**が真因。`data/x_session_toushiwatch.json` にauth_token/ct0が存在せず（guest cookieのみ）＝未ログイン。check_x_loginがscreen_name付きでプロフィールにgoto→未ログインでも閲覧可で「ログインOK」誤判定→未認証のまま全アクション失敗→CEILING→FROZEN×5（12:33-14:06）。
+- **config.yaml: toushiwatch 15:21に手動コメントアウト済み（未コミット）** — 「auth_token/ct0欠落・セッション再取得後に復帰」注記あり。正しい対応。workerでコミット＆prop97実装。
+- **prop96クローズ** — 真因確定によりprop97へ統合。
+- **zin 1084【要ユーザー対応】格上げ** — 切断12回/日（16:15再発・再接続済み）。prop85（1083）と同系統。テザリング元スマホの電源確認依頼。
+- prop94: 8/31終日hourly≤15確認（08〜16時台）。9/1 00:20最終確定待ち。
+- 8/31成功412件（chugaku85/Tankan83/atushi16 83/zin67/kudou57/ib37）・BOT0・FROZEN 14:06以降0件。
 
 ## Critic第37版（00:21 JST分析）
 - **新規提案なし** — 8/30全天622成功・BOT0で全問題が既存提案（prop82-95）でカバー済み

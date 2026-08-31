@@ -717,10 +717,42 @@ def create_browser(
     return (pw, browser, ctx, page)
 
 
+def _session_has_auth_cookies(account_key: str) -> bool:
+    """セッションに auth_token/ct0 クッキーが存在するか検証（prop97）。
+
+    toushiwatch事象（2026-08-31）: セッション未認証（guest cookieのみ・auth_token/ct0欠落）のまま
+    check_x_login が「ログインOK」を誤判定 → 未認証のまま全アクション失敗 → FROZEN連発。
+    ここで欠落を事前検出し、バッチ開始前に SKIP させる。
+    """
+    try:
+        from kensho.application.session_manager import get_session_data
+
+        data = get_session_data(account_key)
+    except Exception:
+        return False
+    if not data or not isinstance(data, dict):
+        return False
+    cookies = data.get("cookies", [])
+    if not isinstance(cookies, list):
+        return False
+    names = {c.get("name") for c in cookies if isinstance(c, dict)}
+    return "auth_token" in names and "ct0" in names
+
+
 def check_x_login(page: Any, log: Any = None, screen_name: str | None = None) -> bool:
     """X.comにログイン済みか確認。戻り値: bool"""
     if log:
         log.write("Xにログイン確認中...")
+
+    # ★ prop97: セッション未認証の事前検出（auth_token/ct0欠落）
+    #   toushiwatch: セッションファイルに auth_token/ct0 が無く guest cookieのみ。
+    #   check_x_login が screen_name付きでプロフィール閲覧可なため誤って「ログインOK」を返し、
+    #   未認証のままアクション連打→FROZEN連発を起こしていた。
+    #   screen_name が渡された時のみ検証（アプリ動作と相関）し、欠落なら即 False。
+    if screen_name and not _session_has_auth_cookies(screen_name):
+        if log:
+            log.write(f"[NG] no_auth_session: {screen_name} セッション未認証（auth_token/ct0欠落・要再取得）")
+        return False
 
     page.set_default_timeout(_CHECK_LOGIN_TIMEOUT)
 

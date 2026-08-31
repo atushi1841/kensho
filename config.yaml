@@ -155,25 +155,27 @@ accounts:
 
   # ★ 2026-08-31: royalkensho 凍結（code 64）→ 破棄。後継 @toushiwatch に置換。
   #   アダプタを toushiwatch_airtra1 にリネーム。回線 2_povo_AW(air-tra1/povo) 引き継ぎ。
-  - key: toushiwatch
-    display: "@toushiwatch"
-    session: "data/x_session_toushiwatch.json"
-    disable_reply: true
-    daily_target: 50
-    schedule:
-      collects: false
-      batches:
+  # ★ 2026-08-31 15:21: 応募停止（セッションにauth_token/ct0が無く未ログインのまま失敗アクション続行中）。
+  #   BOT検出リスク回避のためコメントアウト。セッション再取得（ブラウザでログイン→auth_token/ct0保存）後に復帰。
+  # - key: toushiwatch
+  #   display: "@toushiwatch"
+  #   session: "data/x_session_toushiwatch.json"
+  #   disable_reply: true
+  #   daily_target: 50
+  #   schedule:
+  #     collects: false
+  #     batches:
         # 2026-08-31: royal のスケジュールを引き継ぎ（非キリ番・70分間隔・最終22:30以前）
-        - { time: "09:46", max: 15 }
-        - { time: "11:03", max: 15 }
-        - { time: "12:31", max: 15 }
-        - { time: "13:58", max: 15 }
-        - { time: "15:22", max: 15 }
-        - { time: "16:47", max: 15 }
-        - { time: "18:07", max: 15 }
-        - { time: "19:29", max: 15 }
-        - { time: "21:05", max: 15 }
-        - { time: "22:21", max: 15 }
+        # - { time: "09:46", max: 15 }
+        # - { time: "11:03", max: 15 }
+        # - { time: "12:31", max: 15 }
+        # - { time: "13:58", max: 15 }
+        # - { time: "15:22", max: 15 }
+        # - { time: "16:47", max: 15 }
+        # - { time: "18:07", max: 15 }
+        # - { time: "19:29", max: 15 }
+        # - { time: "21:05", max: 15 }
+        # - { time: "22:21", max: 15 }
 
 # ── 収集設定 ──
 collection:
