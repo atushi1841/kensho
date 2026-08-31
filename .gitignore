@@ -101,3 +101,4 @@ kensho/data/
 kensho/application/transaction_pairs.json
 .hermes_backup_rtfix/
 data/*.bak_*
+config.yaml.bak_*
