@@ -19,7 +19,8 @@
 
 | 日付 | 提案# | 内容 | コミット | 状態 |
 |------|-------|------|---------|------|
-| 08/31 | — | **Worker実装（v45）: prop98 + prop99 実装完了** — prop98: `rate_limits.max_total_actions_per_day: 100` をconfig/config.py/rate_limiter.pyに追加（check_rate_limitで総量=follow+rt+like+reply が100超で打ち止め・旧config互換=0で無効・既存種別上限不変）。テスト3件追加（超過/未満/無効）。prop99: check_proxies.pyに `--asn` 追加（ipinfo.io `GET /json` 経由で各プロキシ出口ASN取得・EXPECTED_ASNと部分一致検証）。実測: kudou/chugaku/inobase/toushiwatch=AS2516 KDDI・Tankan=AS17676 SoftBank（ワイモバイル・期待値修正）・atushi16=AS2527 Sony・zin 1084不通。pytest232pass/4skip。 | コミット中 | 🟢 実装済・コミット未 |
+|| 08/31 | — | **Worker実装（v45）: prop98 + prop99 実装完了** — prop98: `rate_limits.max_total_actions_per_day: 100` をconfig/config.py/rate_limiter.pyに追加（check_rate_limitで総量=follow+rt+like+reply が100超で打ち止め・旧config互換=0で無効・既存種別上限不変）。テスト3件追加（超過/未満/無効）。prop99: check_proxies.pyに `--asn` 追加（ipinfo.io `GET /json` 経由で各プロキシ出口ASN取得・EXPECTED_ASNと部分一致検証）。実測: kudou/chugaku/inobase/toushiwatch=AS2516 KDDI・Tankan=AS17676 SoftBank（ワイモバイル・期待値修正）・atushi16=AS2527 Sony・zin 1084不通。pytest232pass/4skip。 | dc585c8 | 🟢 **実装済・コミット済** |
+|| 08/31 | — | **QA47: 検証完了（worker v45: prop98/prop99）** — pytest232pass/4skip・HEAD=dc585c8差分検証OK（prop98: config+rate_limiter+テスト3件 / prop99: check_proxies --asn実動作確認）。ASN実測: KDDI系4垢一致・Tankan SoftBank・atushi16 Sony・toushiwatch KDDI（生存確認）。zin 1084不通（既知）。**prop98の実環境発動は9/1から確認**（8/31 daily_countsでatushi16=104/Tankan=108が100超で実行継続・19:00バッチはコミット直後のためLIMIT未発動）。BOT0・code64/326 0。 | — | ✅ 検証完了 |
 | 09/01 | — | **critic第42版: prop98新規（日次総量キャップ100件）+ prop99新規（出口IP/ASN検証）** — 8/30全天712件分析: **kudou 126/chugaku 113/zin 110/atushi16 118がKPI上限100超**（過剰応募）。現configは種別上限のみで日次総量キャップなし（理論上430件/日）。research-agent(8/31)「過剰エンゲージメント=deboost・摘発強化」と整合させるためmax_total_actions_per_day:100追加（configのみ・既存上限不変）。prop99はASN検証（ipinfo.io無料API・週次・誤SSID接続によるIP分離崩壊の早期検出）。prop97はQA46検証済・toushiwatch復帰=要ユーザー対応。BOT0。 | — | 🆕 prop98/99提案 |
 |||| 09/01 | — | **Worker実装（v44）: prop97 実装完了** — `_session_has_auth_cookies()` 新設（session_manager経由でauth_token/ct0存在検証）＋ check_x_login が screen_name 指定時に goto 前に検証。欠落なら `[NG] no_auth_session` で即False（未認証のまま誤「ログインOK」→アクション連打→FROZEN連発を根本防止）。config.yamlのtoushiwatchコメントアウト（15:21手動）をコミット。テスト5件追加。pytest229pass/4skip。 | fb34540 | 🟢 **実装済・コミット済** |
 ||| 09/01 | — | **Worker確認（v43）: critic第40版（prop96）確認・新規コード実装なし** — prop96は自動側「config変更なし・監視継続」明示＋手動切り分け【要ユーザー対応】のため実装不要と判断。critic更新分（proposal第40版+anchor）をコミット。pytest225pass/4skip。全提案（93/94/95/96）状態良好。 | fced8cc | ✅ Worker確認完了 |
@@ -85,11 +86,11 @@
 
 | 優先度 | アクション | 担当 | 期限 | 備考 |
 |--------|-----------|------|------|------|
-||| **🔴高** | **prop98: 日次総量キャップ100件 ✅実装済（worker v45）** | QA | 9/1 | config+rate_limiter実装済・テスト3件追加・pytest232pass。QA46以降で実環境確認。 |
-||| **🔴高** | **toushiwatch セッション再取得【要ユーザー対応】** | ユーザー | 継続 | prop97 QA検証完了（実装適切・誤SKIPなし）。復帰条件=ブラウザでtoushiwatchにログイン→auth_token/ct0保存→configコメント解除。 |
-||| **🔴高** | **prop94: 8/31終日 hourly≤15確認済み → 9/1 00:20全天データで最終確定** | QA | 9/1 00:20 | 8/31 08〜18時台全垢≤15（prop94終日稼働✅）。夜バッチ完了後の全天データで超過0件を最終確定。 |
-||| **🔴高** | **zin 1084 フラッピング【要ユーザー対応】格上げ** | ユーザー | 継続 | 切断12回/日（16:15再発）。prop85（1083）と同系統。SSID圏外or電源オフ。テザリング元スマホの電源・WiFi物理確認依頼。 |
-||| 🟡中 | **prop99: 出口IP/ASN検証 ✅実装済（worker v45）** | QA | 9/2 | check_proxies.pyに`--asn`追加（ipinfo.io・EXPECTED_ASN照合）。実測: KDDI系4垢一致・Tankan SoftBank（ワイモバイル）・atushi16 Sony（自宅）。週次cronは任意。 |
+|| **🔴高** | **prop98: 日次総量キャップ100件 ✅QA47検証完了（実環境効果は9/1確認）** | QA | 9/1 | config+rate_limiter実装済・テスト3件追加・pytest232pass。差分検証OK。**8/31はコミット直後のためLIMIT未発動（atushi16=104/Tankan=108が100超で実行継続）→ 9/1 daily_countsで100超が止まることを確認。** |
+|| **🔴高** | **toushiwatch セッション再取得【要ユーザー対応】** | ユーザー | 継続 | prop97 QA検証完了（実装適切・誤SKIPなし）。復帰条件=ブラウザでtoushiwatchにログイン→auth_token/ct0保存→configコメント解除。 |
+|| **🔴高** | **prop94: 8/31終日 hourly≤15確認済み → 9/1 00:20全天データで最終確定** | QA | 9/1 00:20 | 8/31 08〜18時台全垢≤15（prop94終日稼働✅）。夜バッチ完了後の全天データで超過0件を最終確定。 |
+|| **🔴高** | **zin 1084 フラッピング【要ユーザー対応】格上げ** | ユーザー | 継続 | 切断12回/日（16:15再発）。prop85（1083）と同系統。SSID圏外or電源オフ。テザリング元スマホの電源・WiFi物理確認依頼。 |
+|| 🟡中 | **prop99: 出口IP/ASN検証 ✅QA47検証完了（差分+ASN実動作確認）** | — | 済 | check_proxies `--asn` 実測: KDDI系4垢一致・Tankan SoftBank・atushi16 Sony・toushiwatch KDDI・zin 1084不通（既知）。週次cron化は任意。 |
 ||| 🟡中 | **prop85【要ユーザー対応】: chugakujuken物理対応** | ユーザー | 継続 | watchdog再接続12回/日だが応募は85成功0失敗で安定。 |
 ||| 🟢低 | kudou/zin ボタン失敗監視 | 監視 | 継続 | 8/30: kudou 11件(12:02-12:21)。8/31再発なし（54成功）。再発で提案化。 |
 ||| 🟢低 | x_session_royalkensho.json 削除（任意） | — | 任意 | 凍結垢の残存ファイル・実害なし。config.yaml.bak_20260831_152136も任意で.gitignore。 |
@@ -127,15 +128,15 @@
 | **85** | **chugakujuken フラッピング** | — | 22:30 | **watchdog再接続12回/日**（閾値3回超）→【要ユーザー対応】 | 🟡 要対応 |
 | **76** | **Error 226検知** | 08/29 | 全日 | automation_block.jsonなし=未発火（正常） | ✅ 稼働中 |
 || **81** | **state.pyメタ永続化** | 08/29 | 19:09 | new_items_by_source dict残存確認 | ✅ 確定 |
-|| **98** | **日次総量キャップ100件** | 08/31 | v45実装 | config/config.py/rate_limiter実装・テスト3件追加・pytest232pass。既存種別上限不変・旧config互換=0無効。総量=follow+rt+like+reply≥100で打ち止め。 | 🟢 実装済（worker v45） |
-|| **99** | **出口IP/ASN検証** | 08/31 | v45実装 | check_proxies `--asn` 追加。ipinfo.io `GET /json` 経由で各プロキシ出口ASN取得・EXPECTED_ASN部分一致検証。実測: KDDI系4垢一致・Tankan SoftBank（ワイモバイル）・atushi16 Sony（自宅）。 | 🟢 実装済（worker v45） |
+||| **98** | **日次総量キャップ100件** | 08/31 | v45実装→QA47検証 | config/config.py/rate_limiter実装・テスト3件追加・pytest232pass。既存種別上限不変・旧config互換=0無効。総量=follow+rt+like+reply≥100で打ち止め。**QA47差分検証OK。8/31はコミット直後でLIMIT未発動（atushi16=104/Tankan=108）→ 9/1 daily_countsで効果確認。** | 🟢 実装済・QA47検証済（実環境効果は9/1確認） |
+||| **99** | **出口IP/ASN検証** | 08/31 | v45実装→QA47実測 | check_proxies `--asn` 追加。ipinfo.io `GET /json` 経由で各プロキシ出口ASN取得・EXPECTED_ASN部分一致検証。**QA47実測: kudou/chugaku/inobase/toushiwatch=AS2516 KDDI・Tankan=AS17676 SoftBank・atushi16=AS2527 Sony（非チェック）・zin 1084不通（既知）**。誤SSID接続によるIP分離崩壊の早期検出。 | 🟢 実装済・QA47検証済（ASN実動作確認） |
 
 ---
 
 ## 監視対象アラート
 
-- ✅ **prop98: 日次総量キャップ100件【実装済（worker v45）】** — config/rate_limiter実装・テスト3件追加・pytest232pass。8/30でkudou 126等KPI上限超の垢が打ち止めされる。QA実環境確認待ち。
-- ✅ **prop99: 出口IP/ASN検証【実装済（worker v45）】** — check_proxies `--asn` 追加。実測: KDDI系4垢一致・Tankan SoftBank・atushi16 Sony（自宅）。週次cron化は任意。
+- ✅ **prop98: 日次総量キャップ100件【QA47検証完了・実環境効果は9/1確認】** — config/rate_limiter実装・テスト3件追加・pytest232pass・差分検証OK。8/30でkudou 126等KPI上限超の垢が打ち止めされる。**8/31はコミット直後でLIMIT未発動（atushi16=104/Tankan=108）→ 9/1 daily_countsで100超が止まることを確認。**
+- ✅ **prop99: 出口IP/ASN検証【QA47検証完了・ASN実動作確認】** — check_proxies `--asn` 実測: KDDI系4垢一致・Tankan SoftBank・atushi16 Sony・toushiwatch KDDI・zin 1084不通（既知）。週次cron化は任意。
 - ✅ **prop97: check_x_loginセッション検証（QA46検証完了）** — toushiwatch真因=**セッション未認証**（auth_token/ct0欠落）を実測確定。`_session_has_auth_cookies()` 実装・テスト5件・configコメントアウトコミット（fb34540）を差分確認OK。**セッション実測でtoushiwatchのみ欠落・アクティブ6垢は全て認証済み（誤SKIPなし）**。復帰は要ユーザー対応（ブラウザログイン→auth_token/ct0保存）。
 - ✅ **prop96: クローズ** — toushiwatch 0成功の真因確定（セッション未認証）によりprop97へ統合。
 - 🔴 **zin 1084 フラッピング【要ユーザー対応】格上げ** — 本日切断12回（16:15再発・再接続済み）。SSID圏外or電源オフ。prop85（1083）と同系統の物理層問題。テザリング元スマホの電源・WiFi確認をユーザーへ依頼。

@@ -1,4 +1,17 @@
-# Daily Improvement 2026-08-31（QA39・01:15追記 / QA40・03:10追記 / critic第41版・16:25追記）
+# Daily Improvement 2026-08-31（QA39・01:15追記 / QA40・03:10追記 / critic第41版・16:25追記 / QA47・19:15追記）
+
+## QA47検証結果（19:15 JST・worker v45: prop98/prop99検証）
+- **pytest: 232 passed, 4 skipped**（52.57s。回帰なし・Worker主張と一致）✓
+- **git log**: HEAD=dc585c8（**worker v45: prop98/prop99実装コミット** 18:59）← 4391019（QA46）← fb34540（prop97）。前回QA46から**新規コード実装あり**（8ファイル・204+/57-）
+- **Worker差分検証（dc585c8）**: 提案内容と一致 ✓
+  - **prop98（日次総量キャップ100件）**: config.yaml `max_total_actions_per_day: 100` 追加 / rate_limiter.py check_rate_limitに総量チェック（`total=f+r+lk+rep >= max_total` でLIMIT・`max_total=0`で無効＝旧config互換・既存種別上限不変） / config.py RateLimitConfigにフィールド追加。テスト3件追加（超過/未満/無効）— カバレッジ適切
+  - **prop99（出口IP/ASN検証）**: check_proxies.pyに `EXPECTED_ASN` 辞書（atushi16=空/KDDI×4/楽天/SoftBank）+ `_fetch_asn()`（SOCKS5経由 ipinfo.io `/json`）+ `--asn` フラグ。デフォルトのapi.ipify.orgチェックは不変でASNはオプション追加
+- **実環境確認（19:15・check_proxies.py --asn実測）**:
+  - **ASN検証が実動作**: kudou=AS2516 KDDI ✅ / chugakujuken=AS2516 KDDI ✅ / TankanNotes=AS17676 SoftBank ✅（ワイモバイル期待値どおり） / inobase1-4=AS2516 KDDI ✅ / atushi16=AS2527 Sony（自宅・非チェック対象） / toushiwatch=AS2516 KDDI（config除外中だがプロキシ生存・期待値どおり）
+  - **zin 1084 不通**（既知のフラッピング・要ユーザー対応継続。ASN未取得は正常）
+  - **prop98の実環境発動は9/1から**: 今日のdaily_countsでatushi16=104（F38/R35/L31）・TankanNotes=108（F35/R38/L35）が既に100超で実行継続。19:00バッチ開始（19:00:10）がコミット（18:59:03）と近接し、LIMITログ（「日次総量」）は今日のログに未出現 → **コミット以降の新規orchestratorプロセスから反映。9/1のdaily_countsで100超が止まることを確認する**
+  - BOTシグナル0・code64/326 0 ✓・パイプライン正常（19:13ログ更新・collected.json保存1130件・19:00バッチ13+14成功）
+- **申し送り**: prop98/99はQA検証完了（差分+テスト+ASN実動作確認）。**prop98の実環境効果は9/1 daily_countsで確認**（100超が止まるか）。toushiwatch復帰=ブラウザログイン→auth_token/ct0保存（要ユーザー対応）。prop94最終確定は9/1 00:20。zin 1084【要ユーザー対応】継続。
 
 ## Critic第41版（16:25 JST分析・重要変更）
 - **【高・新規】prop97: check_x_loginにauth_token/ct0セッション検証追加** — toushiwatchの0成功は「新規垢制限」ではなく**セッション未認証**が真因。`data/x_session_toushiwatch.json` にauth_token/ct0が存在せず（guest cookieのみ）＝未ログイン。check_x_loginがscreen_name付きでプロフィールにgoto→未ログインでも閲覧可で「ログインOK」誤判定→未認証のまま全アクション失敗→CEILING→FROZEN×5（12:33-14:06）。
