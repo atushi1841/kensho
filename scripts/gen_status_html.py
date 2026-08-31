@@ -22,11 +22,11 @@ ACCOUNT_ADAPTERS = {
         "ワイモバイル",
     ),  # 2026-08-27: povo HR01(2_povo_tankan)から切替。アダプタ名もWi-Fi→Tankan_HR01にリネーム
     "inobase1-4": ("inobase1-4", "ino1_4_oppo_r5a", "povo"),
-    "royalkensho": (
-        "royalkensho_airtra1",
+    "toushiwatch": (
+        "toushiwatch_airtra1",
         "2_povo_AW",
         "povo",
-    ),  # 2026-08-28: 旧zin_6_Gal_S10→リネーム。air-tra1モバイルWiFi
+    ),  # 2026-08-31: royal破棄→toushiwatch。air-tra1モバイルWiFi
 }
 
 # UNUSED（応募停止済み）: cron再生成でも維持されるようハードコード（2026-08-17）

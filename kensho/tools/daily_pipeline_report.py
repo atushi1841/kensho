@@ -25,7 +25,7 @@ AUDIT_PATH = ROOT / "data" / "audit.jsonl"
 COUNTS_PATH = ROOT / "data" / "daily_counts.json"
 CONFIG_PATH = ROOT / "config.yaml"
 
-ACCOUNTS = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4", "royalkensho"]
+ACCOUNTS = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4", "toushiwatch"]
 DEFAULT_TARGET = {
     "atushi16": 75,
     "kudou": 50,
@@ -33,7 +33,7 @@ DEFAULT_TARGET = {
     "zin20120731": 50,
     "TankanNotes": 50,
     "inobase1-4": 50,
-    "royalkensho": 50,
+    "toushiwatch": 50,
 }
 
 JST = datetime.timezone(datetime.timedelta(hours=9))

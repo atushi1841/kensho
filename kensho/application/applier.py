@@ -1014,7 +1014,7 @@ def apply_for_account(
                         "zin20120731",
                         "TankanNotes",
                         "inobase1-4",
-                        "royalkensho",
+                        "toushiwatch",
                     }  # 2026-08-27: povo低速垢も追加
                     if account_key in _fixupx_accounts:
                         out("  [FIXUPX] 低速回線: fixupx.comでテキスト取得試行...")
@@ -1057,7 +1057,7 @@ def apply_for_account(
                         "zin20120731",
                         "TankanNotes",
                         "inobase1-4",
-                        "royalkensho",
+                        "toushiwatch",
                     }  # 2026-08-27: povo低速垢も追加
                     if account_key in _fixupx_accounts:
                         out("  [SKIP] 低速回線: goto不可（180秒以内にページ読み込み完了しない）→ 次アイテムへ")
@@ -1073,7 +1073,7 @@ def apply_for_account(
                         "zin20120731",
                         "TankanNotes",
                         "inobase1-4",
-                        "royalkensho",
+                        "toushiwatch",
                     }
                     _is_fast = account_key in _fast_accounts
                     _is_slow = account_key in _slow_accounts

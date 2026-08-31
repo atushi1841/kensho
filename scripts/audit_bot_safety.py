@@ -28,7 +28,7 @@ import sys
 from datetime import timedelta, timezone
 from pathlib import Path
 
-ACCOUNTS = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4", "royalkensho"]
+ACCOUNTS = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4", "toushiwatch"]
 AUDIT_PATH = Path(__file__).resolve().parent.parent / "data" / "audit.jsonl"
 CONFIG_PATH = Path(__file__).resolve().parent.parent / "config.yaml"
 STATE_PATH = Path(__file__).resolve().parent.parent / "data" / ".audit_bot_safety_state.json"

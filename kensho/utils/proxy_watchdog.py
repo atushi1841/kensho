@@ -29,7 +29,7 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
     #   8/28 22:19-22:23 に1回フラップ（自己復旧・POVO系テザリング一時不安定）。
     #   頻発（1日2回以上）する場合は要ユーザー対応（提案49方式）へ格上げ。
     "inobase1-4": (1089, "inobase1-4"),
-    "royalkensho": (1087, "royalkensho_airtra1"),  # 2026-08-28: 旧zin_6_Gal_S10→リネーム。2_povo_AW(air-tra1/povo)
+    "toushiwatch": (1087, "toushiwatch_airtra1"),  # 2026-08-31: royal破棄→toushiwatch。2_povo_AW(air-tra1/povo)
 }
 
 # ── WiFi SSID マップ（自動再接続用）──
@@ -40,7 +40,7 @@ WIFI_SSID_MAP: dict[str, str] = {
     "zin20120731": "AiR-WiFi_6_povo",
     "TankanNotes": "10_ymo_HR01",
     "inobase1-4": "ino1_4_oppo_r5a",
-    "royalkensho": "2_povo_AW",  # 2026-08-27: air-tra1 / povo無料回線
+    "toushiwatch": "2_povo_AW",  # 2026-08-31: royal破棄→toushiwatch転用
 }
 
 PROXY_HOST = "172.26.80.1"
