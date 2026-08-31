@@ -61,3 +61,16 @@
   - 最終収集03:12（深夜収集正常）✓
   - prop94効果確定は8/31全天バッチ完了後（9/1 00:20頃）まで待機
 - **申し送り**: 前回QA41から変更なし。inobase1-4 CAPTCHA解除待ち継続。prop94夜確定待ち。
+
+## QA43検証結果（11:14 JST）
+- **pytest: 225 passed, 4 skipped**（45.99s。回帰なし）✓
+- **git log**: HEAD=3d65a9c（docs(worker): v41 critic第39版確認 + pytest225pass + 全提案状態良好を記録）。前回QA42（1718e89）から**新規コード変更なし**（コミットはreports/2ファイルのみ：critic_proposal + improvement-anchor）。作業ツリーに未コミットのドキュメント編集あり（critic_proposal_2026-08-31.md第39版）✓
+- **Worker実装検証**: Workerコミット（3d65a9c）はdocs記録のみで新規実装なし。critic第39版「新規提案なし」方針と一致 ✓
+- **実環境確認（11:14）**:
+  - 8/31 11:12時点audit: **成功123件 / 失敗14件（成功率89.8%）** follow41 rt44 like38（バッチ稼働継続中・正常）
+  - daily_counts hourly: 全垢≤15（chugaku 08=15/10=15, atushi16 10=15, kudou 10=15, Tankan 09=15 — prop94厳格稼働）✓ [LIMIT]18件発動
+  - **BOTシグナル0**（audit_bot_safety --today: 「BOTシグナルなし」）✓
+  - code 64/326 0件 ✓・inobase1-4/royalkensho 出現0件（除外継続）✓
+  - **新規観測: [FROZEN]連続失敗3回×4件（10:57/11:03/11:07/11:12）** — 原因はHTTP 0 NetworkError + NS_ERROR_CONNECTION_REFUSED（ネットワーク一過性）。**code 64/326ではない＝凍結ではない**。提案90/91のFROZEN_ABORT（連続失敗検出→即中断）機構が期待通り動作。次バッチで自然回復見込み。監視継続。
+  - 最終収集03:12（深夜収集正常）✓
+- **申し送り**: inobase1-4 CAPTCHA解除待ち継続。prop94最終確定は9/1 00:20（8/31全天データ）待ち。**FROZEN(NetworkError)×4件の監視追加** — 特定アダプタ/プロキシの一時的な接続問題の可能性。再発で提案化検討。
