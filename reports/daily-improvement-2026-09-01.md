@@ -141,3 +141,47 @@
 
 ### 🟢 軽微
 - なし
+
+---
+
+# QA検証結果: 2026-09-01 (QA53・07:15実行)
+
+## 検証結果
+
+### pytest
+- **236 passed, 4 skipped**（41.37s、test_invisible_playwright.py 除外）
+- 失敗なし。Worker v51 後の回帰なし。
+
+### git状態
+- HEAD = `9fa5bab` fix(anchor): v51 commit hash da88fff（2026-09-01 06:49）
+- 実装コミット = `da88fff` docs(worker): v51 critic第48版確認（新規提案なし）・pytest236pass/4skip（06:48）
+- 直前 = `72fcffe`(critic v47) / `e1cc39e`(QA52 anchor) / `89b7c40`(worker v50)
+- 未追跡のみ: AGENTS.md / CODEBASE.md / scripts/kensho-env-audit.* / stack/（別セッション成果物・workerスコープ外）
+
+### 差分検証（Worker v51）
+- `9fa5bab`: `reports/improvement-anchor.md` の1行修正のみ（Worker確認(v51)行のコミットhash `コミット予定`→`da88fff`）— **ロジック変更なし**
+- `da88fff`: `critic_proposal_2026-09-01.md` 第47版→第48版更新（エグゼクティブサマリーを9/1 06:22実測ベースに刷新・新規提案0件） + `improvement-anchor.md` 1行追加 — **docsのみ・新規コード実装なし**
+- **✓ 実装内容を確認済み**。critic第48版「新規提案なし」と完全に整合。
+
+### パイプライン生存確認（9/1 07:15）
+- 07:00サイクル正常終了（日次サマリー生成済・[PROXY-CHECK] alive=[1081,1082,1083,1085,1089] dead=[1084] restored=0）
+- プロキシ: 1081=219.104.132.236 / 1082=106.146.18.98 / 1083=106.146.14.18 / 1085=126.133.204.225 / 1089=106.146.14.81 生存・**1084のみ不通（zin 要ユーザー対応継続）**
+- daily_counts 9/1は未生成（date=2026-08-31のまま）— **9/1初回バッチは08:15開始のため正常**。prop100の100丁度検証は本日終了時まで実施不可
+
+## 改善ノート保存先
+- `reports/daily-improvement-2026-09-01.md`（本ファイルに追記）
+- `reports/improvement-anchor.md` を更新（changes / outcomes / next steps）
+
+## 次回への申し送り
+
+### 🔴 重要
+- **prop100: 9/1 daily_counts で全垢が100丁度で停止することを確認（最重要・継続）** — 8/31は atushi16=104/Tankan=108 とオーバーシュート（prop100未発効）。9/1 07:15現在 daily_counts未生成（初回バッチ08:15から）。9/1 終了時に daily_counts で 100丁度停止（全垢≤100）を実測確認すること。
+
+### 🟡 継続
+- **toushiwatch セッション再取得【要ユーザー対応】**
+- **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 07:00 時点で dead 確認）
+- **prop94（hourly≤15）9/1 も継続確認**
+- **applied復元漏れ（atushi16 22件）監視** — 復元cron（07:50）動作確認継続
+
+### 🟢 軽微
+- なし
