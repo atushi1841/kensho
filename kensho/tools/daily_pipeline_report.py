@@ -80,6 +80,7 @@ def main() -> int:
     errs: collections.Counter = collections.Counter()  # error -> n
     acct_errs: dict[str, collections.Counter] = collections.defaultdict(collections.Counter)
     hourly: collections.Counter = collections.Counter()
+    real_success: dict[str, collections.Counter] = collections.defaultdict(collections.Counter)  # acct -> action -> n（already_*除外）
     total_actions = 0
 
     if AUDIT_PATH.exists():
@@ -108,7 +109,13 @@ def main() -> int:
                     errs[e] += 1
                     acct_errs[acct][e] += 1
                 if st == "success":
+                    reason = r.get("reason", "") or ""
+                    if reason.startswith("already_"):
+                        # already_liked/already_retweeted は新規アクションを伴わないため
+                        # 成功・時間帯集計から除外（prop101, 2026-09-01）
+                        continue
                     hourly[(acct, jst.strftime("%H"))] += 1
+                    real_success[acct][act] += 1
 
     # ── 出力 ──
     print(f"# Kensho パイプライン日次レポート: {date_s}")
@@ -121,14 +128,15 @@ def main() -> int:
     print("|---|---|---|---|---|---|---|---|---|")
     for acct in ACCOUNTS:
         c = by_acct[acct]
-        succ = sum(n for (a, s), n in c.items() if s == "success")
+        rs = real_success[acct]
+        succ = sum(rs.values())
         fail = sum(n for (a, s), n in c.items() if s == "failed")
         tgt = targets.get(acct, 50)
         rate = f"{succ / tgt * 100:.0f}%" if tgt else "-"
-        fl = c.get(("follow", "success"), 0)
-        rt = c.get(("rt", "success"), 0)
-        lk = c.get(("like", "success"), 0)
-        rp = c.get(("reply", "success"), 0)
+        fl = rs.get("follow", 0)
+        rt = rs.get("rt", 0)
+        lk = rs.get("like", 0)
+        rp = rs.get("reply", 0)
         flag = " ⚠️" if succ < tgt * 0.5 else ""
         print(f"| {acct} | {tgt} | {fl} | {rt} | {lk} | {rp} | {succ} | {fail} | {rate}{flag} |")
 
@@ -215,7 +223,7 @@ def main() -> int:
                 if isinstance(a, dict) and a.get("key") == acct:
                     batches = (a.get("schedule", {}) or {}).get("batches", []) or []
         n_batches = len(batches)
-        succ = sum(n for (act, s), n in by_acct[acct].items() if s == "success")
+        succ = sum(real_success[acct].values())
         planned = targets.get(acct, 50)  # 日次目標（daily_target or デフォルト）
         if planned:
             rate = f"{succ / planned * 100:.0f}%"
@@ -233,7 +241,7 @@ def main() -> int:
             col = json.loads(col_path.read_text(encoding="utf-8"))
             items = col.get("collected", []) if isinstance(col, dict) else []
             n_new = col.get("new_items_processed", 0) if isinstance(col, dict) else 0
-            succ_all = sum(n for a in ACCOUNTS for (act, s), n in by_acct[a].items() if s == "success")
+            succ_all = sum(sum(rs.values()) for a, rs in real_success.items() if a in ACCOUNTS)
             if items:
                 print(f"- 収集ツイート数: {len(items)}件（新規処理: {n_new}件）")
                 print(f"- 全垢応募成功合計: {succ_all}件 → 変換率: {succ_all / len(items) * 100:.1f}%")
