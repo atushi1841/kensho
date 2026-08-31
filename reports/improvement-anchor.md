@@ -9,7 +9,7 @@
 ## intent（現在の方向性）
 
 - **Kensho目標**: 各アカウント50〜75件/日をBOT判定されず安定達成
-- **現在のフォーカス**: 提案100（**実装済 9ad3bb5・9/1 daily_countsで100丁度確認待ち**） + 提案98（**日次総量キャップ100件・8/31 19時台から発動済・オーバーシュート解消はprop100**） + 提案99（**出口IP/ASN検証・QA47検証済**） + 提案97（**実装済 fb34540・QA46検証済・toushiwatch復帰は要ユーザー対応**） + 提案96（**クローズ: 真因確定によりprop97へ統合**） + 提案95（**実装済 + 8/31 37件成功で解決確認**） + 提案94（**8/31終日 hourly≤15・9/1 00:20最終確定待ち**） + 提案93（code 326自動フォロー停止・稼働中） + 提案83 L/F=95.4%達成✅クローズ + 提案85(chugakujuken【要ユーザー対応】) + **zin 1084フラッピング【要ユーザー対応】格上げ**
+- **現在のフォーカス**: 提案100（**実装済 6087bd9・9/1 daily_countsで100丁度確認待ち**） + 提案98（**日次総量キャップ100件・8/31 19時台から発動済・オーバーシュート解消はprop100**） + 提案99（**出口IP/ASN検証・QA47検証済**） + 提案97（**実装済 fb34540・QA46検証済・toushiwatch復帰は要ユーザー対応**） + 提案96（**クローズ: 真因確定によりprop97へ統合**） + 提案95（**実装済 + 8/31 37件成功で解決確認**） + 提案94（**8/31終日 hourly≤15・9/1 00:20最終確定待ち**） + 提案93（code 326自動フォロー停止・稼働中） + 提案83 L/F=95.4%達成✅クローズ + 提案85(chugakujuken【要ユーザー対応】) + **zin 1084フラッピング【要ユーザー対応】格上げ**
 - **KPI**: 応募成功率80%以上、BOTシグナル0、エラー率20%未満、L/F比率95%以上
 - **制約**: 自宅IPはatushi16のみ。凍結リスクは絶対回避。コストは無料/従量課金のみ
 
@@ -19,7 +19,7 @@
 
 | 日付 | 提案# | 内容 | コミット | 状態 |
 |------|-------|------|---------|------|
-|| 08/31 | — | **Worker実装（v47）: prop100 実装完了** — `daily_total_limit_reached()` をrate_limiter.pyに追加（総量=follow+rt+like+reply が max_total_actions_per_day 以上でTrue・0=無効の旧config互換）。applier.py のaction_queueループ内で各アクション実行前に呼び出し、上限到達なら残りアクションをスキップ（prop94 hourlyと同構造・提案100）。テスト4件追加（未満/ちょうど/超過/無効）。pytest236pass/4skip。9/1 daily_countsで100丁度で止まることを確認。 | 9ad3bb5 | 🟢 **実装済・コミット済** |
+|| 08/31 | — | **Worker実装（v47）: prop100 実装完了** — `daily_total_limit_reached()` をrate_limiter.pyに追加（総量=follow+rt+like+reply が max_total_actions_per_day 以上でTrue・0=無効の旧config互換）。applier.py のaction_queueループ内で各アクション実行前に呼び出し、上限到達なら残りアクションをスキップ（prop94 hourlyと同構造・提案100）。テスト4件追加（未満/ちょうど/超過/無効）。pytest236pass/4skip。9/1 daily_countsで100丁度で止まることを確認。 | 6087bd9 | 🟢 **実装済・コミット済** |
 || 08/31 | — | **critic第44版: prop100新規提案（日次総量キャップのアクション単位厳格チェック）＋prop98発動確認** — 8/31 22:25実測: atushi16 104/Tankan 108/chugaku 100/kudou 100/zin 67/ib 81。**prop98 LIMITは8/31 19時台から既に発動（ログ21件）**。ただし**atushi16=104/100・Tankan=108/100と上限超で停止**（check_rate_limitが項目単位呼び出しのため1項目内F+R+L=+3とキュー処理中にtotalが100超→prop94で解消したhourly問題と同構造）→ prop100でアクション単位チェック追加を提案。chugaku/kudouは100丁度で停止。hourly全垢≤15・BOT0。toushiwatch/zin 1084は要ユーザー対応継続。 | — | 🆕 prop100提案 |
 || 08/31 | — | **QA48: 検証完了（worker v46: docsのみ）** — pytest232pass/4skip・HEAD=fc76ed4差分検証OK（critic第43版確認 + .gitignore config.yaml.bak_*追加のみ・新規コード実装なし）。8/31 daily_counts（21:10）: atushi16 104/Tankan 108/chugaku 100/kudou 100/zin 67/ib 66。hourly全垢≤15・BOT0・code64/326/403 0・audit本日成功495件。toushiwatch/zin 1084は要ユーザー対応継続。 | — | ✅ 検証完了 |
 | 08/31 | — | **critic第43版: 新規提案なし（第42版踏襲・8/31 20:14実測）** — 8/31 daily_counts（20:14）: atushi16 104/Tankan 108/chugaku 100/kudou 84/zin 67/ib 58。**atushi16・Tankanがprop98キャップ100超で実行継続（コミット直後のためLIMIT未発動・9/1から発動確認）**。hourly全垢≤15・BOT0。全7提案実装済/監視継続で新規提案なし。prop94は9/1 00:20最終確定待ち。toushiwatch/zin 1084は要ユーザー対応継続。 | — | ✅ 分析のみ |
@@ -92,7 +92,7 @@
 
 | 優先度 | アクション | 担当 | 期限 | 備考 |
 |--------|-----------|------|------|------|
-| **🔴高** | **prop100: 日次総量キャップのアクション単位厳格チェック ✅実装済（9ad3bb5）** | QA | 9/1 | prop98のLIMITは8/31 19時台から発動済だが atushi16=104/Tankan=108 と上限超で停止（check_rate_limitが項目単位のため）。hourly_limit_reached()同様のアクション直前チェックで100丁度に。実装完了。9/1 daily_countsで100丁度で止まることを確認。 |
+| **🔴高** | **prop100: 日次総量キャップのアクション単位厳格チェック ✅実装済（6087bd9）** | QA | 9/1 | prop98のLIMITは8/31 19時台から発動済だが atushi16=104/Tankan=108 と上限超で停止（check_rate_limitが項目単位のため）。hourly_limit_reached()同様のアクション直前チェックで100丁度に。実装完了。9/1 daily_countsで100丁度で止まることを確認。 |
 | **🔴高** | **prop98: 日次総量キャップ100件 ✅8/31 19時台から発動確認・オーバーシュート解消はprop100** | QA | 9/1 | 8/31 LIMITログ21件確認（atushi16 104/100・Tankan 108/100・chugaku/kudou 100丁度）。prop100実装後、9/1 daily_countsで100丁度で止まることを確認。 |
 | **🔴高** | **toushiwatch セッション再取得【要ユーザー対応】** | ユーザー | 継続 | prop97 QA検証完了（実装適切・誤SKIPなし）。復帰条件=ブラウザでtoushiwatchにログイン→auth_token/ct0保存→configコメント解除。 |
 | **🔴高** | **prop94: 8/31終日 hourly≤15確認済み → 9/1 00:20全天データで最終確定** | QA | 9/1 00:20 | 8/31 08〜18時台全垢≤15（prop94終日稼働✅）。夜バッチ完了後の全天データで超過0件を最終確定。 |
@@ -143,7 +143,7 @@
 
 ## 監視対象アラート
 
-- ✅ **prop100: 日次総量キャップのアクション単位厳格チェック【実装済 9ad3bb5】** — `daily_total_limit_reached()` をaction_queueループ内で各アクション実行前に呼び出し、上限到達で残りをスキップ（prop94 hourlyと同構造）。9/1 daily_countsで100丁度で止まることを確認。
+- ✅ **prop100: 日次総量キャップのアクション単位厳格チェック【実装済 6087bd9】** — `daily_total_limit_reached()` をaction_queueループ内で各アクション実行前に呼び出し、上限到達で残りをスキップ（prop94 hourlyと同構造）。9/1 daily_countsで100丁度で止まることを確認。
 - ✅ **prop98: 日次総量キャップ100件【8/31 19時台から発動確認】** — 8/31 LIMITログ21件（atushi16 104/100・Tankan 108/100・chugaku/kudou 100丁度）。オーバーシュート解消はprop100。9/1 daily_countsで100丁度で止まることを確認。
 - ✅ **prop99: 出口IP/ASN検証【QA47検証完了・ASN実動作確認】** — check_proxies `--asn` 実測: KDDI系4垢一致・Tankan SoftBank・atushi16 Sony・toushiwatch KDDI・zin 1084不通（既知）。週次cron化は任意。
 - ✅ **prop97: check_x_loginセッション検証（QA46検証完了）** — toushiwatch真因=**セッション未認証**（auth_token/ct0欠落）を実測確定。`_session_has_auth_cookies()` 実装・テスト5件・configコメントアウトコミット（fb34540）を差分確認OK。**セッション実測でtoushiwatchのみ欠落・アクティブ6垢は全て認証済み（誤SKIPなし）**。復帰は要ユーザー対応（ブラウザログイン→auth_token/ct0保存）。
