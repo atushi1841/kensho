@@ -185,3 +185,47 @@
 
 ### 🟢 軽微
 - なし
+
+---
+
+# QA検証結果: 2026-09-01 (QA54・08:04実行)
+
+## 検証結果
+
+### pytest
+- **236 passed, 4 skipped**（62.19s、test_invisible_playwright.py 除外）
+- 失敗なし。Worker v52 後の回帰なし。
+
+### git状態
+- HEAD = `bfe5568` fix(anchor): v52 commit hash 1ab401d（2026-09-01 08:02）
+- 実装コミット = `1ab401d` docs(worker): v52 critic第49版確認（新規提案なし）・pytest236pass/4skip（08:01）
+- 直前 = `a4c0d20`(QA53: v51検証完了) / `9fa5bab`(v51 anchor) / `da88fff`(worker v51)
+- 未追跡のみ: AGENTS.md / CODEBASE.md / scripts/kensho-env-audit.* / stack/（別セッション成果物・workerスコープ外）
+
+### 差分検証（Worker v52）
+- `1ab401d`: `critic_proposal_2026-09-01.md` 第48版→第49版更新（07:36実測ベースに刷新：パイプライン生存 heartbeat 07:30・daily_counts 8/31のまま・audit 9/1エントリ0・プロキシ6/7生存・セッション6垢OK・applied復元漏れ22件据え置き・新規提案0件）+ `improvement-anchor.md` 1行追加（Worker確認(v52)行）— **docsのみ・新規コード実装なし**
+- `bfe5568`: `improvement-anchor.md` のコミットhash修正（`ab1d3ca`→`1ab401d`）— **ロジック変更なし**
+- **✓ 実装内容を確認済み**。critic第49版「新規提案なし」と完全に整合。
+
+### パイプライン生存確認（9/1 08:04）
+- 08:00 heartbeat 正常（`{"ts":"2026-09-01T08:00:11.861979"}`）
+- パイプライン: バッチ間（前回07:45終了・次回08:15開始）— 正常稼働中
+- プロキシ: 6/7生存（zin 1084 dead継続・既知）
+- daily_counts 9/1は未生成（date=2026-08-31のまま）— **9/1初回バッチ08:15開始のため正常**
+- audit 9/1エントリ: 0件（深夜no_action_window正常）
+- BOT安全監査: シグナルなし
+
+## 改善ノート保存先
+- `reports/daily-improvement-2026-09-01.md`（本ファイルに追記）
+- `reports/improvement-anchor.md` を更新済み（worker v52 コミット）
+
+## 次回への申し送り
+
+### 🔴 重要
+- **prop100: 9/1 daily_counts で全垢が100丁度で停止することを確認（最重要・継続）** — 8/31は atushi16=104/Tankan=108 とオーバーシュート（prop100未発効）。9/1 08:04現在 daily_counts未生成（初回バッチ08:15から）。9/1 終了時に daily_counts で 100丁度停止（全垢≤100）を実測確認すること。
+
+### 🟡 継続
+- **toushiwatch セッション再取得【要ユーザー対応】**
+- **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 08:00 時点で dead 確認）
+- **prop94（hourly≤15）9/1 も継続確認**
+- **applied復元漏れ（atushi16 22件）監視** — 復元cron（07:50）動作確認継続
