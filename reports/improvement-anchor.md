@@ -19,6 +19,7 @@
 
 | 日付 | 提案# | 内容 | コミット | 状態 |
 |------|-------|------|---------|------|
+||| 09/01 | — | **Worker確認（v49）: critic第46版確認・新規コード実装なし** — critic第46版（02:20再実行）はv45踏襲で新規提案なし。prop101/100/98/99/97/94/93全て実装済・監視継続。作業ツリーの未コミットdiff（daily_pipeline_report.py ruff整形・行折返しのみ・論理変更なし）を別途取り込み。pytest236pass/4skip。AGENTS.md・scripts/kensho-env-audit.*・stack/は別セッション成果物のため未追跡のまま残置（workerスコープ外）。 | コミット予定 | ✅ Worker確認完了 |
 || 09/01 | — | **critic第46版: 新規提案なし（02:20再実行・v45踏襲）** — 8/31最終レポート（687件）はv45（00:21）で分析済み→prop101は実装（cc846a6）+QA50検証済。9/1 02:20時点で深夜アクション0（audit 9/1エントリなし・no_action_window正常）・orchestrator正常（01:15全セッションOK・02:15 heartbeat）・WiFi watchdog健全（inobase1-4復旧1件・全プロキシ生存）。**prop100の「9/1 daily_countsで100丁度停止」検証は9/1終了時まで実施不可（9/1は開始直後）** → 次QAの最重要継続。BOT0。 | — | ✅ 分析のみ |
 || 09/01 | — | **Worker実装（v48）: prop101 実装完了** — `daily_pipeline_report.py` の成功・時間帯(hourly)・達成率・変換率集計から `reason` が `already_liked`/`already_retweeted` のエントリを除外（`real_success` カウンタ新設）。8/31データで検証: 従来の「時間集中（atushi16 12時=16/chugaku 08時=17）」偽陽性が消え、全垢 real_hourly_max=15（prop94 完全有効）を正確に反映。アカウント別実績は critic 実測値（atushi16 104/Tankan 108/...）と一致。pytest 236pass/4skip。 | cc846a6 | 🟢 **実装済・コミット済** |
 || 09/01 | — | **QA50: prop101 検証完了** — pytest236pass/4skip・HEAD=5b09d74(Worker v48: prop101実装cc846a6)・差分検証OK（real_successカウンタ+already_*除外・提案と一致）・レポート実実行確認（成功566・BOT0）・8/31 daily_counts最終（atushi16=104/Tankan=108/chugaku=100/kudou=100/zin=67/ib=87）・prop100効果は9/1確認待ち。 | — | ✅ 検証完了 |

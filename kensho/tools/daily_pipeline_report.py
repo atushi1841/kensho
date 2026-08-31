@@ -80,7 +80,9 @@ def main() -> int:
     errs: collections.Counter = collections.Counter()  # error -> n
     acct_errs: dict[str, collections.Counter] = collections.defaultdict(collections.Counter)
     hourly: collections.Counter = collections.Counter()
-    real_success: dict[str, collections.Counter] = collections.defaultdict(collections.Counter)  # acct -> action -> n（already_*除外）
+    real_success: dict[str, collections.Counter] = collections.defaultdict(
+        collections.Counter
+    )  # acct -> action -> n（already_*除外）
     total_actions = 0
 
     if AUDIT_PATH.exists():
