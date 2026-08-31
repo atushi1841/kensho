@@ -43,6 +43,7 @@ from kensho.application.browser import (
 )
 from kensho.application.rate_limiter import (
     check_rate_limit,
+    daily_total_limit_reached,
     hourly_limit_reached,
     is_active_hours,
     load_daily_counts,
@@ -1640,6 +1641,17 @@ def apply_for_account(
                 _follow_error_code: str | None = None
                 action_count = len(action_queue)
                 for idx, (_name, _fn) in enumerate(action_queue):
+                    # ★ 2026-08-31提案100: 日次総量上限をアクション単位で厳格チェック
+                    #   prop98のitem単位チェック（check_rate_limit）は1item内の複数
+                    #   アクション（F+R+L）でtotalが100→108まで跳ねる（実測: atushi16
+                    #   =104/Tankan=108）。各アクション実行前にtotal専用チェックで
+                    #   100丁度に抑える（hourly_limit_reachedと同構造）。
+                    if daily_total_limit_reached(account_key, cfg):
+                        out(
+                            f"  [LIMIT] {account_key}: 日次総量上限到達"
+                            f" → 残り{action_count - idx}アクションをスキップ（提案100）"
+                        )
+                        break
                     # ★ 2026-08-30提案94: hourly上限をアクション単位で厳格チェック
                     #   item単位チェック（check_rate_limit）は1item内の複数アクション
                     #   （F+R+L）でhourly counterが15→17まで跳ねる（実測: kudou 08時=17）。

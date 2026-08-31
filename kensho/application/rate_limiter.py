@@ -131,6 +131,32 @@ def check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
     return False
 
 
+def daily_total_limit_reached(account_key: str, cfg: dict[str, Any]) -> bool:
+    """日次総量上限に達したかチェック（totalのみ・アクション単位で使う）。
+
+    hourly_limit_reached と同様、action_queueループ内で各アクション実行前に
+    呼ばれる。日次総量（follow+rt+like+reply）が max_total_actions_per_day 以上
+    なら True を返し、残りアクションをスキップさせる。
+    （2026-08-31提案100: prop98のitem単位チェックでは1item内の複数アクション
+    F+R+Lでtotalが100→108まで跳ねる。アクション単位で厳格チェックする。）
+    """
+    limits: dict[str, Any] = cfg.get("rate_limits", {})
+    max_total: int = limits.get("max_total_actions_per_day", 0)  # 0=無効（旧config互換）
+    if max_total <= 0:
+        return False
+    counts: dict[str, Any] = load_daily_counts()
+    acct: dict[str, Any] = counts.get(account_key, {})
+    f: int = acct.get("follow", 0)
+    r: int = acct.get("rt", 0)
+    lk: int = acct.get("like", 0)
+    rep: int = acct.get("reply", 0)
+    total: int = f + r + lk + rep
+    if total >= max_total:
+        print(f"[LIMIT] {account_key}: 日次総量上限到達（アクション単位）({total}/{max_total})", flush=True)
+        return True
+    return False
+
+
 def hourly_limit_reached(account_key: str, cfg: dict[str, Any]) -> bool:
     """時間あたり上限に達したかチェック（hourlyのみ・アクション単位で使う）。
 

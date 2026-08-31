@@ -142,3 +142,21 @@
   - **BOTシグナル0・code64/326 0** ✓・パイプライン正常（17:13ログ更新・collected.json保存完了1130件）
   - 未コミット: config.yaml.bak_20260831_152136（バックアップ・実害なし）
 - **申し送り**: prop97はQA検証完了（実装適切・誤SKIPなし・テスト5件パス）。toushiwatch復帰条件=ブラウザでログイン→auth_token/ct0保存（要ユーザー対応）。prop94最終確定は9/1 00:20（8/31全天データ）。zin 1084フラッピング【要ユーザー対応】継続。
+
+## QA48検証結果（21:10 JST・Worker v46: docsのみ確認）
+- **pytest: 232 passed, 4 skipped**（67.38s。回帰なし・QA47と同一）✓
+- **git log**: HEAD=fc76ed4（**Worker v46: docsのみ** — critic第43版確認・新規提案なし・実装不要 + config.yaml.bak_*を.gitignoreに追加）。前回QA47（dc585c8）から**新規コード変更なし**（コミットはreports/3ファイルのみ：critic_proposal_2026-08-31.md更新 + improvement-anchor.md + .gitignore）✓
+- **Worker差分検証（fc76ed4）**: docsのみの変更を確認
+  - critic_proposal_2026-08-31.md: 第43版更新（新規提案なしの20:14実測を反映）
+  - improvement-anchor.md: 第43版エントリ追加 + 既存行の日付修正
+  - .gitignore: `config.yaml.bak_*` 追加
+- **git status**: 未追跡ファイル3件（AGENTS.md / scripts/kensho-env-audit-cron.sh / scripts/kensho-env-audit.py）— 別セッション成果物・workerスコープ外で残置。作業ツリーの変更なし ✓
+- **実環境確認（21:10 JST）**:
+  - **8/31 daily_counts（21:10時点）**: atushi16=104（F38/R35/L31）/ Tankan=108（F35/R38/L35）/ chugaku=100（F33/R36/L31）/ kudou=100（F36/R30/L34）/ zin=67（F22/R27/L18）/ ib=66（F23/R27/L16）。**atushi16・Tankanがprop98キャップ100超で実行継続（8/31はコミット直後のためLIMIT未発動・9/1から発動確認）**。chugaku/kudouは100丁度。
+  - **audit本日成功495件・BOT0・code64/326/403 0** ✓
+  - **hourly全垢≤15（prop94終日超過0確定）** ✓
+  - **最終ログ更新21:18（正常終了）** — パイプライン稼働中 ✓
+  - **collected.json 1170件・timestamp 21:11:50** — 収集正常 ✓
+  - **toushiwatch 0件（config除外継続・要ユーザー対応）**
+  - **zin 67成功** — 1084フラッピング継続中だがアクションは正常稼働
+- **申し送り**: Worker v46はdocsのみで新規コード実装なし。**prop98実環境効果は9/1 daily_countsで確認**（100超が止まるか）。prop94最終確定は9/1 00:20（8/31全天データ）。toushiwatch/zin 1084は要ユーザー対応継続。全提案実装済・監視継続で新規提案なし。
