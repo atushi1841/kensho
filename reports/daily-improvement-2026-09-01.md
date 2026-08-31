@@ -97,3 +97,47 @@
 
 ### 🟢 軽微
 - なし（QA50申し送りの ruff 整形未コミットは v49 で解消済み）
+
+---
+
+# QA検証結果: 2026-09-01 (QA52・05:10実行)
+
+## 検証結果
+
+### pytest
+- **236 passed, 4 skipped**（57.65s、test_invisible_playwright.py 除外）
+- 失敗なし。Worker v50 後の回帰なし。
+
+### git状態
+- HEAD = `e1cc39e` fix(anchor): v50 commit hash 89b7c40（2026-09-01 04:49）
+- 実装コミット = `89b7c40` docs(worker): v50 critic第47版確認（新規提案なし）（04:48）
+- 直前 = `72fcffe` critic v47: 新規提案なし・深夜クリーン確認・applied復元漏れ52→22件改善（04:23）
+- 未追跡のみ: AGENTS.md / scripts/kensho-env-audit.* / stack/（別セッション成果物・workerスコープ外）
+
+### 差分検証（Worker v50）
+- `e1cc39e`: `reports/improvement-anchor.md` の1行修正のみ（Worker確認(v50)行のコミットhash `コミット予定`→`89b7c40`）— **ロジック変更なし**
+- `89b7c40`: `daily-improvement-2026-09-01.md` 追記 + `improvement-anchor.md` 1行追加（critic第47版確認）— **docsのみ・新規コード実装なし**
+- **✓ 実装内容を確認済み**。critic第47版「新規提案なし」と完全に整合。
+
+### パイプライン生存確認（9/1 05:10）
+- 05:00サイクル正常終了・6垢セッション全OK・no_action_window中（audit 9/1エントリ0・深夜アクション0正常）
+- プロキシ: alive=[1081,1082,1083,1085,1089] dead=[1084]（zin 1084 要ユーザー対応継続）
+- daily_counts 9/1は空（no_action_window中のため正常・07:00以降のバッチから計上）
+
+## 改善ノート保存先
+- `reports/daily-improvement-2026-09-01.md`（本ファイルに追記）
+- `reports/improvement-anchor.md` を更新（changes / outcomes / next steps）
+
+## 次回への申し送り
+
+### 🔴 重要
+- **prop100: 9/1 daily_counts で全垢が100丁度で停止することを確認（最重要・継続）** — 8/31は atushi16=104/Tankan=108 とオーバーシュート（prop100未発効）。9/1 07:00以降のバッチから prop100 が発動するため、9/1 終了時に daily_counts で 100丁度停止（全垢≤100）を実測確認すること。
+
+### 🟡 継続
+- **toushiwatch セッション再取得【要ユーザー対応】**
+- **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 05:00 時点で dead 確認）
+- **prop94（hourly≤15）9/1 も継続確認**
+- **applied復元漏れ（atushi16 22件→改善中）監視** — 復元cron（07:50）動作確認継続
+
+### 🟢 軽微
+- なし
