@@ -9,7 +9,7 @@
 ## intent（現在の方向性）
 
 - **Kensho目標**: 各アカウント50〜75件/日をBOT判定されず安定達成
-- **現在のフォーカス**: 提案97（**toushiwatch真因判明: セッション未認証・check_x_login誤判定・configコメントアウト対応済み・check_x_loginにセッション検証追加**） + 提案96（**クローズ: 真因確定によりprop97へ統合**） + 提案95（**実装済 + 8/31 37件成功で解決確認**） + 提案94（**8/31終日 hourly≤15・9/1 00:20最終確定待ち**） + 提案93（code 326自動フォロー停止・稼働中） + 提案83 L/F=95.4%達成✅クローズ + 提案85(chugakujuken【要ユーザー対応】) + **zin 1084フラッピング【要ユーザー対応】格上げ**
+- **現在のフォーカス**: 提案97（**実装済 fb34540: check_x_loginにセッション検証追加・toushiwatchコメントアウトコミット済・QA検証待ち**） + 提案96（**クローズ: 真因確定によりprop97へ統合**） + 提案95（**実装済 + 8/31 37件成功で解決確認**） + 提案94（**8/31終日 hourly≤15・9/1 00:20最終確定待ち**） + 提案93（code 326自動フォロー停止・稼働中） + 提案83 L/F=95.4%達成✅クローズ + 提案85(chugakujuken【要ユーザー対応】) + **zin 1084フラッピング【要ユーザー対応】格上げ**
 - **KPI**: 応募成功率80%以上、BOTシグナル0、エラー率20%未満、L/F比率95%以上
 - **制約**: 自宅IPはatushi16のみ。凍結リスクは絶対回避。コストは無料/従量課金のみ
 
@@ -19,7 +19,8 @@
 
 | 日付 | 提案# | 内容 | コミット | 状態 |
 |------|-------|------|---------|------|
-|| 09/01 | — | **Worker確認（v43）: critic第40版（prop96）確認・新規コード実装なし** — prop96は自動側「config変更なし・監視継続」明示＋手動切り分け【要ユーザー対応】のため実装不要と判断。critic更新分（proposal第40版+anchor）をコミット。pytest225pass/4skip。全提案（93/94/95/96）状態良好。 | fced8cc | ✅ Worker確認完了 |
+||| 09/01 | — | **Worker実装（v44）: prop97 実装完了** — `_session_has_auth_cookies()` 新設（session_manager経由でauth_token/ct0存在検証）＋ check_x_login が screen_name 指定時に goto 前に検証。欠落なら `[NG] no_auth_session` で即False（未認証のまま誤「ログインOK」→アクション連打→FROZEN連発を根本防止）。config.yamlのtoushiwatchコメントアウト（15:21手動）をコミット。テスト5件追加。pytest229pass/4skip。 | fb34540 | 🟢 **実装済・コミット済** |
+||| 09/01 | — | **Worker確認（v43）: critic第40版（prop96）確認・新規コード実装なし** — prop96は自動側「config変更なし・監視継続」明示＋手動切り分け【要ユーザー対応】のため実装不要と判断。critic更新分（proposal第40版+anchor）をコミット。pytest225pass/4skip。全提案（93/94/95/96）状態良好。 | fced8cc | ✅ Worker確認完了 |
 || 08/31 | — | **critic第41版: prop97新規（toushiwatch真因判明・check_x_loginセッション検証追加）** — 16:20実測: **toushiwatch 0成功の真因は「新規垢制限」ではなく「セッション未認証」（x_session_toushiwatch.jsonにauth_token/ct0なし・guest cookieのみ）**。check_x_loginはscreen_name付きでプロフィールにgotoし未ログインでも閲覧可→「ログインOK」誤判定→未認証のままアクション連打→no_follow/no_like/RT403→CEILING→FROZEN×5。**config.yamlは15:21に手動コメントアウト済み（未コミット・「セッション再取得後に復帰」注記）**。prop97: check_x_loginにauth_token/ct0セッション検証を追加。prop96は真因確定によりクローズ。zin 1084切断12回/日（16:15再発）→【要ユーザー対応】格上げ。prop94 8/31終日hourly≤15・9/1 00:20確定待ち。BOT0。 | — | 🆕 prop97提案・prop96クローズ |
 || 08/31 | — | **critic第40版: prop96新規（toushiwatch 2日連続0成功）** — 8/31 11-14時台実ログ検証: 全垢hourly≤15（prop94終日稼働）・ib復帰24件（prop95解決）・**toushiwatch 4バッチ全てloginOK→CEILING→FROZEN×5・RT403 empty body（X側ポリシー拒否）・新規垢制限疑い・要ユーザー切り分け**・zin FROZENバースト×5（10:57-11:15・一過性・回復済み）・BOT0 | — | 🆕 prop96提案 |
 | 08/31 | — | **critic第39版: 新規提案なし（第38版踏襲・8/31 08-10時台実ログ検証済み）** | — | ✅ 分析のみ |
@@ -82,7 +83,7 @@
 
 | 優先度 | アクション | 担当 | 期限 | 備考 |
 |--------|-----------|------|------|------|
-| **🔴高** | **prop97: check_x_loginにauth_token/ct0セッション検証追加（実装）** | worker | 9/1 | check_x_login成功判定前にsession_manager経由でauth_token/ct0クッキー存在を確認。欠落なら「[NG] no_auth_session」でFalse。config.yamlのtoushiwatchコメントアウトをコミット。復帰条件=ブラウザでログイン→auth_token/ct0保存。 |
+| **🔴高** | **prop97: QA検証（check_x_loginセッション検証実装確認 fb34540）** | QA | 9/1 | 実装済（fb34540）。差分検証＋pytest229pass確認＋実環境でtoushiwatchが `[NG] no_auth_session` でSKIPされることを確認。復帰条件=ブラウザでログイン→auth_token/ct0保存。 |
 | **🔴高** | **prop94: 8/31終日 hourly≤15確認済み → 9/1 00:20全天データで最終確定** | QA | 9/1 00:20 | 8/31 08〜16時台全垢≤15（prop94終日稼働✅）。夜バッチ完了後の全天データで超過0件を最終確定。 |
 | **🔴高** | **zin 1084 フラッピング【要ユーザー対応】格上げ** | ユーザー | 継続 | 切断12回/日（16:15再発）。prop85（1083）と同系統。SSID圏外or電源オフ。テザリング元スマホの電源・WiFi物理確認依頼。 |
 | 🟡中 | **prop85【要ユーザー対応】: chugakujuken物理対応** | ユーザー | 継続 | watchdog再接続12回/日だが応募は85成功0失敗で安定。 |
@@ -128,7 +129,7 @@
 ## 監視対象アラート
 
 - ✅ **prop95: inobase1-4 復帰（CAPTCHA解除）** — 8/31 37件成功（16:20時点）。**解決確定**。
-- 🔴 **prop97: check_x_loginセッション検証追加（新規・高）** — toushiwatch真因=**セッション未認証**（auth_token/ct0欠落）を実測確定。check_x_loginが未ログインでもプロフィール閲覧可で「ログインOK」誤判定→未認証のまま全アクション失敗→FROZEN連発。configは15:21手動コメントアウト済み（未コミット）。worker実装待ち。
+- ✅ **prop97: check_x_loginセッション検証（実装済 fb34540）** — toushiwatch真因=**セッション未認証**（auth_token/ct0欠落）を実測確定。check_x_loginが未ログインでもプロフィール閲覧可で「ログインOK」誤判定→未認証のまま全アクション失敗→FROZEN連発。**worker実装済**: `_session_has_auth_cookies()` で欠落検出→goto前 `[NG] no_auth_session` 即SKIP。configコメントアウトコミット済。QA検証待ち。
 - ✅ **prop96: クローズ** — toushiwatch 0成功の真因確定（セッション未認証）によりprop97へ統合。
 - 🔴 **zin 1084 フラッピング【要ユーザー対応】格上げ** — 本日切断12回（16:15再発・再接続済み）。SSID圏外or電源オフ。prop85（1083）と同系統の物理層問題。テザリング元スマホの電源・WiFi確認をユーザーへ依頼。
 - ✅ **prop93: code 326 自動フォロー停止 — 実環境稼働確認済**
