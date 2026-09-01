@@ -315,3 +315,49 @@
 - **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 11:14 dead 確認・10:20の再接続後も再断）
 - **prop94（hourly≤15）9/1 継続確認**（08/09時台=15ちょうどで有効）
 - **applied復元漏れ（atushi16 22件）監視**
+
+---
+
+## QA57 検証結果（13:20 追記・Worker v55 = prop102 実装検証）
+
+### pytest
+- `uv run python -m pytest tests/ -q --ignore=tests/test_invisible_playwright.py` → **237 passed, 4 skipped**（worker v55 申告どおり +1テスト）
+
+### git状態
+- HEAD = `5866340`（Worker v55: `feat(apier): prop102 code 64 検出時の自動フォロー停止（LOCK102）` 12:59）
+- 作業ツリー: `config.yaml` が未コミット変更（inobase1-4 凍結コメントアウト・後述）。AGENTS.md / CODEBASE.md / kensho/IMPROVEMENTS.md / scripts/kensho-env-audit.* / stack/ は別セッション成果物のため未追跡のまま残置（workerスコープ外）
+
+### 差分検証（Worker v55: prop102）
+- `api_actions.py`: `_is_follow_suspended_64()` 新設（code:64 検出・326と共存）+ 403分岐で `follow_suspended_64` エラーコード返却（提案どおり）
+- `applier.py`: `[LOCK102]` code 64 検出 → follow_lock 12h 停止（`follow_suspend_hours` config・デフォルト12h・403カウンタは触らない）— 提案どおり
+- `tests/test_applier.py`: `test_is_follow_suspended_64_detects_code` 追加（64真/326偽/空偽の5assert）— 提案どおり
+- `reports/critic_proposal_2026-09-01.md`: prop102【高】提案 + anchor 更新
+- **✓ 実装内容を確認済み**。prop102 提案と完全一致（code 64検出→フォロー12h停止・config除外と同等の自動停止）
+
+### パイプライン生存確認（9/1 13:13）
+- heartbeat 12:46 apply 正常（TankanNotes 処理中 [0/15]）・ログ 13:13 更新（稼働中）
+- daily_counts 9/1（13:11）: atushi16 F21/R21/L22=64（hourly 08=15/09=13/10=11/11=15/12=6/13=4）・kudou F14/R10/L14=38・chugakujuken F15/R12/L13=40・TankanNotes F20/R16/L18=54・inobase1-4 F0/R1/L0=1
+- **hourly全垢≤15（prop94 9/1継続有効）** — 08/09/11時台=15ちょうど
+- audit 9/1: 234件中 成功182/失敗52・BOTシグナルなし
+- プロキシ: 6/7生存（alive=1081/1082/1083/1085/1087/1089・zin 1084 deadのみ既知）
+
+### 🔴 重大: inobase1-4 2度目の凍結 → config コメントアウト（ユーザー確認済み）
+- **12:53:06 ログに code 64 確定**: `フォローAPI: HTTP 403 (body: {"errors":[{"code":64,"message":"Your account is suspended..."}]})`
+- 11:38 `[FROZEN_ABORT] 提案91: フォロー403凍結疑い` → 12:53 code 64（この間に X 側で凍結）
+- **13:04 に config.yaml で inobase1-4 をコメントアウト**（「凍結2度目・ユーザー確認済み・ログアウト済み」注記・未コミット）
+- **13:15 サイクルから対象垢から除外確認済み**（`対象垢: atushi16 kudou chugakujuken zin20120731 TankanNotes` — inobase1-4 消滅）
+- audit 9/1 inobase1-4: 失敗42件（凍結に伴う全API失敗）。code 64 は prop102 の実装根拠そのもの → 実装は正しく時機を得た
+
+## 改善ノート保存先
+- `reports/daily-improvement-2026-09-01.md`（本ファイルに追記）
+- `reports/improvement-anchor.md` を更新（prop102検証 + inobase1-4 凍結反映）
+
+## 次回への申し送り
+### 🔴 重要
+- **inobase1-4 2度目の凍結（code 64 実測・ユーザー確認済み）→ config コメントアウト反映（13:04・未コミット）** — 次回 critic で各ファイル（dashboard/gen_status_data 等）からの整理とコミットを判断。復帰は新垢再作成 or 解除後のセッション再取得が必要【要ユーザー対応】
+- **prop102: 実環境検証は9/2以降** — inobase1-4 は config 除外で発動場面なし。他垢で code 64 発生時に [LOCK102] を確認
+- **prop100: 9/1 daily_counts で全垢が100丁度で停止することを確認（最重要・継続）** — 9/1 13:11現在 進行中（atushi16 64/100・kudou 38・chugaku 40・Tankan 54・全垢100未満で正常進行）。9/1 終了時に ≤100 停止を実測確認
+### 🟡 継続
+- **toushiwatch セッション再取得【要ユーザー対応】**
+- **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 13:11 dead 確認）
+- **applied復元漏れ（atushi16 22件）監視**
