@@ -361,3 +361,42 @@
 - **toushiwatch セッション再取得【要ユーザー対応】**
 - **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 13:11 dead 確認）
 - **applied復元漏れ（atushi16 22件）監視**
+
+---
+
+# QA検証結果: 2026-09-01（QA58・15:10〜）
+
+## 検証結果
+- **pytest: 237 passed, 4 skipped（315.66s）** — QA57と同結果・新規失敗なし
+- **git状態**: HEAD=bb3ae39（Worker v56: anchor更新）→ c6933a5（inobase1-4 freeze整理）→ 486950e（QA57）
+- **差分検証（Worker v56: c6933a5）— 提案内容と実装が一致**:
+  - `config.yaml`: inobase1-4 ブロック全体をコメントアウト（2026-09-01 凍結2度目・ユーザー確認済み・ログアウト済み注記）→ YAMLパース正常・**アクティブ5垢**（atushi16/kudou/chugakujuken/zin20120731/TankanNotes）・inobase1-4 非含有 ✅
+  - `kensho/utils/dashboard.py`: `frozen_accounts = {"inobase1-4"}`（API経由表示除外）✅
+  - `scripts/gen_status_data.py`: accounts/WIFI_ADAPTER_TO_ACCOUNT/WIFI_ACCOUNT_SSID からコメントアウト → 実行DATA_OK ✅
+  - `scripts/gen_status_html.py`: ACCOUNT_ADAPTERS からコメントアウト → **kensho-status.html に inobase1-4 0件** ✅
+  - `browser.py`/`keyring.py`/`check_proxies.py`/`proxy_watchdog.py` は維持（Step 4c準拠・復帰可能性）— 意図どおり・config除外でdispatchされない
+  - **実効確認**: dashboard（/tmp/kensho_status_data.json）に inobase1-4 非表示 ✅ / audit 9/1 inobase1-4 最終エントリ 13:13 JST（13:15除外後の再発なし=凍結整理有効）✅
+- **bb3ae39**: anchor 1行修正のみ（コミットハッシュ反映）— docsのみ・ロジック変更なし ✅
+- **✓ 実装内容を確認済み**。Worker v56 は critic第53版 申し送り1（inobase1-4 freeze整理）を完全に実施
+
+### パイプライン生存確認（9/1 15:10）
+- heartbeat 15:16 正常・15:06 サイクル正常終了
+- daily_counts 9/1（15:10）: atushi16 F25/R27/L28=80（hourly 08=15/09=13/10=11/11=15/12=6/13=6/14=14）・kudou F19/R16/L20=55・chugakujuken F22/R18/L20=60・TankanNotes F23/R20/L22=65 — **全垢100未満でprop100正常進行**
+- **hourly全垢≤15（prop94 9/1継続有効）**
+- audit 9/1: 306件中 成功250/失敗40/スキップ16・BOTシグナルなし
+- zin 1084 dead継続（daily_countsにzin 0件・本日も0）【要ユーザー対応】
+- プロキシ: 1081-1089 の死活は既知状態踏襲
+
+## 改善ノート保存先
+- `reports/daily-improvement-2026-09-01.md`（本ファイルに追記）
+- `reports/improvement-anchor.md` を更新（QA58検証 + inobase1-4 freeze整理完了反映）
+
+## 次回への申し送り
+### 🔴 重要
+- **prop100: 9/1 daily_counts で全垢が100丁度で停止することを確認（最重要・継続）** — 9/1 15:10現在 進行中（atushi16 80/100・kudou 55・chugaku 60・Tankan 65・全垢100未満で正常進行）。9/1 終了時に ≤100 停止を実測確認
+- **prop102: 実環境検証は9/2以降** — inobase1-4 は config 除外で発動場面なし。他垢で code 64 発生時に [LOCK102] を確認
+- **inobase1-4 凍結整理は完了（worker v56コミット済）** — 復帰は新垢再作成 or 解除後セッション再取得【要ユーザー対応】。browser.py/keyring等は復帰可能性のため維持
+### 🟡 継続
+- **toushiwatch セッション再取得【要ユーザー対応】**
+- **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 15:10 daily_counts 0件）
+- **applied復元漏れ（atushi16 22件）監視**
