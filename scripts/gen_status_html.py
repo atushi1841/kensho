@@ -21,7 +21,7 @@ ACCOUNT_ADAPTERS = {
         "10_ymo_HR01",
         "ワイモバイル",
     ),  # 2026-08-27: povo HR01(2_povo_tankan)から切替。アダプタ名もWi-Fi→Tankan_HR01にリネーム
-    "inobase1-4": ("inobase1-4", "ino1_4_oppo_r5a", "povo"),
+    # "inobase1-4": ("inobase1-4", "ino1_4_oppo_r5a", "povo"),  # 2026-09-01: 凍結（code 64）→ dashboard除外
     "toushiwatch": (
         "toushiwatch_airtra1",
         "2_povo_AW",

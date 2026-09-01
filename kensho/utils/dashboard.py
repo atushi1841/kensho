@@ -46,7 +46,7 @@ def _load_json(path: Path) -> dict | list:
 
 def collect_stats(collected_path: Path | None = None, dm_wins_path: Path | None = None) -> dict:
     """全統計を収集"""
-    frozen_accounts = set()
+    frozen_accounts = {"inobase1-4"}  # 2026-09-01: 凍結（code 64）→ dashboard除外
     data_dir = _get_data_dir()
 
     collected_path = collected_path or data_dir / "collected.json"

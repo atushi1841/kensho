@@ -130,28 +130,29 @@ accounts:
         - { time: "20:12", max: 15 }
         - { time: "22:07", max: 15 }
 
-  # ★ 2026-08-31 復帰: ユーザーがCAPTCHA解除実施。fixupxで凍結メッセージなし確認済み。
-  #   プロキシ1089正常(106.146.14.81)。セッションファイル残存。コメント解除のみで復帰。
-  - key: inobase1-4
-    display: "@inobase128508"
-    session: "data/x_session_inobase1-4.json"
-    disable_reply: true
-    daily_target: 50
-    schedule:
-      collects: false
-      batches:
-        # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
-        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "09:38", max: 15 }
-        - { time: "10:48", max: 15 }
-        - { time: "11:58", max: 15 }
-        - { time: "13:19", max: 15 }
-        - { time: "15:13", max: 15 }
-        - { time: "16:28", max: 15 }
-        - { time: "17:51", max: 15 }
-        - { time: "19:11", max: 15 }
-        - { time: "21:17", max: 15 }
-        - { time: "22:29", max: 15 }
+  # ★ 2026-09-01: inobase1-4 凍結（2度目・ユーザー確認済み・ログアウト済み）→ 応募停止。
+  #   いいね/フォロー/RT すべて停止。configコメントアウトでdispatchから除外。
+  #   復帰条件: 新規アカウント再作成 or 解除後、セッション再取得してからコメント解除。
+  # - key: inobase1-4
+  #   display: "@inobase128508"
+  #   session: "data/x_session_inobase1-4.json"
+  #   disable_reply: true
+  #   daily_target: 50
+  #   schedule:
+  #     collects: false
+  #     batches:
+  #       # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
+  #       # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
+  #       - { time: "09:38", max: 15 }
+  #       - { time: "10:48", max: 15 }
+  #       - { time: "11:58", max: 15 }
+  #       - { time: "13:19", max: 15 }
+  #       - { time: "15:13", max: 15 }
+  #       - { time: "16:28", max: 15 }
+  #       - { time: "17:51", max: 15 }
+  #       - { time: "19:11", max: 15 }
+  #       - { time: "21:17", max: 15 }
+  #       - { time: "22:29", max: 15 }
 
   # ★ 2026-08-31: royalkensho 凍結（code 64）→ 破棄。後継 @toushiwatch に置換。
   #   アダプタを toushiwatch_airtra1 にリネーム。回線 2_povo_AW(air-tra1/povo) 引き継ぎ。
