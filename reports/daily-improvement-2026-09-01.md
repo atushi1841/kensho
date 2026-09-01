@@ -229,3 +229,46 @@
 - **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 08:00 時点で dead 確認）
 - **prop94（hourly≤15）9/1 も継続確認**
 - **applied復元漏れ（atushi16 22件）監視** — 復元cron（07:50）動作確認継続
+
+---
+
+# QA検証結果: 2026-09-01 (QA55・09:14実行)
+
+## 検証結果
+
+### pytest
+- **236 passed, 4 skipped**（56.85s、test_invisible_playwright.py 除外）
+- 失敗なし。Worker v53 後の回帰なし。
+
+### git状態
+- HEAD = `b06a6a3` docs(worker): v53 critic第50版確認（新規提案なし）・pytest236pass/4skip（2026-09-01 08:47）
+- 実装コミット = `b06a6a3`（Worker v53）
+- 直前 = `bfe5568`(v52 anchor hash修正) / `1ab401d`(v52) / `a4c0d20`(QA53)
+- 未追跡のみ: AGENTS.md / CODEBASE.md / scripts/kensho-env-audit.* / stack/（別セッション成果物・workerスコープ外）
+
+### 差分検証（Worker v53）
+- `b06a6a3`: `critic_proposal_2026-09-01.md` 第49版→第50版更新（08:21実測：9/1初回バッチ08:15開始・atushi16稼働・新規提案0件）+ `daily-improvement-2026-09-01.md` QA54追記 + `improvement-anchor.md` にcritic第50版+Worker確認(v53)行追加 — **docsのみ・新規コード実装なし**
+- **✓ 実装内容を確認済み**。critic第50版「新規提案なし」と完全に整合。
+
+### パイプライン生存確認（9/1 09:14）
+- 09:00 heartbeat apply 正常・ログ 09:11 更新（稼働中）
+- daily_counts 9/1生成中: atushi16 F5/R5/L5 hourly 08=15 / kudou F5/R4/L6 hourly 08=15 / chugakujuken F3/R3/L3 hourly 09=9
+- **hourly全垢≤15（prop94 9/1継続有効）** — atushi16/kudou の 08時台=15ちょうど
+- audit 9/1: 9件 全success（chugakujuken）・BOT監査シグナルなし
+- プロキシ: 6/7生存（alive=1081/1082/1083/1085/1089・zin 1084 deadのみ既知）
+- セッション: アクティブ6垢OK
+
+## 改善ノート保存先
+- `reports/daily-improvement-2026-09-01.md`（本ファイルに追記）
+- `reports/improvement-anchor.md` を更新予定（worker v53 コミット反映）
+
+## 次回への申し送り
+
+### 🔴 重要
+- **prop100: 9/1 daily_counts で全垢が100丁度で停止することを確認（最重要・継続）** — 9/1 09:14現在 生成初期段階（atushi16 15/100・kudou 15/100・chugaku 9/100）。9/1 終了時に daily_counts で全垢≤100 を実測確認すること。
+
+### 🟡 継続
+- **toushiwatch セッション再取得【要ユーザー対応】**
+- **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 09:14 dead 確認）
+- **prop94（hourly≤15）9/1 継続確認**（08時台=15ちょうどで有効）
+- **applied復元漏れ（atushi16 22件）監視**
