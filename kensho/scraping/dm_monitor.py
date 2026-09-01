@@ -138,7 +138,8 @@ def check_dms(
 
     # 既存の当選ログ
     wins_cache = _load_wins_cache(data_dir)
-    if account_key not in wins_cache:
+    # account_key=None（全垢チェック）時は None キーを作らない（JSONで "null" になるため）
+    if account_key is not None and account_key not in wins_cache:
         wins_cache[account_key] = []
 
     new_wins: list[dict] = []
