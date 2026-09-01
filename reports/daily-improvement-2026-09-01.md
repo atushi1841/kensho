@@ -391,12 +391,42 @@
 - `reports/daily-improvement-2026-09-01.md`（本ファイルに追記）
 - `reports/improvement-anchor.md` を更新（QA58検証 + inobase1-4 freeze整理完了反映）
 
+## QA59: 検証完了（worker v57: docsのみ・新規提案なし）
+
+### pytest
+- **237 passed, 4 skipped**（329.48s、test_invisible_playwright.py 除外）
+- 失敗なし。Worker v57（docsのみ）実装後の回帰なし。
+
+### git状態
+- HEAD = `7eaec54` docs(anchor): v57 anchor hash確定（c80db3b）
+- 実装コミット = `c80db3b` docs(worker): v57 critic第54版確認（新規提案なし）・pytest237pass/4skip
+- 直前 = `33a7697` docs(qa): QA58検証完了
+- 差分: critic_proposal_2026-09-01.md 第53版→第54版更新（16:21実測・新規提案0件）+ improvement-anchor.md 行追加のみ。**新規コード実装なし（docsのみ）。**
+
+### 差分検証（Worker v57: docsのみ）
+- `c80db3b` の差分を確認: `reports/critic_proposal_2026-09-01.md` と `reports/improvement-anchor.md` の更新のみ。提案内容と一致。
+- **✓ 実装内容を確認済み（新規コード実装なし）**
+
+### ライブ計測（17:11 JST）
+| 監視項目 | 値 | 判定 |
+|---------|-----|------|
+| daily_counts 9/1 | atushi16 85/100・kudou 61/100・chugakujuken 66/100・TankanNotes 79/100・inobase1-4 1（凍結）・zin 14 | ✅ **prop100正常進行（全垢≤100）** |
+| hourly全垢 | 全垢≤15（atushi16 08=15/11=15・kudou 08=15・chugaku 09=15） | ✅ **prop94完全有効** |
+| audit 9/1 | 353件・成功295・失敗58（inobase1-4凍結分42件）→ 実質成功率94.8% | ✅ **BOT0** |
+| プロキシ | 5/6生存（zin 1084 deadのみ・既知・バックオフ中） | ✅ |
+| inobase1-4 | config除外済・dashboard非表示・凍結最終13:13 | ✅ worker v56完了 |
+| zin | 本日14件（hourly 16=12, 17=2）・1084断続的復旧→切断 | 🔴 **要ユーザー対応継続** |
+
+## 改善ノート保存先
+- `reports/daily-improvement-2026-09-01.md`（本ファイルに追記完了）
+- `reports/improvement-anchor.md` を更新予定（QA59検証 + worker v57確認反映）
+
 ## 次回への申し送り
 ### 🔴 重要
-- **prop100: 9/1 daily_counts で全垢が100丁度で停止することを確認（最重要・継続）** — 9/1 15:10現在 進行中（atushi16 80/100・kudou 55・chugaku 60・Tankan 65・全垢100未満で正常進行）。9/1 終了時に ≤100 停止を実測確認
+- **prop100: 9/1 daily_counts で全垢が100丁度で停止することを確認（最重要・継続）** — 9/1 17:11現在 進行中（atushi16 85/100・kudou 61・chugaku 66・Tankan 79・**全垢100未満で正常進行**）。**9/1 終了時に ≤100 停止を実測確認（本日中に最終確認が必要）**
 - **prop102: 実環境検証は9/2以降** — inobase1-4 は config 除外で発動場面なし。他垢で code 64 発生時に [LOCK102] を確認
 - **inobase1-4 凍結整理は完了（worker v56コミット済）** — 復帰は新垢再作成 or 解除後セッション再取得【要ユーザー対応】。browser.py/keyring等は復帰可能性のため維持
 ### 🟡 継続
 - **toushiwatch セッション再取得【要ユーザー対応】**
-- **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 15:10 daily_counts 0件）
+- **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 17:11 daily_counts 14件・hourly 16=12・バックオフ中）
 - **applied復元漏れ（atushi16 22件）監視**
