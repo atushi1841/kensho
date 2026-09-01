@@ -430,3 +430,55 @@
 - **toushiwatch セッション再取得【要ユーザー対応】**
 - **zin 1084 フラッピング【要ユーザー対応】継続**（9/1 17:11 daily_counts 14件・hourly 16=12・バックオフ中）
 - **applied復元漏れ（atushi16 22件）監視**
+
+---
+
+# QA60検証結果: 2026-09-01 23:11
+
+## 検証結果
+
+### pytest
+- **237 passed, 4 skipped**（97.81s）
+- 失敗なし。Worker v59（dm_monitor Noneキーバグ修正）後の回帰なし。
+
+### git状態
+- HEAD = `1ef6d8e` docs(anchor): v59 worker確認（critic第56版確認・dm_monitor Noneキーバグ修正 80396f3反映）
+- 作業ツリー: 未追跡ファイル（AGENTS.md/CODEBASE.md/scripts/stack/）あり。**コード変更はなし。**
+
+### 差分検証（Worker v59: dm_monitorバグ修正 + critic第56版確認）
+- コミット `80396f3`（22:53）を検証:
+  - `kensho/scraping/dm_monitor.py`: `check_dms()` の `wins_cache` 初期化で `account_key is not None` 条件追加（1行+コメント）→ JSONの `"null"` キー混入防止。**適切。**
+  - `data/dm_wins.json`: 既存の不正 `"null"` キー除去（`atushi16` のみに）。**適切。**
+  - `reports/critic_proposal_2026-09-01.md`: 第55版（20:20更新）→第56版（22:21更新）。**prop100最終確認完了（全垢≤100）・新規提案なし。** docs更新のみ。
+  - `reports/improvement-anchor.md`: critic第56版反映の行更新。docs更新のみ。
+- コミット `1ef6d8e`: 上記差分+anchor追記のラップ。**コード変更はdm_monitor.pyの1行のみ。**
+- **✓ 実装内容を確認済み（dm_monitorバグ修正は適切・残りはdocs更新）**
+
+### ライブ計測（23:11 JST）
+
+| 監視項目 | 値 | 判定 |
+|---------|-----|------|
+| **daily_counts 9/1確定**（22:49） | atushi16=100✅ / Tankan=100✅ / chugakujuken=100✅ **3垢丁度停止** / kudou=92 / zin=65 / inobase1-4=1（凍結） / toushiwatch=15（テストのみ） | ✅ **全垢≤100確定 → prop100クローズ** |
+| hourly全垢 | 全垢≤15（atushi16 max 08/11=15・kudou 08=15・chugaku 09=15・Tankan 12=14・zin 21=13） | ✅ **prop94完全有効** |
+| audit 9/1 | 464成功/27skip/40失敗/計531件・BOTlike=0 | ✅ **実質成功率>95%（inobase1-4凍結分除く）** |
+| プロキシ | **7/7 LISTENING**（1081/1082/1083/1084/1085/1087/1089） | ✅ **zin 1084復帰確定** |
+| BOTシグナル | code 64/326/403 0件 | ✅ |
+| zin 1084 | **本日65件成功**（F24/R21/L20・hourly最大21時=13・安定） | ✅ **【要ユーザー対応】解除** |
+| inobase1-4 | 凍結継続（config除外済み・dashboard非表示・最終13:13再発なし） | 🔴 **要ユーザー対応** |
+| toushiwatch | 18時テスト15件全成功（F6/R5/L4）・config再コメント中 | ⚠️ ユーザー判断待ち |
+| chugakujuken 1083 | 本日100件成功・失敗0・hourly全≤15・安定 | ✅ 監視継続 |
+
+## 改善ノート保存先
+- `reports/daily-improvement-2026-09-01.md`（本ファイルにQA60追記完了）
+- `reports/improvement-anchor.md` を更新予定（QA60検証 + worker v59確認反映）
+
+## 次回への申し送り
+### 🔴 重要
+- **prop100 クローズ確定（9/1全垢≤100実測完了）** — 3垢（atushi16/Tankan/chugakujuken）が丁度100で停止。次回anchorから監視対象解除。
+- **inobase1-4 凍結継続【要ユーザー対応】** — config/dashboard除外済み。復帰は新垢 or 解除後セッション再取得。
+- **prop102（code 64自動フォロー停止）実環境検証は9/2以降** — inobase1-4除外中のため発動場面なし。
+
+### 🟡 継続
+- **toushiwatch 復帰判断【要ユーザー対応】** — テスト15件全成功済み（18時台）。config再コメント中。
+- **chugakujuken 1083 フラッピング監視** — 本日100件成功0失敗で安定。物理対応待ち。
+- **applied復元漏れ（atushi16 22件）監視**
