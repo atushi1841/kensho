@@ -1713,6 +1713,20 @@ def apply_for_account(
                                 f"  [LOCK93] code 326 一時ロック検出 → {account_key}"
                                 f" フォローを{int(_lock_hours)}時間停止（like/RT継続・提案93）"
                             )
+                        elif _name == "follow" and _follow_error_code == "follow_suspended_64":
+                            # ★ 2026-09-01提案102: code 64（アカウント停止）→ 当日フォロー完全停止
+                            #   code 326より深刻。フォローは当日中完全停止（~12h）、
+                            #   実質応募不能のためフォロー制限としては最長の停止期間。
+                            #   翌日バッチで自動ログイン→再度code 64→再度LOCK102のループになるが、
+                            #   「無駄な1バッチで済む」＝config除外よりソフトな停止。
+                            _suspend_hours = float(cfg.get("applier", {}).get("follow_suspend_hours", 12))
+                            _set_follow_lock(account_key, _suspend_hours)
+                            _follow_locked_until = _get_follow_lock(account_key)
+                            # 64は凍結判定に近いので403カウンタは触らない（通常パスでリセット）
+                            out(
+                                f"  [LOCK102] code 64 アカウント停止検出 → {account_key}"
+                                f" フォローを{int(_suspend_hours)}時間停止（提案102）"
+                            )
                         elif _name == "follow" and _follow_error_code == "http_403":
                             _follow_403_count += 1
                             out(f"  [i] フォロー403検出 {_follow_403_count}回目（フォロー制限シグナル・提案90）")

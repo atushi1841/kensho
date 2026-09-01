@@ -1069,3 +1069,13 @@ class TestFollowLock93:
         assert _is_temp_lock_326('{"code":64,"message":"Your account is suspended"}') is False
         assert _is_temp_lock_326("") is False
         assert _is_temp_lock_326("normal response") is False
+
+    def test_is_follow_suspended_64_detects_code(self) -> None:
+        """api_actions._is_follow_suspended_64: code 64（アカウント停止）検出（提案102）"""
+        from kensho.application.api_actions import _is_follow_suspended_64
+
+        assert _is_follow_suspended_64('{"errors":[{"code":64,"message":"Your account is suspended"}]}') is True
+        assert _is_follow_suspended_64('"code":64,"message":"Your account is suspended"') is True
+        assert _is_follow_suspended_64('{"code":326,"message":"temporarily locked"}') is False
+        assert _is_follow_suspended_64("") is False
+        assert _is_follow_suspended_64("normal response") is False

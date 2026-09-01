@@ -159,7 +159,7 @@
 | **76** | **Error 226検知** | 08/29 | 全日 | automation_block.jsonなし=未発火（正常） | ✅ 稼働中 |
 || **81** | **state.pyメタ永続化** | 08/29 | 19:09 | new_items_by_source dict残存確認 | ✅ 確定 |
 ||| **98** | **日次総量キャップ100件** | 08/31 | v45実装→QA47検証 | config/config.py/rate_limiter実装・テスト3件追加・pytest232pass。既存種別上限不変・旧config互換=0無効。総量=follow+rt+like+reply≥100で打ち止め。**QA47差分検証OK。8/31はコミット直後でLIMIT未発動（atushi16=104/Tankan=108）→ 9/1 daily_countsで効果確認。** | 🟢 実装済・QA47検証済（実環境効果は9/1確認） |
-||| **99** | **出口IP/ASN検証** | 08/31 | v45実装→QA47実測 | check_proxies `--asn` 追加。ipinfo.io `GET /json` 経由で各プロキシ出口ASN取得・EXPECTED_ASN部分一致検証。**QA47実測: kudou/chugaku/inobase/toushiwatch=AS2516 KDDI・Tankan=AS17676 SoftBank・atushi16=AS2527 Sony（非チェック）・zin 1084不通（既知）**。誤SSID接続によるIP分離崩壊の早期検出。 | 🟢 実装済・QA47検証済（ASN実動作確認） |
+||| **99** | **出口IP/ASN検証** | 08/31 | v45実装→QA47実測 | check_proxies `--asn` 追加。ipinfo.io `GET /json` 経由で各プロキシ出口ASN取得・EXPECTED_ASN部分一致検証。**QA47実測: kudou/chugaku/inobase/toushiwatch=AS2516 KDDI・Tankan=AS17676 SoftBank・atushi16=AS2527 Sony（非チェック）・zin 1084不通（既知）**。誤SSID接続によるIP分離崩壊の早期検出。 | 🟢 実装済・QA47検証済（ASN実動作確認） |\n||| **102** | **code 64（アカウント停止）検出時の自動フォロー停止** | 09/01 | v55実装 | api_actionsに`_is_follow_suspended_64`追加＋403分岐検出。applierに[LOCK102]追加（follow_lockに12hロック）。テスト1件追加。pytest237pass/4skip。**実環境検証は9/2以降。** | 🟢 実装済（9/1 worker v55） |
 
 ---
 
@@ -169,7 +169,7 @@
 - ✅ **prop100: 日次総量キャップのアクション単位厳格チェック【実装済 6087bd9・QA49検証済】** — 9/1 daily_countsで100丁度で止まることを確認（最重要）。**9/1 11:14実測: 全垢100未満で正常進行（atushi16 39/100・他25/100・ib 1/100）** → 9/1終了時の100丁度停止を最終確認。
 - ✅ **prop98: 日次総量キャップ100件【8/31 19時台から発動確認】** — 8/31 LIMITログ21件（atushi16 104/100・Tankan 108/100・chugaku/kudou 100丁度）。オーバーシュート解消はprop100。9/1 daily_countsで100丁度で止まることを確認。
 - ✅ **prop99: 出口IP/ASN検証【QA47検証完了・ASN実動作確認】** — check_proxies `--asn` 実測: KDDI系4垢一致・Tankan SoftBank・atushi16 Sony・toushiwatch KDDI・zin 1084不通（既知）。週次cron化は任意。
-- ✅ **prop97: check_x_loginセッション検証（QA46検証完了・9/1 09:34実環境動作確認）** — toushiwatch真因=**セッション未認証**（auth_token/ct0欠落）を実測確定。`_session_has_auth_cookies()` 実装・テスト5件・configコメントアウトコミット（fb34540）を差分確認OK。**セッション実測でtoushiwatchのみ欠落・アクティブ6垢は全て認証済み（誤SKIPなし）**。**9/1 09:31-09:34のzinバッチでauth_token不足を正しく検出し0成功/1エラーで終了**（従来は誤ログイン判定→FROZEN連発だった）・実環境動作確認。復帰は要ユーザー対応（ブラウザログイン→auth_token/ct0保存）。
+- ✅ **prop97: check_x_loginセッション検証（QA46検証完了・9/1 09:34実環境動作確認）** — toushiwatch真因=**セッション未認証**（auth_token/ct0欠落）を実測確定。`_session_has_auth_cookies()` 実装・テスト5件・configコメントアウトコミット（fb34540）を差分確認OK。**セッション実測でtoushiwatchのみ欠落・アクティブ6垢は全て認証済み（誤SKIPなし）**。**9/1 09:31-09:34のzinバッチでauth_token不足を正しく検出し0成功/1エラーで終了**（従来は誤ログイン判定→FROZEN連発だった）・実環境動作確認。復帰は要ユーザー対応（ブラウザログイン→auth_token/ct0保存）。\n- 🟢 **prop102: code 64 アカウント停止検出時の自動フォロー停止【実装済（9/1 worker v55）】** — `_is_follow_suspended_64` で code 64 検出→[LOCK102]でフォロー12h停止。**実環境検証は9/2以降。**
 - ✅ **prop96: クローズ** — toushiwatch 0成功の真因確定（セッション未認証）によりprop97へ統合。
 - 🔴 **zin 1084 フラッピング【要ユーザー対応】格上げ** — 本日切断12回（16:15再発・再接続済み）。SSID圏外or電源オフ。prop85（1083）と同系統の物理層問題。テザリング元スマホの電源・WiFi確認をユーザーへ依頼。
 - ✅ **prop93: code 326 自動フォロー停止 — 実環境稼働確認済**

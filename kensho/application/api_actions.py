@@ -174,6 +174,21 @@ def _is_temp_lock_326(body_str: str) -> bool:
     return False
 
 
+def _is_follow_suspended_64(body_str: str) -> bool:
+    """code 64（アカウント停止/フォロー制限）判定。フォローAPIでのみ使用。
+
+    ★ 2026-09-01提案102: code 64 "Your account is suspended" は凍結/フォロー制限の
+    決定的エラー。code 326（一時ロック・提案93）より深刻で、検出時は当日フォローを
+    完全停止する。like/rt（GraphQL）が成功しても当選条件（フォロー）を満たせないため、
+    実質応募不能状態の早期検出が目的。
+    """
+    if not body_str:
+        return False
+    if '"code":64' in body_str or 'code":64' in body_str:
+        return True
+    return False
+
+
 def _load_automation_blocks() -> dict[str, float]:
     try:
         with open(_AUTOMATION_BLOCK_FILE, encoding="utf-8") as f:
@@ -926,6 +941,16 @@ def api_follow_by_screen_name(
                 delay_ms=_delay,
             )
             return (False, "automation_blocked")
+        if _is_follow_suspended_64(body_str):
+            # ★ 2026-09-01提案102: code 64（アカウント停止/フォロー制限）→ 当日フォロー停止マーカー
+            #   FROZEN_ABORT（提案90/91）はバッチ中断のみで次バッチで再起動→再失敗のループになるため、
+            #   applier側で「当日フォロー完全停止」の分岐に使う（follow_lockに長時間ロック）。
+            out(f"  [WARN] フォローAPI: HTTP 403 code 64（アカウント停止: {body_str[:200]})")
+            _delay = int((_time.time() - _t0) * 1000)
+            audit_ledger.log(
+                account_key, "follow", screen_name, "allow", "failed", error="follow_suspended_64", delay_ms=_delay
+            )
+            return (False, "follow_suspended_64")
         if _is_temp_lock_326(body_str):
             # ★ 2026-08-30提案93: code 326（一時ロック）→ フォロー停止マーカー用エラーコード
             #   凍結（code 64）ではなく一時ロックのため、FROZEN_ABORT（提案90/91）ではなく
