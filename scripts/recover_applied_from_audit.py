@@ -141,9 +141,44 @@ for it in items:
             restored += 1
             restored_follow_state += 1
 
+# ★ 2026-09-02追加: 第2パス — applied dict にキー自体が存在しない垢も復元する。
+#   これまでの第1パスは `ap.keys()` しか走査せず、キー欠落(エントリ未初期化)の垢は
+#   永久に復元されなかった。RT/follow成功を全垢について検証し、キーを追加で補完する。
+for it in items:
+    x_url = it.get("x_url") or ""
+    m = re.search(r"x\.com/([^/]+)/status/(\d+)", x_url)
+    if not m:
+        continue
+    screen, tid = m.group(1), m.group(2)
+    ap = it.get("applied")
+    if not isinstance(ap, dict):
+        it["applied"] = {}
+        ap = it["applied"]
+    for ac in sorted(set(rt_ok) | set(follow_ok) | set(follow_state_done)):
+        if isinstance(ap.get(ac), str) and not str(ap.get(ac)).startswith("DEFER"):
+            continue  # 既に日付あり
+        if ap.get(ac) is not None:
+            continue  # 既に日付/DEFERあり
+        # キーが存在しないか None → audit/follow_stateから補完
+        if ac in rt_ok and tid in rt_ok[ac]:
+            rt_ts_val = rt_ts.get(ac, {}).get(tid)
+            ap[ac] = rt_ts_val if rt_ts_val else f"{datetime.now().isoformat(timespec='seconds')}Z"
+            restored += 1
+        elif ac in follow_ok and screen in follow_ok[ac]:
+            fts = follow_ts.get(ac, {}).get(screen)
+            ap[ac] = fts if fts else f"{datetime.now().isoformat(timespec='seconds')}Z"
+            restored += 1
+        elif ac in follow_state_done and screen in follow_state_done[ac]:
+            fts = follow_ts.get(ac, {}).get(screen)
+            ap[ac] = fts if fts else f"{datetime.now().isoformat(timespec='seconds')}Z"
+            restored += 1
+            restored_follow_state += 1
+
 if args.dry_run:
     print(
-        f"[DRY-RUN] 復元予定 {restored} エントリ (うちfollow_state由来 {restored_follow_state}) / 既に日付ありスキップ {skipped_had_date}"
+        f"[DRY-RUN] 復元予定 {restored} エントリ "
+        f"(うちfollow_state由来 {restored_follow_state}) "
+        f"/ 既に日付ありスキップ {skipped_had_date}"
     )
     print("垢別 復元後(予定)内訳:")
     after = data.get("collected", [])
@@ -153,7 +188,9 @@ else:
         encoding="utf-8",
     )
     print(
-        f"[DONE] 復元 {restored} エントリ (うちfollow_state由来 {restored_follow_state}) / 既に日付ありスキップ {skipped_had_date}"
+        f"[DONE] 復元 {restored} エントリ "
+        f"(うちfollow_state由来 {restored_follow_state}) "
+        f"/ 既に日付ありスキップ {skipped_had_date}"
     )
     print("垢別復元内訳を表示（下部）:")
     after = json.loads(COLLECTED.read_text(encoding="utf-8"))["collected"]
