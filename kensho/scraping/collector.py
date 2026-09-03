@@ -106,6 +106,66 @@ def _dedup_x_url_merge(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return list(x_url_index.values())
 
 
+def _merge_applied_from_disk(result_items: list[dict[str, Any]], disk_items: list[dict[str, Any]]) -> int:
+    """保存直前マージ: ディスク上のapplied応募日付を収集結果に反映（2026-09-03 v7修正）。
+
+    collectorは全ソース収集に数分かかり、その間にapplierがcollected.jsonのappliedを
+    更新（日付書き込み）している可能性がある。この変更を上書きして消さないよう、
+    各アイテムのappliedをディスク値とmerged（None以外を優先）する。
+
+    knshow の detail_url は収集ごとに変わるハッシュ形式（/detail/<hash>.html）のため、
+    detail_url 単独照合では保存前マージが機能せず applied が消滅する（観測1・4回目再発）。
+    → detail_url 照合に失敗した場合は正規化済み x_url で再照合する複合照合に変更。
+
+    戻り値: applied をディスク値で補完・更新したアイテム数
+    """
+    if not disk_items or not result_items:
+        return 0
+    _disk_map_detail: dict[str, dict[str, Any]] = {item["detail_url"]: item for item in disk_items}
+    # x_url（正規化後）→ ディスクアイテム。同一ツイートが過去の収集でdetail_url違いで
+    # 重複している場合は applied（None以外を優先）をunionして最も情報の多い状態を保持。
+    _disk_map_xurl: dict[str, dict[str, Any]] = {}
+    for _dit in disk_items:
+        _dxu: str = _normalize_x_url(_dit.get("x_url", ""))
+        if not _dxu:
+            continue
+        if _dxu not in _disk_map_xurl:
+            _disk_map_xurl[_dxu] = _dit
+            continue
+        _prev = _disk_map_xurl[_dxu]
+        _pa: dict[str, Any] = _prev.get("applied") or {}
+        _da: dict[str, Any] = _dit.get("applied") or {}
+        _ua: dict[str, Any] = dict(_pa)
+        for _k, _v in _da.items():
+            if _v not in (None, ""):
+                _ua[_k] = _v
+            elif _k not in _ua:
+                _ua[_k] = _v
+        _prev["applied"] = _ua
+    _matched: int = 0
+    for item in result_items:
+        _du: str = item.get("detail_url", "")
+        _disk_item: dict[str, Any] | None = _disk_map_detail.get(_du)
+        if _disk_item is None:
+            # detail_url が変わった（knshow ハッシュ形式）→ x_url で再照合
+            _xu_key: str = _normalize_x_url(item.get("x_url", ""))
+            if _xu_key:
+                _disk_item = _disk_map_xurl.get(_xu_key)
+        if _disk_item is None:
+            continue
+        _disk_applied: dict[str, Any] = _disk_item.get("applied") or {}
+        _item_applied: dict[str, Any] = item.get("applied") or {}
+        _merged: dict[str, Any] = dict(_disk_applied)
+        for _k, _v in _item_applied.items():
+            if _v is None:
+                _merged.setdefault(_k, None)
+            else:
+                _merged[_k] = _v
+        item["applied"] = _merged
+        _matched += 1
+    return _matched
+
+
 def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int = 99) -> tuple[int, int, int]:
     """
     収集を実行。
@@ -576,24 +636,13 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     #    collectorは全ソース収集に数分かかり、その間にapplierがcollected.jsonのappliedを更新
     #    (日付書き込み)している可能性がある。この変更を上書きして消さないよう、
     #    各アイテムのappliedをディスク値とmerged（None以外を優先）する。
+    # ★ 2026-09-03 v7修正: detail_url 単独照合→x_url複合照合に変更（_merge_applied_from_disk参照）。
     try:
         _disk_data: dict[str, Any] = load_json(COLLECTED_FILE, {})
         _disk_items: list[dict[str, Any]] = _disk_data.get("collected", [])
-        _disk_map: dict[str, dict[str, Any]] = {item["detail_url"]: item for item in _disk_items}
-        for item in result["collected"]:
-            _du: str = item.get("detail_url", "")
-            _disk_item: dict | None = _disk_map.get(_du)
-            if _disk_item is None:
-                continue
-            _disk_applied: dict = _disk_item.get("applied") or {}
-            _item_applied: dict = item.get("applied") or {}
-            _merged: dict[str, Any] = dict(_disk_applied)
-            for _k, _v in _item_applied.items():
-                if _v is None:
-                    _merged.setdefault(_k, None)
-                else:
-                    _merged[_k] = _v
-            item["applied"] = _merged
+        _matched: int = _merge_applied_from_disk(result["collected"], _disk_items)
+        if _matched:
+            out(f"  [保存前マージ] {_matched}件のappliedをディスク値で補完")
     except Exception as _me:
         out(f"  [WARN] 保存前マージ失敗: {_me}")
     safe_save_json(COLLECTED_FILE, result, "collected.json")

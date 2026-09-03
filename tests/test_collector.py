@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from kensho.scraping.collector import (
     _dedup_x_url_merge,
     _is_expired,
+    _merge_applied_from_disk,
     _normalize_x_url,
     extract_deadline_and_winners,
     is_x_url,
@@ -317,3 +318,112 @@ class TestDedupXUrlMerge:
         }
         merged = _dedup_x_url_merge([a])
         assert merged[0]["tweet_id"] == "custom_id"
+
+
+class TestMergeAppliedFromDisk:
+    """_merge_applied_from_disk: 保存直前のappliedマージ（2026-09-03 v7修正）
+
+    knshow の detail_url が収集ごとに変わるハッシュ形式のため、
+    detail_url 単独照合ではappliedが消滅する問題の回帰テスト。
+    """
+
+    def test_detail_url_match_merges_applied(self) -> None:
+        """detail_url一致: ディスクのapplied日付が収集結果に反映される"""
+        disk = [
+            {
+                "detail_url": "/detail/hash1.html",
+                "x_url": "https://x.com/foo/status/123",
+                "applied": {"atushi16": "2026-09-03T08:00:00", "zin": None},
+            }
+        ]
+        result = [
+            {
+                "detail_url": "/detail/hash1.html",
+                "x_url": "https://x.com/foo/status/123",
+                "applied": {"atushi16": None, "zin": None, "Tankan": None},
+            }
+        ]
+        matched = _merge_applied_from_disk(result, disk)
+        assert matched == 1
+        assert result[0]["applied"]["atushi16"] == "2026-09-03T08:00:00"
+        # 新しいアカウントキーも保持される
+        assert set(result[0]["applied"].keys()) == {"atushi16", "zin", "Tankan"}
+
+    def test_detail_url_changed_xurl_fallback(self) -> None:
+        """detail_url変動（knshowハッシュ形式）: x_urlで照合してappliedを保持する"""
+        disk = [
+            {
+                "detail_url": "/detail/old_hash.html",
+                "x_url": "https://x.com/foo/status/123",
+                "applied": {"atushi16": "2026-09-03T09:30:00"},
+            }
+        ]
+        result = [
+            {
+                "detail_url": "/detail/new_hash.html",  # 収集ごとに変わる
+                "x_url": "https://x.com/foo/status/123",
+                "applied": {"atushi16": None},
+            }
+        ]
+        matched = _merge_applied_from_disk(result, disk)
+        assert matched == 1
+        assert result[0]["applied"]["atushi16"] == "2026-09-03T09:30:00"
+
+    def test_xurl_notation_variant_fallback(self) -> None:
+        """x_url表記揺れ（/i/web/status/ 等）も正規化で同一視される"""
+        disk = [
+            {
+                "detail_url": "/detail/old_hash.html",
+                "x_url": "https://x.com/i/web/status/123",
+                "applied": {"kudou": "2026-09-03T10:00:00"},
+            }
+        ]
+        result = [
+            {
+                "detail_url": "/detail/new_hash.html",
+                "x_url": "https://twitter.com/foo/status/123",
+                "applied": {"kudou": None},
+            }
+        ]
+        matched = _merge_applied_from_disk(result, disk)
+        assert matched == 1
+        assert result[0]["applied"]["kudou"] == "2026-09-03T10:00:00"
+
+    def test_disk_duplicate_xurl_union_applied(self) -> None:
+        """ディスクに同一ツイートの重複エントリがある場合、appliedをunionして最も情報の多い状態を保持"""
+        disk = [
+            {
+                "detail_url": "/detail/old_hash.html",
+                "x_url": "https://x.com/foo/status/123",
+                "applied": {"atushi16": "2026-09-03T08:00:00", "zin": None},
+            },
+            {
+                "detail_url": "/detail/older_hash.html",
+                "x_url": "https://x.com/foo/status/123",
+                "applied": {"atushi16": None, "zin": "2026-09-03T07:00:00"},
+            },
+        ]
+        result = [
+            {
+                "detail_url": "/detail/new_hash.html",
+                "x_url": "https://x.com/foo/status/123",
+                "applied": {"atushi16": None, "zin": None},
+            }
+        ]
+        matched = _merge_applied_from_disk(result, disk)
+        assert matched == 1
+        assert result[0]["applied"]["atushi16"] == "2026-09-03T08:00:00"
+        assert result[0]["applied"]["zin"] == "2026-09-03T07:00:00"
+
+    def test_no_match_leaves_applied_untouched(self) -> None:
+        """照合できないアイテムは変更されない"""
+        disk = [{"detail_url": "/detail/aaa.html", "x_url": "https://x.com/a/status/1", "applied": {"a": "x"}}]
+        result = [{"detail_url": "/detail/bbb.html", "x_url": "https://x.com/b/status/2", "applied": {"a": None}}]
+        matched = _merge_applied_from_disk(result, disk)
+        assert matched == 0
+        assert result[0]["applied"]["a"] is None
+
+    def test_empty_inputs(self) -> None:
+        """空の入力は0を返す"""
+        assert _merge_applied_from_disk([], []) == 0
+        assert _merge_applied_from_disk([{"detail_url": "x", "x_url": "", "applied": {}}], []) == 0
