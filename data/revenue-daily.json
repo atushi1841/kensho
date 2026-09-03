@@ -472,11 +472,11 @@
  },
  {
   "date": "2026-09-03",
-  "collected_at": "2026-09-03T08:58:51.333732",
+  "collected_at": "2026-09-03T17:18:05.740905",
   "apify": {
    "source": "apify",
    "actors_total": 25,
-   "actors_public": 22,
+   "actors_public": 25,
    "actors_ppe": 25,
    "actors_free": 0,
    "total_users_30d": 21,
@@ -550,7 +550,7 @@
      "runs": 27,
      "billing": "ppe",
      "price": 0.002,
-     "is_public": false
+     "is_public": true
     },
     {
      "name": "japan-rent-market-cn",
@@ -640,7 +640,7 @@
      "runs": 3,
      "billing": "ppe",
      "price": 0.002,
-     "is_public": false
+     "is_public": true
     },
     {
      "name": "camera-kr",
@@ -650,7 +650,7 @@
      "runs": 3,
      "billing": "ppe",
      "price": 0.002,
-     "is_public": false
+     "is_public": true
     },
     {
      "name": "watch-cn",
@@ -737,11 +737,19 @@
   },
   "rapidapi": {
    "source": "rapidapi",
-   "apis_total": 21,
+   "apis_total": 22,
    "apis_public": 20,
-   "apis_private": 1,
-   "apis_freemium": 21,
+   "apis_private": 2,
+   "apis_freemium": 22,
    "details": [
+    {
+     "id": "api_7d2dcc27-829d-4add-88b9-5c1708447f85",
+     "name": "Japan Camera & Lens Resale Price Research API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
     {
      "id": "api_45bf102f-6d1b-4fd5-9179-f164de167ffd",
      "name": "Japan Kakaku Price Stats API",
@@ -777,7 +785,7 @@
     {
      "id": "api_e19e373c-049e-462b-bd7c-c5acf9b65770",
      "name": "Japan Used Camera Price Stats API",
-     "visibility": "PUBLIC",
+     "visibility": "PRIVATE",
      "pricing": "FREEMIUM",
      "version": "1.0.0",
      "version_status": "active"
@@ -918,7 +926,7 @@
    "details": [
     {
      "title": "Japanese Hobby & Collectibles Market Price Dataset (Weekly CSV)",
-     "price": "9.99",
+     "price": "29.99",
      "zip_exists": true,
      "zip_size": 315522
     }
@@ -933,11 +941,11 @@
    "last_28_days_usd": 0,
    "total_earnings_usd": 0,
    "login_ok": true,
-   "collected_at": "2026-09-02T23:58:51.204Z"
+   "collected_at": "2026-09-03T09:08:03.977"
   },
   "opportunities": [
    "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI非公開API 1本: Japan OffMall Used Goods Price Stats API (Chinese)",
+   "RapidAPI非公開API 2本: Japan OffMall Used Goods Price Stats API (Chinese), Japan Used Camera Price Stats API",
    "Apify高使用量アクター: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
   ],
   "warnings": [
