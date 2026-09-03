@@ -1,0 +1,111 @@
+actor,issue,field,current,suggested,evidence,search_query,queries_tried,competitors
+surugaya-japan-hobby-prices,short_description,description,261字,競合中央値 274字以上に拡張（最大 294字）,競合5件のdesc_len中央値=274,surugaya hobby,3,5
+surugaya-japan-hobby-prices,missing_keywords,title+description,"(不在) clean, code, json, largest, maker, required","説明/タイトルに追加: clean(競合2件), code(競合2件), json(競合2件), largest(競合2件), maker(競合2件), required(競合2件)",競合5件中2件以上に出現し自社全文に不在,surugaya hobby,3,5
+surugaya-japan-hobby-prices,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間2ユーザー）,競合中央値u30d=1 / 自社0 / 競合1位=yahoo-auctions-sold-scraper,surugaya hobby,3,5
+surugaya-japan-hobby-prices,title_keyword_gap,title,Suruga-ya Scraper — 駿河屋 中古フィギュア・ホビー価格,タイトルへ追加: collectibles(競合3件),競合title5件中3件以上に出現し自社titleに不在,surugaya hobby,3,5
+mandarake-auction-scraper,short_description,description,260字,競合中央値 297字以上に拡張（最大 298字）,競合2件のdesc_len中央値=297,mandarake auction,1,2
+mandarake-auction-scraper,missing_keywords,title+description,(不在) sold,説明/タイトルに追加: sold(競合2件),競合2件中2件以上に出現し自社全文に不在,mandarake auction,1,2
+mandarake-auction-scraper,missing_categories,categories,ECOMMERCE,"追加候補: AUTOMATION(競合2件), DEVELOPER_TOOLS(競合2件)",競合2件中2件以上が設定,mandarake auction,1,2
+mandarake-auction-scraper,title_keyword_gap,title,Mandarake Auction Scraper — Japan Used Collectibles Auctions,タイトルへ追加: sold(競合2件),競合title2件中2件以上に出現し自社titleに不在,mandarake auction,1,2
+mandarake-surugaya-mcp,no_competitor_data,search_query,mandarake suruga,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,mandarake suruga,8,0
+rakuten-japan-mcp,missing_keywords,title+description,"(不在) competitive, e-commerce, marketplace, merchant","説明/タイトルに追加: competitive(競合2件), e-commerce(競合2件), marketplace(競合2件), merchant(競合2件)",競合5件中2件以上に出現し自社全文に不在,rakuten ichiba,1,5
+rakuten-japan-mcp,missing_categories,categories,"ECOMMERCE,MCP_SERVERS,DEVELOPER_TOOLS","追加候補: AUTOMATION(競合4件), LEAD_GENERATION(競合3件)",競合5件中2件以上が設定,rakuten ichiba,1,5
+rakuten-japan-mcp,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間7ユーザー）,競合中央値u30d=2 / 自社0 / 競合1位=rakuten-product-scraper,rakuten ichiba,1,5
+dlsite-scraper,no_competitor_data,search_query,dlsite doujin,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,dlsite doujin,6,0
+tackleberry-japan-fishing-tackle-scraper,short_description,description,284字,競合中央値 292字以上に拡張（最大 292字）,競合1件のdesc_len中央値=292,tackleberry net,1,1
+kitamura-japan-used-camera-scraper,no_competitor_data,search_query,kitamura camera,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,kitamura camera,6,0
+jackroad-used-watch-scraper,no_competitor_data,search_query,jackroad watch,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,jackroad watch,6,0
+komehyo-japan-brand-scraper,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間2ユーザー）,競合中央値u30d=2 / 自社0 / 競合1位=reclo-japan-luxury-resale-listings-scraper,komehyo luxury,1,1
+iosys-japan-used-smartphone-scraper,missing_categories,categories,ECOMMERCE,"追加候補: AUTOMATION(競合2件), DEVELOPER_TOOLS(競合2件)",競合2件中2件以上が設定,iosys smartphone,1,2
+iosys-japan-used-smartphone-scraper,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間1ユーザー）,競合中央値u30d=1 / 自社0 / 競合1位=iosys-phone-market-checker,iosys smartphone,1,2
+iosys-japan-used-smartphone-scraper,title_keyword_gap,title,IOSYS Japan Used Smartphone & Tablet Scraper,タイトルへ追加: iphone(競合2件),競合title2件中2件以上に出現し自社titleに不在,iosys smartphone,1,2
+digimart-japan-used-instrument-scraper,short_description,description,240字,競合中央値 242字以上に拡張（最大 293字）,競合2件のdesc_len中央値=242,digimart instruments,1,2
+digimart-japan-used-instrument-scraper,missing_categories,categories,ECOMMERCE,"追加候補: AUTOMATION(競合2件), DEVELOPER_TOOLS(競合2件)",競合2件中2件以上が設定,digimart instruments,1,2
+japan-used-instrument-market-scraper,missing_categories,categories,ECOMMERCE,"追加候補: AUTOMATION(競合2件), DEVELOPER_TOOLS(競合2件)",競合2件中2件以上が設定,instrument digimart,1,2
+japan-used-instrument-market-scraper,title_keyword_gap,title,Japan Used Instrument Market — Cross-Shop Price Comparison,タイトルへ追加: digimart(競合2件),競合title2件中2件以上に出現し自社titleに不在,instrument digimart,1,2
+japan-luxury-brand-market-scraper,short_description,description,225字,競合中央値 286字以上に拡張（最大 286字）,競合1件のdesc_len中央値=286,luxury brand,1,1
+japan-market-mcp,short_description,description,201字,競合中央値 292字以上に拡張（最大 297字）,競合2件のdesc_len中央値=292,cross agents claude,3,2
+japan-market-mcp,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間3347ユーザー）,競合中央値u30d=1864.5 / 自社0 / 競合1位=reddit-scraper,cross agents claude,3,2
+japan-offmall-market-scraper,no_competitor_data,search_query,offmall goods,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,offmall goods,6,0
+japan-camera-market-cn-scraper,no_competitor_data,search_query,日本二手相机市场 跨店比价（kitamura+fujiya）,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,日本二手相机市场 跨店比价（kitamura+fujiya）,4,0
+japan-camera-market-kr-scraper,no_competitor_data,search_query,카메라 크로스샵,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,카메라 크로스샵,6,0
+japan-watch-market-scraper-cn,no_competitor_data,search_query,日本二手手表市场 跨店比价（jackroad+kitamura）,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,日本二手手表市场 跨店比价（jackroad+kitamura）,5,0
+japan-watch-market-scraper-kr,no_competitor_data,search_query,크로스샵 비교（jackroad+kitamura）,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,크로스샵 비교（jackroad+kitamura）,5,0
+japan-luxury-brand-market-cn,no_competitor_data,search_query,日本二手奢侈品市场 跨店比价（komehyo+jackroad）,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,日本二手奢侈品市场 跨店比价（komehyo+jackroad）,7,0
+japan-luxury-brand-market-kr,no_competitor_data,search_query,크로스샵 비교（komehyo+jackroad）,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,크로스샵 비교（komehyo+jackroad）,7,0
+japan-used-instrument-market-cn,no_competitor_data,search_query,日本二手乐器市场 跨店比价（digimart+ishibashi）,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,日本二手乐器市场 跨店比价（digimart+ishibashi）,5,0
+japan-used-instrument-market-kr,no_competitor_data,search_query,크로스샵 비교（digimart+ishibashi）,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,크로스샵 비교（digimart+ishibashi）,5,0
+japan-offmall-market-cn,no_competitor_data,search_query,日本オフモール二手商品市场 ハードオフ官方通贩,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,日本オフモール二手商品市场 ハードオフ官方通贩,5,0
+japan-offmall-market-kr,no_competitor_data,search_query,오프몰 중고품,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,오프몰 중고품,6,0
+japan-rent-market-scraper,short_description,description,0字,競合中央値 263字以上に拡張（最大 279字）,競合5件のdesc_len中央値=263,rent suumo,1,5
+japan-rent-market-scraper,missing_keywords,title+description,"(不在) estate, real, access, photos, amenities, key","説明/タイトルに追加: estate(競合5件), real(競合5件), access(競合4件), photos(競合3件), amenities(競合2件), key(競合2件)",競合5件中2件以上に出現し自社全文に不在,rent suumo,1,5
+japan-rent-market-scraper,missing_categories,categories,ECOMMERCE,"追加候補: REAL_ESTATE(競合5件), LEAD_GENERATION(競合4件), AUTOMATION(競合2件)",競合5件中2件以上が設定,rent suumo,1,5
+japan-rent-market-scraper,title_keyword_gap,title,Japan Rent Market — 3-Site Cross Comparison,タイトルへ追加: suumo(競合4件),競合title5件中3件以上に出現し自社titleに不在,rent suumo,1,5
+japan-rent-market-cn,short_description,description,76字,競合中央値 185字以上に拡張（最大 185字）,競合1件のdesc_len中央値=185,日本租房市场 suumo+at,1,1
+japan-rent-market-kr,short_description,description,103字,競合中央値 277字以上に拡張（最大 291字）,競合3件のdesc_len中央値=277,suumo+at home,1,3
+japan-rent-market-kr,missing_keywords,title+description,"(不在) access, age, building, clean, csv, deposit","説明/タイトルに追加: access(競合3件), age(競合3件), building(競合3件), clean(競合3件), csv(競合3件), deposit(競合3件)",競合3件中2件以上に出現し自社全文に不在,suumo+at home,1,3
+japan-rent-market-kr,missing_categories,categories,"ECOMMERCE,REAL_ESTATE","追加候補: AUTOMATION(競合3件), LEAD_GENERATION(競合3件)",競合3件中2件以上が設定,suumo+at home,1,3
+japan-rent-market-kr,title_keyword_gap,title,일본 렌트 마켓 — 3개 사이트 크로스샵 비교（SUUMO+at home+LIFULL）,"タイトルへ追加: home(競合3件), property(競合3件), rental(競合2件)",競合title3件中2件以上に出現し自社titleに不在,suumo+at home,1,3
+japan-property-market-scraper,short_description,description,221字,競合中央値 295字以上に拡張（最大 299字）,競合5件のdesc_len中央値=295,property condo sale,2,5
+japan-property-market-scraper,missing_keywords,title+description,"(不在) rent, zillow, agent, code, csv, excel","説明/タイトルに追加: rent(競合4件), zillow(競合4件), agent(競合3件), code(競合2件), csv(競合2件), excel(競合2件)",競合5件中2件以上に出現し自社全文に不在,property condo sale,2,5
+japan-property-market-scraper,missing_categories,categories,"ECOMMERCE,REAL_ESTATE",追加候補: LEAD_GENERATION(競合3件),競合5件中2件以上が設定,property condo sale,2,5
+japan-property-market-scraper,title_keyword_gap,title,Japan Property Market — 2-Site Cross Comparison (Used Condo),タイトルへ追加: zillow(競合4件),競合title5件中3件以上に出現し自社titleに不在,property condo sale,2,5
+japan-property-market-cn,short_description,description,78字,競合中央値 185字以上に拡張（最大 185字）,競合1件のdesc_len中央値=185,日本二手房市场 suumo+at,1,1
+japan-property-market-kr,short_description,description,101字,競合中央値 237字以上に拡張（最大 237字）,競合1件のdesc_len中央値=237,부동산 suumo+at,1,1
+japan-kakaku-price-search,missing_keywords,title+description,"(不在) ratings, reviews, scrape, specs, category, clean","説明/タイトルに追加: ratings(競合4件), reviews(競合3件), scrape(競合3件), specs(競合3件), category(競合2件), clean(競合2件)",競合4件中2件以上に出現し自社全文に不在,kakaku 価格.com,1,4
+japan-kakaku-price-search,missing_categories,categories,ECOMMERCE,追加候補: AUTOMATION(競合2件),競合4件中2件以上が設定,kakaku 価格.com,1,4
+japan-kakaku-price-search,title_keyword_gap,title,Japan Kakaku Price Search — 価格.com Price Lookup,"タイトルへ追加: comparison(競合2件), product(競合2件)",競合title4件中2件以上に出現し自社titleに不在,kakaku 価格.com,1,4
+japan-kakaku-price-search-cn,no_competitor_data,search_query,日本价格搜索 価格.com,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,日本价格搜索 価格.com,7,0
+japan-kakaku-price-search-kr,no_competitor_data,search_query,価格.com 최저가,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,価格.com 최저가,7,0
+kimono-market-scraper,no_competitor_data,search_query,kimono cross,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,kimono cross,6,0
+kimono-market-scraper-cn,no_competitor_data,search_query,日本中古着物市场 跨店比价,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,日本中古着物市场 跨店比价,6,0
+kimono-market-scraper-kr,no_competitor_data,search_query,기모노 스크래퍼,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,기모노 스크래퍼,6,0
+goo-net-car-scraper,short_description,description,76字,競合中央値 226字以上に拡張（最大 283字）,競合2件のdesc_len中央値=226,goo net cars,2,2
+goo-net-car-scraper,missing_keywords,title+description,"(不在) mileage, specs, vehicle","説明/タイトルに追加: mileage(競合2件), specs(競合2件), vehicle(競合2件)",競合2件中2件以上に出現し自社全文に不在,goo net cars,2,2
+goo-net-car-scraper,missing_categories,categories,ECOMMERCE,追加候補: OTHER(競合2件),競合2件中2件以上が設定,goo net cars,2,2
+biglemon-machinery-scraper,no_competitor_data,search_query,biglemon construction,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,biglemon construction,7,0
+goo-net-car-scraper-es,short_description,description,168字,競合中央値 226字以上に拡張（最大 283字）,競合2件のdesc_len中央値=226,goo net cars,2,2
+goo-net-car-scraper-es,missing_keywords,title+description,"(不在) mileage, specs, vehicle","説明/タイトルに追加: mileage(競合2件), specs(競合2件), vehicle(競合2件)",競合2件中2件以上に出現し自社全文に不在,goo net cars,2,2
+goo-net-car-scraper-es,missing_categories,categories,ECOMMERCE,追加候補: OTHER(競合2件),競合2件中2件以上が設定,goo net cars,2,2
+goo-net-car-scraper-pt,short_description,description,164字,競合中央値 226字以上に拡張（最大 283字）,競合2件のdesc_len中央値=226,goo net cars,2,2
+goo-net-car-scraper-pt,missing_keywords,title+description,"(不在) mileage, specs, url, vehicle","説明/タイトルに追加: mileage(競合2件), specs(競合2件), url(競合2件), vehicle(競合2件)",競合2件中2件以上に出現し自社全文に不在,goo net cars,2,2
+goo-net-car-scraper-pt,missing_categories,categories,ECOMMERCE,追加候補: OTHER(競合2件),競合2件中2件以上が設定,goo net cars,2,2
+suumo-japan-real-estate-scraper,short_description,description,136字,競合中央値 263字以上に拡張（最大 279字）,競合5件のdesc_len中央値=263,suumo real,1,5
+suumo-japan-real-estate-scraper,missing_keywords,title+description,"(不在) access, age, amenities, deposit, key, money","説明/タイトルに追加: access(競合3件), age(競合2件), amenities(競合2件), deposit(競合2件), key(競合2件), money(競合2件)",競合5件中2件以上に出現し自社全文に不在,suumo real,1,5
+suumo-japan-real-estate-scraper,missing_categories,categories,ECOMMERCE,"追加候補: LEAD_GENERATION(競合4件), REAL_ESTATE(競合4件), MCP_SERVERS(競合2件)",競合5件中2件以上が設定,suumo real,1,5
+suumo-japan-real-estate-scraper-cn,short_description,description,42字,競合中央値 263字以上に拡張（最大 279字）,競合4件のdesc_len中央値=263,suumo real estate,3,4
+suumo-japan-real-estate-scraper-cn,missing_keywords,title+description,"(不在) access, estate, listings, real, area, property","説明/タイトルに追加: access(競合4件), estate(競合4件), listings(競合4件), real(競合4件), area(競合3件), property(競合3件)",競合4件中2件以上に出現し自社全文に不在,suumo real estate,3,4
+suumo-japan-real-estate-scraper-cn,missing_categories,categories,ECOMMERCE,"追加候補: REAL_ESTATE(競合4件), LEAD_GENERATION(競合3件), AUTOMATION(競合2件)",競合4件中2件以上が設定,suumo real estate,3,4
+suumo-japan-real-estate-scraper-cn,title_keyword_gap,title,SUUMO 日本房产爬虫 — 中古公寓·租房房源,"タイトルへ追加: estate(競合2件), real(競合2件)",競合title4件中2件以上に出現し自社titleに不在,suumo real estate,3,4
+suumo-japan-real-estate-scraper-kr,short_description,description,42字,競合中央値 263字以上に拡張（最大 279字）,競合4件のdesc_len中央値=263,suumo real estate,3,4
+suumo-japan-real-estate-scraper-kr,missing_keywords,title+description,"(不在) access, estate, listings, real, area, property","説明/タイトルに追加: access(競合4件), estate(競合4件), listings(競合4件), real(競合4件), area(競合3件), property(競合3件)",競合4件中2件以上に出現し自社全文に不在,suumo real estate,3,4
+suumo-japan-real-estate-scraper-kr,missing_categories,categories,ECOMMERCE,"追加候補: REAL_ESTATE(競合4件), LEAD_GENERATION(競合3件), AUTOMATION(競合2件)",競合4件中2件以上が設定,suumo real estate,3,4
+suumo-japan-real-estate-scraper-kr,title_keyword_gap,title,SUUMO 일본 부동산 스크래퍼 — 중고 아파트·임대 매물,"タイトルへ追加: estate(競合2件), real(競合2件)",競合title4件中2件以上に出現し自社titleに不在,suumo real estate,3,4
+suumo-japan-real-estate-scraper-es,short_description,description,98字,競合中央値 263字以上に拡張（最大 279字）,競合4件のdesc_len中央値=263,suumo real estate,3,4
+suumo-japan-real-estate-scraper-es,missing_keywords,title+description,"(不在) access, estate, listings, real, area, property","説明/タイトルに追加: access(競合4件), estate(競合4件), listings(競合4件), real(競合4件), area(競合3件), property(競合3件)",競合4件中2件以上に出現し自社全文に不在,suumo real estate,3,4
+suumo-japan-real-estate-scraper-es,missing_categories,categories,ECOMMERCE,"追加候補: REAL_ESTATE(競合4件), LEAD_GENERATION(競合3件), AUTOMATION(競合2件)",競合4件中2件以上が設定,suumo real estate,3,4
+suumo-japan-real-estate-scraper-es,title_keyword_gap,title,SUUMO Scraper de Bienes Raíces de Japón,"タイトルへ追加: estate(競合2件), real(競合2件)",競合title4件中2件以上に出現し自社titleに不在,suumo real estate,3,4
+goo-net-car-scraper-fr,short_description,description,72字,競合中央値 226字以上に拡張（最大 283字）,競合2件のdesc_len中央値=226,goo net japon,2,2
+goo-net-car-scraper-fr,missing_keywords,title+description,"(不在) mileage, specs, url, vehicle","説明/タイトルに追加: mileage(競合2件), specs(競合2件), url(競合2件), vehicle(競合2件)",競合2件中2件以上に出現し自社全文に不在,goo net japon,2,2
+goo-net-car-scraper-fr,missing_categories,categories,ECOMMERCE,追加候補: OTHER(競合2件),競合2件中2件以上が設定,goo net japon,2,2
+goo-net-car-scraper-ru,short_description,description,72字,競合中央値 226字以上に拡張（最大 283字）,競合2件のdesc_len中央値=226,goo net car,3,2
+goo-net-car-scraper-ru,missing_keywords,title+description,"(不在) mileage, specs, url","説明/タイトルに追加: mileage(競合2件), specs(競合2件), url(競合2件)",競合2件中2件以上に出現し自社全文に不在,goo net car,3,2
+goo-net-car-scraper-ru,missing_categories,categories,ECOMMERCE,追加候補: OTHER(競合2件),競合2件中2件以上が設定,goo net car,3,2
+goobike-motorcycle-scraper,no_competitor_data,search_query,goobike motorcycles,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,goobike motorcycles,7,0
+upgarage-parts-scraper,missing_keywords,title+description,"(不在) contacts, csv, estate, excel, photos, proptech","説明/タイトルに追加: contacts(競合2件), csv(競合2件), estate(競合2件), excel(競合2件), photos(競合2件), proptech(競合2件)",競合2件中2件以上に出現し自社全文に不在,garage car,1,2
+upgarage-parts-scraper,missing_categories,categories,ECOMMERCE,"追加候補: AUTOMATION(競合2件), LEAD_GENERATION(競合2件), REAL_ESTATE(競合2件)",競合2件中2件以上が設定,garage car,1,2
+upgarage-parts-scraper,title_keyword_gap,title,Japan Used Car & Motorcycle Parts Prices API (upgarage.com),"タイトルへ追加: estate(競合2件), real(競合2件)",競合title2件中2件以上に出現し自社titleに不在,garage car,1,2
+golfpartner-used-club-scraper,no_competitor_data,search_query,golfpartner golf,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,golfpartner golf,8,0
+yahoo-auctions-japan-scraper,missing_keywords,title+description,(不在) structured,説明/タイトルに追加: structured(競合2件),競合4件中2件以上に出現し自社全文に不在,yahoo auctions,1,4
+yahoo-auctions-japan-scraper,missing_categories,categories,ECOMMERCE,"追加候補: NEWS(競合3件), AUTOMATION(競合2件), DEVELOPER_TOOLS(競合2件)",競合4件中2件以上が設定,yahoo auctions,1,4
+mercari-japan-search-scraper,missing_keywords,title+description,"(不在) conditions, extracts, marketplace, pricing, resale, tracking","説明/タイトルに追加: conditions(競合4件), extracts(競合2件), marketplace(競合2件), pricing(競合2件), resale(競合2件), tracking(競合2件)",競合5件中2件以上に出現し自社全文に不在,mercari product,1,5
+mercari-japan-search-scraper,missing_categories,categories,ECOMMERCE,"追加候補: AUTOMATION(競合3件), DEVELOPER_TOOLS(競合2件)",競合5件中2件以上が設定,mercari product,1,5
+japan-hotpepper-scraper,short_description,description,165字,競合中央値 265字以上に拡張（最大 269字）,競合3件のdesc_len中央値=265,hotpepper gourmet,1,3
+japan-hotpepper-scraper,missing_keywords,title+description,"(不在) address, booking, coupons, phone, photos","説明/タイトルに追加: address(競合2件), booking(競合2件), coupons(競合2件), phone(競合2件), photos(競合2件)",競合3件中2件以上に出現し自社全文に不在,hotpepper gourmet,1,3
+japan-hotpepper-scraper,missing_categories,categories,ECOMMERCE,追加候補: TRAVEL(競合2件),競合3件中2件以上が設定,hotpepper gourmet,1,3
+japan-hotpepper-cn-scraper,no_competitor_data,search_query,日本餐饮数据 餐厅预算交通,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,日本餐饮数据 餐厅预算交通,6,0
+japan-hotpepper-kr-scraper,no_competitor_data,search_query,음식점 데이터,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,음식점 데이터,6,0
+japan-camera-resale-price-stats,missing_keywords,title+description,"(不在) analysis, filter, info, media, monitoring, perfect","説明/タイトルに追加: analysis(競合2件), filter(競合2件), info(競合2件), media(競合2件), monitoring(競合2件), perfect(競合2件)",競合4件中2件以上に出現し自社全文に不在,camera lens,1,4
+japan-camera-resale-price-stats,missing_categories,categories,ECOMMERCE,追加候補: AUTOMATION(競合3件),競合4件中2件以上が設定,camera lens,1,4
+japan-camera-resale-price-stats,seo_title_missing,seoTitle,(未設定),検索意図を含む60字程度のタイトルを設定,detail APIのseoTitleが空,camera lens,1,4
+japan-camera-resale-price-stats,seo_description_missing,seoDescription,(未設定),価値提案+料金を含む160字程度を設定,detail APIのseoDescriptionが空,camera lens,1,4
