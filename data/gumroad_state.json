@@ -1,0 +1,16 @@
+{
+  "state_exists": true,
+  "sales": 0,
+  "revenue": 0,
+  "total_sales": 0,
+  "total_revenue": 0,
+  "balance_usd": 0,
+  "last_7_days_usd": 0,
+  "last_28_days_usd": 0,
+  "total_earnings_usd": 0,
+  "currency": "USD",
+  "collected_at": "2026-09-03T09:08:03.977",
+  "dashboard_url": "https://gumroad.com/dashboard",
+  "login_ok": true,
+  "sales_page_ok": true
+}

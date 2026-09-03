@@ -1,0 +1,185 @@
+// Gumroad売上データ収集スクリプト（本番版）
+// CDP経由でGumroadダッシュボードの売上データを取得し、gumroad_state.jsonに保存する。
+// Chrome自動起動対応（cron等からの一発実行用）。
+// Cookie: D:\Project2\gumroad-automation\gumroad_cookies.json（約1ヶ月で再エクスポート必要）
+// 出力: D:\Project2\kensho\data\gumroad_state.json
+const http = require('http');
+const fs = require('fs');
+const { execFile } = require('child_process');
+
+const CDP_PORT = parseInt(process.env.GUMROAD_CDP_PORT || '9333', 10);
+const COOKIE_FILE = 'D:\\Project2\\gumroad-automation\\gumroad_cookies.json';
+const STATE_FILE = 'D:\\Project2\\kensho\\data\\gumroad_state.json';
+const CHROME_EXE = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+const CHROME_PROFILE = 'C:\\temp\\gumroad-cdp9333';
+const NAVIGATION_TIMEOUT = 15000;
+
+function getJSON(path) {
+  return new Promise((resolve, reject) => {
+    http.get(`http://127.0.0.1:${CDP_PORT}${path}`, (res) => {
+      let d = '';
+      res.on('data', (c) => d += c);
+      res.on('end', () => {
+        try { resolve(JSON.parse(d)); }
+        catch(e) { reject(new Error('JSON parse error: ' + d.slice(0,200))); }
+      });
+    }).on('error', reject);
+  });
+}
+
+// Chrome自動起動（cron環境からの一発実行用）
+async function ensureChrome() {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const tabs = await getJSON('/json');
+      return tabs;
+    } catch(e) {
+      /* まだ起動していない */
+    }
+    if (attempt === 0) {
+      console.log('Chrome起動: port=' + CDP_PORT);
+      try {
+        execFile(CHROME_EXE, [
+          '--remote-debugging-port=' + CDP_PORT,
+          '--user-data-dir=' + CHROME_PROFILE,
+          '--no-first-run',
+          '--no-default-browser-check',
+          '--window-size=1280,900',
+          'about:blank',
+        ], { windowsHide: true, detached: true }, () => {});
+      } catch(e) {
+        console.log('Chrome起動失敗: ' + e.message);
+      }
+    }
+    await new Promise((r) => setTimeout(r, 8000));
+  }
+  throw new Error('Chrome CDPに接続できません（port=' + CDP_PORT + '）');
+}
+
+async function main() {
+  // 1. Chrome CDP接続（無ければ自動起動）
+  const tabs = await ensureChrome();
+  const page = tabs.find(t => t.type === 'page' && t.url.startsWith('http')) || tabs.find(t => t.type === 'page');
+  if (!page) { console.log('ERROR: タブがありません'); process.exit(2); }
+
+  // 2. WebSocket接続
+  const ws = new WebSocket(page.webSocketDebuggerUrl);
+  let id = 0;
+  const pending = {};
+  ws.onmessage = (e) => {
+    const m = JSON.parse(e.data);
+    if (m.id && pending[m.id]) { pending[m.id](m); delete pending[m.id]; }
+  };
+  const send = (method, params = {}) => new Promise((resolve) => {
+    const mid = ++id;
+    pending[mid] = resolve;
+    ws.send(JSON.stringify({ id: mid, method, params }));
+  });
+  await new Promise((r) => ws.onopen = r);
+
+  const evalJs = async (expr) => {
+    const m = await send('Runtime.evaluate', { expression: expr, returnByValue: true, awaitPromise: true });
+    if (m.result && m.result.exceptionDetails) return 'EXC: ' + JSON.stringify(m.result.exceptionDetails).slice(0, 200);
+    return m.result && m.result.result && m.result.result.value;
+  };
+
+  // 3. Cookie注入
+  let cookieCount = 0;
+  if (fs.existsSync(COOKIE_FILE)) {
+    const cookies = JSON.parse(fs.readFileSync(COOKIE_FILE, 'utf-8'));
+    for (const c of cookies) {
+      if (!c.name || !c.value) continue;
+      try {
+        const params = {
+          name: c.name,
+          value: c.value,
+          domain: c.domain || '.gumroad.com',
+          path: c.path || '/',
+          secure: c.secure !== false,
+          httpOnly: c.httpOnly === true,
+          sameSite: c.sameSite || 'Lax',
+          url: 'https://gumroad.com' + (c.path || '/'),
+        };
+        if (c.expirationDate) params.expires = c.expirationDate;
+        await send('Network.setCookie', params);
+        cookieCount++;
+      } catch(e) { /* 個別失敗は無視 */ }
+    }
+    console.log('Cookie注入: ' + cookieCount + '/' + cookies.length);
+  } else {
+    console.log('Cookieファイルなし: ' + COOKIE_FILE);
+  }
+
+  // 4. ダッシュボードへ移動
+  await send('Page.enable');
+  await send('Page.navigate', { url: 'https://gumroad.com/dashboard' });
+  await new Promise((r) => setTimeout(r, NAVIGATION_TIMEOUT));
+  const url = await evalJs('location.href');
+  console.log('Dashboard URL:', url);
+
+  // 5. 売上データ抽出
+  const bodyText = await evalJs('document.body ? document.body.innerText : ""');
+  let rev = {};
+  if (typeof bodyText === 'string') {
+    const moneyRe = /\$(\d+(?:\.\d{2})?)/g;
+    const balanceIdx = bodyText.indexOf('Balance');
+    const totalIdx = bodyText.indexOf('Total earnings');
+    rev = {
+      balance: null,
+      last_7_days: null,
+      last_28_days: null,
+      total_earnings: null,
+      has_login: !/log ?in|sign ?in/i.test(bodyText.slice(0, 200)),
+    };
+    if (balanceIdx >= 0) {
+      const seg = bodyText.slice(balanceIdx, Math.min(balanceIdx + 150, bodyText.length));
+      const segMatches = [...seg.matchAll(moneyRe)].map(x => x[1]);
+      if (segMatches.length >= 1) rev.balance = segMatches[0];
+      if (segMatches.length >= 2) rev.last_7_days = segMatches[1];
+      if (segMatches.length >= 3) rev.last_28_days = segMatches[2];
+    }
+    if (totalIdx >= 0) {
+      const seg = bodyText.slice(totalIdx, Math.min(totalIdx + 80, bodyText.length));
+      const segMatches = [...seg.matchAll(moneyRe)].map(x => x[1]);
+      if (segMatches.length >= 1) rev.total_earnings = segMatches[0];
+    }
+  } else {
+    rev = { raw: String(bodyText).slice(0, 300) };
+  }
+  console.log('売上データ:', JSON.stringify(rev));
+
+  // 6. Salesページ（Analytics）でも確認
+  let salesText = null;
+  try {
+    await send('Page.navigate', { url: 'https://gumroad.com/dashboard/sales' });
+    await new Promise((r) => setTimeout(r, NAVIGATION_TIMEOUT));
+    salesText = await evalJs('document.body ? document.body.innerText.slice(0, 3000) : ""');
+  } catch(e) { /* 失敗しても続行 */ }
+
+  // 7. gumroad_state.json に保存
+  const state = {
+    state_exists: true,
+    sales: 0,
+    revenue: 0,
+    total_sales: 0,
+    total_revenue: rev.total_earnings !== null ? parseFloat(rev.total_earnings) : 0,
+    balance_usd: rev.balance !== null ? parseFloat(rev.balance) : null,
+    last_7_days_usd: rev.last_7_days !== null ? parseFloat(rev.last_7_days) : null,
+    last_28_days_usd: rev.last_28_days !== null ? parseFloat(rev.last_28_days) : null,
+    total_earnings_usd: rev.total_earnings !== null ? parseFloat(rev.total_earnings) : null,
+    currency: 'USD',
+    // 日本時間（JST, UTC+9）のISO 8601表記で保存（他スクリプトのcollected_atと表記統一）
+    collected_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().replace('Z', ''),
+    dashboard_url: url,
+    login_ok: rev.has_login !== false,
+    sales_page_ok: salesText !== null && salesText.includes('Total'),
+  };
+  fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2), 'utf-8');
+  console.log('保存:', STATE_FILE);
+  console.log(JSON.stringify(state, null, 2));
+
+  ws.close();
+  console.log('完了');
+}
+
+main().catch((e) => { console.error('FATAL:', e.message); process.exit(1); });
