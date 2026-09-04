@@ -1,0 +1,67 @@
+[
+  {
+    "actor": "japan-offmall-market-scraper",
+    "pricingModel": "PAY_PER_EVENT",
+    "event_prices": {
+      "actor_start_usd": 5e-05,
+      "dataset_item_usd": 0.002,
+      "is_primary": true
+    },
+    "stats_totalRuns": 128,
+    "stats_users30d": 1,
+    "stats_lastRun": "2026-09-03T10:14:49.722Z",
+    "ok": true
+  },
+  {
+    "actor": "japan-used-camera-market-scraper",
+    "pricingModel": "PAY_PER_EVENT",
+    "event_prices": {
+      "actor_start_usd": 5e-05,
+      "dataset_item_usd": 0.002,
+      "is_primary": true
+    },
+    "stats_totalRuns": 62,
+    "stats_users30d": 1,
+    "stats_lastRun": "2026-09-03T10:00:05.591Z",
+    "ok": true
+  },
+  {
+    "actor": "japan-luxury-brand-market-scraper",
+    "pricingModel": "PAY_PER_EVENT",
+    "event_prices": {
+      "actor_start_usd": 5e-05,
+      "dataset_item_usd": 0.002,
+      "is_primary": true
+    },
+    "stats_totalRuns": 55,
+    "stats_users30d": 1,
+    "stats_lastRun": "2026-09-03T13:00:08.224Z",
+    "ok": true
+  },
+  {
+    "actor": "japan-watch-market-scraper",
+    "pricingModel": "PAY_PER_EVENT",
+    "event_prices": {
+      "actor_start_usd": 5e-05,
+      "dataset_item_usd": 0.002,
+      "is_primary": true
+    },
+    "stats_totalRuns": 56,
+    "stats_users30d": 1,
+    "stats_lastRun": "2026-09-03T11:00:07.438Z",
+    "ok": true
+  },
+  {
+    "actor": "japan-used-instrument-market-scraper",
+    "pricingModel": "PAY_PER_EVENT",
+    "event_prices": {
+      "actor_start_usd": 5e-05,
+      "dataset_item_usd": 0.002,
+      "is_primary": true
+    },
+    "stats_totalRuns": 56,
+    "stats_users30d": 1,
+    "stats_lastRun": "2026-09-03T14:00:03.689Z",
+    "ok": true
+  }
+]
