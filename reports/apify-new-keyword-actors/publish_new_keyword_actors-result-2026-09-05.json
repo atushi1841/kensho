@@ -1,6 +1,14 @@
 {
-  "count": 1,
+  "count": 3,
   "actors": {
+    "mercari": {
+      "name": "mercari-japan-search-scraper",
+      "id": "whSePszWpMtfeLYBp",
+      "isPublic": true,
+      "effective_ppe": 0.002,
+      "target_ppe": 0.002,
+      "price_matches": true
+    },
     "yahoo": {
       "name": "yahoo-auctions-japan-scraper",
       "id": "8WBam4CPB72q9Rvsd",
@@ -8,6 +16,14 @@
       "effective_ppe": 0.002,
       "target_ppe": 0.002,
       "price_matches": true
+    },
+    "surugaya": {
+      "name": "surugaya-japan-hobby-prices",
+      "id": "F8Hl0a8Cx9bpJBrxR",
+      "isPublic": true,
+      "effective_ppe": null,
+      "target_ppe": 0.002,
+      "price_skipped": "surugaya 0-item on Apify; refuse paid pricing without --force-price-surugaya"
     }
   },
   "applied": true

@@ -99,15 +99,18 @@ ACTORS = {
         "id": "F8Hl0a8Cx9bpJBrxR",
         "name": "surugaya-japan-hobby-prices",
         "categories": ["ECOMMERCE"],
-        "title": "Suruga-ya Scraper — 駿河屋 中古フィギュア・ホビー価格 collectibles",
-        "seo_title": "Suruga-ya Scraper — 駿河屋 中古フィギュア・ホビー価格 collectibles",
-        "seo_description": "Aggregated price statistics from Japanese C2C marketplaces",
+        "title": "Suruga-ya Scraper — Japan Used Hobby & Figure Prices",
+        "seo_title": "Suruga-ya Scraper - Japan Used Hobby and Figure Prices",
+        "seo_description": (
+            "Scrape used prices from Suruga-ya (駿河屋), Japan's largest "
+            "second-hand hobby store: figures, anime, games, manga, and more."
+        ),
         "description": (
             "Scrape used and new prices from Suruga-ya (駿河屋), Japan's "
-            "largest second-hand collectibles and hobby store. Extract brand, "
-            "category, condition and price for reseller arbitrage and price "
-            "monitoring. Note: requires De-facto Japan-IP access (paid Apify "
-            "plan with JP residential proxies)."
+            "largest second-hand hobby store. Extract brand, category, "
+            "condition and price for reseller arbitrage and price monitoring. "
+            "Covers figures, anime, games, manga and books. Note: requires "
+            "Japan-IP access (paid Apify JP residential proxies)."
         ),
         "force_price": False,
     },

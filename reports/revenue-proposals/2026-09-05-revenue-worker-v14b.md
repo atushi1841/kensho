@@ -22,12 +22,18 @@
    - 文字数ガード: title≤80 / seoTitle≤60 / seoDescription≤160 / description≤300 / categories≤3（Apify実測の制限値）
 2. `tests/test_publish_new_keyword_actors.py` を新規作成（17 tests、全パス）
 3. ライブ検証: mercari / yahoo は実効単価 $0.002＋フルSEO＋公開済みを確認。`--apply` が冪等に安全動作することを確認
-4. Store ページのスクリーンショット3枚（mercari / yahoo / surugaya）を取得（evidence/）+ SSR でタイトル実在確認（HTTP 200）
+4. **surugaya SEO 改善（本ラン）**: 日本語混在タイトル/短文seoDescription(58字)を英語SEOに刷新
+   （title 52 / seoTitle 54 / seoDescription 121 / description 294——全制限内）。`--apply` でライブ反映・検証。
+5. Store ページのスクリーンショット3枚（mercari / yahoo / surugaya）を取得（evidence/）+ SSR でタイトル実在確認（HTTP 200）
 
 ## 検証エビデンス
-- `python -m pytest tests/test_publish_new_keyword_actors.py -q` → 17 passed
-- `ruff check tests/...` → All checks passed
-- ライブ: `publish_new_keyword_actors.py --apply --actor mercari` / `--actor yahoo` → `public=True ppe=0.002 price_matches=True`（冪等）
+- `python -m pytest tests/test_publish_new_keyword_actors.py -q` → 17 passed（全件・文字数上限含め検証）
+- ライブ最終状態（本ラン API 実取得）:
+  | アクター | isPublic | 実効単価 | seoTitle | seoDescription | description | categories |
+  |---|---|---|---|---|---|---|
+  | mercari | ✅ | **$0.002** | 52 | 152 | 300 | ECOCOMMERCE/AUTOMATION/DEVELOPER_TOOLS |
+  | yahoo | ✅ | **$0.002** | 55 | 151 | 277 | 同上 |
+  | surugaya | ✅ | **FREE**（ガード） | 54 | 121 | 294 | ECOMMERCE |
 - Store SSR: 3ページとも HTTP 200・タイトルマーカー実在（html_len ~425-450KB）
 - mercari 実測テストラン（2026-09-05）: useApifyProxy:false 構成で SUCCEEDED・リアルデータ（Nikon F3, ￥34,800等）取得。yahoo も直近 runs が HAS_DATA で SUCCEEDED。
 
