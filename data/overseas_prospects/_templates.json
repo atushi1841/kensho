@@ -1,0 +1,56 @@
+[
+  {
+    "product": "Japanese Anime Figure & Collectibles Market Price Dataset (Weekly CSV)",
+    "price": "$29.99 flat",
+    "url": "https://atushi5.gumroad.com/l/agyhq",
+    "template": "If you're researching japanese figures, hobby & collectibles used-market price data as a weekly csv with price history, I have a weekly Japanese anime figure & collectibles price dataset (CSV) with price history — $29.99 flat. It returns clean JSON/CSV, and it's live today. Happy to send a small sample: https://atushi5.gumroad.com/l/agyhq"
+  },
+  {
+    "product": "Mercari Japan Search Scraper",
+    "price": "$0.002 / result",
+    "url": "https://apify.com/apitor/mercari-japan-search-scraper",
+    "template": "If you're researching search mercari japan listings; used prices in jpy with condition & seller data, I have a Mercari Japan listings scraper (used prices in JPY) — $0.002 / result. It returns clean JSON/CSV, and it's live today. Happy to send a small sample: https://apify.com/apitor/mercari-japan-search-scraper"
+  },
+  {
+    "product": "Yahoo Auctions Japan Scraper",
+    "price": "$0.002 / result",
+    "url": "https://apify.com/apitor/yahoo-auctions-japan-scraper",
+    "template": "If you're researching yahoo! auctions japan listing prices and data as clean json, I have a Yahoo Auctions Japan scraper (live bid/listing prices) — $0.002 / result. It returns clean JSON/CSV, and it's live today. Happy to send a small sample: https://apify.com/apitor/yahoo-auctions-japan-scraper"
+  },
+  {
+    "product": "Surugaya Japan Hobby Prices",
+    "price": "$0.002 / result",
+    "url": "https://apify.com/apitor/surugaya-japan-hobby-prices",
+    "template": "If you're researching hobby/used goods price data from suruga-ya (japanese hobby marketplace), I have a Suruga-ya (Japanese hobby marketplace) price scraper — $0.002 / result. It returns clean JSON/CSV, and it's live today. Happy to send a small sample: https://apify.com/apitor/surugaya-japan-hobby-prices"
+  },
+  {
+    "product": "Japan Used Camera Market Scraper",
+    "price": "$0.005 / result",
+    "url": "https://apify.com/apitor/japan-used-camera-market-scraper",
+    "template": "If you're researching used camera prices from kitamura, fujiya & map camera in jpy, I have a Japanese used-camera price scraper (Kitamura / Fujiya / Map Camera) — $0.005 / result. It returns clean JSON/CSV, and it's live today. Happy to send a small sample: https://apify.com/apitor/japan-used-camera-market-scraper"
+  },
+  {
+    "product": "Japan Watch Market Scraper",
+    "price": "$0.005 / result",
+    "url": "https://apify.com/apitor/japan-watch-market-scraper",
+    "template": "If you're researching used luxury watch prices from jackroad, kitamura & komehyo, I have a Japanese used-luxury-watch price scraper (Jackroad / Kitamura / Komehyo) — $0.005 / result. It returns clean JSON/CSV, and it's live today. Happy to send a small sample: https://apify.com/apitor/japan-watch-market-scraper"
+  },
+  {
+    "product": "Japan Luxury Brand Market Scraper",
+    "price": "$0.005 / result",
+    "url": "https://apify.com/apitor/japan-luxury-brand-market-scraper",
+    "template": "If you're researching pre-owned luxury prices from komehyo, jackroad & brand off (bags, wallets, watches), I have a Japanese pre-owned luxury/bag price scraper (Komehyo / Jackroad / Brand Off) — $0.005 / result. It returns clean JSON/CSV, and it's live today. Happy to send a small sample: https://apify.com/apitor/japan-luxury-brand-market-scraper"
+  },
+  {
+    "product": "Japan Used Instrument Market Scraper",
+    "price": "$0.005 / result",
+    "url": "https://apify.com/apitor/japan-used-instrument-market-scraper",
+    "template": "If you're researching used musical instrument prices from digimart & ishibashi (guitars, synths, audio), I have a Japanese used-instrument price scraper (Digimart / Ishibashi) — $0.005 / result. It returns clean JSON/CSV, and it's live today. Happy to send a small sample: https://apify.com/apitor/japan-used-instrument-market-scraper"
+  },
+  {
+    "product": "Japan Used Goods Prices via OffMall (Hard Off)",
+    "price": "$0.005 / result",
+    "url": "https://apify.com/apitor/japan-offmall-market-scraper",
+    "template": "If you're researching used-goods prices across 800+ hard off / offmall second-hand stores, I have a Japan-wide used-goods price scraper (Hard Off OffMall, 800+ stores) — $0.005 / result. It returns clean JSON/CSV, and it's live today. Happy to send a small sample: https://apify.com/apitor/japan-offmall-market-scraper"
+  }
+]
