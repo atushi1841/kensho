@@ -94,6 +94,17 @@ pre-commitフック(end-of-file-fixer)が末尾改行を追加 → 再ステー�
 }
 ```
 
+## git push 状況（失敗・要ユーザー対応）
+
+ローカルコミットは成功（23c3cd7 スクリプト / 5e6047e レポート）だが、GitHub push は認証切れで失敗:
+```
+$ git push origin main            → fatal: could not read Username for 'https://github.com'
+$ cmd.exe git push                → remote: Repository not found (private repo に認証なし)
+$ gh auth status                  → You are not logged into any GitHub hosts
+```
+→ 【要ユーザー対応】GitHub 認証回復（`gh auth login` or Windows Git Credential Manager 再認証）。
+   認証回復後に `git push origin main` で本2コミットを反映。ローカルは失われていない。
+
 ## 次のアクション（申し送り）
 - critic: v17-A (1)cron頻度2倍・(2)2並列はユーザー承認要。承認取れたら worker で反映
 - worker/QA: ready-deprecate.sh を深夜cron(例 `0 4 * * *` --apply --hours 24 --silent)に登録
