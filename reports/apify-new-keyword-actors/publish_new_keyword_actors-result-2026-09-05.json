@@ -1,0 +1,14 @@
+{
+  "count": 1,
+  "actors": {
+    "yahoo": {
+      "name": "yahoo-auctions-japan-scraper",
+      "id": "8WBam4CPB72q9Rvsd",
+      "isPublic": true,
+      "effective_ppe": 0.002,
+      "target_ppe": 0.002,
+      "price_matches": true
+    }
+  },
+  "applied": true
+}
