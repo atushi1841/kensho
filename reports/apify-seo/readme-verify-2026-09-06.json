@@ -1,0 +1,56 @@
+{
+  "task": "t_5126f825",
+  "verified_at": "2026-09-06T02:40:00",
+  "heads_up_spec_defect": {
+    "finding": "Apify REST API has NO readme field/endpoint. Confirmed against official openapi.json (docs.apify.com/api/openapi.json, 2026-09-06): the Actor and Version schemas have no 'readme' property and no path references readme. GET /v2/acts/{id} returns no readme key.",
+    "implication": "The task's stated read-back criterion ('individual GET で readme>=800') is IMPOSSIBLE as specced. The earlier ground-truth claim 'readme_ge_800: 0/63' measured a nonexistent field and was a false artifact.",
+    "verifiable_substitution": "README is build-time from source README.md. Verified deploy by: (a) README.md present in source (GitHub contents API for GIT_REPO / version sourceFiles for SOURCE_FILES), (b) build SUCCEEDED. Final Store-visible README renders only in the web UI, not the API."
+  },
+  "audit": {
+    "target": 63,
+    "public_with_source_readme_ge_800": 63,
+    "gaps_remaining": 0,
+    "pre_existing_already_ge_800": 59,
+    "source_breakdown": {"GIT_REPO": 55, "SOURCE_FILES": 8}
+  },
+  "deployed_this_run": [
+    {
+      "actor": "surugaya-japan-hobby-prices",
+      "sourceType": "SOURCE_FILES",
+      "version": "0.3",
+      "readme_before": 0,
+      "readme_after": 2374,
+      "build_id": "flePhEaG0VtyRH7r6",
+      "build_status": "SUCCEEDED"
+    },
+    {
+      "actor": "yahoo-auctions-japan-scraper",
+      "sourceType": "SOURCE_FILES",
+      "version": "0.0",
+      "readme_before": 0,
+      "readme_after": 2365,
+      "build_id": "X6z4aPyBIqDbEgvWV",
+      "build_status": "SUCCEEDED"
+    },
+    {
+      "actor": "japan-egov-laws",
+      "sourceType": "SOURCE_FILES",
+      "version": "0.1",
+      "readme_before": 615,
+      "readme_after": 2357,
+      "build_id": "NIBFy4ibfoGffo7U3",
+      "build_status": "SUCCEEDED"
+    },
+    {
+      "actor": "japan-jma-weather",
+      "sourceType": "SOURCE_FILES",
+      "version": "0.1",
+      "readme_before": 620,
+      "readme_after": 2355,
+      "build_id": "gSP7x8EtgVqAbiEtb",
+      "build_status": "SUCCEEDED"
+    }
+  ],
+  "tooling": "scripts/apify_readme_deploy.py (--audit / --deploy); audit dump: reports/apify-seo/readme-source-audit-latest.json; deploy log: reports/apify-seo/readme-deploy-2026-09-05.json",
+  "note": "21 of 73 total actors have latest-build FAILED; none of the 4 deployed here. Pre-existing, unrelated to this task."
+}

@@ -1,0 +1,58 @@
+[
+ {
+  "name": "surugaya-japan-hobby-prices",
+  "id": "F8Hl0a8Cx9bpJBrxR",
+  "sourceType": "SOURCE_FILES",
+  "git": null,
+  "version": "0.3",
+  "readme_len": 0,
+  "need": true,
+  "method": "sf:0.3(no-readme)",
+  "push_ok": true,
+  "push_note": "sf-put 200 0.3",
+  "build_id": "flePhEaG0VtyRH7r6",
+  "build_ok": true
+ },
+ {
+  "name": "yahoo-auctions-japan-scraper",
+  "id": "8WBam4CPB72q9Rvsd",
+  "sourceType": "SOURCE_FILES",
+  "git": null,
+  "version": "0.0",
+  "readme_len": 0,
+  "need": true,
+  "method": "sf:0.0(no-readme)",
+  "push_ok": true,
+  "push_note": "sf-put 200 0.0",
+  "build_id": "X6z4aPyBIqDbEgvWV",
+  "build_ok": true
+ },
+ {
+  "name": "japan-egov-laws",
+  "id": "pWhvh8aWz4i6OM1ST",
+  "sourceType": "SOURCE_FILES",
+  "git": null,
+  "version": "0.1",
+  "readme_len": 615,
+  "need": true,
+  "method": "sf:0.1",
+  "push_ok": true,
+  "push_note": "sf-put 200 0.1",
+  "build_id": "NIBFy4ibfoGffo7U3",
+  "build_ok": true
+ },
+ {
+  "name": "japan-jma-weather",
+  "id": "1g84gsOT7vE9yxNla",
+  "sourceType": "SOURCE_FILES",
+  "git": null,
+  "version": "0.1",
+  "readme_len": 620,
+  "need": true,
+  "method": "sf:0.1",
+  "push_ok": true,
+  "push_note": "sf-put 200 0.1",
+  "build_id": "gSP7x8EtgVqAbiEtb",
+  "build_ok": true
+ }
+]
