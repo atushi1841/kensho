@@ -1,0 +1,649 @@
+{
+  "summary": {
+    "verified_at": "2026-09-06T01:03:07",
+    "method": "individual GET /v2/acts/{id} (QA-specified; resolves list-GET blind spot)",
+    "public_total": 63,
+    "desc_ge_120": 63,
+    "seoDesc_ge_80": 63,
+    "cats_gt_0": 63,
+    "readme_ge_800": 0,
+    "readme_note": "README is build-time sourced from source README.md; PUT /v2/acts/{id} rejects readme (schema 400). Not API-writable -- pending source rebuild/redeploy.",
+    "gap_filled_this_run": [
+      "japan-egov-laws (desc 246->298, seoDesc 0->134, cats 0->3)",
+      "japan-jma-weather (desc 258->291, seoDesc 0->143, cats 0->3)"
+    ],
+    "prior_v31_claim": "CONFIRMED GENUINE -- desc/seo/cats already applied on 61/63 public actors; QA 'fabricated' verdict was a false positive from list GET (/v2/acts?my=true) not returning these fields."
+  },
+  "public": [
+    {
+      "actor_id": "F8Hl0a8Cx9bpJBrxR",
+      "name": "surugaya-japan-hobby-prices",
+      "isPublic": true,
+      "desc_len": 295,
+      "readme_len": 0,
+      "seoTitle_len": 47,
+      "seoDesc_len": 122,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "q2E37PVTg5JcGOTEn",
+      "name": "mandarake-auction-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "xUYsD13SVHHRFQS1H",
+      "name": "mandarake-surugaya-mcp",
+      "isPublic": true,
+      "desc_len": 295,
+      "readme_len": 0,
+      "seoTitle_len": 47,
+      "seoDesc_len": 122,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "0eeiFH0nLqlWVoOAc",
+      "name": "rakuten-japan-mcp",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 52,
+      "seoDesc_len": 136,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "6Z7tJ3plfUmAgGmbk",
+      "name": "dlsite-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "nUm22B2guMo8vXom6",
+      "name": "dmm-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "wxMskoiHMPeeH2qAJ",
+      "name": "tackleberry-japan-fishing-tackle-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "DOiD9y1NAJfLBcAjT",
+      "name": "kitamura-japan-used-camera-scraper",
+      "isPublic": true,
+      "desc_len": 280,
+      "readme_len": 0,
+      "seoTitle_len": 46,
+      "seoDesc_len": 107,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "nWf9BR2ndMTYqKxNB",
+      "name": "jackroad-used-watch-scraper",
+      "isPublic": true,
+      "desc_len": 288,
+      "readme_len": 0,
+      "seoTitle_len": 45,
+      "seoDesc_len": 115,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "Db3iY8FIRxPjPag7N",
+      "name": "komehyo-japan-brand-scraper",
+      "isPublic": true,
+      "desc_len": 282,
+      "readme_len": 0,
+      "seoTitle_len": 45,
+      "seoDesc_len": 109,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "vvD9vs8D1AwoQrTTS",
+      "name": "iosys-japan-used-smartphone-scraper",
+      "isPublic": true,
+      "desc_len": 285,
+      "readme_len": 0,
+      "seoTitle_len": 43,
+      "seoDesc_len": 112,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "FSuoQiX8OG4KuIQ9c",
+      "name": "digimart-japan-used-instrument-scraper",
+      "isPublic": true,
+      "desc_len": 284,
+      "readme_len": 0,
+      "seoTitle_len": 46,
+      "seoDesc_len": 111,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "mQaZFo6up4YZKepC3",
+      "name": "japan-used-camera-market-scraper",
+      "isPublic": true,
+      "desc_len": 292,
+      "readme_len": 0,
+      "seoTitle_len": 45,
+      "seoDesc_len": 119,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "yN1R26HrV6C2MBKas",
+      "name": "japan-used-instrument-market-scraper",
+      "isPublic": true,
+      "desc_len": 293,
+      "readme_len": 0,
+      "seoTitle_len": 57,
+      "seoDesc_len": 120,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "gMqdrS2evpcybSZc2",
+      "name": "japan-watch-market-scraper",
+      "isPublic": true,
+      "desc_len": 288,
+      "readme_len": 0,
+      "seoTitle_len": 45,
+      "seoDesc_len": 115,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "b0vuqa3ESvy2mOwFB",
+      "name": "japan-luxury-brand-market-scraper",
+      "isPublic": true,
+      "desc_len": 284,
+      "readme_len": 0,
+      "seoTitle_len": 50,
+      "seoDesc_len": 111,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "57SNehd4cHNFyUCj3",
+      "name": "japan-market-mcp",
+      "isPublic": true,
+      "desc_len": 284,
+      "readme_len": 0,
+      "seoTitle_len": 41,
+      "seoDesc_len": 111,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "Zh4kqcS4dYPWpFzBd",
+      "name": "japan-offmall-market-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 54,
+      "seoDesc_len": 127,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "OqO1aPmd1njsKQvaW",
+      "name": "japan-camera-market-cn-scraper",
+      "isPublic": true,
+      "desc_len": 292,
+      "readme_len": 0,
+      "seoTitle_len": 45,
+      "seoDesc_len": 119,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "rEaPnKwB07oS2cyZh",
+      "name": "japan-camera-market-kr-scraper",
+      "isPublic": true,
+      "desc_len": 292,
+      "readme_len": 0,
+      "seoTitle_len": 45,
+      "seoDesc_len": 119,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "hoqt6EVaVcniMXWbK",
+      "name": "japan-watch-market-scraper-cn",
+      "isPublic": true,
+      "desc_len": 288,
+      "readme_len": 0,
+      "seoTitle_len": 45,
+      "seoDesc_len": 115,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "kDY2AAouEJzp8kfyj",
+      "name": "japan-watch-market-scraper-kr",
+      "isPublic": true,
+      "desc_len": 288,
+      "readme_len": 0,
+      "seoTitle_len": 45,
+      "seoDesc_len": 115,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "Igcmtgs71DCHze3CL",
+      "name": "japan-luxury-brand-market-cn",
+      "isPublic": true,
+      "desc_len": 284,
+      "readme_len": 0,
+      "seoTitle_len": 50,
+      "seoDesc_len": 111,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "5J3JeV9cOSA3Gha0j",
+      "name": "japan-luxury-brand-market-kr",
+      "isPublic": true,
+      "desc_len": 284,
+      "readme_len": 0,
+      "seoTitle_len": 50,
+      "seoDesc_len": 111,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "p279xuzqUvvLROE7O",
+      "name": "japan-used-instrument-market-cn",
+      "isPublic": true,
+      "desc_len": 293,
+      "readme_len": 0,
+      "seoTitle_len": 57,
+      "seoDesc_len": 120,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "agm9XlFlLFj7jlt66",
+      "name": "japan-used-instrument-market-kr",
+      "isPublic": true,
+      "desc_len": 293,
+      "readme_len": 0,
+      "seoTitle_len": 57,
+      "seoDesc_len": 120,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "wxLa590euQRaAJNKO",
+      "name": "japan-offmall-market-cn",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 54,
+      "seoDesc_len": 127,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "9HSJRPbEIIGc6bHOx",
+      "name": "japan-offmall-market-kr",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 54,
+      "seoDesc_len": 127,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "N1o8olAoZyXTJuhnb",
+      "name": "japan-rent-market-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "5EOtT2UpEGEU83nhO",
+      "name": "japan-rent-market-cn",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "lWHSccM79ZpPxOLls",
+      "name": "japan-rent-market-kr",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "AiXA2WVMNTaGuHoDh",
+      "name": "japan-property-market-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "aAe1nK4dpqgmBksOK",
+      "name": "japan-property-market-cn",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "CeDRuOvv0IHA8NL4M",
+      "name": "japan-property-market-kr",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "XOqsB7rCHYrb42kcY",
+      "name": "japan-kakaku-price-search",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "4SjfgE6nF1awZZtEI",
+      "name": "japan-kakaku-price-search-cn",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "5hzOkPeYWPzpv6fBd",
+      "name": "japan-kakaku-price-search-kr",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "2Yy3Zu3pw0KzqYOP5",
+      "name": "kimono-market-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "yCN9ystlovHkgolzw",
+      "name": "kimono-market-scraper-cn",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "8iktWtPM0ZD3ab54f",
+      "name": "kimono-market-scraper-kr",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "bgm5Gxn4BeBmoO7xD",
+      "name": "goo-net-car-scraper",
+      "isPublic": true,
+      "desc_len": 293,
+      "readme_len": 0,
+      "seoTitle_len": 48,
+      "seoDesc_len": 120,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "W9cXhDckzHd9RZWnQ",
+      "name": "biglemon-machinery-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "pcSpFWK2A2HWRE2mx",
+      "name": "goo-net-car-scraper-es",
+      "isPublic": true,
+      "desc_len": 293,
+      "readme_len": 0,
+      "seoTitle_len": 48,
+      "seoDesc_len": 120,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "ksRNLhw7sjdmoVbVt",
+      "name": "goo-net-car-scraper-pt",
+      "isPublic": true,
+      "desc_len": 293,
+      "readme_len": 0,
+      "seoTitle_len": 48,
+      "seoDesc_len": 120,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "FzQlnqfCsMfSlRG9j",
+      "name": "suumo-japan-real-estate-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "8lfpT6vpZMl9JVagy",
+      "name": "suumo-japan-real-estate-scraper-cn",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "GfdpyUl6gSpCQlGK8",
+      "name": "suumo-japan-real-estate-scraper-kr",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "GXAtS99WP3st7AR27",
+      "name": "suumo-japan-real-estate-scraper-es",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "pZ20lXqRtsJUl9bGk",
+      "name": "rakuten-market-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "vN10EvpaN6lNSRxUo",
+      "name": "goo-net-car-scraper-fr",
+      "isPublic": true,
+      "desc_len": 293,
+      "readme_len": 0,
+      "seoTitle_len": 48,
+      "seoDesc_len": 120,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "L0xYjvLZT8aYUKjKQ",
+      "name": "goo-net-car-scraper-ru",
+      "isPublic": true,
+      "desc_len": 293,
+      "readme_len": 0,
+      "seoTitle_len": 48,
+      "seoDesc_len": 120,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "xv30Eoxh7NMJgJIj5",
+      "name": "goobike-motorcycle-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "BdQF1T6wB5T25AO20",
+      "name": "upgarage-parts-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "xPSQSSsdVjRwWQAiA",
+      "name": "golfpartner-used-club-scraper",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "8WBam4CPB72q9Rvsd",
+      "name": "yahoo-auctions-japan-scraper",
+      "isPublic": true,
+      "desc_len": 291,
+      "readme_len": 0,
+      "seoTitle_len": 52,
+      "seoDesc_len": 118,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "whSePszWpMtfeLYBp",
+      "name": "mercari-japan-search-scraper",
+      "isPublic": true,
+      "desc_len": 281,
+      "readme_len": 0,
+      "seoTitle_len": 45,
+      "seoDesc_len": 108,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "UVkH1uhlt57Jf6QnT",
+      "name": "japan-hotpepper-scraper",
+      "isPublic": true,
+      "desc_len": 297,
+      "readme_len": 0,
+      "seoTitle_len": 54,
+      "seoDesc_len": 124,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "95ZKdUlpFBo8CBYJh",
+      "name": "japan-hotpepper-cn-scraper",
+      "isPublic": true,
+      "desc_len": 297,
+      "readme_len": 0,
+      "seoTitle_len": 54,
+      "seoDesc_len": 124,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "FVJsHJhb4aPq54Uyd",
+      "name": "japan-hotpepper-kr-scraper",
+      "isPublic": true,
+      "desc_len": 297,
+      "readme_len": 0,
+      "seoTitle_len": 54,
+      "seoDesc_len": 124,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "xJI4WaPBfQiDJfcnp",
+      "name": "japan-camera-resale-price-stats",
+      "isPublic": true,
+      "desc_len": 292,
+      "readme_len": 0,
+      "seoTitle_len": 45,
+      "seoDesc_len": 119,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "WnrudUFF2kZxZcj7Z",
+      "name": "japan-figure-plamo-resale-price-stats",
+      "isPublic": true,
+      "desc_len": 300,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 129,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "pWhvh8aWz4i6OM1ST",
+      "name": "japan-egov-laws",
+      "isPublic": true,
+      "desc_len": 298,
+      "readme_len": 0,
+      "seoTitle_len": 40,
+      "seoDesc_len": 134,
+      "cats_cnt": 3
+    },
+    {
+      "actor_id": "1g84gsOT7vE9yxNla",
+      "name": "japan-jma-weather",
+      "isPublic": true,
+      "desc_len": 291,
+      "readme_len": 0,
+      "seoTitle_len": 46,
+      "seoDesc_len": 143,
+      "cats_cnt": 3
+    }
+  ]
+}
