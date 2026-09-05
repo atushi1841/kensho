@@ -1,0 +1,40 @@
+[
+  {
+    "api_id": "api_7d2dcc27-829d-4add-88b9-5c1708447f85",
+    "api_key": "japan-camera",
+    "api_name": "Japan Camera & Lens Resale Price Research API",
+    "visibility": "PUBLIC",
+    "tiers": [
+      {
+        "tier": "BASIC",
+        "plan_id": "billingplan_81242251-5b27-456e-8883-b999955cb51d",
+        "updated_id": "billingplan_81242251-5b27-456e-8883-b999955cb51d",
+        "current_price": null,
+        "target_price": 0.001,
+        "status": "changed",
+        "action": "update",
+        "message": "単価 None → 0.001 に更新."
+      },
+      {
+        "tier": "PRO",
+        "plan_id": "billingplan_3dc07a9a-141d-42a4-80d2-69e1e46cd78b",
+        "updated_id": "billingplan_3dc07a9a-141d-42a4-80d2-69e1e46cd78b",
+        "current_price": 0.02,
+        "target_price": 0.005,
+        "status": "changed",
+        "action": "update",
+        "message": "単価 0.02 → 0.005 に更新."
+      },
+      {
+        "tier": "ULTRA",
+        "created_plan_id": "billingplan_4dc72758-122c-405f-836f-235f393d2137",
+        "current_price": null,
+        "target_price": 0.01,
+        "status": "created",
+        "action": "create",
+        "message": "新規プラン ULTRA ($0.01/call) を作成."
+      }
+    ],
+    "status": "ok"
+  }
+]

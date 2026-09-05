@@ -135,11 +135,42 @@ def run_apply(account, max_n, log):
         return 1
 
 
+def run_gumroad_x_post(log):
+    """v21-C: Gumroad agyhq X 日次自動投稿（1ツイート）。scripts/gumroad_x_post.py を叩く。
+
+    daily batch 5（日次定型5本目の1本）として、9/5〜9/11 の期間に限り毎日1本だけ
+    @atushi16 から agyhq ($29.99) を宣伝する。ウィンドウ・日次dedupは
+    gumroad_x_post.py 側で冪等に処理されるため、毎日実行しても安全。
+    """
+    log("\n--- Gumroad X Post (v21-C) ---")
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    script = BASE / "gumroad_x_post.py"
+    if not script.exists():
+        log(f"WARN: スクリプトが無い: {script}")
+        return 1
+    r = subprocess.run(
+        [PYTHON, str(script)],
+        cwd=str(BASE),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        timeout=120,
+        env=env,
+    )
+    out = r.stdout.decode("utf-8", errors="replace") if r.stdout else ""
+    for line in out.splitlines()[-25:]:
+        log(line)
+    if r.returncode != 0:
+        log(f"WARN: gumroad_x_post exit code {r.returncode}")
+    return r.returncode
+
+
 def main():
     if len(sys.argv) < 3:
-        print("Usage: kensho_cron_worker.py <morning|apply> <account> [max_n]")
+        print("Usage: kensho_cron_worker.py <morning|apply|post> <account> [max_n]")
         print("  例: kensho_cron_worker.py morning zin 15")
         print("  例: kensho_cron_worker.py apply kudou 10")
+        print("  例: kensho_cron_worker.py post atushi16")
         sys.exit(1)
 
     mode = sys.argv[1]
@@ -176,6 +207,11 @@ def main():
             run_collect(log)
         else:
             log("--- 収集データは新鮮（スキップ） ---")
+    elif mode == "post":
+        # Gumroad agyhq X 日次自動投稿（v21-C・daily batch 5）
+        exit_code = run_gumroad_x_post(log)
+        log(f"\n=== Done: {time.strftime('%H:%M:%S')} (exit={exit_code}) ===")
+        sys.exit(exit_code if exit_code != 0 else 0)
     else:
         log(f"ERROR: 不明なモード: {mode}")
         sys.exit(1)

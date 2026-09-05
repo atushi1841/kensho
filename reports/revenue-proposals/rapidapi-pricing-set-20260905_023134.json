@@ -1,0 +1,38 @@
+[
+  {
+    "api_id": "api_7d2dcc27-829d-4add-88b9-5c1708447f85",
+    "api_key": "japan-camera",
+    "api_name": "Japan Camera & Lens Resale Price Research API",
+    "visibility": "PUBLIC",
+    "tiers": [
+      {
+        "tier": "BASIC",
+        "plan_id": "billingplan_81242251-5b27-456e-8883-b999955cb51d",
+        "version_id": "billingplanversion_dca00db9-241c-447f-863e-7bca4fdc4131",
+        "current_price": 0.001,
+        "target_price": 0.001,
+        "status": "unchanged",
+        "message": "すでに対象単価のバージョンがあります（スキップ）."
+      },
+      {
+        "tier": "PRO",
+        "plan_id": "billingplan_3dc07a9a-141d-42a4-80d2-69e1e46cd78b",
+        "version_id": "billingplanversion_b1d68149-a9aa-444c-a348-0180773efec6",
+        "current_price": 0.005,
+        "target_price": 0.005,
+        "status": "unchanged",
+        "message": "すでに対象単価のバージョンがあります（スキップ）."
+      },
+      {
+        "tier": "ULTRA",
+        "plan_id": "billingplan_4dc72758-122c-405f-836f-235f393d2137",
+        "version_id": "billingplanversion_c8c0285b-4643-419c-8c38-d194442ef4d6",
+        "current_price": 0.01,
+        "target_price": 0.01,
+        "status": "unchanged",
+        "message": "すでに対象単価のバージョンがあります（スキップ）."
+      }
+    ],
+    "status": "ok"
+  }
+]

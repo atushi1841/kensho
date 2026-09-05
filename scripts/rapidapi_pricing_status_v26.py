@@ -4,7 +4,7 @@
 rapidapi_pricing_set.py の関数を再利用して、候補API の BASIC/PRO/ULTRA 単価を確認する。
 認証は goo-net-car-scraper/rapidapi_auth.json を再利用。
 """
-import json
+
 import sys
 
 sys.path.insert(0, "/mnt/d/Project2/kensho/scripts")

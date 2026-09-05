@@ -53,7 +53,7 @@ from typing import Any
 
 API_BASE = "https://api.apify.com/v2"
 APP_NAME = "apify_seo_full_apply"
-APIFY_TOKEN = os.environ.get("APIFY_TOKEN") or "[REDACTED]"
+APIFY_TOKEN = os.environ.get("APIFY_TOKEN") or os.environ.get("APIFY_TOKEN_DEFAULT", "")
 
 CHAR_LIMITS = {
     "title": 63,

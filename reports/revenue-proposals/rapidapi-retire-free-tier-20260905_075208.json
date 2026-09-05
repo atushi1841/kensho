@@ -1,0 +1,225 @@
+[
+  {
+    "api_id": "api_e093340e-c784-4cc9-9d70-7cf80404b9ed",
+    "api_key": "japan-used-car",
+    "api_name": "Japan Used Car Price Stats API",
+    "plans": [
+      {
+        "plan_id": "billingplan_dca311a9-4ced-4c87-9a85-c766ed04c7b3",
+        "plan_name": "BASIC",
+        "current_active_versions": [
+          "billingplanversion_037463c1-b1a9-4124-bd0d-1c7b27facf41"
+        ],
+        "retire_candidates": [
+          {
+            "version_id": "billingplanversion_0d7f277e-dac7-4ca4-bd62-231d18347442",
+            "free500k": true,
+            "period": "MONTHLY",
+            "per_call_usd": null,
+            "subscribers": 1
+          },
+          {
+            "version_id": "billingplanversion_0ff1fc64-7b77-4709-a749-194734d452a8",
+            "free500k": true,
+            "period": "MONTHLY",
+            "per_call_usd": null,
+            "subscribers": 0
+          }
+        ],
+        "deletable_at_plan_level": false,
+        "status": "studio-ui-required",
+        "action": "version-retire"
+      },
+      {
+        "plan_id": "billingplan_54427ca8-1b45-4c75-90fe-28ba27a05007",
+        "plan_name": "PRO",
+        "current_active_versions": [
+          "billingplanversion_78ef6b3d-97be-49f3-a03d-9db0950ac657"
+        ],
+        "retire_candidates": [
+          {
+            "version_id": "billingplanversion_1f56b4b3-1834-4e0e-a3d9-0198ae84349a",
+            "free500k": false,
+            "period": "PERUSE",
+            "per_call_usd": 0.01,
+            "subscribers": 0
+          },
+          {
+            "version_id": "billingplanversion_31ced085-b9db-4b22-99cf-79eef3858493",
+            "free500k": false,
+            "period": "PERUSE",
+            "per_call_usd": 0.02,
+            "subscribers": 0
+          },
+          {
+            "version_id": "billingplanversion_41898baa-f66a-4256-b144-b921d9055eb2",
+            "free500k": false,
+            "period": "PERUSE",
+            "per_call_usd": 0.01,
+            "subscribers": 0
+          },
+          {
+            "version_id": "billingplanversion_8714981a-93fd-4e3d-b5ba-a406203551c1",
+            "free500k": false,
+            "period": "PERUSE",
+            "per_call_usd": 0.02,
+            "subscribers": 0
+          },
+          {
+            "version_id": "billingplanversion_8ba46ffd-9917-4235-8d92-84bbe72065b1",
+            "free500k": false,
+            "period": "PERUSE",
+            "per_call_usd": 3e-05,
+            "subscribers": 0
+          },
+          {
+            "version_id": "billingplanversion_e285bb5f-8b79-4786-97a1-21e5768e410a",
+            "free500k": false,
+            "period": "PERUSE",
+            "per_call_usd": 0.02,
+            "subscribers": 0
+          }
+        ],
+        "deletable_at_plan_level": false,
+        "status": "studio-ui-required",
+        "action": "version-retire"
+      },
+      {
+        "plan_id": "billingplan_c389fe6f-1fdd-4871-a0e2-c32ab87cd9a6",
+        "plan_name": "ULTRA",
+        "current_active_versions": [
+          "billingplanversion_8e8d3d15-2736-4bd0-8b78-355f77f478b8"
+        ],
+        "retire_candidates": [],
+        "deletable_at_plan_level": false,
+        "status": "none",
+        "action": "noop"
+      }
+    ],
+    "has_ui_required": true,
+    "status": "ok"
+  },
+  {
+    "api_id": "api_3697e05e-3115-47c5-85df-f6edadbdc8ca",
+    "api_key": "japan-offmall-cn",
+    "api_name": "Japan OffMall Used Goods Price Stats API (Chinese)",
+    "plans": [
+      {
+        "plan_id": "billingplan_bf857d19-84de-458e-8bf0-788758c19809",
+        "plan_name": "BASIC",
+        "current_active_versions": [
+          "billingplanversion_d59aea5f-c5e6-4202-8db6-0e452dc3a31f"
+        ],
+        "retire_candidates": [
+          {
+            "version_id": "billingplanversion_03e7713f-fe51-45ba-949e-e07ecbcca3bb",
+            "free500k": true,
+            "period": "MONTHLY",
+            "per_call_usd": null,
+            "subscribers": 1
+          }
+        ],
+        "deletable_at_plan_level": false,
+        "status": "studio-ui-required",
+        "action": "version-retire"
+      },
+      {
+        "plan_id": "billingplan_de2f563a-0019-4367-8b57-5b80ad07627f",
+        "plan_name": "PRO",
+        "current_active_versions": [
+          "billingplanversion_e75256c8-af6c-4c83-983a-921412e7bd71"
+        ],
+        "retire_candidates": [
+          {
+            "version_id": "billingplanversion_15f4ebef-4dce-438a-a672-0806de1fa1ad",
+            "free500k": false,
+            "period": "PERUSE",
+            "per_call_usd": 0.02,
+            "subscribers": 0
+          },
+          {
+            "version_id": "billingplanversion_a3ee6ad4-e68f-4211-ba92-77b5a186588a",
+            "free500k": false,
+            "period": "PERUSE",
+            "per_call_usd": 0.001,
+            "subscribers": 0
+          }
+        ],
+        "deletable_at_plan_level": false,
+        "status": "studio-ui-required",
+        "action": "version-retire"
+      },
+      {
+        "plan_id": "billingplan_355c86ba-4771-46a1-ab76-665afd4dc272",
+        "plan_name": "ULTRA",
+        "current_active_versions": [
+          "billingplanversion_4383ff43-d114-4b3f-b444-75adff2ad514"
+        ],
+        "retire_candidates": [],
+        "deletable_at_plan_level": false,
+        "status": "none",
+        "action": "noop"
+      }
+    ],
+    "has_ui_required": true,
+    "status": "ok"
+  },
+  {
+    "api_id": "api_7d2dcc27-829d-4add-88b9-5c1708447f85",
+    "api_key": "japan-camera",
+    "api_name": "Japan Camera & Lens Resale Price Research API",
+    "plans": [
+      {
+        "plan_id": "billingplan_3dc07a9a-141d-42a4-80d2-69e1e46cd78b",
+        "plan_name": "PRO",
+        "current_active_versions": [
+          "billingplanversion_b1d68149-a9aa-444c-a348-0180773efec6"
+        ],
+        "retire_candidates": [
+          {
+            "version_id": "billingplanversion_987d46a4-dce8-4b3b-8bea-2aa4ca5d219d",
+            "free500k": false,
+            "period": "PERUSE",
+            "per_call_usd": 0.02,
+            "subscribers": 0
+          }
+        ],
+        "deletable_at_plan_level": false,
+        "status": "studio-ui-required",
+        "action": "version-retire"
+      },
+      {
+        "plan_id": "billingplan_81242251-5b27-456e-8883-b999955cb51d",
+        "plan_name": "BASIC",
+        "current_active_versions": [
+          "billingplanversion_dca00db9-241c-447f-863e-7bca4fdc4131"
+        ],
+        "retire_candidates": [
+          {
+            "version_id": "billingplanversion_c6a5210c-2396-4341-904c-9d3102069104",
+            "free500k": true,
+            "period": "MONTHLY",
+            "per_call_usd": null,
+            "subscribers": 1
+          }
+        ],
+        "deletable_at_plan_level": false,
+        "status": "studio-ui-required",
+        "action": "version-retire"
+      },
+      {
+        "plan_id": "billingplan_4dc72758-122c-405f-836f-235f393d2137",
+        "plan_name": "ULTRA",
+        "current_active_versions": [
+          "billingplanversion_c8c0285b-4643-419c-8c38-d194442ef4d6"
+        ],
+        "retire_candidates": [],
+        "deletable_at_plan_level": false,
+        "status": "none",
+        "action": "noop"
+      }
+    ],
+    "has_ui_required": true,
+    "status": "ok"
+  }
+]

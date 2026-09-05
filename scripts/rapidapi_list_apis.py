@@ -3,8 +3,8 @@
 
 認証は goo-net-car-scraper/rapidapi_auth.json を再利用。読み取り専用。
 """
+
 import json
-import os
 
 import requests
 
@@ -49,15 +49,20 @@ def main():
     print("COUNT:", len(apis))
     for a in sorted(apis, key=lambda x: (x["name"] or "").lower()):
         cv = a.get("currentVersion") or {}
-        print(json.dumps({
-            "id": a["id"],
-            "name": a["name"],
-            "slug": a.get("slugifiedName"),
-            "vis": a.get("visibility"),
-            "pricing": a.get("pricing"),
-            "ver": cv.get("name"),
-            "baseUrl": cv.get("targetBaseUrl"),
-        }, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "id": a["id"],
+                    "name": a["name"],
+                    "slug": a.get("slugifiedName"),
+                    "vis": a.get("visibility"),
+                    "pricing": a.get("pricing"),
+                    "ver": cv.get("name"),
+                    "baseUrl": cv.get("targetBaseUrl"),
+                },
+                ensure_ascii=False,
+            )
+        )
 
 
 if __name__ == "__main__":

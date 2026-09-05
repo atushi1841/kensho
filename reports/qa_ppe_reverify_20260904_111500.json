@@ -1,0 +1,67 @@
+[
+  {
+    "actor": "japan-used-camera-market-scraper",
+    "actId": "mQaZFo6up4YZKepC3",
+    "pricingModel": "PAY_PER_EVENT",
+    "apifyMargin": 0.2,
+    "event_prices": {
+      "apify-actor-start": 5e-05,
+      "apify-default-dataset-item": 0.002
+    },
+    "totalRuns": 62,
+    "users30d": null,
+    "ok": true
+  },
+  {
+    "actor": "japan-used-instrument-market-scraper",
+    "actId": "yN1R26HrV6C2MBKas",
+    "pricingModel": "PAY_PER_EVENT",
+    "apifyMargin": 0.2,
+    "event_prices": {
+      "apify-actor-start": 5e-05,
+      "apify-default-dataset-item": 0.002
+    },
+    "totalRuns": 56,
+    "users30d": null,
+    "ok": true
+  },
+  {
+    "actor": "japan-watch-market-scraper",
+    "actId": "gMqdrS2evpcybSZc2",
+    "pricingModel": "PAY_PER_EVENT",
+    "apifyMargin": 0.2,
+    "event_prices": {
+      "apify-actor-start": 5e-05,
+      "apify-default-dataset-item": 0.002
+    },
+    "totalRuns": 56,
+    "users30d": null,
+    "ok": true
+  },
+  {
+    "actor": "japan-luxury-brand-market-scraper",
+    "actId": "b0vuqa3ESvy2mOwFB",
+    "pricingModel": "PAY_PER_EVENT",
+    "apifyMargin": 0.2,
+    "event_prices": {
+      "apify-actor-start": 5e-05,
+      "apify-default-dataset-item": 0.002
+    },
+    "totalRuns": 55,
+    "users30d": null,
+    "ok": true
+  },
+  {
+    "actor": "japan-offmall-market-scraper",
+    "actId": "Zh4kqcS4dYPWpFzBd",
+    "pricingModel": "PAY_PER_EVENT",
+    "apifyMargin": 0.2,
+    "event_prices": {
+      "apify-actor-start": 5e-05,
+      "apify-default-dataset-item": 0.002
+    },
+    "totalRuns": 130,
+    "users30d": null,
+    "ok": true
+  }
+]

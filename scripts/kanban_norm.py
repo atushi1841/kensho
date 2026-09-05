@@ -92,10 +92,16 @@ def fetch_existing_normalized_titles(
     ph = ",".join("?" * len(statuses))
     con = sqlite3.connect(str(db))
     try:
-        rows = con.execute(
-            f"SELECT id, title FROM tasks WHERE lower(title) LIKE ? AND status IN ({ph})",
-            (title_like.lower(), *statuses),
-        ).fetchall()
+        if title_like is None:
+            rows = con.execute(
+                f"SELECT id, title FROM tasks WHERE status IN ({ph})",
+                statuses,
+            ).fetchall()
+        else:
+            rows = con.execute(
+                f"SELECT id, title FROM tasks WHERE lower(title) LIKE ? AND status IN ({ph})",
+                (title_like.lower(), *statuses),
+            ).fetchall()
     finally:
         con.close()
     out: dict[str, list[str]] = {}

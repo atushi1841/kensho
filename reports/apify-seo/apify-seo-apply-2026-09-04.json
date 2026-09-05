@@ -1,0 +1,75 @@
+{
+  "generated_at": "2026-09-04T21:12:42",
+  "total": 5,
+  "ok": 2,
+  "ng": 3,
+  "results": [
+    {
+      "actor": "iosys-japan-used-smartphone-scraper",
+      "actor_id": "vvD9vs8D1AwoQrTTS",
+      "issue": "discovery_gap",
+      "ok": false,
+      "status_code": 0,
+      "error": "no change proposed (current value already matches suggestion)",
+      "fields_changed": [],
+      "before": {},
+      "after": {}
+    },
+    {
+      "actor": "japan-market-mcp",
+      "actor_id": "57SNehd4cHNFyUCj3",
+      "issue": "discovery_gap",
+      "ok": false,
+      "status_code": 0,
+      "error": "no change proposed (current value already matches suggestion)",
+      "fields_changed": [],
+      "before": {},
+      "after": {}
+    },
+    {
+      "actor": "komehyo-japan-brand-scraper",
+      "actor_id": "Db3iY8FIRxPjPag7N",
+      "issue": "discovery_gap",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrape used luxury brand items from Komehyo (コメ兵), one of Japan's largest resale chains. Extract brand, price, rank, size, material, store, and image. NEW: For cross-shop comparison across Komehyo categories + Jackroad, try the Japan Luxury Brand Market Scraper (japan-luxury-brand-market-scraper) Up"
+      },
+      "after": {
+        "description": "Scrape used luxury brand items from Komehyo (コメ兵), one of Japan's largest resale chains. Extract brand, price, rank, size, material, store, and image. NEW: For cross-shop comparison across Komehyo categories + Jackroad, try the Japan Luxury Brand Market Scraper (japan-luxury-brand-market-scraper) Up"
+      }
+    },
+    {
+      "actor": "rakuten-japan-mcp",
+      "actor_id": "0eeiFH0nLqlWVoOAc",
+      "issue": "discovery_gap",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Search Rakuten Ichiba (楽天市場) products via official API. Extract item names, prices, URLs, shop info, review counts, ratings, and images. Available as Apify actor and MCP server for AI agents. Clean JSON output. Free tier available Updated for better discoverability competitive, e-commerce, marketpla"
+      },
+      "after": {
+        "description": "Search Rakuten Ichiba (楽天市場) products via official API. Extract item names, prices, URLs, shop info, review counts, ratings, and images. Available as Apify actor and MCP server for AI agents. Clean JSON output. Free tier available Updated for better discoverability competitive, e-commerce, marketpla"
+      }
+    },
+    {
+      "actor": "surugaya-japan-hobby-prices",
+      "actor_id": "F8Hl0a8Cx9bpJBrxR",
+      "issue": "discovery_gap",
+      "ok": false,
+      "status_code": 0,
+      "error": "no change proposed (current value already matches suggestion)",
+      "fields_changed": [],
+      "before": {},
+      "after": {}
+    }
+  ]
+}

@@ -50,7 +50,7 @@ from typing import Any
 PROJECT_DIR = "/mnt/d/Project2/kensho"
 DEFAULT_OUT_DIR = os.path.join(PROJECT_DIR, "reports", "apify-seo")
 
-APIFY_TOKEN_DEFAULT = "[REDACTED]"
+APIFY_TOKEN_DEFAULT = os.environ.get("APIFY_TOKEN_DEFAULT", "")
 API_BASE = "https://api.apify.com/v2"
 
 # 1アクターあたりのStore検索試行上限（API負荷・実行時間抑制）

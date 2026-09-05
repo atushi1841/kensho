@@ -1,0 +1,12 @@
+[
+  {
+    "api_id": "api_3697e05e-3115-47c5-85df-f6edadbdc8ca",
+    "api_key": "japan-offmall-cn",
+    "api_name": "Japan OffMall Used Goods Price Stats API (Chinese)",
+    "pro_plan_id": "billingplan_de2f563a-0019-4367-8b57-5b80ad07627f",
+    "current_price": 0.02,
+    "target_price": 0.001,
+    "status": "dry-run",
+    "message": "単価 0.02 → 0.001 にするペイロードを構築（未実行）."
+  }
+]

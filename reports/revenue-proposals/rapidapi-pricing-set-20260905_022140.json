@@ -1,0 +1,35 @@
+[
+  {
+    "api_id": "api_3697e05e-3115-47c5-85df-f6edadbdc8ca",
+    "api_key": "japan-offmall-cn",
+    "api_name": "Japan OffMall Used Goods Price Stats API (Chinese)",
+    "visibility": "PRIVATE",
+    "tiers": [
+      {
+        "tier": "BASIC",
+        "status": "error",
+        "error": "GraphQL errors: [{\"message\": \"Found error in configuration while try to add, plan - \", \"locations\": [{\"line\": 1, \"column\": 74}], \"path\": [\"updateBillingPlanExtended\"], \"extensions\": {\"correlationId\": \"e59ed0e4-dc75-4027-85cc-41c58833aa90\"}}]"
+      },
+      {
+        "tier": "PRO",
+        "plan_id": "billingplan_de2f563a-0019-4367-8b57-5b80ad07627f",
+        "updated_id": "billingplan_de2f563a-0019-4367-8b57-5b80ad07627f",
+        "current_price": 0.02,
+        "target_price": 0.005,
+        "status": "changed",
+        "action": "update",
+        "message": "単価 0.02 → 0.005 に更新."
+      },
+      {
+        "tier": "ULTRA",
+        "created_plan_id": "billingplan_355c86ba-4771-46a1-ab76-665afd4dc272",
+        "current_price": null,
+        "target_price": 0.01,
+        "status": "created",
+        "action": "create",
+        "message": "新規プラン ULTRA ($0.01/call) を作成."
+      }
+    ],
+    "status": "error"
+  }
+]

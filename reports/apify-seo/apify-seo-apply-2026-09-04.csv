@@ -1,0 +1,6 @@
+actor,actor_id,issue,ok,status_code,fields_changed,error
+iosys-japan-used-smartphone-scraper,vvD9vs8D1AwoQrTTS,discovery_gap,False,0,,no change proposed (current value already matches suggestion)
+japan-market-mcp,57SNehd4cHNFyUCj3,discovery_gap,False,0,,no change proposed (current value already matches suggestion)
+komehyo-japan-brand-scraper,Db3iY8FIRxPjPag7N,discovery_gap,True,200,description,
+rakuten-japan-mcp,0eeiFH0nLqlWVoOAc,discovery_gap,True,200,description,
+surugaya-japan-hobby-prices,F8Hl0a8Cx9bpJBrxR,discovery_gap,False,0,,no change proposed (current value already matches suggestion)

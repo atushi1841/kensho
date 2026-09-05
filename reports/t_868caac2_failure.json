@@ -1,0 +1,19 @@
+{
+  "date": "2026-09-02",
+  "task_id": "t_868caac2",
+  "task": "RapidAPI公開APIへの有料プラン導入テスト",
+  "status": "FAILED - 実装不可",
+  "target_api": "Japan Used Camera Price Stats API (api_e19e373c)",
+  "target_plan": "PRO (billingplan_2156fa33)",
+  "before": {
+    "price": "0/PERUSE",
+    "pricing": "FREEMIUM"
+  },
+  "failure_reason": {
+    "attempt1": "updateBillingPlanExtended: newBillingPlanVersion undefined (api情報不足)",
+    "attempt2": "updateBillingPlanExtended: Requests object should be set (billingLimits設定不足)",
+    "attempt3": "enableBillingFeatures + billingLimits追加も同エラー",
+    "cause": "RapidAPI GraphQLスキーマのBillingLimitInputV2型が未定義で正しいRequestsオブジェクト形式が特定不能"
+  },
+  "recommendation": "RapidAPI Studio UIから手動で価格設定、もしくはcreateBillingPlanでbillingLimits形式を試行"
+}

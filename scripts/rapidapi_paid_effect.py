@@ -24,6 +24,7 @@ t_bcd0e525(API-direct)/t_60f5b5de(CDP+UI) が実施。本スクリプトはタ�
 
 認証: /mnt/d/Project2/goo-net-car-scraper/rapidapi_auth.json（既存クレデンシャル再利用）
 """
+
 from __future__ import annotations
 
 import argparse
@@ -48,7 +49,7 @@ FREE_MONTHLY_THRESHOLD = 500000
 
 
 def fetch_versions_with_subs(auth: dict[str, Any], api_id: str) -> list[dict[str, Any]]:
-    """billingPlanVersions を subscriptions 込みで取得（読み取り専用）. """
+    """billingPlanVersions を subscriptions 込みで取得（読み取り専用）."""
     query = """
     query BillingPlans($where: BillingPlanVersionWhereInput) {
       billingPlanVersions(where: $where) {
@@ -137,20 +138,26 @@ def measure_api(auth: dict[str, Any], api_key: str, api_def: dict[str, Any]) -> 
     tiers: dict[str, Any] = {}
     warnings: list[str] = []
     for tier_name, bucket in sorted(by_tier.items()):
-        consumer = [{
-            "version_id": v["version_id"],
-            "period": v["period"],
-            "per_call_price_usd": per_call_price(v),
-            "free_monthly_500k": is_free_monthly(v),
-            "subscribers": v["subscribers"],
-        } for v in bucket["consumer"]]
-        orphan = [{
-            "version_id": v["version_id"],
-            "period": v["period"],
-            "per_call_price_usd": per_call_price(v),
-            "free_monthly_500k": is_free_monthly(v),
-            "subscribers": v["subscribers"],
-        } for v in bucket["orphan"]]
+        consumer = [
+            {
+                "version_id": v["version_id"],
+                "period": v["period"],
+                "per_call_price_usd": per_call_price(v),
+                "free_monthly_500k": is_free_monthly(v),
+                "subscribers": v["subscribers"],
+            }
+            for v in bucket["consumer"]
+        ]
+        orphan = [
+            {
+                "version_id": v["version_id"],
+                "period": v["period"],
+                "per_call_price_usd": per_call_price(v),
+                "free_monthly_500k": is_free_monthly(v),
+                "subscribers": v["subscribers"],
+            }
+            for v in bucket["orphan"]
+        ]
         # 実効単価は消費者向け(現在)バージョンの有料最小値
         paid = [a for a in consumer if (a["per_call_price_usd"] or 0) > 0]
         effective_price = min((a["per_call_price_usd"] for a in paid), default=None)
@@ -164,9 +171,7 @@ def measure_api(auth: dict[str, Any], api_key: str, api_def: dict[str, Any]) -> 
         }
         # hygiene: 消費者向け(current)に複数 → 単価競合（実質表示は1つだが安全側で警告）
         if len(consumer) > 1:
-            warnings.append(
-                f"{tier_name}: 消費者向けcurrent版が {len(consumer)} 個共存（単価競合 / 実効価格が曖昧）"
-            )
+            warnings.append(f"{tier_name}: 消費者向けcurrent版が {len(consumer)} 個共存（単価競合 / 実効価格が曖昧）")
         # 消費者向け(current)が本当に無料のまま(=FREEMIUM)なら警告
         if effective_price is None and consumer:
             warnings.append(f"{tier_name}: 消費者向けが無料のみ（PAID未設定）→ 収益 $0")
@@ -190,14 +195,10 @@ def measure_api(auth: dict[str, Any], api_key: str, api_def: dict[str, Any]) -> 
         "api_name": info.get("name"),
         "visibility": info.get("visibility"),
         "tiers": tiers,
-        "tier_effective_prices": {
-            k: v["effective_per_call_price_usd"] for k, v in tiers.items()
-        },
+        "tier_effective_prices": {k: v["effective_per_call_price_usd"] for k, v in tiers.items()},
         "subscribers": {"total": total_subs, "paid": paid_subs, "free": free_subs},
         "warnings": warnings,
-        "paid_plan_active": any(
-            v["effective_per_call_price_usd"] is not None for v in tiers.values()
-        ),
+        "paid_plan_active": any(v["effective_per_call_price_usd"] is not None for v in tiers.values()),
     }
 
 
@@ -213,9 +214,18 @@ def collect_all(auth: dict[str, Any]) -> list[dict[str, Any]]:
 RAPIDAPI_V26_APIS: dict[str, dict[str, Any]] = {
     "japan-kakaku": {"api_id": "api_45bf102f-6d1b-4fd5-9179-f164de167ffd", "display": "Japan Kakaku Price Stats API"},
     "japan-rent": {"api_id": "api_2e8e063d-f2a3-43de-9fe4-50d5eb16659a", "display": "Japan Rent Price Stats API"},
-    "japan-watch": {"api_id": "api_cb7a9d01-e8db-4f0d-b91f-031899d5e7cc", "display": "Japan Used Watch Price Stats API"},
-    "japan-luxury": {"api_id": "api_8941b445-afab-4f21-abbe-a58e96b21325", "display": "Japan Used Luxury Brand Price Stats API"},
-    "japan-instrument": {"api_id": "api_8ccef00b-e8be-44b2-b4e4-3c96fdaf7481", "display": "Japan Used Musical Instrument Price Stats API"},
+    "japan-watch": {
+        "api_id": "api_cb7a9d01-e8db-4f0d-b91f-031899d5e7cc",
+        "display": "Japan Used Watch Price Stats API",
+    },
+    "japan-luxury": {
+        "api_id": "api_8941b445-afab-4f21-abbe-a58e96b21325",
+        "display": "Japan Used Luxury Brand Price Stats API",
+    },
+    "japan-instrument": {
+        "api_id": "api_8ccef00b-e8be-44b2-b4e4-3c96fdaf7481",
+        "display": "Japan Used Musical Instrument Price Stats API",
+    },
 }
 
 
@@ -266,12 +276,16 @@ def main() -> int:
         for tier_name, t in r["tiers"].items():
             price = t["effective_per_call_price_usd"]
             pr = "FREE" if price is None else f"${price}/call"
-            print(f"  {tier_name:<6} effective={pr:<12} subs={t['subscribers']} "
-                  f"consumer={t['consumer_versions_count']} orphan={t['orphan_versions_count']}")
+            print(
+                f"  {tier_name:<6} effective={pr:<12} subs={t['subscribers']} "
+                f"consumer={t['consumer_versions_count']} orphan={t['orphan_versions_count']}"
+            )
             for a in t["consumer_versions"]:
                 tag = " [FREE月500K]" if a["free_monthly_500k"] else ""
-                print(f"      ver={a['version_id'][:20]}... price={a['per_call_price_usd']} "
-                      f"period={a['period']} subs={a['subscribers']}{tag}")
+                print(
+                    f"      ver={a['version_id'][:20]}... price={a['per_call_price_usd']} "
+                    f"period={a['period']} subs={a['subscribers']}{tag}"
+                )
         s = r["subscribers"]
         print(f"  PAID subscribers: {s['paid']}  FREE: {s['free']}  total: {s['total']}")
         for w in r["warnings"]:

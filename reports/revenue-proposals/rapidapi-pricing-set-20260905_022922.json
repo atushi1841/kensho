@@ -1,0 +1,38 @@
+[
+  {
+    "api_id": "api_3697e05e-3115-47c5-85df-f6edadbdc8ca",
+    "api_key": "japan-offmall-cn",
+    "api_name": "Japan OffMall Used Goods Price Stats API (Chinese)",
+    "visibility": "PRIVATE",
+    "tiers": [
+      {
+        "tier": "BASIC",
+        "plan_id": "billingplan_bf857d19-84de-458e-8bf0-788758c19809",
+        "version_id": "billingplanversion_d59aea5f-c5e6-4202-8db6-0e452dc3a31f",
+        "current_price": 0.001,
+        "target_price": 0.001,
+        "status": "unchanged",
+        "message": "すでに対象単価のバージョンがあります（スキップ）."
+      },
+      {
+        "tier": "PRO",
+        "plan_id": "billingplan_de2f563a-0019-4367-8b57-5b80ad07627f",
+        "version_id": "billingplanversion_e75256c8-af6c-4c83-983a-921412e7bd71",
+        "current_price": 0.005,
+        "target_price": 0.005,
+        "status": "unchanged",
+        "message": "すでに対象単価のバージョンがあります（スキップ）."
+      },
+      {
+        "tier": "ULTRA",
+        "plan_id": "billingplan_355c86ba-4771-46a1-ab76-665afd4dc272",
+        "version_id": "billingplanversion_4383ff43-d114-4b3f-b444-75adff2ad514",
+        "current_price": 0.01,
+        "target_price": 0.01,
+        "status": "unchanged",
+        "message": "すでに対象単価のバージョンがあります（スキップ）."
+      }
+    ],
+    "status": "ok"
+  }
+]

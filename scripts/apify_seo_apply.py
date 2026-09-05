@@ -36,13 +36,12 @@ import json
 import os
 import sys
 import time
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any
-
 import urllib.error
 import urllib.parse
 import urllib.request
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
 
 # --- 設定 ---
 
@@ -82,8 +81,8 @@ VALID_CATEGORIES = {
     "DATA_PROCESSING",
 }
 
-# Apify API の実制限（実測で確認済: 2026-09-04 v14-C）
-MAX_TITLE = 80
+# Apify API の実制限（実測で確認済: 2026-09-04 v14-C, 2026-09-04 v15-A）
+MAX_TITLE = 63  # schema-validation: "title must be at most 63 characters long" (実測で80→63に修正)
 MAX_DESCRIPTION = 300  # schema-validation: "description must be at most 300 characters long"
 MAX_CATEGORIES = 3  # schema-validation: "You can enter up to 3 values"
 MAX_SEO_TITLE = 60
@@ -101,7 +100,7 @@ class Finding:
     impact_rank: int = 999
 
     @classmethod
-    def from_row(cls, row: dict[str, str]) -> "Finding":
+    def from_row(cls, row: dict[str, str]) -> Finding:
         return cls(
             actor=row["actor"].strip(),
             issue=row["issue"].strip(),
@@ -109,9 +108,7 @@ class Finding:
             current=row["current"].strip(),
             suggested=row["suggested"].strip(),
             evidence=row["evidence"].strip(),
-            impact_rank=IMPACT_ORDER.index(row["issue"].strip())
-            if row["issue"].strip() in IMPACT_ORDER
-            else 999,
+            impact_rank=IMPACT_ORDER.index(row["issue"].strip()) if row["issue"].strip() in IMPACT_ORDER else 999,
         )
 
 
@@ -360,6 +357,126 @@ def load_findings(csv_path: Path, limit: int | None, impacts: set[str] | None) -
     return findings
 
 
+# --- v15-A bulk templating: 1 actor = 1 GET + 1 PUT ---
+
+
+def group_findings_by_actor(findings: list[Finding]) -> dict[str, list[Finding]]:
+    """findings を actor ごとにグルーピング（impact 順維持）。"""
+    by_actor: dict[str, list[Finding]] = {}
+    for f in findings:
+        by_actor.setdefault(f.actor, []).append(f)
+    # 各 actor 内は impact_rank 昇順
+    for v in by_actor.values():
+        v.sort(key=lambda x: (x.impact_rank, x.issue))
+    return by_actor
+
+
+def merge_actor_payload(actor: dict[str, Any], findings: list[Finding]) -> tuple[dict[str, Any], list[str], list[str]]:
+    """1 actor の findings 群から単一 PUT payload を組み立てる。
+
+    戻り値: (payload, changed_fields, applied_issues)
+    applied_issues は実際に payload に入った finding.issue のリスト。
+    1件も change が無ければ payload={} (no-op 検知用)。
+    """
+    payload: dict[str, Any] = {}
+    changed: list[str] = []
+    applied: list[str] = []
+
+    # actor を shallow copy して累積的に変化を反映する
+    # → 同じフィールド（例: title）に2つの finding がある場合、2つ目が1つ目の結果を見て動く
+    virtual_actor = dict(actor)
+
+    for f in findings:
+        sub_payload, sub_changed = build_update_payload(virtual_actor, f)
+        if not sub_payload:
+            continue
+        applied.append(f.issue)
+        for k, v in sub_payload.items():
+            payload[k] = v
+            if k not in changed:
+                changed.append(k)
+            # virtual_actor も更新して次の finding に反映
+            virtual_actor[k] = v
+
+    return payload, changed, applied
+
+
+def apply_bulk_one(
+    actor: str,
+    actor_id: str,
+    findings: list[Finding],
+    token: str,
+    cache: dict[str, dict[str, Any]],
+) -> list[ApplyResult]:
+    """1 actor 分の findings を 1 GET + 1 PUT で適用する。
+
+    戻り値: ApplyResult のリスト（findings と同数）。
+    no-op の場合は 1件だけの NG ApplyResult(actor, merged_issues="", error="no change proposed")。
+    PUT 失敗時は全 findings を 1 つの NG ApplyResult に集約（個別 ApplyResult には展開しない）。
+    """
+    if actor_id not in cache:
+        status, body = _api_get(f"/acts/{actor_id}", token)
+        if status != 200 or "data" not in body:
+            return [
+                ApplyResult(
+                    actor=actor,
+                    actor_id=actor_id,
+                    issue="(bulk)",
+                    ok=False,
+                    status_code=status,
+                    error=f"GET failed: {body}",
+                )
+            ]
+        cache[actor_id] = body["data"]
+    actor_data = cache[actor_id]
+
+    payload, changed, applied_issues = merge_actor_payload(actor_data, findings)
+    if not payload:
+        return [
+            ApplyResult(
+                actor=actor,
+                actor_id=actor_id,
+                issue="(bulk)",
+                ok=False,
+                error="no change proposed (current value already matches suggestion)",
+            )
+        ]
+
+    # isPublic 維持
+    payload["isPublic"] = actor_data.get("isPublic", True)
+
+    status, body = _api_put(f"/acts/{actor_id}", token, payload)
+    if status == 200 and "data" in body:
+        new_actor = body["data"]
+        cache[actor_id] = new_actor
+        # 適用した issues ごとに ApplyResult を 1 つずつ返す（v14-C 互換）
+        return [
+            ApplyResult(
+                actor=actor,
+                actor_id=actor_id,
+                issue=iss,
+                ok=True,
+                status_code=200,
+                fields_changed=list(changed),
+                before={k: actor_data.get(k) for k in changed},
+                after={k: new_actor.get(k) for k in changed},
+            )
+            for iss in applied_issues
+        ]
+
+    # PUT 失敗 → 全 findings を 1 つの NG に集約
+    return [
+        ApplyResult(
+            actor=actor,
+            actor_id=actor_id,
+            issue="(bulk)",
+            ok=False,
+            status_code=status,
+            error=str(body)[:300],
+        )
+    ]
+
+
 def apply_one(
     finding: Finding,
     actor_id: str,
@@ -370,8 +487,12 @@ def apply_one(
         status, body = _api_get(f"/acts/{actor_id}", token)
         if status != 200 or "data" not in body:
             return ApplyResult(
-                actor=finding.actor, actor_id=actor_id, issue=finding.issue,
-                ok=False, status_code=status, error=f"GET failed: {body}",
+                actor=finding.actor,
+                actor_id=actor_id,
+                issue=finding.issue,
+                ok=False,
+                status_code=status,
+                error=f"GET failed: {body}",
             )
         cache[actor_id] = body["data"]
     actor = cache[actor_id]
@@ -379,8 +500,11 @@ def apply_one(
     payload, changed = build_update_payload(actor, finding)
     if not payload:
         return ApplyResult(
-            actor=finding.actor, actor_id=actor_id, issue=finding.issue,
-            ok=False, error="no change proposed (current value already matches suggestion)",
+            actor=finding.actor,
+            actor_id=actor_id,
+            issue=finding.issue,
+            ok=False,
+            error="no change proposed (current value already matches suggestion)",
         )
 
     # isPublic は維持（false にしてしまうと非公開化してしまう）
@@ -391,20 +515,26 @@ def apply_one(
         new_actor = body["data"]
         cache[actor_id] = new_actor  # 後続findingのために更新
         return ApplyResult(
-            actor=finding.actor, actor_id=actor_id, issue=finding.issue,
-            ok=True, status_code=200, fields_changed=changed,
+            actor=finding.actor,
+            actor_id=actor_id,
+            issue=finding.issue,
+            ok=True,
+            status_code=200,
+            fields_changed=changed,
             before={k: actor.get(k) for k in changed},
             after={k: new_actor.get(k) for k in changed},
         )
     return ApplyResult(
-        actor=finding.actor, actor_id=actor_id, issue=finding.issue,
-        ok=False, status_code=status, error=str(body)[:300],
+        actor=finding.actor,
+        actor_id=actor_id,
+        issue=finding.issue,
+        ok=False,
+        status_code=status,
+        error=str(body)[:300],
     )
 
 
-def write_results(
-    results: list[ApplyResult], token: str, name_to_id: dict[str, str]
-) -> tuple[Path, Path]:
+def write_results(results: list[ApplyResult], token: str, name_to_id: dict[str, str]) -> tuple[Path, Path]:
     RESULT_DIR.mkdir(parents=True, exist_ok=True)
     date = time.strftime("%Y-%m-%d")
     json_path = RESULT_DIR / f"apify-seo-apply-{date}.json"
@@ -433,13 +563,23 @@ def write_results(
     with csv_path.open("w", newline="") as f:
         w = csv.writer(f)
         w.writerow([
-            "actor", "actor_id", "issue", "ok", "status_code",
-            "fields_changed", "error",
+            "actor",
+            "actor_id",
+            "issue",
+            "ok",
+            "status_code",
+            "fields_changed",
+            "error",
         ])
         for r in results:
             w.writerow([
-                r.actor, r.actor_id, r.issue, r.ok, r.status_code,
-                ",".join(r.fields_changed), r.error,
+                r.actor,
+                r.actor_id,
+                r.issue,
+                r.ok,
+                r.status_code,
+                ",".join(r.fields_changed),
+                r.error,
             ])
     return json_path, csv_path
 
@@ -447,12 +587,15 @@ def write_results(
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--csv", default=str(DEFAULT_CSV))
-    parser.add_argument("--limit", type=int, default=None,
-                        help="上位N件のみ処理（impact順）")
+    parser.add_argument("--limit", type=int, default=None, help="上位N件のみ処理（impact順）")
     parser.add_argument("--actor", default=None, help="特定actorのみ")
-    parser.add_argument("--impact", default=None,
-                        help="カンマ区切りで issue 種別を限定")
+    parser.add_argument("--impact", default=None, help="カンマ区切りで issue 種別を限定")
     parser.add_argument("--token", default=os.environ.get("APIFY_TOKEN"))
+    parser.add_argument(
+        "--bulk",
+        action="store_true",
+        help="v15-A: 1 actor = 1 PUT で bulk 適用（findings を actor 単位でマージ）",
+    )
     args = parser.parse_args()
 
     if not args.token:
@@ -472,9 +615,10 @@ def main() -> int:
         print("INFO: 該当 finding なし（filter で全件除外）")
         return 0
 
-    print(f"=== apify_seo_apply ===")
+    print("=== apify_seo_apply ===")
     print(f"findings: {len(findings)}")
     print(f"csv: {csv_path}")
+    print(f"mode: {'BULK (1 actor = 1 PUT)' if args.bulk else 'PER-FINDING (1 finding = 1 PUT)'}")
 
     print("Fetching my actors ...")
     name_to_id = list_my_actors(args.token)
@@ -501,24 +645,66 @@ def main() -> int:
     # 適用
     actor_cache: dict[str, dict[str, Any]] = {aid: baseline[aid] for aid in baseline}
     results: list[ApplyResult] = []
-    for i, f in enumerate(findings, 1):
-        if f.actor not in name_to_id:
-            results.append(ApplyResult(
-                actor=f.actor, actor_id=None, issue=f.issue, ok=False,
-                error="actor not found in my list",
-            ))
-            continue
-        r = apply_one(f, name_to_id[f.actor], args.token, actor_cache)
-        results.append(r)
-        status_str = "OK" if r.ok else "NG"
-        print(f"[{i:3d}/{len(findings)}] {status_str} {r.actor[:35]:35s} {r.issue:25s} {','.join(r.fields_changed) or '-'}")
-        if not r.ok:
-            print(f"           err: {r.error[:150]}")
-        time.sleep(0.5)  # API負荷軽減
+    start = time.time()
 
+    if args.bulk:
+        # v15-A: 1 actor = 1 GET (cached) + 1 PUT
+        by_actor = group_findings_by_actor(findings)
+        print(f"BULK: {len(by_actor)} actors, {len(findings)} findings")
+        for i, (actor_name, fs) in enumerate(by_actor.items(), 1):
+            if actor_name not in name_to_id:
+                results.extend(
+                    ApplyResult(
+                        actor=actor_name,
+                        actor_id=None,
+                        issue=f.issue,
+                        ok=False,
+                        error="actor not found in my list",
+                    )
+                    for f in fs
+                )
+                continue
+            sub = apply_bulk_one(actor_name, name_to_id[actor_name], fs, args.token, actor_cache)
+            results.extend(sub)
+            ok_count = sum(1 for r in sub if r.ok)
+            print(
+                f"[{i:3d}/{len(by_actor)}] {actor_name[:45]:45s} "
+                f"findings={len(fs):2d} ok={ok_count:2d} ng={len(fs) - ok_count:2d}"
+            )
+            if ok_count == 0 and sub and sub[0].status_code:
+                print(f"           err: {sub[0].error[:150]}")
+            time.sleep(0.5)
+    else:
+        # v14-C: 1 finding = 1 PUT
+        for i, f in enumerate(findings, 1):
+            if f.actor not in name_to_id:
+                results.append(
+                    ApplyResult(
+                        actor=f.actor,
+                        actor_id=None,
+                        issue=f.issue,
+                        ok=False,
+                        error="actor not found in my list",
+                    )
+                )
+                continue
+            r = apply_one(f, name_to_id[f.actor], args.token, actor_cache)
+            results.append(r)
+            status_str = "OK" if r.ok else "NG"
+            print(
+                f"[{i:3d}/{len(findings)}] {status_str} {r.actor[:35]:35s} {r.issue:25s} {','.join(r.fields_changed) or '-'}"
+            )
+            if not r.ok:
+                print(f"           err: {r.error[:150]}")
+            time.sleep(0.5)
+
+    elapsed = time.time() - start
     json_path, csv_path = write_results(results, args.token, name_to_id)
     ok = sum(1 for r in results if r.ok)
-    print(f"\n=== summary: {ok}/{len(results)} ok ===")
+    print(f"\n=== summary: {ok}/{len(results)} ok in {elapsed:.1f}s ===")
+    if args.bulk:
+        unique_actors = len({r.actor for r in results})
+        print(f"    bulk mode: {unique_actors} actors, {len(results)} finding-rows")
     print(f"result: {json_path}")
     print(f"        {csv_path}")
     print(f"baseline: {baseline_path}")
