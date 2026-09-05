@@ -1,0 +1,76 @@
+[
+  {
+    "actor_id": "F8Hl0a8Cx9bpJBrxR",
+    "name": "surugaya-japan-hobby-prices",
+    "status": "applied",
+    "http_code": 200,
+    "modified_at_before": "2026-09-04T23:59:47.872Z",
+    "modified_at_after": "2026-09-04T23:59:52.127Z",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ]
+  },
+  {
+    "actor_id": "q2E37PVTg5JcGOTEn",
+    "name": "mandarake-auction-scraper",
+    "status": "applied",
+    "http_code": 200,
+    "modified_at_before": "2026-09-04T12:12:15.638Z",
+    "modified_at_after": "2026-09-04T23:59:54.579Z",
+    "changed_fields": [
+      "title",
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ]
+  },
+  {
+    "actor_id": "xUYsD13SVHHRFQS1H",
+    "name": "mandarake-surugaya-mcp",
+    "status": "applied",
+    "http_code": 200,
+    "modified_at_before": "2026-08-27T21:53:19.045Z",
+    "modified_at_after": "2026-09-04T23:59:56.810Z",
+    "changed_fields": [
+      "title",
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ]
+  },
+  {
+    "actor_id": "0eeiFH0nLqlWVoOAc",
+    "name": "rakuten-japan-mcp",
+    "status": "applied",
+    "http_code": 200,
+    "modified_at_before": "2026-09-04T12:12:41.154Z",
+    "modified_at_after": "2026-09-04T23:59:59.630Z",
+    "changed_fields": [
+      "title",
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ]
+  },
+  {
+    "actor_id": "6Z7tJ3plfUmAgGmbk",
+    "name": "dlsite-scraper",
+    "status": "applied",
+    "http_code": 200,
+    "modified_at_before": "2026-08-23T01:13:52.046Z",
+    "modified_at_after": "2026-09-05T00:00:01.822Z",
+    "changed_fields": [
+      "title",
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ]
+  }
+]

@@ -1,0 +1,770 @@
+[
+  {
+    "actor_id": "F8Hl0a8Cx9bpJBrxR",
+    "name": "surugaya-japan-hobby-prices",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:30.936Z"
+  },
+  {
+    "actor_id": "q2E37PVTg5JcGOTEn",
+    "name": "mandarake-auction-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:33.304Z"
+  },
+  {
+    "actor_id": "xUYsD13SVHHRFQS1H",
+    "name": "mandarake-surugaya-mcp",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:35.534Z"
+  },
+  {
+    "actor_id": "0eeiFH0nLqlWVoOAc",
+    "name": "rakuten-japan-mcp",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:38.303Z"
+  },
+  {
+    "actor_id": "6Z7tJ3plfUmAgGmbk",
+    "name": "dlsite-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:40.471Z"
+  },
+  {
+    "actor_id": "nUm22B2guMo8vXom6",
+    "name": "dmm-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:42.581Z"
+  },
+  {
+    "actor_id": "wxMskoiHMPeeH2qAJ",
+    "name": "tackleberry-japan-fishing-tackle-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:44.746Z"
+  },
+  {
+    "actor_id": "DOiD9y1NAJfLBcAjT",
+    "name": "kitamura-japan-used-camera-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:48.025Z"
+  },
+  {
+    "actor_id": "nWf9BR2ndMTYqKxNB",
+    "name": "jackroad-used-watch-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:51.112Z"
+  },
+  {
+    "actor_id": "Db3iY8FIRxPjPag7N",
+    "name": "komehyo-japan-brand-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:53.213Z"
+  },
+  {
+    "actor_id": "vvD9vs8D1AwoQrTTS",
+    "name": "iosys-japan-used-smartphone-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:55.350Z"
+  },
+  {
+    "actor_id": "FSuoQiX8OG4KuIQ9c",
+    "name": "digimart-japan-used-instrument-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:57.456Z"
+  },
+  {
+    "actor_id": "mQaZFo6up4YZKepC3",
+    "name": "japan-used-camera-market-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:49:59.596Z"
+  },
+  {
+    "actor_id": "yN1R26HrV6C2MBKas",
+    "name": "japan-used-instrument-market-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:01.726Z"
+  },
+  {
+    "actor_id": "gMqdrS2evpcybSZc2",
+    "name": "japan-watch-market-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:03.988Z"
+  },
+  {
+    "actor_id": "b0vuqa3ESvy2mOwFB",
+    "name": "japan-luxury-brand-market-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:06.202Z"
+  },
+  {
+    "actor_id": "57SNehd4cHNFyUCj3",
+    "name": "japan-market-mcp",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:08.327Z"
+  },
+  {
+    "actor_id": "Zh4kqcS4dYPWpFzBd",
+    "name": "japan-offmall-market-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:11.186Z"
+  },
+  {
+    "actor_id": "OqO1aPmd1njsKQvaW",
+    "name": "japan-camera-market-cn-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:13.332Z"
+  },
+  {
+    "actor_id": "rEaPnKwB07oS2cyZh",
+    "name": "japan-camera-market-kr-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:15.658Z"
+  },
+  {
+    "actor_id": "hoqt6EVaVcniMXWbK",
+    "name": "japan-watch-market-scraper-cn",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:17.967Z"
+  },
+  {
+    "actor_id": "kDY2AAouEJzp8kfyj",
+    "name": "japan-watch-market-scraper-kr",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:20.174Z"
+  },
+  {
+    "actor_id": "Igcmtgs71DCHze3CL",
+    "name": "japan-luxury-brand-market-cn",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:22.333Z"
+  },
+  {
+    "actor_id": "5J3JeV9cOSA3Gha0j",
+    "name": "japan-luxury-brand-market-kr",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:24.464Z"
+  },
+  {
+    "actor_id": "p279xuzqUvvLROE7O",
+    "name": "japan-used-instrument-market-cn",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:26.568Z"
+  },
+  {
+    "actor_id": "agm9XlFlLFj7jlt66",
+    "name": "japan-used-instrument-market-kr",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:28.779Z"
+  },
+  {
+    "actor_id": "wxLa590euQRaAJNKO",
+    "name": "japan-offmall-market-cn",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:30.873Z"
+  },
+  {
+    "actor_id": "9HSJRPbEIIGc6bHOx",
+    "name": "japan-offmall-market-kr",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:33.013Z"
+  },
+  {
+    "actor_id": "N1o8olAoZyXTJuhnb",
+    "name": "japan-rent-market-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:35.213Z"
+  },
+  {
+    "actor_id": "5EOtT2UpEGEU83nhO",
+    "name": "japan-rent-market-cn",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:37.420Z"
+  },
+  {
+    "actor_id": "lWHSccM79ZpPxOLls",
+    "name": "japan-rent-market-kr",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:39.544Z"
+  },
+  {
+    "actor_id": "AiXA2WVMNTaGuHoDh",
+    "name": "japan-property-market-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:41.629Z"
+  },
+  {
+    "actor_id": "aAe1nK4dpqgmBksOK",
+    "name": "japan-property-market-cn",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:43.751Z"
+  },
+  {
+    "actor_id": "CeDRuOvv0IHA8NL4M",
+    "name": "japan-property-market-kr",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:45.902Z"
+  },
+  {
+    "actor_id": "XOqsB7rCHYrb42kcY",
+    "name": "japan-kakaku-price-search",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:48.013Z"
+  },
+  {
+    "actor_id": "4SjfgE6nF1awZZtEI",
+    "name": "japan-kakaku-price-search-cn",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:50.115Z"
+  },
+  {
+    "actor_id": "5hzOkPeYWPzpv6fBd",
+    "name": "japan-kakaku-price-search-kr",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:52.203Z"
+  },
+  {
+    "actor_id": "2Yy3Zu3pw0KzqYOP5",
+    "name": "kimono-market-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:54.318Z"
+  },
+  {
+    "actor_id": "yCN9ystlovHkgolzw",
+    "name": "kimono-market-scraper-cn",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:56.790Z"
+  },
+  {
+    "actor_id": "8iktWtPM0ZD3ab54f",
+    "name": "kimono-market-scraper-kr",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:50:58.921Z"
+  },
+  {
+    "actor_id": "bgm5Gxn4BeBmoO7xD",
+    "name": "goo-net-car-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:01.051Z"
+  },
+  {
+    "actor_id": "W9cXhDckzHd9RZWnQ",
+    "name": "biglemon-machinery-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:03.153Z"
+  },
+  {
+    "actor_id": "pcSpFWK2A2HWRE2mx",
+    "name": "goo-net-car-scraper-es",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:05.325Z"
+  },
+  {
+    "actor_id": "ksRNLhw7sjdmoVbVt",
+    "name": "goo-net-car-scraper-pt",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:07.563Z"
+  },
+  {
+    "actor_id": "FzQlnqfCsMfSlRG9j",
+    "name": "suumo-japan-real-estate-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:09.705Z"
+  },
+  {
+    "actor_id": "8lfpT6vpZMl9JVagy",
+    "name": "suumo-japan-real-estate-scraper-cn",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:11.943Z"
+  },
+  {
+    "actor_id": "GfdpyUl6gSpCQlGK8",
+    "name": "suumo-japan-real-estate-scraper-kr",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:14.082Z"
+  },
+  {
+    "actor_id": "GXAtS99WP3st7AR27",
+    "name": "suumo-japan-real-estate-scraper-es",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:16.210Z"
+  },
+  {
+    "actor_id": "pZ20lXqRtsJUl9bGk",
+    "name": "rakuten-market-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:18.480Z"
+  },
+  {
+    "actor_id": "NURQEJnUsVAobIiPs",
+    "name": "rakuten-debug-fetch",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:20.603Z"
+  },
+  {
+    "actor_id": "S3IdRuweFhrTwvJJN",
+    "name": "tabelog-debug-fetch",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:22.735Z"
+  },
+  {
+    "actor_id": "vN10EvpaN6lNSRxUo",
+    "name": "goo-net-car-scraper-fr",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:24.885Z"
+  },
+  {
+    "actor_id": "L0xYjvLZT8aYUKjKQ",
+    "name": "goo-net-car-scraper-ru",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:27.046Z"
+  },
+  {
+    "actor_id": "xv30Eoxh7NMJgJIj5",
+    "name": "goobike-motorcycle-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:29.214Z"
+  },
+  {
+    "actor_id": "BdQF1T6wB5T25AO20",
+    "name": "upgarage-parts-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:31.323Z"
+  },
+  {
+    "actor_id": "xPSQSSsdVjRwWQAiA",
+    "name": "golfpartner-used-club-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:33.450Z"
+  },
+  {
+    "actor_id": "8WBam4CPB72q9Rvsd",
+    "name": "yahoo-auctions-japan-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:35.575Z"
+  },
+  {
+    "actor_id": "whSePszWpMtfeLYBp",
+    "name": "mercari-japan-search-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:37.711Z"
+  },
+  {
+    "actor_id": "UVkH1uhlt57Jf6QnT",
+    "name": "japan-hotpepper-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:39.873Z"
+  },
+  {
+    "actor_id": "95ZKdUlpFBo8CBYJh",
+    "name": "japan-hotpepper-cn-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:41.960Z"
+  },
+  {
+    "actor_id": "FVJsHJhb4aPq54Uyd",
+    "name": "japan-hotpepper-kr-scraper",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:44.103Z"
+  },
+  {
+    "actor_id": "xJI4WaPBfQiDJfcnp",
+    "name": "japan-camera-resale-price-stats",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:46.360Z"
+  },
+  {
+    "actor_id": "lRUO0nFDpE66U013r",
+    "name": "mini-actor-test-0903",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:48.743Z"
+  },
+  {
+    "actor_id": "WnrudUFF2kZxZcj7Z",
+    "name": "japan-figure-plamo-resale-price-stats",
+    "status": "would_apply",
+    "changed_fields": [
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "categories"
+    ],
+    "modified_at": "2026-09-05T01:51:50.852Z"
+  }
+]

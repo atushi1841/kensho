@@ -1,0 +1,6 @@
+actor_id,changed_fields,http_code,modified_at_after,modified_at_before,name,status
+F8Hl0a8Cx9bpJBrxR,"['seoTitle', 'seoDescription', 'description', 'categories']",200,2026-09-04T23:59:52.127Z,2026-09-04T23:59:47.872Z,surugaya-japan-hobby-prices,applied
+q2E37PVTg5JcGOTEn,"['title', 'seoTitle', 'seoDescription', 'description', 'categories']",200,2026-09-04T23:59:54.579Z,2026-09-04T12:12:15.638Z,mandarake-auction-scraper,applied
+xUYsD13SVHHRFQS1H,"['title', 'seoTitle', 'seoDescription', 'description', 'categories']",200,2026-09-04T23:59:56.810Z,2026-08-27T21:53:19.045Z,mandarake-surugaya-mcp,applied
+0eeiFH0nLqlWVoOAc,"['title', 'seoTitle', 'seoDescription', 'description', 'categories']",200,2026-09-04T23:59:59.630Z,2026-09-04T12:12:41.154Z,rakuten-japan-mcp,applied
+6Z7tJ3plfUmAgGmbk,"['title', 'seoTitle', 'seoDescription', 'description', 'categories']",200,2026-09-05T00:00:01.822Z,2026-08-23T01:13:52.046Z,dlsite-scraper,applied
