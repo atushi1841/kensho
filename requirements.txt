@@ -3,6 +3,7 @@
 # playwright install firefox  # ← 実行必須
 
 playwright>=1.52,<1.53
+patchright==1.62.3
 httpx>=0.27,<0.29
 pyyaml>=6.0,<7.0
 psutil>=5.9,<6.0
