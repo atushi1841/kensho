@@ -1201,9 +1201,13 @@ def apply_for_account(
                         pass
 
                 # ★ 賞品価値推定（scorer）
-                # ツイート本文から金額・アイテムを抽出し優先度を計算
+                # ツイート本文から金額・アイテムを抽出し優先度を計算（当選人数・締切も反映）
                 try:
-                    prize = score_prize(body_text)
+                    prize = score_prize(
+                        body_text,
+                        winner_count=item.get("winner_count", 0) or 0,
+                        deadline=str(item.get("deadline", "") or ""),
+                    )
                     if prize["priority"] > 0:
                         out(f"  [PRIZE] {format_prize_info(prize)}")
                         # 高優先度ツイートは保存dataにもマーク

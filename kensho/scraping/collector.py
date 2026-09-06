@@ -310,18 +310,21 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
                 except Exception:
                     pass
 
-                # ★ 賞品価値推定
+                applied: dict[str, None] = {k: None for k in account_keys}
+                deadline, winner_count = extract_deadline_and_winners(html)
+                # ★ 賞品価値推定（当選人数・締切を重みに反映）
                 prize_score: dict = {}
                 if tweet_text:
                     try:
                         from kensho.scraping.scorer import score_prize
 
-                        prize_score = score_prize(tweet_text)
+                        prize_score = score_prize(
+                            tweet_text,
+                            winner_count=winner_count or 0,
+                            deadline=deadline or "",
+                        )
                     except Exception:
                         pass
-
-                applied: dict[str, None] = {k: None for k in account_keys}
-                deadline, winner_count = extract_deadline_and_winners(html)
                 days_remaining: str = ""
                 if deadline:
                     try:

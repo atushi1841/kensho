@@ -10,6 +10,7 @@ v1.0: 金額抽出 + 商品種別認識 + 優先度計算
 from __future__ import annotations
 
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -49,8 +50,21 @@ def _clean_amount_str(s: str) -> int:
         return 0
 
 
-def score_prize(tweet_text: str, rt_count: int = 0, like_count: int = 0) -> dict:
+def score_prize(
+    tweet_text: str,
+    rt_count: int = 0,
+    like_count: int = 0,
+    winner_count: int = 0,
+    deadline: str = "",
+) -> dict:
     """ツイートを解析して賞品スコアを返す
+
+    引数:
+        tweet_text: ツイート本文
+        rt_count: リポスト数（人気判定に使用）
+        like_count: いいね数（人気判定に使用）
+        winner_count: 当選者数（多いほど当選確率が高い → ボーナス）
+        deadline: 応募締切（ISO日付文字列。24時間以内ならボーナス）
 
     戻り値:
         estimated_value_jpy: 推定金額（円）
@@ -113,6 +127,42 @@ def score_prize(tweet_text: str, rt_count: int = 0, like_count: int = 0) -> dict
         priority *= 1.3
     elif total_engagement >= 500:
         priority *= 1.15
+
+    # ── リサーチ反映の重み（2026-09-03 v9 提案1）────────────────
+    # 協賛・タイアップ・地域限定・店舗系は全国懸賞より約1.7倍当たりやすい
+    sponsor_mult = cfg.get("sponsor_multiplier", {})
+    for pattern, mult in sponsor_mult.items():
+        if re.search(str(pattern), tweet_text, re.IGNORECASE):
+            priority = max(priority, float(mult))
+            break
+
+    # 食品系は当選人数600〜2000名と多く設定されやすい
+    food_mult = cfg.get("food_multiplier", {})
+    for pattern, mult in food_mult.items():
+        if re.search(str(pattern), tweet_text, re.IGNORECASE):
+            priority = max(priority, float(mult))
+            break
+
+    # 当選人数が多いほど当選確率が高い → 倍率アップ
+    if winner_count > 0:
+        wc_mult = cfg.get("winner_count_multiplier", {})
+        for threshold, mult in sorted(wc_mult.items(), key=lambda kv: float(kv[0]), reverse=True):
+            if winner_count >= float(threshold):
+                priority = max(priority, float(mult))
+                break
+
+    # 締切まで24時間以内なら競争率が低く当選しやすい → 倍率アップ
+    if deadline:
+        try:
+            _dl_dt = datetime.strptime(deadline, "%Y-%m-%d")
+            _short = cfg.get("short_deadline", {}) or {}
+            _within_h = float(_short.get("within_hours", 24))
+            _mult = float(_short.get("multiplier", 1.3))
+            _remaining_h = (_dl_dt - datetime.now()).total_seconds() / 3600.0
+            if 0 <= _remaining_h <= _within_h:
+                priority = max(priority, _mult)
+        except Exception:
+            pass
 
     result["priority"] = round(priority, 2)
     return result
