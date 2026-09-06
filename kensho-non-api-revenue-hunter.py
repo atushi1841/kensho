@@ -52,6 +52,7 @@ WORKDIR = Path("/mnt/d/Project2/kensho")
 sys.path.insert(0, str(WORKDIR / "scripts"))
 try:
     from kanban_norm import is_duplicate as _kanban_is_duplicate  # type: ignore
+    from kanban_norm import norm_title as _norm_title  # type: ignore
 except ImportError as _e:  # pragma: no cover - import 失敗は致命的
     sys.stderr.write(f"[hunter] kanban_norm import error: {_e}\n")
     raise
@@ -425,15 +426,24 @@ def create_kanban_task(title, body, weight, url=""):
     """
     if weight == "低":
         return None, "weight=低、見送り"
-    # 1) Run 横断 dedup (Show HN 由来の記事のみ対象。クエリは "%show hn%" で十分)
+    # 1) Run 横断 dedup (全カテゴリ対象。title_like=None で全文字照合、
+    #    statuses に done を含む=「workerが実装不能判定でdone済みの案件を
+    #    HN掲載期間中に毎晩再作成する」ループを遮断。2026-09-05教訓)
     try:
-        if "show hn" in title.lower():
-            is_dup, existing = _kanban_is_duplicate(title)
-            if is_dup:
-                return None, f"(dedup-skip) 既存 {existing}"
+        is_dup, existing = _kanban_is_duplicate(
+            title,
+            statuses=("ready", "todo", "running", "blocked", "triage", "done"),
+            title_like=None,
+        )
+        if is_dup:
+            return None, f"(dedup-skip) 既存 {existing}"
     except Exception as e:  # DB 障害などで dedup が失敗しても create は試みる
         sys.stderr.write(f"[hunter] dedup check error (continue): {e}\n")
     priority = 1 if weight == "高" else 2
+    # 2) 正規化タイトルから決定的な idempotency key を生成 (二重作成の最終防衛)
+    import hashlib
+
+    idem = "hn-" + hashlib.sha1(_norm_title(title).encode("utf-8")).hexdigest()[:16]
     try:
         result = subprocess.run(
             [
@@ -449,6 +459,8 @@ def create_kanban_task(title, body, weight, url=""):
                 str(priority),
                 "--created-by",
                 "kensho-non-api-revenue-hunter",
+                "--idempotency-key",
+                idem,
             ],
             capture_output=True,
             text=True,

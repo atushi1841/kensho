@@ -70,7 +70,7 @@ class Query:
     areas: list[str] = field(default_factory=list)
     hiring_types: list[str] = field(default_factory=list)
     order: str = "recent"  # recent | popular | mixed
-    pages: int = 2         # SSR は page=N でページング可 (pageSize 固定 10)
+    pages: int = 2  # SSR は page=N でページング可 (pageSize 固定 10)
 
 
 @dataclass
@@ -115,13 +115,15 @@ def load_config(path: str | None) -> list[Query]:
         filters = DEFAULT_FILTERS
     queries: list[Query] = []
     for f in filters:
-        queries.append(Query(
-            keywords=list(f.get("keywords") or []),
-            areas=list(f.get("areas") or []),
-            hiring_types=list(f.get("hiring_types") or []),
-            order=f.get("order", "recent"),
-            pages=int(f.get("pages") or 2),
-        ))
+        queries.append(
+            Query(
+                keywords=list(f.get("keywords") or []),
+                areas=list(f.get("areas") or []),
+                hiring_types=list(f.get("hiring_types") or []),
+                order=f.get("order", "recent"),
+                pages=int(f.get("pages") or 2),
+            )
+        )
     return queries
 
 
@@ -147,7 +149,7 @@ def http_get(url: str, timeout: int = 30) -> str | None:
                 return r.read().decode("utf-8", errors="replace")
         except urllib.error.HTTPError as e:
             if e.code in (429, 500, 502, 503, 504) and attempt < 2:
-                time.sleep(2 ** attempt * 2)
+                time.sleep(2**attempt * 2)
                 continue
             return None
         except (urllib.error.URLError, TimeoutError, OSError):
@@ -202,8 +204,7 @@ def parse_ssr(html: str) -> list[JobPost]:
         data = json.loads(m.group(1))
     except json.JSONDecodeError:
         return []
-    gsi = (data.get("props", {}).get("pageProps", {})
-           .get("__apollo", {}).get("graphqlGatewayInitialState", {}))
+    gsi = data.get("props", {}).get("pageProps", {}).get("__apollo", {}).get("graphqlGatewayInitialState", {})
 
     # 1) 詳細オブジェクトを id → dict で索引付け
     detail: dict[str, dict] = {}
@@ -235,16 +236,18 @@ def parse_ssr(html: str) -> list[JobPost]:
         for h in d.get("hiringTypes") or []:
             htypes.append(str(h.get("type") or h.get("label") or ""))
         desc = d.get("detailDescription") or {}
-        jobs.append(JobPost(
-            id=jid,
-            title=str(d.get("title") or ""),
-            company=str(comp.get("name") or ""),
-            occupation=str(d.get("occupationName") or ""),
-            hiring_types=htypes,
-            published_at=str(d.get("publishedAt") or ""),
-            url=f"https://www.wantedly.com/projects/{jid}",
-            description=str(desc.get("plainBody") or "")[:400],
-        ))
+        jobs.append(
+            JobPost(
+                id=jid,
+                title=str(d.get("title") or ""),
+                company=str(comp.get("name") or ""),
+                occupation=str(d.get("occupationName") or ""),
+                hiring_types=htypes,
+                published_at=str(d.get("publishedAt") or ""),
+                url=f"https://www.wantedly.com/projects/{jid}",
+                description=str(desc.get("plainBody") or "")[:400],
+            )
+        )
     return jobs
 
 
@@ -322,8 +325,9 @@ def mark_seen(conn: sqlite3.Connection, job_id: str, published_at: str, title: s
 # ── 通知 ─────────────────────────────────────────────────────
 def _slack_notify(webhook: str, text: str) -> bool:
     payload = json.dumps({"text": text}).encode("utf-8")
-    req = urllib.request.Request(webhook, data=payload, headers={
-        "User-Agent": USER_AGENT, "Content-Type": "application/json"})
+    req = urllib.request.Request(
+        webhook, data=payload, headers={"User-Agent": USER_AGENT, "Content-Type": "application/json"}
+    )
     try:
         with urllib.request.urlopen(req, timeout=15) as r:
             return r.status in (200, 201, 204)
@@ -333,9 +337,15 @@ def _slack_notify(webhook: str, text: str) -> bool:
 
 def _line_notify(token: str, text: str) -> bool:
     data = urllib.parse.urlencode({"message": text}).encode("utf-8")
-    req = urllib.request.Request("https://notify-api.line.me/api/notify", data=data, headers={
-        "User-Agent": USER_AGENT, "Authorization": f"Bearer {token}",
-        "Content-Type": "application/x-www-form-urlencoded"})
+    req = urllib.request.Request(
+        "https://notify-api.line.me/api/notify",
+        data=data,
+        headers={
+            "User-Agent": USER_AGENT,
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+    )
     try:
         with urllib.request.urlopen(req, timeout=15) as r:
             return r.status in (200, 201, 204)
@@ -390,8 +400,7 @@ def main() -> int:
 
     if args.list_filters:
         for i, q in enumerate(load_config(args.config if args.config else None), 1):
-            print(f"{i}. keywords={q.keywords} areas={q.areas} "
-                  f"hiring={q.hiring_types} order={q.order} pages={q.pages}")
+            print(f"{i}. keywords={q.keywords} areas={q.areas} hiring={q.hiring_types} order={q.order} pages={q.pages}")
         return 0
 
     if args.notify_test:
@@ -421,8 +430,9 @@ def main() -> int:
     print("=" * 72)
 
     for q in queries:
-        print(f"  ▶ {q.keywords} × {q.areas or '全国'} "
-              f"(hiring={q.hiring_types or '-'} order={q.order} pages={q.pages})")
+        print(
+            f"  ▶ {q.keywords} × {q.areas or '全国'} (hiring={q.hiring_types or '-'} order={q.order} pages={q.pages})"
+        )
 
     new_jobs = crawl(queries, dry_run=args.dry_run, page_cap=args.pages)
     print(f"\n新規マッチ: {len(new_jobs)} 件")
@@ -438,8 +448,7 @@ def main() -> int:
     print(f"\n通知: {delivered}/{total} 件配信")
 
     # レポート
-    REPORT = REPORTS_DIR / f"2026-09-05-wantedly-monitor.md"
-    import io
+    report_path = REPORTS_DIR / "2026-09-05-wantedly-monitor.md"
     buf = []
     buf.append(f"# Wantedly 求人監視 実行ログ ({ts.date()})")
     buf.append("")
@@ -458,8 +467,8 @@ def main() -> int:
         buf.append("(新規マッチなし)")
     buf.append("")
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    REPORT.write_text("\n".join(buf), encoding="utf-8")
-    print(f"レポート: {REPORT}")
+    report_path.write_text("\n".join(buf), encoding="utf-8")
+    print(f"レポート: {report_path}")
     return 0
 
 

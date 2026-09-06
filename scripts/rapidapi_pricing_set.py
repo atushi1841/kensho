@@ -452,6 +452,7 @@ def run_status(auth: dict, only: str | None) -> list[dict]:
 # free 500K tier 退役（t_60f5b5de v11-A: full PAID化の残務）
 # ---------------------------------------------------------------------------
 
+
 def _is_free_500k(limits: list[dict]) -> bool:
     """billinglimits が『月50万リクエスト無料 MONTHLY』か判定."""
     for bl in limits:
@@ -498,7 +499,7 @@ def fetch_plan_versions_full(auth: dict, api_id: str) -> list[dict]:
             "status": n.get("status"),
             "current": bool(n.get("current")),
             "free500k": _is_free_500k(limits),
-            "overageprice": next((l["overageprice"] for l in limits if l["overageprice"]), None),
+            "overageprice": next((bl["overageprice"] for bl in limits if bl["overageprice"]), None),
             "subscribers": len(subs),
         })
     return out
@@ -526,7 +527,7 @@ def retire_free_tier(auth: dict, api_key: str, apply: bool) -> dict:
     for v in versions:
         buckets.setdefault(v["plan_id"], []).append(v)
 
-    mutate = 'mutation D($ids: [ID!]!){ deleteBillingPlans(ids:$ids) }'
+    mutate = "mutation D($ids: [ID!]!){ deleteBillingPlans(ids:$ids) }"
     plans_out: list[dict] = []
     for plan_id, vers in buckets.items():
         pname = vers[0]["plan_name"]
@@ -586,7 +587,9 @@ def main() -> int:
     parser.add_argument("--set-price", type=float, default=None, help="単一価格（--tier 未指定なら全 tier）USD/コール")
     parser.add_argument("--tier", choices=sorted(TIER_PRICES), help="対象 tier（--set-price 併用）")
     parser.add_argument("--api", choices=sorted(TARGET_APIS), help="対象API キー（省略=全対象）")
-    parser.add_argument("--retire-free-tier", action="store_true", help="free 500K/旧 ACTIVE 版の退役（--apply で実行）")
+    parser.add_argument(
+        "--retire-free-tier", action="store_true", help="free 500K/旧 ACTIVE 版の退役（--apply で実行）"
+    )
     parser.add_argument("--apply", action="store_true", help="--retire-free-tier で実際に削除実行")
     parser.add_argument("--json", action="store_true", help="JSON形式で出力")
     args = parser.parse_args()
@@ -594,7 +597,9 @@ def main() -> int:
     auth = _load_auth()
     mode = args.set_tiers or args.set_price is not None or args.status or args.dry_run or args.retire_free_tier
     if not mode:
-        parser.error("--status / --dry-run / --set-tiers / --set-price / --retire-free-tier のいずれかを指定してください")
+        parser.error(
+            "--status / --dry-run / --set-tiers / --set-price / --retire-free-tier のいずれかを指定してください"
+        )
 
     keys = [args.api] if args.api else list(TARGET_APIS)
 
@@ -607,15 +612,14 @@ def main() -> int:
                 print(f"### {r.get('api_key')} ({r.get('api_name')})  [{r.get('status')}]")
                 for p in r.get("plans", []):
                     rc = p["retire_candidates"]
-                    line = (
-                        f"  plan={p['plan_name']} {p['status']:>18} action={p['action']} "
-                        f"candidates={len(rc)}"
-                    )
+                    line = f"  plan={p['plan_name']} {p['status']:>18} action={p['action']} candidates={len(rc)}"
                     print(line)
                     if rc:
                         free = sum(1 for c in rc if c["free500k"])
-                        print(f"      free500k={free} 有料current={len(p['current_active_versions'])} "
-                              f"うち購読者あり={sum(1 for c in rc if c['subscribers'])}")
+                        print(
+                            f"      free500k={free} 有料current={len(p['current_active_versions'])} "
+                            f"うち購読者あり={sum(1 for c in rc if c['subscribers'])}"
+                        )
             now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime("%Y%m%d_%H%M%S")
             report_path = Path("reports/revenue-proposals") / f"rapidapi-retire-free-tier-{now}.json"
             report_path.parent.mkdir(parents=True, exist_ok=True)

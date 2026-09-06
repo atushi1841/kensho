@@ -16,6 +16,7 @@ TweetResultByRestId で view_count(インプレッション) を取得し、data
   - インプレッションは所有者(=atushi16)セッションでのみ閲覧可。public CDN や未認証では取れない。
   - 詳細(特典/metrics)はログに出さない。data/ への上書きのみ。
 """
+
 from __future__ import annotations
 
 import argparse
@@ -39,6 +40,7 @@ SESSION_FILE = DATA_DIR / "x_session.json"
 _X_BEARER = "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
 _QUERY_ID_URL = "https://raw.githubusercontent.com/fa0311/TwitterInternalAPIDocument/master/docs/json/API.json"
 _KEYWORD = "obfiowerehiring"
+
 
 def _now() -> str:
     return datetime.now(UTC).isoformat()
@@ -86,13 +88,11 @@ def fetch_views(session: dict[str, str], tweet_id: str) -> dict:
         "x-client-transaction-id": gen_tid("POST", path),
     }
     payload = {
-        "variables": {"tweetId": tweet_id, "withCommunity": False,
-                      "includePromotedContent": False, "withVoice": False},
+        "variables": {"tweetId": tweet_id, "withCommunity": False, "includePromotedContent": False, "withVoice": False},
         "features": feats,
     }
     time.sleep(random.uniform(0.8, 2.0))
-    r = curl_requests.post(f"https://x.com{path}", headers=headers, json=payload,
-                           impersonate="chrome", timeout=25)
+    r = curl_requests.post(f"https://x.com{path}", headers=headers, json=payload, impersonate="chrome", timeout=25)
     body = r.json()
     res = (body.get("data", {}).get("tweetResult", {}) or {}).get("result", {})
     if res.get("__typename") != "Tweet":
@@ -172,7 +172,7 @@ def main() -> None:
         entry["snapshots"].append(snap)
         entry["views_latest"] = snap.get("views")
         changed = True
-        row = f'{date} | views={snap.get("views")} | fav={snap.get("fav")!r} | conv={snap.get("conv")!r}'
+        row = f"{date} | views={snap.get('views')} | fav={snap.get('fav')!r} | conv={snap.get('conv')!r}"
         if snap.get("error"):
             row += f" | ERR {snap['error']}"
         print(row)
