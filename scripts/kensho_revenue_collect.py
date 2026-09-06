@@ -18,6 +18,27 @@ from datetime import datetime
 from typing import Any
 
 PROJECT_DIR = "/mnt/d/Project2/kensho"
+
+
+# ── 簡易.envローダー（9/7追加: 401対策。dotenv無しのstandalone実装） ──
+def _load_env_file() -> None:
+    env_path = os.path.join(PROJECT_DIR, ".env")
+    if not os.path.exists(env_path):
+        return
+    try:
+        with open(env_path, encoding="utf-8-sig") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, _, v = line.partition("=")
+                os.environ.setdefault(k.strip(), v.strip())
+    except Exception:
+        pass  # .env読み取り失敗しても収集は継続
+
+
+_load_env_file()
+
 DATA_DIR = os.path.join(PROJECT_DIR, "data")
 OUTPUT = os.path.join(DATA_DIR, "revenue-daily.json")
 APIFY_STATS = "/mnt/d/Project2/apify-portfolio-stats.json"
@@ -645,7 +666,8 @@ def build_revenue_summary(
         "total_monthly": round(apify_ppe_monthly + gumroad_monthly, 6),  # 実測値の合計
         "apify_ppe_external_runs": apify_ext_runs,
         "note": (
-            f"現状: Apify PPE課金 {apify.get('actors_ppe', 0)}件（外部run {apify_ext_runs}件→実収益 ${apify_ppe_monthly:.4f}）、"
+            f"現状: Apify PPE課金 {apify.get('actors_ppe', 0)}件"
+            f"（外部run {apify_ext_runs}件→実収益 ${apify_ppe_monthly:.4f}）、"
             f"無料 {apify.get('actors_free', 0)}件、RapidAPI全FREEMIUM、{gumroad_note}。"
             f"課金設定で月1-3万円のポテンシャル"
         ),
@@ -795,7 +817,8 @@ def main() -> None:
     rap_ok = "error" not in rapidapi
     print(f"  {'✓' if rap_ok else '✗'} API数: {rapidapi.get('apis_total', '?')}")
     print(
-        f"      公開: {rapidapi.get('apis_public')}, 非公開: {rapidapi.get('apis_private')}, FREEMIUM: {rapidapi.get('apis_freemium')}"
+        f"      公開: {rapidapi.get('apis_public')}, 非公開: {rapidapi.get('apis_private')}, "
+        f"FREEMIUM: {rapidapi.get('apis_freemium')}"
     )
 
     # 3. Gumroad
