@@ -138,7 +138,7 @@ def test_merge_title_skips_existing_keywords():
     assert ch == ["title"]
 
 
-def test_merge_title_truncates_to_80():
+def test_merge_title_truncates_to_63():
     long_suffix = " ".join(f"keyword{i}" for i in range(20))
     a = _actor(title="Short")
     f = _finding(
@@ -146,7 +146,7 @@ def test_merge_title_truncates_to_80():
         suggested=f"タイトルへ追加: {long_suffix}",
     )
     new_title, ch = apply_mod.merge_title(a, f)
-    assert len(new_title) <= 80
+    assert len(new_title) <= 63
     assert ch == ["title"]
 
 
@@ -273,18 +273,26 @@ def test_build_payload_discovery_gap_falls_back_to_description():
 
 def test_load_findings_skips_no_competitor_data(tmp_path: Path):
     import csv as _csv
+
     p = tmp_path / "test.csv"
     with p.open("w", newline="") as f:
         w = _csv.DictWriter(f, fieldnames=["actor", "issue", "field", "current", "suggested", "evidence"])
         w.writeheader()
         w.writerow({
-            "actor": "a", "issue": "no_competitor_data",
-            "field": "", "current": "", "suggested": "", "evidence": "",
+            "actor": "a",
+            "issue": "no_competitor_data",
+            "field": "",
+            "current": "",
+            "suggested": "",
+            "evidence": "",
         })
         w.writerow({
-            "actor": "a", "issue": "missing_categories",
-            "field": "categories", "current": "ECOMMERCE",
-            "suggested": "追加候補: AUTOMATION(競合2件)", "evidence": "",
+            "actor": "a",
+            "issue": "missing_categories",
+            "field": "categories",
+            "current": "ECOMMERCE",
+            "suggested": "追加候補: AUTOMATION(競合2件)",
+            "evidence": "",
         })
     findings = apply_mod.load_findings(p, limit=None, impacts=None)
     # no_competitor_data はデフォルト skip
@@ -294,23 +302,34 @@ def test_load_findings_skips_no_competitor_data(tmp_path: Path):
 
 def test_load_findings_impact_filter(tmp_path: Path):
     import csv as _csv
+
     p = tmp_path / "test.csv"
     with p.open("w", newline="") as f:
         w = _csv.DictWriter(f, fieldnames=["actor", "issue", "field", "current", "suggested", "evidence"])
         w.writeheader()
         w.writerow({
-            "actor": "a", "issue": "discovery_gap",
-            "field": "", "current": "", "suggested": "", "evidence": "",
+            "actor": "a",
+            "issue": "discovery_gap",
+            "field": "",
+            "current": "",
+            "suggested": "",
+            "evidence": "",
         })
         w.writerow({
-            "actor": "a", "issue": "short_description",
-            "field": "description", "current": "x",
-            "suggested": "拡張", "evidence": "",
+            "actor": "a",
+            "issue": "short_description",
+            "field": "description",
+            "current": "x",
+            "suggested": "拡張",
+            "evidence": "",
         })
         w.writerow({
-            "actor": "a", "issue": "missing_categories",
-            "field": "categories", "current": "ECOMMERCE",
-            "suggested": "追加候補: AUTOMATION(競合2件)", "evidence": "",
+            "actor": "a",
+            "issue": "missing_categories",
+            "field": "categories",
+            "current": "ECOMMERCE",
+            "suggested": "追加候補: AUTOMATION(競合2件)",
+            "evidence": "",
         })
     findings = apply_mod.load_findings(p, limit=None, impacts={"discovery_gap"})
     assert len(findings) == 1
@@ -336,9 +355,16 @@ def test_apply_one_success():
     f = _finding(issue="missing_categories", suggested="追加候補: AUTOMATION(競合2件)")
     cache: dict[str, Any] = {}
     with patch.object(apply_mod, "_api_get", return_value=(200, {"data": a})):
-        with patch.object(apply_mod, "_api_put", return_value=(200, {
-            "data": {**a, "categories": ["ECOMMERCE", "AUTOMATION"], "modifiedAt": "2026-09-04T11:00:00Z"},
-        })) as mock_put:
+        with patch.object(
+            apply_mod,
+            "_api_put",
+            return_value=(
+                200,
+                {
+                    "data": {**a, "categories": ["ECOMMERCE", "AUTOMATION"], "modifiedAt": "2026-09-04T11:00:00Z"},
+                },
+            ),
+        ) as mock_put:
             r = apply_mod.apply_one(f, "test123", "tok", cache)
     assert r.ok
     assert r.status_code == 200
@@ -378,3 +404,109 @@ def test_apply_one_no_change_proposed():
         r = apply_mod.apply_one(f, "test123", "tok", cache)
     assert not r.ok
     assert "no change proposed" in r.error
+
+
+# --- v15-A bulk templating tests ---
+
+
+def test_group_findings_by_actor():
+    f1 = _finding(actor="actor-a", issue="short_description", impact_rank=1)
+    f2 = _finding(actor="actor-a", issue="missing_keywords", impact_rank=3)
+    f3 = _finding(actor="actor-b", issue="missing_categories", impact_rank=2)
+    g = apply_mod.group_findings_by_actor([f1, f3, f2])
+    assert set(g.keys()) == {"actor-a", "actor-b"}
+    assert [f.issue for f in g["actor-a"]] == ["short_description", "missing_keywords"]
+    assert [f.issue for f in g["actor-b"]] == ["missing_categories"]
+
+
+def test_group_findings_by_actor_empty():
+    assert apply_mod.group_findings_by_actor([]) == {}
+
+
+def test_merge_actor_payload_combines_changes():
+    """複数 finding を 1 actor に集約したとき payload が合体する."""
+    a = _actor(
+        title="Old Title",
+        description="Old desc.",
+        categories=["ECOMMERCE"],
+    )
+    f1 = _finding(issue="short_description", suggested="競合中央値 274字以上に拡張（最大 294字）", impact_rank=1)
+    f2 = _finding(
+        issue="missing_categories", suggested="追加候補: AUTOMATION(競合2件), DEVELOPER_TOOLS(競合2件)", impact_rank=2
+    )
+    payload, changed, applied = apply_mod.merge_actor_payload(a, [f1, f2])
+    assert "description" in changed
+    assert "categories" in changed
+    assert "short_description" in applied
+    assert "missing_categories" in applied
+    assert len(applied) == 2
+
+
+def test_merge_actor_payload_no_change():
+    a = _actor(categories=["ECOMMERCE"])
+    f = _finding(issue="missing_categories", suggested="追加候補: NOT_VALID_CATEGORY")
+    payload, changed, applied = apply_mod.merge_actor_payload(a, [f])
+    assert payload == {}
+    assert changed == []
+    assert applied == []
+
+
+def test_merge_actor_payload_chained_title_updates():
+    """同じ title に2回 update が走っても virtual_actor で累積する."""
+    a = _actor(title="Base", description="Base desc.")
+    f1 = _finding(issue="title_keyword_gap", suggested="タイトルへ追加: collectibles(競合3件)", impact_rank=4)
+    f2 = _finding(issue="title_keyword_gap", suggested="タイトルへ追加: sold(競合2件)", impact_rank=4)
+    payload, changed, applied = apply_mod.merge_actor_payload(a, [f1, f2])
+    assert "title" in changed
+    assert "collectibles" in payload["title"]
+    assert "sold" in payload["title"]
+
+
+def test_apply_bulk_one_merges_multiple_findings():
+    """1 actor に複数 finding → 1 GET + 1 PUT で 複数 ApplyResult が返る."""
+    a = _actor(
+        id="actX1",
+        title="Old",
+        description="Old desc.",
+        categories=["ECOMMERCE"],
+    )
+    f1 = _finding(
+        actor="actor-x", issue="short_description", suggested="競合中央値 274字以上に拡張（最大 294字）", impact_rank=1
+    )
+    f2 = _finding(actor="actor-x", issue="missing_categories", suggested="追加候補: AUTOMATION(競合2件)", impact_rank=2)
+    cache: dict[str, Any] = {}
+    with patch.object(apply_mod, "_api_get", return_value=(200, {"data": a})):
+        with patch.object(
+            apply_mod, "_api_put", return_value=(200, {"data": {**a, "categories": ["ECOMMERCE", "AUTOMATION"]}})
+        ) as mock_put:
+            results = apply_mod.apply_bulk_one("actor-x", "actX1", [f1, f2], "tok", cache)
+    assert mock_put.call_count == 1  # 1 PUT にまとめられている
+    assert len(results) == 2
+    assert all(r.ok for r in results)
+    assert {r.issue for r in results} == {"short_description", "missing_categories"}
+
+
+def test_apply_bulk_one_no_op_returns_single_ng():
+    a = _actor(categories=["ECOMMERCE"])
+    f = _finding(actor="actor-x", issue="missing_categories", suggested="追加候補: NOT_VALID")
+    cache: dict[str, Any] = {}
+    with patch.object(apply_mod, "_api_get", return_value=(200, {"data": a})):
+        results = apply_mod.apply_bulk_one("actor-x", "actX1", [f], "tok", cache)
+    assert len(results) == 1
+    assert not results[0].ok
+    assert "no change proposed" in results[0].error
+
+
+def test_apply_bulk_one_put_failure_consolidates():
+    a = _actor(id="actX1", title="T", description="D", categories=["ECOMMERCE"])
+    f1 = _finding(actor="actor-x", issue="short_description", impact_rank=1)
+    f2 = _finding(
+        actor="actor-x", issue="missing_keywords", suggested="説明/タイトルに追加: foo(競合2件)", impact_rank=3
+    )
+    cache: dict[str, Any] = {}
+    with patch.object(apply_mod, "_api_get", return_value=(200, {"data": a})):
+        with patch.object(apply_mod, "_api_put", return_value=(400, {"error": "bad"})):
+            results = apply_mod.apply_bulk_one("actor-x", "actX1", [f1, f2], "tok", cache)
+    assert len(results) == 1  # 集約されて 1 件
+    assert not results[0].ok
+    assert results[0].status_code == 400

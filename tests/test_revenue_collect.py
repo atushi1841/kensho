@@ -64,9 +64,16 @@ def _make_anomaly_apify() -> dict[str, Any]:
         "total_users_30d": 0,
         "total_runs": 0,
         "details": [
-            {"name": f"japan-actor-{i}", "actual_name": f"japan-actor-{i}",
-             "billing": "ppe", "price": None, "is_public": True,
-             "users": 0, "u30d": 0, "runs": 0}
+            {
+                "name": f"japan-actor-{i}",
+                "actual_name": f"japan-actor-{i}",
+                "billing": "ppe",
+                "price": None,
+                "is_public": True,
+                "users": 0,
+                "u30d": 0,
+                "runs": 0,
+            }
             for i in range(25)
         ],
     }
@@ -108,32 +115,37 @@ class TestRetryApifyCollect:
     def test_retry_recovers_to_normal(self) -> None:
         """初回異常→再収集で正常値取得 → 正常結果を返す"""
         normal = _make_normal_apify(n_ppe=5, n_free=0)
-        with patch.object(krc, "collect_apify", return_value=normal), \
-             patch("kensho_revenue_collect.time.sleep"):
+        with patch.object(krc, "collect_apify", return_value=normal), patch("kensho_revenue_collect.time.sleep"):
             result = krc._retry_apify_collect()
         assert result["actors_ppe"] == 5
         assert krc._is_ppe_zero_anomaly(result) is False
 
     def test_retry_returns_best_when_all_anomalous(self) -> None:
         """全試行で異常継続 → price付き詳細を持つ最良の結果を返す"""
-        with patch.object(krc, "collect_apify", return_value=_make_anomaly_apify()), \
-             patch("kensho_revenue_collect.time.sleep"):
+        with (
+            patch.object(krc, "collect_apify", return_value=_make_anomaly_apify()),
+            patch("kensho_revenue_collect.time.sleep"),
+        ):
             result = krc._retry_apify_collect()
         # 全部同じ異常値なので最後の試行値が返る
         assert result["actors_ppe"] == 0
 
     def test_retry_stops_at_max_attempts_when_anomalous(self) -> None:
         """異常継続時 → MAX_APIFY_RETRIES 回（2回）試行して終わる"""
-        with patch.object(krc, "collect_apify", return_value=_make_anomaly_apify()) as mock, \
-             patch("kensho_revenue_collect.time.sleep"):
+        with (
+            patch.object(krc, "collect_apify", return_value=_make_anomaly_apify()) as mock,
+            patch("kensho_revenue_collect.time.sleep"),
+        ):
             krc._retry_apify_collect()
         assert mock.call_count == krc.MAX_APIFY_RETRIES
 
     def test_retry_exits_early_when_recovered(self) -> None:
         """1回目で正常値取得 → 2回目は呼ばない"""
         normal = _make_normal_apify(n_ppe=5, n_free=0)
-        with patch.object(krc, "collect_apify", return_value=normal) as mock, \
-             patch("kensho_revenue_collect.time.sleep"):
+        with (
+            patch.object(krc, "collect_apify", return_value=normal) as mock,
+            patch("kensho_revenue_collect.time.sleep"),
+        ):
             krc._retry_apify_collect()
         assert mock.call_count == 1
 
@@ -193,6 +205,7 @@ class TestCollectGumroadState:
         p = tmp_path / "gumroad_state.json"
         p.write_text(json.dumps(state), encoding="utf-8")
         import kensho_revenue_collect as _krc
+
         _krc.GUMROAD_STATE = str(p)
         _krc.GUMROAD_BUNDLE = str(tmp_path / "bundle_info_missing.json")
 
@@ -213,6 +226,7 @@ class TestCollectGumroadState:
 
     def test_missing_state_is_false(self, tmp_path: Any) -> None:
         import kensho_revenue_collect as _krc
+
         _krc.GUMROAD_STATE = str(tmp_path / "nonexistent.json")
         _krc.GUMROAD_BUNDLE = str(tmp_path / "bundle_info_missing.json")
         result = krc.collect_gumroad()
@@ -250,18 +264,19 @@ class TestBuildRevenueSummaryGumroad:
         assert entry["revenue_estimate"]["total_monthly"] == 25.5
 
 
-
 class TestMainIntegration:
     """main(): 異常検出→再収集→復旧の全体フロー"""
 
     def test_main_no_retry_when_normal(self) -> None:
         """正常値 → 再収集ループは走らない"""
         normal = _make_normal_apify(n_ppe=5, n_free=0)
-        with patch.object(krc, "collect_apify", return_value=normal) as mock_collect, \
-             patch.object(krc, "collect_rapidapi", return_value=_empty_rapidapi()), \
-             patch.object(krc, "collect_gumroad", return_value=_empty_gumroad()), \
-             patch.object(krc, "append_to_file") as mock_append, \
-             patch("kensho_revenue_collect.time.sleep"):
+        with (
+            patch.object(krc, "collect_apify", return_value=normal) as mock_collect,
+            patch.object(krc, "collect_rapidapi", return_value=_empty_rapidapi()),
+            patch.object(krc, "collect_gumroad", return_value=_empty_gumroad()),
+            patch.object(krc, "append_to_file") as mock_append,
+            patch("kensho_revenue_collect.time.sleep"),
+        ):
             krc.main()
         # 1回だけ呼ばれる（再収集なし）
         assert mock_collect.call_count == 1
@@ -272,11 +287,13 @@ class TestMainIntegration:
         """初回異常→再収集で復旧 → anomaly フラグは付かない"""
         anomaly = _make_anomaly_apify()
         normal = _make_normal_apify(n_ppe=5, n_free=0)
-        with patch.object(krc, "collect_apify", side_effect=[anomaly, normal]) as mock_collect, \
-             patch.object(krc, "collect_rapidapi", return_value=_empty_rapidapi()), \
-             patch.object(krc, "collect_gumroad", return_value=_empty_gumroad()), \
-             patch.object(krc, "append_to_file") as mock_append, \
-             patch("kensho_revenue_collect.time.sleep"):
+        with (
+            patch.object(krc, "collect_apify", side_effect=[anomaly, normal]) as mock_collect,
+            patch.object(krc, "collect_rapidapi", return_value=_empty_rapidapi()),
+            patch.object(krc, "collect_gumroad", return_value=_empty_gumroad()),
+            patch.object(krc, "append_to_file") as mock_append,
+            patch("kensho_revenue_collect.time.sleep"),
+        ):
             krc.main()
         # 初回 + 再収集1回 = 2回
         assert mock_collect.call_count == 2
@@ -287,14 +304,65 @@ class TestMainIntegration:
     def test_main_flags_anomaly_when_persists(self) -> None:
         """全試行で異常継続 → anomaly_ppe_zero フラグ付き保存"""
         anomaly = _make_anomaly_apify()
-        with patch.object(krc, "collect_apify", return_value=anomaly) as mock_collect, \
-             patch.object(krc, "collect_rapidapi", return_value=_empty_rapidapi()), \
-             patch.object(krc, "collect_gumroad", return_value=_empty_gumroad()), \
-             patch.object(krc, "append_to_file") as mock_append, \
-             patch("kensho_revenue_collect.time.sleep"):
+        with (
+            patch.object(krc, "collect_apify", return_value=anomaly) as mock_collect,
+            patch.object(krc, "collect_rapidapi", return_value=_empty_rapidapi()),
+            patch.object(krc, "collect_gumroad", return_value=_empty_gumroad()),
+            patch.object(krc, "append_to_file") as mock_append,
+            patch("kensho_revenue_collect.time.sleep"),
+        ):
             krc.main()
         # 初回 + 再収集2回 = 3回
         assert mock_collect.call_count == krc.MAX_APIFY_RETRIES + 1
         entry = mock_append.call_args[0][0]
         assert entry["apify"].get("anomaly_ppe_zero") is True
         assert "anomaly_detected_at" in entry["apify"]
+
+
+class TestFetchApifyPricing:
+    """fetch_apify_pricing: 複数pricingInfos時の有効価格は最後のエントリ（t_c4343276 PPE値上げA/B）"""
+
+    def _fake_actor(self, pricing_infos: list[dict[str, Any]]) -> dict[str, Any]:
+        return {
+            "status_code": 200,
+            "data": {"name": "japan-offmall-market-scraper", "isPublic": True, "pricingInfos": pricing_infos},
+        }
+
+    def _ppe_entry(self, price: float, created: str) -> dict[str, Any]:
+        return {
+            "pricingModel": "PAY_PER_EVENT",
+            "pricingPerEvent": {
+                "actorChargeEvents": {
+                    "apify-actor-start": {"eventPriceUsd": 5e-05},
+                    "apify-default-dataset-item": {"eventPriceUsd": price},
+                }
+            },
+            "apifyMarginPercentage": 0.2,
+            "createdAt": created,
+            "startedAt": created,
+        }
+
+    def test_uses_last_entry_as_active_price(self) -> None:
+        """PPE値上げで2エントリ化→最後のエントリ（$0.005/件）を有効単価として返す"""
+        old = self._ppe_entry(0.002, "2026-08-10T10:23:09.925Z")
+        new = self._ppe_entry(0.005, "2026-09-04T15:55:14.790Z")
+        list_resp = FakeResponse({"data": {"items": [{"id": "zh4k", "name": "japan-offmall-market-scraper"}]}})
+        actor_resp = FakeResponse(self._fake_actor([old, new]))
+        with patch("requests.get", side_effect=[list_resp, actor_resp]):
+            result = krc.fetch_apify_pricing()
+        got = result.get("japan-offmall-market-scraper")
+        assert got is not None
+        assert got["price"] == 0.005  # 最後のエントリが有効
+        assert got["pricing_model"] == "PAY_PER_EVENT"
+
+
+class FakeResponse:
+    def __init__(self, json_body: dict[str, Any]) -> None:
+        self._json = json_body
+        self.status_code = 200
+
+    def json(self) -> dict[str, Any]:
+        return self._json
+
+    def raise_for_status(self) -> None:
+        pass
