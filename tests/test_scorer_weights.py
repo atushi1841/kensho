@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta
+
 import pytest
 
 from kensho.scraping.scorer import score_prize
@@ -63,6 +65,14 @@ class TestShortDeadlineWeight:
     def test_tomorrow_deadline_not_boost(self) -> None:
         """締切が明日より先ならボーナスなし"""
         assert _base()["priority"] <= 1.1
+
+    def test_near_deadline_boosts(self) -> None:
+        """締切が近い（24時間以内）なら優先度1.3以上に上がる"""
+        # 日付のみ粒度のため、明日0時は常に現在から24時間以内（0 < 残<=24h）。
+        # 実質的に締切12時間前相当の正ケース（期限内 = multiplier 1.3 がかかる）。
+        near = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+        s = score_prize("抽選でプレゼント", deadline=near)
+        assert s["priority"] >= 1.3
 
 
 class TestCombined:
