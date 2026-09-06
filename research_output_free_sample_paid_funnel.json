@@ -1,0 +1,90 @@
+{
+  "summary": "①発見の要旨: Gumroadは自前トラフィック前提で、Discover経由販売は手数料30%と高く、販売の42%はメール経由との分析があるため、「無料版でメールを取る→有料版へ誘導」がGumroad上で最も再現性のあるファネル。無料サンプル+有料フル版の実在例(20データセット/約5.3万レコードに対し各30レコードを無料公開、フル版をGumroadで単品$24-$29・バンドル40-55%割引で販売)があり、サンプルは「同一スキーマの部分行+評価用ライセンス」で設計されている。②適用可否: 当プロジェクト(日本中古ホビー価格データ$29.99、週次更新可)には「無料サンプル(メール/ゲート付き)+有料フル版(網羅+週次更新)」は適合する。価格$29.99は$30-49帯が最も転換するという分析と整合。ただしKaggleへの「フル版サンプル」掲載は不適合と判断する: Kaggleはdataset-metadata.jsonでライセンス必須指定(CC0-1.0等の寛容ライセンスが標準)の無料公開プラットフォームで、公開後は誰でも再配布可能になり有料版の販売根拠(排他性)が消えるため(推測ではなくライセンス仕様に基づく判断)。Kaggle→Gumroad直結ファネルの成功/失敗の公開事例は複数クエリで検証できず「機能の確証なし」と評価(推測: Kaggle/HFユーザーは無料DLに慣れており、ネイティブな課金導線が無いため低転換と推察)。HFはGated Dataset機能(ユーザー名+メール共有を必須化、自動/手動承認、カスタム項目、API自動化)が公式にあり、メール獲得装置としては機能する。③実装ステップは下記steps参照。法務注記: 米第9巡回区控訴裁hiQ v. LinkedIn(2022)で公開WebデータのスクレイピングはCFAA違反にならない蓋然性が高いとされたが、各マーケットプレイスToS(契約)違反のリスクは別途残るため、データに個人情報・出品者特定情報を含めない設計を維持すること。",
+  "findings": [
+    {
+      "claim": "Gumroadは自前トラフィック前提のプラットフォーム。Similarwebによると訪問の約40.55%が直接アクセスで、オーガニック検索流入の上位キーワードは「gumroad」「gumroad login」等のブランド語ばかりであり、商品レベルの偶然発見はほぼ無い。",
+      "source_url": "https://roo.beehiiv.com/p/gumroad-traffic-2026-real-data"
+    },
+    {
+      "claim": "Gumroad Discover(マーケットプレイス経由販売)の手数料は30%で、直接販売の10%+決済手数料(2.9%+$0.30等)とは別建て。受動的販売はあるが採算が悪く、$29商品ではDiscover販売1件あたりの手取りが直接販売より約$6少なくなる試算もある。",
+      "source_url": "https://checkoutpage.com/blog/gumroad-fees"
+    },
+    {
+      "claim": "InsightRaiderのGumroad 146,271商品分析によると、メールが販売の約42%を占める最大チャネルで、メールリストの転換率3.2%は有料広告の1.9%の約1.7倍。メール2,400人保有セラーは中央値28件の売上に対し、リスト保有での初週売上は269件超と約2倍の報告がある。無料リードマグネット(PWYW最低$0)でのリスト構築が推奨されている。",
+      "source_url": "https://insightraider.com/en/answers/how-to-market-your-gumroad-products"
+    },
+    {
+      "claim": "同分析では$30-49価格帯は$10未満より28%良く転換し、$10未満商品は全商品の約35%を占めながらプラットフォーム売上の約0.8%しか生んでいない。PWYWは固定価格比で販売数+8%だが、有効なアンカー(推奨額表示)が無いと平均支払額が65%下落する。→ $29.99固定(または$29.99アンカー付きPWYW)は合理的。",
+      "source_url": "https://insightraider.com/en/answers/can-you-set-your-own-prices-on-gumroad"
+    },
+    {
+      "claim": "リードマグネット転換率ベンチマーク(Unbounce等8レポート統合): 全業種のランディングページ中央値は6.6%(Unbounce、41,000ページ/4.64億訪問解析)、メール経由トラフィックのLP転換率19.3%は有料検索の11.3%を大きく上回り、トラフィックソースが転換率を左右する。",
+      "source_url": "https://www.digitalapplied.com/blog/lead-magnet-conversion-benchmarks-2026-b2b-data-reference"
+    },
+    {
+      "claim": "Gumroadで$0商品(無料)をリードマグネット化し有料商品へ誘導して売上を作った個人の実践報告がある(自己申告ベースの小規模事例で$2,600の売上を報告。一般化は不可)。",
+      "source_url": "https://solopreneurcode.substack.com/p/how-i-made-2600-with-free-products"
+    },
+    {
+      "claim": "「データセット無料サンプル+有料フル版」の実在例: 開発者/API系20データセット(計約53,000レコード)の各30レコードをJSON+CSVで無料公開し、フル版をGumroadで販売。サンプルは「同一スキーマ・評価用の寛容ライセンス」、フル版はGumroad側ライセンスと区別し、単品$24-$29・テーマバンドルで40-55%割引のティア構成。",
+      "source_url": "https://futdevpro.github.io/niche-datasets-free/"
+    },
+    {
+      "claim": "B2Bデータ市場の標準UIは「無料サンプルプレビュー→購入」方式。Datarade等のデータマーケットプレイスでは全カテゴリでサンプルデータを無料プレビューさせてから購入させる構造が一般化している。",
+      "source_url": "https://datarade.ai/data-categories/seo-data/datasets"
+    },
+    {
+      "claim": "Kaggleへのデータセット公開はdataset-metadata.jsonでライセンスの必須指定(正確に1件、例: \"licenses\": [{\"name\": \"CC0-1.0\"}])がAPI仕様で要求される。公開されたデータはKaggleの無料公開プラットフォーム上で誰でもダウンロードできる構造。",
+      "source_url": "https://github.com/Kaggle/kaggle-cli/wiki/Dataset-Metadata/bc2684f533cd40afae28210d8f6e62b88d793d62"
+    },
+    {
+      "claim": "Kaggleは50万超の公開データセットを無料で提供するML練習/コンペ文化の場。各データセットページにライセンス表示があり、CC0は帰属なしで商用利用可、CC-BY-NCは商用利用を禁止する等、選択したライセンスで利用範囲が決まる。Kaggle側にはペイウォールやメールゲート等のネイティブ課金/リード獲得機能が無い。",
+      "source_url": "https://labelyourdata.com/articles/machine-learning/kaggle-datasets"
+    },
+    {
+      "claim": "Hugging FaceのGated Dataset機能は、データセット作者が有効化するとユーザーはダウンロード前に「ユーザー名とメールアドレスを作者と共有すること」への同意が必須になる。承認は自動(デフォルト)または手動選択が可能で、追加のカスタム項目(利用目的等)も設定でき、APIで承認を自動化できる。→ 公式仕様のメール獲得装置。",
+      "source_url": "https://huggingface.co/docs/hub/datasets-gated"
+    },
+    {
+      "claim": "HF Hubはリポジトリカードのメタデータでライセンスを明示でき、CC非商用系(CC-BY-NC等)・ODbL・Community Data License Agreement等、データ向けライセンスを含む広範なリストから選択可能。作者の権利表示(licenseタグ)が標準化されている。",
+      "source_url": "https://huggingface.co/docs/hub/repositories-licenses"
+    },
+    {
+      "claim": "公開Webデータのスクレイピングの法的位置づけ: 米第9巡回区控訴裁はhiQ v. LinkedIn(2022年4月)で、公開WebサイトのスクレイピングはCFAA(コンピュータ詐偽取締法)違反にならない蓋然性が高いと判断。",
+      "source_url": "https://www.eff.org/deeplinks/2022/04/scraping-public-websites-still-isnt-crime-court-appeals-declares"
+    },
+    {
+      "claim": "同判決の射程はCFAAのみで、契約(サイトToS)違反・不正競争等の別法理は残るため、マーケットプレイス由来データの収集・再販は規約上のグレーゾーンが残る(法務確認推奨)。",
+      "source_url": "https://www.morganlewis.com/blogs/sourcingatmorganlewis/2022/12/linkedin-v-hiq-landmark-data-scraping-suit-provides-guidance-to-data-scrapers-and-web-operators"
+    },
+    {
+      "claim": "本プロジェクトと同ニッチ(日本の中古ホビー市場データ)の有料データ商品がApifyマーケットプレイスで実際に販売されている: 駿河屋の使用済みフィギュア・レトロゲーム等の価格/在庫スクレイパーが有料アクターとして出品され、国際ユーザー向けに作られている。",
+      "source_url": "https://apify.com/datalab-jp/suruga-ya-scraper"
+    },
+    {
+      "claim": "さらに同ニッチでは「Mandarake Japan Collectibles — Price & Stock Market Stats」という価格・在庫統計APIもApifyで販売されており、日本語コレクティブル価格データへの有料需要が実在する。",
+      "source_url": "https://apify.com/jpmarketdata/mandarake-market-checker/api/cli"
+    },
+    {
+      "claim": "KaggleやHFへの「無料フル版データセット掲載→Gumroad等での有料転換」ファネルの公開された成功・失敗事例は、本調査の複数クエリ(英語中心)では発見できなかった。Kaggle/HFは無料DL文化の場であり、この経路が機能したという検証可能な報告は確認できず「機能の確証なし」と評価する。",
+      "source_url": "https://www.kaggle.com/datasets"
+    },
+    {
+      "claim": "Gumroadには$0価格の無料商品が7,700件超存在する「free」タグのエコシステムがあり、$0商品でのメール収集→有料商品紹介という動線がGumroadの仕組み上サポートされている(PWYWの最低額$0を含む)。",
+      "source_url": "https://gumroad.com/discover?tags=free"
+    }
+  ],
+  "steps": [
+    "Gumroadに$0の「無料サンプル+市場サマリーPDF」商品を新規追加してメール自動収集の入口にする。サンプルは既存データの代表サブセット(カテゴリ横断で約30〜100行・1週間分)とし、既存$29.99フル版ページにはサンプルへのリンクと「フル版=全件+週次更新」の価値記述を明記する(サンプル行数はデータ総量を見て決定、30行/データセットという実例あり)。",
+    "CSVには透かしが効かないため、無料版と有料版は「行サブセット・カラム削減・鮮度」で差別化する: ①無料版はランダム行サブセットのみ、②出品者ID・商品URL等の再特定カラムは削除またはハッシュ化、③無料版のupdated_atは過去値に固定し「週次更新」は有料版限定とする。サマリーPDF(価格帯ヒートマップ等)を無料版に含める場合は可視透かし+低解像度化。",
+    "有料版を「フルデータ(全件・全カラム)+週次更新+更新アラート」に再構成し、Gumroadのライセンスキーとファイル更新機能を利用して既存購入者へ新版を自動再配信する。更新の継続性こそが無料版との差別化根拠になる。",
+    "Hugging Faceに同サンプルをGated Datasetとして公開する(auto-approve + 追加カスタム項目で利用目的を取得)。licenseは\"other\"+独自規約で「評価用・商用フル版はGumroad」と明示し、データセットカードにGumroadリンクを記載する。",
+    "Kaggleへのサンプル掲載は行わない(または「フル版と重複しない独立の小規模集計データ(カテゴリ別相場トレンド等)」に限定する)。理由: Kaggleはライセンス必須指定+無料再配布構造のため、無料フル版を置くと有料版の排他性が消える。Kaggle掲載はブランド露出目的に限定する。",
+    "価格は$29.99固定を維持する。代替として推奨額$29.99をアンカー表示したPWYWも許容(アンカー無しPWYWは平均支払額が65%下落するため禁止)。バンドル/上位ティア(全カテゴリ+過去アーカイブ版$49-79、もしくは更新サブスク)を追加し客単価を上げる。",
+    "$0商品ダウンローダーと有料購入者をGumroad顧客リストで分け、週次ニュースレター(「今週の高騰アイテム」等、サンプルデータの実利用例)を送信する。メールがGumroad販売の約42%を占めるチャネルであり、有料版への直接リンクを各配信に含める。",
+    "トラフィックは自前で確保する: 無料サンプルをReddit(r/AnimeFigures, r/gamecollecting, r/datahoarders等)、X、ニッチDiscordへ投稿し、商品ページのSEO文言(例: used figure price data Japan)は早期に整備する(オーガニック検索は4-6ヶ月で効き始めるとの分析あり)。",
+    "毎月のKPIを計測する: $0ダウンロード数(メール獲得数)、$0→有料転換率、Discover販売比率と手数料30%の負担、ニュースレター経由売上。1ヶ月でメール30件未満なら商品名・カテゴリ・掲載先をA/B改善する。",
+    "コンプライアンス設計を維持する: 無料・有料とも個人情報・出品者特定情報を含めない。原データの各マーケットプレイスToSはCFAA判決とは別の契約リスクとして残るため、出品データの加工方法(集計化・ID非公開化)を守り、商用再販を前提とした利用規約をGumroad商品ページに明記する。",
+    "2-3ヶ月後にファネルを再評価する。売上がゼロのままなら、HF Gated Datasetのカスタム項目に「有料フル版への関心」を追加して直接のセールス導線にし、並行してApify等の有料データマーケットプレイス(同ニッチの駿河屋・まんだらけデータ商品が実在)への出品も検討する。"
+  ]
+}

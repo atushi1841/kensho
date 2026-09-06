@@ -1,0 +1,42 @@
+{
+  "task": "t_28f2859f",
+  "date": "2026-09-06",
+  "title": "Japanese used-goods price data via API (Mercari, Yahoo Auctions, Suruga-ya, Mandarake)",
+  "article_url": "https://dev.to/atu_ino_ed473db24d76d234a/japanese-used-goods-price-data-via-api-mercari-yahoo-auctions-suruga-ya-mandarake-3dk2",
+  "slug": "japanese-used-goods-price-data-via-api-mercari-yahoo-auctions-suruga-ya-mandarake-3dk2",
+  "tags": ["api", "webscraping", "data", "japan"],
+  "post_status": 201,
+  "id": 4587593,
+  "published_at": "2026-09-06T11:24:45Z",
+  "verification": {
+    "POST /api/articles": 201,
+    "GET /api/users/me username": "atu_ino_ed473db24d76d234a",
+    "GET /api/articles?username=atu_ino_ed473db24d76d234a": "1 article, matched, url confirmed",
+    "24h_view_baseline": {
+      "positive_reactions_count": 0,
+      "public_reactions_count": 0,
+      "comments_count": 0,
+      "notes": "Recorded at publish time 2026-09-06T11:24Z; re-check ~24h later for views"
+    }
+  },
+  "real_data_samples": {
+    "mercari": "live Apify actor run 2026-09-06, 5 items (CBR250RR search) - e.g. HONDA CBR250RR MC51 2000JPY",
+    "yahoo_auctions": "local run 2026-09-06, 8 items (Canon EOS R5 search) - e.g. currentPrice 237980 / buyNowPrice 238000",
+    "surugaya": "cached real output research_out_EOS_R5.json (2026-08-17) - used/new/list prices",
+    "mandarake": "real dataset CSV mandarake-auction-scraper_20260901_0409.csv - item_index/current_price/bid_count/watch_count"
+  },
+  "links_set": {
+    "apify_store_5": [
+      "https://apify.com/fruitful_quintessence/mercari-japan-search-scraper",
+      "https://apify.com/fruitful_quintessence/yahoo-auctions-japan-scraper",
+      "https://apify.com/fruitful_quintessence/surugaya-japan-hobby-prices",
+      "https://apify.com/fruitful_quintessence/mandarake-auction-scraper",
+      "https://apify.com/fruitful_quintessence/japan-offmall-market-scraper"
+    ],
+    "gumroad_agyhq": "https://atushi5.gumroad.com/l/agyhq"
+  },
+  "constraints": {
+    "x_engagement_farming": "NOT performed (dev.to publish only, no X auto-post)",
+    "real_data_only": true
+  }
+}

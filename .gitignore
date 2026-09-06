@@ -102,3 +102,18 @@ kensho/application/transaction_pairs.json
 .hermes_backup_rtfix/
 data/*.bak_*
 config.yaml.bak_*
+
+# 一時・スクラッチ・ランタイム状態（コミット対象外）──
+data/tmp/
+data/wantedly_monitor/
+data/revenue-daily.json.bak-*
+data/ai-team-semantic-memory.json
+data/apify_ppe_external_views_state.json
+data/gumroad_x_analytics.json
+data/gumroad_x_post_state.json
+data/apify-seo-apply-baseline-*.json
+
+# 外部リポジトリクローン（Firecrawl monorepo など）
+stack/firecrawl/
+# 動作検証プローブ（ruff 違反・一時的実験コード）
+research/hang_detect_probe/
