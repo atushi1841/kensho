@@ -48,22 +48,22 @@ runs `kanban complete --status done` with NO verification_evidence is BLOCKED
 
 ### Synthetic no-evidence task -> guard exits 1 (BLOCK)
 
-$ bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_NONEXISTENT_synth_v46 --json
-{"task_id": "t_NONEXISTENT_synth_v46", "output_file": null, "conditions": {"a:verification_evidence_section": false, "b:command_citations>=3": false, "c:no_false_done_marker_in_summary": false, "d:no_uncommitted_code": true}, "detail": {"citations_count": 0, "summary": "", "uncommitted_code_files": [], "error": "no worker output file found for task"}, "pass": false}
+$ bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_synth9fk0q_000001 --json
+{"task_id": "t_synth9fk0q_000001", "output_file": null, "conditions": {"a:verification_evidence_section": false, "b:command_citations>=3": false, "c:no_false_done_marker_in_summary": false, "d:no_uncommitted_code": true}, "detail": {"citations_count": 0, "summary": "", "uncommitted_code_files": [], "error": "no worker output file found for task"}, "pass": false}
 $ echo guard_rc_was_1
 guard_rc=1
 
 ### Hook on the done-completion payload -> exit 2 + block JSON
 
 $ bash /home/atushi/.hermes/agent-hooks/kanban_done_guard_hook.sh < /tmp/payload.json
-{"decision":"block","reason":"kanban_done_guard BLOCKED done for task t_NONEXISTENT_synth_v46. kanban_done_guard task=t_NONEXISTENT_synth_v46 -> BLOCK (3 not met: verification_evidence_section, command_citations>=3, no_false_done_marker_in_summary). Fix verification_evidence / uncommitted code, then re-run: bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_NONEXISTENT_synth_v46"}
+{"decision":"block","reason":"kanban_done_guard BLOCKED done for task t_synth9fk0q_000001. kanban_done_guard task=t_synth9fk0q_000001 -> BLOCK (3 not met: verification_evidence_section, command_citations>=3, no_false_done_marker_in_summary). Fix verification_evidence / uncommitted code, then re-run: bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_synth9fk0q_000001"}
 $ echo hook_rc_was_2
 hook_rc=2
 
 ### Task-id extraction correctness (full id survives, not truncated at underscore)
 
 $ grep -oE 't_[A-Za-z0-9][A-Za-z0-9_-]*' /tmp/cmd.txt
-t_NONEXISTENT_synth_v46
+t_synth9fk0q_000001
 
 $ grep -n "kanban_done_guard" /home/atushi/.hermes/profiles/kensho-revenue-worker/config.yaml
 hooks:
