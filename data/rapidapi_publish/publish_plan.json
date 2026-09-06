@@ -1,0 +1,36 @@
+{
+  "created_at": "2026-09-06T09:18:16.982289+09:00",
+  "state_before": {
+    "japan-offmall-cn": {
+      "api_id": "api_3697e05e-3115-47c5-85df-f6edadbdc8ca",
+      "name": "Japan OffMall Used Goods Price Stats API (Chinese)",
+      "visibility": "PUBLIC",
+      "pricing": null,
+      "slugs": [
+        "japan-offmall-used-goods-price-stats-api-chinese"
+      ],
+      "display": "Japan OffMall Used Goods Price Stats API (Chinese)"
+    },
+    "japan-used-car": {
+      "api_id": "api_e093340e-c784-4cc9-9d70-7cf80404b9ed",
+      "name": "Japan Used Car Price Stats API",
+      "visibility": "PUBLIC",
+      "pricing": null,
+      "slugs": [
+        "japan-used-car-price-stats-api1"
+      ],
+      "display": "Japan Used Car Price Stats API (goo-net JP)"
+    },
+    "japan-camera": {
+      "api_id": "api_7d2dcc27-829d-4add-88b9-5c1708447f85",
+      "name": "Japan Camera & Lens Resale Price Research API",
+      "visibility": "PUBLIC",
+      "pricing": null,
+      "slugs": [
+        "japan-camera-lens-resale-price-research-api"
+      ],
+      "display": "Japan Camera & Lens Resale Price Research API"
+    }
+  },
+  "to_publish": []
+}
