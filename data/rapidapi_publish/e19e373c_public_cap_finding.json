@@ -1,0 +1,18 @@
+{
+  "task": "t_9c588435",
+  "assessed_at": "2026-09-06T17:21:00+09:00",
+  "api_id": "api_e19e373c-049e-462b-bd7c-c5acf9b65770",
+  "name": "Japan Used Camera Price Stats API",
+  "slug": "japan-used-camera-price-stats-api",
+  "visibility_now": "PRIVATE",
+  "pricing": "FREEMIUM (list query)",
+  "assessment": "publication_leak_confirmed",
+  "why_leak": "Japanese original remained PRIVATE while its Chinese (api_daeb465c) and Korean (api_9e1f6683) sibling versions are PUBLIC FREEMIUM; same name family, no abandonment rationale exists.",
+  "publish_attempt": "BLOCKED by platform hard cap",
+  "graphql_error": "There is a limit of 20 public APIs allowed per owner. If you need to exceed this limit, contact support. (extendedCode BAD_REQUEST, correlationId 54b2fcb3-ecb2-43b7-b16e-f500b449f3c1)",
+  "account_public_count": 21,
+  "account_cap": 20,
+  "conclusion": "Publishing the 22nd PUBLIC API is rejected because the owner is already at/over the 20-public-API cap. Non-removable by a worker script. Requires a human/business decision: contact RapidAPI support to raise the cap, or accept 1 remaining PRIVATE (this revenue API stays unliquidated).",
+  "backup": "data/rapidapi_publish/visibility_backup_e19e373c.json",
+  "rollback_needed": false
+}

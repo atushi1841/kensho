@@ -1,0 +1,66 @@
+{
+  "created_at": "2026-09-06T19:47:25.236394+09:00",
+  "plan": {
+    "rationale_short": "全RapidAPI収益$0(paid sub0)。冗長言語版のうちbacking Apify usage最小(camera-cn/kr 6 runs)2本をPRIVATE化して枠を空け、漏れのJP cameraを公開",
+    "public_cap": 20,
+    "steps": [
+      {
+        "op": "updateApi Japan Used Camera Price Stats API (Chinese) [lowest-value redundant]",
+        "api_id": "api_daeb465c-9094-4f76-8918-0b18e7b7915d",
+        "visibility_before": "PRIVATE",
+        "visibility_after": "PRIVATE"
+      },
+      {
+        "op": "updateApi Japan Used Camera Price Stats API (Korean) [2nd lowest, same family]",
+        "api_id": "api_9e1f6683-5736-4fee-a61e-8e248f21a449",
+        "visibility_before": "PUBLIC",
+        "visibility_after": "PRIVATE"
+      },
+      {
+        "op": "updateApi Japan Used Camera Price Stats API (JP original)",
+        "api_id": "api_e19e373c-049e-462b-bd7c-c5acf9b65770",
+        "visibility_before": "PRIVATE",
+        "visibility_after": "PUBLIC"
+      }
+    ]
+  },
+  "results": {
+    "api_daeb465c-9094-4f76-8918-0b18e7b7915d": {
+      "op": "Japan Used Camera Price Stats API (Chinese) [lowest-value redundant]",
+      "before": "PRIVATE",
+      "mutation": {
+        "id": "api_daeb465c-9094-4f76-8918-0b18e7b7915d",
+        "visibility": "PRIVATE",
+        "name": "Japan Used Camera Price Stats API (Chinese)"
+      },
+      "ok": true
+    },
+    "api_9e1f6683-5736-4fee-a61e-8e248f21a449": {
+      "op": "Japan Used Camera Price Stats API (Korean) [2nd lowest, same family]",
+      "before": "PUBLIC",
+      "mutation": {
+        "id": "api_9e1f6683-5736-4fee-a61e-8e248f21a449",
+        "visibility": "PRIVATE",
+        "name": "Japan Used Camera Price Stats API (Korean)"
+      },
+      "ok": true
+    },
+    "api_e19e373c-049e-462b-bd7c-c5acf9b65770": {
+      "op": "Japan Used Camera Price Stats API (JP original)",
+      "before": "PRIVATE",
+      "mutation": {
+        "id": "api_e19e373c-049e-462b-bd7c-c5acf9b65770",
+        "visibility": "PUBLIC",
+        "name": "Japan Used Camera Price Stats API"
+      },
+      "ok": true
+    }
+  },
+  "state_after_public_total": 20,
+  "camera_jp_visibility": "PUBLIC",
+  "privatized_visibilities": {
+    "api_daeb465c-9094-4f76-8918-0b18e7b7915d": "PRIVATE",
+    "api_9e1f6683-5736-4fee-a61e-8e248f21a449": "PRIVATE"
+  },
+  "verify_pass": true
+}
