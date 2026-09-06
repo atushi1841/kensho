@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Kensho Browser — invisible_playwright Firefox ブラウザ制御
-v4.0: C++レベル指紋偽装（invisible_playwright）+ アカウント別シード
+Kensho Browser — stealth ブラウザ制御
+v4.x: standard playwright Firefox（実運用デフォルト） + patchright Chromium-stealth（opt-in）
+※ chromium は /status/ が X から 403 を返すため現状デフォルト非活性（KENSHO_BROWSER=chromium で opt-in）。
 """
 
 from __future__ import annotations
@@ -17,20 +18,27 @@ from typing import Any
 import psutil
 
 # ── anti-detect browser selector ──
-# patchright が利用可能なら優先使用（C++レベル指紋偽装・CDP漏洩対策）
-# フォールバック: 標準の playwright
+# patchright は Playwright のステルス派生（webdriver=False 等の自動化検出回避）。
+# ※ patchright の firefox driver は不安定（evaluate が _client 参照で失敗する）ため、
+#   Firefox エンジンは常に標準 playwright を使用し、既存接続を実運用デフォルトとして温存する。
+#   chromium-stealth 経路（_launch_patchright_chromium）は KENSHO_BROWSER=chromium で opt-in 利用。
+#   実測上 X は chromium の /status/ permalink へ 403 を返すため、既定は Firefox を維持する。
 _PATCHRIGHT_AVAILABLE: bool = False
+_patchright_sync_playwright: Any | None = None
 try:
-    from patchright.sync_api import sync_playwright as _patchright_sync_playwright
+    # chromium-stealth 経路用にハンドルを確保（_launch_patchright_chromium で利用）。
+    from patchright.sync_api import sync_playwright as _patchright_sync_playwright  # noqa: F401
 
     _PATCHRIGHT_AVAILABLE = True
 except ImportError:
     pass
-if not _PATCHRIGHT_AVAILABLE:
-    try:
-        from playwright.sync_api import sync_playwright as _patchright_sync_playwright  # noqa: F811
-    except ImportError:
-        _patchright_sync_playwright = None  # type: ignore[assignment]
+
+# Firefox エンジン用の安定ドライバ（常に標準 playwright）
+_std_sync_playwright: Any | None = None
+try:
+    from playwright.sync_api import sync_playwright as _std_sync_playwright
+except ImportError:  # pragma: no cover
+    _std_sync_playwright = None
 
 # ── check_x_login constants ──
 _CHECK_LOGIN_TIMEOUT: int = 30000
@@ -527,6 +535,220 @@ def _build_stealth_js(fp: dict[str, Any] | None) -> str:
     return "\n".join(lines)
 
 
+# ═══════════════════════════════════════════════════════════════
+# ── chromium-stealth 経路（patchright）──
+# ═══════════════════════════════════════════════════════════════
+# 実測（2026-09-05, t_39eef5a3）: patchright chromium は login 成立・navigator.webdriver=False だが、
+# X が /status/ permalink へのトップレベル遷移を 403 で返し（home/profile は 200）、
+# 応募アクション（per-tweet goto）が成立しないため、実運用のデフォルトは Firefox を維持する。
+# chromium は KENSHO_BROWSER=chromium 明示で opt-in 利用（X 側 403 が解消された段階で既定化可能）。
+PATCHRIGHT_CHROMIUM_ENABLED: bool = os.environ.get("KENSHO_BROWSER", "firefox").lower() in (
+    "1",
+    "true",
+    "chromium",
+    "patchright",
+    "auto",
+)
+
+# Chrome 系 UA のメジャーバージョン候補（シードから垢別に安定選択）
+_CHROME_VERSIONS: list[int] = [124, 125, 126, 127, 128, 129, 130, 131, 132]
+
+
+def _chromium_requested() -> bool:
+    """patchright が利用可能かつ chromium 経路が有効であるかを返す。"""
+    return bool(_PATCHRIGHT_AVAILABLE and PATCHRIGHT_CHROMIUM_ENABLED)
+
+
+def _chromium_ua(fp: dict[str, Any] | None) -> str:
+    """Firefox 固有 UA を Chromium 用 Chrome UA に変換（垢別シード→安定バージョン）。
+
+    FINGERPRINTS の user_agent は Firefox 文字列（Gecko/…Firefox/150.0）だが、
+    Chromium では Firefox UA を名乗ると検出されるため Chrome 系に差し替える。
+    """
+    seed: int = fp["seed"] if fp else 42
+    ver: int = _CHROME_VERSIONS[seed % len(_CHROME_VERSIONS)]
+    return (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        f"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{ver}.0.0.0 Safari/537.36"
+    )
+
+
+def _chromium_webgl(fp: dict[str, Any] | None) -> tuple[str, str]:
+    """WebGL vendor/renderer を Chromium（ANGLE/Direct3D11）向けに変換。
+
+    Firefox の fp['webgl_renderer'] は "Intel HD Graphics 4600 (ANGLE)" 形式だが、
+    Chromium の WEBGL_debug_renderer_info は Windows 上で
+    "ANGLE (Intel, … Direct3D11 vs_5_0 ps_5_0, D3D11)" を返すため翻訳する。
+    """
+    if fp is None:
+        return "Google Inc. (Intel)", "ANGLE (Intel, Intel(R) HD Graphics 4600 Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    vendor: str = str(fp.get("webgl_vendor", "Google Inc. (Intel)"))
+    raw_renderer: str = str(fp.get("webgl_renderer", "Intel HD Graphics 4600 (ANGLE)"))
+    # 既に Chromium 形式ならそのまま
+    if raw_renderer.startswith("ANGLE (") or raw_renderer.startswith("ANGLE("):
+        return vendor, raw_renderer
+    # 親GPU名 = " (ANGLE)" の前の部分
+    base_gpu: str = raw_renderer.split(" (")[0].strip() or raw_renderer
+    # vendor の短名: "Google Inc. (Intel)" → "Intel" / カッコ無しは最後の単語
+    short_vendor: str = vendor
+    if "(" in vendor and ")" in vendor:
+        short_vendor = vendor[vendor.index("(") + 1 : vendor.rindex(")")]
+    else:
+        short_vendor = vendor.rsplit(" ", 1)[-1]
+    renderer = f"ANGLE ({short_vendor}, {base_gpu} Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    return vendor, renderer
+
+
+def _build_chromium_stealth_js(fp: dict[str, Any] | None) -> str:
+    """Chromium 固有の JS stealth 層。
+
+    _build_stealth_js() は Firefox 前提（plugins 偽装、oscpu 等）を含むため、
+    Chromium 用に WebGL vendor/renderer の偽装（_build_stealth_js() が扱わない項目）を追加する。
+    実改行(ASCII 10)で結合 — コメントが後続コードを食わない。
+    """
+    vendor, renderer = _chromium_webgl(fp)
+    _hc_cores: int = [4, 8, 6, 12, 16][(fp["seed"] if fp else 42) % 5]
+    _vendor_lit = vendor.replace("\\", "\\\\").replace("'", "\\'")
+    _renderer_lit = renderer.replace("\\", "\\\\").replace("'", "\\'")
+    lines = [
+        "// ── Kensho Chromium-Stealth JS Layer ──",
+        "(async()=>{",
+        "try{",
+        f"let _kv='{_vendor_lit}'; let _kr='{_renderer_lit}';",
+        "// 1. navigator.webdriver を undefined に上書き（patchright の二重ロック）",
+        "Object.defineProperty(navigator,'webdriver',{get:()=>undefined});",
+        "// 2. WebGL vendor/renderer 偽装（WEBGL_debug_renderer_info）",
+        "let _patchGetParam=(proto)=>{",
+        "  if(!proto)return;",
+        "  let _og=proto.getParameter;",
+        "  proto.getParameter=function(pid){",
+        "    if(pid===0x9249)return _kv;",  # UNMASKED_VENDOR_WEBGL
+        "    if(pid===0x9246)return _kr;",  # UNMASKED_RENDERER_WEBGL
+        "    return _og.call(this,pid);",
+        "  };",
+        "};",
+        "try{_patchGetParam(WebGLRenderingContext.prototype);}catch(e){}",
+        "try{_patchGetParam(WebGL2RenderingContext.prototype);}catch(e){}",
+        "// 3. HardwareConcurrency を固定（_build_stealth_js と同じロジック）",
+        f"let _cores=[4,8,6,12,16][({fp['seed'] if fp else 42})%5];",
+        f"Object.defineProperty(navigator,'hardwareConcurrency',{{get:()=>{_hc_cores}}});",
+        "}catch(e){})()",
+    ]
+    return "\n".join(lines)
+
+
+def _load_browser_storage(session_file: str | None, account_key: str | None, log: Any) -> Any:
+    """セッション読み込み（ファイル → keyring 優先）を共通化。"""
+    storage: Any = None
+    if session_file and os.path.exists(session_file):
+        try:
+            with open(session_file, encoding="utf-8") as f:
+                storage = json.load(f)
+        except Exception as e:
+            if log:
+                log.write(f"WARN: session file read error: {e}")
+    if account_key:
+        from kensho.utils.keyring import load_session as _kr_load
+
+        kr_data = _kr_load(account_key)
+        if kr_data:
+            storage = kr_data
+            if log:
+                log.write("  [KEYRING] Session loaded from Credential Manager")
+    return storage
+
+
+def _asyncio_prepare_sync() -> None:
+    """sync Playwright 起動前の asyncio loop 残留対策。"""
+    try:
+        asyncio.get_running_loop()
+        # ループが回っている → sync Playwrightは使えない
+        asyncio.set_event_loop(asyncio.new_event_loop())
+    except RuntimeError:
+        pass
+    try:
+        loop = asyncio.get_running_loop()
+        if loop.is_running():
+            asyncio.set_event_loop(None)
+    except RuntimeError:
+        pass
+
+
+def _launch_patchright_chromium(
+    account_key: str | None,
+    session_file: str | None,
+    headless: bool,
+    log: Any,
+    proxy: str | None,
+) -> tuple[Any, Any, Any, Any]:
+    """patchright chromium-stealth でブラウザを起動（最優先経路）。
+
+    Firefox 固有の firefox_user_prefs（network.proxy.socks / general.useragent.override 等）は
+    Chromium では無効なため、proxy / UA / accept-language / locale / timezone は
+    new_context() 引数で設定し、WebGL vendor/renderer は launch-arg 相当を JS stealth で偽装する。
+    """
+    fp: dict[str, Any] | None = FINGERPRINTS.get(account_key) if account_key else None
+    if USE_PROXY and proxy is None and account_key in PROXY_MAP:
+        proxy = PROXY_MAP[account_key]
+
+    _asyncio_prepare_sync()
+    if _patchright_sync_playwright is None:
+        raise RuntimeError("patchright is required for chromium-stealth launch")
+    pw = _patchright_sync_playwright().start()
+    launch_args: list[str] = [
+        "--no-sandbox",
+        "--disable-dev-shm-usage",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--disable-background-networking",
+        "--disable-component-update",
+        "--disable-features=RendererCodeIntegrity",
+    ]
+    try:
+        browser = pw.chromium.launch(headless=headless, args=launch_args)
+    except Exception:
+        try:
+            pw.stop()
+        except Exception:
+            pass
+        raise
+    if log:
+        log.write("  Browser engine: patchright chromium-stealth")
+
+    storage: Any = _load_browser_storage(session_file, account_key, log)
+
+    ctx_kwargs: dict[str, Any] = {"storage_state": storage}
+    if proxy:
+        # Chromium は socks5h:// スキームを解釈できない（ERR_NO_SUPPORTED_PROXIES）。
+        # SOCKS5 は既定でリモートDNS解決されるため socks5:// へ正規化すれば同義。
+        _cproxy: str = proxy.replace("socks5h://", "socks5://").replace("socks5://", "socks5://")
+        ctx_kwargs["proxy"] = {"server": _cproxy}
+    if fp:
+        ctx_kwargs["user_agent"] = _chromium_ua(fp)
+        ctx_kwargs["locale"] = fp.get("locale", "ja-JP")
+        ctx_kwargs["timezone_id"] = fp.get("timezone_id", "Asia/Tokyo")
+        accept_lang = fp.get("accept_language", "ja-JP,ja;q=0.9,en-US;q=0.8")
+        ctx_kwargs["extra_http_headers"] = {"Accept-Language": accept_lang}
+        if "pixel_ratio" in fp:
+            ctx_kwargs["device_scale_factor"] = fp["pixel_ratio"]
+    if log:
+        log.write(f"  [CHROMIUM] UA: {ctx_kwargs.get('user_agent', 'default')}")
+        log.write(f"  [FINGERPRINT] {account_key}: seed={fp['seed'] if fp else None}")
+
+    ctx = browser.new_context(**ctx_kwargs)
+    page = ctx.new_page()
+    if fp:
+        set_viewport_for_fingerprint(page, fp)
+    else:
+        random_viewport(page)
+    page.set_default_timeout(60000)
+    page.add_init_script(_build_stealth_js(fp))
+    page.add_init_script(_build_chromium_stealth_js(fp))
+    if log:
+        log.write("DEBUG: patchright chromium page created")
+    return (pw, browser, ctx, page)
+
+
 def create_browser(
     account_key: str | None = None,
     session_file: str | None = None,
@@ -534,26 +756,41 @@ def create_browser(
     log: Any = None,
     proxy: str | None = None,
 ) -> tuple[Any, Any, Any, Any]:
-    """
-    invisible_playwright Firefox ブラウザを起動（C++レベル指紋偽装）。
-    account_key が指定されていれば、垢別固定シードで指紋を再現。
+    """ブラウザを起動する。
 
-    戻り値: (invisible_pw_instance, browser, context, page)
-    invisible_pw_instance は close_browser() で終了処理に使う。
-    """
+    実運用デフォルトは standard playwright Firefox（安全・確実、X の /status/ が 200 で成立）。
+    KENSHO_BROWSER=chromium を設定した場合のみ patchright chromium-stealth を利用し、
+    起動失敗時は Firefox へフォールバックする。
 
+    戻り値: (pw_instance, browser, context, page)
+    pw_instance は close_browser() で終了処理に使う（.stop()）。
+    """
     if log:
-        log.write(f"DEBUG: invisible_playwright Firefox starting (account={account_key})")
+        log.write(f"DEBUG: browser starting (account={account_key})")
 
-    # asyncio loop 残留対策: sync Playwright起動前にクリア
-    try:
-        asyncio.get_running_loop()
-        # ループが回っている → sync Playwrightは使えない
-        # （実際は発生しないはず。もし発生したらnew_event_loopで上書き）
-        asyncio.set_event_loop(asyncio.new_event_loop())
-    except RuntimeError:
-        # ループ無し → 正常。何もしない
-        pass
+    if _chromium_requested():
+        try:
+            return _launch_patchright_chromium(account_key, session_file, headless, log, proxy)
+        except Exception as e:
+            if log:
+                log.write(f"WARN: patchright chromium failed ({e}); fallback to std playwright Firefox")
+            # fallback: 標準 playwright Firefox（既存接続を温存）
+
+    return _launch_std_firefox(account_key, session_file, headless, log, proxy)
+
+
+def _launch_std_firefox(
+    account_key: str | None,
+    session_file: str | None,
+    headless: bool,
+    log: Any,
+    proxy: str | None,
+) -> tuple[Any, Any, Any, Any]:
+    """標準 playwright Firefox でブラウザを起動（フォールバック／従来経路）。"""
+    if log:
+        log.write(f"DEBUG: standard playwright Firefox starting (account={account_key})")
+
+    _asyncio_prepare_sync()
 
     # 垢別シードマッピング
     fp: dict[str, Any] | None = FINGERPRINTS.get(account_key) if account_key else None
@@ -623,14 +860,15 @@ def create_browser(
         extra_prefs["intl.accept_languages"] = accept_lang
 
     # ★ Playwright Sync API でブラウザ起動（標準Playwright Firefox）
-    try:
-        loop = asyncio.get_running_loop()
-        if loop.is_running():
-            asyncio.set_event_loop(None)
-    except RuntimeError:
-        pass
-    pw = _patchright_sync_playwright().start()
-    engine = "patchright" if _PATCHRIGHT_AVAILABLE else "playwright (std)"
+    #  ※ patchright の firefox driver は不安定のため常に標準 playwright を利用。
+    if _std_sync_playwright is None:
+        raise RuntimeError("standard playwright (playwright) is required for Firefox launch")
+    pw = _std_sync_playwright().start()
+    engine = (
+        "std playwright firefox (fallback from patchright chromium)"
+        if _PATCHRIGHT_AVAILABLE
+        else "playwright (std) firefox"
+    )
     if log:
         log.write(f"  Browser engine: {engine}")
     browser = pw.firefox.launch(
@@ -639,26 +877,10 @@ def create_browser(
     )
 
     if log:
-        log.write("DEBUG: Firefox browser launched (invisible_playwright)")
+        log.write("DEBUG: Firefox browser launched")
 
     # ── セッション読み込み（auth_token等）──
-    storage = None
-    if session_file and os.path.exists(session_file):
-        try:
-            with open(session_file, encoding="utf-8") as f:
-                storage = json.load(f)
-        except Exception as e:
-            if log:
-                log.write(f"WARN: session file read error: {e}")
-    # keyring優先
-    if account_key:
-        from kensho.utils.keyring import load_session as _kr_load
-
-        kr_data = _kr_load(account_key)
-        if kr_data:
-            storage = kr_data
-            if log:
-                log.write("  [KEYRING] Session loaded from Credential Manager")
+    storage: Any = _load_browser_storage(session_file, account_key, log)
 
     if fp and log:
         log.write(f"  [FINGERPRINT] {account_key}: seed={fp['seed']}")
@@ -673,12 +895,12 @@ def create_browser(
     if hasattr(ctx, "pages"):
         # BrowserContext の場合（profile_dir有り → persistent context）
         if log:
-            log.write("DEBUG: using InvisiblePlaywright BrowserContext directly")
+            log.write("DEBUG: using BrowserContext directly")
         pages = ctx.pages
     elif hasattr(ctx, "contexts"):
         # Browser の場合（profile_dir無し → new_context で作成）
         if log:
-            log.write("DEBUG: using InvisiblePlaywright Browser, creating context")
+            log.write("DEBUG: using Browser, creating context")
         contexts = ctx.contexts
         if contexts:
             ctx = contexts[0]
@@ -848,7 +1070,7 @@ def close_browser(ipw: Any, browser: Any, log: Any = None, label: str = "browser
     except Exception as _e:
         if log:
             log.write(f"[WARN] {label} ipw.__exit__失敗: {_e}")
-    # ★ 強化: 残存Firefox子プロセスをOSレベルでkill
+    # ★ 強化: 残存ブラウザ子プロセスをOSレベルでkill（Firefox + Chromium）
     try:
         import signal
 
@@ -856,9 +1078,17 @@ def close_browser(ipw: Any, browser: Any, log: Any = None, label: str = "browser
         for child in current.children(recursive=True):
             try:
                 name = child.name().lower()
-                if "firefox" in name or "geckodriver" in name or "plugin_container" in name:
+                if (
+                    "firefox" in name
+                    or "geckodriver" in name
+                    or "plugin_container" in name
+                    or "chrome" in name
+                    or "chromium" in name
+                    or "headless_shell" in name
+                    or "crashpad" in name
+                ):
                     if log:
-                        log.write(f"  [KILL] Firefox子プロセス: {child.pid} ({child.name()})")
+                        log.write(f"  [KILL] ブラウザ子プロセス: {child.pid} ({child.name()})")
                     child.send_signal(signal.SIGKILL)
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
