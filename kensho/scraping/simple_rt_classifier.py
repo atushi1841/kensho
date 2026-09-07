@@ -24,13 +24,14 @@ from typing import Any
 
 import httpx
 
-API_URL: str = "https://openrouter.ai/api/v1/chat/completions"
-# ★ 2026-08-28: OpenRouter無料モデル採用 — 実測比較:
-#   minimax/minimax-m3:free: 7/7正解・cost=0・非推論（788tokens）
-#   z-ai/glm-5.2:free: 429（一時レート制限）
-#   nvidia/nemotron-3-ultra-550b-a55b:free: 推論トークン枯渇で本文空
-#   deepseek-chat(公式): 7/7だが課金（最後の砦なので不採用）
-DEFAULT_MODEL: str = "minimax/minimax-m3:free"
+API_URL: str = "http://127.0.0.1:18020/v1/chat/completions"
+# ★ 2026-09-07: GALLERIA機ローカルqwen単一運用へ移行（ユーザー指示）。
+#   qwen3.8-27b は推論モデルなので chat_template_kwargs.enable_thinking=false で本文空返しを防止。
+#   ローカル死活時は OpenRouter 無料枠へ自動フォールバック（収集を止めない）。
+LOCAL_API_KEY: str = "dev-kensho-local-2026"
+DEFAULT_MODEL: str = "qwen3.8-27b"
+FALLBACK_API_URL: str = "https://openrouter.ai/api/v1/chat/completions"
+FALLBACK_MODEL: str = "minimax/minimax-m3:free"
 DEFAULT_BATCH_SIZE: int = 8
 
 # Hermes profile側 .env（本番実行時はここに OPENROUTER_API_KEY がある。2026-08-28）
@@ -104,6 +105,7 @@ def _call_api(
     model: str,
     max_tokens: int,
     timeout: int = 90,
+    url: str | None = None,
 ) -> str:
     payload: dict[str, Any] = {
         "model": model,
@@ -114,10 +116,14 @@ def _call_api(
         "temperature": 0.1,
         "max_tokens": max_tokens,
     }
+    if model == DEFAULT_MODEL:
+        # ローカルqwen（推論モデル）: thinking OFFで本文空返しを防止
+        payload["chat_template_kwargs"] = {"enable_thinking": False}
     # OpenRouter無料モデルは 429（レート制限）が頻発する → 指数バックオフで2回再試行
+    endpoint = url or API_URL
     for attempt in range(3):
         resp = httpx.post(
-            API_URL,
+            endpoint,
             headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
             json=payload,
             timeout=timeout,
@@ -129,6 +135,23 @@ def _call_api(
         break
     data = resp.json()
     return data["choices"][0]["message"].get("content", "") or ""
+
+
+def _call_api_with_fallback(
+    batch: list[dict[str, str]],
+    model: str,
+    max_tokens: int,
+    timeout: int = 300,
+) -> str:
+    """ローカルqwen優先。死活/エラー時だけOpenRouter無料枠へフォールバック（収集を止めない）。"""
+    try:
+        return _call_api(LOCAL_API_KEY, batch, model, max_tokens, timeout=timeout)
+    except Exception:
+        or_key = _load_api_key()
+        if not or_key:
+            raise
+        payload_model = FALLBACK_MODEL if model == DEFAULT_MODEL else model
+        return _call_api(or_key, batch, payload_model, max_tokens, timeout=timeout, url=FALLBACK_API_URL)
 
 
 def classify_texts(
@@ -151,19 +174,17 @@ def classify_texts(
         return {}
     if api_key is None:
         api_key = _load_api_key(project_root)
-    if not api_key:
-        if log:
-            log.write("[simple_rt] OPENROUTER_API_KEY なし → 全UNKNOWN（fail-open）")
-        return {pid: "UNKNOWN" for pid, _ in pairs}
+    # ローカルqwenはキー不要（LOCAL_API_KEY固定）。OpenRouterフォールバック用のキーが
+    # 無い場合もローカルqwenは動くので fail-open にはしない（2026-09-07 qwen単一運用）。
 
     result: dict[str, str] = {pid: "UNKNOWN" for pid, _ in pairs}
     for i in range(0, len(pairs), batch_size):
         batch = [{"id": pid, "text": txt[:800]} for pid, txt in pairs[i : i + batch_size]]
         try:
-            content = _call_api(api_key, batch, model, max_tokens=2000)
+            content = _call_api_with_fallback(batch, model, max_tokens=2000)
             # 推論トークン枯渇で本文空 → 上限を増やして1回だけ再試行
             if not content.strip():
-                content = _call_api(api_key, batch, model, max_tokens=4000)
+                content = _call_api_with_fallback(batch, model, max_tokens=4000)
             parsed = _extract_json(content) or []
             for item in parsed:
                 rid = item.get("id")

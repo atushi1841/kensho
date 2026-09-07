@@ -188,9 +188,9 @@ collection:
   #   従来のキーワード判定の見逃し（外部X連携・動画認証・入力・診断・写真/ハッシュタグ投稿・
   #   シェア等の追加操作が必要な案件をFLAG判定）を捕捉。fail-open（失敗時は従来挙動）。
   llm_classify: true
-  # ★ 2026-08-28: OpenRouter無料モデル(minimax-m3:free)採用 — cost=0・7/7正解・非推論
-  #   公式DeepSeekキーは最後の砦のため絶対に使わない
-  llm_model: "minimax/minimax-m3:free"
+  # ★ 2026-09-07: GALLERIA機ローカルqwen単一運用（ユーザー指示）。cost=0・thinking OFF。
+  #   ローカル死活時のみコード内フォールバックでOpenRouter無料枠(minimax-m3:free)へ自動退避。
+  llm_model: "qwen3.8-27b"
   llm_batch_size: 8
   # 収集を応募(orchestrator)から分離: 専用cron(crontab 0 3,9-21)で実行。
   # orchestratorの応募処理が収集の7.5分で圧迫されなくなる。

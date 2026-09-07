@@ -99,7 +99,8 @@ class TestClassifyTexts:
             api_key="sk-test",
         )
         assert res == {"t1": "FLAG", "t2": "OK"}
-        assert called and called[0]["model"] == "minimax/minimax-m3:free"
+        assert called and called[0]["model"] == "qwen3.8-27b"
+        assert called[0]["chat_template_kwargs"] == {"enable_thinking": False}
         assert called[0]["messages"][0]["role"] == "system"
 
     def test_fail_open_on_error(self, monkeypatch: Any) -> None:
@@ -127,9 +128,36 @@ class TestClassifyTexts:
         assert res == {"t1": "FLAG"}
         assert calls == [2000, 4000]
 
-    def test_no_api_key_fail_open(self, monkeypatch: Any) -> None:
-        res = classify_texts([("t1", "text")], api_key="")
+    def test_no_api_key_fail_open(self, monkeypatch: Any, tmp_path: Path) -> None:
+        """ローカルqwen死活 + OpenRouterキー無し → UNKNOWN（fail-open）。実ネットワーク禁止。"""
+
+        def fake_post(url: str, **kwargs: Any) -> _FakeResp:
+            raise RuntimeError("connection refused")
+
+        monkeypatch.setattr("kensho.scraping.simple_rt_classifier.httpx.post", fake_post)
+        monkeypatch.setattr(
+            "kensho.scraping.simple_rt_classifier.PROFILE_ENV_FILE",
+            tmp_path / "no_such_profile.env",
+        )
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+        res = classify_texts([("t1", "text")], project_root=tmp_path)
         assert res == {"t1": "UNKNOWN"}
+
+    def test_fallback_to_openrouter_when_local_dead(self, monkeypatch: Any) -> None:
+        """ローカルqwen失敗時だけOpenRouter無料枠へフォールバックする。"""
+        urls: list[str] = []
+
+        def fake_post(url: str, **kwargs: Any) -> _FakeResp:
+            urls.append(url)
+            if "18020" in url:
+                raise RuntimeError("local down")
+            return _ok_response([("t1", "OK")])
+
+        monkeypatch.setattr("kensho.scraping.simple_rt_classifier.httpx.post", fake_post)
+        monkeypatch.setattr("kensho.scraping.simple_rt_classifier._load_api_key", lambda *a, **k: "sk-or-test")
+        res = classify_texts([("t1", "text")])
+        assert res == {"t1": "OK"}
+        assert len(urls) == 2 and "openrouter" in urls[1]
 
 
 class TestClassifyCollectedItems:
