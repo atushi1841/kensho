@@ -71,6 +71,30 @@ T2/T3後は expected_account.txt を `sabotenJAL` に復元済み（cat で確�
 - `hermes cron list` の grep に 9689ecb38792 が出なかった（別プロファイル管理の可能性）。
   状態変更は行っていない。
 
+## verification_evidence
+
+t_cc939def の実測証跡（コマンド→出力引用）。
+
+```
+$ bash -n /home/atushi/.hermes/profiles/kensho-sweeps/scripts/reddit-gate-check.sh
+SYNTAX_OK
+$ timeout 150 bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/reddit-gate-check.sh   # T0 正常
+PASS G4: identity ok (u/sabotenJAL == expected u/sabotenJAL)
+GATES: FAIL (4 gate(s) blocked) -> DO NOT POST   # G1/G2/G3/G5のみ、exit 1
+$ timeout 120 bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/reddit-gate-check.sh   # T1 expected_account.txt 不在
+FAIL G4: expected_account.txt missing - cannot bind identity, posting forbidden
+$ echo hbomax > expected_account.txt && timeout 120 bash .../reddit-gate-check.sh             # T2 不一致
+FAIL G4: identity mismatch (WRONGACCOUNT sabotenJAL expected=hbomax) - cookie belongs to another account, posting forbidden
+$ timeout 120 bash /tmp/gate_t3.sh                                                            # T3 一時的失敗再現(URL置換複製)
+FAIL G4: network transient after 3 tries (TRANSIENT URLError ) - NOT a cookie problem, re-run later
+$ cat expected_account.txt                                                                    # 復元確認
+sabotenJAL
+$ cd /home/atushi/.hermes/profiles/kensho-sweeps && git commit -m "fix(reddit-gate): v50 ..."
+[master 2543621] fix(reddit-gate): v50 G4 retry+error classification (TRANSIENT vs AUTHFAIL vs WRONGACCOUNT), remove hbomax hardcoded fallback (t_cc939def)
+$ git status --porcelain scripts/ | wc -l
+0
+```
+
 ## 5. Reflexion
 
 ```json
