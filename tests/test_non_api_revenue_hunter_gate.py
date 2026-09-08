@@ -33,9 +33,15 @@ def _load_hunter():
 hunter = _load_hunter()
 
 
+def _hi_matches(item):
+    """classify_seed 互換の高スコア一致（テスト用）."""
+    return [{"category": "アプリ/ツール", "weight": "高", "has_automation_keyword": True}]
+
+
 # ---------------------------------------------------------------------------
 # helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_db(tmpdir: str) -> str:
     """kanban tasks テーブルを持つ最小 DB を作る."""
@@ -51,8 +57,7 @@ def _make_db(tmpdir: str) -> str:
 
 def _insert(con, tid, title, body, status):
     con.execute(
-        "INSERT INTO tasks (id, title, body, status, assignee, created_by, created_at)"
-        " VALUES (?,?,?,?,?,?,?)",
+        "INSERT INTO tasks (id, title, body, status, assignee, created_by, created_at) VALUES (?,?,?,?,?,?,?)",
         (tid, title, body, status, "kensho-revenue-worker", "kensho-non-api-revenue-hunter", 1),
     )
 
@@ -60,6 +65,7 @@ def _insert(con, tid, title, body, status):
 # ---------------------------------------------------------------------------
 # 要件3: HN item_id 抽出と全ステータス dedup (kanban_norm)
 # ---------------------------------------------------------------------------
+
 
 class TestHnItemIdDedup:
     def test_extract_from_hn_url(self):
@@ -117,6 +123,7 @@ class TestHnItemIdDedup:
 # 要件1: score / monetization ゲート
 # ---------------------------------------------------------------------------
 
+
 class TestQualityGate:
     def _item(self, score=10, text="a paid SaaS with API and pricing", title="Show HN: Thing"):
         return {"title": title, "text": text, "score": score}
@@ -159,6 +166,7 @@ class TestQualityGate:
 # ---------------------------------------------------------------------------
 # 要件3 (hunter 側): create_kanban_task の hnid-skip
 # ---------------------------------------------------------------------------
+
 
 class TestCreateKanbanTaskHnidSkip:
     def test_hnid_skip_before_title_dedup(self, monkeypatch):
@@ -207,9 +215,7 @@ class TestCreateKanbanTaskHnidSkip:
 
         monkeypatch.setattr(hunter, "_is_duplicate_hn_id", boom)
         monkeypatch.setattr(hunter, "_kanban_is_duplicate", lambda t, **kw: (True, "t_title_dup"))
-        tid, status = hunter.create_kanban_task(
-            "t", "body", "高", url="https://news.ycombinator.com/item?id=111"
-        )
+        tid, status = hunter.create_kanban_task("t", "body", "高", url="https://news.ycombinator.com/item?id=111")
         assert tid is None and "(dedup-skip)" in status
 
     def test_weight_low_still_skipped_first(self, monkeypatch):
@@ -224,6 +230,7 @@ class TestCreateKanbanTaskHnidSkip:
 # ---------------------------------------------------------------------------
 # メインループ統合: ゲート通過は最大3件、score<3 は0件
 # ---------------------------------------------------------------------------
+
 
 class TestMainLoopIntegration:
     def _seed(self, n_high=10, score=5, monetized=True):
@@ -246,7 +253,7 @@ class TestMainLoopIntegration:
         created = []
 
         monkeypatch.setattr(hunter, "SOURCES", [])
-        monkeypatch.setattr(hunter, "classify_seed", lambda item: [{"category": "アプリ/ツール", "weight": "高", "has_automation_keyword": True}])
+        monkeypatch.setattr(hunter, "classify_seed", _hi_matches)
 
         # fetch 系を差し替えて1ソースから10件返す
         def fake_fetch_hn_list(url, limit):
@@ -289,7 +296,7 @@ class TestMainLoopIntegration:
             [{"name": "HN", "url": "u", "kind": "hn_ids", "limit": 30, "weight": "高", "rationale": "r"}],
         )
         monkeypatch.setattr(hunter, "fetch_hn_list", lambda url, limit: [dict(s[1]) for s in seeds])
-        monkeypatch.setattr(hunter, "classify_seed", lambda item: [{"category": "アプリ/ツール", "weight": "高", "has_automation_keyword": True}])
+        monkeypatch.setattr(hunter, "classify_seed", _hi_matches)
         monkeypatch.setattr(hunter, "_is_duplicate_hn_id", lambda hid, **k: (False, ""))
         monkeypatch.setattr(hunter, "_kanban_is_duplicate", lambda t, **k: (False, ""))
 
@@ -318,7 +325,7 @@ class TestMainLoopIntegration:
             [{"name": "HN", "url": "u", "kind": "hn_ids", "limit": 30, "weight": "高", "rationale": "r"}],
         )
         monkeypatch.setattr(hunter, "fetch_hn_list", lambda url, limit: [dict(s[1]) for s in seeds])
-        monkeypatch.setattr(hunter, "classify_seed", lambda item: [{"category": "アプリ/ツール", "weight": "高", "has_automation_keyword": True}])
+        monkeypatch.setattr(hunter, "classify_seed", _hi_matches)
         monkeypatch.setattr(hunter, "_is_duplicate_hn_id", lambda hid, **k: (False, ""))
         monkeypatch.setattr(hunter, "_kanban_is_duplicate", lambda t, **k: (False, ""))
 

@@ -51,12 +51,10 @@ WORKDIR = Path("/mnt/d/Project2/kensho")
 # kanban_hn_cleanup.py と共有することで、Run を跨いだ重複作成を防ぐ。
 sys.path.insert(0, str(WORKDIR / "scripts"))
 try:
-    from kanban_norm import ALL_STATUSES  # type: ignore
     from kanban_norm import dedup_key as _dedup_key  # type: ignore
     from kanban_norm import extract_hn_item_id as _extract_hn_item_id  # type: ignore
     from kanban_norm import is_duplicate as _kanban_is_duplicate  # type: ignore
     from kanban_norm import is_duplicate_hn_id as _is_duplicate_hn_id  # type: ignore
-    from kanban_norm import norm_title as _norm_title  # type: ignore
 except ImportError as _e:  # pragma: no cover - import 失敗は致命的
     sys.stderr.write(f"[hunter] kanban_norm import error: {_e}\n")
     raise
@@ -65,8 +63,8 @@ except ImportError as _e:  # pragma: no cover - import 失敗は致命的
 #   低シグナル Show HN の一括投入が loop_health を 95→70 に低下させたため、
 #   (1) score ゲート (2) monetization シグナル ゲート (3) 1実行あたり投入上限
 #   (4) HN item_id 主キー dedup を追加する。
-MIN_HN_SCORE = 3            # score < MIN_HN_SCORE は低シグナルとしてスキップ (要件1: score<3)
-MAX_KANBAN_PER_RUN = 3      # 1実行で新規作成する ready タスクの上限 (投入ペース制御)
+MIN_HN_SCORE = 3  # score < MIN_HN_SCORE は低シグナルとしてスキップ (要件1: score<3)
+MAX_KANBAN_PER_RUN = 3  # 1実行で新規作成する ready タスクの上限 (投入ペース制御)
 
 # monetization モデルを示す語 (本文/タイトルに無ければスキップ)。
 # 有料/データ販売/API化/サブスク/ストア販売/手数料/アフィリエイト 等。
@@ -606,8 +604,12 @@ def main():
             gate_stats[gate_key] += 1
             seen_urls.add(url)
             kanban_added.append({
-                "title": item.get("title", ""), "url": url, "category": top["category"],
-                "weight": top["weight"], "task_id": None, "status": gate_msg,
+                "title": item.get("title", ""),
+                "url": url,
+                "category": top["category"],
+                "weight": top["weight"],
+                "task_id": None,
+                "status": gate_msg,
             })
             continue
         seen_urls.add(url)
@@ -655,6 +657,11 @@ def main():
     ok_create_count = sum(1 for k in kanban_added if k["task_id"] and not k["task_id"].startswith("("))
 
     # レポート生成
+    gate_breakdown = (
+        f"score<{MIN_HN_SCORE}: {gate_stats['score_low']} / "
+        f"monetization無: {gate_stats['no_monetization']} / "
+        f"上限到達: {gate_stats['cap_reached']}"
+    )
     report_md = f"""# 非API自動収益ハンター レポート
 |**実行日時**: {started.strftime("%Y-%m-%d %H:%M JST")}
 |**対象ジョブ**: {JOB_ID}
@@ -670,7 +677,7 @@ def main():
 | Kanban 新規投入 | {ok_create_count} (上限 {MAX_KANBAN_PER_RUN}) |
 | Kanban dedup-skip (title) | {dedup_skip_count} |
 | Kanban hnid-skip (HN item_id) | {hnid_skip_count} |
-| 品質ゲートスキップ | {gate_skip_count} (score<{MIN_HN_SCORE}: {gate_stats["score_low"]} / monetization無: {gate_stats["no_monetization"]} / 上限到達: {gate_stats["cap_reached"]}) |
+| 品質ゲートスキップ | {gate_skip_count} ({gate_breakdown}) |
 
 ## ソース別取得数
 
