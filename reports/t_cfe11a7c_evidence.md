@@ -59,6 +59,22 @@ $ python3 scripts/kensho_revenue_dashboard.py && grep -o "売上データ更新[
 - last_success_at within 24h: MET (19:22 today).
 - Freshness label shown in report: MET.
 
+## Re-verification (attempt 2, run 302, 2026-09-08 19:45)
+$ timeout 300 python3 scripts/kensho_revenue_collect.py 2>&1 | grep -cE 'timeout-mark|fail-mark'
+=> 0   (run 302 #1)
+$ timeout 300 python3 scripts/kensho_revenue_collect.py 2>&1 | grep -cE 'timeout-mark|fail-mark'
+=> 0   (run 302 #2, consecutive)
+$ python3 scripts/kensho_revenue_dashboard.py && grep -o '売上データ更新[^<]*' revenue-status.html
+=> ✓ 生成完了; 売上データ更新: 0時間前
+$ grep -n last_success_at data/gumroad_state.json
+=> "last_success_at": "2026-09-08T19:46:25" (login_ok=true, sales_page_ok=true)
+$ python3 -m pytest -q --no-cov
+=> 469 passed, 5 skipped in 36.58s
+$ git commit -F /tmp/t_cfe11a7c_commit_msg.txt  (pre-commit ruff check/format Passed)
+=> 589a4d5 fix(revenue): Gumroad CDP collect timeout — Windows-side auto-launch + split timeouts + freshness stamp (t_cfe11a7c)
+$ bash .../kanban_done_guard.py t_cfe11a7c --output-dirs /mnt/d/Project2/kensho/reports
+=> PASS (a/b/c/d all True, citations=6)
+
 ## Out of scope / notes
 - No Gumroad API credential exists in .env/config (CDP remains the collection path).
 - Generated data files (revenue-daily.json, revenue-status.html, gumroad_state.json)
