@@ -35,6 +35,32 @@ from kensho.scraping.sources import (
 )
 from kensho.utils.backup import safe_save_json, try_recover_collected, verify_collected_integrity
 
+# ── deadline 空アイテムの snowflake 年齢パージ（critic v67）──
+#   cp.meikan は一覧ページから期限を抽出できないため deadline が空のまま collected.json に
+#   滞留する。_is_expired(deadline="") は False を返すため期限切れ除去をすり抜け、収集のたびに
+#   再生成されて backfill の成果を毎朝リセットしていた。tweet_id(snowflake)から生成時刻を
+#   復元し、_STALE_TWEET_DAYS 超のものを期限切れとして除去する。
+_STALE_TWEET_DAYS: int = 14
+_TWITTER_EPOCH_MS: int = 1288834974657
+
+
+def _snowflake_ts_ms(tweet_id: Any) -> int | None:
+    """tweet_id（Twitter snowflake）から生成時刻(ms)を復元。非数値・欠落は None。"""
+    try:
+        return (int(tweet_id) >> 22) + _TWITTER_EPOCH_MS
+    except (ValueError, TypeError):
+        return None
+
+
+def _is_stale_empty_deadline(item: dict[str, Any], now: datetime) -> bool:
+    """deadline 空かつ tweet 生成から _STALE_TWEET_DAYS 超なら True（snowflake 年齢パージ）。"""
+    if item.get("deadline"):
+        return False
+    ts_ms = _snowflake_ts_ms(item.get("tweet_id", ""))
+    if ts_ms is None:
+        return False
+    return (now.timestamp() * 1000 - ts_ms) > _STALE_TWEET_DAYS * 86400 * 1000
+
 
 def _normalize_x_url(xu: str) -> str:
     """x_url を正規化して同一ツイートの表記揺れを吸収する。
@@ -468,7 +494,13 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
 
     _now: datetime = datetime.now()
     before: int = len(merged)
-    merged = [item for item in merged if not _is_expired(item.get("deadline", ""), _now)]
+    # _is_expired: deadline 日付ベースの除去。_is_stale_empty_deadline: deadline 空を
+    # snowflake(tweet_id) 年齢で除去（critic v67、cp.meikan 対策）。
+    merged = [
+        item
+        for item in merged
+        if not (_is_expired(item.get("deadline", ""), _now) or _is_stale_empty_deadline(item, _now))
+    ]
     purged: int = before - len(merged)
     if purged > 0:
         out(f"  期限切れ除去: {purged}件")

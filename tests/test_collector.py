@@ -15,11 +15,20 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from kensho.scraping.collector import (
     _dedup_x_url_merge,
     _is_expired,
+    _is_stale_empty_deadline,
     _merge_applied_from_disk,
     _normalize_x_url,
+    _snowflake_ts_ms,
     extract_deadline_and_winners,
     is_x_url,
 )
+
+_TWITTER_EPOCH_MS = 1288834974657
+
+
+def _tweet_id_for(dt: datetime) -> int:
+    """snowflake tweet_id を生成時刻から合成（_snowflake_ts_ms の逆算）。"""
+    return int(int(dt.timestamp() * 1000) - _TWITTER_EPOCH_MS) << 22
 
 
 class TestIsExpired:
@@ -55,6 +64,35 @@ class TestIsExpired:
         assert _is_expired("2026-06-01", now) is False
         # 未来は応募可能
         assert _is_expired("2026-07-01", now) is False
+
+
+class TestSnowflakeStalePurge:
+    """_is_stale_empty_deadline / _snowflake_ts_ms: deadline 空を snowflake 年齢で期限切れ判定（critic v67）"""
+
+    def test_snowflake_ts_roundtrip(self) -> None:
+        dt = datetime(2026, 9, 1, 12, 0, 0)
+        assert _snowflake_ts_ms(_tweet_id_for(dt)) == int(dt.timestamp() * 1000)
+
+    def test_stale_empty_deadline_true(self) -> None:
+        now = datetime.now()
+        item = {"deadline": "", "tweet_id": str(_tweet_id_for(now - timedelta(days=20)))}
+        assert _is_stale_empty_deadline(item, now) is True
+
+    def test_recent_empty_deadline_false(self) -> None:
+        now = datetime.now()
+        item = {"deadline": "", "tweet_id": str(_tweet_id_for(now - timedelta(days=1)))}
+        assert _is_stale_empty_deadline(item, now) is False
+
+    def test_deadline_present_never_stale(self) -> None:
+        # deadline があるアイテムは deadline ベース除去(_is_expired)に委譲し、ここでは処理しない
+        now = datetime.now()
+        item = {"deadline": "2099-01-01", "tweet_id": str(_tweet_id_for(now - timedelta(days=40)))}
+        assert _is_stale_empty_deadline(item, now) is False
+
+    def test_non_numeric_tweet_id_false(self) -> None:
+        now = datetime.now()
+        assert _is_stale_empty_deadline({"deadline": "", "tweet_id": "abc"}, now) is False
+        assert _is_stale_empty_deadline({"deadline": ""}, now) is False
 
 
 class TestIsXUrl:
