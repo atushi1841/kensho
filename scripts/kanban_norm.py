@@ -73,6 +73,31 @@ def norm_title(title: str) -> str:
 # アクティブ状態 = 未完了
 ACTIVE_STATUSES = ("ready", "todo", "running", "blocked", "triage")
 
+# 全状態 (Stripe-style idempotency guard 用):
+# hunter が毎晩同じ案件を再作成するのは「done/archived 済み案件が dedup 対象外」
+# だったため。done だけでなく archived も含め、既に解決済み・アーカイブ済みの
+# 案件でも idempotency キーが一致したら再作成せず既存タスクを返す。
+ALL_STATUSES = ACTIVE_STATUSES + ("done", "archived", "scheduled")
+
+
+def dedup_key(title: str, organizer: str = "", condition: str = "") -> str:
+    """title + organizer + condition から決定的な idempotency キーを生成する。
+
+    Stripe の idempotency パターンに倣い、同一案件を表す要素を連結して
+    正規化したキーを返す。agent 側でキー比較し、全ステータス(done/archived 含む)に
+    一致する既存タスクがあれば再作成せず返すための判定材料。
+
+    ルール:
+      - title は norm_title で正規化 (カテゴリ/Show HN プレフィクス除去・小文字統一)
+      - organizer/condition は小文字化・連続空白圧縮のみ(誤マージを避け過剰正規化しない)
+      - '|' 区切り。空要素は含めない
+    """
+    parts = [norm_title(title or "")]
+    for extra in (organizer or "", condition or ""):
+        if extra:
+            parts.append(re.sub(r"\s+", " ", extra.strip()).lower())
+    return "|".join(p for p in parts if p)
+
 
 def fetch_existing_normalized_titles(
     db_path: Path | str | None = None,
@@ -117,10 +142,16 @@ def is_duplicate(
     db_path: Path | str | None = None,
     statuses: Iterable[str] = ACTIVE_STATUSES,
     title_like: str = "%show hn%",
+    include_all_statuses: bool = False,
 ) -> tuple[bool, str]:
     """title を正規化し、kanban DB に同キー(同一記事)が既にあれば (True, task_id) を返す。
     無ければ (False, "")。DB 未作成なら (False, "")。
+
+    include_all_statuses=True のときは ALL_STATUSES (done/archived/scheduled 含む) を
+    statuses 引数より優先し、解決済み・アーカイブ済み案件に対しても重複判定を行う
+    (Stripe-style idempotency: hunter の毎晩の再作成防止)。
     """
+    statuses = ALL_STATUSES if include_all_statuses else tuple(statuses)
     key = norm_title(title)
     if not key:
         return False, ""
