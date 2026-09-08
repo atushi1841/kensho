@@ -1,0 +1,114 @@
+[
+ {
+  "name": "mandarake-surugaya-mcp",
+  "title": "Japan Suruga-ya Prices — Listings & Market Data",
+  "users": 1,
+  "runs": 1,
+  "last_run": "2026-07-27",
+  "is_public": true
+ },
+ {
+  "name": "rakuten-japan-mcp",
+  "title": "Japan Rakuten Ichiba Prices — Listings & Market Data",
+  "users": 1,
+  "runs": 7,
+  "last_run": "2026-07-29",
+  "is_public": true
+ },
+ {
+  "name": "kitamura-japan-used-camera-scraper",
+  "title": "Japan Kitamura Prices — Listings & Market Data",
+  "users": 1,
+  "runs": 32,
+  "last_run": "2026-09-07",
+  "is_public": true
+ },
+ {
+  "name": "jackroad-used-watch-scraper",
+  "title": "Japan watches Prices — Listings & Market Data",
+  "users": 1,
+  "runs": 32,
+  "last_run": "2026-09-07",
+  "is_public": true
+ },
+ {
+  "name": "komehyo-japan-brand-scraper",
+  "title": "Japan Komehyo Prices — Listings & Market Data",
+  "users": 1,
+  "runs": 43,
+  "last_run": "2026-09-07",
+  "is_public": true
+ },
+ {
+  "name": "iosys-japan-used-smartphone-scraper",
+  "title": "Japan IOSYS Prices — Listings & Market Data",
+  "users": 1,
+  "runs": 39,
+  "last_run": "2026-09-07",
+  "is_public": true
+ },
+ {
+  "name": "japan-market-mcp",
+  "title": "Japan MCP Prices — Listings & Market Data",
+  "users": 1,
+  "runs": 591,
+  "last_run": "2026-09-08",
+  "is_public": true
+ },
+ {
+  "name": "rakuten-debug-fetch",
+  "title": "Japan Japan market data Prices — Listings & Market Data",
+  "users": 1,
+  "runs": 1,
+  "last_run": "2026-08-13",
+  "is_public": false
+ },
+ {
+  "name": "tabelog-debug-fetch",
+  "title": "Japan Japan market data Prices — Listings & Market Data",
+  "users": 1,
+  "runs": 1,
+  "last_run": "2026-08-13",
+  "is_public": false
+ },
+ {
+  "name": "mini-actor-test-0903",
+  "title": "Japan Japan market data Prices — Listings & Market Data",
+  "users": 1,
+  "runs": 1,
+  "last_run": "2026-09-02",
+  "is_public": false
+ },
+ {
+  "name": "tackleberry-scraper",
+  "title": "Tackleberry B-net Japan Fishing Tackle Scraper",
+  "users": 2,
+  "runs": 2,
+  "last_run": "2026-09-08",
+  "is_public": true
+ },
+ {
+  "name": "amazon-paapi-jp-actor",
+  "title": "Amazon PA-API v5 Search (JP / US / UK / DE)",
+  "users": 1,
+  "runs": 0,
+  "last_run": "None",
+  "is_public": true
+ },
+ {
+  "name": "japan-jma-weather",
+  "title": "Japan JMA Weather Data Scraper",
+  "users": 1,
+  "runs": 9,
+  "last_run": "2026-09-05",
+  "is_public": true
+ },
+ {
+  "name": "japan-crowdfunding-trend-feed",
+  "title": "Japan Crowdfunding Trend Feed - CAMPFIRE backed Projects",
+  "users": 2,
+  "runs": 2,
+  "last_run": "2026-09-08",
+  "is_public": true
+ }
+]
