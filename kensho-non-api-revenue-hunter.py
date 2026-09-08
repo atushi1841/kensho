@@ -53,11 +53,33 @@ sys.path.insert(0, str(WORKDIR / "scripts"))
 try:
     from kanban_norm import ALL_STATUSES  # type: ignore
     from kanban_norm import dedup_key as _dedup_key  # type: ignore
+    from kanban_norm import extract_hn_item_id as _extract_hn_item_id  # type: ignore
     from kanban_norm import is_duplicate as _kanban_is_duplicate  # type: ignore
+    from kanban_norm import is_duplicate_hn_id as _is_duplicate_hn_id  # type: ignore
     from kanban_norm import norm_title as _norm_title  # type: ignore
 except ImportError as _e:  # pragma: no cover - import 失敗は致命的
     sys.stderr.write(f"[hunter] kanban_norm import error: {_e}\n")
     raise
+
+# 品質ゲート (t_2e20f1ef critic_proposal v58):
+#   低シグナル Show HN の一括投入が loop_health を 95→70 に低下させたため、
+#   (1) score ゲート (2) monetization シグナル ゲート (3) 1実行あたり投入上限
+#   (4) HN item_id 主キー dedup を追加する。
+MIN_HN_SCORE = 3            # score < MIN_HN_SCORE は低シグナルとしてスキップ (要件1: score<3)
+MAX_KANBAN_PER_RUN = 3      # 1実行で新規作成する ready タスクの上限 (投入ペース制御)
+
+# monetization モデルを示す語 (本文/タイトルに無ければスキップ)。
+# 有料/データ販売/API化/サブスク/ストア販売/手数料/アフィリエイト 等。
+MONETIZATION_PATTERNS = [
+    r"\b(paid|pricing|price|premium|subscription|subscripti[onoe]d?|saas|billed|billing)\b",
+    r"\b(mrr|arr|revenue|monetiz\w*|income|profit|sales|sell|selling|sold)\b",
+    r"\b(api|sdk|webhook|endpoint)\b",
+    r"\b(datan?set|dataset|data sale|download|dl sale|digital download)\b",
+    r"\b(affiliate|sponsor|donation|tipjar|patron|crowdfund\w*)\b",
+    r"\b(store|marketplace|steam|itch\.io|app store|play store|producthunt launch)\b",
+    r"\b(freemium|tier|license|licensing|enterprise|seat)\b",
+    r"(有料|販売|収益|マネタイズ|サブスク|課金|価格|手数料|アフィリ|データ販売|api化)",
+]
 
 # 探索ソース (RSS/JSON API で軽量に取得できるもの中心)
 SOURCES = [
@@ -387,6 +409,30 @@ def fetch_rss(url, limit):
     return items
 
 
+def has_monetization_signal(item):
+    """本文/タイトルに monetization モデル (有料/データ販売/API化等) の語があるか。
+    品質ゲート要件1 (t_2e20f1ef v58)。"""
+    text = f"{item.get('title', '')} {item.get('text', '')}".lower()
+    return any(re.search(pat, text, re.IGNORECASE) for pat in MONETIZATION_PATTERNS)
+
+
+def quality_gate(item, created_count):
+    """1件の候補に対する品質ゲート判定 (t_2e20f1ef critic_proposal v58)。
+    通過なら None、そうでなければ (gate_key, status_message) を返す。
+      要件1: score < MIN_HN_SCORE は低シグナルとしてスキップ
+      要件1: monetization モデル語が本文/タイトルに無ければスキップ
+      要件2: 1実行あたり新規投入 created_count >= MAX_KANBAN_PER_RUN でスキップ
+    """
+    score = item.get("score", 0) or 0
+    if score < MIN_HN_SCORE:
+        return ("score_low", f"(gate) score={score} < {MIN_HN_SCORE} でスキップ")
+    if not has_monetization_signal(item):
+        return ("no_monetization", "(gate) monetization シグナル無しでスキップ")
+    if created_count >= MAX_KANBAN_PER_RUN:
+        return ("cap_reached", f"(gate) 投入上限 {MAX_KANBAN_PER_RUN} 件到達のためスキップ")
+    return None
+
+
 def classify_seed(item):
     """記事/投稿が「自動収益の種」かどうか判定"""
     text = f"{item.get('title', '')} {item.get('text', '')}"
@@ -415,19 +461,30 @@ def classify_seed(item):
     return matches
 
 
-def create_kanban_task(title, body, weight, url=""):
+def create_kanban_task(title, body, weight, url="", hn_id=""):
     """重要度中以上なら kanban に投入。
     Run 横断 dedup:
-      1) 渡された title を scripts/kanban_norm.norm_title で正規化し、
-         kanban DB のアクティブ状態タスクと照合。
-         既に同一キーがあれば (None, "dedup-skip:<existing_task_id>") を返し、
-         何も作らない。report 側で "(dedup-skip)" と記録される。
+      0) HN item_id 主キー照合 (t_2e20f1ef v58 要件3)。item の hn_url / url から
+         抽出した news.ycombinator.com/item?id=<digits> を tasks.body と突き合わせ、
+         done/archived を含む全ステータスに一致すれば (None, "hnid-skip:<existing>")。
+         タイトルの 60 字切り詰め・表記揺れに強い決定論的キー。
+      1) title を scripts/kanban_norm.norm_title で正規化し、
+         kanban DB の全ステータスと照合。同一キーがあれば (None, "dedup-skip:<existing>")。
       2) 重複が無ければ hermes kanban create を実行。
          失敗しても例外で timer を止めない(要件: kanban timer 生成を妨げない)。
     戻り値: (task_id_or_None, status_string)
     """
     if weight == "低":
         return None, "weight=低、見送り"
+    # 0) HN item_id 主キー dedup (全ステータス照合、done/archived 含む)
+    hn_id = hn_id or _extract_hn_item_id(url) or _extract_hn_item_id(body)
+    if hn_id:
+        try:
+            is_dup, existing = _is_duplicate_hn_id(hn_id)
+            if is_dup:
+                return None, f"(hnid-skip) 既存 {existing} (hn_id={hn_id})"
+        except Exception as e:  # DB 障害で dedup 失敗時は後段の title dedup に委ねる
+            sys.stderr.write(f"[hunter] hn_id dedup check error (continue): {e}\n")
     # 1) Run 横断 dedup (全カテゴリ対象。title_like=None で全文字照合、
     #    include_all_statuses=True で done/archived を含む全ステータスと照合=
     #    「workerが実装不能判定でdone/archived済みの案件をHN掲載期間中に
@@ -527,14 +584,31 @@ def main():
     all_seeds.sort(key=lambda x: (weight_order[x[2][0]["weight"]], -x[1].get("score", 0)))
 
     # 上位を kanban に投入 (重複防止: 同一URLは1度だけ)
+    # 品質ゲート (t_2e20f1ef critic_proposal v58):
+    #   要件1: score < MIN_HN_SCORE または monetization シグナル無しはスキップ
+    #   要件2: 1実行の新規投入は MAX_KANBAN_PER_RUN 件で上限 (投入ペース制御)
+    #   要件3: HN item_id 主キー dedup は create_kanban_task 内 (hnid-skip)
     kanban_added = []
     seen_urls = set()
+    gate_stats = {"score_low": 0, "no_monetization": 0, "cap_reached": 0, "hnid_skip": 0}
+    created_count = 0
     for src, item, matches in all_seeds:
         url = item.get("url", "")
         if not url or url in seen_urls:
             continue
         top = matches[0]
         if top["weight"] == "低":
+            continue
+        # --- 品質ゲート (要件1: score / monetization、要件2: 投入上限) ---
+        gate = quality_gate(item, created_count)
+        if gate is not None:
+            gate_key, gate_msg = gate
+            gate_stats[gate_key] += 1
+            seen_urls.add(url)
+            kanban_added.append({
+                "title": item.get("title", ""), "url": url, "category": top["category"],
+                "weight": top["weight"], "task_id": None, "status": gate_msg,
+            })
             continue
         seen_urls.add(url)
         body = (
@@ -558,7 +632,13 @@ def main():
             f"[非API自動収益] {top['category']}: {item.get('title', '')[:60]}",
             body,
             top["weight"],
+            url=url,
+            hn_id=_extract_hn_item_id(item.get("hn_url", "")) or _extract_hn_item_id(url),
         )
+        if task_id:
+            created_count += 1
+        if "(hnid-skip)" in status:
+            gate_stats["hnid_skip"] += 1
         kanban_added.append({
             "title": item.get("title", ""),
             "url": url,
@@ -570,6 +650,8 @@ def main():
 
     # dedup-skip 件数(参考、レポート出力用)
     dedup_skip_count = sum(1 for k in kanban_added if "(dedup-skip)" in k.get("status", ""))
+    hnid_skip_count = gate_stats["hnid_skip"]
+    gate_skip_count = gate_stats["score_low"] + gate_stats["no_monetization"] + gate_stats["cap_reached"]
     ok_create_count = sum(1 for k in kanban_added if k["task_id"] and not k["task_id"].startswith("("))
 
     # レポート生成
@@ -585,8 +667,10 @@ def main():
 | 巡回ソース数 | {len(SOURCES)} |
 | 取得アイテム合計 | {sum(s["fetched"] for s in source_summaries)} |
 | 自動収益の「種」発見 | {len(all_seeds)} |
-| Kanban 新規投入 | {ok_create_count} |
-| Kanban dedup-skip | {dedup_skip_count} |
+| Kanban 新規投入 | {ok_create_count} (上限 {MAX_KANBAN_PER_RUN}) |
+| Kanban dedup-skip (title) | {dedup_skip_count} |
+| Kanban hnid-skip (HN item_id) | {hnid_skip_count} |
+| 品質ゲートスキップ | {gate_skip_count} (score<{MIN_HN_SCORE}: {gate_stats["score_low"]} / monetization無: {gate_stats["no_monetization"]} / 上限到達: {gate_stats["cap_reached"]}) |
 
 ## ソース別取得数
 
@@ -609,8 +693,14 @@ def main():
     report_md += "\n## Kanban 投入履歴\n\n"
     if kanban_added:
         for k in kanban_added:
-            # dedup-skip / 失敗 / ok を識別しやすくする
-            if "(dedup-skip)" in k["status"]:
+            # gate / hnid-skip / dedup-skip / 失敗 / ok を識別しやすくする
+            if "(gate)" in k["status"]:
+                marker = "(gate)"
+                tid_disp = "skip"
+            elif "(hnid-skip)" in k["status"]:
+                marker = "(hnid-skip)"
+                tid_disp = "skip"
+            elif "(dedup-skip)" in k["status"]:
                 marker = "(dedup-skip)"
                 tid_disp = "skip"
             elif k["task_id"]:
@@ -623,12 +713,18 @@ def main():
     else:
         report_md += "- (今回は投入なし — 重要度「中」以上の新規種が見つからなかった)\n"
 
-    report_md += """
+    report_md += f"""
 ## 評価基準
 - **重要度「高」**: Kensho 既存スキル(スクレイピング/CDP/Selenium/Cron/Gemini API) で
   1週間以内に MVP 可能、かつ市場需要が観測できる
 - **重要度「中」: 1つ以上の不確実要素あり (市場規模未確認 / 法務要確認 / 技術難易度高)
 - **重要度「低」**: アイデア倒れに近い / Kenshoで自動化しても旨味が薄い
+
+## 品質ゲート (t_2e20f1ef v58)
+- score < {MIN_HN_SCORE} は低シグナルとしてスキップ
+- monetization モデル (有料/データ販売/API化等) の語が本文/タイトルに無ければスキップ
+- 1実行あたり新規投入は {MAX_KANBAN_PER_RUN} 件まで (投入ペース制御)
+- HN item_id 主キーで done/archived 含む全ステータスと照合し再生成を防止
 
 ## 申し送り
 - 重要度「中」以上は kensho-revenue-worker 担当で Kanban 投入済み

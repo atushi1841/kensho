@@ -162,6 +162,69 @@ def is_duplicate(
     return False, ""
 
 
+# ---------------------------------------------------------------------------
+# HN item_id 重複判定 (t_2e20f1ef 品質ゲート v58)
+# タイトル正規化 dedup は 60 字切り詰めや表記揺れに弱いため、HN の item_id
+# (news.ycombinator.com/item?id=<digits>) を主キーとした Run 横断 dedup を追加。
+# done/archived を含む全ステータスと照合する (t_58335360 の拡張)。
+# ---------------------------------------------------------------------------
+
+HN_ITEM_ID_RE = re.compile(r"news\.ycombinator\.com/item\?id=(\d+)")
+
+
+def extract_hn_item_id(text: str) -> str:
+    """URL/本文テキストから HN item_id を抽出して返す。無ければ ""。"""
+    m = HN_ITEM_ID_RE.search(text or "")
+    return m.group(1) if m else ""
+
+
+def fetch_existing_hn_ids(
+    db_path: Path | str | None = None,
+    statuses: Iterable[str] = ALL_STATUSES,
+) -> dict[str, str]:
+    """kanban DB の tasks.body に現れる HN item_id -> task_id マッピングを返す。
+    statuses 既定は ALL_STATUSES (done/archived 含む = 再生成防止)。
+    DB が存在しなければ空 dict。同一 id が複数タスクにあっても最初の 1 件を返す。
+    """
+    db = Path(db_path) if db_path else default_db_path()
+    if not db.exists():
+        return {}
+    statuses = tuple(statuses)
+    if not statuses:
+        return {}
+    ph = ",".join("?" * len(statuses))
+    con = sqlite3.connect(str(db))
+    try:
+        rows = con.execute(
+            f"SELECT id, body FROM tasks WHERE body LIKE '%item?id=%' AND status IN ({ph})",
+            statuses,
+        ).fetchall()
+    finally:
+        con.close()
+    out: dict[str, str] = {}
+    for tid, body in rows:
+        for hid in HN_ITEM_ID_RE.findall(body or ""):
+            out.setdefault(hid, tid)
+    return out
+
+
+def is_duplicate_hn_id(
+    hn_id: str,
+    db_path: Path | str | None = None,
+    statuses: Iterable[str] = ALL_STATUSES,
+) -> tuple[bool, str]:
+    """HN item_id が kanban DB (既定: 全ステータス、done/archived 含む) に
+    既にあれば (True, task_id)、無ければ (False, "")。hn_id が空なら (False, "")。
+    """
+    if not hn_id:
+        return False, ""
+    mapping = fetch_existing_hn_ids(db_path=db_path, statuses=statuses)
+    tid = mapping.get(str(hn_id))
+    if tid:
+        return True, tid
+    return False, ""
+
+
 if __name__ == "__main__":
     # 簡易 self-check
     samples = [
