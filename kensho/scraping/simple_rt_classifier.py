@@ -24,12 +24,12 @@ from typing import Any
 
 import httpx
 
-API_URL: str = "http://127.0.0.1:18020/v1/chat/completions"
-# ★ 2026-09-07: GALLERIA機ローカルqwen単一運用へ移行（ユーザー指示）。
-#   qwen3.8-27b は推論モデルなので chat_template_kwargs.enable_thinking=false で本文空返しを防止。
-#   ローカル死活時は OpenRouter 無料枠へ自動フォールバック（収集を止めない）。
-LOCAL_API_KEY: str = "dev-kensho-local-2026"
-DEFAULT_MODEL: str = "qwen3.8-27b"
+API_URL: str = "https://api.b.ai/v1/chat/completions"
+# ★ 2026-09-07: 収集判定LLMを bai/qwen3.8-flash へ（新メインと統一）。
+#   baiはOpenAI互換・chat_template_kwargs容認（enable_thinking無しでもOK）。
+#   死英時は OpenRouter 無料枠（minimax-m3:free）へ自動フォールバック（収集を止めない）。
+BAI_API_KEY_UNAME: str = "BAI_API_KEY"
+DEFAULT_MODEL: str = "qwen3.8-flash"
 FALLBACK_API_URL: str = "https://openrouter.ai/api/v1/chat/completions"
 FALLBACK_MODEL: str = "minimax/minimax-m3:free"
 DEFAULT_BATCH_SIZE: int = 8
@@ -57,11 +57,8 @@ JSON の配列のみを出力:
 _PROJECT_ENV_NAME: str = ".env"
 
 
-def _load_api_key(project_root: str | Path | None = None) -> str:
-    """OPENROUTER_API_KEY を プロジェクト.env → Hermes profile .env → 環境変数 の順で取得。
-
-    ★ 公式DeepSeek APIキー（DEEPSEEK_API_KEY）は使わない（最後の砦）。
-    """
+def _load_key_from_envs(key_name: str, project_root: str | Path | None = None) -> str:
+    """指定APIキーを プロジェクト.env → Hermes profile .env → 環境変数 の順で取得。"""
     root = Path(project_root) if project_root else Path(__file__).resolve().parent.parent.parent
     candidates = [
         root / _PROJECT_ENV_NAME,
@@ -70,13 +67,22 @@ def _load_api_key(project_root: str | Path | None = None) -> str:
     for env_file in candidates:
         try:
             text = env_file.read_text(encoding="utf-8-sig")
-            m = re.search(r"OPENROUTER_API_KEY\s*=\s*[\"']?([A-Za-z0-9_\-]+)", text)
+            m = re.search(rf"{key_name}\s*=\s*[\"']?([A-Za-z0-9_\-]+)", text)
             if m:
                 return m.group(1)
         except OSError:
             continue
-    # 最後の手段として環境変数（本番実行時は.profile等に設定してある想定）
-    return os.environ.get("OPENROUTER_API_KEY", "")
+    return os.environ.get(key_name, "")
+
+
+def _load_api_key(project_root: str | Path | None = None) -> str:
+    """メイン判定LLMのAPIキー（BAI_API_KEY）を取得。★公式DeepSeekは使わない。"""
+    return _load_key_from_envs("BAI_API_KEY", project_root)
+
+
+def _load_or_key(project_root: str | Path | None = None) -> str:
+    """OpenRouterフォールバック用キー。"""
+    return _load_key_from_envs("OPENROUTER_API_KEY", project_root)
 
 
 def _extract_json(content: str) -> list[dict[str, Any]] | None:
@@ -116,10 +122,7 @@ def _call_api(
         "temperature": 0.1,
         "max_tokens": max_tokens,
     }
-    if model == DEFAULT_MODEL:
-        # ローカルqwen（推論モデル）: thinking OFFで本文空返しを防止
-        payload["chat_template_kwargs"] = {"enable_thinking": False}
-    # OpenRouter無料モデルは 429（レート制限）が頻発する → 指数バックオフで2回再試行
+    # bai qwen3.8-flash: chat_template_kwargs不要（容認はされるが完答）。OpenRouter無料モデルは 429（レート制限）が頻発する → 指数バックオフで2回再試行
     endpoint = url or API_URL
     for attempt in range(3):
         resp = httpx.post(
@@ -143,15 +146,18 @@ def _call_api_with_fallback(
     max_tokens: int,
     timeout: int = 300,
 ) -> str:
-    """ローカルqwen優先。死活/エラー時だけOpenRouter無料枠へフォールバック（収集を止めない）。"""
-    try:
-        return _call_api(LOCAL_API_KEY, batch, model, max_tokens, timeout=timeout)
-    except Exception:
-        or_key = _load_api_key()
-        if not or_key:
-            raise
-        payload_model = FALLBACK_MODEL if model == DEFAULT_MODEL else model
-        return _call_api(or_key, batch, payload_model, max_tokens, timeout=timeout, url=FALLBACK_API_URL)
+    """bai判定LLM優先。死活/エラー時だけOpenRouter無料枠へフォールバック（収集を止めない）。"""
+    key = _load_api_key()
+    if key:
+        try:
+            return _call_api(key, batch, model, max_tokens, timeout=timeout)
+        except Exception:
+            pass  # bai失敗 → OR退避へ
+    or_key = _load_or_key()
+    if not or_key:
+        raise  # 両方ない場合はfail-open側でUNKNOWN扱い(呼び出し元except)
+    payload_model = model
+    return _call_api(or_key, batch, payload_model, max_tokens, timeout=timeout, url=FALLBACK_API_URL)
 
 
 def classify_texts(
@@ -174,8 +180,7 @@ def classify_texts(
         return {}
     if api_key is None:
         api_key = _load_api_key(project_root)
-    # ローカルqwenはキー不要（LOCAL_API_KEY固定）。OpenRouterフォールバック用のキーが
-    # 無い場合もローカルqwenは動くので fail-open にはしない（2026-09-07 qwen単一運用）。
+    # bai qwen3.8-flash は chat_template_kwargs不要・推理も完答（bai優先、OR退避は_fallbackが処理）
 
     result: dict[str, str] = {pid: "UNKNOWN" for pid, _ in pairs}
     for i in range(0, len(pairs), batch_size):

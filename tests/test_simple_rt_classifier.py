@@ -65,18 +65,19 @@ class TestLoadApiKey:
             "kensho.scraping.simple_rt_classifier.PROFILE_ENV_FILE",
             tmp_path / "no_such_profile.env",
         )
+        monkeypatch.delenv("BAI_API_KEY", raising=False)
         monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
 
     def test_bom_env_file(self, monkeypatch: Any, tmp_path: Path) -> None:
         p = tmp_path / ".env"
-        p.write_bytes(b"\xef\xbb\xbfOPENROUTER_API_KEY=sk-or-v1-test123\n")
+        p.write_bytes(b"\xef\xbb\xbfBAI_API_KEY=sk-bai-test\n")
         self._patch_profile_env(monkeypatch, tmp_path)
-        assert _load_api_key(tmp_path) == "sk-or-v1-test123"
+        assert _load_api_key(tmp_path) == "sk-bai-test"
 
     def test_ignores_deepseek_key(self, monkeypatch: Any, tmp_path: Path) -> None:
         """最後の砦のDEEPSEEK_API_KEYは絶対に使わない（フォールバックしない）"""
         p = tmp_path / ".env"
-        p.write_bytes(b"DEEPSEEK_API_KEY=sk-deepseek-secret\n")
+        p.write_bytes(b"DEEPSEEK_API_KEY=sk-deepseek\n")
         self._patch_profile_env(monkeypatch, tmp_path)
         assert _load_api_key(tmp_path) == ""
 
@@ -99,8 +100,8 @@ class TestClassifyTexts:
             api_key="sk-test",
         )
         assert res == {"t1": "FLAG", "t2": "OK"}
-        assert called and called[0]["model"] == "qwen3.8-27b"
-        assert called[0]["chat_template_kwargs"] == {"enable_thinking": False}
+        assert called and called[0]["model"] == "qwen3.8-flash"
+        assert "chat_template_kwargs" not in called[0]  # baiはthinking OFF不要
         assert called[0]["messages"][0]["role"] == "system"
 
     def test_fail_open_on_error(self, monkeypatch: Any) -> None:
@@ -143,18 +144,19 @@ class TestClassifyTexts:
         res = classify_texts([("t1", "text")], project_root=tmp_path)
         assert res == {"t1": "UNKNOWN"}
 
-    def test_fallback_to_openrouter_when_local_dead(self, monkeypatch: Any) -> None:
-        """ローカルqwen失敗時だけOpenRouter無料枠へフォールバックする。"""
+    def test_fallback_to_openrouter_when_bai_dead(self, monkeypatch: Any) -> None:
+        """bai(qwen3.8-flash)失敗時だけOpenRouter無料枠へフォールバックする。"""
         urls: list[str] = []
 
         def fake_post(url: str, **kwargs: Any) -> _FakeResp:
             urls.append(url)
-            if "18020" in url:
-                raise RuntimeError("local down")
+            if "api.b.ai" in url:
+                raise RuntimeError("bai down")
             return _ok_response([("t1", "OK")])
 
         monkeypatch.setattr("kensho.scraping.simple_rt_classifier.httpx.post", fake_post)
-        monkeypatch.setattr("kensho.scraping.simple_rt_classifier._load_api_key", lambda *a, **k: "sk-or-test")
+        monkeypatch.setattr("kensho.scraping.simple_rt_classifier._load_api_key", lambda *a, **k: "sk-bai-test")
+        monkeypatch.setattr("kensho.scraping.simple_rt_classifier._load_or_key", lambda *a, **k: "sk-or-test")
         res = classify_texts([("t1", "text")])
         assert res == {"t1": "OK"}
         assert len(urls) == 2 and "openrouter" in urls[1]
