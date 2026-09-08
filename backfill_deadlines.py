@@ -9,6 +9,16 @@ critic v61（cpmeikan deadline 全欠損の恒久化）対応:
   - COLLECTED_LOCK を獲得し、ディスクからの再読み込み + applied 保全マージの上で書き戻す
     （applier 実行と並行しても race で応募済み日付を消さない）
 
+critic v68（cpmeikan deadline KPI 再定義・70%目標撤去）:
+  - 現行「非空率 >= 70% → CHECK」は構造的到達不能（cp.meikan 一覧に期限表記が無く、
+    毎収集で若年 deadline 空が再生成される。実測 7/33 = 21.2%）。毎日止まらない誤警報
+    （alert fatigue）を生むため撤去。
+  - 2層KPI: L1 ハードゲート = stale_empty（deadline 空かつ snowflake 年齢 > L1_GATE_DAYS）
+    が 0 件（v67 パージの成功指標そのもの。1件でもあればパージ不全・収集停止として FAIL）。
+    L2 監視ライン = cpmeikan 非空率（実測帯 20-30%）を INFO 表示のみ。FAIL 行は出さない。
+  - ゲート = STALE_PURGE_DAYS(14) + STALE_GATE_GRACE_DAYS(1) = 15日: 収集（〜21時）から
+    03:45 backfill までの間隔で 14日ちょうど超が正常に発生しうるため。純値14日超は INFO 併記。
+
 使い方: uv run python backfill_deadlines.py [--dry-run]
 """
 
@@ -43,6 +53,12 @@ AGE_FREEZE_DAYS = 21
 
 # deadline を抽出する際の「年」決め: 同年中の該当日が today より45日超過去なら翌年とみなす。
 _YEAR_ROLLOVER = 45
+
+# critic v68 L1 ハードゲート: collector の snowflake パージ閾値（_STALE_TWEET_DAYS）と対。
+STALE_PURGE_DAYS = 14
+# 収集（最終〜21時台）から 03:45 backfill までの間隔で 14日ちょうど超が正常に発生しうる
+# （ゲート時刻の遅延でなくスケジュール境界）。純度14日は INFO 表示し、FAIL ゲートは +1d grace。
+STALE_GATE_GRACE_DAYS = 1
 
 # 締切キーワード
 _WORDS = [
@@ -250,6 +266,26 @@ def backfill_local(collected: list[dict[str, Any]]) -> tuple[int, int, int]:
     return (extracted, frozen, still)
 
 
+def _tweet_age_days(item: dict[str, Any], now: datetime) -> float | None:
+    """snowflake からの tweet 経過日数。tweet_id 不正なら None。"""
+    post = snowflake_to_dt(_tweet_id(item))
+    if post is None:
+        return None
+    return (now - post).total_seconds() / 86400.0
+
+
+def count_stale_empty(collected: list[dict[str, Any]], now: datetime, min_days: int) -> int:
+    """deadline 空 かつ tweet 年齢が min_days 超の件数（critic v68 L1 用）。"""
+    n = 0
+    for c in collected:
+        if c.get("deadline"):
+            continue
+        age = _tweet_age_days(c, now)
+        if age is not None and age > min_days:
+            n += 1
+    return n
+
+
 def main() -> None:
     dry_run: bool = "--dry-run" in sys.argv
 
@@ -274,6 +310,12 @@ def main() -> None:
         cp_before = sum(1 for c in collected if c.get("source") == "cpmeikan" and not c.get("deadline"))
         print(f"Total: {len(collected)}, missing deadline: {before} (cpmeikan {cp_before})")
 
+        # critic v68 L1: エントリ時（バックフィル適用前）の生状態で測る。
+        # after で測ると age_freeze（≥21日→expired 記入）がパージ不全を秘匿するため。
+        now_dt = datetime.now()
+        stale_strict = count_stale_empty(collected, now_dt, STALE_PURGE_DAYS)
+        stale_gate = count_stale_empty(collected, now_dt, STALE_PURGE_DAYS + STALE_GATE_GRACE_DAYS)
+
         t0 = time.time()
         f1 = backfill_knshow(collected)
         f2, f3, still = backfill_local(collected)
@@ -286,10 +328,14 @@ def main() -> None:
         rate: float = 0.0
         if total_cp:
             rate = round(100 * (total_cp - cp_after) / total_cp, 1)
+
         print(f"\n📊 Missing: {before} → {after} (fixed {before - after})")
-        print(f"   cpmeikan deadline 非空率: {rate}% (target ≥70%)")
+        # L2: 情報表示のみ（FAIL 行は出さない — critic v68、70%目標は構造的到達不能のため撤去）
+        print(f"   [L2] cpmeikan deadline 非空率: {rate}% (INFO・実測帯20-30%)")
 
         if dry_run:
+            gate_days = STALE_PURGE_DAYS + STALE_GATE_GRACE_DAYS
+            print(f"   [L1] stale_empty: >{STALE_PURGE_DAYS}d={stale_strict} / gate>{gate_days}d={stale_gate}")
             print("\n(Dry-run: 書き込みせず終了)")
             return
 
@@ -297,7 +343,14 @@ def main() -> None:
         data["collected"] = collected
         safe_save_json(COLLECTED_PATH, data, "collected.json")
         print("\n📝 Updated: " + str(COLLECTED_PATH))
-        print(f"   cpmeikan 非空率 {rate}%（target ≥70%）→ {'PASS' if rate >= 70 else 'CHECK'}")
+        # L1: ハードゲート（v67 パージの成功指標）。1件でもあれば収集/purge 不全として FAIL+rc=1
+        verdict = "PASS" if stale_gate == 0 else "FAIL"
+        print(
+            f"   [L1] stale_empty( deadline空 かつ tweet年齢>{STALE_PURGE_DAYS + STALE_GATE_GRACE_DAYS}d ): "
+            f"{stale_gate} (>{STALE_PURGE_DAYS}d 純値 {stale_strict}) → {verdict}"
+        )
+        if stale_gate > 0:
+            sys.exit(1)
     finally:
         release_lock()
 

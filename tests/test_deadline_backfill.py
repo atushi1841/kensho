@@ -10,7 +10,10 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from backfill_deadlines import (
+    STALE_GATE_GRACE_DAYS,
+    STALE_PURGE_DAYS,
     backfill_local,
+    count_stale_empty,
     extract_tweet_deadline,
     snowflake_to_dt,
 )
@@ -101,3 +104,42 @@ class TestBackfillLocal:
         items = [self._mk(deadline="2026-09-20", tweet_text="締切:8/30(日)")]
         e, f, s = backfill_local(items)
         assert e == 0 and items[0]["deadline"] == "2026-09-20"
+
+
+class TestCountStaleEmpty:
+    """critic v68 L1 ハードゲートの stale_empty 件数カウント"""
+
+    NOW = datetime(2026, 9, 9, 3, 45)
+    GATE_DAYS = STALE_PURGE_DAYS + STALE_GATE_GRACE_DAYS
+
+    def _mk_age(self, days_ago: float, deadline: str = "") -> dict[str, Any]:
+        epoch_ms = 1288834974657
+        ms = int(self.NOW.timestamp() * 1000) - int(days_ago * 86400 * 1000)
+        tid = ((ms - epoch_ms) << 22) | 1
+        return {"source": "cpmeikan", "deadline": deadline, "tweet_text": "", "x_url": "", "tweet_id": str(tid)}
+
+    def test_counts_deadline_empty_over_gate(self) -> None:
+        items = [self._mk_age(20.0), self._mk_age(15.5), self._mk_age(7.0)]
+        assert count_stale_empty(items, self.NOW, self.GATE_DAYS) == 2
+
+    def test_deadline_present_never_counted(self) -> None:
+        items = [self._mk_age(30.0, deadline="2026-10-01")]
+        assert count_stale_empty(items, self.NOW, self.GATE_DAYS) == 0
+
+    def test_boundary_exactly_gate_days_excluded(self) -> None:
+        # 「min_days 超」の境界: gate ちょうど（-1分）は含めず、+1分は含める
+        just_under = self._mk_age(float(self.GATE_DAYS) - 60.0 / 86400.0)
+        just_over = self._mk_age(float(self.GATE_DAYS) + 60.0 / 86400.0)
+        assert count_stale_empty([just_under], self.NOW, self.GATE_DAYS) == 0
+        assert count_stale_empty([just_over], self.NOW, self.GATE_DAYS) == 1
+
+    def test_invalid_tweet_id_ignored(self) -> None:
+        items = [{"source": "cpmeikan", "deadline": "", "tweet_id": "not-a-snowflake", "x_url": ""}]
+        assert count_stale_empty(items, self.NOW, self.GATE_DAYS) == 0
+
+    def test_age_from_x_url_fallback(self) -> None:
+        epoch_ms = 1288834974657
+        ms = int(self.NOW.timestamp() * 1000) - 20 * 86400 * 1000
+        tid = str(((ms - epoch_ms) << 22) | 1)
+        items = [{"source": "cpmeikan", "deadline": "", "tweet_text": "", "x_url": f"https://x.com/a/status/{tid}"}]
+        assert count_stale_empty(items, self.NOW, self.GATE_DAYS) == 1
