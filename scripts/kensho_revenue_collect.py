@@ -51,6 +51,15 @@ GUMROAD_SCRIPT = os.path.join(PROJECT_DIR, "scripts", "gumroad_sales_collect.js"
 GUMROAD_NODE = "/mnt/c/Program Files/nodejs/node.exe"
 MAX_ENTRIES = 90  # 直近90日保持
 
+# Gumroad CDP収集の恒久対策（t_cfe11a7c / critic v60）:
+# 根因は「深夜早朝にWindows Chrome/CDPが未起動」+「固定プロファイル起動が既存Chromeに
+# ハンドオフされCDPが立たず、nodeの起動待ちが90秒を超えてTimeoutExpired → 前回値凍結」。
+# CDPの事前チェック・自動起動・起動待ちは node（gumroad_sales_collect.js, Windows側）で
+# 実施する。理由: 本スクリプト(WSL側Python)は Windows localhost:CDP に接続できないため、
+# ポート判定はWindows側のnodeでのみ正しく行える。Pythonは一度のsubprocess実行で
+# 起動(最大45秒)＋収集を丸ごと渡し、合計時限をここで保証する（起動/収集の分離=node内封じ込め）。
+GUMROAD_TOTAL_TIMEOUT = 240.0  # CDP起動(≤45s)+ページ収集の合計上限（従来の90秒→240秒）
+
 # actors_ppe=0 異常検出時の自動再収集設定（9/3 00:20異常の再発防止: t_fc85c305）
 RETRY_DELAY_SECONDS = 3.0  # 再収集までの待機秒数
 MAX_APIFY_RETRIES = 2  # 再収集の最大試行回数（初回含め最大3回）
@@ -505,11 +514,35 @@ def _to_windows_path(path: str) -> str:
     return path
 
 
+def _persist_last_success_at() -> None:
+    """収集成功時のみ gumroad_state.json の last_success_at を更新（鮮度判定用）。"""
+    try:
+        if not os.path.exists(GUMROAD_STATE):
+            return
+        with open(GUMROAD_STATE, encoding="utf-8") as f:
+            state = json.load(f)
+        if not isinstance(state, dict):
+            state = {}
+        state["last_success_at"] = datetime.now().isoformat(timespec="seconds")
+        with open(GUMROAD_STATE, "w", encoding="utf-8") as f:
+            json.dump(state, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"  ⚠️ last_success_at永続化失敗: {e}")
+
+
 def update_gumroad_state_via_cdp() -> bool:
     """CDP（nodeスクリプト）でGumroad売上データを取得し、gumroad_state.jsonを更新する。
 
-    - node.exe + gumroad_sales_collect.js を実行（Chromeが無ければ自動起動）
-    - 失敗しても既存の gumroad_state.json があれば収集は継続できる（呼び出し側でフォールバック）
+    事前CDPチェック・Chrome自動起動・起動待ちは Windows側の node スクリプト
+    （gumroad_sales_collect.js の ensureChrome）内で完結する。
+    WSL側Pythonは Windows localhost:CDP に接続できないため、ポート判定・起動は
+    Windows側nodeでのみ正しく行える（歴史的観察: 127.0.0.1:9222 がWSLから常にCLOSED）。
+
+    - タイムアウト分離: node内部で起動待ち（最大45秒）→ ページ収集の順に処理し、
+      Python側は1回のsubprocessに GUMROAD_TOTAL_TIMEOUT(240秒) をかける
+      （従来の timeouts=90秒 が、Chrome起動の遅延でTimeoutExpired→前回値凍結を起こしていた）。
+    - 成功時のみ last_success_at を永続化。
+    - 失敗しても既存の gumroad_state.json があれば収集は継続（呼び出し側でフォールバック）。
     """
     if not os.path.exists(GUMROAD_NODE):
         print("  ⚠️ node.exeが見つかりません — Gumroad売上データは前回値を使用")
@@ -517,28 +550,33 @@ def update_gumroad_state_via_cdp() -> bool:
     if not os.path.exists(GUMROAD_SCRIPT):
         print("  ⚠️ gumroad_sales_collect.jsが見つかりません — Gumroad売上データは前回値を使用")
         return False
+
     try:
         r = subprocess.run(
             [GUMROAD_NODE, _to_windows_path(GUMROAD_SCRIPT)],
             capture_output=True,
             text=True,
-            timeout=90,
+            timeout=GUMROAD_TOTAL_TIMEOUT,
         )
         if r.stdout:
             for line in r.stdout.strip().splitlines():
                 print(f"    {line}")
         if r.returncode != 0:
             if r.stderr:
-                print(f"  ⚠️ Gumroad売上取得失敗 (rc={r.returncode}): {r.stderr.strip()[:200]}")
+                print(f"fail-mark ⚠️ Gumroad売上取得失敗 (rc={r.returncode}): {r.stderr.strip()[:200]}")
             else:
-                print(f"  ⚠️ Gumroad売上取得失敗 (rc={r.returncode})")
+                print(f"fail-mark ⚠️ Gumroad売上取得失敗 (rc={r.returncode})")
             return False
+        # 成功時のみ last_success_at を永続化（鮮度表示の基準）
+        _persist_last_success_at()
         return True
     except subprocess.TimeoutExpired:
-        print("  ⚠️ Gumroad売上取得がタイムアウト（90秒）— 前回値を使用")
+        print(
+            f"timeout-mark ⚠️ Gumroad売上取得がタイムアウト（{GUMROAD_TOTAL_TIMEOUT:.0f}秒・CDP起動+収集）— 前回値を使用"
+        )
         return False
     except Exception as e:
-        print(f"  ⚠️ Gumroad売上取得エラー: {e} — 前回値を使用")
+        print(f"fail-mark ⚠️ Gumroad売上取得エラー: {e} — 前回値を使用")
         return False
 
 
@@ -587,6 +625,7 @@ def collect_gumroad() -> dict[str, Any]:
                     "total_earnings_usd",
                     "login_ok",
                     "collected_at",
+                    "last_success_at",
                 ]:
                     if k in state:
                         result[k] = state[k]

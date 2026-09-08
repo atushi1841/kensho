@@ -11,12 +11,16 @@ const CDP_PORT = parseInt(process.env.GUMROAD_CDP_PORT || '9333', 10);
 const COOKIE_FILE = 'D:\\Project2\\gumroad-automation\\gumroad_cookies.json';
 const STATE_FILE = 'D:\\Project2\\kensho\\data\\gumroad_state.json';
 const CHROME_EXE = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-const CHROME_PROFILE = 'C:\\temp\\gumroad-cdp9333';
+// ユニークプロファイルで起動する（固定プロファイルは既存Chromeにハンドオフされて
+// CDP:9333が立たず、node側の起動待ちが90秒を超えてタイムアウトする根因の回避）
+const CHROME_PROFILE = `C:\\temp\\gumroad-cdp-${CDP_PORT}-${process.pid}`;
 const NAVIGATION_TIMEOUT = 15000;
+const LAUNCH_TIMEOUT_MS = 45000; // ① 自動起動後の起動待ち上限（Python側の合計時限240sに収まる）
+const CDP_HOSTS = ['127.0.0.1', '[::1]']; // ChromeはIPv4/IPv6どちらにbindしても接続できるよう両対応
 
-function getJSON(path) {
+function getJSON(host, path) {
   return new Promise((resolve, reject) => {
-    http.get(`http://127.0.0.1:${CDP_PORT}${path}`, (res) => {
+    http.get(`http://${host}:${CDP_PORT}${path}`, (res) => {
       let d = '';
       res.on('data', (c) => d += c);
       res.on('end', () => {
@@ -27,39 +31,53 @@ function getJSON(path) {
   });
 }
 
-// Chrome自動起動（cron環境からの一発実行用）
-async function ensureChrome() {
-  for (let attempt = 0; attempt < 3; attempt++) {
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// 対象CDPポートに接続でき、pageタブを返せるか（IPv4/IPv6両方を試す）
+async function connectCdp() {
+  for (const host of CDP_HOSTS) {
     try {
-      const tabs = await getJSON('/json');
-      return tabs;
-    } catch(e) {
-      /* まだ起動していない */
-    }
-    if (attempt === 0) {
-      console.log('Chrome起動: port=' + CDP_PORT);
-      try {
-        execFile(CHROME_EXE, [
-          '--remote-debugging-port=' + CDP_PORT,
-          '--user-data-dir=' + CHROME_PROFILE,
-          '--no-first-run',
-          '--no-default-browser-check',
-          '--window-size=1280,900',
-          'about:blank',
-        ], { windowsHide: true, detached: true }, () => {});
-      } catch(e) {
-        console.log('Chrome起動失敗: ' + e.message);
+      const tabs = await getJSON(host, '/json');
+      if (Array.isArray(tabs) && tabs.length > 0) {
+        const page = tabs.find(t => t.type === 'page' && t.url.startsWith('http')) || tabs.find(t => t.type === 'page');
+        if (page) return { host, page };
       }
-    }
-    await new Promise((r) => setTimeout(r, 8000));
+    } catch(e) { /* そのホストではまだ接続不可 */ }
+  }
+  return null;
+}
+
+// ① 事前CDPチェック → 無ければChrome自動起動 → 起動待ち（最大45秒）
+async function ensureChrome() {
+  let conn = await connectCdp();
+  if (conn) return conn;
+  console.log('Chrome起動: port=' + CDP_PORT + ' profile=' + CHROME_PROFILE);
+  try {
+    execFile(CHROME_EXE, [
+      '--remote-debugging-port=' + CDP_PORT,
+      '--user-data-dir=' + CHROME_PROFILE,
+      '--no-first-run',
+      '--no-default-browser-check',
+      '--headless=new',
+      '--disable-gpu',
+      '--window-size=1280,900',
+      'about:blank',
+    ], { windowsHide: true, detached: true }, () => {});
+  } catch(e) {
+    console.log('Chrome起動失敗: ' + e.message);
+  }
+  const deadline = Date.now() + LAUNCH_TIMEOUT_MS;
+  while (Date.now() < deadline) {
+    await sleep(2000);
+    conn = await connectCdp();
+    if (conn) return conn;
   }
   throw new Error('Chrome CDPに接続できません（port=' + CDP_PORT + '）');
 }
 
 async function main() {
-  // 1. Chrome CDP接続（無ければ自動起動）
-  const tabs = await ensureChrome();
-  const page = tabs.find(t => t.type === 'page' && t.url.startsWith('http')) || tabs.find(t => t.type === 'page');
+  // 1. Chrome CDP接続（事前チェック→自動起動→起動待ちはensureChrome内で実施）
+  const { host, page } = await ensureChrome();
   if (!page) { console.log('ERROR: タブがありません'); process.exit(2); }
 
   // 2. WebSocket接続
@@ -157,6 +175,7 @@ async function main() {
   } catch(e) { /* 失敗しても続行 */ }
 
   // 7. gumroad_state.json に保存
+  const collectedAt = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().replace('Z', '');
   const state = {
     state_exists: true,
     sales: 0,
@@ -169,7 +188,8 @@ async function main() {
     total_earnings_usd: rev.total_earnings !== null ? parseFloat(rev.total_earnings) : null,
     currency: 'USD',
     // 日本時間（JST, UTC+9）のISO 8601表記で保存（他スクリプトのcollected_atと表記統一）
-    collected_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().replace('Z', ''),
+    collected_at: collectedAt,
+    last_success_at: collectedAt,
     dashboard_url: url,
     login_ok: rev.has_login !== false,
     sales_page_ok: salesText !== null && salesText.includes('Total'),
@@ -180,6 +200,11 @@ async function main() {
 
   ws.close();
   console.log('完了');
+  // 起動したChromeを閉じ、ユニークプロファイルを後始末（ベストエフォート）
+  try { await send('Browser.close'); } catch(e) {}
+  setTimeout(() => {
+    try { fs.rmSync(CHROME_PROFILE, { recursive: true, force: true }); } catch(e) {}
+  }, 2000);
 }
 
 main().catch((e) => { console.error('FATAL:', e.message); process.exit(1); });

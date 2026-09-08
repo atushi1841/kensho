@@ -6,6 +6,7 @@ Tests for scripts/kensho_revenue_collect.py — actors_ppe=0 異常検出・自�
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -274,6 +275,7 @@ class TestMainIntegration:
             patch.object(krc, "collect_apify", return_value=normal) as mock_collect,
             patch.object(krc, "collect_rapidapi", return_value=_empty_rapidapi()),
             patch.object(krc, "collect_gumroad", return_value=_empty_gumroad()),
+            patch.object(krc, "update_gumroad_state_via_cdp", return_value=False),
             patch.object(krc, "append_to_file") as mock_append,
             patch("kensho_revenue_collect.time.sleep"),
         ):
@@ -291,6 +293,7 @@ class TestMainIntegration:
             patch.object(krc, "collect_apify", side_effect=[anomaly, normal]) as mock_collect,
             patch.object(krc, "collect_rapidapi", return_value=_empty_rapidapi()),
             patch.object(krc, "collect_gumroad", return_value=_empty_gumroad()),
+            patch.object(krc, "update_gumroad_state_via_cdp", return_value=False),
             patch.object(krc, "append_to_file") as mock_append,
             patch("kensho_revenue_collect.time.sleep"),
         ):
@@ -308,6 +311,7 @@ class TestMainIntegration:
             patch.object(krc, "collect_apify", return_value=anomaly) as mock_collect,
             patch.object(krc, "collect_rapidapi", return_value=_empty_rapidapi()),
             patch.object(krc, "collect_gumroad", return_value=_empty_gumroad()),
+            patch.object(krc, "update_gumroad_state_via_cdp", return_value=False),
             patch.object(krc, "append_to_file") as mock_append,
             patch("kensho_revenue_collect.time.sleep"),
         ):
@@ -366,3 +370,95 @@ class FakeResponse:
 
     def raise_for_status(self) -> None:
         pass
+
+
+class TestGumroadCdpResilience:
+    """CDP収集タイムアウト恒久対策（t_cfe11a7c / critic v60）。
+
+    - CDPチェック・Chrome自動起動・起動待ちは node 側（Windows）が担う設計。
+    - Python側は1回のsubprocessを GUMROAD_TOTAL_TIMEOUT(240s) で実行。
+    - 成功時のみ last_success_at を永続化。
+    - timeout-mark / fail-mark 文言で収集失敗をgrep検知可能。
+    """
+
+    class _FakeProc:
+        def __init__(self, returncode: int = 0, stdout: str = "ok", stderr: str = "") -> None:
+            self.returncode = returncode
+            self.stdout = stdout
+            self.stderr = stderr
+
+    def test_collect_gumroad_reads_last_success_at(self, tmp_path: Any) -> None:
+        import kensho_revenue_collect as _krc
+
+        p = tmp_path / "gumroad_state.json"
+        p.write_text(
+            json.dumps({
+                "state_exists": True,
+                "collected_at": "2026-09-08T09:00:00",
+                "last_success_at": "2026-09-08T09:00:00",
+            }),
+            encoding="utf-8",
+        )
+        _krc.GUMROAD_STATE = str(p)
+        _krc.GUMROAD_BUNDLE = str(tmp_path / "bundle_missing.json")
+        result = krc.collect_gumroad()
+        assert result["last_success_at"] == "2026-09-08T09:00:00"
+        assert result["collected_at"] == "2026-09-08T09:00:00"
+
+    def test_persist_last_success_at_writes(self, tmp_path: Any) -> None:
+        import kensho_revenue_collect as _krc
+
+        p = tmp_path / "gumroad_state.json"
+        p.write_text(json.dumps({"state_exists": True}), encoding="utf-8")
+        _krc.GUMROAD_STATE = str(p)
+        _krc._persist_last_success_at()
+        with open(p, encoding="utf-8") as f:
+            st = json.load(f)
+        assert "last_success_at" in st
+
+    def test_persist_last_success_at_noop_when_missing(self, tmp_path: Any) -> None:
+        import kensho_revenue_collect as _krc
+
+        _krc.GUMROAD_STATE = str(tmp_path / "nonexistent.json")
+        _krc._persist_last_success_at()  # 例外を出さず素通り
+
+    def test_update_runs_node_with_total_timeout(self) -> None:
+        """cdp収集は1回のnode実行・タイムアウトは GUMROAD_TOTAL_TIMEOUT。成功時のみpersist。"""
+        with (
+            patch("kensho_revenue_collect.subprocess.run", return_value=self._FakeProc(returncode=0)) as mrun,
+            patch.object(krc, "_persist_last_success_at") as mpersist,
+        ):
+            ok = krc.update_gumroad_state_via_cdp()
+        assert ok is True
+        mrun.assert_called_once()
+        assert mrun.call_args.kwargs["timeout"] == krc.GUMROAD_TOTAL_TIMEOUT
+        mpersist.assert_called_once()
+
+    def test_update_skips_persist_on_nonzero(self) -> None:
+        with (
+            patch("kensho_revenue_collect.subprocess.run", return_value=self._FakeProc(returncode=1, stderr="boom")),
+            patch.object(krc, "_persist_last_success_at") as mpersist,
+        ):
+            assert krc.update_gumroad_state_via_cdp() is False
+        mpersist.assert_not_called()
+
+    def test_update_fail_prints_fail_mark(self) -> None:
+        with (
+            patch("kensho_revenue_collect.subprocess.run", return_value=self._FakeProc(returncode=1, stderr="boom")),
+            patch("builtins.print") as mprint,
+        ):
+            krc.update_gumroad_state_via_cdp()
+        msgs = " ".join(str(a) for c in mprint.call_args_list for a in c.args)
+        assert "fail-mark" in msgs
+
+    def test_update_timeout_prints_timeout_mark(self) -> None:
+        with (
+            patch(
+                "kensho_revenue_collect.subprocess.run",
+                side_effect=subprocess.TimeoutExpired("node.exe", krc.GUMROAD_TOTAL_TIMEOUT),
+            ),
+            patch("builtins.print") as mprint,
+        ):
+            krc.update_gumroad_state_via_cdp()
+        msgs = " ".join(str(a) for c in mprint.call_args_list for a in c.args)
+        assert "timeout-mark" in msgs

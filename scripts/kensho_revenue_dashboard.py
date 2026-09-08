@@ -5,28 +5,29 @@ revenue-daily.json を読み込み、収益状況を可視化したHTMLを生成
 出力: /mnt/d/Project2/kensho/revenue-status.html
 cronで毎日収集後に自動生成される。
 """
+
 import json
 import os
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any
 
 PROJECT_DIR = "/mnt/d/Project2/kensho"
 DATA_FILE = os.path.join(PROJECT_DIR, "data", "revenue-daily.json")
 OUTPUT = os.path.join(PROJECT_DIR, "revenue-status.html")
 
 
-def load_data() -> List[Dict[str, Any]]:
+def load_data() -> list[dict[str, Any]]:
     if not os.path.exists(DATA_FILE):
         return []
     try:
         with open(DATA_FILE, encoding="utf-8") as f:
-            result: List[Dict[str, Any]] = json.load(f)
+            result: list[dict[str, Any]] = json.load(f)
             return result
     except Exception:
         return []
 
 
-def render(entries: List[Dict[str, Any]]) -> str:
+def render(entries: list[dict[str, Any]]) -> str:
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     if not entries:
         return f"<html><body><h1>収益ダッシュボード</h1><p>データなし</p><p>更新: {now}</p></body></html>"
@@ -41,19 +42,19 @@ def render(entries: List[Dict[str, Any]]) -> str:
     recent = entries[-7:]
     trend_rows = ""
     for e in recent:
-        trend_rows += f"<tr><td>{e.get('date','?')}</td><td>{e.get('apify',{}).get('total_runs',0)}</td><td>{e.get('apify',{}).get('total_users_30d',0)}</td><td>{e.get('rapidapi',{}).get('apis_total',0)}</td><td>{e.get('rapidapi',{}).get('apis_private',0)}</td></tr>"
+        trend_rows += f"<tr><td>{e.get('date', '?')}</td><td>{e.get('apify', {}).get('total_runs', 0)}</td><td>{e.get('apify', {}).get('total_users_30d', 0)}</td><td>{e.get('rapidapi', {}).get('apis_total', 0)}</td><td>{e.get('rapidapi', {}).get('apis_private', 0)}</td></tr>"  # noqa: E501
 
     # Apify詳細（使用量順）
     apify_details = sorted(apify.get("details", []), key=lambda x: x.get("runs", 0), reverse=True)
     apify_rows = ""
     for d in apify_details[:15]:
-        apify_rows += f"<tr><td>{d.get('name','?')}</td><td>{d.get('users',0)}</td><td>{d.get('u30d',0)}</td><td>{d.get('runs',0)}</td></tr>"
+        apify_rows += f"<tr><td>{d.get('name', '?')}</td><td>{d.get('users', 0)}</td><td>{d.get('u30d', 0)}</td><td>{d.get('runs', 0)}</td></tr>"  # noqa: E501
 
     # RapidAPI詳細
     rap_rows = ""
     for d in rapidapi.get("details", []):
         vis = "🔓" if d.get("visibility") == "PUBLIC" else "🔒"
-        rap_rows += f"<tr><td>{vis}{d.get('name','?')}</td><td>{d.get('visibility','?')}</td><td>{d.get('pricing','?')}</td></tr>"
+        rap_rows += f"<tr><td>{vis}{d.get('name', '?')}</td><td>{d.get('visibility', '?')}</td><td>{d.get('pricing', '?')}</td></tr>"  # noqa: E501
 
     # 収益機会
     opp_list = "".join(f"<li>✅ {o}</li>" for o in last.get("opportunities", []))
@@ -66,7 +67,9 @@ def render(entries: List[Dict[str, Any]]) -> str:
     # Gumroad詳細
     gum_rows = ""
     for d in gumroad.get("details", []):
-        gum_rows += f"<tr><td>{d.get('title','?')}</td><td>${d.get('price','?')}</td><td>{d.get('zip_size',0)} B</td></tr>"
+        gum_rows += (
+            f"<tr><td>{d.get('title', '?')}</td><td>${d.get('price', '?')}</td><td>{d.get('zip_size', 0)} B</td></tr>"
+        )
 
     # Gumroad売上サマリー（CDPで取得した実値を表示 — state_exists=false解消の目印）
     gum_state_exists = gumroad.get("state_exists", False)
@@ -75,15 +78,28 @@ def render(entries: List[Dict[str, Any]]) -> str:
     gum_last7 = gumroad.get("last_7_days_usd")
     gum_login = gumroad.get("login_ok")
     gum_collected = gumroad.get("collected_at", "?")
+    gum_success = gumroad.get("last_success_at") or gum_collected
+    gum_age_h: float | None = None
+    try:
+        gc = datetime.fromisoformat(str(gum_success))
+        gum_age_h = (datetime.now() - gc).total_seconds() / 3600
+    except (ValueError, TypeError):
+        gum_age_h = None
+    if gum_age_h is not None:
+        gum_fresh = f"売上データ更新: {gum_age_h:.0f}時間前"
+    else:
+        gum_fresh = "売上データ更新時刻: 不明"
+    gum_fresh_color = "#3fb950"
+    if gum_age_h is not None and gum_age_h > 24:
+        gum_fresh_color = "#f85149"
+        gum_fresh = f"⚠️ {gum_fresh}（24h超・前回値）"
     gum_state_color = "#3fb950" if gum_state_exists else "#d29922"
     gum_state_label = "✓ 取得済み" if gum_state_exists else "✗ 未取得"
-    gum_login_label = (
-        "✓ ログインOK" if gum_login is True
-        else "✗ セッション失効" if gum_login is False
-        else "— 不明"
-    )
+    gum_login_label = "✓ ログインOK" if gum_login is True else "✗ セッション失効" if gum_login is False else "— 不明"
+
     def _fmt_money(v: object) -> str:
         return f"${v:.2f}" if isinstance(v, (int, float)) else "—"
+
     gum_sales_card = f"""
 <div class="card">
 <div class="card-title">Gumroad 売上（CDP自動取得）</div>
@@ -93,11 +109,12 @@ def render(entries: List[Dict[str, Any]]) -> str:
 <div class="stat-card"><div class="stat-val" style="color:#58a6ff">{_fmt_money(gum_balance)}</div><div class="stat-label">残高</div></div>
 </div>
 <p class="sub" style="margin-top:8px">
-直近7日: {_fmt_money(gum_last7)} / 直近28日: {_fmt_money(gumroad.get('last_28_days_usd'))} /
+直近7日: {_fmt_money(gum_last7)} / 直近28日: {_fmt_money(gumroad.get("last_28_days_usd"))} /
 ログイン: {gum_login_label} / 取得時刻: {gum_collected}
 </p>
+<div style="margin-top:6px;color:{gum_fresh_color};font-size:0.85rem;font-weight:600">{gum_fresh}</div>
 </div>
-"""
+"""  # noqa: E501
 
     return f"""<!DOCTYPE html>
 <html lang="ja">
@@ -123,16 +140,16 @@ li{{font-size:0.85rem;margin-bottom:4px}}
 </head>
 <body>
 <h1>💰 Kensho 収益ダッシュボード</h1>
-<div class="sub">更新: {now} | 収集日: {last.get('date','?')}</div>
+<div class="sub">更新: {now} | 収集日: {last.get("date", "?")}</div>
 
 <div class="card">
 <div class="card-title">収益サマリー</div>
 <div class="grid-3">
-<div class="stat-card"><div class="stat-val">${rev.get('total_monthly',0)}</div><div class="stat-label">月間収益見込み</div></div>
-<div class="stat-card"><div class="stat-val" style="color:#58a6ff">{apify.get('actors_total',0)}</div><div class="stat-label">Apifyアクター</div></div>
-<div class="stat-card"><div class="stat-val" style="color:#d29922">{rapidapi.get('apis_total',0)}</div><div class="stat-label">RapidAPI API</div></div>
+<div class="stat-card"><div class="stat-val">${rev.get("total_monthly", 0)}</div><div class="stat-label">月間収益見込み</div></div>
+<div class="stat-card"><div class="stat-val" style="color:#58a6ff">{apify.get("actors_total", 0)}</div><div class="stat-label">Apifyアクター</div></div>
+<div class="stat-card"><div class="stat-val" style="color:#d29922">{rapidapi.get("apis_total", 0)}</div><div class="stat-label">RapidAPI API</div></div>
 </div>
-<p class="sub" style="margin-top:8px">{rev.get('note','')}</p>
+<p class="sub" style="margin-top:8px">{rev.get("note", "")}</p>
 </div>
 
 <div class="card">
@@ -152,7 +169,7 @@ li{{font-size:0.85rem;margin-bottom:4px}}
 </div>
 
 <div class="card">
-<div class="card-title">RapidAPI API一覧（{rapidapi.get('apis_total',0)}本）</div>
+<div class="card-title">RapidAPI API一覧（{rapidapi.get("apis_total", 0)}本）</div>
 <table>
 <tr><th>API</th><th>可視性</th><th>価格設定</th></tr>
 {rap_rows}
@@ -180,7 +197,7 @@ li{{font-size:0.85rem;margin-bottom:4px}}
 <div class="sub">Kensho 収益ダッシュボード v1 — {now}</div>
 </body>
 </html>
-"""
+"""  # noqa: E501
 
 
 def main() -> None:
