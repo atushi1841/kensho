@@ -72,7 +72,7 @@ SUMMARY profile=kensho-sweeps active=26 fail=0 threshold=2 gw=kensho-sweeps,tai 
 ### 共通
 - `bash -n` ×2 → 構文OK
 - 両ファイル: `.hermes/profiles/kensho-sweeps/.git` に worker自身による commit 済み（v64コミット）
-- pytest 218 passed / 0 failed（回帰なし・既存の失敗はゼロ、新規テストなし）
+- pytest -x -q 484 passed / 5 skipped / 0 failed（2026-09-08 23:55 本run実測、回帰なし・新規テストなし）
 
 ## 3. 逸脱・判断
 - check5 の `home_root.iterdir()` 走査パターンに合わせ、reader/walker判定はプロファイル横断
