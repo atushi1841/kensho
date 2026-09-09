@@ -13,21 +13,33 @@
   hermes kanban create にタスクを自動投入する。
 
   検出2パターン:
-    1. same-zero-streak: 以前は成果があったソースが THRESHOLD(12) 収集連続で 0 件
-       （twscrape のような「完全死」を捕まえる）
-    2. error-streak: fixupx の HTTP 404/例外が THRESHOLD(12) 収集連続で再発
-       （dead URL 残存・上流障害のシグナル）
+      1. same-zero-streak: 監視対象ソースが THRESHOLD(12) 収集連続で 0 件。
+         「以前成果があったのに死んだ」（twscrape型の突然死）も、state導入以前から
+         一度も成果のない「最初から死んでいた」ソース（twscrapeの実態：全433ログで
+         一度も [1-9] 件なし・08-20からXClIdGen失敗）も、同じ閾値で検知する。
+         前者は「要調査」、後者は「代替で代替済み・依存自体が死んでいる」旨の
+         文言を分ける（ever_positive フラグで判定）。
+      2. error-streak: fixupx の HTTP 404/例外が THRESHOLD(12) 収集連続で再発
+         （dead URL 残存・上流障害のシグナル）。
 
 Safety:
   - kanban CLI 失敗・state 破損時も収集本体は絶対に止めない（fail-open / rc 不変）。
-  - 同一キーのタスクは 1 回だけ投入（created_tasks で idempotency）。
+  - 同一キーのタスクは 1 回だけ投入（created_tasks + hermes idempotency で重複排除、
+    復帰（>0件）で解除され次の死は新タスクになる）。
   - 収集が「全ソース0件」で早期 return するケースは異常ではなく新着なしの正常運用
     であるため、カウントしない（全ソース同時死は error-streak 側で拾う）。
+
+初回シーディング（ever_positive 判定）:
+  v71導入時点で既に死んでいるソース（twscrape: 09-07から50h連続0件、しかも全ログ
+  遡及で一度も成果なし）は「以前成果があった」条件を要求すると永久に検知できない。
+  そのため zero_streak は ever_positive を問わず全監視対象でカウントし、文言だけ
+  「突然死（要調査）」/「導入以来0件（退役 or 修正判断）」に分ける。
 """
 
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -38,8 +50,10 @@ STATE_FILENAME: str = "dead_source_state.json"
 # 同一ソースの連続0件 / 連続エラーこの回数でデッド宣言（critic v71 提案①の数値）
 DEAD_STREAK_THRESHOLD: int = 12
 
-# 監視対象ソース（knshow は success 変数で別計上のため here は dict キー名で揃える）
+# 監視対象ソース（collected.json の new_items_by_source と同じキー体系で揃える）
+# knshow は v71実装時に追加: 09-08 13:00以降連続0件なのに監視外だった（twscrape型ギャップ）
 _TRACKED_SOURCES: tuple[str, ...] = (
+    "knshow",
     "ken-kaku",
     "kenshou.club",
     "cp.meikan",
@@ -74,12 +88,31 @@ def _save_state(path: Path, state: dict[str, Any]) -> None:
         pass
 
 
+def _resolve_hermes() -> str:
+    """実行可能な hermes バイナリを解決する。
+
+    cron の PATH では /usr/local/bin/hermes（root管理・venv python不正で rc=126）が
+    先頭に来る。ユーザーローカルの正常なバイナリを優先解決する（critic v71 実測対応）。
+    """
+    import shutil
+
+    candidates = [
+        Path.home() / ".local" / "bin" / "hermes",
+        Path.home() / ".hermes" / "hermes-agent" / "venv" / "bin" / "hermes",
+    ]
+    for c in candidates:
+        if c.exists() and os.access(c, os.X_OK):
+            return str(c)
+    found = shutil.which("hermes")
+    return found or "hermes"
+
+
 def _create_kanban_task(title: str, body: str, idem: str) -> tuple[bool, str]:
     """hermes kanban create でタスク投入。失敗しても例外を投げず (ok, detail) を返す。"""
     try:
         result = subprocess.run(
             [
-                "hermes",
+                _resolve_hermes(),
                 "kanban",
                 "create",
                 title,
@@ -145,34 +178,50 @@ def check_dead_sources(
                 entry["zero_streak"] = 0
                 entry["alerted"] = False  # 復帰したら次死で再アラート可
                 created_tasks.pop(f"dead-src-{src}", None)  # 次エピソードは新タスク可
-            elif entry.get("ever_positive"):
+            else:
+                # ever_positive を問わずカウントする: v71導入以前から死んでいるソース
+                # （twscrape型）を「一度も成果なし」を理由に検知不能にしないため。
                 entry["zero_streak"] = int(entry.get("zero_streak", 0)) + 1
                 streak = int(entry["zero_streak"])
                 if streak >= DEAD_STREAK_THRESHOLD and not entry.get("alerted"):
-                    msg = (
-                        f"[DEAD-SOURCE] {src}: {streak}収集連続で0件"
+                    ever = bool(entry.get("ever_positive"))
+                    why = (
                         f"（最終正常取得は{streak}収集前まで）— 上流変更の可能性、要調査"
+                        if ever
+                        else "（導入以来一度も成果なし）— ソース退役 or 修正判断が必要"
                     )
+                    msg = f"[DEAD-SOURCE] {src}: {streak}収集連続で0件{why}"
                     alerts.append(msg)
                     out(msg)
                     entry["alerted"] = True
                     # idem は安定キー（ソース名のみ）: alerted フラグがエピソード単位の
-                    # 抑止を担うので、here で時刻を混ぜると同秒内の再死が潰れる。
-                    # 復帰→再死は新キーにはならないが、hermes 側は archived 済みなら
-                    # 再作成される（同一キー存活中のみ重複排除）。
+                    # 抑止を担う。復帰→再死は created_tasks.pop でキーが消えるため再投入、
+                    # 同一エピソード内は alerted=True で投入自体が発生しない（dupes=0）。
                     idem = f"dead-src-{src}"
-                    if idem not in created_tasks or not created_tasks[idem].get("ok"):
-                        body = (
-                            f"critic v71 dead-source alert（自動検出 {now_iso}）\n\n"
-                            f"ソース `{src}` が {streak} 収集連続で新規0件です。\n"
-                            f"by_source={json.dumps(by_source, ensure_ascii=False)}\n\n"
-                            f"想定原因: サイト側HTML変更（セレクタ死）、X側API変更、認証切れ。\n"
-                            f"対応: スクレイパ更新 or ソース退役判断。代替ソースで収入は維持されています。\n"
-                            f"state: {state_path}"
-                        )
-                        ok, detail = create(f"[dead-source] {src} が{streak}収集連続0件 — 上流調査", body, idem)
-                        created_tasks[idem] = {"ok": ok, "detail": detail, "at": now_iso}
-                        out(f"  [DEAD-SOURCE] kanban投入({src}): {'OK' if ok else '失敗'} — {detail[:120]}")
+                    reason = (
+                        "サイト側HTML変更（セレクタ死）、X側API変更、認証切れ"
+                        if ever
+                        else "上流障害・恒久死（twscrape型: XClientTxId生成不能など）"
+                    )
+                    action = (
+                        "スクレイパ更新 or ソース退役判断"
+                        if ever
+                        else "修正（上流依存の復旧）か退役判断。収入は代替ソースで維持。"
+                    )
+                    body = (
+                        f"critic v71 dead-source alert（自動検出 {now_iso}）\\n\\n"
+                        f"ソース `{src}` が {streak} 収集連続で新規0件です"
+                        f"（{'以前は成果あり=突然死' if ever else '導入以来一度も成果なし'}）。\\n"
+                        f"by_source={json.dumps(by_source, ensure_ascii=False)}\\n\\n"
+                        f"想定原因: {reason}。\\n"
+                        f"対応: {action}\\n"
+                        f"state: {state_path}"
+                    )
+                    ok, detail = create(f"[dead-source] {src} が{streak}収集連続0件 — 上流調査", body, idem)
+                    created_tasks[idem] = {"ok": ok, "detail": detail, "at": now_iso}
+                    if not ok:
+                        entry["alerted"] = False  # 投入失敗→次収集で再試行（dupesはhermes idempotencyが抑止）
+                    out(f"  [DEAD-SOURCE] kanban投入({src}): {'OK' if ok else '失敗'} — {detail[:120]}")
 
     # fixupx エラーの連続再発（dead URL 残存 or 上流障害）
     fx_streak = int(state.get("fixupx_streak", 0))
@@ -204,6 +253,8 @@ def check_dead_sources(
         )
         ok, detail = create(f"[dead-source] fixupx が{fx_streak}収集連続全エラー — 要調査", body, idem)
         created_tasks[idem] = {"ok": ok, "detail": detail, "at": now_iso}
+        if not ok:
+            state["fixupx_alerted"] = False  # 投入失敗→次収集で再試行
         out(f"  [DEAD-SOURCE] kanban投入(fixupx): {'OK' if ok else '失敗'} — {detail[:120]}")
 
     state["last_run"] = now_iso

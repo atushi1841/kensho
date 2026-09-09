@@ -117,16 +117,17 @@ def test_recovery_resets_streak_and_realerts(tmp_path: Path) -> None:
     assert len(kb.calls) == 2
 
 
-def test_source_never_positive_is_not_counted(tmp_path: Path) -> None:
-    """一度も成果のないソース（新規追加直後）は dead と扱わない。"""
+def test_source_never_positive_is_still_counted(tmp_path: Path):
+    """v71実装修正: 導入以前から0件のソース（twscrape型）も検知対象。
+    ever_positive は文言の分岐にのみ使い（突然死 vs 導入以来0件）、閾値は共通。"""
     kb = _FakeKanban()
     alerts: list[str] = []
-    for _ in range(DEAD_STREAK_THRESHOLD + 3):
+    for _ in range(DEAD_STREAK_THRESHOLD):
         alerts = _run(tmp_path, {**_BASE, "chance.com": 0, "kensho-everyday": 0}, 0, 5, kb)
-    # chance.com/kevery は ever_positive でない限りカウント外だが、
-    # _BASE の値が positive なため一度だけ positive 記録 → その後0継続でカウントされる。
-    # → chance.com のみ dead 宣言があり得る。twscrape は正常なのでそれ以外は無アラート。
-    assert all("twscrape" not in a for a in alerts)
+    assert any("chance.com" in a for a in alerts)
+    assert any("kensho-everyday" in a for a in alerts)
+    assert all("twscrape" not in a for a in alerts)  # twscrapeは正常なので無関係
+    assert any("導入以来一度も成果なし" in a for a in alerts)
 
 
 def test_ever_positive_starts_after_first_hit(tmp_path: Path) -> None:
