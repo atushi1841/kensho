@@ -146,9 +146,14 @@ def _call_api_with_fallback(
     model: str,
     max_tokens: int,
     timeout: int = 300,
+    api_key: str | None = None,
+    project_root: str | Path | None = None,
 ) -> str:
-    """bai判定LLM優先。死活/エラー時だけOpenRouter無料枠へフォールバック（収集を止めない）。"""
-    key = _load_api_key()
+    """bai判定LLM優先。死活/エラー時だけOpenRouter無料枠へフォールバック（収集を止めない）。
+
+    api_key/project_root が明示された場合はそれを優先（呼び出し元の解決を尊重）。
+    """
+    key = api_key if api_key is not None else _load_api_key(project_root)
     if key:
         try:
             return _call_api(key, batch, model, max_tokens, timeout=timeout)
@@ -187,10 +192,12 @@ def classify_texts(
     for i in range(0, len(pairs), batch_size):
         batch = [{"id": pid, "text": txt[:800]} for pid, txt in pairs[i : i + batch_size]]
         try:
-            content = _call_api_with_fallback(batch, model, max_tokens=2000)
+            content = _call_api_with_fallback(batch, model, max_tokens=2000, api_key=api_key, project_root=project_root)
             # 推論トークン枯渇で本文空 → 上限を増やして1回だけ再試行
             if not content.strip():
-                content = _call_api_with_fallback(batch, model, max_tokens=4000)
+                content = _call_api_with_fallback(
+                    batch, model, max_tokens=4000, api_key=api_key, project_root=project_root
+                )
             parsed = _extract_json(content) or []
             for item in parsed:
                 rid = item.get("id")

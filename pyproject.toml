@@ -21,6 +21,7 @@ dependencies = [
     "lxml>=5.0",
     # 実行時依存の正式宣言（従来venv手入れでCI未導入→テスト収集ImportError）
     "twscrape>=0.16",
+    "patchright==1.62.3",  # requirements.txtのpinと一致（chromium-stealth経路）
 ]
 
 [project.optional-dependencies]

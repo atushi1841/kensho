@@ -12,6 +12,8 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 
 import kensho_revenue_collect as krc
@@ -386,6 +388,16 @@ class TestGumroadCdpResilience:
             self.returncode = returncode
             self.stdout = stdout
             self.stderr = stderr
+
+    @pytest.fixture(autouse=True)
+    def _fake_node_paths(self, tmp_path: Any, monkeypatch: Any) -> None:
+        """CI（Linux）でも node.exe/js 存在ガードを通過させる（従来 /mnt/c 実在に暗黙依存）。"""
+        node = tmp_path / "node.exe"
+        node.write_text("")
+        script = tmp_path / "gumroad_sales_collect.js"
+        script.write_text("")
+        monkeypatch.setattr(krc, "GUMROAD_NODE", str(node))
+        monkeypatch.setattr(krc, "GUMROAD_SCRIPT", str(script))
 
     def test_collect_gumroad_reads_last_success_at(self, tmp_path: Any) -> None:
         import kensho_revenue_collect as _krc
