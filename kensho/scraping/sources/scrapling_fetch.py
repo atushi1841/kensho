@@ -17,17 +17,25 @@ import random
 import time
 from typing import Any
 
-from scrapling import Fetcher
+try:  # CIランナー等に未インストールでもimport成立させる（実使用時のみ失敗）
+    from scrapling import Fetcher as _Fetcher  # noqa: F401
+except ImportError:  # pragma: no cover
+    _Fetcher = None  # type: ignore[assignment,misc]
 
 # ── Scrapling Fetcher（シングルトン）──
-_FETCHER: Fetcher | None = None
+_FETCHER: Any = None
 
 
-def _get_fetcher(save_on_disk: bool = False) -> Fetcher:
+def _get_fetcher(save_on_disk: bool = False) -> Any:
     """遅延初期化で Fetcher インスタンスを取得"""
     global _FETCHER
     if _FETCHER is None:
-        _FETCHER = Fetcher()
+        if _Fetcher is None:
+            raise ImportError(
+                "scrapling が未インストールです。"
+                "pip install scrapling で導入するか、common.fetch() を使用してください。"
+            )
+        _FETCHER = _Fetcher()
     return _FETCHER
 
 
