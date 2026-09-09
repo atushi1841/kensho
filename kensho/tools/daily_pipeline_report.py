@@ -177,6 +177,32 @@ def main() -> int:
     except Exception as e:
         print(f"[audit_bot_safety] 実行失敗: {e}")
 
+    # ── 依存関係ドリフト検査（v65 / t_7b040302: 日次 drift count トレンド）──
+    print()
+    print("## 依存関係ドリフト（pyproject宣言 vs venv実インストール）")
+    try:
+        import subprocess
+
+        res = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "check_dep_drift.py")],
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+        try:
+            j = json.loads((res.stdout or "").strip().splitlines()[-1])
+            drifts = j.get("drift", [])
+            names = ", ".join(str(d.get("name", "?")) for d in drifts[:5])
+            print(
+                f"- drift_count={len(drifts)} ok={j.get('ok')}"
+                + (f" → {names}" if names else "")
+                + f" | pip_check: {str(j.get('pip_check', ''))[:80]}"
+            )
+        except (ValueError, IndexError):
+            print(f"- check_dep_drift 実行異常 rc={res.returncode}: {(res.stdout or res.stderr or '').strip()[:120]}")
+    except Exception as e:
+        print(f"- check_dep_drift 実行失敗: {e}")
+
     # 時系列の異常（1時間あたり15件超）
     hot = [(a, h, n) for (a, h), n in hourly.items() if n > 15]
     if hot:
