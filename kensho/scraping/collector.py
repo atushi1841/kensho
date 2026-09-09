@@ -15,6 +15,7 @@ from kensho.scraping.common import (
     is_stale_empty_deadline,
     snowflake_ts_ms,
 )
+from kensho.scraping.dead_source_sentinel import check_dead_sources
 from kensho.scraping.sources import (
     BASE_URL,
     _fetch_with_retry,
@@ -38,6 +39,14 @@ from kensho.scraping.sources import (
     scrapling_fetch_with_retry,
 )
 from kensho.utils.backup import safe_save_json, try_recover_collected, verify_collected_integrity
+from kensho.utils.url_guard import (
+    BLOCK_THRESHOLD,
+    GUARD_FILENAME,
+    is_blocked,
+    load_guard,
+    record_failure,
+    record_success,
+)
 
 # ── deadline 空アイテムの snowflake 年齢パージ（critic v67）──
 #   cp.meikan は一覧ページから期限を抽出できないため deadline が空のまま collected.json に
@@ -514,8 +523,16 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     ]
     if text_candidates:
         out(f"\n[Step 4 Tweet Text Fetch] 未取得 {len(text_candidates)}件をCDN→fixupxで取得...")
+        # ★ critic v71 提案②: fixupx 失敗ガード（同一ツイートID失敗3回でブラックリスト、
+        #   ブロック入りURLは以後の収集でスキップ、成功でカウントリセット）
+        _guard_path: Path = DATA_DIR / GUARD_FILENAME
+        _guard = load_guard(_guard_path)
+        _guard_hits = 0
         for idx, item in enumerate(text_candidates):
             x_url: str = item["x_url"]
+            if is_blocked(_guard, x_url):
+                _guard_hits += 1
+                continue
             # ★ CDN優先（認証不要・全文取得・軽量） — REST v1.1死の代替
             _tweet_id = re.search(r"/status/(\d+)", x_url)
             _cdn_text: str = ""
@@ -534,6 +551,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
             if _cdn_text:
                 item["tweet_text"] = _cdn_text
                 text_fetched += 1
+                record_success(_guard, x_url, _guard_path)  # ★ v71: 成功で失敗カウント消去
             else:
                 # ★ fixupxフォールバック（og:description 168文字打ち切り）
                 fx_url: str = x_url.replace("x.com/", "fixupx.com/").replace("twitter.com/", "fixupx.com/")
@@ -559,14 +577,25 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
                         if _m:
                             item["tweet_text"] = _m.group(1)
                             text_fetched += 1
+                            record_success(_guard, x_url, _guard_path)  # ★ v71
                         else:
                             text_skipped += 1  # no og:description meta
+                            # 200だがog:descriptionなし（delete済みページはこの形）も失敗扱い
+                            _fc = record_failure(_guard, x_url, "no_og_description", _guard_path)
+                            if _fc == BLOCK_THRESHOLD:
+                                out(f"    🚫 fixupx失敗{_fc}回 → ガードブロック入り: {x_url[:70]}")
                     else:
                         out(f"    [ERROR] fixupx: {x_url} (HTTP {_fx_resp.status_code})")
                         text_errors += 1
+                        _fc = record_failure(_guard, x_url, f"HTTP {_fx_resp.status_code}", _guard_path)
+                        if _fc == BLOCK_THRESHOLD:
+                            out(f"    🚫 fixupx失敗{_fc}回 → ガードブロック入り: {x_url[:70]}")
                 except Exception:
                     out(f"    [ERROR] fixupx例外: {x_url}")
                     text_errors += 1
+                    _fc = record_failure(_guard, x_url, "exception", _guard_path)
+                    if _fc == BLOCK_THRESHOLD:
+                        out(f"    🚫 fixupx失敗{_fc}回 → ガードブロック入り: {x_url[:70]}")
 
             if (idx + 1) % 10 == 0:
                 out(
@@ -576,7 +605,10 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
             # ★ 人間の閲覧ペース: CDN成功時は0.5s、フォールバック後は1.5〜2秒
             time.sleep(0.5 if _cdn_text else 1.5)
 
-        out(f"  Tweet Text一括取得完了: 成功{text_fetched} / スキップ{text_skipped} / エラー{text_errors}")
+        out(
+            f"  Tweet Text一括取得完了: 成功{text_fetched} / スキップ{text_skipped} / エラー{text_errors}"
+            + (f" / ガードスキップ{_guard_hits}件" if _guard_hits else "")
+        )
     else:
         out("\n[Step 4 Tweet Text Fetch] 未取得アイテムなし（スキップ）")
 
@@ -673,6 +705,20 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     except Exception as _me:
         out(f"  [WARN] 保存前マージ失敗: {_me}")
     safe_save_json(COLLECTED_FILE, result, "collected.json")
+
+    # ★ critic v71 提案①: デッドソースセンチネル — ソース別連続0件/fixupx連続エラーを
+    #   検知してログに[DEAD-SOURCE]明示 + kanbanタスク自動投入（twscrape 50hサイレント死再発防止）。
+    #   fail-open: 検知機構の失敗で収集本体を絶対に止めない。
+    try:
+        check_dead_sources(
+            by_source=result["new_items_by_source"],
+            fixupx_errors=text_errors,
+            fixupx_fetched=text_fetched,
+            data_dir=DATA_DIR,
+            out=out,
+        )
+    except Exception as _dse:  # noqa: BLE001
+        out(f"  [WARN] dead-source sentinel 失敗（fail-open）: {_dse}")
 
     elapsed_total: float = time.time() - t0
     out(f"\n{'=' * 50}")

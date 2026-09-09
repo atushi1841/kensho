@@ -23,6 +23,8 @@ data/orchestrator_state.json
 data/orchestrator_heartbeat.json
 data/follow_lock.json
 data/crash_reports/
+data/fixupx_guard.json
+data/dead_source_state.json
 accounts.db
 
 # 巨大Chromeプロファイル（デバッグ用）
@@ -118,3 +120,4 @@ stack/firecrawl/
 # 動作検証プローブ（ruff 違反・一時的実験コード）
 research/hang_detect_probe/
 tmp/
+research/*/raw_responses.json

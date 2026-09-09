@@ -1,0 +1,1 @@
+No apps registered. Use 'xurl auth apps add' to register one.
