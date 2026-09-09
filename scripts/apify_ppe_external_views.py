@@ -48,7 +48,28 @@ import requests
 
 PROJECT_DIR = "/mnt/d/Project2/kensho"
 API_BASE = "https://api.apify.com/v2"
-APIFY_TOKEN_DEFAULT = "[REDACTED]"
+
+
+# ── 簡易.envローダー（9/9追加: トークン直打ち除去。kensho_revenue_collect.pyと同実装） ──
+def _load_env_file() -> None:
+    env_path = os.path.join(PROJECT_DIR, ".env")
+    if not os.path.exists(env_path):
+        return
+    try:
+        with open(env_path, encoding="utf-8-sig") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, _, v = line.partition("=")
+                os.environ.setdefault(k.strip(), v.strip())
+    except Exception:
+        pass  # .env読み取り失敗しても継続
+
+
+_load_env_file()
+
+APIFY_TOKEN_DEFAULT = os.environ.get("APIFY_TOKEN_DEFAULT", "").strip()  # 値は.envにのみ（git管理外）
 TOKEN_ENV = "APIFY_TOKEN"
 
 STATE_FILE = os.path.join(PROJECT_DIR, "data", "apify_ppe_external_views_state.json")
@@ -275,7 +296,9 @@ def attach_to_daily(m: dict[str, Any]) -> bool:
         "point_date": m.get("point_date"),
         "baseline": m.get("baseline"),
         "measured_at": m.get("measured_at"),
-        "proxy_note": "external_views = 外部(owner以外)ユーザー累積run (Apify公開APIで唯一取得可能な外部エンゲージメント信号)",
+        "proxy_note": (
+            "external_views = 外部(owner以外)ユーザー累積run (Apify公開APIで唯一取得可能な外部エンゲージメント信号)"
+        ),
         "actors": payload,
     }
     target["apify_ppe_external_views_keys"] = entry_metric
