@@ -21,7 +21,7 @@
 - cron 登録: **8c1271fd2158**（`50 8 * * *` / no-agent / deliver telegram:8510166694）
   - 選定理由: ready-watchdog（09:00）より10分早い08:50に置き、16:00のhunter投入前に必ず検知する順序
 
-## 2. verification_evidence
+## verification_evidence
 
 ### E1. 修正前のギャップ実測（t_e971e85a の前提検証）
 ```
