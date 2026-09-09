@@ -61,8 +61,14 @@ def scrape_twscrape(
 
         for query in _TWSCRAPE_QUERIES:
             # ★ XClIdGen生成は失敗しやすい（XのJSビルド変更追従不能）。失敗時は即スキップ。
+            # twscrape>=0.20.1: 匿名セッションにはlogged-outビルドが返りindicesが無い。
+            # クッキー付き（認証済み）で生成すること。
             try:
-                _gen = await XClIdGenStore.get("twscrape_bot", fresh=False)
+                _gen = await XClIdGenStore.get(
+                    "twscrape_bot",
+                    cookies={"auth_token": auth_token, "ct0": ct0},
+                    fresh=False,
+                )
             except Exception:
                 out(
                     "[TWSCRAPE] XClientTxId生成不能（X JS変更）→ twscrape無効化。"

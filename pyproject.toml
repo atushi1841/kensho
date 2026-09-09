@@ -20,7 +20,7 @@ dependencies = [
     "beautifulsoup4>=4.12",
     "lxml>=5.0",
     # 実行時依存の正式宣言（従来venv手入れでCI未導入→テスト収集ImportError）
-    "twscrape>=0.16",
+    "twscrape>=0.20.1",  # 0.20.1でX webビルド変更(16桁ハッシュ+logged-out検出)に追従、t_35da58ceで実証
     "patchright==1.62.3",  # requirements.txtのpinと一致（chromium-stealth経路）
 ]
 
