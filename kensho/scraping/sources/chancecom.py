@@ -88,7 +88,8 @@ def scrape_chancecom(out: Any, processed_set: set[str], account_keys: list[str])
             if code != 200:
                 continue
 
-            jump_match = re.search(r"(https://www\.chance\.com/jump\.srv\?id=\d+&s=[a-zA-Z0-9]+)", html)
+            # 2026-09: サイト側が &s= トークンを廃止 → 互換のため任意匹配（旧形式も許容）
+            jump_match = re.search(r"(https://www\.chance\.com/jump\.srv\?id=\d+(?:&s=[a-zA-Z0-9]+)?)", html)
             if not jump_match:
                 continue
             jump_url = jump_match.group(1)
