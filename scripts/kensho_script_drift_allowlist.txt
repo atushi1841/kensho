@@ -1,0 +1,4 @@
+# 意図的な profile 版差分（DRIFT 扱いしない）。1行1ファイル名、#以降は理由。
+# t_e971e85a (2026-09-09): profile版は $SCRIPT_DIR 相対で kensho-env-audit.py を読む設計。
+#   repo版は cd /mnt/d/Project2/kensho 前提。双方動作するため意図的差分として許可。
+kensho-env-audit-cron.sh  # profile版はBASH_SOURCE解決（意図的・2026-08-31）

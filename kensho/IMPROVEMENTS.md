@@ -49,12 +49,14 @@
   _CONFIG_CACHE: dict[str, Any] | None = None
   _CONFIG_CACHE_AT: float = 0.0
   _CONFIG_TTL: float = 30.0
+
+
   def _load_config() -> dict[str, Any]:
       global _CONFIG_CACHE, _CONFIG_CACHE_AT
       now = time.time()
       if _CONFIG_CACHE is not None and now - _CONFIG_CACHE_AT < _CONFIG_TTL:
           return _CONFIG_CACHE
-      ... # 従来の読込ロジック
+      ...  # 従来の読込ロジック
       _CONFIG_CACHE_AT = now
       return _CONFIG_CACHE
   ```
