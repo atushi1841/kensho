@@ -122,7 +122,8 @@ def _call_api(
         "temperature": 0.1,
         "max_tokens": max_tokens,
     }
-    # bai qwen3.8-flash: chat_template_kwargs不要（容認はされるが完答）。OpenRouter無料モデルは 429（レート制限）が頻発する → 指数バックオフで2回再試行
+    # bai qwen3.8-flash: chat_template_kwargs不要（容認はされるが完答）。
+    # OpenRouter無料モデルは 429（レート制限）が頻発する → 指数バックオフで2回再試行
     endpoint = url or API_URL
     for attempt in range(3):
         resp = httpx.post(
