@@ -11,6 +11,10 @@ from typing import Any
 import httpx
 
 from kensho.core.config import load as load_config
+from kensho.scraping.common import (
+    is_stale_empty_deadline,
+    snowflake_ts_ms,
+)
 from kensho.scraping.sources import (
     BASE_URL,
     _fetch_with_retry,
@@ -40,26 +44,14 @@ from kensho.utils.backup import safe_save_json, try_recover_collected, verify_co
 #   滞留する。_is_expired(deadline="") は False を返すため期限切れ除去をすり抜け、収集のたびに
 #   再生成されて backfill の成果を毎朝リセットしていた。tweet_id(snowflake)から生成時刻を
 #   復元し、_STALE_TWEET_DAYS 超のものを期限切れとして除去する。
-_STALE_TWEET_DAYS: int = 14
+#   ★ critic v70: ロジックは kensho/scraping/common.py へ共通化（collector パージと
+#     applier 保存層パージ state.save_collected_safe で同一判定を共有）。
+#   _snowflake_ts_ms / _is_stale_empty_deadline は後方互換のため再エクスポート。
 _TWITTER_EPOCH_MS: int = 1288834974657
 
-
-def _snowflake_ts_ms(tweet_id: Any) -> int | None:
-    """tweet_id（Twitter snowflake）から生成時刻(ms)を復元。非数値・欠落は None。"""
-    try:
-        return (int(tweet_id) >> 22) + _TWITTER_EPOCH_MS
-    except (ValueError, TypeError):
-        return None
-
-
-def _is_stale_empty_deadline(item: dict[str, Any], now: datetime) -> bool:
-    """deadline 空かつ tweet 生成から _STALE_TWEET_DAYS 超なら True（snowflake 年齢パージ）。"""
-    if item.get("deadline"):
-        return False
-    ts_ms = _snowflake_ts_ms(item.get("tweet_id", ""))
-    if ts_ms is None:
-        return False
-    return (now.timestamp() * 1000 - ts_ms) > _STALE_TWEET_DAYS * 86400 * 1000
+# mypy strict 用: 後方互換の再エクスポート（テスト tests/test_collector.py が private 名で import）
+_snowflake_ts_ms = snowflake_ts_ms
+_is_stale_empty_deadline = is_stale_empty_deadline
 
 
 def _normalize_x_url(xu: str) -> str:

@@ -9,11 +9,13 @@ import json
 import os
 import random
 import time
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 import psutil
 
+from kensho.scraping.common import is_stale_empty_deadline
 from kensho.utils.backup import safe_save_json
 
 DATA_DIR: Path = Path(__file__).parent.parent.parent / "data"
@@ -111,6 +113,17 @@ def save_collected_safe(data: dict[str, Any], account_key: str, log: Any = None)
                 else:
                     merged_items.append(item)
 
+            data["collected"] = merged_items
+
+            # ★ 2026-09-09 critic v70: 保存層パージ（マージ後・書き込み前）。
+            #   applier はセッション開始時にロードしたメモリ上の data（collector の v67 パージ
+            #   前スナップショット）を保持したまま応募を進めるため、上記の無条件 append が
+            #   collector が除去した stale empty（deadline 空かつ tweet 年齢>14d）をディスクに
+            #   再追加（復活）させていた。これを防ぐため、collector と同一判定
+            #   （kensho/scraping/common.py の is_stale_empty_deadline）をマージ後に適用する。
+            #   collector の全件対象パージ（critic v67）と合わせ、毎時 backfill の L1 ゲート
+            #   （stale_empty>15d=0）を復活で壊さない。
+            merged_items = [item for item in merged_items if not (is_stale_empty_deadline(item, datetime.now()))]
             data["collected"] = merged_items
 
             # ★ 2026-08-29 提案81: 診断メタフィールドをディスク current から補完。

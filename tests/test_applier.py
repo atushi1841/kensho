@@ -603,6 +603,83 @@ class TestSaveCollectedSafeMeta:
         assert saved["new_items_processed"] == 100  # メタも保持
 
 
+class TestSaveCollectedSafeStalePurge:
+    """save_collected_safe: マージ後の保存層 stale-empty パージ（critic v70）
+
+    collector v67 がディスクから除去した stale empty（deadline 空かつ tweet 年齢>14d）を、
+    applier のメモリ上のデータが再追加（復活）させないことを保証する。
+    マージ後のパージで、若年（14日以内）の deadline 空は応募対象として維持する。
+    """
+
+    _EPOCH_MS = 1288834974657
+
+    @classmethod
+    def _tweet_id_for(cls, dt: _dt.datetime) -> str:
+        return str(int(int(dt.timestamp() * 1000) - cls._EPOCH_MS) << 22)
+
+    def _setup(self, tmp_path: Path, monkeypatch: object) -> Path:
+        import kensho.application.state as state_mod
+
+        col_file = tmp_path / "collected.json"
+        monkeypatch.setattr(state_mod, "COLLECTED_FILE", col_file)
+        monkeypatch.setattr(state_mod, "COLLECTED_LOCK", tmp_path / "collected.lock")
+        # ディスクに既存の空ファイルを用意（save はディスク再読込+合併するため）
+        col_file.write_text(json.dumps({"collected": []}), encoding="utf-8")
+        return col_file
+
+    def test_merge_then_purge_removes_resurrecting_stale(self, tmp_path: Path, monkeypatch: object) -> None:
+        """コンソール・メモリに残るパージ済み stale が、マージ後の保存層で除去される"""
+        col_file = self._setup(tmp_path, monkeypatch)
+        now = _dt.datetime.now()
+        stale_id = self._tweet_id_for(now - _dt.timedelta(days=20))  # deadline 空・>14d → パージ対象
+        fresh_id = self._tweet_id_for(now - _dt.timedelta(days=5))  # deadline 空・若年 → 維持
+        # applier がセッション開始時にロードしたメモリ（ステイル空・コレクターパージ前）
+        mem = {
+            "collected": [
+                {
+                    "detail_url": "/detail/stale1",
+                    "x_url": "https://x.com/a/status/1",
+                    "tweet_id": stale_id,
+                    "deadline": "",
+                    "applied": {"atushi16": None},
+                },
+                {
+                    "detail_url": "/detail/fresh1",
+                    "x_url": "https://x.com/a/status/2",
+                    "tweet_id": fresh_id,
+                    "deadline": "",
+                    "applied": {"atushi16": None},
+                },
+            ]
+        }
+        save_collected_safe(mem, "atushi16")
+        saved = json.loads(col_file.read_text(encoding="utf-8"))
+        urls = [it["detail_url"] for it in saved["collected"]]
+        assert "/detail/stale1" not in urls, "パージ済み stale empty が保存層で復活している"
+        assert "/detail/fresh1" in urls, "若年の deadline 空が誤ってパージされた"
+
+    def test_purge_after_applied_union_keeps_recently_applied(self, tmp_path: Path, monkeypatch: object) -> None:
+        """マージ（applied union 保全）後にパージが実行される順序で、応募済み若年項目は残る"""
+        col_file = self._setup(tmp_path, monkeypatch)
+        now = _dt.datetime.now()
+        fresh_id = self._tweet_id_for(now - _dt.timedelta(days=5))
+        mem = {
+            "collected": [
+                {
+                    "detail_url": "/detail/fresh2",
+                    "x_url": "https://x.com/a/status/3",
+                    "tweet_id": fresh_id,
+                    "deadline": "",
+                    "applied": {"atushi16": "2026-09-09T10:00:00"},
+                }
+            ]
+        }
+        save_collected_safe(mem, "atushi16")
+        saved = json.loads(col_file.read_text(encoding="utf-8"))
+        assert len(saved["collected"]) == 1
+        assert saved["collected"][0]["applied"]["atushi16"] == "2026-09-09T10:00:00"
+
+
 class TestCheckTweetResult:
     """_check_tweet_result: 応募後のツイート状態確認
 
