@@ -125,3 +125,4 @@ research/*/raw_responses.json
 # AIチーム状態ファイル（実行時状態・ログ: git管理対象外）
 data/dm_scan_state.json
 data/dep_drift_log.jsonl
+devto_check_drafts.py
