@@ -117,3 +117,4 @@ data/apify-seo-apply-baseline-*.json
 stack/firecrawl/
 # 動作検証プローブ（ruff 違反・一時的実験コード）
 research/hang_detect_probe/
+tmp/
