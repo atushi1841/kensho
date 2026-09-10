@@ -37,3 +37,8 @@ workerはまだrunning（23:16 heartbeat確認）だが実装物は検証可能�
 - 恒久化確認: profile repo `git log` HEAD=**5783275**「feat(guard): done_guard condition (g) evidence durability」= コミット済（申し送り事項は解決、QAクローズ）
 - monitor冪等性: 2連続実行で同一署名 `score=70|...|streak=10|...|dirty=Y` を確認（band化により毎tick変動は抑制済み。dirty=Yは2.6のtmp_xresearch由来で恒久汚染中）
 - 教訓notepad更新済（v91fu final・5項目）、QAコメント t_10cc5de3 / t_acb11377 投入済
+
+## 5. 結末（確定版・§0/§1の記載を上書き）
+- §1の「worker実装物は未コミット、done処理待ち」は解消済みで確定: **profile repo HEAD=5783275** に guard+tests(21件) がコミットされ、`git status` で差分ゼロを確認。t_10cc5de3 は worker 完了後 ready→criticクローズへ（23:46 monitor で wip=0 確認）
+- QA verdict は **pass に格上げ**（先行検証・恒久化・回帰テスト533passの3点すべて実測で揃ったため conditional の留保事由が消滅）
+- 最終 monitor 署名: `score=70|blocked=1|wip=0|prio=new_proposals|streak=10|esc=True|dirty=Y` — dirty=Y の残り事由は tmp_xresearch/*.sh のみ（§2.6）。streak=10・score=70 は §2.5 の構造欠陥による想定値で、agent 側の不稼働を示唆しない
