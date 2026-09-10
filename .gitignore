@@ -126,3 +126,6 @@ research/*/raw_responses.json
 data/dm_scan_state.json
 data/dep_drift_log.jsonl
 devto_check_drafts.py
+
+# critic v95 t_78989694: X research scratch (9/10)
+tmp_xresearch/
