@@ -18,6 +18,13 @@ workerはまだrunning（23:16 heartbeat確認）だが実装物は検証可能�
 {"evaluation":{"technical":{"score":9,"assessment":"条件g実装+selftest+pytest16通過。設計は提案書準拠","evidence":"SELFTEST OK (g_durability) / pytest 16 passed 0.69s / L549-680実読"},"business_kpi":{"score":8,"assessment":"再発2回の『done時レポート未コミット』構造要因をgate化。9/16 hard化で恒久抑止","evidence":"reports/未追跡 9→0（692fa57）。recurring再発カウントは9/12以降の実測待ち"},"cost_efficiency":{"score":9,"assessment":"既存guardへの条件追加のみ・新規cron/LLM起動ゼロ。soft移行で誤停止リスク回避","evidence":"diffはdone_guard.py+tests内、外部依存追加なし"}},"loop_health":{"score":95,"stagnation_streak":8,"verdict":"healthy（streakは要ユーザー対応タスク1件の構造値、エージェントは稼働中）"},"self_review_quality":{"valid":true,"notes":"workerの分解コメント（v90wake a85e76a）はdirty真因/tmp産区別/wip競合回避を明記、自己レビュー品質良好"},"verdict":"conditional_pass","next_steps":["worker done後、kanban_done_guard.py/testsのprofile repoコミット有無を次QAで確認","9/11 10:00 criticがt_10cc5de3をqa判定クローズ","9/16 hard化初日の誤ブロック0確認"]}
 ```
 
+## 2.5 再実測: streak=10到達とband減点（レポート執筆後の追加診断）
+- board_state_monitor.sh を2連続実行 → 署名が `streak=0/score=95` から `streak=10/score=70/esc=True` に変化
+- 真因: **loop_health.sh は「読まれるたびに streak を +1 して state を書き換える」設計**。monitor tick（3 cron × 2時間毎）+ agent実行 + QA診断の呼び出し回数で streak が増えるため、streak は「滞留時間」ではなく「監視tick数」。人間待ち1件の blocked が正当地ぶら下がっているだけで、半日〜1日で band=10（-25減点）に到達する
+- 重複エスカレーションは不发火（last_escalate_streak=20 保持済、発火条件は streak>=30）＝v30修正は有効
+- **構造所見（次critic向け・優先度=中）**: 「tick数ベースのstreak」は alert-fatigue 対策として導入した monitor と組み合わせると自己増幅する（monitorが呼ばれるほど減点が進み、score低下→agent起動→さらに呼ばれる）。対策案: ①stateのlast_updatedと比較して同一ブロック内の再読込は streak を増やさない（1tick=1回のみ加算）②streak を created_at 経過日数ベースに置換 ③band閾値を日数に換算。再現コマンド: `bash loop_health.sh; bash loop_health.sh` で stagnation_streak が +2 されることを確認
+- monitor署名は変化済なので次のtickで3 cron が起動する見込み（criticが band=10 をどう扱うか good case）
+
 ## 3. 申し送り
 - 【要ユーザー対応】維持: t_443551e0（Apify Storeログイン済みConsoleでPublish on Store確認）— blocked適正、streak 10到達で自動エスカレーション
 - 次QAチェックリスト: ①t_10cc5de3のdone+コードコミット恒久化 ②standby measure（9/11 10:00、logs/agentic_standby_measure_0910.log未生成=当日実行待ちで正常）③dirty署名がNに戻ることをmonitor差分で確認
