@@ -299,11 +299,23 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
                         continue
                     log.info("WiFi reconnect succeeded for %s on %s", account, adapter)
                 else:
-                    log.warning(
-                        "No SSID mapping for %s – skipping",
-                        account,
-                    )
-                    continue
+                    # 2026-09-10 QA修正(edb8a02回帰): TankanNotesはLAN直結(Tankan_ETH3)で
+                    #   WIFI_SSID_MAPから除去済み。アダプタUpなのにegressなし（LAN一時的断・
+                    #   ルーター再起動・DHCP変更）はプロキシプロセス再起動で復旧できるため、
+                    #   「No SSID mapping」でcontinueして自動復旧を放棄してはいけない（旧バグ）。
+                    #   ※ アダプタ自体がDownの有線はソフトウェア復旧不可なので従来どおりskip。
+                    if status == "Up":
+                        log.warning(
+                            "No SSID mapping for %s but adapter %s is Up (wired) – restarting proxy directly",
+                            account,
+                            adapter,
+                        )
+                    else:
+                        log.warning(
+                            "No SSID mapping for %s and adapter not Up – skipping",
+                            account,
+                        )
+                        continue
 
             # ── IPv4付与を待つ（WiFi確立の遅延で、アダプタUpでもIP未付与だと
             #    kensho_proxy.py が resolve 失敗で exit(2) し bind しない → 再発防止）──
