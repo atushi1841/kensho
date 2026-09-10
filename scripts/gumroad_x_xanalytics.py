@@ -170,7 +170,10 @@ def main() -> None:
             c = cdn_engagement(tid)
             snap.update(c)
         entry["snapshots"].append(snap)
-        entry["views_latest"] = snap.get("views")
+        # views_latest は「取得できた最新値」。タイムアウト時の None で
+        # 既存の良好値を潰さない（t_78989694: null混入でmax()検証がTypeError化した）。
+        ok = [s["views"] for s in entry["snapshots"] if s.get("views") is not None]
+        entry["views_latest"] = ok[-1] if ok else None
         changed = True
         row = f"{date} | views={snap.get('views')} | fav={snap.get('fav')!r} | conv={snap.get('conv')!r}"
         if snap.get("error"):
