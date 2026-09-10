@@ -25,6 +25,12 @@ workerはまだrunning（23:16 heartbeat確認）だが実装物は検証可能�
 - **構造所見（次critic向け・優先度=中）**: 「tick数ベースのstreak」は alert-fatigue 対策として導入した monitor と組み合わせると自己増幅する（monitorが呼ばれるほど減点が進み、score低下→agent起動→さらに呼ばれる）。対策案: ①stateのlast_updatedと比較して同一ブロック内の再読込は streak を増やさない（1tick=1回のみ加算）②streak を created_at 経過日数ベースに置換 ③band閾値を日数に換算。再現コマンド: `bash loop_health.sh; bash loop_health.sh` で stagnation_streak が +2 されることを確認
 - monitor署名は変化済なので次のtickで3 cron が起動する見込み（criticが band=10 をどう扱うか good case）
 
+## 2.6 dirty=Y の真因を確定（署名変化の追跡）
+- monitor署名の `dirty=N→Y` は本QAの成果物では**ない**（reports/・*.json は除外規則で判定対象外）
+- 実測で特定: `tmp_xresearch/search.sh` / `search2.sh`（22:18–22:21生成、Xリサーチ系タスクの一時成果物。guardと同一の除外規則を再現するPython判定で DIRTY-CODE 2件として検出）
+- **所見（優先度=低、監視継続）**: `tmp_*` 直下の使い捨てスクリプトがリポジトリ直下に置かれると monitor の dirty フラグを永続的に汚し、skip-fast ゲートを無効化してLLMを無駄起動させる（alert-fatigue対策の逆効果）。対策案: ①`tmp_*/` を .gitignore に追加 ②一時スクリプトは `data/tmp/` か /tmp 配下に生成する運用規則を worker プロンプトへ明文化
+- **本QAでは削除しない**（別タスクの稼働中成果物の可能性があるため、生成元cronのクローズ確認は次QA/criticへ）
+
 ## 3. 申し送り
 - 【要ユーザー対応】維持: t_443551e0（Apify Storeログイン済みConsoleでPublish on Store確認）— blocked適正、streak 10到達で自動エスカレーション
 - 次QAチェックリスト: ①t_10cc5de3のdone+コードコミット恒久化 ②standby measure（9/11 10:00、logs/agentic_standby_measure_0910.log未生成=当日実行待ちで正常）③dirty署名がNに戻ることをmonitor差分で確認
