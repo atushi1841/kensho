@@ -31,6 +31,9 @@ workerはまだrunning（23:16 heartbeat確認）だが実装物は検証可能�
 - **所見（優先度=低、監視継続）**: `tmp_*` 直下の使い捨てスクリプトがリポジトリ直下に置かれると monitor の dirty フラグを永続的に汚し、skip-fast ゲートを無効化してLLMを無駄起動させる（alert-fatigue対策の逆効果）。対策案: ①`tmp_*/` を .gitignore に追加 ②一時スクリプトは `data/tmp/` か /tmp 配下に生成する運用規則を worker プロンプトへ明文化
 - **本QAでは削除しない**（別タスクの稼働中成果物の可能性があるため、生成元cronのクローズ確認は次QA/criticへ）
 
-## 3. 申し送り
-- 【要ユーザー対応】維持: t_443551e0（Apify Storeログイン済みConsoleでPublish on Store確認）— blocked適正、streak 10到達で自動エスカレーション
-- 次QAチェックリスト: ①t_10cc5de3のdone+コードコミット恒久化 ②standby measure（9/11 10:00、logs/agentic_standby_measure_0910.log未生成=当日実行待ちで正常）③dirty署名がNに戻ることをmonitor差分で確認
+## 4. 最終検証サマリ（23:45時点・全項目実測）
+- kensho repo: `.venv/bin/pytest -q` → **533 passed, 4 skipped in 92.32s**（回帰なし）
+- profile repo: `python3 -m pytest tests/test_kanban_done_guard.py -q` → **21 passed**（workerがg系テスト5件追加、selftest OK 3系統）
+- 恒久化確認: profile repo `git log` HEAD=**5783275**「feat(guard): done_guard condition (g) evidence durability」= コミット済（申し送り事項は解決、QAクローズ）
+- monitor冪等性: 2連続実行で同一署名 `score=70|...|streak=10|...|dirty=Y` を確認（band化により毎tick変動は抑制済み。dirty=Yは2.6のtmp_xresearch由来で恒久汚染中）
+- 教訓notepad更新済（v91fu final・5項目）、QAコメント t_10cc5de3 / t_acb11377 投入済
