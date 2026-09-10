@@ -96,3 +96,21 @@ weeks, file the support/Discord request per the procedure above.
 (pricingModel null → ineligible by gate 1, expected); the 2 MCP actors now pass
 all four documented gates. Evidence: `gap_classification.json` in the t_8646bcf9
 workspace.
+
+---
+
+## QA独立検証 2026-09-10 17:28 (t_8646bcf9 / t_c3efa1cd)
+
+**pass（flag反転計測のみ 9/11 に持ち越し）.** 実測根拠:
+
+1. GET `/v2/acts/57SNehd4cHNFyUCj3` → japan-market-mcp: standbyUrl=None / isEnabled=False
+2. GET `/v2/acts/xUYsD13SVHHRFQS1H` → mandarake-surugaya-mcp: standbyUrl=None / isEnabled=False
+   → Standby無効化PUTの反映をlive APIで独立確認。
+3. `bash scripts/check_agentic_whitelist.sh` → exit 0、whitelisted=62/72、ppe_gaps=[japan-market-mcp, mandarake-surugaya-mcp]（反転前は想定内、62のまま）
+4. ネイティブcrontab one-shot armed確認: `0 9 11 9 * .../measure_agentic_standby_t_8646bcf9.py >> logs/agentic_standby_measure_0911.log`（self-remove形式、ログ未生成=実行前）
+5. commit 9423e7b にレポート追記+計測スクリプト同梱を確認（git show --stat）
+6. pytest 533 passed / 4 skipped（回帰なし）
+
+**分岐**: 9/11 09:00計測で flag=True ×2 → done。9/12時点でFalse → Apify support/Discord #monetization 申請（Procedure 2、t_c3efa1cd scheduled 済み）。
+
+**QA補足**: actorStandby はopenapiスキーマ外の未文書化フィールドだがPUTは有効。将来の仕様変更リスクがあるため恒久スクリプト check_agentic_whitelist.sh のexit 2（ベースライン乖離）を監視ゲートとして維持すること。
