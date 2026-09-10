@@ -208,9 +208,9 @@ keepalive:
     - label: "WiFi-C (@zin20120731)"
       type: wifi_monitor
       wifi_profile: "AiR-WiFi_6_povo"
-    - label: "WiFi-D (@TankanNotes)"
-      type: wifi_monitor
-      wifi_profile: "10_ymo_HR01"      # 2026-08-27 ワイモバイルHR01切替 (旧 2_povo_HR01)
+    - label: "Ethernet-D (@TankanNotes)"
+      type: ping                       # 2026-09-10: HR01 Wi-Fi不良→LAN直結(Tankan_ETH3)へ切替。wifi_monitor(再接続=netsh wlan)は不適なのでping型へ
+      network_interface: "Tankan_ETH3"
     - label: "WiFi-E (@toushiwatch)"
       type: wifi_monitor
       wifi_profile: "2_povo_AW"        # 2026-08-31: royal破棄→toushiwatch転用

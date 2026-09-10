@@ -21,10 +21,10 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
     #   要ユーザー対応(提案49方式)へ格上げすること。
     "chugakujuken": (1083, "chugakujuken_RM10JE_S"),
     "zin20120731": (1084, "zin_AW6povo"),
-    # 2026-08-27: povo HR01(2_povo_tankan)からワイモバイルHR01(Tankan_HR01 / 10_ymo_HR01)へ切替。
-    #   アダプタ名: Wi-Fi → Tankan_HR01 にリネーム済み。bind方式(IP直指定)で起動（2026-08-27 17:10）。
-    #   ※ --no-bind不可: メトリック最下位によりデフォルトルート=自宅有線のため、--no-bindだと自宅IPリーク。
-    "TankanNotes": (1085, "Tankan_HR01"),
+    # 2026-09-10: HR01 Wi-Fi(RTL8188EU#2 / 10_ymo_HR01)不良（アソシエーション拒否・APIPA）→
+    #   ワイモバイルHR01ルーターのLANポートからUSB有線LAN(Tankan_ETH3 / Realtek USB FE)へ直結切替。
+    #   旧 Tankan_HR01 は運用除外。回線自体は同じワイモバイルなので出口IPは126.133系のはず。
+    "TankanNotes": (1085, "Tankan_ETH3"),
     # 2026-08-28(提案69): inobase1-4(1089)もフラッピング監視対象に追加。
     #   8/28 22:19-22:23 に1回フラップ（自己復旧・POVO系テザリング一時不安定）。
     #   頻発（1日2回以上）する場合は要ユーザー対応（提案49方式）へ格上げ。
@@ -34,11 +34,12 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
 
 # ── WiFi SSID マップ（自動再接続用）──
 # 2026-08-27: TankanNotes → ワイモバイルHR01(10_ymo_HR01)へ切替
+# 2026-09-10: TankanNotesはLAN直結(Tankan_ETH3)へ移行。netsh wlanが通らないためマップから除去
+#   （有線リンクDOWN時の復旧はWindows DHCP側で自動。watchdogはプロキシ再起動のみ行う）
 WIFI_SSID_MAP: dict[str, str] = {
     "kudou": "RM10JE_B",
     "chugakujuken": "RM10JE_S",
     "zin20120731": "AiR-WiFi_6_povo",
-    "TankanNotes": "10_ymo_HR01",
     "inobase1-4": "ino1_4_oppo_r5a",
     "toushiwatch": "2_povo_AW",  # 2026-08-31: royal破棄→toushiwatch転用
 }

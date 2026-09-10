@@ -17,10 +17,10 @@ ACCOUNT_ADAPTERS = {
     "chugakujuken": ("chugakujuken_RM10JE_S", "RM10JE_S", "povo"),
     "zin20120731": ("zin_AW6povo", "AiR-WiFi_6_povo", "povo"),
     "TankanNotes": (
-        "Tankan_HR01",
-        "10_ymo_HR01",
+        "Tankan_ETH3",
+        "LAN直結",
         "ワイモバイル",
-    ),  # 2026-08-27: povo HR01(2_povo_tankan)から切替。アダプタ名もWi-Fi→Tankan_HR01にリネーム
+    ),  # 2026-09-10: HR01 Wi-Fi不良→ワイモバイルHR01ルーターのLANポートへUSB有線直結(Realtek USB FE)。アダプタ名=イーサネット 3→Tankan_ETH3にリネーム
     # "inobase1-4": ("inobase1-4", "ino1_4_oppo_r5a", "povo"),  # 2026-09-01: 凍結（code 64）→ dashboard除外
     "toushiwatch": (
         "toushiwatch_airtra1",
