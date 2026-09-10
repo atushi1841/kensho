@@ -92,7 +92,13 @@ def fetch_views(session: dict[str, str], tweet_id: str) -> dict:
         "features": feats,
     }
     time.sleep(random.uniform(0.8, 2.0))
-    r = curl_requests.post(f"https://x.com{path}", headers=headers, json=payload, impersonate="chrome", timeout=25)
+    # v96 (t_377e030d): v95巡回実行で curl(28) タイムアウトが 5/26=19% 実測。
+    # 例外時は random.uniform(5,12) 秒待って1回のみ再試行し、再試行も失敗した時だけ raise。
+    try:
+        r = curl_requests.post(f"https://x.com{path}", headers=headers, json=payload, impersonate="chrome", timeout=25)
+    except Exception:
+        time.sleep(random.uniform(5, 12))
+        r = curl_requests.post(f"https://x.com{path}", headers=headers, json=payload, impersonate="chrome", timeout=25)
     body = r.json()
     res = (body.get("data", {}).get("tweetResult", {}) or {}).get("result", {})
     if res.get("__typename") != "Tweet":
