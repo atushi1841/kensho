@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -328,6 +329,11 @@ class TestMainIntegration:
 class TestFetchApifyPricing:
     """fetch_apify_pricing: 複数pricingInfos時の有効価格は最後のエントリ（t_c4343276 PPE値上げA/B）"""
 
+    @pytest.fixture(autouse=True)
+    def _isolate_cache(self, tmp_path: Any, monkeypatch: Any) -> None:
+        """キャッシュ書込を実データDirへ漏らさない（v94）。"""
+        monkeypatch.setattr(krc, "PRICING_CACHE", str(tmp_path / "apify_pricing_cache.json"))
+
     def _fake_actor(self, pricing_infos: list[dict[str, Any]]) -> dict[str, Any]:
         return {
             "status_code": 200,
@@ -474,3 +480,171 @@ class TestGumroadCdpResilience:
             krc.update_gumroad_state_via_cdp()
         msgs = " ".join(str(a) for c in mprint.call_args_list for a in c.args)
         assert "timeout-mark" in msgs
+
+
+# ── critic v94 (t_360dd497): Apify課金状態の二重障害（APIタイムアウト全放棄+フォールバック路径欠損）──
+
+
+class TestV94PpeFallbackPath:
+    """項目1: APIFY_PPEパス欠損修正 — data/tmp実体を読めること"""
+
+    def test_candidates_include_real_file(self) -> None:
+        assert "/mnt/d/Project2/kensho/data/tmp/pay_per_event.json" in krc.APIFY_PPE_CANDIDATES
+
+    def test_load_ppe_actors_reads_data_tmp_entity(self) -> None:
+        """実ファイル（修正後の正パス）から5件のPPE単価が読める（従来は誤パスで{}）"""
+        actors = krc.load_ppe_actors()
+        assert len(actors) >= 5
+        assert actors["japan-used-camera-market-scraper"] == 0.002
+
+    def test_load_ppe_actors_tries_second_candidate(self, tmp_path: Any, monkeypatch: Any) -> None:
+        first = tmp_path / "missing.json"
+        second = tmp_path / "fallback.json"
+        second.write_text(json.dumps({"actors_ppe": {"x": 0.01}}), encoding="utf-8")
+        monkeypatch.setattr(krc, "APIFY_PPE_CANDIDATES", [str(first), str(second)])
+        monkeypatch.setattr(krc, "APIFY_PPE", str(first))
+        assert krc.load_ppe_actors() == {"x": 0.01}
+
+    def test_load_ppe_actors_all_missing_is_empty(self, tmp_path: Any, monkeypatch: Any) -> None:
+        monkeypatch.setattr(krc, "APIFY_PPE_CANDIDATES", [str(tmp_path / "nope.json")])
+        monkeypatch.setattr(krc, "APIFY_PPE", str(tmp_path / "nope.json"))
+        assert krc.load_ppe_actors() == {}
+
+
+class TestV94FetchPartialResilience:
+    """項目2: 個別取得CONTINUE_ — 1本失敗でループ全放棄しない"""
+
+    def _list_resp(self, n: int = 3) -> FakeResponse:
+        return FakeResponse({
+            "data": {
+                "items": [
+                    {"id": f"act{i}", "name": v}
+                    for i, v in enumerate(sorted(set(krc.PORTFOLIO_TO_ACTUAL.values()))[:n])
+                ]
+            }
+        })
+
+    def _ppe_resp(self, price: float) -> FakeResponse:
+        return FakeResponse({
+            "data": {
+                "name": "x",
+                "isPublic": True,
+                "pricingInfos": [
+                    {
+                        "pricingModel": "PAY_PER_EVENT",
+                        "pricingPerEvent": {
+                            "actorChargeEvents": {"apify-default-dataset-item": {"eventPriceUsd": price}}
+                        },
+                    }
+                ],
+            }
+        })
+
+    @pytest.fixture(autouse=True)
+    def _isolate(self, tmp_path: Any, monkeypatch: Any) -> None:
+        monkeypatch.setattr(krc, "PRICING_CACHE", str(tmp_path / "cache.json"))
+
+    def test_one_timeout_keeps_other_results(self) -> None:
+        """1本目失敗（例外）→ 2本目成功 → 部分結果を返す（従来は全体{}）"""
+        names = sorted(set(krc.PORTFOLIO_TO_ACTUAL.values()))
+        responses = [self._list_resp(2), Exception("ConnectTimeout api.apify.com:443"), self._ppe_resp(0.002)]
+        with patch("requests.get", side_effect=responses):
+            result = krc.fetch_apify_pricing()
+        assert names[1] in result
+        assert names[0] not in result
+        assert result[names[1]]["pricing_model"] == "PAY_PER_EVENT"
+
+    def test_consecutive_failures_abort_loop(self) -> None:
+        """連続3本失敗で打ち切る（requests.get呼出が無限に増えない）"""
+        calls = {"n": 0}
+
+        def _boom(*a: Any, **k: Any) -> Any:
+            calls["n"] += 1
+            if calls["n"] == 1:
+                return self._list_resp(25)
+            raise Exception("ConnectTimeout")
+
+        with patch("requests.get", side_effect=_boom):
+            result = krc.fetch_apify_pricing()
+        assert result == {}
+        # list 1 + actor試行 4（3失敗で打ち切り、4本目は打ち切り判定で呼ばれない想定）
+        assert calls["n"] <= 1 + 3 + 1
+
+    def test_success_writes_cache(self, tmp_path: Any) -> None:
+        """項目4: 取得成功時にキャッシュ書込"""
+        cache = tmp_path / "cache.json"
+        with patch("requests.get", side_effect=[self._list_resp(1), self._ppe_resp(0.002)]):
+            result = krc.fetch_apify_pricing()
+        assert result
+        assert cache.exists()
+        payload = json.loads(cache.read_text(encoding="utf-8"))
+        assert "saved_at" in payload and payload["pricing"]
+
+    def test_api_total_failure_uses_cache(self, tmp_path: Any) -> None:
+        """項目4: list API失敗でも24h内キャッシュがあればそれを返す（{}→フォールバック空振り防止）"""
+        cache = tmp_path / "cache.json"
+        payload = {
+            "saved_at": datetime.now().isoformat(timespec="seconds"),
+            "pricing": {
+                "japan-market-mcp": {"pricing_model": "PAY_PER_EVENT", "price": 5e-05, "is_public": True, "id": "abc"}
+            },
+        }
+        cache.write_text(json.dumps(payload), encoding="utf-8")
+        with patch("requests.get", side_effect=Exception("ConnectTimeout")):
+            result = krc.fetch_apify_pricing()
+        assert "japan-market-mcp" in result
+
+    def test_stale_cache_ignored(self, tmp_path: Any) -> None:
+        cache = tmp_path / "cache.json"
+        stale = (datetime.now() - timedelta(hours=25)).isoformat(timespec="seconds")
+        cache.write_text(json.dumps({"saved_at": stale, "pricing": {"x": {}}}), encoding="utf-8")
+        with patch("requests.get", side_effect=Exception("ConnectTimeout")):
+            assert krc.fetch_apify_pricing() == {}
+
+
+class TestV94UnknownBilling:
+    """項目3: API空+フォールバック空 → 「無料」でなく unknown、警告文変更、異常検知"""
+
+    @pytest.fixture(autouse=True)
+    def _isolate(self, tmp_path: Any, monkeypatch: Any) -> None:
+        monkeypatch.setattr(krc, "APIFY_PPE_CANDIDATES", [str(tmp_path / "absent.json")])
+        monkeypatch.setattr(krc, "APIFY_PPE", str(tmp_path / "absent.json"))
+
+    def test_collect_apify_marks_unknown(self, tmp_path: Any, monkeypatch: Any) -> None:
+        stats = tmp_path / "stats.json"
+        stats.write_text(
+            json.dumps([{"date": "2026-09-11", "japan-camera-market": {"users": 1, "u30d": 2, "runs": 3}}]),
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(krc, "APIFY_STATS", str(stats))
+        with (
+            patch.object(krc, "fetch_apify_pricing", return_value={}),
+            patch.object(krc, "get_apify_token", return_value=""),
+        ):
+            result = krc.collect_apify()
+        assert result["actors_unknown"] == 1
+        assert result["actors_free"] == 0
+        assert result["details"][0]["billing"] == "unknown"
+
+    def test_warning_says_unknown_not_free(self) -> None:
+        apify = _make_normal_apify(n_ppe=0, n_free=0)
+        apify["actors_total"] = 25
+        apify["actors_unknown"] = 25
+        apify["details"] = []
+        entry = krc.build_revenue_summary(apify, _empty_rapidapi(), _empty_gumroad())
+        assert any("課金状態不明" in w for w in entry["warnings"])
+        assert not any("無料設定" in w for w in entry["warnings"])
+
+    def test_true_free_still_warns_free(self) -> None:
+        """従来動作の維持: 全部free（unknown=0）なら従来通り「無料設定」警告"""
+        apify = _make_normal_apify(n_ppe=0, n_free=25)
+        entry = krc.build_revenue_summary(apify, _empty_rapidapi(), _empty_gumroad())
+        assert any("無料設定" in w for w in entry["warnings"])
+
+    def test_anomaly_detects_unknown_case(self) -> None:
+        """検知ギャップ塞ぎ: ppe=0/free=25風→unknown化なら異常True（従来は素通り）"""
+        result = _make_normal_apify(n_ppe=0, n_free=0)
+        result["actors_total"] = 25
+        result["actors_unknown"] = 25
+        result["details"] = []
+        assert krc._is_ppe_zero_anomaly(result) is True

@@ -42,7 +42,16 @@ _load_env_file()
 DATA_DIR = os.path.join(PROJECT_DIR, "data")
 OUTPUT = os.path.join(DATA_DIR, "revenue-daily.json")
 APIFY_STATS = "/mnt/d/Project2/apify-portfolio-stats.json"
-APIFY_PPE = "/mnt/d/Project2/kensho/pay_per_event.json"
+# v94 (t_360dd497): フォールバック実体は data/tmp/pay_per_event.json（619B, 9/5）。
+# 誤パス "/mnt/d/Project2/kensho/pay_per_event.json" は実在せず load_ppe_actors()={} →
+# 全件free誤判定（9/11 04:20再発）の原因。両候補を試す（第一候補=実体のあるdata/tmp）。
+APIFY_PPE_CANDIDATES = [
+    "/mnt/d/Project2/kensho/data/tmp/pay_per_event.json",
+    "/mnt/d/Project2/kensho/pay_per_event.json",
+]
+APIFY_PPE = APIFY_PPE_CANDIDATES[0]  # 後方互換参照（外部スクリプト向け・実読込はCANDIDATES側）
+PRICING_CACHE = os.path.join(DATA_DIR, "apify_pricing_cache.json")  # v94項目4: 24hキャッシュ
+PRICING_CACHE_TTL_H = 24.0
 RAPIDAPI_AUTH = "/mnt/d/Project2/goo-net-car-scraper/rapidapi_auth.json"
 GUMROAD_BUNDLE = "/mnt/d/Project2/gumroad-automation/bundle_info.json"
 GUMROAD_STATE = os.path.join(DATA_DIR, "gumroad_state.json")
@@ -73,6 +82,37 @@ def get_apify_token() -> str:
     return os.environ.get("APIFY_TOKEN", "") or APIFY_TOKEN_DEFAULT
 
 
+def _save_pricing_cache(pricing: dict[str, dict[str, Any]]) -> None:
+    """fetch_apify_pricing 成功結果を data/apify_pricing_cache.json に保存（v94項目4）。"""
+    try:
+        payload = {
+            "saved_at": datetime.now().isoformat(timespec="seconds"),
+            "pricing": {k: v for k, v in pricing.items() if not k.startswith("_")},
+        }
+        os.makedirs(os.path.dirname(PRICING_CACHE), exist_ok=True)
+        with open(PRICING_CACHE, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, indent=1)
+    except Exception as e:
+        print(f"  ⚠️ pricingキャッシュ書込失敗（収集は継続）: {e}")
+
+
+def _load_pricing_cache() -> dict[str, dict[str, Any]]:
+    """24h以内のpricingキャッシュを返す。無ければ空dict（v94項目4）。"""
+    if not os.path.exists(PRICING_CACHE):
+        return {}
+    try:
+        with open(PRICING_CACHE, encoding="utf-8") as f:
+            payload = json.load(f)
+        saved_at = datetime.fromisoformat(str(payload.get("saved_at", "")))
+        age_h = (datetime.now() - saved_at).total_seconds() / 3600.0
+        if age_h > PRICING_CACHE_TTL_H:
+            return {}
+        pricing = payload.get("pricing") or {}
+        return dict(pricing) if isinstance(pricing, dict) else {}
+    except Exception:
+        return {}
+
+
 def fetch_apify_pricing() -> dict[str, dict[str, Any]]:
     """Apify APIからポートフォリオ全アクターの課金状態を直接取得。
 
@@ -86,6 +126,10 @@ def fetch_apify_pricing() -> dict[str, dict[str, Any]]:
 
     token = get_apify_token()
     result: dict[str, dict[str, Any]] = {}
+    # v94 (t_360dd497) 項目2: 個別アクター取得失敗でループ全体を放棄しない
+    # （9/11 04:20実測: 25本途中でConnectTimeout → result={} → フォールバック空振り）。
+    # 1本は try/except+continue、連続3本失敗で以降を打ち切る（レート制限/不通の連鎖防止）。
+    consecutive_failures = 0
     try:
         # 1. 全アクターのID一覧を取得
         resp = requests.get(f"https://api.apify.com/v2/acts?my=true&token={token}", timeout=30)
@@ -95,14 +139,28 @@ def fetch_apify_pricing() -> dict[str, dict[str, Any]]:
         name_to_id = {a.get("name"): a.get("id") for a in items if a.get("id")}
 
         # 2. ポートフォリオ対象アクターの個別情報を取得（pricingInfosは個別APIでのみ返る）
-        for actual_name in set(PORTFOLIO_TO_ACTUAL.values()):
+        targets = sorted(set(PORTFOLIO_TO_ACTUAL.values()))
+        for actual_name in targets:
             aid = name_to_id.get(actual_name)
             if not aid:
                 continue
-            r = requests.get(f"https://api.apify.com/v2/acts/{aid}?token={token}", timeout=30)
-            if r.status_code != 200:
+            if consecutive_failures >= 3:
+                print(
+                    f"  ⚠️ Apify pricing個別取得を打ち切り（連続{consecutive_failures}失敗）"
+                    ": 残り本は部分結果/キャッシュで代替"
+                )
+                break
+            try:
+                r = requests.get(f"https://api.apify.com/v2/acts/{aid}?token={token}", timeout=30)
+                if r.status_code != 200:
+                    consecutive_failures += 1
+                    continue
+                consecutive_failures = 0
+                act = r.json().get("data", {})
+            except Exception as e:
+                consecutive_failures += 1
+                print(f"  ⚠️ Apify pricing個別取得失敗 {actual_name}: {type(e).__name__}（_CONTINUE_）")
                 continue
-            act = r.json().get("data", {})
             pricing_infos = act.get("pricingInfos", []) or []
             model = pricing_infos[-1].get("pricingModel") if pricing_infos else "FREE"
             price: float | None = None
@@ -122,9 +180,24 @@ def fetch_apify_pricing() -> dict[str, dict[str, Any]]:
                 "is_public": bool(act.get("isPublic")),
                 "id": aid,
             }
+        if result:
+            # v94項目4: 取得成功時は24hキャッシュへ保存（次回API失敗時の代替）
+            _save_pricing_cache(result)
+            if name_to_id and len(result) * 2 < len([v for v in PORTFOLIO_TO_ACTUAL.values() if v in name_to_id]):
+                # 取得件数がポートフォリオ対象の過半数に満たない → 部分結果として明示
+                result["_partial"] = {"fetched": len(result)}  # type: ignore[typeddict-item]
     except Exception as e:
-        print(f"  ⚠️ Apify pricing API取得失敗: {e}（pay_per_event.jsonにフォールバック）")
-        return {}
+        print(f"  ⚠️ Apify pricing API取得失敗: {e}（キャッシュ→pay_per_event.jsonにフォールバック）")
+        cached = _load_pricing_cache()
+        if cached:
+            print(f"  ↑ pricingキャッシュ（24h以内）を使用: {len(cached)}件")
+        return cached
+    if not result:
+        # 連続失敗で打ち切り（0件）→ 例外経路と同様にキャッシュを代替として試す（v94）
+        cached = _load_pricing_cache()
+        if cached:
+            print(f"  ↑ pricing個別取得0件 — キャッシュ（24h以内）を使用: {len(cached)}件")
+        return cached
     return result
 
 
@@ -267,15 +340,28 @@ def measure_apify_ppe_revenue(
 
 
 def load_ppe_actors() -> dict[str, float]:
-    """pay_per_event.json からPPE設定済みアクター（実API名 → 単価）を読み込む。"""
-    if not os.path.exists(APIFY_PPE):
+    """pay_per_event.json からPPE設定済みアクター（実API名 → 単価）を読み込む。
+
+    v94 (t_360dd497): 誤パス（実体なし）で全件free誤判定が起きたため、
+    APIFY_PPE_CANDIDATES を順に試し、最初に読めたファイルを使う。
+    APIFY_PPE（先頭候補・外部からpatchable）も候補に含める。
+    """
+    data: Any = None
+    candidates = (
+        [APIFY_PPE, *APIFY_PPE_CANDIDATES] if APIFY_PPE not in APIFY_PPE_CANDIDATES else list(APIFY_PPE_CANDIDATES)
+    )
+    for path in candidates:
+        if not os.path.exists(path):
+            continue
+        try:
+            with open(path, encoding="utf-8") as f:
+                data = json.load(f)
+            break
+        except Exception:
+            continue
+    if not isinstance(data, dict):
         return {}
-    try:
-        with open(APIFY_PPE, encoding="utf-8") as f:
-            data = json.load(f)
-        return dict(data.get("actors_ppe", {}))
-    except Exception:
-        return {}
+    return dict(data.get("actors_ppe", {}))
 
 
 def _is_ppe_zero_anomaly(apify_result: dict[str, Any]) -> bool:
@@ -296,7 +382,13 @@ def _is_ppe_zero_anomaly(apify_result: dict[str, Any]) -> bool:
     total = apify_result.get("actors_total", 0)
     ppe = apify_result.get("actors_ppe", 0)
     free = apify_result.get("actors_free", 0)
-    if total <= 0 or ppe > 0 or free > 0:
+    if total <= 0 or ppe > 0:
+        return False
+    # v94 (t_360dd497): billing=unknown（API失敗+フォールバック空）は ppe=0 異常の新版。
+    # 9/11 04:20の検知ギャップ（ppe=0/free=25が素通り）を塞ぐ。
+    if apify_result.get("actors_unknown", 0) > 0:
+        return True
+    if free > 0:
         return False
     # 詳細レコードに price が1件も無い → 真の異常（APIもfallbackも空振り）
     priced_count = sum(1 for d in apify_result.get("details", []) if d.get("price") is not None)
@@ -336,7 +428,9 @@ def collect_apify() -> dict[str, Any]:
         "actors_public": 0,
         "actors_ppe": 0,
         "actors_free": 0,
+        "actors_unknown": 0,
         "total_users_30d": 0,
+        "external_users_total": 0,
         "total_runs": 0,
         "details": [],
     }
@@ -346,8 +440,11 @@ def collect_apify() -> dict[str, Any]:
 
     # 課金状態はApify APIのpricingInfosを正とする（pay_per_event.jsonはフォールバック）
     api_pricing = fetch_apify_pricing()
+    api_pricing = {k: v for k, v in api_pricing.items() if not k.startswith("_")}
     ppe_actors = load_ppe_actors()  # フォールバック用
     use_api = bool(api_pricing)
+    # v94項目3: APIもフォールバックファイルも空 → 「無料」と断定せず unknown 扱い
+    fallback_empty = not ppe_actors
 
     try:
         with open(APIFY_STATS, encoding="utf-8") as f:
@@ -371,6 +468,12 @@ def collect_apify() -> dict[str, Any]:
                     billing = "ppe" if info["pricing_model"] == "PAY_PER_EVENT" else "free"
                     price = info["price"]
                     is_public = info["is_public"]
+                elif not use_api and fallback_empty:
+                    # v94項目3: API失敗＋pay_per_event.jsonも不在/空 → 課金状態不明。
+                    # 「無料設定」と断定すると収益判断を誤る（9/11 04:20誤報の再発防止）。
+                    billing = "unknown"
+                    price = None
+                    is_public = True
                 else:
                     # フォールバック: pay_per_event.json
                     price = ppe_actors.get(actual_name)
@@ -378,15 +481,21 @@ def collect_apify() -> dict[str, Any]:
                     is_public = True  # ポートフォリオ統計は公開アクターのみ想定
                 if billing == "ppe":
                     result["actors_ppe"] += 1
+                elif billing == "unknown":
+                    result["actors_unknown"] += 1
                 else:
                     result["actors_free"] += 1
                 result["total_runs"] += v.get("runs", 0)
                 result["total_users_30d"] += v.get("u30d", 0)
+                # external_users系はkensho-revenue-report.shが消費（profile版から統合）
+                result["external_users_total"] += v.get("external_users", 0)
                 result["details"].append({
                     "name": k,
                     "actual_name": actual_name,
                     "users": v.get("users", 0),
                     "u30d": v.get("u30d", 0),
+                    "external_users": v.get("external_users", 0),
+                    "external_runs": v.get("external_runs", 0),
                     "runs": v.get("runs", 0),
                     "billing": billing,
                     "price": price,
@@ -654,7 +763,10 @@ def build_revenue_summary(
     warnings = []
 
     # Apify: 公開アクターが課金設定無し（PPE設定があれば正常）
-    if apify.get("actors_total", 0) > 0 and apify.get("actors_ppe", 0) == 0:
+    # v94項目3: 課金状態不明（API失敗+フォールバック空）を「無料設定」と断定しない
+    if apify.get("actors_unknown", 0) > 0:
+        warnings.append("Apify課金状態不明（API超時+フォールバック欠損）— 「無料」ではありません")
+    elif apify.get("actors_total", 0) > 0 and apify.get("actors_ppe", 0) == 0:
         warnings.append("Apify公開アクター全件が無料設定（PPE課金なし）")
     elif apify.get("actors_ppe", 0) > 0:
         ppe_names = [d.get("name", "?") for d in apify.get("details", []) if d.get("billing") == "ppe"]
@@ -707,7 +819,9 @@ def build_revenue_summary(
         "note": (
             f"現状: Apify PPE課金 {apify.get('actors_ppe', 0)}件"
             f"（外部run {apify_ext_runs}件→実収益 ${apify_ppe_monthly:.4f}）、"
-            f"無料 {apify.get('actors_free', 0)}件、RapidAPI全FREEMIUM、{gumroad_note}。"
+            f"無料 {apify.get('actors_free', 0)}件"
+            + (f"、課金状態不明 {apify.get('actors_unknown', 0)}件" if apify.get("actors_unknown", 0) > 0 else "")
+            + f"、RapidAPI全FREEMIUM、{gumroad_note}。"
             f"課金設定で月1-3万円のポテンシャル"
         ),
     }
