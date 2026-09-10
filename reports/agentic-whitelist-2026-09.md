@@ -64,3 +64,35 @@ card (child of t_370e65d0).
 Scan scripts + JSON evidence: `~/.hermes/kanban/boards/kensho-ai-team/workspaces/t_370e65d0/`
 (`verify_v87.py`, `my_store_flags.json`, `notwhitelisted.json`, `verify_v87.json`,
 `community_agentic_mine.json`, `probe.log`, `keys_scan.py`, `characterize.py`).
+
+---
+
+## Update 2026-09-10 (t_8646bcf9): root cause of the 2 MCP gaps = Standby mode, now fixed
+
+**Root cause.** docs.apify.com/integrations/x402 ("Supported Actors") lists four
+eligibility gates: (1) PAY_PER_EVENT pricing, (2) events-only (no "Pay per event +
+usage"), (3) limited permissions, (4) **not running in Standby mode** — plus developer
+KYC. The 2 gap actors had `actorStandby.isEnabled=true` (with live standbyUrls);
+`rakuten-japan-mcp` (wl=True) has `standbyUrl=null`. The gaps were a structural
+Standby exclusion, **not** rollout lag as v87 hypothesized.
+
+**Fix applied (self-serve, no support request needed).** PUT
+`/v2/acts/{id}` with `actorStandby.isEnabled=false` succeeded for both
+japan-market-mcp (57SNehd4cHNFyUCj3) and mandarake-surugaya-mcp
+(xUYsD13SVHHRFQS1H) at ~16:45 JST 2026-09-10. Pre-state JSON backups:
+`~/.hermes/kanban/boards/kensho-ai-team/workspaces/t_8646bcf9/standby_pre_<id>.json`.
+Post-fix verification: `standbyUrl=null` on both; zero standby traffic in the last
+24h (get-stats) and neither README advertises the standby URL, so no consumer
+breakage. Note: `actorStandby` is NOT in the official actor-update schema (openapi
+has no standby/agentic paths) yet the API accepts it — undocumented but effective.
+
+**Re-measurement.** `scripts/measure_agentic_standby_t_8646bcf9.py` (native crontab
+one-shot 9/11 09:00 JST, self-removing; logs to
+`logs/agentic_standby_measure_0911.log`). As of 9/10 16:53 the flags are still
+False (62/72) — whitelist refresh cadence is unknown; if still False after ~2
+weeks, file the support/Discord request per the procedure above.
+
+**Full gap classification (10 non-wl store actors, 9/10 16:50):** 8 are FREE
+(pricingModel null → ineligible by gate 1, expected); the 2 MCP actors now pass
+all four documented gates. Evidence: `gap_classification.json` in the t_8646bcf9
+workspace.
