@@ -1,389 +1,358 @@
 #!/usr/bin/env python3
 """
-SEO Rank Watch — dev.to / Apify Store keyword rank observation loop.
-Ported from 'SEO Rank Watch' tweet prompt (AI site 放置 SEO 改善プロンプト)。
-Phase 1: 計測→候補選定 → Phase 2: 1キーワード改善 → Phase 3: 7日観察 → 完了
+seo_rank_watch.py v2 — 実Google順位計測型SEO Rank Watch
+=================================================================
+設計 (2026-09-11 実測調査に基づく):
 
-[WORKFLOW]
-1. watchwords.json から 1 keyword を選定（優先度 high → medium → low、未観察優先）
-2. rank-history.json から該当 keyword の latest rank / imp を取得
-   - dev.to: /api/articles + 独自 analytics（または search ページ PV）で近似
-   - Apify store: store API search count / 自actor 順位※
-3. rank-history.json にその日分の {date, keyword, rank, rank_source, imp, action_taken} を追記
-4. improvement-log.json から該当 keyword の status が 'observing' かつ 7日経過なら：
-   - status を 'achieved' に変更。次の cycle 候補からは除く。
-5. まだ 'active' あるいは 'observing' 状態の keyword が 1 つだけに絞る：
-   - rank_est < 900（概算で上位圏） かつ imp > 0 であること
-6. 候補が 1 つ見つかったら、「改善アクション定義」を 1〜2文で作成
-   - 例: "meta description に target keyword を先頭配置 + H1 に含載"
-7. improvement-log.json に {date, keyword, status: active, action_definition, next_review_day: +7} を追記
-8. 7日目以降は status を 'observing' に変更、改善は実施しない（観察のみ）
-9. それ以上（候補なし、または 7日観察中）は何もしない — 次回 run で再試行
+1. 計測: Apify公式「Google Search Results Scraper」(actId nFJndFXA5zjCTuudP)
+   - 実Google SERPのorganicResultsを取得し、target_urlの実順位を測る
+   - 1キーワード/回・maxResults=20 で $0.02-0.04程度。月間コスト <$1.5
+   - 予算ガード: 当日 Apify usage が DAILY_USD_CAP 超えたら計測スキップ
+2. 選定: watchwords.json から
+   - status=active で next_review_day 到達 → 観察フェーズ (改善効果判定)
+   - それ以外は計測回数が最少のactive候補を1件
+3. 改善 (close-keyword優先):
+   - rank 4-10 → タイトル微調整 (Apify actor title PATCH)
+   - rank 11-20 → 記事bodyにキーワードH2追加 (dev.to article PATCH)
+   - rank 21+ or 圏外 → 新規dev.to記事で被リンク獲得 (週次cron任せ)
+   - 改善は1回/日まで。実APIを叩いて「loopを閉じる」
+4. 記録: rank-history.json / improvement-log.json は append-only
+5. ステートマシン: initial → active → observing → (7日後判定) achieved/retry
 
-[CONVENTIONS]
-- rank_source: "devto_approx" | "apify_store" | "manual"
-- status: "active" | "observing" | "achieved"
-- next_review_day: ISO date string YYYY-MM-DD
-- 周期: 毎日 1 回 cron 実行。1 run で 1 keyword に絞る。
-- GSC が使えない環境（Kensho）では dev.to analytics（記事 PV）を代理指標にする。
-- 「7日待つ」のは構造的に最も重要 — 一括改善の弊害（何が効いたか不明）を回避。
-
-[USAGE]
-python3 scripts/seo_rank_watch.py
-
-[SIDE EFFECTS]
-- data/seo/watchwords.json 読み込み（初回 seed は手動登録）
-- data/seo/rank-history.json 追記
-- data/seo/improvement-log.json 追記
+使い方: python3 scripts/seo_rank_watch.py [--dry-run]
 """
 
 import json
 import os
 import re
-from datetime import date, datetime, timedelta
+import sys
+from datetime import date, timedelta
+from pathlib import Path
 
-ENV = "/mnt/d/Project2/kensho/.env"
-SEED_DIR = "/mnt/d/Project2/kensho/data/seo"
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data" / "seo"
+HIST = DATA / "rank-history.json"
+IMPROVE = DATA / "improvement-log.json"
+WATCH = DATA / "watchwords.json"
+ENV = ROOT / ".env"
 
-
-def env_val(key):
-    for line in open(ENV, encoding="utf-8"):
-        if line.startswith(key + "="):
-            return line.split("=", 1)[1].strip().strip('"').strip("'")
-    return None
-
-
-def load_json(path):
-    if os.path.exists(path):
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
-    return None
+DAILY_USD_CAP = 0.50  # Apify SERP計測の日次上限
+GS_ACT = "nFJndFXA5zjCTuudP"  # Apify公式 Google Search Results Scraper
 
 
-def save_json(path, data):
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+def env_val(key: str) -> str:
+    """project .env から値取得 (プロセス環境を優先)"""
+    if key in os.environ:
+        return os.environ[key]
+    if ENV.exists():
+        for line in ENV.read_text(encoding="utf-8").splitlines():
+            if line.startswith(f"{key}="):
+                return line.split("=", 1)[1].strip()
+    return ""
 
 
-def append_json(path, entry):
-    """append-only: read existing, append entry, write back (overwrite entire file)"""
-    data = load_json(path) or {}
-    if isinstance(data, dict):
-        data.setdefault("log", []).append(entry)
-    elif isinstance(data, list):
-        data.append(entry)
-    save_json(path, data)
-
-
-def pick_keyword(watchwords):
-    """Select one keyword from watchwords.json.
-    Priority: high → medium → low.
-    Preference: status 未観察 or observing 7日経過分は復活させる。
-    Returns: (keyword_dict, index) or (None, None)
-    """
-    keywords = watchwords.get("keywords", [])
-    if not keywords:
-        return None, None
-
-    today = date.today().isoformat()
-
-    # まず 'observing' かつ next_review_day 過去のものを復活
-    for i, kw in enumerate(keywords):
-        rev = kw.get("next_review_day", "")
-        if rev and rev <= today and kw.get("status") == "observing":
-            return kw, i
-
-    # 優先度順ソート（high=3, medium=2, low=1）
-    prio_map = {"high": 3, "medium": 2, "low": 1}
-    sorted_kw = sorted(keywords, key=lambda k: prio_map.get(k.get("priority", "low"), 1), reverse=True)
-
-    # status が 'achieved' ではないものから first_candidate
-    for i, kw in enumerate(sorted_kw):
-        if kw.get("status") not in ("achieved",):
-            next_rev = kw.get("next_review_day", "")
-            if not next_rev or next_rev <= today:
-                return kw, sorted_kw.index(kw)
-
-    # 見つからなければ最初の initial/active
-    for kw in sorted_kw:
-        if kw.get("status") not in ("achieved",):
-            return kw, sorted_kw.index(kw)
-
-    return None, None
-
-
-def check_rank_devto(slug):
-    """dev.to rank approx via article search or API."""
-    tok = env_val("DEVTO_API_KEY")
-    if not tok:
-        return None, None, "no_token"
+def load_json(path: Path, default):
     try:
-        import requests
-
-        r = requests.get(
-            "https://dev.to/api/articles",
-            params={"per_page": 5, "tag": "japan"},
-            timeout=15,
-            headers={"Api-Key": tok},
-        )
-        if r.status_code != 200:
-            return None, None, f"api_err:{r.status_code}"
-        articles = r.json()
-        # article タイトルから検索順位を推定
-        for i, a in enumerate(articles):
-            if slug.lower() in a.get("title", "").lower():
-                imp = len(a.get("description", "") or "")
-                return i + 1, imp, "devto_approx"
-        # ヒットしなかった→ rank > 5 とする
-        if articles:
-            imp_vals = []
-            for a in articles:
-                d = a.get("description", "") or ""
-                m = re.search(r"(\d[\d,]*\s*views?)", d.replace(",", ""))
-                if m:
-                    imp_vals.append(int(m.group(1).split()[0].replace(",", "")))
-            if imp_vals:
-                median_imp = sorted(imp_vals)[len(imp_vals) // 2]
-            else:
-                median_imp = len(articles[0].get("description", "")) if articles else 0
-        else:
-            median_imp = 0
-        return 99, median_imp, "devto_approx_no_hit"
-    except Exception as e:
-        return None, None, f"devto_err:{e}"
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return default
 
 
-def check_rank_apify(keyword):
-    """Apify store search での自 actor 順位を確認."""
+def append_json(path: Path, list_key: str, entry: dict) -> None:
+    """append-only 追記 (既存エントリは絶対に書き換えない)"""
+    d = load_json(path, {})
+    if not isinstance(d, dict):
+        d = {}
+    d.setdefault(list_key, []).append(entry)
+    # 不要キー掃除 (v1の残骸)
+    for k in ("notes", "created_at", "source"):
+        d.setdefault(k, d.get(k, ""))
+    path.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def today() -> str:
+    return date.today().isoformat()
+
+
+# ---------------------------------------------------------------- SERP 計測
+def apify_headers() -> dict:
     tok = env_val("APIFY_TOKEN_DEFAULT")
     if not tok:
-        return None, None, "no_token"
+        raise RuntimeError("APIFY_TOKEN_DEFAULT が未設定")
+    return {"Authorization": f"Bearer {tok}", "Content-Type": "application/json"}
+
+
+def apify_today_usage_usd() -> float:
+    """当日のApifyプラットフォーム使用料 (USD)"""
     try:
         import requests
 
         r = requests.get(
-            "https://api.apify.com/v2/store",
-            params={"token": tok, "query": keyword, "limit": 50},
-            timeout=25,
+            "https://api.apify.com/v2/runs",
+            headers=apify_headers(),
+            params={"limit": 200, "startedAfter": today() + "T00:00:00Z"},
+            timeout=60,
         )
-        if r.status_code != 200:
-            return None, None, f"api_err:{r.status_code}"
-        d = r.json().get("data", {})
-        items = d.get("items", [])
-        my = [it for it in items if it.get("username") == "fruitful_quintessence"]
-        if not my:
-            return 999, 0, "apify_store_no_me"
-        rank = items.index(my[0]) + 1
-        info = my[0].get("stats", {})
-        imp = info.get("totalUsers7Days", info.get("bookmarkCount", 0))
-        return rank, imp, "apify_store"
+        runs = r.json().get("data", {}).get("items", [])
+        total = sum(float(x.get("usageTotalUsd") or 0) for x in runs)
+        return round(total, 4)
     except Exception as e:
-        return None, None, f"apify_err:{e}"
+        print(f"[warn] usage取得失敗: {e}")
+        return 0.0
 
 
-def main():
-    today = date.today().isoformat()
-    watchwords_path = os.path.join(SEED_DIR, "watchwords.json")
-    rank_path = os.path.join(SEED_DIR, "rank-history.json")
-    log_path = os.path.join(SEED_DIR, "improvement-log.json")
+def google_rank(keyword: str, target_url: str, max_results: int = 20):
+    """実Google SERPでtarget_urlの順位を取得。見つからなければ None"""
+    import requests
 
-    watchwords = load_json(watchwords_path) or {"keywords": []}
-    rank_history = load_json(rank_path) or {"log": []}
-    improvement_log = load_json(log_path) or {"log": []}
-
-    # 1. keyword 選定
-    kw, kw_idx = pick_keyword(watchwords)
-    if kw is None:
-        print("[RANK_WATCH] No actionable keyword today. All under achieved or pending review.")
-        append_json(rank_path, {"date": today, "note": "no_candidate_all_achieved_or_pending"})
-        return
-
-    keyword_key = kw.get("key", "")
-    target_url = kw.get("target_url", "")
-    priority = kw.get("priority", "low")
-
-    print(f"[RANK_WATCH] Selected keyword: {keyword_key} (priority={priority}, status={kw.get('status', 'initial')})")
-
-    # 2. rank 計測
-    # まず Apify store でチェック（キーワードが apify/mercari/dlsite に該当する場合）
-    apify_keywords = ["mercari", "dlsite", "apify", "kakaku", "suruga-ya"]
-    rank_est, imp_est, rank_source = None, None, "none"
-
-    if any(kw_key in keyword_key.lower() for kw_key in apify_keywords):
-        rank_est, imp_est, rank_source = check_rank_apify(keyword_key)
-        print(
-            f"[RANK_WATCH] Apify store check for '{keyword_key}': rank={rank_est}, imp={imp_est}, source={rank_source}"
+    run = (
+        requests
+        .post(
+            f"https://api.apify.com/v2/acts/{GS_ACT}/runs?waitForFinish=150",
+            headers=apify_headers(),
+            json={
+                "queries": keyword,
+                "countryCode": "jp",
+                "searchLanguage": "ja",
+                "maxResults": max_results,
+            },
+            timeout=170,
         )
-
-    # dev.to fallback（Apify でヒットしなかった、またはランクが取れなかった場合）
-    if rank_est is None or rank_est >= 900:
-        slug = None
-        if target_url:
-            m = re.search(r"[^/]+$", target_url)
-            if m:
-                slug = m.group(0)
-        if not slug:
-            slug = keyword_key
-        rank_est, imp_est, rank_source = check_rank_devto(slug)
-        print(f"[RANK_WATCH] dev.to fallback for '{keyword_key}': rank={rank_est}, imp={imp_est}, source={rank_source}")
-
-    # 3. rank-history に追記
-    history_entry = {
-        "date": today,
-        "keyword": keyword_key,
-        "rank": rank_est if rank_est else 999,
-        "rank_source": rank_source,
-        "imp": imp_est if imp_est else 0,
-        "action_taken": "none_yet",
-    }
-    # 既に同じkeyword+date がある場合は追記せずスキップ
-    same_day = [e for e in rank_history.get("log", []) if e.get("date") == today and e.get("keyword") == keyword_key]
-    if not same_day:
-        rank_history.setdefault("log", []).append(history_entry)
-        save_json(rank_path, rank_history)
-        print(f"[RANK_WATCH] Appended to rank-history.json (total entries: {len(rank_history['log'])})")
-    else:
-        print(f"[RANK_WATCH] Duplicate date entry skipped for {keyword_key}")
-
-    # 4. improvement-log の処理: status が 'observing' で 7日経過なら 'achieved' へ
-    existing_imp_entries = [e for e in improvement_log.get("log", []) if e.get("keyword") == keyword_key]
-
-    latest_status = "active"
-    if existing_imp_entries:
-        dates_sorted = sorted(existing_imp_entries, key=lambda e: e.get("date", ""))
-        latest = dates_sorted[-1]
-        latest_status = latest.get("status", "active")
-        latest_review = latest.get("next_review_day", "")
-    else:
-        latest_review = ""
-
-    # observing 状態で 7日経過チェック
-    if latest_status == "observing" and latest_review:
-        review_date = datetime.strptime(latest_review, "%Y-%m-%d").date()
-        if review_date <= date.today():
-            latest["status"] = "achieved"
-            latest["achieved_at"] = today
-            print(f"[RANK_WATCH] Status changed from 'observing' to 'achieved' for {keyword_key} (reviewed {today})")
-
-    # 5. candidate selection: 今日の rank_est / imp_est が条件を満たす keyword が 1 つだけか確認
-    # 候補となる条件: rank_est < 900 かつ imp_est > 0 （および status が achieved でないこと）
-    candidates = []
-    for i, k in enumerate(watchwords.get("keywords", [])):
-        s = k.get("status", "initial")
-        if s == "achieved":
-            continue
-        # observing だけど review day が未来なら候補から除く
-        if s == "observing":
-            rev = k.get("next_review_day", "")
-            if rev and rev > today:
-                print(f"[RANK_WATCH] '{k.get('key')}' is in observing period (until {rev}) — not a candidate this run")
-                continue
-        # 今日の rank_est / imp_est がこの keyword に該当し、条件を満たす場合
-        # 条件: rank_est < 900 かつ imp_est > 0
-        # そしてこの keyword が today の選定対象（keyword_key と一致）であること
-        if keyword_key and k.get("key") == keyword_key:
-            if rank_est is not None and rank_est < 900 and imp_est is not None and imp_est > 0:
-                candidates.append((k, i))
-                print(f"[RANK_WATCH] '{k.get('key')}' is a candidate today: rank={rank_est}, imp={imp_est}")
-            else:
-                reason = []
-                if rank_est is None or rank_est >= 900:
-                    reason.append(f"rank_est={rank_est} not < 900")
-                if imp_est is None or imp_est <= 0:
-                    reason.append(f"imp_est={imp_est} not > 0")
-                print(f"[RANK_WATCH] '{k.get('key')}' skipped: {', '.join(reason)}")
-        # keyword_key と一致しない他 keyword はスキップ
-
-    print(
-        f"[RANK_WATCH] Candidate count for '{keyword_key}': {len(candidates)} "
-        f"(total keywords: {len(watchwords.get('keywords', []))})"
+        .json()
+        .get("data", {})
     )
+    if run.get("status") != "SUCCEEDED":
+        raise RuntimeError(f"SERP run 失敗: status={run.get('status')}")
+    usd = float(run.get("usageTotalUsd") or 0)
 
-    if len(candidates) == 1:
-        # 候補が 1 つだけ → 改善アクションを定義して active → observing へ
-        chosen_kw, chosen_idx = candidates[0]
-        chosen_key = chosen_kw.get("key", "")
+    items = requests.get(
+        f"https://api.apify.com/v2/datasets/{run['defaultDatasetId']}/items",
+        headers=apify_headers(),
+        params={"limit": 10},
+        timeout=60,
+    ).json()
+    rank = None
+    total_organic = 0
+    for it in items:
+        organic = it.get("organicResults") or []
+        total_organic = max(total_organic, len(organic))
+        for i, o in enumerate(organic, 1):
+            if target_url in (o.get("u") or o.get("url") or o.get("link") or ""):
+                rank = i
+                break
+        if rank:
+            break
+    return rank, total_organic, usd
 
-        # 既存の improvement log から同じ keyword の last action_definition を取得
-        last_action = ""
-        if existing_imp_entries:
-            for e in reversed(existing_imp_entries):
-                if e.get("action_definition"):
-                    last_action = e.get("action_definition")
-                    break
 
-        # 新しい action_definition を生成
-        action_def = ""
-        if 2 <= rank_est <= 10:
-            action_def = (
-                f"[{chosen_key}] 順位 {rank_est} 圏内キーワードへの対応: "
-                "meta description に target keyword を先頭配置し、H1 に含載する。インラインリンクも補完する。"
-            )
-        elif rank_est > 10 and rank_est < 900:
-            action_def = (
-                f"[{chosen_key}] 順位圏外キーワードへの対応: "
-                "ページ構造を見直し、関連キーワードを H2/H3 に自然に組み込む。"
-            )
+# ---------------------------------------------------------------- 選定
+def select_keyword(keywords: list, history: dict) -> dict | None:
+    """計測対象を1件選ぶ: 観察到期を最優先、次に計測回数最少のactive"""
+    logs = history.get("log", [])
+    counts: dict[str, int] = {}
+    for e in logs:
+        if e.get("keyword"):
+            counts[e["keyword"]] = counts.get(e["keyword"], 0) + 1
+
+    # 1) observing 到期チェック
+    for kw in keywords:
+        if kw.get("status") == "observing" and kw.get("next_review_day") == today():
+            return kw
+    # 2) active のうち最少計測
+    actives = [kw for kw in keywords if kw.get("status") == "active"]
+    if not actives:
+        return None
+    return min(actives, key=lambda k: (counts.get(k["key"], 0), k["key"]))
+
+
+# ---------------------------------------------------------------- 改善
+def improve_apify_title(actor_path: str, keyword: str) -> bool:
+    """actor title にキーワードを自然に含める (PATCH相当はPUT)"""
+    import requests
+
+    H = apify_headers()  # noqa: N806 (ruff pre-commit互換: 大文字ヘッダdictはローカル完結)
+    api = f"https://api.apify.com/v2/acts/{actor_path}"
+    a = requests.get(api, headers=H, timeout=30).json()["data"]
+    cur = a.get("title") or ""
+    if keyword.lower() in cur.lower():
+        print(f"  [skip] title already contains keyword: {cur!r}")
+        return False
+    # 現タイトル + 区切り + keyword (30-60字目安)
+    sep = " | " if "|" not in cur else " — "
+    new_title = f"{cur}{sep}{keyword.title()}"[:80]
+    r = requests.put(api, headers=H, json={"title": new_title}, timeout=30)
+    ok = r.status_code == 200
+    print(f"  title: {cur!r} -> {new_title!r} ({r.status_code})")
+    return ok
+
+
+def improve_devto_article(article_id: int, keyword: str, api_key: str) -> bool:
+    """記事body末尾にキーワードH2節を追記 (被リンク用)"""
+    import requests
+
+    H = {"api-key": api_key, "Content-Type": "application/json"}  # noqa: N806
+    r = requests.get(f"https://dev.to/api/articles/{article_id}", headers=H, timeout=30).json()
+    body = r.get("body_markdown") or ""
+    if keyword.lower() in body.lower():
+        print("  [skip] article already mentions keyword")
+        return False
+    slug = keyword.lower().replace(" ", "-")
+    section = (
+        f"\n\n## More on {keyword.title()}\n\n"
+        f"If you are looking for a {slug}, the Apify actors below cover it:\n\n"
+        f"- [Mercari Japan scraper](https://apify.com/fruitful_quintessence/mercari-japan-search-scraper)\n"
+        f"- [Yahoo Auctions / Suruga-ya price data](https://apify.com/fruitful_quintessence/japan-offmall-market-scraper)\n"
+    )
+    r2 = requests.put(
+        "https://dev.to/api/articles/me",
+        headers=H,
+        json={"article": {"body_markdown": body + section}},
+        timeout=30,
+    )
+    ok = r2.status_code in (200, 201)
+    print(f"  dev.to article {article_id}: append section ({r2.status_code})")
+    return ok
+
+
+def decide_action(rank, keyword: str) -> str:
+    """close-keyword戦略: rank帯ごとに最小コストの一手"""
+    if rank is None:
+        return "new_devto_backlink"
+    if rank <= 3:
+        return "hold"  # 上位安定 — 触らない
+    if rank <= 10:
+        return "tune_title"
+    if rank <= 20:
+        return "append_body_section"
+    return "new_devto_backlink"
+
+
+# ---------------------------------------------------------------- main
+def main() -> int:
+    dry = "--dry-run" in sys.argv
+
+    watch = load_json(WATCH, {"keywords": []})
+    keywords = [k for k in watch.get("keywords", []) if k.get("status") != "retired"]
+    hist = load_json(HIST, {"log": []})
+
+    # ステートマシン initial→active 昇格 (9/11修正: これが無くseed語が永久不選出だった)
+    promoted = False
+    for k in keywords:
+        if k.get("status") == "initial":
+            k["status"] = "active"
+            promoted = True
+            print(f"initial→active 昇格: {k['key']}")
+    if promoted:
+        WATCH.write_text(json.dumps(watch, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    # v1ログの掃除: keywordなしの skip エントリは選定カウントから除外済み
+    kw = select_keyword(keywords, hist)
+    if not kw:
+        print("対象キーワードなし — 終了")
+        return 0
+
+    key = kw["key"]
+    target = kw.get("target_url") or ""
+    print(f"[{today()}] 計測対象: {key} -> {target}")
+
+    if dry:
+        print("[dry-run] 計測せず終了")
+        return 0
+
+    # 予算ガード
+    used = apify_today_usage_usd()
+    print(f"Apify当日使用: ${used:.4f} / cap ${DAILY_USD_CAP:.2f}")
+    if used >= DAILY_USD_CAP:
+        print("日次予算上限到達 — 計測スキップ")
+        append_json(HIST, "log", {"date": today(), "note": f"budget_cap_skip: ${used:.2f}"})
+        return 0
+
+    # 実順位計測
+    rank, organic_count, usd = google_rank(key, target)
+    print(f"Google順位: {rank if rank else '圏外'} / organic {organic_count}件 / cost ${usd:.4f}")
+
+    entry = {
+        "date": today(),
+        "keyword": key,
+        "rank": rank,
+        "rank_source": "google_jp_serp_apify",
+        "imp": organic_count,
+        "cost_usd": round(usd, 4),
+        "action_taken": "none",
+    }
+    append_json(HIST, "log", entry)
+
+    # 改善判定 (1回/日まで)
+    action = decide_action(rank, key)
+    print(f"改善アクション: {action}")
+    improved = False
+    detail = ""
+
+    if action == "tune_title":
+        actor = re.sub(r"^https://apify\.com/", "", target)
+        improved = improve_apify_title(actor, key)
+        detail = f"title tuned -> contains {key!r}"
+    elif action == "append_body_section":
+        art_id = kw.get("devto_article_id")
+        if art_id:
+            improved = improve_devto_article(int(art_id), key, env_val("DEVTO_API_KEY"))
+            detail = f"dev.to {art_id} append section"
         else:
-            action_def = (
-                f"[{chosen_key}] コンテンツ改善: "
-                "現在の記事構造を見直し、ユーザー意図に即した見出し構成と本文量を拡張する。"
-            )
+            action = "new_devto_backlink"
+            detail = "no article_id — fallback to backlink"
+    elif action == "new_devto_backlink":
+        # 即席で新規記事は回さない (週次devto-weekly-seo-post cronに任せる)
+        detail = "queued for weekly devto post cron"
+        improved = False
+    elif action == "hold":
+        detail = "rank<=3 stable — no action"
 
-        # last_action と被らない範囲で調整
-        if last_action and last_action in action_def:
-            action_def = action_def.replace(last_action, f"[見直し済み]{action_def}")
-
-        # new improvement log entry
-        new_entry = {
-            "date": today,
-            "keyword": chosen_key,
+    if action not in ("none", "hold"):
+        entry2 = {
+            "date": today(),
+            "keyword": key,
+            "rank_before": rank,
             "status": "active",
-            "action_definition": action_def,
+            "action": action,
+            "detail": detail,
+            "improved": improved,
             "next_review_day": (date.today() + timedelta(days=7)).isoformat(),
         }
-        improvement_log.setdefault("log", []).append(new_entry)
-        save_json(log_path, improvement_log)
+        append_json(IMPROVE, "log", entry2)
+        # 観察フェーズへ
+        if improved or action == "new_devto_backlink":
+            kw["status"] = "observing"
+            kw["next_review_day"] = (date.today() + timedelta(days=7)).isoformat()
+            # watchwords.json 更新 (status列のみ — これはseed自身の寿命管理)
+            watch["keywords"] = [kw if k2["key"] == kw["key"] else k2 for k2 in watch["keywords"]]
+            WATCH.write_text(json.dumps(watch, ensure_ascii=False, indent=2), encoding="utf-8")
 
-        # watchwords の status を 'active' に更新
-        watchwords["keywords"][kw_idx]["status"] = "active"
-        watchwords["keywords"][kw_idx]["next_review_day"] = (date.today() + timedelta(days=7)).isoformat()
-        save_json(watchwords_path, watchwords)
+    # observing 到期 → achieved判定
+    for k2 in watch["keywords"]:
+        if k2.get("status") == "observing" and k2.get("next_review_day") == today():
+            recs = [e for e in hist["log"] if e.get("keyword") == k2["key"]]
+            if recs:
+                first, last = recs[0], recs[-1]
+                improved_rank = (last.get("rank") or 99) < (first.get("rank") or 99)
+                k2["status"] = "achieved" if improved_rank else "active"
+                note = "achieved" if improved_rank else "retry"
+                print(f"観察判定: {k2['key']} -> {note}")
+                append_json(
+                    IMPROVE,
+                    "log",
+                    {
+                        "date": today(),
+                        "keyword": k2["key"],
+                        "status": k2["status"],
+                        "rank_first": first.get("rank"),
+                        "rank_last": last.get("rank"),
+                    },
+                )
+    WATCH.write_text(json.dumps(watch, ensure_ascii=False, indent=2), encoding="utf-8")
 
-        print("[RANK_WATCH] 🎯 1 candidate found! action_definition set.")
-        print(f"    keyword: {chosen_key}")
-        print(f"    rank: {rank_est} (source: {rank_source})")
-        print(f"    imp: {imp_est}")
-        print(f"    action: {action_def[:80]}...")
-        print(f"    next review: {new_entry['next_review_day']}")
-
-    elif len(candidates) == 0:
-        print(
-            f"[RANK_WATCH] No candidates today for '{keyword_key}' — "
-            "all keywords either achieved, in observing period, or rank/imp not met."
-        )
-        # 7日経過分の observing を 'achieved' に一括昇格させる機会
-        for k in watchwords.get("keywords", []):
-            if k.get("status") == "observing":
-                rev = k.get("next_review_day", "")
-                if rev and rev <= today:
-                    k["status"] = "achieved"
-                    print(f"[RANK_WATCH] Auto-upgraded '{k.get('key')}' from observing to achieved (7 days elapsed)")
-        save_json(watchwords_path, watchwords)
-
-        # rank-history にノーアクションログ
-        append_json(rank_path, {"date": today, "note": "no_candidates_rank_imp_not_met"})
-
-    else:
-        # 候補が 2 つ以上ある場合は何もしない — 次回 run で再試行
-        append_json(
-            rank_path,
-            {"date": today, "note": f"multiple_candidates:{len(candidates)} — skip this run for {keyword_key}"},
-        )
-        print(f"[RANK_WATCH] {len(candidates)} candidates found — skipping this run, will retry next cycle.")
-
-    print("[RANK_WATCH] Done.")
+    print("完了")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
