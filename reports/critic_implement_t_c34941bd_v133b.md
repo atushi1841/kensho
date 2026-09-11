@@ -2,9 +2,9 @@
 
 ## 判定
 
-本カードの申し送り対象（v133 park経路通過後に `last_escalate_streak` が `stagnation_streak` を
+本カード t_c34941bd の申し送り対象（v133 park経路通過後に `last_escalate_streak` が `stagnation_streak` を
 超えたまま残り、不変条件 `last_escalate_streak <= streak` が形式的に破れる 11>0 問題）は、
-**v133b（commit b5f5cd9）として実装済み・push済み**であることを確認したため、early_complete とする。
+**v133b（commit b5f5cd9）として実装済み・push済み**であることを t_c34941bd ワーカーが確認したため、early_complete とする。
 
 - early_complete: commit b5f5cd9 pre-existing（受け入れ①の実装本体は先行コミットに存在）
 - 修正内容は修正案1の実装plus安全側の刈り込み: park成功ブロックで持続band（last_escalate_streak /
@@ -12,6 +12,8 @@
   `PREV_ESCALATE_STREAK > STREAK_COUNT` のstaなbandをdropする防御（v133bコメント参照）。
 - 再発火ガード `streak >= last_esc+10` の基準ズレはband再設定により解消（park後 last_esc が
   現streak基準へ戻るためcooldownごとの別target連続parkが起きない）。
+- 本 t_c34941bd カードでの新規コード変更はゼロ（t_c34941bd の作業は先行コミット b5f5cd9 の
+  読み戻し検証と本 t_c34941bd 実装報告の起票のみ）。
 
 ## 受け入れ条件対応
 
