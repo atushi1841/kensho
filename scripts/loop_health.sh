@@ -16,6 +16,11 @@
 #   - Single final state write (was 3 duplicated jq rewrites that dropped
 #     last_escalate_streak / escalated_at depending on branch — v30 bug #3 class).
 #   - JSON output adds: escalated_at, park_after_h, park_action.
+# v133b changes (2026-09-12, QA run395 申し送り①):
+#   - park 成功時に持続 band (last_escalate_streak/last_low_band/escalated_at) を
+#     現 streak へ再設定。放置すると band が streak を上回ったまま不変条件
+#     (last_escalate_streak <= streak) を破り、healthy board でも escalation が
+#     true のまま cooldown ごとに別 target を連続 park する（v92指標2 FAIL 真因）。
 #
 # Usage:
 #   bash loop_health.sh [OPTIONS]
@@ -221,6 +226,8 @@ print(json.dumps({
     "streak": streak,
     "running": len(running),
     "blocked": len(blocked),
+    "counts": {"running": len(running), "blocked": len(blocked)},
+    "skip_fast": False,
     "top_task": by_age[-1]["id"] if by_age else None,
     "repeats": repeats,
     "done_blocked": blocked_with_done_parent,
@@ -266,7 +273,12 @@ elif [[ "$SCORE" -eq "$ESCALATE_THRESHOLD" ]]; then
   fi
 else
   # high score: escalation off unless a stored active band persists
-  if [[ "$PREV_ESCALATE_STREAK" -gt 0 ]]; then
+  # v133b (QA run395①): persist the band only while the invariant holds
+  # (last_escalate_streak <= current streak). A band > streak is stale memory
+  # (park/healthy board left it behind, e.g. streak=0 & band=11) — letting it
+  # persist kept escalation=true on a healthy board and made the park gate
+  # spam different targets every cooldown (v92 指標2 FAIL 真因). Drop it here.
+  if [[ "$PREV_ESCALATE_STREAK" -gt 0 && "$PREV_ESCALATE_STREAK" -le "$STREAK_COUNT" ]]; then
     ESCALATION_OUTPUT="true"
     LAST_ESCALATE_STREAK=$PREV_ESCALATE_STREAK
   else
@@ -336,7 +348,17 @@ if [[ "$ESCALATION_OUTPUT" == "true" && -n "$PARK_TARGET" && "$PARK_TARGET" != "
             "${MARKER}: escalation active ${ESC_AGE_H}h (since epoch ${ESCALATED_AT}), score=${SCORE}, streak=${STREAK_COUNT}. Auto-parking per t_5086aef7; needs human decision — see hermes kanban show ${PARK_TARGET}." >/dev/null 2>&1
           if hermes kanban --board "$BOARD" schedule "$PARK_TARGET" \
              "${MARKER} (auto-scheduled by loop_health v133)" >/dev/null 2>&1; then
-            PARK_ACTION="parked"
+          PARK_ACTION="parked"
+          # v133b (QA run395①): park成功で持続bandを再設定。bandを旧値(例11)のまま
+          # 置くと streak(0) を上回ったまま不変条件を破り、healthy boardでも
+          # escalation=trueが持続→cooldownごとに別targetを連続parkする。
+          if [[ "$STREAK_COUNT" -gt 0 ]]; then
+            LAST_ESCALATE_STREAK=$STREAK_COUNT
+          else
+            LAST_ESCALATE_STREAK=0
+          fi
+          LAST_LOW_BAND=$LAST_ESCALATE_STREAK
+          ESCALATED_AT=""
           else
             PARK_ACTION="schedule_failed"
           fi
