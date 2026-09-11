@@ -1,6 +1,7 @@
 # t_5086aef7 実装報告 — evolution v102: escalation SLA parking（v133 + v133b クローズ）
 
 日付: 2026-09-12 04:00 JST / 作業者: kensho-revenue-worker / run 399
+カード: t_5086aef7（t_5086aef7 の受け入れ条件＝本文のpark実装+成功指標充足を本報告で証跡化する。t_5086aef7 QA run395①のv133bクローズも含む）
 
 ## 実施内容
 
