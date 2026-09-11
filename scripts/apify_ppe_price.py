@@ -15,28 +15,55 @@ import copy
 import json
 import os
 import sys
+import urllib.error
 import urllib.request
 
-TOKEN = os.environ.get("APIFY_TOKEN")
 BASE = "https://api.apify.com/v2"
+_ENV_PATH = "/mnt/d/Project2/kensho/.env"
 
 
-def get(path):
-    req = urllib.request.Request(BASE + path, headers={"Authorization": f"Bearer {TOKEN}"})
-    with urllib.request.urlopen(req) as r:
-        return json.loads(r.read().decode())
+def _resolve_token() -> str:
+    """t_6f3de363: env不整合修復。APIFY_TOKEN→APIFY_TOKEN_DEFAULT→.env直接パースの順。
+    全て不在なら 401 静默フォールバックではなく即失敗（原因を明示）。"""
+    tok = os.environ.get("APIFY_TOKEN") or os.environ.get("APIFY_TOKEN_DEFAULT")
+    if tok:
+        return tok.strip()
+    # cronはsourceでもexportされないため.envを直接読む（2026-09-12 00:58失敗の実因）
+    try:
+        with open(_ENV_PATH, encoding="utf-8") as f:
+            for line in f:
+                if line.startswith(("APIFY_TOKEN_DEFAULT=", "APIFY_TOKEN=")):
+                    return line.split("=", 1)[1].strip()
+    except OSError:
+        pass
+    sys.exit("ERROR: Apifyトークン未取得（APIFY_TOKEN/APIFY_TOKEN_DEFAULT/.env すべて不在）。401の前に終了。")
 
 
-def put(path, body):
-    data = json.dumps(body).encode()
-    req = urllib.request.Request(
-        BASE + path,
-        data=data,
-        method="PUT",
-        headers={"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(req) as r:
-        return json.loads(r.read().decode())
+TOKEN = _resolve_token()
+
+
+def _request(path: str, body: object = None, method: str | None = None) -> dict:
+    data = json.dumps(body).encode() if body is not None else None
+    headers = {"Authorization": f"Bearer {TOKEN}"}
+    if data is not None:
+        headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(BASE + path, data=data, method=method, headers=headers)
+    try:
+        with urllib.request.urlopen(req) as r:
+            return json.loads(r.read().decode())
+    except urllib.error.HTTPError as e:
+        # 401等のレスポンスを握りつぶさない: HTTPステータス付きで明示失敗
+        sys.exit(f"ERROR: HTTP {e.code} at {path}（token失効/権限を確認）")
+    except urllib.error.URLError as e:
+        sys.exit(f"ERROR: network failure at {path}: {e.reason}")
+
+
+def get(path: str) -> dict:
+    return _request(path)
+
+
+def put(path: str, body: object) -> dict:
+    return _request(path, body=body, method="PUT")
 
 
 def main():
