@@ -129,3 +129,10 @@ devto_check_drafts.py
 
 # critic v95 t_78989694: X research scratch (9/10)
 tmp_xresearch/
+
+# critic v100 t_cd504399: 一過性probe・ランタイム成果物による dirty=Y ストーム遮断
+data/seo/
+tmp_llm_research/
+report.json
+rtx3090_*
+data/apify_pricing_cache.json
