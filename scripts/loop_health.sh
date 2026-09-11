@@ -21,6 +21,15 @@
 #     現 streak へ再設定。放置すると band が streak を上回ったまま不変条件
 #     (last_escalate_streak <= streak) を破り、healthy board でも escalation が
 #     true のまま cooldown ごとに別 target を連続 park する（v92指標2 FAIL 真因）。
+# v133c changes (2026-09-12, t_8fed223a QA run411 — v92回帰の再導入):
+#   - v133 リライトで失われた v92 (7327ab7, t_f3533056) の時刻ベース dedup 窓を
+#     park gate へ再導入。同一 result/同一 target を PARK_DEDUP_WINDOW_S (既定
+#     1800s=30分) 以内の再実行で再評価しない: 2回連続実行の2回目は
+#     park_action=dedup_skip を返し last_park_target は切り替わらない。
+#     連続park（別target含む）は last_park_result="parked" 窓で遮断 — park
+#     cooldown(1h)より短いスパンで escalation 別 target を連続 park する v92
+#     真因（自動復旧阻害）の再発防止。dedup_skip は窓をスライドさせない
+#     ため last_park_result/_ts を更新しない。
 #
 # Usage:
 #   bash loop_health.sh [OPTIONS]
@@ -42,6 +51,7 @@ BOARD="kensho-ai-team"
 STATE_FILE="${HERMES_HOME:-$HOME/.hermes/profiles/kensho-sweeps}/data/loop_health_state.json"
 PARK_AFTER_H="${PARK_AFTER_H:-24}"
 PARK_COOLDOWN_S="${PARK_COOLDOWN_S:-21600}"   # 6h between park actions
+PARK_DEDUP_WINDOW_S="${PARK_DEDUP_WINDOW_S:-1800}"   # v133c: 30分窓の時刻dedup (v92回帰の再導入)
 NO_PARK=0
 DRY_RUN=0
 
@@ -79,18 +89,25 @@ PREV_ESCALATE_STREAK=0
 PREV_LOW_BAND=0
 PREV_ESCALATED_AT=""
 PREV_PARK_CD=0
+PREV_PARK_TS=""
+PREV_PARK_RESULT=""
+PREV_PARK_TARGET=""
 if [[ -f "$STATE_FILE" ]]; then
   PREV_STREAK=$(jq -r '.streak // 0' "$STATE_FILE" 2>/dev/null)
   PREV_ESCALATE_STREAK=$(jq -r '.last_escalate_streak // 0' "$STATE_FILE" 2>/dev/null)
   PREV_LOW_BAND=$(jq -r '.last_low_band // 0' "$STATE_FILE" 2>/dev/null)
   PREV_ESCALATED_AT=$(jq -r '.escalated_at // empty' "$STATE_FILE" 2>/dev/null)
   PREV_PARK_CD=$(jq -r '.park_cooldown_until // 0' "$STATE_FILE" 2>/dev/null)
+  PREV_PARK_TS=$(jq -r '.last_park_ts // empty' "$STATE_FILE" 2>/dev/null)
+  PREV_PARK_RESULT=$(jq -r '.last_park_result // empty' "$STATE_FILE" 2>/dev/null)
+  PREV_PARK_TARGET=$(jq -r '.last_park_target // empty' "$STATE_FILE" 2>/dev/null)
 fi
 [[ "$PREV_STREAK" =~ ^[0-9]+$ ]] || PREV_STREAK=0
 [[ "$PREV_ESCALATE_STREAK" =~ ^[0-9]+$ ]] || PREV_ESCALATE_STREAK=0
 [[ "$PREV_LOW_BAND" =~ ^[0-9]+$ ]] || PREV_LOW_BAND=0
 [[ "$PREV_ESCALATED_AT" =~ ^[0-9]+$ ]] || PREV_ESCALATED_AT=""
 [[ "$PREV_PARK_CD" =~ ^[0-9]+$ ]] || PREV_PARK_CD=0
+[[ "$PREV_PARK_TS" =~ ^[0-9]+$ ]] || PREV_PARK_TS=""
 
 # ─── Fetch tasks if not provided ─────────────────────────────────────────────
 # QA修正(2026-09-12 02:00): ①--tagsはhermes CLIに存在せずusageエラー→stale DB
@@ -328,10 +345,38 @@ PARK_ACTION="none"
 PARK_TARGET="$ESCALATION_TARGET"
 PARK_AFTER_S=$(( PARK_AFTER_H * 3600 ))
 PARK_CD_UNTIL="$PREV_PARK_CD"
+# v133c: park試行ウィンドウ（試行があった時だけ進める。dedup/cooldown判定は窓をスライドしない）
+LAST_PARK_TS="$PREV_PARK_TS"
+LAST_PARK_RESULT="$PREV_PARK_RESULT"
+LAST_PARK_TARGET="$PREV_PARK_TARGET"
 
 if [[ "$ESCALATION_OUTPUT" == "true" && -n "$PARK_TARGET" && "$PARK_TARGET" != "null" && -n "$ESCALATED_AT" && "$ESC_AGE_S" -ge "$PARK_AFTER_S" ]]; then
-  if [[ "$NO_PARK" -eq 1 || "$DRY_RUN" -eq 1 ]]; then
+  # v133c: 30分窓の時刻dedup（v92回帰の再導入、v133系では失われていた）。
+  # 直近 PARK_DEDUP_WINDOW_S 以内にpark試行（実park/already_scheduled）があれば
+  # target切替を問わず再試行しない → cooldown(6h)より短いスパンでescalation別
+  # targetを連続parkするv92真因（自動復旧阻害）の再発防止。dry_run/失敗系は
+  # 同一target限定で遮断。判定はPREV_*の窓値に対し、窓の前進は試行時のみ
+  # （dedup_skipは窓をスライドさせない）。
+  DEDUP_OK=1
+  if [[ -n "$PREV_PARK_TS" ]] && [[ $(( NOW - PREV_PARK_TS )) -lt PARK_DEDUP_WINDOW_S ]]; then
+    case "$PREV_PARK_RESULT" in
+      parked|already_scheduled)
+        DEDUP_OK=0
+        ;;
+      dry_run_would_park|schedule_failed|skipped_status_*)
+        if [[ "$PREV_PARK_TARGET" == "$PARK_TARGET" ]]; then
+          if [[ "$PREV_PARK_RESULT" != "dry_run_would_park" || "$NO_PARK" -eq 1 || "$DRY_RUN" -eq 1 ]]; then
+            DEDUP_OK=0
+          fi
+        fi
+        ;;
+    esac
+  fi
+  if [[ "$DEDUP_OK" -eq 0 ]]; then
+    PARK_ACTION="dedup_skip"
+  elif [[ "$NO_PARK" -eq 1 || "$DRY_RUN" -eq 1 ]]; then
     PARK_ACTION="dry_run_would_park"
+    LAST_PARK_TS="$NOW"; LAST_PARK_RESULT="$PARK_ACTION"; LAST_PARK_TARGET="$PARK_TARGET"
   elif [[ "$NOW" -lt "$PREV_PARK_CD" ]]; then
     PARK_ACTION="cooldown"
   else
@@ -340,6 +385,7 @@ if [[ "$ESCALATION_OUTPUT" == "true" && -n "$PARK_TARGET" && "$PARK_TARGET" != "
     case "$TARGET_STATUS" in
       scheduled)
         PARK_ACTION="already_scheduled"
+        LAST_PARK_TS="$NOW"; LAST_PARK_RESULT="$PARK_ACTION"; LAST_PARK_TARGET="$PARK_TARGET"
         ;;
       running|blocked|ready|todo)
         MARKER="[loop-health] SLA ${ESC_AGE_H}h > ${PARK_AFTER_H}h parking gate"
@@ -363,12 +409,15 @@ if [[ "$ESCALATION_OUTPUT" == "true" && -n "$PARK_TARGET" && "$PARK_TARGET" != "
             PARK_ACTION="schedule_failed"
           fi
           PARK_CD_UNTIL=$(( NOW + PARK_COOLDOWN_S ))
+          LAST_PARK_TS="$NOW"; LAST_PARK_RESULT="$PARK_ACTION"; LAST_PARK_TARGET="$PARK_TARGET"
         else
           PARK_ACTION="dry_run_would_park"
+          LAST_PARK_TS="$NOW"; LAST_PARK_RESULT="$PARK_ACTION"; LAST_PARK_TARGET="$PARK_TARGET"
         fi
         ;;
       *)
         PARK_ACTION="skipped_status_${TARGET_STATUS:-unknown}"
+        LAST_PARK_TS="$NOW"; LAST_PARK_RESULT="$PARK_ACTION"; LAST_PARK_TARGET="$PARK_TARGET"
         ;;
     esac
   fi
@@ -392,6 +441,9 @@ STATE_JSON=$(jq -n \
   --argjson park_cooldown_until "$PARK_CD_UNTIL" \
   --arg park_after_h "$PARK_AFTER_H" \
   --arg park_action "$PARK_ACTION" \
+  --arg last_park_ts "${LAST_PARK_TS:-}" \
+  --arg last_park_result "${LAST_PARK_RESULT:-}" \
+  --arg last_park_target "${LAST_PARK_TARGET:-}" \
   --arg top_task "$ESCALATION_TARGET" \
   --arg ts "$(date -Iseconds)" \
   '{
@@ -403,7 +455,9 @@ STATE_JSON=$(jq -n \
     park_cooldown_until: $park_cooldown_until,
     park_after_h: $park_after_h,
     last_park_action: $park_action,
-    last_park_target: $top_task,
+    last_park_ts: $last_park_ts,
+    last_park_result: $last_park_result,
+    last_park_target: $last_park_target,
     last_run_ts: $ts,
     escalation_active: ($score < 55)
   }')
