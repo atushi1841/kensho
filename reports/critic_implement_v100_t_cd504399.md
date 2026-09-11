@@ -18,3 +18,20 @@
 
 ## 効果
 SEO監視probe再生成のたびに3AI起床（4baf143523e0/5e8ec4984bba/033ff6065ef7）を誘発していた dirty=N→Y フリッカが構造的に消滅。alert fatigue 1経路クローズ。
+
+## verification_evidence
+t_cd504399 受け入れ条件5項目の実測証跡（2026-09-11 21:1x JST、/mnt/d/Project2/kensho）:
+
+$ git log --oneline -3
+6ea5423 chore(scripts): t_cd504399 critic v100 dirty=Yストーム遮断 — apify_store_check/seo_rank_watch正式化+一過性probeをdata/seo/probesへ(.gitignore追記: data/seo,tmp_llm_research,report.json,rtx3090_*,apify_pricing_cache)
+2eb8b59 docs(readme): t_cd504399 critic v100 scripts/ にseo_rank_watch/apify_store_check参照追記
+134a71e docs(reports): t_cd504399 critic v100 dirty=Yストーム遮断 実装報告
+$ .venv/bin/ruff check scripts/seo_rank_watch.py scripts/apify_store_check.py
+All checks passed!
+$ bash ~/.hermes/scripts/board_state_monitor.sh && sleep 1 && bash ~/.hermes/scripts/board_state_monitor.sh
+score=95|ready=0|blocked=2|wip=1|prio=normal|streak=0|esc=False|skip=False|dirty=N
+score=95|ready=0|blocked=2|wip=1|prio=normal|streak=0|esc=False|skip=False|dirty=N
+$ git status --porcelain -uall | grep -c probe
+0
+$ git status --porcelain -uall | grep -E '\.(py|sh|js|yaml)$' | grep -vE '^(.. )?(data|reports)/'
+（出力なし＝code-suffix dirty 0件、t_cd504399による残汚染なし）
