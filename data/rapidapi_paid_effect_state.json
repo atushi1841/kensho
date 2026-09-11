@@ -2642,6 +2642,1044 @@
      "paid_plan_active": true
     }
    }
+  },
+  "2026-09-11": {
+   "point": "measured",
+   "point_date": "2026-09-11",
+   "measured_at": "2026-09-11T07:05:59.290280+09:00",
+   "per_api": {
+    "japan-used-car": {
+     "api_id": "api_e093340e-c784-4cc9-9d70-7cf80404b9ed",
+     "api_name": "Japan Used Car Price Stats API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_037463c1-b1a9-4124-bd0d-1c7b27facf41",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 2,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_78ef6b3d-97be-49f3-a03d-9db0950ac657",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 6,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_8e8d3d15-2736-4bd0-8b78-355f77f478b8",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-offmall-cn": {
+     "api_id": "api_3697e05e-3115-47c5-85df-f6edadbdc8ca",
+     "api_name": "Japan OffMall Used Goods Price Stats API (Chinese)",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_d59aea5f-c5e6-4202-8db6-0e452dc3a31f",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_e75256c8-af6c-4c83-983a-921412e7bd71",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 2,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_4383ff43-d114-4b3f-b444-75adff2ad514",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-camera": {
+     "api_id": "api_7d2dcc27-829d-4add-88b9-5c1708447f85",
+     "api_name": "Japan Camera & Lens Resale Price Research API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_dca00db9-241c-447f-863e-7bca4fdc4131",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_b1d68149-a9aa-444c-a348-0180773efec6",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_c8c0285b-4643-419c-8c38-d194442ef4d6",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-kakaku": {
+     "api_id": "api_45bf102f-6d1b-4fd5-9179-f164de167ffd",
+     "api_name": "Japan Kakaku Price Stats API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_92aae0cf-7ac8-43ee-b4e6-2a159539ed1e",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_1bb344e0-5713-4445-87bb-ff0c04006be5",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_a90351ae-2ea3-4475-8931-dccea8287fa6",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-rent": {
+     "api_id": "api_2e8e063d-f2a3-43de-9fe4-50d5eb16659a",
+     "api_name": "Japan Rent Price Stats API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_db89b2c7-21a6-44b4-80d9-a15dd3d07c51",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_7a178638-db7d-43a6-b85c-d178e42e9107",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_51191b81-b036-4a6f-99e5-3f4f6bfd4562",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-watch": {
+     "api_id": "api_cb7a9d01-e8db-4f0d-b91f-031899d5e7cc",
+     "api_name": "Japan Used Watch Price Stats API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_c82618c3-5118-4c4d-90d0-6856fd7a40ad",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_e1e1024a-c81a-4d6c-a1a2-7aac5b2e883b",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_ec2b55cb-60ff-413b-a48b-9aa16f09e678",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-luxury": {
+     "api_id": "api_8941b445-afab-4f21-abbe-a58e96b21325",
+     "api_name": "Japan Used Luxury Brand Price Stats API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_e86d441a-f68c-4c98-9ccc-1bcc9aa30a6c",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_566b2add-f6ee-4681-b6b5-7063540c7768",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_2f8628e4-2870-44da-b1f7-5df5853fff5d",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-instrument": {
+     "api_id": "api_8ccef00b-e8be-44b2-b4e4-3c96fdaf7481",
+     "api_name": "Japan Used Musical Instrument Price Stats API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_045d063e-2c60-448c-abda-89e813d01db7",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_fecaf4d0-4149-402b-9275-195959b6341e",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_f8bb3037-f5b8-435c-b42b-20d1b7ba82fa",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    }
+   }
+  },
+  "2026-09-12": {
+   "point": "measured",
+   "point_date": "2026-09-12",
+   "measured_at": "2026-09-12T07:12:43.378836+09:00",
+   "per_api": {
+    "japan-used-car": {
+     "api_id": "api_e093340e-c784-4cc9-9d70-7cf80404b9ed",
+     "api_name": "Japan Used Car Price Stats API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_037463c1-b1a9-4124-bd0d-1c7b27facf41",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 2,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_78ef6b3d-97be-49f3-a03d-9db0950ac657",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 6,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_8e8d3d15-2736-4bd0-8b78-355f77f478b8",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-offmall-cn": {
+     "api_id": "api_3697e05e-3115-47c5-85df-f6edadbdc8ca",
+     "api_name": "Japan OffMall Used Goods Price Stats API (Chinese)",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_d59aea5f-c5e6-4202-8db6-0e452dc3a31f",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_e75256c8-af6c-4c83-983a-921412e7bd71",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 2,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_4383ff43-d114-4b3f-b444-75adff2ad514",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-camera": {
+     "api_id": "api_7d2dcc27-829d-4add-88b9-5c1708447f85",
+     "api_name": "Japan Camera & Lens Resale Price Research API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_dca00db9-241c-447f-863e-7bca4fdc4131",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_b1d68149-a9aa-444c-a348-0180773efec6",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_c8c0285b-4643-419c-8c38-d194442ef4d6",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-kakaku": {
+     "api_id": "api_45bf102f-6d1b-4fd5-9179-f164de167ffd",
+     "api_name": "Japan Kakaku Price Stats API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_92aae0cf-7ac8-43ee-b4e6-2a159539ed1e",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_1bb344e0-5713-4445-87bb-ff0c04006be5",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_a90351ae-2ea3-4475-8931-dccea8287fa6",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-rent": {
+     "api_id": "api_2e8e063d-f2a3-43de-9fe4-50d5eb16659a",
+     "api_name": "Japan Rent Price Stats API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_db89b2c7-21a6-44b4-80d9-a15dd3d07c51",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_7a178638-db7d-43a6-b85c-d178e42e9107",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_51191b81-b036-4a6f-99e5-3f4f6bfd4562",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-watch": {
+     "api_id": "api_cb7a9d01-e8db-4f0d-b91f-031899d5e7cc",
+     "api_name": "Japan Used Watch Price Stats API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_c82618c3-5118-4c4d-90d0-6856fd7a40ad",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_e1e1024a-c81a-4d6c-a1a2-7aac5b2e883b",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_ec2b55cb-60ff-413b-a48b-9aa16f09e678",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-luxury": {
+     "api_id": "api_8941b445-afab-4f21-abbe-a58e96b21325",
+     "api_name": "Japan Used Luxury Brand Price Stats API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_e86d441a-f68c-4c98-9ccc-1bcc9aa30a6c",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_566b2add-f6ee-4681-b6b5-7063540c7768",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_2f8628e4-2870-44da-b1f7-5df5853fff5d",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    },
+    "japan-instrument": {
+     "api_id": "api_8ccef00b-e8be-44b2-b4e4-3c96fdaf7481",
+     "api_name": "Japan Used Musical Instrument Price Stats API",
+     "visibility": "PUBLIC",
+     "tiers": {
+      "BASIC": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_045d063e-2c60-448c-abda-89e813d01db7",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.001,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.001,
+       "subscribers": 0
+      },
+      "PRO": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_fecaf4d0-4149-402b-9275-195959b6341e",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.005,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 1,
+       "effective_per_call_price_usd": 0.005,
+       "subscribers": 0
+      },
+      "ULTRA": {
+       "consumer_versions": [
+        {
+         "version_id": "billingplanversion_f8bb3037-f5b8-435c-b42b-20d1b7ba82fa",
+         "period": "PERUSE",
+         "per_call_price_usd": 0.01,
+         "free_monthly_500k": false,
+         "subscribers": 0
+        }
+       ],
+       "consumer_versions_count": 1,
+       "orphan_versions_count": 0,
+       "effective_per_call_price_usd": 0.01,
+       "subscribers": 0
+      }
+     },
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     },
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true
+    }
+   }
   }
  }
 }
