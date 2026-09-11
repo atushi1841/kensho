@@ -88,25 +88,46 @@ fi
 [[ "$PREV_PARK_CD" =~ ^[0-9]+$ ]] || PREV_PARK_CD=0
 
 # ─── Fetch tasks if not provided ─────────────────────────────────────────────
+# QA修正(2026-09-12 02:00): ①--tagsはhermes CLIに存在せずusageエラー→stale DB
+# fallbackでsignature凍結の原因 ②full list(741KB)をenvに流すとArgument list
+# too long。対策: blocked/runningのみCLI取得(分析が使うのはこの2状態だけ)+
+# テンポラリファイル経由でpythonに_handoff(2026-09-05教訓準拠)。
 if [[ -z "$TASKS_JSON" ]]; then
-  TASKS_JSON="${TASKS_JSON_OVERRIDE:-$(hermes kanban --board "$BOARD" list --json --tags "" 2>/dev/null)}"
+  if [[ -n "$TASKS_JSON_OVERRIDE" ]]; then
+    TASKS_JSON="$TASKS_JSON_OVERRIDE"
+  else
+    _TASKS_TMP=$(mktemp /tmp/loop_health_tasks.XXXXXX.json)
+    _B=$(hermes kanban --board "$BOARD" list --json --status blocked 2>/dev/null)
+    _R=$(hermes kanban --board "$BOARD" list --json --status running 2>/dev/null)
+    printf '%s' "${_B:-[]}" > "${_TASKS_TMP}.b"
+    printf '%s' "${_R:-[]}" > "${_TASKS_TMP}.r"
+    jq -s 'add // []' "${_TASKS_TMP}.b" "${_TASKS_TMP}.r" > "$_TASKS_TMP" 2>/dev/null \
+      || echo '[]' > "$_TASKS_TMP"
+    rm -f "${_TASKS_TMP}.b" "${_TASKS_TMP}.r"
+    TASKS_FILE="$_TASKS_TMP"
+  fi
 fi
 
-if [[ -z "$TASKS_JSON" ]]; then
+if [[ -z "$TASKS_JSON" && -z "$TASKS_FILE" ]]; then
   # DB fallback
   TASKS_JSON=$(sqlite3 -json "$DB_PATH" "SELECT id, status, title, result, started_at FROM tasks WHERE status IN ('running','blocked') ORDER BY started_at ASC LIMIT 100" 2>/dev/null)
 fi
 
-[[ -z "$TASKS_JSON" ]] && TASKS_JSON="[]"
+if [[ -z "$TASKS_FILE" ]]; then
+  [[ -z "$TASKS_JSON" ]] && TASKS_JSON="[]"
+  TASKS_FILE=$(mktemp /tmp/loop_health_tasks.XXXXXX.json)
+  printf '%s' "$TASKS_JSON" > "$TASKS_FILE"
+fi
+trap 'rm -f "$TASKS_FILE"' EXIT
 
 NOW=$(date +%s)
-export _LH_TASKS="$TASKS_JSON" _LH_NOW="$NOW" _LH_PREV="$PREV_STREAK"
+export _LH_TASKS_FILE="$TASKS_FILE" _LH_NOW="$NOW" _LH_PREV="$PREV_STREAK"
 
 # ─── Analyze ─────────────────────────────────────────────────────────────────
 ANALYSIS=$(python3 - <<'PYEOF'
 import json, os, re, time
 
-tasks = json.loads(os.environ.get("_LH_TASKS", "[]"))
+tasks = json.loads(open(os.environ.get("_LH_TASKS_FILE", "/dev/null")).read() or "[]")
 now = int(os.environ.get("_LH_NOW", str(int(time.time()))))
 prev_streak = int(os.environ.get("_LH_PREV", "0"))
 
@@ -119,7 +140,7 @@ by_age = sorted(running, key=lambda t: t.get("started_at") or now, reverse=False
 # Detect same-result repeat
 results = {}
 for t in tasks:
-    res = t.get("result", "")
+    res = t.get("result") or ""
     if res:
         results.setdefault(res, []).append(t["id"])
 
@@ -128,7 +149,7 @@ repeats = {r: ids for r, ids in results.items() if len(ids) >= 2}
 # Detect blocked tasks whose parent is done (wasteful block)
 blocked_with_done_parent = []
 for t in blocked:
-    res = t.get("result", "")
+    res = t.get("result") or ""
     if "already completed" in res.lower() or "no action needed" in res.lower():
         blocked_with_done_parent.append(t["id"])
 
