@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""apify_seo_full_apply — 全64アクターに description(>=120) + title/seoTitle/seoDescription/categories を API 経由で一括適用。
+"""apify_seo_full_apply — 全64アクターに description(>=120) + title/seoTitle/seoDescription/categories
+を API 経由で一括適用。
 
 task t_76165687 (revenue-critic, 2026-09-05) 実装。
 
@@ -146,7 +147,8 @@ def build_readme(actor_name: str, label: str, usage: str) -> str:
     """readme 800-1500字の英文ドキュメントを生成。"""
     return f"""# {actor_name}
 
-This Apify actor scrapes **{label}** data from Japanese {usage} sources. It produces structured JSON or CSV suitable for resale arbitrage, market research, price monitoring, AI training pipelines, and competitor analysis.
+This Apify actor scrapes **{label}** data from Japanese {usage} sources. It produces structured JSON or CSV
+suitable for resale arbitrage, market research, price monitoring, AI training pipelines, and competitor analysis.
 
 ## What it scrapes
 
@@ -190,7 +192,8 @@ Results are written to the default Apify dataset in this shape:
 
 ## Pricing
 
-Pay-per-event: **charged per item scraped**. See the actor's pricing tab for the current per-item rate. No monthly subscription required; you pay only for what you actually collect.
+Pay-per-event: **charged per item scraped**. See the actor's pricing tab for the current per-item rate.
+No monthly subscription required; you pay only for what you actually collect.
 
 ## Use cases
 
@@ -202,9 +205,13 @@ Pay-per-event: **charged per item scraped**. See the actor's pricing tab for the
 
 ## Notes
 
-This actor is part of a suite covering major Japanese marketplaces and second-hand chains. Combine it with sibling actors (camera/watch/luxury/instrument/offmall/surugaya/komehyo/mercari/iosys/etc.) to build a unified Japan-market dataset.
+This actor is part of a suite covering major Japanese marketplaces and second-hand chains.
+Combine it with sibling actors
+(camera/watch/luxury/instrument/offmall/surugaya/komehyo/mercari/iosys/etc.)
+to build a unified Japan-market dataset.
 
-Source listings are public; the actor respects robots.txt and includes polite crawl delays. For high-volume or commercial scraping, configure residential proxies via the input schema.
+Source listings are public; the actor respects robots.txt and includes polite crawl delays.
+For high-volume or commercial scraping, configure residential proxies via the input schema.
 """
 
 

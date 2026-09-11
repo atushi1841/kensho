@@ -691,9 +691,8 @@ def main() -> int:
             r = apply_one(f, name_to_id[f.actor], args.token, actor_cache)
             results.append(r)
             status_str = "OK" if r.ok else "NG"
-            print(
-                f"[{i:3d}/{len(findings)}] {status_str} {r.actor[:35]:35s} {r.issue:25s} {','.join(r.fields_changed) or '-'}"
-            )
+            changed = ",".join(r.fields_changed) or "-"
+            print(f"[{i:3d}/{len(findings)}] {status_str} {r.actor[:35]:35s} {r.issue:25s} {changed}")
             if not r.ok:
                 print(f"           err: {r.error[:150]}")
             time.sleep(0.5)
