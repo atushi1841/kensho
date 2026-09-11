@@ -69,3 +69,70 @@
 
 - 効果測定cronは「日付ガード型ワンショット」に頼らず、期日超過時に補充実行できる設計（本次は9/7ポイント恒久欠測）。手動補充コマンド: `python3 scripts/apify_seo_effect.py --date <YYYY-MM-DD>`。
 - 自己runを含むtotal runsは需要側の proxy に不適（external_runs=0 が真の実力値）。A/B判定・効果測定とも外部run基準で読むこと。
+
+## verification_evidence（実測出力引用）
+
+1. PPE A/B 7d total runs=39（t_47db49e9の判定ルール通りruns API直接取得で本タスクでも再実測、9/12 05:30 JST）:
+
+```
+$ python3 - "$TOK" <<'EOF'  # GET https://api.apify.com/v2/acts/Zh4kqcS4dYPWpFzBd/runs?desc=1&limit=100
+7d total runs (window 2026-09-04 -> 2026-09-11 ): 39
+sample latest 3 startedAt: ['2026-09-11T03:30:02.031Z', '2026-09-11T03:00:14.750Z', '2026-09-11T02:30:07.121Z']
+EOF
+→ 39 ≥ 24.5（baseline35×0.7）= 復帰閾値超え → $0.005維持確定（t_47db49e9のcritic実測39と一致）
+```
+
+2. SEO 168h補充実行（9/12、本タスクで実行、9/7欠測分の補充）:
+
+```
+$ ./.venv/bin/python scripts/apify_seo_effect.py --date 2026-09-11
+=== 測定ポイント: 2026-09-03 → 2026-09-11 (day_span=8) ===
+アクター全数: 25
+runs増加アクター: 25
+0改善アクター: 0
+✓ CSV/JSON 出力: /mnt/d/Project2/kensho/reports/apify-seo/apify-seo-effect.json
+```
+
+3. 外部流入=0の継続確認（revenue-daily.json 9/12エントリ集計）:
+
+```
+$ python3 -c "import json; d=json.load(open('data/revenue-daily.json'))[-1]; ..."
+date         tot_run   u30d   extU extRun
+2026-09-12     1498     24      0      0
+```
+
+4. Gumroad X 7日分のスナップショット合計（analytics JSONからviews/fav/conv集計、本タスク実測）:
+
+```
+$ python3 - <<'EOF'  # data/gumroad_x_analytics.json 最終snapshot走査
+posts: 7 views_total: 259 fav_total: 0 conv_total: 0
+EOF
+```
+
+5. Gumroad売上$0不変（9/12収集state、本タスク実測）:
+
+```
+$ python3 -c "import json; d=json.load(open('data/gumroad_state.json')); print(...)"
+{"sales": 0, "revenue": 0, "total_sales": 0, "total_revenue": 0, "balance_usd": 0,
+ "last_7_days_usd": 0, "last_28_days_usd": 0, "total_earnings_usd": 0,
+ "collected_at": "2026-09-12T00:23:12.778", "last_success_at": "2026-09-12T00:23:12.778"}
+```
+
+5b. PPE外部ビュー168h=全アクター0（apify_ppe_external_views_state.json、external runが真の実力値）:
+
+```
+$ python3 -c "import json; d=json.load(open('data/apify_ppe_external_views_state.json')); ..."
+168h 2026-09-11 measured_at 2026-09-11T00:02:04
+    japan-camera-market ext_views 0 runs 77 u30d 1
+    japan-watch-market ext_views 0 runs 70 u30d 1
+    japan-luxury-market ext_views 0 runs 69 u30d 1
+    japan-instrument-market ext_views 0 runs 70 u30d 1
+    japan-offmall-market ext_views 0 runs 174 u30d 1
+```
+
+6. 測定cron 9/7・9/11未発火の実証（ログ不在）:
+
+```
+$ ls -la logs/apify-seo-effect-*
+ls: cannot access 'logs/apify-seo-effect-*': No such file or directory
+```
