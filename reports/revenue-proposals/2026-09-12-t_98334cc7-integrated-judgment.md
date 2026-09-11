@@ -70,9 +70,11 @@
 - 効果測定cronは「日付ガード型ワンショット」に頼らず、期日超過時に補充実行できる設計（本次は9/7ポイント恒久欠測）。手動補充コマンド: `python3 scripts/apify_seo_effect.py --date <YYYY-MM-DD>`。
 - 自己runを含むtotal runsは需要側の proxy に不適（external_runs=0 が真の実力値）。A/B判定・効果測定とも外部run基準で読むこと。
 
-## verification_evidence（実測出力引用）
+## verification_evidence
 
-1. PPE A/B 7d total runs=39（t_47db49e9の判定ルール通りruns API直接取得で本タスクでも再実測、9/12 05:30 JST）:
+t_98334cc7 の実測出力引用（以下、t_98334cc7 判定の全根拠）。
+
+1. PPE A/B 7d total runs=39（t_98334cc7再実測: t_47db49e9の判定ルール通りruns API直接取得、9/12 05:30 JST）:
 
 ```
 $ python3 - "$TOK" <<'EOF'  # GET https://api.apify.com/v2/acts/Zh4kqcS4dYPWpFzBd/runs?desc=1&limit=100

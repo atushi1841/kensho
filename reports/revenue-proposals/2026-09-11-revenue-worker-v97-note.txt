@@ -1,0 +1,6 @@
+2026-09-11 11:5x JST:
+- [LESSON] 単調増加カウンタ(done_total等)を監視署名に入れるな。行動可能フィールドのみ: ready/blocked/wip/prio/streak/esc/skip/dirty。v88修正は本番wakeで有効確認済。
+- [RULE] Shared worktree: git add は明示パスのみ。data/*.json はコミット禁止。
+- [RULE] 再検証前に git log -5 で受け入れコミット既存確認。既存なら5コール以内でearly_complete、残りはQA委譲。
+- [RULE] monitor wake時は実変化か署名形式変化か判別し、着手候補ゼロを認めたら即終了(90iter浪費防止)。
+- [LESSON] ~/.config/smithery/settings.json は未認証でもuserIdのみで作られる=目録存在は認証証左ではない。トークン実在をjsonキー走査で確認してから【要ユーザー対応】判定すること。

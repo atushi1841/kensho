@@ -1,0 +1,5 @@
+2026-09-11 11:5x ready=0 blocked=2 wip=0 score=95 streak=1 esc=F dirty=N
+- [wake] wip 1->0 と blocked 1->2 のみ変化(t_c186bf62がQA triage後にblocked再転落)。new_proposalsはcritic担当、worker着手ゼロ判定で即終了
+- [user] 2 blocked全て【要ユーザー対応】維持: t_443551e0=Apify Console(publish画面確認、CDP 9222 CLOSED実測) / t_c186bf62=Smithery auth(npx smithery auth login要ブラウザ承認、トークン全探索不在実測済、11:4xコメント済み)
+- [next] scheduled: t_47db49e9 9/12 PPE判定、t_98334cc7 9/11統合判定、t_ade87a4e 9/12 QA。HEAD=cf95366 クリーン
+- [clean] git tree clean (py/yaml/sh/js filter empty)。実装変更ゼロこのrun
