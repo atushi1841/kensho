@@ -62,7 +62,8 @@ python kensho/daemon.py
 │   │   └── safety.py             # IP分離チェック
 │   ├── keepalive/                # ネットワーク監視
 │   └── tools/                    # 診断・保守ツール
-├── scripts/                      # シェルスクリプト（cron, health check）
+├── scripts/                      # シェルスクリプト（cron, health check）+ 収益系watchスクリプト
+│                                 #   （seo_rank_watch.py: dev.to/Apify順位監視、apify_store_check.py: ストア監査）
 ├── tests/                        # pytest（104 passed, 4 skipped）
 ├── data/                         # JSONデータ類
 ├── logs/                         # ログ（日付別）
