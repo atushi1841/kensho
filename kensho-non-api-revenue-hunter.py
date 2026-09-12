@@ -66,6 +66,18 @@ except ImportError as _e:  # pragma: no cover - import 失敗は致命的
 MIN_HN_SCORE = 3  # score < MIN_HN_SCORE は低シグナルとしてスキップ (要件1: score<3)
 MAX_KANBAN_PER_RUN = 3  # 1実行で新規作成する ready タスクの上限 (投入ペース制御)
 
+# wrapper_free ゲート (critic v138 / t_117de0fe):
+#   Blunderbase(9/7)→Claude Read Aloud(9/12)→hnslop(9/12) と、HNスコア低・
+#   GitHub直リンク・無料/オープンソース/MIT/ブラウザextension のラッパ型OSSが
+#   monetization語(無料公開API等)でゲートを通過しworker評価後に非収益判定で
+#   消費される再発パターン2件。score < WRAPPER_FREE_MAX_SCORE かつ上記特征は
+#   monetizationシグナル通過でも投入前にスキップする。
+WRAPPER_FREE_MAX_SCORE = 10
+WRAPPER_FREE_RE = re.compile(
+    r"\bfree\b|\bopen[\s-]?source\b|\bMIT\b|\bextension\b|無料|オープンソース|拡張機能",
+    re.IGNORECASE,
+)
+
 # monetization モデルを示す語 (本文/タイトルに無ければスキップ)。
 # 有料/データ販売/API化/サブスク/ストア販売/手数料/アフィリエイト 等。
 MONETIZATION_PATTERNS = [
@@ -414,16 +426,32 @@ def has_monetization_signal(item):
     return any(re.search(pat, text, re.IGNORECASE) for pat in MONETIZATION_PATTERNS)
 
 
+def is_wrapper_free_oss(item):
+    """無料ラッパ型OSSの兆候: タイトル/要旨が free|open-source|MIT|extension 語に該当し、
+    かつ GitHub 直リンク系 (URL or 本文に github.com)。critic v138 / t_117de0fe。"""
+    text = f"{item.get('title', '')} {item.get('text', '')} {item.get('url', '')}"
+    if not WRAPPER_FREE_RE.search(text):
+        return False
+    return "github.com" in text.lower()
+
+
 def quality_gate(item, created_count):
     """1件の候補に対する品質ゲート判定 (t_2e20f1ef critic_proposal v58)。
     通過なら None、そうでなければ (gate_key, status_message) を返す。
       要件1: score < MIN_HN_SCORE は低シグナルとしてスキップ
       要件1: monetization モデル語が本文/タイトルに無ければスキップ
+      要件1b (v138): score < 10 かつ無料ラッパ型OSS (free/open-source/MIT/extension
+        + GitHub直リンク) は monetization通過でもスキップ (wrapper_free)
       要件2: 1実行あたり新規投入 created_count >= MAX_KANBAN_PER_RUN でスキップ
     """
     score = item.get("score", 0) or 0
     if score < MIN_HN_SCORE:
         return ("score_low", f"(gate) score={score} < {MIN_HN_SCORE} でスキップ")
+    if score < WRAPPER_FREE_MAX_SCORE and is_wrapper_free_oss(item):
+        return (
+            "wrapper_free",
+            f"(gate) 無料ラッパ型OSS (score={score} < {WRAPPER_FREE_MAX_SCORE} + GitHub直リンク) でスキップ",
+        )
     if not has_monetization_signal(item):
         return ("no_monetization", "(gate) monetization シグナル無しでスキップ")
     if created_count >= MAX_KANBAN_PER_RUN:
@@ -588,7 +616,7 @@ def main():
     #   要件3: HN item_id 主キー dedup は create_kanban_task 内 (hnid-skip)
     kanban_added = []
     seen_urls = set()
-    gate_stats = {"score_low": 0, "no_monetization": 0, "cap_reached": 0, "hnid_skip": 0}
+    gate_stats = {"score_low": 0, "wrapper_free": 0, "no_monetization": 0, "cap_reached": 0, "hnid_skip": 0}
     created_count = 0
     for src, item, matches in all_seeds:
         url = item.get("url", "")
@@ -653,12 +681,15 @@ def main():
     # dedup-skip 件数(参考、レポート出力用)
     dedup_skip_count = sum(1 for k in kanban_added if "(dedup-skip)" in k.get("status", ""))
     hnid_skip_count = gate_stats["hnid_skip"]
-    gate_skip_count = gate_stats["score_low"] + gate_stats["no_monetization"] + gate_stats["cap_reached"]
+    gate_skip_count = (
+        gate_stats["score_low"] + gate_stats["wrapper_free"] + gate_stats["no_monetization"] + gate_stats["cap_reached"]
+    )
     ok_create_count = sum(1 for k in kanban_added if k["task_id"] and not k["task_id"].startswith("("))
 
     # レポート生成
     gate_breakdown = (
         f"score<{MIN_HN_SCORE}: {gate_stats['score_low']} / "
+        f"無料ラッパ型OSS: {gate_stats['wrapper_free']} / "
         f"monetization無: {gate_stats['no_monetization']} / "
         f"上限到達: {gate_stats['cap_reached']}"
     )
@@ -727,8 +758,10 @@ def main():
 - **重要度「中」: 1つ以上の不確実要素あり (市場規模未確認 / 法務要確認 / 技術難易度高)
 - **重要度「低」**: アイデア倒れに近い / Kenshoで自動化しても旨味が薄い
 
-## 品質ゲート (t_2e20f1ef v58)
+## 品質ゲート (t_2e20f1ef v58 / critic v138)
 - score < {MIN_HN_SCORE} は低シグナルとしてスキップ
+- score < {WRAPPER_FREE_MAX_SCORE} かつ 無料/OSS/MIT/extension 語 + GitHub直リンクは
+  無料ラッパ型OSSとしてスキップ (wrapper_free: monetization通過でも投入しない)
 - monetization モデル (有料/データ販売/API化等) の語が本文/タイトルに無ければスキップ
 - 1実行あたり新規投入は {MAX_KANBAN_PER_RUN} 件まで (投入ペース制御)
 - HN item_id 主キーで done/archived 含む全ステータスと照合し再生成を防止

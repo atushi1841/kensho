@@ -164,6 +164,58 @@ class TestQualityGate:
 
 
 # ---------------------------------------------------------------------------
+# 要件1b (critic v138 / t_117de0fe): wrapper_free 無料ラッパ型OSSゲート
+# ---------------------------------------------------------------------------
+
+
+class TestWrapperFreeGate:
+    def _gh(self, score, title, text=""):
+        return {
+            "title": title,
+            "text": text,
+            "score": score,
+            "url": "https://github.com/someone/claude-read-aloud",
+        }
+
+    def test_wrapper_free_oss_skipped_despite_monetization(self):
+        """t_c979410c Claude Read Aloud 相当: score=3, MIT+extension+GitHub直リンク."""
+        item = self._gh(
+            3,
+            "Show HN: Claude Read Aloud – Hear Claude's Replies Instead of Reading",
+            "free open-source browser extension, MIT license, uses the API",
+        )
+        assert hunter.has_monetization_signal(item)  # v58ゲートは通過していた
+        gate = hunter.quality_gate(item, created_count=0)
+        assert gate is not None
+        assert gate[0] == "wrapper_free"
+        assert "無料ラッパ型OSS" in gate[1]
+
+    def test_hnslop_extension_pattern_skipped(self):
+        """extension+GitHub直リンク・低スコア型 (t_6e2d4279 hnslop と同特征、score=9)."""
+        item = self._gh(9, "Show HN: Extension to filter LLM written articles", "free, no API key needed")
+        gate = hunter.quality_gate(item, created_count=0)
+        assert gate is not None and gate[0] == "wrapper_free"
+
+    def test_high_score_wrapper_not_skipped(self):
+        """score >= 10 は wrapper_free 対象外 (monetization語があれば従来どおり通過)."""
+        item = self._gh(15, "Show HN: Open-source CRM with paid cloud", "MIT extension, self-host free")
+        assert hunter.quality_gate(item, created_count=0) is None
+
+    def test_no_github_link_not_skipped(self):
+        """GitHub直リンクが無ければ wrapper_free 適用外."""
+        item = {
+            "title": "Show HN: My free SaaS with pricing tiers",
+            "text": "paid subscription",
+            "score": 5,
+            "url": "https://product.example.com",
+        }
+        assert hunter.quality_gate(item, created_count=0) is None
+
+    def test_wrapper_free_constant_is_10(self):
+        assert hunter.WRAPPER_FREE_MAX_SCORE == 10
+
+
+# ---------------------------------------------------------------------------
 # 要件3 (hunter 側): create_kanban_task の hnid-skip
 # ---------------------------------------------------------------------------
 
