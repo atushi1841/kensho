@@ -648,3 +648,131 @@ class TestV94UnknownBilling:
         result["actors_unknown"] = 25
         result["details"] = []
         assert krc._is_ppe_zero_anomaly(result) is True
+
+
+# ── critic v140 (t_e3302129): RapidAPI read timeout→last-known-stateフォールバック ──
+
+
+def _rap_nodes(n: int = 22) -> list[dict[str, Any]]:
+    return [
+        {
+            "id": f"api_{i}",
+            "name": f"api-{i}",
+            "visibility": "PUBLIC" if i < n - 2 else "PRIVATE",
+            "pricing": "FREEMIUM",
+            "currentVersion": {"id": "v", "name": "1.0.0", "versionStatus": "active"},
+        }
+        for i in range(n)
+    ]
+
+
+class TestV140RapidapiFallback:
+    """collect_rapidapi: リトライ＋last-known-stateフォールバック（0本虚偽報告防止）"""
+
+    @pytest.fixture(autouse=True)
+    def _isolate(self, tmp_path: Any, monkeypatch: Any) -> None:
+        auth = tmp_path / "rapidapi_auth.json"
+        auth.write_text(json.dumps({"csrf_token": "t", "entity_id": "e", "cookies": "a=1; b=2"}), encoding="utf-8")
+        monkeypatch.setattr(krc, "RAPIDAPI_AUTH", str(auth))
+        monkeypatch.setattr(krc, "RAPIDAPI_STATE", str(tmp_path / "revenue_rapidapi_state.json"))
+        self.state_path = krc.RAPIDAPI_STATE
+
+    def test_success_saves_state(self, monkeypatch: Any) -> None:
+        """成功収集 → apis_total=22・stateファイルに apis_total=22 が保存される"""
+        monkeypatch.setattr(krc, "_rapidapi_fetch_apis", lambda: _rap_nodes(22))
+        result = krc.collect_rapidapi()
+        assert "error" not in result
+        assert result["apis_total"] == 22
+        assert result["apis_public"] == 20 and result["apis_private"] == 2
+        state = json.loads(Path(self.state_path).read_text(encoding="utf-8"))
+        assert state["apis_total"] == 22 and state["saved_at"]
+
+    def test_retry_recovers_from_timeout(self, monkeypatch: Any) -> None:
+        """初回read timeout→リトライ1回で成功 → error無し・backoff 5秒待機"""
+        calls = {"n": 0}
+
+        def _flaky() -> list[dict[str, Any]]:
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise Exception("Read timed out. (read timeout=15)")
+            return _rap_nodes(22)
+
+        monkeypatch.setattr(krc, "_rapidapi_fetch_apis", _flaky)
+        with patch("kensho_revenue_collect.time.sleep") as msleep:
+            result = krc.collect_rapidapi()
+        assert calls["n"] == 2
+        assert "error" not in result
+        assert result["apis_total"] == 22
+        msleep.assert_called_once_with(krc.RAPIDAPI_RETRY_BACKOFF)
+
+    def test_total_failure_falls_back_to_state(self, monkeypatch: Any) -> None:
+        """全試行失敗＋stateあり → last-known復元・error/fallback/last_known_* を記録"""
+        state = {
+            "saved_at": "2026-09-12T09:00:00",
+            "apis_total": 22,
+            "apis_public": 20,
+            "apis_private": 2,
+            "apis_freemium": 22,
+            "details": _rap_nodes(22),
+        }
+        Path(self.state_path).write_text(json.dumps(state), encoding="utf-8")
+        monkeypatch.setattr(krc, "_rapidapi_fetch_apis", lambda: (_ for _ in ()).throw(Exception("Read timed out")))
+        with patch("kensho_revenue_collect.time.sleep"):
+            result = krc.collect_rapidapi()
+        assert "timed out" in result["error"]
+        assert result["apis_total"] == 22  # 0本虚偽報告にならない
+        assert result["fallback"] == "last_known_state"
+        assert result["last_known_total"] == 22
+        assert "timed out" in result["last_known_error"]
+
+    def test_failure_without_state_stays_zero(self, monkeypatch: Any) -> None:
+        """全試行失敗＋state無し → apis_total=0・fallbackフラグ無し（従来動作）"""
+        monkeypatch.setattr(krc, "_rapidapi_fetch_apis", lambda: (_ for _ in ()).throw(Exception("Read timed out")))
+        with patch("kensho_revenue_collect.time.sleep"):
+            result = krc.collect_rapidapi()
+        assert result["apis_total"] == 0
+        assert "error" in result
+        assert "fallback" not in result
+
+    def test_missing_auth_early_returns(self, monkeypatch: Any) -> None:
+        """authファイル無し → ネットワーク行かず即error（リトライもしない）"""
+        monkeypatch.setattr(krc, "RAPIDAPI_AUTH", "/nonexistent/rapidapi_auth.json")
+
+        def _boom() -> list[dict[str, Any]]:
+            raise AssertionError("fetch must not run without auth")
+
+        monkeypatch.setattr(krc, "_rapidapi_fetch_apis", _boom)
+        result = krc.collect_rapidapi()
+        assert result["error"] == "RapidAPI auth file not found"
+
+
+class TestV140CollectorsTopLayer:
+    """build_revenue_summary: collectors健全性＋フォールバック時の頂層last_known記録"""
+
+    def test_collectors_ok_when_no_error(self) -> None:
+        entry = krc.build_revenue_summary(_make_normal_apify(n_ppe=5), _empty_rapidapi(), _empty_gumroad())
+        assert entry["collectors"] == {"apify_ok": True, "rapidapi_ok": True, "gumroad_ok": False}
+        assert "last_known_total" not in entry
+
+    def test_fallback_records_top_layer(self) -> None:
+        rap = {
+            **_empty_rapidapi(),
+            "apis_total": 22,
+            "apis_public": 20,
+            "apis_private": 2,
+            "apis_freemium": 22,
+            "details": _rap_nodes(22),
+            "error": "Read timed out. (read timeout=15)",
+            "fallback": "last_known_state",
+            "fallback_state_saved_at": "2026-09-12T09:00:00",
+            "last_known_total": 22,
+            "last_known_error": "Read timed out. (read timeout=15)",
+        }
+        entry = krc.build_revenue_summary(_make_normal_apify(n_ppe=5), rap, _empty_gumroad())
+        assert entry["last_known_total"] == 22
+        assert "timed out" in entry["last_known_error"]
+        assert entry["collectors"]["rapidapi_ok"] is False
+        assert entry["collectors"]["rapidapi_cache_fallback"] is True
+        assert any("last-known-stateフォールバック" in w for w in entry["warnings"])
+        # 非公開API机会検出はフォールバックdetailsでも機能する
+        assert any("RapidAPI非公開API" in o for o in entry["opportunities"])

@@ -56,6 +56,10 @@ RAPIDAPI_AUTH = "/mnt/d/Project2/goo-net-car-scraper/rapidapi_auth.json"
 GUMROAD_BUNDLE = "/mnt/d/Project2/gumroad-automation/bundle_info.json"
 GUMROAD_STATE = os.path.join(DATA_DIR, "gumroad_state.json")
 RAPIDAPI_PAID_EFFECT_STATE = os.path.join(DATA_DIR, "rapidapi_paid_effect_state.json")  # t_868caac2 v-effect
+# v140 (t_e3302129): RapidAPI収集 read timeout時のlast-known-stateフォールバック（0本虚偽報告防止）
+RAPIDAPI_STATE = os.path.join(DATA_DIR, "revenue_rapidapi_state.json")
+RAPIDAPI_MAX_RETRIES = 1  # 初回失敗後の再試行回数（backoff 5秒）
+RAPIDAPI_RETRY_BACKOFF = 5.0
 GUMROAD_SCRIPT = os.path.join(PROJECT_DIR, "scripts", "gumroad_sales_collect.js")
 GUMROAD_NODE = "/mnt/c/Program Files/nodejs/node.exe"
 MAX_ENTRIES = 90  # 直近90日保持
@@ -523,8 +527,106 @@ def collect_apify() -> dict[str, Any]:
     return result
 
 
+def _rapidapi_fetch_apis() -> list[dict[str, Any]]:
+    """GraphQLで自アカウントの全APIノードを取得する（失敗時は例外を送出）。
+
+    v140 (t_e3302129): 従来 collect_rapidapi() 内にインラインだった処理を
+    リトライ対応のため分離。read timeout等の例外は呼び出し側で捕捉する。
+    """
+    import requests
+
+    with open(RAPIDAPI_AUTH, encoding="utf-8") as f:
+        auth = json.load(f)
+    return _rapidapi_fetch_with_auth(requests, auth)
+
+
+def _rapidapi_fetch_with_auth(requests: Any, auth: dict[str, Any]) -> list[dict[str, Any]]:
+    # Cookieパース
+    cookies: dict[str, str] = {}
+    if isinstance(auth.get("cookies"), str):
+        for part in auth["cookies"].split(";"):
+            if "=" in part:
+                k, v = part.strip().split("=", 1)
+                cookies[k] = v
+
+    headers = {
+        "content-type": "application/json",
+        "csrf-token": auth.get("csrf_token", ""),
+        "origin": "https://rapidapi.com",
+        "rapid-client": "provider-dashboard-service",
+        "referer": "https://rapidapi.com/_studio/",
+        "x-entity-id": auth.get("entity_id", ""),
+    }
+
+    query = """
+    query GetApis($where: ApiWhereInput) {
+      apis(where: $where) {
+        nodes {
+          id
+          name
+          visibility
+          pricing
+          currentVersion {
+            id
+            name
+            versionStatus
+          }
+        }
+      }
+    }
+    """
+    variables = {"where": {"ownerId": [auth.get("entity_id", "")]}}
+    payload = {"operationName": "GetApis", "variables": variables, "query": query}
+
+    resp = requests.post(
+        "https://rapidapi.com/gateway/graphql",
+        headers=headers,
+        cookies=cookies,
+        json=payload,
+        timeout=15,
+    )
+    data = resp.json()
+    apis = data.get("data", {}).get("apis", {}).get("nodes", [])
+    return list(apis)
+
+
+def _save_rapidapi_state(result: dict[str, Any]) -> None:
+    """成功収集時のみ last-known-state を保存する（v140）。"""
+    try:
+        os.makedirs(DATA_DIR, exist_ok=True)
+        payload = {
+            "saved_at": datetime.now().isoformat(timespec="seconds"),
+            "apis_total": result.get("apis_total", 0),
+            "apis_public": result.get("apis_public", 0),
+            "apis_private": result.get("apis_private", 0),
+            "apis_freemium": result.get("apis_freemium", 0),
+            "details": result.get("details", []),
+        }
+        with open(RAPIDAPI_STATE, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, indent=1)
+    except Exception as e:
+        print(f"  ⚠️ RapidAPI last-known-state保存失敗: {e}")
+
+
+def _load_rapidapi_state() -> dict[str, Any] | None:
+    """last-known-stateを読み込む（v140）。無ければ None。"""
+    if not os.path.exists(RAPIDAPI_STATE):
+        return None
+    try:
+        with open(RAPIDAPI_STATE, encoding="utf-8") as f:
+            state = json.load(f)
+        return state if isinstance(state, dict) else None
+    except Exception:
+        return None
+
+
 def collect_rapidapi() -> dict[str, Any]:
-    """RapidAPIの全API情報をGraphQLで取得。"""
+    """RapidAPIの全API情報をGraphQLで取得。
+
+    v140 (t_e3302129): read timeoutで apis_total=0 の虚偽報告が発生した（9/13実測）。
+    対策: ①失敗時リトライ1回（backoff 5秒）②それでも失敗時は last-known-state
+    （data/revenue_rapidapi_state.json）を復元し、error と fallback フラグを残す。
+    """
     result: dict[str, Any] = {
         "source": "rapidapi",
         "apis_total": 0,
@@ -537,59 +639,21 @@ def collect_rapidapi() -> dict[str, Any]:
         result["error"] = "RapidAPI auth file not found"
         return result
 
-    try:
-        import requests
+    # リトライ（初回+RAPIDAPI_MAX_RETRIES回、backoff秒）
+    apis: list[dict[str, Any]] | None = None
+    last_err: str = ""
+    for attempt in range(1 + RAPIDAPI_MAX_RETRIES):
+        if attempt > 0:
+            print(f"  ↻ RapidAPI収集リトライ {attempt}/{RAPIDAPI_MAX_RETRIES}（{RAPIDAPI_RETRY_BACKOFF:.0f}秒待機）...")
+            time.sleep(RAPIDAPI_RETRY_BACKOFF)
+        try:
+            apis = _rapidapi_fetch_apis()
+            break
+        except Exception as e:
+            last_err = str(e)
+            apis = None
 
-        with open(RAPIDAPI_AUTH, encoding="utf-8") as f:
-            auth = json.load(f)
-
-        # Cookieパース
-        cookies: dict[str, str] = {}
-        if isinstance(auth.get("cookies"), str):
-            for part in auth["cookies"].split(";"):
-                if "=" in part:
-                    k, v = part.strip().split("=", 1)
-                    cookies[k] = v
-
-        headers = {
-            "content-type": "application/json",
-            "csrf-token": auth.get("csrf_token", ""),
-            "origin": "https://rapidapi.com",
-            "rapid-client": "provider-dashboard-service",
-            "referer": "https://rapidapi.com/_studio/",
-            "x-entity-id": auth.get("entity_id", ""),
-        }
-
-        query = """
-        query GetApis($where: ApiWhereInput) {
-          apis(where: $where) {
-            nodes {
-              id
-              name
-              visibility
-              pricing
-              currentVersion {
-                id
-                name
-                versionStatus
-              }
-            }
-          }
-        }
-        """
-        variables = {"where": {"ownerId": [auth.get("entity_id", "")]}}
-        payload = {"operationName": "GetApis", "variables": variables, "query": query}
-
-        resp = requests.post(
-            "https://rapidapi.com/gateway/graphql",
-            headers=headers,
-            cookies=cookies,
-            json=payload,
-            timeout=15,
-        )
-        data = resp.json()
-        apis = data.get("data", {}).get("apis", {}).get("nodes", [])
-
+    if apis is not None:
         result["apis_total"] = len(apis)
         for a in apis:
             vis = a.get("visibility", "UNKNOWN")
@@ -608,9 +672,28 @@ def collect_rapidapi() -> dict[str, Any]:
                 "version": a.get("currentVersion", {}).get("name", "?"),
                 "version_status": a.get("currentVersion", {}).get("versionStatus", "?"),
             })
-    except Exception as e:
-        result["error"] = str(e)
+        if result["apis_total"] > 0:
+            _save_rapidapi_state(result)
+        return result
 
+    # 全試行失敗 → last-known-state フォールバック（0本虚偽報告の防止）
+    result["error"] = last_err
+    state = _load_rapidapi_state()
+    if state and state.get("apis_total", 0) > 0:
+        result["apis_total"] = state["apis_total"]
+        result["apis_public"] = state.get("apis_public", 0)
+        result["apis_private"] = state.get("apis_private", 0)
+        result["apis_freemium"] = state.get("apis_freemium", 0)
+        result["details"] = state.get("details", [])
+        result["fallback"] = "last_known_state"
+        result["fallback_state_saved_at"] = state.get("saved_at")
+        print(
+            "  ⚠️ RapidAPI収集失敗 — last-known-state復元: "
+            f"apis_total={result['apis_total']} (state {state.get('saved_at')})"
+        )
+        # 頂層記録用（build_revenue_summaryが読む）
+        result["last_known_total"] = state["apis_total"]
+        result["last_known_error"] = last_err
     return result
 
 
@@ -803,6 +886,24 @@ def build_revenue_summary(
 
     entry["opportunities"] = opportunities
     entry["warnings"] = warnings
+
+    # v140 (t_e3302129): collector健全性/top層last-known記録（rebuild時フォールバックを明示）
+    collectors: dict[str, Any] = {
+        "apify_ok": "error" not in apify,
+        "rapidapi_ok": "error" not in rapidapi,
+        "gumroad_ok": bool(gumroad.get("state_exists")),
+    }
+    if rapidapi.get("fallback") == "last_known_state":
+        collectors["rapidapi_cache_fallback"] = True
+        collectors["rapidapi_fallback_state_saved_at"] = rapidapi.get("fallback_state_saved_at")
+        collectors["rapidapi_error"] = rapidapi.get("error")
+        entry["last_known_total"] = rapidapi.get("last_known_total")
+        entry["last_known_error"] = rapidapi.get("last_known_error")
+        warnings.append(
+            f"RapidAPI収集失敗（last-known-stateフォールバックで apis_total={rapidapi.get('apis_total')} を表示、"
+            f"state鮮度 {rapidapi.get('fallback_state_saved_at')}）"
+        )
+    entry["collectors"] = collectors
     # Gumroad: 売上があれば収益見積もりに反映
     gumroad_monthly = gumroad.get("total_earnings_usd") or 0
     gumroad_note = f"Gumroad売上 ${gumroad_monthly:.2f} USD" if gumroad_monthly > 0 else "Gumroad売上なし"

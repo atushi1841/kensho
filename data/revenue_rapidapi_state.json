@@ -1,0 +1,193 @@
+{
+ "saved_at": "2026-09-13T04:57:56",
+ "apis_total": 23,
+ "apis_public": 20,
+ "apis_private": 3,
+ "apis_freemium": 23,
+ "details": [
+  {
+   "id": "api_7d2dcc27-829d-4add-88b9-5c1708447f85",
+   "name": "Japan Camera & Lens Resale Price Research API",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_dbf7c702-51b3-436e-9e70-21c6c6c358d8",
+   "name": "Japan Fuel Price API",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_45bf102f-6d1b-4fd5-9179-f164de167ffd",
+   "name": "Japan Kakaku Price Stats API",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_c1044ee7-1752-4d3e-a688-53f7e791d5ff",
+   "name": "Japan OffMall Used Goods Price Stats API",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_3697e05e-3115-47c5-85df-f6edadbdc8ca",
+   "name": "Japan OffMall Used Goods Price Stats API (Chinese)",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_2e8e063d-f2a3-43de-9fe4-50d5eb16659a",
+   "name": "Japan Rent Price Stats API",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_e19e373c-049e-462b-bd7c-c5acf9b65770",
+   "name": "Japan Used Camera Price Stats API",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_daeb465c-9094-4f76-8918-0b18e7b7915d",
+   "name": "Japan Used Camera Price Stats API (Chinese)",
+   "visibility": "PRIVATE",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_9e1f6683-5736-4fee-a61e-8e248f21a449",
+   "name": "Japan Used Camera Price Stats API (Korean)",
+   "visibility": "PRIVATE",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_e093340e-c784-4cc9-9d70-7cf80404b9ed",
+   "name": "Japan Used Car Price Stats API",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_1f0df9f7-b950-42ce-9b01-b4bd101e87b3",
+   "name": "Japan Used Car Price Stats API (Portuguese)",
+   "visibility": "PRIVATE",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_b23adf16-97b5-4b4b-bfc7-c50ece68d74b",
+   "name": "Japan Used Car Price Stats API (Spanish)",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_7813dffd-a465-4cae-a3c5-12675e95f57c",
+   "name": "Japan Used Kimono Price Stats API",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_8941b445-afab-4f21-abbe-a58e96b21325",
+   "name": "Japan Used Luxury Brand Price Stats API",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_0161125b-59dc-473c-adf5-be218ac9bc87",
+   "name": "Japan Used Luxury Brand Price Stats API (Chinese)",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_2ef6103e-28f3-4576-ae3a-54f7bbe1c7b3",
+   "name": "Japan Used Luxury Brand Price Stats API (Korean)",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_8ccef00b-e8be-44b2-b4e4-3c96fdaf7481",
+   "name": "Japan Used Musical Instrument Price Stats API",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_807997c1-295c-4453-9a2a-c8158cb537dd",
+   "name": "Japan Used Musical Instrument Price Stats API (Chinese)",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_869b5394-5c02-4fde-a362-16ccaadbce4e",
+   "name": "Japan Used Musical Instrument Price Stats API (Korean)",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_cb7a9d01-e8db-4f0d-b91f-031899d5e7cc",
+   "name": "Japan Used Watch Price Stats API",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_afa51cca-f231-4b16-8001-2c07dfa3d0eb",
+   "name": "Japan Used Watch Price Stats API (Chinese)",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_f53e6974-1ad4-4e53-960f-4c8b4d771527",
+   "name": "Japan Used Watch Price Stats API (Korean)",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  },
+  {
+   "id": "api_83ff803f-ea25-4e5e-8d67-0a8537f46bc1",
+   "name": "Suumo Japan Real Estate Price Stats API",
+   "visibility": "PUBLIC",
+   "pricing": "FREEMIUM",
+   "version": "1.0.0",
+   "version_status": "active"
+  }
+ ]
+}
