@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Loop Health Checker v133 (t_5086aef7: PARK_AFTER_H gate 実装 + 重複状態書き込み解消)
+# Loop Health Checker v137 (t_296c3dbc: top_task不倒修正 / t_5086aef7: PARK_AFTER_H gate 実装 + 重複状態書き込み解消)
 # Detects Kanban loop stagnation and escalates via Telegram.
 # HARD LIMIT: Output max 5 lines.
 #
@@ -30,6 +30,12 @@
 #     cooldown(1h)より短いスパンで escalation 別 target を連続 park する v92
 #     真因（自動復旧阻害）の再発防止。dedup_skip は窓をスライドさせない
 #     ため last_park_result/_ts を更新しない。
+# v137 changes (2026-09-12, t_296c3dbc QA 9/12実測):
+#   - top_task 不倒 bug 修正: by_age は started_at 昇順(先頭=最古)なのに
+#     line 226/248 が by_age[-1]=最新規を拾っており、2件以上 running の時
+#     park/escalation target が最古でなく最新になる → SLA parking(24h超滞留
+#     判定)が空振りする。both を by_age[0]=最古running に統一。
+#     不変条件「top_task=最古running」は tests/test_loop_health.py で固定。
 #
 # Usage:
 #   bash loop_health.sh [OPTIONS]
@@ -223,7 +229,9 @@ score = max(0, min(100, score))
 lines = []
 lines.append(f"score={score}")
 if by_age:
-    top = by_age[-1]
+    # v137: by_ageはstarted_at昇順(先頭=最古)。top_task/park targetは最古running
+    # でなければならない(QA 9/12実測: [-1]だと最新規を拾いSLA parkingが空振り)。
+    top = by_age[0]
     age_h = (now - int(top.get("started_at") or now)) // 3600
     lines.append(f"top={top['id']} age={age_h}h")
 else:
@@ -245,7 +253,7 @@ print(json.dumps({
     "blocked": len(blocked),
     "counts": {"running": len(running), "blocked": len(blocked)},
     "skip_fast": False,
-    "top_task": by_age[-1]["id"] if by_age else None,
+    "top_task": by_age[0]["id"] if by_age else None,
     "repeats": repeats,
     "done_blocked": blocked_with_done_parent,
     "lines": lines[:5]
