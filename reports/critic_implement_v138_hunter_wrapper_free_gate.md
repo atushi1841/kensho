@@ -1,5 +1,7 @@
 # critic v138: hunter monetizationゲート強化（wrapper_free 無料ラッパ型OSS除外）— 実装記録 (t_117de0fe)
 
+- Commit: e5295b0 feat(hunter): critic v138 wrapper_free gate
+
 - 変更: kensho-non-api-revenue-hunter.py quality_gate() に要件1b `wrapper_free` 追加。
   score < WRAPPER_FREE_MAX_SCORE(10) かつ タイトル/要旨/URLが free|open-source|MIT|extension|
   無料|オープンソース|拡張機能 に該当 + github.com 直リンク系 = monetizationシグナル通過でも
@@ -33,9 +35,10 @@ paid_saas = None
 
 ```
 $ md5sum /mnt/d/Project2/kensho/kensho-non-api-revenue-hunter.py /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-non-api-revenue-hunter.py
-9ebd50d76b78d69fbf8405fad6a8062b  /mnt/d/Project2/kensho/kensho-non-api-revenue-hunter.py
-9ebd50d76b78d69fbf8405fad6a8062b  /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-non-api-revenue-hunter.py
+b5cea462b6b7642127973cc8a57eb12d  /mnt/d/Project2/kensho/kensho-non-api-revenue-hunter.py
+b5cea462b6b7642127973cc8a57eb12d  /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-non-api-revenue-hunter.py
 ```
+（pre-commit ruff整形後の最終md5。pytest 24件は整形後コードでも再実行し全pass確認済）
 
 - 成功指標の live 検証は 9/13 16:00 Hunterレポート（cron経路）で gate_stats.wrapper_free>=1
   or 同型新規投入0件。タスク本文の検証コマンド:
