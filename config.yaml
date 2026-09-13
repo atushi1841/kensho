@@ -181,7 +181,7 @@ accounts:
 # ── 収集設定 ──
 collection:
   source: "https://knshow.com"
-  use_scrapling: false        # true: Cloudflare突破にScrapling（curl_cffi + browserforge）を使用
+  use_scrapling: true        # true: Cloudflare突破にScrapling（curl_cffi + browserforge）を使用
   times: ["03:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"]
   max_items: 500
   # ★ 2026-08-28: LLMで「フォロー+RTだけで応募完了か」を判定（simple_rt_ok）
