@@ -6,7 +6,9 @@
 - 作業1（A/B準備検証）は 9/13 14:49 完了済み（commit 79d7d19、reports/scrapling_ab_2026-09-13.md）: 3源バイト一致・JA4が httpx `t13d1712h1` → curl_cffi `t13d1516h2`（Chrome一致）へ切替実測。
 - ユーザーGO: commit **b7f2ff0**「config: enable use_scrapling per user GO (v142 unblock)」（16:26、committer Kensho-Sweeps）として記録済み。カードコメント経由ではないが、git history 上で GO 明記のコミットが実在するためゲート解除と判断。
 
-## verification_evidence（実測のみ）
+## verification_evidence
+
+以下、t_cafe0cdd 作業2（実測のみ）。
 
 ```
 $ cd /mnt/d/Project2/kensho && python3 -c "import yaml; cfg=yaml.safe_load(open('config.yaml')); print('use_scrapling =', cfg['collection'].get('use_scrapling'))"
