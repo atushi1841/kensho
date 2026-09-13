@@ -136,3 +136,15 @@ tmp_llm_research/
 report.json
 rtx3090_*
 data/apify_pricing_cache.json
+
+# ── critic v141 t_84d9dcbb: 日次データchurn恒久除外（実行時状態・再生成派生物）──
+data/dm_wins.json
+data/gumroad_state.json
+data/rapidapi_paid_effect_state.json
+data/revenue-daily.json
+data/revenue_rapidapi_state.json
+data/rapidapi_fuel_metrics.json
+data/overseas_prospects/_drafts_*.json
+data/overseas_prospects/_leads_*.json
+data/*.lock
+data/*.tmp
