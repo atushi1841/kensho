@@ -287,6 +287,11 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
             carrier_tag = f"[{carrier}] " if carrier else ""
             sig = w.get("signal")
             rssi = w.get("rssi")
+            # 有線直結（LAN/RJ45）は Wi-Fi の信号値が存在しない。watchdogログの最終Wi-Fi値を
+            # 誤表示しないよう "—" 固定にする（2026-09-13: TankanNotes LAN直結移行に伴う）
+            if ssid in ("LAN直結", "RJ45直結"):
+                sig = None
+                rssi = None
             ok_t = w.get("ok_today", 0)
             fail_t = w.get("fail_today", 0)
             ok7 = w.get("ok_last7d", 0)

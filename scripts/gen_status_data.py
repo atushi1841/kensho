@@ -519,10 +519,14 @@ def _wifi_date_from_name(bn: str):
 
 
 wifi_stats: dict[str, dict[str, Any]] = {}
-for ac in WIFI_ACCOUNT_SSID:
+# 2026-09-13: WIFI_ACCOUNT_SSID に無い垢（TankanNotes = LAN直結でSSID監視対象外）でも
+# WIFI_ADAPTER_TO_ACCOUNT 経由でログ行が来るため、両者の和集合で初期化する。
+# 旧実装は SSID 側のみを初期化していたため `wifi_stats[ac]` が KeyError → 生成cronが
+# 9/10 09:45 から無音で全停止していた（クラッシュ耐性のため下の参照も .get() 化）。
+for ac in sorted(set(WIFI_ACCOUNT_SSID) | set(WIFI_ADAPTER_TO_ACCOUNT.values())):
     wifi_stats[ac] = {
         "adapter": "",
-        "ssid": WIFI_ACCOUNT_SSID[ac],
+        "ssid": WIFI_ACCOUNT_SSID.get(ac),
         "signal": None,  # 最新の接続時 信号%
         "rssi": None,  # 最新の接続時 Rssi(dBm)
         "connected_now": None,  # 最新runでの接続状態 (True/False/None)
@@ -563,7 +567,9 @@ for wlf in wifi_log_files:
             ac = WIFI_ADAPTER_TO_ACCOUNT.get(adapter)
             if ac is None:
                 continue
-            w = wifi_stats[ac]
+            w = wifi_stats.get(ac)
+            if w is None:  # 未知アダプタ名でも生成を落とさない
+                continue
             w["adapter"] = adapter
             # 信号値更新（同じrun内で複数回接続済みが出ても最後を採用）
             sm = _SIG_RE.search(line)
@@ -586,7 +592,9 @@ for wlf in wifi_log_files:
             ac = WIFI_ADAPTER_TO_ACCOUNT.get(adapter)
             if ac is None:
                 continue
-            w = wifi_stats[ac]
+            w = wifi_stats.get(ac)
+            if w is None:  # 未知アダプタ名でも生成を落とさない
+                continue
             w["adapter"] = adapter
             w["connected_now"] = False
             w["fail_today"] += 1 if is_today else 0
