@@ -60,27 +60,6 @@ accounts:
         - { time: "21:18", max: 15 }
         - { time: "22:28", max: 15 }
 
-  - key: chugakujuken
-    display: "@chugakujuken"
-    session: "data/x_session_chugakujuken.json"
-    disable_reply: true
-    daily_target: 50
-    schedule:
-      collects: false
-      batches:
-        # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
-        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "08:03", max: 15 }
-        - { time: "09:48", max: 15 }
-        - { time: "10:59", max: 15 }
-        - { time: "12:18", max: 15 }
-        - { time: "13:49", max: 15 }
-        - { time: "15:08", max: 15 }
-        - { time: "17:01", max: 15 }
-        - { time: "19:14", max: 15 }
-        - { time: "21:14", max: 15 }
-        - { time: "22:24", max: 15 }
-
   - key: zin20120731
     display: "@zin20120731"
     session: "data/x_session_c.json"
@@ -200,8 +179,6 @@ collection:
 keepalive:
   interval_minutes: 5
   interfaces:
-    - label: "USB-B (povo/@chugakujuken)"
-      type: ping
     - label: "WiFi-A (@kudou_aoshi)"
       type: wifi_monitor
       wifi_profile: "a"

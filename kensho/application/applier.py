@@ -584,6 +584,11 @@ def apply_for_account(
     #   いいね単独連続を4件で一時停止する（フォロー/RTは続行可）。
     consecutive_likes: int = 0
 
+    # ★ アクションパターン記憶（人間らしい行動のための機能追加）:
+    #   最近のアクションシーケンスを記憶し、あまりにも規則的なパターンを避ける
+    _recent_action_sequence: list[str] = []
+    _max_sequence_memory: int = 8  # 記憶するアクション数
+
     # ★ 2026-08-30提案90: フォロー403専用カウンタ（バッチ単位）
     #   フォローHTTP 403はアカウント制限の初動シグナル（atushi1840凍結時8/9-11に21件）。
     #   既存false_countは全アクション連続失敗を数えRT/いいね成功でリセットされるため、
@@ -1244,58 +1249,65 @@ def apply_for_account(
                     "burst": 0.7,
                 }.get(work_style, 1.0)
                 read_time = (base_read + media_delay) * work_coef
-                time.sleep(read_time)
+                # Enhanced human-like reading time with Gaussian distribution
+                # More natural variation: most reads are 3-6 seconds, occasional longer reads
+                if random.random() < 0.85:  # 85% of the time: normal reading
+                    enhanced_read_time = max(1.0, random.gauss(read_time * 0.7, read_time * 0.3))
+                else:  # 15% of the time: deeper reading or distraction
+                    enhanced_read_time = max(1.0, random.gauss(read_time * 1.5, read_time * 0.5))
+                time.sleep(min(enhanced_read_time, read_time * 3))  # Cap at 3x original
 
-                # ★ 自然なスクロール：垢別パターン＋上下混在・速度変化
+                # Enhanced human-like scrolling with more natural patterns
+                # Mix of quick glances and deliberate reading patterns
                 _scroll_cfg: dict[str, Any] = {
                     "smooth": {
-                        "count": (4, 8),
-                        "dy": (30, 120),
-                        "delay": (0.3, 1.0),
+                        "count": (2, 6),  # Fewer scroll actions for more natural reading
+                        "dy": (15, 100),  # Shorter scroll distances
+                        "delay": (0.1, 0.8),  # Faster, more natural scrolling
                         "subdivide": True,
-                        "up_chance": 0.15,
-                        "mouse_move": 0.2,
+                        "up_chance": 0.2,  # More frequent small adjustments
+                        "mouse_move": 0.3,
                     },
                     "aggressive": {
-                        "count": (2, 4),
-                        "dy": (80, 350),
-                        "delay": (0.1, 0.5),
+                        "count": (1, 3),
+                        "dy": (40, 200),
+                        "delay": (0.05, 0.3),
                         "subdivide": False,
-                        "up_chance": 0.10,
+                        "up_chance": 0.1,
                         "mouse_move": 0.1,
                     },
                     "erratic": {
-                        "count": (5, 10),
-                        "dy": (-120, 200),
-                        "delay": (0.2, 2.0),
+                        "count": (3, 8),
+                        "dy": (-80, 150),
+                        "delay": (0.1, 1.5),
                         "subdivide": True,
-                        "up_chance": 0.40,
+                        "up_chance": 0.35,
                         "mouse_move": 0.4,
                     },
                     "measured": {
-                        "count": (3, 6),
-                        "dy": (50, 180),
-                        "delay": (0.5, 2.5),
+                        "count": (2, 5),
+                        "dy": (25, 120),
+                        "delay": (0.3, 2.0),
                         "subdivide": True,
-                        "up_chance": 0.20,
-                        "mouse_move": 0.3,
+                        "up_chance": 0.25,
+                        "mouse_move": 0.35,
                     },
                     "explorative": {
-                        "count": (6, 12),
-                        "dy": (-200, 300),
-                        "delay": (0.3, 1.8),
+                        "count": (4, 10),
+                        "dy": (-150, 250),
+                        "delay": (0.2, 1.2),
                         "subdivide": True,
-                        "up_chance": 0.35,
+                        "up_chance": 0.4,
                         "mouse_move": 0.5,
                     },
                 }.get(
                     scroll_pattern,
                     {
-                        "count": (3, 6),
-                        "dy": (-80, 250),
-                        "delay": (0.2, 1.5),
+                        "count": (2, 5),
+                        "dy": (-50, 180),
+                        "delay": (0.15, 1.0),
                         "subdivide": True,
-                        "up_chance": 0.15,
+                        "up_chance": 0.2,
                         "mouse_move": 0.3,
                     },
                 )
@@ -1688,6 +1700,16 @@ def apply_for_account(
                     _rv = result is True
                     if _rv:
                         _recent_action_times.append(time.time())
+                        # Track successful actions for sequence memory
+                        _recent_action_sequence.append(_name)
+                        # Keep memory manageable
+                        if len(_recent_action_sequence) > _max_sequence_memory:
+                            _recent_action_sequence.pop(0)
+                    else:
+                        # Track failed actions too (they affect behavior)
+                        _recent_action_sequence.append(f"{_name}_failed")
+                        if len(_recent_action_sequence) > _max_sequence_memory:
+                            _recent_action_sequence.pop(0)
                     _per_item_ok[_name] = _per_item_ok.get(_name) or _rv
                     # ★ 連続いいねカウンタ更新: いいね成功で+1、フォロー/RT成功でリセット
                     if _rv:
@@ -1695,6 +1717,9 @@ def apply_for_account(
                             consecutive_likes += 1
                         else:
                             consecutive_likes = 0
+                    else:
+                        if _name == "like":
+                            consecutive_likes = 0  # Reset on failure
                     if result is False:
                         false_count += 1
                         if false_count >= 3:
@@ -1760,11 +1785,44 @@ def apply_for_account(
                                 _follow_locked_until = None
                                 out("  [LOCK93] フォロー成功 → code 326 一時ロック解除（自動復帰・提案93）")
                     if idx < action_count - 1 and action_count >= 2:
-                        if random.random() < 0.75:
-                            delay = random.uniform(6, 25)
-                        else:
-                            delay = random.uniform(30, 90)
-                        time.sleep(delay)
+                        # Enhanced human-like delay with simple pattern awareness
+                        base_delay = random.uniform(5, 35)  # Base range
+
+                        # Simple pattern avoidance: if we just did the same action, wait longer
+                        if (
+                            len(_recent_action_sequence) >= 2
+                            and _recent_action_sequence[-1] == _recent_action_sequence[-2]
+                        ):
+                            base_delay *= random.uniform(1.5, 2.5)  # Increase delay for repeats
+
+                        # Time of day adjustment
+                        hour = datetime.now().hour
+                        if 6 <= hour < 9:  # Morning: slightly faster
+                            time_factor = 0.8
+                        elif 9 <= hour < 17:  # Daytime: normal
+                            time_factor = 1.0
+                        elif 17 <= hour < 21:  # Evening: slightly relaxed
+                            time_factor = 1.1
+                        else:  # Night: slower, more deliberate
+                            time_factor = 1.3
+
+                        # Work style adjustments
+                        if work_style == "morning_person":
+                            time_factor *= 0.9
+                        elif work_style == "burst":
+                            if random.random() < 0.3:  # Occasional long pause
+                                time_factor *= random.uniform(2.0, 4.0)
+                        elif work_style == "night_owl":
+                            if 20 <= hour or hour < 6:  # Night active
+                                time_factor *= 0.8
+                            else:  # Day inactive
+                                time_factor *= 1.2
+
+                        # Add natural variation
+                        final_delay = base_delay * time_factor * random.uniform(0.7, 1.3)
+                        final_delay = max(1.0, min(final_delay, 120))  # Reasonable bounds
+
+                        time.sleep(final_delay)
                     else:
                         time.sleep(random.uniform(1.0, 3.5))
 
@@ -1986,15 +2044,42 @@ def apply_for_account(
                 if global_idx % break_after_n == 0:
                     save_collected_safe(data, account_key, log)
                     out(f"  [SAVE] 保存 ({success}/{max_n})")
-                    # ★ work_style別：burstは短い活動後に長め休憩
+                    # Enhanced human-like break patterns with more variety and timing
                     if work_style == "burst":
-                        rest = random.uniform(break_min * 1.5, break_max * 1.3)
+                        # Burst style: shorter work periods, longer breaks
+                        rest = random.uniform(break_min * 1.2, break_max * 1.5)
                     elif work_style == "night_owl":
-                        rest = random.uniform(break_min, break_max * 1.2)
+                        # Night owls: longer breaks during their active hours
+                        hour = datetime.now().hour
+                        if 20 <= hour or hour < 6:  # Night time
+                            rest = random.uniform(break_min * 0.8, break_max * 1.1)
+                        else:  # Daytime for night owls - shorter breaks
+                            rest = random.uniform(break_min * 0.5, break_max * 0.8)
                     elif work_style == "morning_person":
-                        rest = random.uniform(break_min * 0.7, break_max * 0.8)
+                        # Morning people: shorter breaks in morning, longer in afternoon
+                        hour = datetime.now().hour
+                        if hour < 12:  # Morning
+                            rest = random.uniform(break_min * 0.6, break_max * 0.9)
+                        else:  # Afternoon
+                            rest = random.uniform(break_min * 0.8, break_max * 1.2)
                     else:
-                        rest = random.uniform(break_min, break_max)
+                        # Enhanced steady style with time-of-day variation
+                        hour = datetime.now().hour
+                        if 9 <= hour < 12:  # Late morning - peak productivity
+                            rest = random.uniform(break_min * 0.7, break_max * 1.0)
+                        elif 12 <= hour < 15:  # Early afternoon - post-lunch dip
+                            rest = random.uniform(break_min * 1.2, break_max * 1.6)
+                        elif 15 <= hour < 18:  # Late afternoon - recovery
+                            rest = random.uniform(break_min * 0.9, break_max * 1.2)
+                        else:  # Other times
+                            rest = random.uniform(break_min, break_max)
+
+                    # Add occasional micro-breaks and mega-breaks for human-like patterns
+                    if random.random() < 0.1:  # 10% chance of micro-break
+                        rest = random.uniform(5, 15)  # Very short break
+                    elif random.random() < 0.02:  # 2% chance of mega-break
+                        rest = random.uniform(120, 300)  # 2-5 minute break
+
                     out(f"  [TEA] 休憩{rest:.0f}秒（{work_style}）")
                     time.sleep(rest)
                 else:
@@ -2009,17 +2094,43 @@ def apply_for_account(
                         out(f"  [TEA] 長め休憩{extra:.0f}秒（人間らしさ）")
                         time.sleep(extra)
                     else:
-                        # ★ アクション間待機もwork_style別：morning_personは短め、steadyは長め
+                        # Enhanced human-like action delays with time-of-day variation
+                        # More natural patterns that mimic human behavior throughout the day
+                        hour = datetime.now().hour
+
+                        # Adjust delays based on time of day (humans behave differently)
+                        if 6 <= hour < 9:  # Morning - slightly faster, more alert
+                            time_of_day_factor = 0.8
+                        elif 9 <= hour < 17:  # Daytime - normal pace
+                            time_of_day_factor = 1.0
+                        elif 17 <= hour < 21:  # Evening - slightly relaxed
+                            time_of_day_factor = 1.1
+                        else:  # Night - slower, more deliberate
+                            time_of_day_factor = 1.3
+
+                        # Work style adjustments
                         if work_style == "morning_person":
-                            _min_d = min_delay * 0.7
-                            _max_d = max_delay * 0.8
+                            _min_d = min_delay * 0.6 * time_of_day_factor
+                            _max_d = max_delay * 0.7 * time_of_day_factor
                         elif work_style == "steady":
-                            _min_d = min_delay * 1.2
-                            _max_d = max_delay * 1.1
+                            _min_d = min_delay * 1.1 * time_of_day_factor
+                            _max_d = max_delay * 1.0 * time_of_day_factor
+                        elif work_style == "burst":
+                            # Burst style: quick actions followed by longer pauses
+                            if random.random() < 0.3:  # 30% chance of pause after burst
+                                _min_d = min_delay * 2.0 * time_of_day_factor
+                                _max_d = max_delay * 3.0 * time_of_day_factor
+                            else:
+                                _min_d = min_delay * 0.5 * time_of_day_factor
+                                _max_d = max_delay * 0.8 * time_of_day_factor
                         else:
-                            _min_d = min_delay
-                            _max_d = max_delay
-                        time.sleep(random.uniform(_min_d, _max_d))
+                            _min_d = min_delay * time_of_day_factor
+                            _max_d = max_delay * time_of_day_factor
+
+                        # Add some Gaussian noise for more natural variation
+                        base_delay = random.uniform(_min_d, _max_d)
+                        enhanced_delay = max(0.5, base_delay * random.gauss(1.0, 0.2))  # 20% Gaussian variation
+                        time.sleep(min(enhanced_delay, _max_d * 2))  # Reasonable cap
 
             except Exception as e:
                 err_msg: str = str(e)[:60]

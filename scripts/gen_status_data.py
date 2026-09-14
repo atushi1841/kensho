@@ -31,7 +31,7 @@ COUNT_FILE = os.path.join(PROJECT_DIR, "data/daily_counts.json")
 OUTPUT_FILE = os.path.join(PROJECT_DIR, "kensho-status.html")
 LOG_DIR = os.path.join(PROJECT_DIR, "logs")
 
-accounts = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "toushiwatch"]
+accounts = ["atushi16", "kudou", "zin20120731", "TankanNotes", "toushiwatch"]
 
 # ── UNUSED（応募停止済み）アカウント記録 ──
 # cron再生成でも維持されるようハードコード（2026-08-17現在は応募停止垢なし）
@@ -481,7 +481,6 @@ except Exception as _he:
 # ═══════════════════════════════════════════════
 WIFI_ADAPTER_TO_ACCOUNT = {
     "kudou_RM10JE_B": "kudou",
-    "chugakujuken_RM10JE_S": "chugakujuken",
     "zin_AW6povo": "zin20120731",
     "Tankan_2_redmi_n9s": "TankanNotes",  # 旧アダプタ名（2_povo_tankanに改名済み・参照残は実害なし）
     "2_povo_tankan": "TankanNotes",  # 旧アダプタ名（2026-09-10 LAN直結まで実害なしで参照残）
@@ -492,7 +491,6 @@ WIFI_ADAPTER_TO_ACCOUNT = {
 }
 WIFI_ACCOUNT_SSID = {
     "kudou": "RM10JE_B",
-    "chugakujuken": "RM10JE_S",
     "zin20120731": "AiR-WiFi_6_povo",
     # "TankanNotes": "10_ymo_HR01",  # 2026-09-10: HR01 Wi-Fi不良→LAN直結(Tankan_ETH3)へ移行。netsh wlan監視は不適→除外
     # "inobase1-4": "ino1_4_oppo_r5a",  # 2026-09-01: 凍結（code 64）→ dashboard除外
