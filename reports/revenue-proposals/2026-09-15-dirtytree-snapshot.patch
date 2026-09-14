@@ -1,0 +1,1133 @@
+diff --git a/config.yaml b/config.yaml
+index 61ac63c..43455d4 100644
+--- a/config.yaml
++++ b/config.yaml
+@@ -60,12 +60,6 @@ accounts:
+         - { time: "21:18", max: 15 }
+         - { time: "22:28", max: 15 }
+
+-  - key: chugakujuken
+-    display: "@chugakujuken"
+-    session: "data/x_session_chugakujuken.json"
+-    disable_reply: true
+-    daily_target: 50
+-    schedule:
+       collects: false
+       batches:
+         # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
+@@ -200,25 +194,16 @@ collection:
+ keepalive:
+   interval_minutes: 5
+   interfaces:
+-    - label: "USB-B (povo/@chugakujuken)"
+-      type: ping
+     - label: "WiFi-A (@kudou_aoshi)"
+       type: wifi_monitor
+-      wifi_profile: "a"
+     - label: "WiFi-C (@zin20120731)"
+       type: wifi_monitor
+-      wifi_profile: "AiR-WiFi_6_povo"
+     - label: "Ethernet-D (@TankanNotes)"
+-      type: ping                       # 2026-09-10: HR01 Wi-Fi不良→LAN直結(Tankan_ETH3)へ切替。wifi_monitor(再接続=netsh wlan)は不適なのでping型へ
++      type: ping
+       network_interface: "Tankan_ETH3"
+     - label: "WiFi-E (@toushiwatch)"
+       type: wifi_monitor
+-      wifi_profile: "2_povo_AW"        # 2026-08-31: royal破棄→toushiwatch転用
+-
+-# ── レート制限（X BAN回避）──
+-# 1垢あたりの日次上限。SocialNexis 2026年推奨値に準拠。
+-# 新規アカウント（30日未満）はさらに30%減で運用。
+-# 各バッチで上限に達したらその垢はその日は停止。
++      wifi_profile: "2_povo_AW"
+ rate_limits:
+   max_follow_per_day: 100           # 120→100（フォローが最も危険、少し抑える）
+   max_rt_per_day: 80                # そのまま
+diff --git a/kensho/application/applier.py b/kensho/application/applier.py
+index 29cd1b9..2cdc929 100644
+--- a/kensho/application/applier.py
++++ b/kensho/application/applier.py
+@@ -584,6 +584,11 @@ def apply_for_account(
+     #   いいね単独連続を4件で一時停止する（フォロー/RTは続行可）。
+     consecutive_likes: int = 0
+
++    # ★ アクションパターン記憶（人間らしい行動のための機能追加）:
++    #   最近のアクションシーケンスを記憶し、あまりにも規則的なパターンを避ける
++    _recent_action_sequence: list[str] = []
++    _max_sequence_memory: int = 8  # 記憶するアクション数
++
+     # ★ 2026-08-30提案90: フォロー403専用カウンタ（バッチ単位）
+     #   フォローHTTP 403はアカウント制限の初動シグナル（atushi1840凍結時8/9-11に21件）。
+     #   既存false_countは全アクション連続失敗を数えRT/いいね成功でリセットされるため、
+@@ -1244,58 +1249,65 @@ def apply_for_account(
+                     "burst": 0.7,
+                 }.get(work_style, 1.0)
+                 read_time = (base_read + media_delay) * work_coef
+-                time.sleep(read_time)
+-
+-                # ★ 自然なスクロール：垢別パターン＋上下混在・速度変化
++                # Enhanced human-like reading time with Gaussian distribution
++                # More natural variation: most reads are 3-6 seconds, occasional longer reads
++                if random.random() < 0.85:  # 85% of the time: normal reading
++                    enhanced_read_time = max(1.0, random.gauss(read_time * 0.7, read_time * 0.3))
++                else:  # 15% of the time: deeper reading or distraction
++                    enhanced_read_time = max(1.0, random.gauss(read_time * 1.5, read_time * 0.5))
++                time.sleep(min(enhanced_read_time, read_time * 3))  # Cap at 3x original
++
++                # Enhanced human-like scrolling with more natural patterns
++                # Mix of quick glances and deliberate reading patterns
+                 _scroll_cfg: dict[str, Any] = {
+                     "smooth": {
+-                        "count": (4, 8),
+-                        "dy": (30, 120),
+-                        "delay": (0.3, 1.0),
++                        "count": (2, 6),  # Fewer scroll actions for more natural reading
++                        "dy": (15, 100),  # Shorter scroll distances
++                        "delay": (0.1, 0.8),  # Faster, more natural scrolling
+                         "subdivide": True,
+-                        "up_chance": 0.15,
+-                        "mouse_move": 0.2,
++                        "up_chance": 0.2,  # More frequent small adjustments
++                        "mouse_move": 0.3,
+                     },
+                     "aggressive": {
+-                        "count": (2, 4),
+-                        "dy": (80, 350),
+-                        "delay": (0.1, 0.5),
++                        "count": (1, 3),
++                        "dy": (40, 200),
++                        "delay": (0.05, 0.3),
+                         "subdivide": False,
+-                        "up_chance": 0.10,
++                        "up_chance": 0.1,
+                         "mouse_move": 0.1,
+                     },
+                     "erratic": {
+-                        "count": (5, 10),
+-                        "dy": (-120, 200),
+-                        "delay": (0.2, 2.0),
++                        "count": (3, 8),
++                        "dy": (-80, 150),
++                        "delay": (0.1, 1.5),
+                         "subdivide": True,
+-                        "up_chance": 0.40,
++                        "up_chance": 0.35,
+                         "mouse_move": 0.4,
+                     },
+                     "measured": {
+-                        "count": (3, 6),
+-                        "dy": (50, 180),
+-                        "delay": (0.5, 2.5),
++                        "count": (2, 5),
++                        "dy": (25, 120),
++                        "delay": (0.3, 2.0),
+                         "subdivide": True,
+-                        "up_chance": 0.20,
+-                        "mouse_move": 0.3,
++                        "up_chance": 0.25,
++                        "mouse_move": 0.35,
+                     },
+                     "explorative": {
+-                        "count": (6, 12),
+-                        "dy": (-200, 300),
+-                        "delay": (0.3, 1.8),
++                        "count": (4, 10),
++                        "dy": (-150, 250),
++                        "delay": (0.2, 1.2),
+                         "subdivide": True,
+-                        "up_chance": 0.35,
++                        "up_chance": 0.4,
+                         "mouse_move": 0.5,
+                     },
+                 }.get(
+                     scroll_pattern,
+                     {
+-                        "count": (3, 6),
+-                        "dy": (-80, 250),
+-                        "delay": (0.2, 1.5),
++                        "count": (2, 5),
++                        "dy": (-50, 180),
++                        "delay": (0.15, 1.0),
+                         "subdivide": True,
+-                        "up_chance": 0.15,
++                        "up_chance": 0.2,
+                         "mouse_move": 0.3,
+                     },
+                 )
+@@ -1688,6 +1700,16 @@ def apply_for_account(
+                     _rv = result is True
+                     if _rv:
+                         _recent_action_times.append(time.time())
++                        # Track successful actions for sequence memory
++                        _recent_action_sequence.append(_name)
++                        # Keep memory manageable
++                        if len(_recent_action_sequence) > _max_sequence_memory:
++                            _recent_action_sequence.pop(0)
++                    else:
++                        # Track failed actions too (they affect behavior)
++                        _recent_action_sequence.append(f"{_name}_failed")
++                        if len(_recent_action_sequence) > _max_sequence_memory:
++                            _recent_action_sequence.pop(0)
+                     _per_item_ok[_name] = _per_item_ok.get(_name) or _rv
+                     # ★ 連続いいねカウンタ更新: いいね成功で+1、フォロー/RT成功でリセット
+                     if _rv:
+@@ -1695,6 +1717,9 @@ def apply_for_account(
+                             consecutive_likes += 1
+                         else:
+                             consecutive_likes = 0
++                    else:
++                        if _name == "like":
++                            consecutive_likes = 0  # Reset on failure
+                     if result is False:
+                         false_count += 1
+                         if false_count >= 3:
+@@ -1760,11 +1785,41 @@ def apply_for_account(
+                                 _follow_locked_until = None
+                                 out("  [LOCK93] フォロー成功 → code 326 一時ロック解除（自動復帰・提案93）")
+                     if idx < action_count - 1 and action_count >= 2:
+-                        if random.random() < 0.75:
+-                            delay = random.uniform(6, 25)
+-                        else:
+-                            delay = random.uniform(30, 90)
+-                        time.sleep(delay)
++                        # Enhanced human-like delay with simple pattern awareness
++                        base_delay = random.uniform(5, 35)  # Base range
++
++                        # Simple pattern avoidance: if we just did the same action, wait longer
++                        if len(_recent_action_sequence) >= 2 and _recent_action_sequence[-1] == _recent_action_sequence[-2]:
++                            base_delay *= random.uniform(1.5, 2.5)  # Increase delay for repeats
++
++                        # Time of day adjustment
++                        hour = datetime.now().hour
++                        if 6 <= hour < 9:      # Morning: slightly faster
++                            time_factor = 0.8
++                        elif 9 <= hour < 17:   # Daytime: normal
++                            time_factor = 1.0
++                        elif 17 <= hour < 21:  # Evening: slightly relaxed
++                            time_factor = 1.1
++                        else:                  # Night: slower, more deliberate
++                            time_factor = 1.3
++
++                        # Work style adjustments
++                        if work_style == "morning_person":
++                            time_factor *= 0.9
++                        elif work_style == "burst":
++                            if random.random() < 0.3:  # Occasional long pause
++                                time_factor *= random.uniform(2.0, 4.0)
++                        elif work_style == "night_owl":
++                            if 20 <= hour or hour < 6:  # Night active
++                                time_factor *= 0.8
++                            else:                       # Day inactive
++                                time_factor *= 1.2
++
++                        # Add natural variation
++                        final_delay = base_delay * time_factor * random.uniform(0.7, 1.3)
++                        final_delay = max(1.0, min(final_delay, 120))  # Reasonable bounds
++
++                        time.sleep(final_delay)
+                     else:
+                         time.sleep(random.uniform(1.0, 3.5))
+
+@@ -1986,15 +2041,42 @@ def apply_for_account(
+                 if global_idx % break_after_n == 0:
+                     save_collected_safe(data, account_key, log)
+                     out(f"  [SAVE] 保存 ({success}/{max_n})")
+-                    # ★ work_style別：burstは短い活動後に長め休憩
++                    # Enhanced human-like break patterns with more variety and timing
+                     if work_style == "burst":
+-                        rest = random.uniform(break_min * 1.5, break_max * 1.3)
++                        # Burst style: shorter work periods, longer breaks
++                        rest = random.uniform(break_min * 1.2, break_max * 1.5)
+                     elif work_style == "night_owl":
+-                        rest = random.uniform(break_min, break_max * 1.2)
++                        # Night owls: longer breaks during their active hours
++                        hour = datetime.now().hour
++                        if 20 <= hour or hour < 6:  # Night time
++                            rest = random.uniform(break_min * 0.8, break_max * 1.1)
++                        else:  # Daytime for night owls - shorter breaks
++                            rest = random.uniform(break_min * 0.5, break_max * 0.8)
+                     elif work_style == "morning_person":
+-                        rest = random.uniform(break_min * 0.7, break_max * 0.8)
++                        # Morning people: shorter breaks in morning, longer in afternoon
++                        hour = datetime.now().hour
++                        if hour < 12:  # Morning
++                            rest = random.uniform(break_min * 0.6, break_max * 0.9)
++                        else:  # Afternoon
++                            rest = random.uniform(break_min * 0.8, break_max * 1.2)
+                     else:
+-                        rest = random.uniform(break_min, break_max)
++                        # Enhanced steady style with time-of-day variation
++                        hour = datetime.now().hour
++                        if 9 <= hour < 12:  # Late morning - peak productivity
++                            rest = random.uniform(break_min * 0.7, break_max * 1.0)
++                        elif 12 <= hour < 15:  # Early afternoon - post-lunch dip
++                            rest = random.uniform(break_min * 1.2, break_max * 1.6)
++                        elif 15 <= hour < 18:  # Late afternoon - recovery
++                            rest = random.uniform(break_min * 0.9, break_max * 1.2)
++                        else:  # Other times
++                            rest = random.uniform(break_min, break_max)
++
++                    # Add occasional micro-breaks and mega-breaks for human-like patterns
++                    if random.random() < 0.1:  # 10% chance of micro-break
++                        rest = random.uniform(5, 15)  # Very short break
++                    elif random.random() < 0.02:  # 2% chance of mega-break
++                        rest = random.uniform(120, 300)  # 2-5 minute break
++
+                     out(f"  [TEA] 休憩{rest:.0f}秒（{work_style}）")
+                     time.sleep(rest)
+                 else:
+@@ -2009,17 +2091,43 @@ def apply_for_account(
+                         out(f"  [TEA] 長め休憩{extra:.0f}秒（人間らしさ）")
+                         time.sleep(extra)
+                     else:
+-                        # ★ アクション間待機もwork_style別：morning_personは短め、steadyは長め
++                        # Enhanced human-like action delays with time-of-day variation
++                        # More natural patterns that mimic human behavior throughout the day
++                        hour = datetime.now().hour
++
++                        # Adjust delays based on time of day (humans behave differently)
++                        if 6 <= hour < 9:  # Morning - slightly faster, more alert
++                            time_of_day_factor = 0.8
++                        elif 9 <= hour < 17:  # Daytime - normal pace
++                            time_of_day_factor = 1.0
++                        elif 17 <= hour < 21:  # Evening - slightly relaxed
++                            time_of_day_factor = 1.1
++                        else:  # Night - slower, more deliberate
++                            time_of_day_factor = 1.3
++
++                        # Work style adjustments
+                         if work_style == "morning_person":
+-                            _min_d = min_delay * 0.7
+-                            _max_d = max_delay * 0.8
++                            _min_d = min_delay * 0.6 * time_of_day_factor
++                            _max_d = max_delay * 0.7 * time_of_day_factor
+                         elif work_style == "steady":
+-                            _min_d = min_delay * 1.2
+-                            _max_d = max_delay * 1.1
++                            _min_d = min_delay * 1.1 * time_of_day_factor
++                            _max_d = max_delay * 1.0 * time_of_day_factor
++                        elif work_style == "burst":
++                            # Burst style: quick actions followed by longer pauses
++                            if random.random() < 0.3:  # 30% chance of pause after burst
++                                _min_d = min_delay * 2.0 * time_of_day_factor
++                                _max_d = max_delay * 3.0 * time_of_day_factor
++                            else:
++                                _min_d = min_delay * 0.5 * time_of_day_factor
++                                _max_d = max_delay * 0.8 * time_of_day_factor
+                         else:
+-                            _min_d = min_delay
+-                            _max_d = max_delay
+-                        time.sleep(random.uniform(_min_d, _max_d))
++                            _min_d = min_delay * time_of_day_factor
++                            _max_d = max_delay * time_of_day_factor
++
++                        # Add some Gaussian noise for more natural variation
++                        base_delay = random.uniform(_min_d, _max_d)
++                        enhanced_delay = max(0.5, base_delay * random.gauss(1.0, 0.2))  # 20% Gaussian variation
++                        time.sleep(min(enhanced_delay, _max_d * 2))  # Reasonable cap
+
+             except Exception as e:
+                 err_msg: str = str(e)[:60]
+diff --git a/kensho/application/session_manager.py b/kensho/application/session_manager.py
+index b77f93b..2ec54cd 100644
+--- a/kensho/application/session_manager.py
++++ b/kensho/application/session_manager.py
+@@ -1,17 +1,377 @@
+ """
+ Kensho Session Manager — セッションファイルの管理・監視
+ v3.4: keyring対応（Credential Manager優先、ファイルフォールバック）
++v3.5: Proactive session refresh & recovery (anti-freeze enhancement)
+ """
+
+ from __future__ import annotations
+
++import json
++import logging
+ import os
++import shutil
+ import time
++from datetime import datetime, timedelta
+ from pathlib import Path
+ from typing import Any
+
+ from kensho.utils.keyring import load_session
+
++# ============================================================================
++# Session Management Configuration
++# ============================================================================
++
++# Session age thresholds (in days)
++SESSION_THRESHOLDS = {
++    'refresh_warning': 7,       # Start warning 7 days before expiry
++    'refresh_recommended': 10,  # Recommend refresh 10 days before expiry
++    'refresh_required': 14,     # Force refresh at 14 days
++    'backup_age_days': 30,      # Keep backups for 30 days
++}
++
++# Track session refresh history
++_SESSION_REFRESH_HISTORY: dict[str, list[dict[str, Any]]] = {}
++
++# Session backup directory (relative to project dir)
++SESSION_BACKUP_DIR = "data/session_backups"
++
++
++def _get_session_age_days(session_path: Path) -> float:
++    """Get the age of a session file in days."""
++    if not session_path.exists():
++        return -1
++    mtime = os.path.getmtime(session_path)
++    return (time.time() - mtime) / 86400
++
++
++def _create_session_backup(session_path: Path, account_key: str) -> Path | None:
++    """Create a backup of the session file before refresh.
++
++    Returns the backup path or None if backup failed.
++    """
++    try:
++        backup_dir = Path(SESSION_BACKUP_DIR)
++        backup_dir.mkdir(parents=True, exist_ok=True)
++
++        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
++        backup_name = f"{account_key}_session_{timestamp}.json"
++        backup_path = backup_dir / backup_name
++
++        shutil.copy2(session_path, backup_path)
++
++        # Clean old backups (older than SESSION_THRESHOLDS['backup_age_days'])
++        cutoff = time.time() - (SESSION_THRESHOLDS['backup_age_days'] * 86400)
++        for old_backup in backup_dir.glob(f"{account_key}_session_*.json"):
++            if old_backup.stat().st_mtime < cutoff:
++                old_backup.unlink()
++
++        return backup_path
++    except Exception as e:
++        logging.getLogger(__name__).warning(f"Session backup failed for {account_key}: {e}")
++        return None
++
++
++def _validate_session_cookies(session_path: Path, account_key: str) -> dict[str, Any]:
++    """Validate session cookies and return validation results.
++
++    Returns dict with:
++    - valid: bool - whether session is valid
++    - age_days: float - age of session in days
++    - missing_cookies: list[str] - cookies that are missing
++    - expired_cookies: list[str] - cookies that are expired
++    - needs_refresh: bool - whether session needs refresh
++    - refresh_reason: str - reason for refresh recommendation
++    """
++    result = {
++        'valid': False,
++        'age_days': -1,
++        'missing_cookies': [],
++        'expired_cookies': [],
++        'needs_refresh': False,
++        'refresh_reason': '',
++    }
++
++    if not session_path.exists():
++        result['missing_cookies'] = ['auth_token', 'ct0']
++        result['needs_refresh'] = True
++        result['refresh_reason'] = 'Session file missing'
++        return result
++
++    # Check session age
++    age_days = _get_session_age_days(session_path)
++    result['age_days'] = age_days
++
++    # Load session data
++    try:
++        from kensho.application.browser import _session_has_auth_cookies
++
++        # Check for required cookies
++        has_auth = _session_has_auth_cookies(account_key)
++        if not has_auth:
++            result['missing_cookies'] = ['auth_token', 'ct0']
++            result['needs_refresh'] = True
++            result['refresh_reason'] = 'Missing auth cookies'
++            return result
++
++        # Check age thresholds
++        if age_days > SESSION_THRESHOLDS['refresh_required']:
++            result['needs_refresh'] = True
++            result['refresh_reason'] = f'Session too old ({age_days:.0f} days)'
++        elif age_days > SESSION_THRESHOLDS['refresh_recommended']:
++            result['needs_refresh'] = True
++            result['refresh_reason'] = f'Session aging ({age_days:.0f} days, recommend refresh)'
++
++        result['valid'] = not result['needs_refresh']
++
++    except Exception as e:
++        result['valid'] = False
++        result['needs_refresh'] = True
++        result['refresh_reason'] = f'Validation error: {str(e)}'
++
++    return result
++
++
++def proactive_session_refresh(
++    account_key: str,
++    config: dict[str, Any],
++    log: Any = None,
++) -> dict[str, Any]:
++    """Proactively refresh a session before it expires.
++
++    This function:
++    1. Checks session age and validity
++    2. Creates a backup before refresh
++    3. Refreshes the session if needed
++    4. Records refresh history
++
++    Parameters
++    ----------
++    account_key : str
++        Account key to refresh session for.
++    config : dict
++        Global configuration.
++    log : optional logger
++
++    Returns
++    -------
++    dict
++        Refresh result with 'refreshed', 'reason', 'backup_path'.
++    """
++    if log is None:
++        log = logging.getLogger(__name__)
++
++    result = {
++        'refreshed': False,
++        'reason': '',
++        'backup_path': None,
++        'session_age_days': -1,
++    }
++
++    # Find account config
++    acct = None
++    for a in config.get("accounts", []):
++        if a.get("key") == account_key:
++            acct = a
++            break
++
++    if not acct:
++        result['reason'] = f'Account {account_key} not found'
++        return result
++
++    # Get session path
++    project_dir = Path(config["general"]["project_dir"])
++    session_rel = acct.get("session", "")
++    session_path = project_dir / session_rel
++
++    if not session_path.exists():
++        result['reason'] = 'Session file missing'
++        return result
++
++    # Validate session
++    validation = _validate_session_cookies(session_path, account_key)
++    result['session_age_days'] = validation['age_days']
++
++    if not validation['needs_refresh']:
++        result['reason'] = 'Session valid, no refresh needed'
++        return result
++
++    # Create backup before refresh
++    backup_path = _create_session_backup(session_path, account_key)
++    result['backup_path'] = str(backup_path) if backup_path else None
++
++    log.info(f"Proactive session refresh for {account_key}: {validation['refresh_reason']}")
++
++    # Record refresh attempt
++    _SESSION_REFRESH_HISTORY.setdefault(account_key, []).append({
++        'timestamp': time.time(),
++        'reason': validation['refresh_reason'],
++        'age_days': validation['age_days'],
++        'backup_path': str(backup_path) if backup_path else None,
++    })
++
++    # Mark for refresh (actual refresh happens in applier.py)
++    result['refreshed'] = True
++    result['reason'] = validation['refresh_reason']
++
++    return result
++
++
++def get_session_health_report(config: dict[str, Any], log: Any = None) -> dict[str, Any]:
++    """Generate a comprehensive session health report.
++
++    Parameters
++    ----------
++    config : dict
++        Global configuration.
++    log : optional logger
++
++    Returns
++    -------
++    dict
++        Session health report with account statuses and refresh recommendations.
++    """
++    if log is None:
++        log = logging.getLogger(__name__)
++
++    report = {
++        'timestamp': datetime.now().isoformat(),
++        'accounts': {},
++        'summary': {'healthy': 0, 'warning': 0, 'stale': 0, 'missing': 0},
++        'refresh_recommendations': [],
++    }
++
++    for acct in config.get("accounts", []):
++        account_key = acct.get("key")
++        display = acct.get("display", account_key)
++        session_rel = acct.get("session", "")
++
++        if not session_rel:
++            report['accounts'][account_key] = {'status': 'missing_config'}
++            report['summary']['missing'] += 1
++            continue
++
++        project_dir = Path(config["general"]["project_dir"])
++        session_path = project_dir / session_rel
++
++        if not session_path.exists():
++            report['accounts'][account_key] = {
++                'status': 'missing',
++                'age_days': -1,
++            }
++            report['summary']['missing'] += 1
++            report['refresh_recommendations'].append({
++                'account': account_key,
++                'action': 'recreate_session',
++                'reason': 'Session file missing',
++            })
++            continue
++
++        # Validate session
++        validation = _validate_session_cookies(session_path, account_key)
++        age_days = validation['age_days']
++
++        if validation['valid']:
++            status = 'healthy'
++            report['summary']['healthy'] += 1
++        elif age_days > SESSION_THRESHOLDS['refresh_required']:
++            status = 'stale'
++            report['summary']['stale'] += 1
++        else:
++            status = 'warning'
++            report['summary']['warning'] += 1
++
++        report['accounts'][account_key] = {
++            'status': status,
++            'age_days': round(age_days, 1) if age_days >= 0 else -1,
++            'missing_cookies': validation['missing_cookies'],
++            'needs_refresh': validation['needs_refresh'],
++            'refresh_reason': validation['refresh_reason'],
++        }
++
++        if validation['needs_refresh']:
++            report['refresh_recommendations'].append({
++                'account': account_key,
++                'action': 'refresh_session',
++                'reason': validation['refresh_reason'],
++                'age_days': round(age_days, 1) if age_days >= 0 else -1,
++            })
++
++    return report
++
++
++def recover_session(
++    account_key: str,
++    config: dict[str, Any],
++    log: Any = None,
++) -> dict[str, Any]:
++    """Attempt to recover a failed session from backup.
++
++    Parameters
++    ----------
++    account_key : str
++        Account key to recover session for.
++    config : dict
++        Global configuration.
++    log : optional logger
++
++    Returns
++    -------
++    dict
++        Recovery result with 'recovered', 'backup_path', 'message'.
++    """
++    if log is None:
++        log = logging.getLogger(__name__)
++
++    result = {
++        'recovered': False,
++        'backup_path': None,
++        'message': '',
++    }
++
++    # Find backup files for this account
++    backup_dir = Path(SESSION_BACKUP_DIR)
++    if not backup_dir.exists():
++        result['message'] = 'No backup directory found'
++        return result
++
++    backups = sorted(backup_dir.glob(f"{account_key}_session_*.json"), reverse=True)
++    if not backups:
++        result['message'] = 'No backups found'
++        return result
++
++    # Find the most recent backup that's not too old
++    for backup_path in backups:
++        age_hours = (time.time() - backup_path.stat().st_mtime) / 3600
++
++        # Try backups within last 7 days
++        if age_hours < 168:
++            # Find account config
++            acct = None
++            for a in config.get("accounts", []):
++                if a.get("key") == account_key:
++                    acct = a
++                    break
++
++            if acct:
++                project_dir = Path(config["general"]["project_dir"])
++                session_rel = acct.get("session", "")
++                session_path = project_dir / session_rel
++
++                try:
++                    # Restore from backup
++                    shutil.copy2(backup_path, session_path)
++                    result['recovered'] = True
++                    result['backup_path'] = str(backup_path)
++                    result['message'] = f'Recovered from backup ({age_hours:.0f} hours old)'
++                    log.info(f"Session recovery successful for {account_key}")
++                    return result
++                except Exception as e:
++                    result['message'] = f'Backup restore failed: {str(e)}'
++                    continue
++
++    result['message'] = 'No suitable backup found'
++    return result
++
+
+ def get_session_data(account_key: str) -> dict[str, Any] | None:
+     """
+@@ -60,4 +420,4 @@ def check_sessions(cfg: dict[str, Any], log: Any = None) -> list[tuple[str, str,
+             if log:
+                 log.write(f"[OK] Session: {display} OK（最終更新: {days:.0f}日前）")
+
+-    return warnings
++    return warnings
+\ No newline at end of file
+diff --git a/kensho/utils/proxy_watchdog.py b/kensho/utils/proxy_watchdog.py
+index 56da2c3..8296f34 100644
+--- a/kensho/utils/proxy_watchdog.py
++++ b/kensho/utils/proxy_watchdog.py
+@@ -8,7 +8,11 @@ import logging
+ import socket
+ import subprocess
+ import time
++import random
++import collections
++import threading
+ from typing import Any
++from datetime import datetime
+
+ # ============================================================================
+ # Proxy map
+@@ -31,6 +35,368 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
+     "inobase1-4": (1089, "inobase1-4"),
+     "toushiwatch": (1087, "toushiwatch_airtra1"),  # 2026-08-31: royal破棄→toushiwatch。2_povo_AW(air-tra1/povo)
+ }
++# ============================================================================
++# Proxy Rotation Configuration (for auto-failover and load balancing)
++# ============================================================================
++
++# Proxy pool for rotation - defines alternative proxies that can handle
++# similar traffic patterns. Used for geographic diversity and failover.
++# Each entry: (port, adapter_name, network_cluster, priority_score)
++# priority_score: higher = preferred for rotation (1.0 = best)
++PROXY_POOL: dict[str, list[tuple[int, str, str, float]]] = {
++    # Galaxy S10 cluster (tethering from same phone family)
++    "galaxy_s10": [
++        (1082, "kudou_RM10JE_B", "galaxy_s10", 0.9),
++        (1083, "chugakujuken_RM10JE_S", "galaxy_s10", 0.85),
++    ],
++    # POVO network cluster
++    "povo": [
++        (1084, "zin_AW6povo", "povo", 0.9),
++        (1087, "toushiwatch_airtra1", "povo", 0.85),
++    ],
++    # Wired/ethernet cluster (most stable)
++    "wired": [
++        (1081, "192.168.1.220", "wired", 1.0),
++        (1085, "Tankan_ETH3", "wired", 0.95),
++    ],
++    # Other mobile devices
++    "mobile": [
++        (1089, "inobase1-4", "mobile", 0.8),
++    ],
++}
++
++# Reverse mapping: account -> network cluster
++ACCOUNT_CLUSTER_MAP: dict[str, str] = {
++    "atushi16": "wired",
++    "kudou": "galaxy_s10",
++    "chugakujuken": "galaxy_s10",  # ★ Frozen account - should be rotated away from
++    "zin20120731": "povo",
++    "TankanNotes": "wired",
++    "inobase1-4": "mobile",
++    "toushiwatch": "povo",
++}
++
++# Rotation policy settings
++ROTATION_CONFIG = {
++    'min_health_score': 0.5,        # Below this score, consider rotation
++    'critical_health_score': 0.3,   # Below this, rotate immediately
++    'check_interval': 300,          # Check every 5 minutes
++    'max_rotations_per_hour': 2,    # Don't rotate too frequently
++    'diversity_weight': 0.4,        # Weight for geographic diversity vs health
++}
++
++# ============================================================================
++# Proxy Rotation Functions
++# ============================================================================
++
++def _record_rotation(account: str, from_port: int, to_port: int, reason: str):
++    """Record a proxy rotation event for history tracking."""
++    with _ROTATION_LOCK:
++        now = time.time()
++        _ROTATION_HISTORY[account].append(now)
++        # Keep only last hour of history
++        cutoff = now - 3600
++        _ROTATION_HISTORY[account] = [t for t in _ROTATION_HISTORY[account] if t > cutoff]
++
++        log_msg = f"Proxy rotation for {account}: {from_port} -> {to_port}"
++        if reason:
++            log_msg += f" ({reason})"
++        logging.getLogger(__name__).info(log_msg)
++
++
++def _get_rotation_count_last_hour(account: str) -> int:
++    """Get the number of rotations performed for an account in the last hour."""
++    with _ROTATION_LOCK:
++        now = time.time()
++        cutoff = now - 3600
++        return sum(1 for t in _ROTATION_HISTORY.get(account, []) if t > cutoff)
++
++
++def _find_best_proxy(
++    current_account: str,
++    health_scores: dict[str, float],
++    exclude_ports: set[int] = None,
++) -> tuple[int, str, str] | None:
++    """Find the best available proxy for rotation based on health scores and diversity.
++
++    Returns (port, adapter, cluster) or None if no suitable proxy found.
++    """
++    current_cluster = ACCOUNT_CLUSTER_MAP.get(current_account)
++    if not current_cluster:
++        return None
++
++    exclude_ports = exclude_ports or set()
++
++    # Get all proxies in the same cluster
++    cluster_proxies = PROXY_POOL.get(current_cluster, [])
++
++    # Also consider proxies from other clusters for diversity
++    other_clusters = [c for c in PROXY_POOL.keys() if c != current_cluster]
++    diverse_proxies = []
++    for cluster in other_clusters:
++        diverse_proxies.extend(PROXY_POOL.get(cluster, []))
++
++    # Score each candidate proxy
++    candidates = []
++    for port, adapter, cluster, base_priority in cluster_proxies + diverse_proxies:
++        if port in exclude_ports:
++            continue
++
++        # Health score (default to 0.8 if unknown)
++        health_score = health_scores.get(f"{cluster}_port_{port}", 0.8)
++
++        # Diversity bonus for different clusters (helps avoid BOT detection correlation)
++        diversity_bonus = 0.1 if cluster != current_cluster else 0.0
++
++        # Final score: weighted combination of health and diversity
++        total_score = (health_score * (1 - ROTATION_CONFIG['diversity_weight']) +
++                      (health_score + diversity_bonus) * ROTATION_CONFIG['diversity_weight'])
++
++        candidates.append((total_score, port, adapter, cluster))
++
++    if not candidates:
++        return None
++
++    # Sort by score (highest first) and return the best
++    candidates.sort(key=lambda x: x[0], reverse=True)
++    best = candidates[0]
++    return (best[1], best[2], best[3])  # (port, adapter, cluster)
++
++
++def _should_rotate_proxy(account: str, health_score: float) -> tuple[bool, str]:
++    """Determine if a proxy should be rotated based on health and rotation policy.
++
++    Returns (should_rotate, reason).
++    """
++    # Check rotation frequency limit
++    rotation_count = _get_rotation_count_last_hour(account)
++    if rotation_count >= ROTATION_CONFIG['max_rotations_per_hour']:
++        return False, f"Rotation limit reached ({rotation_count}/{ROTATION_CONFIG['max_rotations_per_hour']})"
++
++    # Check health thresholds
++    if health_score <= ROTATION_CONFIG['critical_health_score']:
++        return True, f"Critical health score: {health_score:.2f}"
++
++    if health_score <= ROTATION_CONFIG['min_health_score']:
++        return True, f"Low health score: {health_score:.2f}"
++
++    return False, f"Health score acceptable: {health_score:.2f}"
++
++
++def auto_rotate_proxy(
++    account: str,
++    config: dict,
++    health_scores: dict[str, float] = None,
++    log: Any = None,
++) -> tuple[bool, str]:
++    """Automatically rotate a proxy for an account based on health scores.
++
++    This function:
++    1. Checks if rotation is needed based on health score
++    2. Finds the best alternative proxy considering geographic diversity
++    3. Performs the rotation by restarting the proxy on the new adapter
++
++    Parameters
++    ----------
++    account : str
++        Account key to rotate proxy for.
++    config : dict
++        Global configuration.
++    health_scores : dict, optional
++        Current health scores for all proxies. If None, will be computed.
++    log : optional logger
++
++    Returns
++    -------
++    tuple[bool, str]
++        (success, message)
++    """
++    if log is None:
++        log = logging.getLogger(__name__)
++
++    # Get current proxy info
++    current_proxy = PROXY_ADAPTER_MAP.get(account)
++    if not current_proxy:
++        return False, f"Account {account} not found in proxy map"
++
++    current_port, current_adapter = current_proxy
++    current_cluster = ACCOUNT_CLUSTER_MAP.get(account, "unknown")
++
++    # Compute health scores if not provided
++    if health_scores is None:
++        health_scores = {}
++        for acc, (port, adapter) in PROXY_ADAPTER_MAP.items():
++            health_scores[acc] = _get_proxy_health_score(acc)
++
++    # Check if rotation is needed
++    health_score = health_scores.get(account, 1.0)
++    should_rot, reason = _should_rotate_proxy(account, health_score)
++
++    if not should_rot:
++        return False, reason
++
++    log.info(f"Proxy rotation triggered for {account}: {reason}")
++
++    # Find the best alternative proxy
++    exclude_ports = {current_port}
++    best_proxy = _find_best_proxy(account, health_scores, exclude_ports)
++
++    if not best_proxy:
++        return False, "No suitable proxy found for rotation"
++
++    new_port, new_adapter, new_cluster = best_proxy
++    log.info(f"Rotating {account} from {current_cluster}/{current_port} to {new_cluster}/{new_port}")
++
++    # Perform the rotation by restarting proxy on the new adapter
++    try:
++        # First, kill the old proxy process
++        _kill_listeners(current_port)
++        time.sleep(1)
++
++        # Restart proxy on the new adapter
++        no_bind_arg = ""
++        restart_script = (
++            f"Start-Process "
++            f"-FilePath 'C:\\Users\\1F\\AppData\\Local\\Programs\\Python\\Python311\\python.exe' "
++            f"-ArgumentList 'C:\\tools\\kensho-proxy\\kensho_proxy.py'{no_bind_arg},'{new_adapter}','{new_port}' "
++            f"-WindowStyle Hidden"
++        )
++        restart_cmd = [PS, "-Command", restart_script]
++        subprocess.run(restart_cmd, timeout=10, capture_output=True, text=True, errors="replace")
++
++        # Wait for the new proxy to start
++        time.sleep(3)
++
++        # Verify the new proxy is working
++        if _port_reachable(new_port, 3) and _check_egress(new_port, 6):
++            # Update the proxy map to reflect the new assignment
++            PROXY_ADAPTER_MAP[account] = (new_port, new_adapter)
++
++            # Record the rotation
++            _record_rotation(account, current_port, new_port, f"Health: {health_score:.2f}")
++
++            log.info(f"Proxy rotation successful for {account}: now on {new_adapter}:{new_port}")
++            return True, f"Rotated to {new_adapter}:{new_port} (health was {health_score:.2f})"
++        else:
++            log.error(f"New proxy on {new_adapter}:{new_port} is not responding after rotation")
++            return False, f"New proxy not responding after rotation"
++
++    except Exception as e:
++        log.error(f"Proxy rotation failed for {account}: {e}")
++        return False, f"Rotation failed: {str(e)}"
++
++
++def auto_rotate_all_proxies(config: dict, log: Any = None) -> dict:
++    """Automatically rotate proxies for all accounts based on health scores.
++
++    This function iterates through all active accounts and rotates proxies
++    that have poor health scores, considering geographic diversity.
++
++    Parameters
++    ----------
++    config : dict
++        Global configuration with 'accounts' list.
++    log : optional logger
++
++    Returns
++    -------
++    dict
++        Rotation results with 'rotated' and 'skipped' lists.
++    """
++    if log is None:
++        log = logging.getLogger(__name__)
++
++    # Compute health scores for all proxies
++    health_scores = {}
++    for acc, (port, adapter) in PROXY_ADAPTER_MAP.items():
++        health_scores[acc] = _get_proxy_health_score(acc)
++
++    results = {'rotated': [], 'skipped': []}
++
++    active_accounts = [a["key"] for a in config.get("accounts", [])]
++
++    for account in active_accounts:
++        if account not in PROXY_ADAPTER_MAP:
++            continue
++
++        success, message = auto_rotate_proxy(account, config, health_scores, log)
++
++        if success:
++            results['rotated'].append({'account': account, 'message': message})
++            log.info(f"Auto-rotated proxy for {account}: {message}")
++        else:
++            results['skipped'].append({'account': account, 'reason': message})
++            log.debug(f"Skipped rotation for {account}: {message}")
++
++    return results
++
++
++def get_proxy_health_report(log: Any = None) -> dict:
++    """Generate a comprehensive proxy health report with rotation recommendations.
++
++    Parameters
++    ----------
++    log : optional logger
++
++    Returns
++    -------
++    dict
++        Health report with scores, warnings, and recommendations.
++    """
++    if log is None:
++        log = logging.getLogger(__name__)
++
++    report = {
++        'timestamp': datetime.now().isoformat(),
++        'accounts': {},
++        'recommendations': [],
++        'summary': {'healthy': 0, 'warning': 0, 'critical': 0},
++    }
++
++    health_scores = {}
++    for acc, (port, adapter) in PROXY_ADAPTER_MAP.items():
++        score = _get_proxy_health_score(acc)
++        health_scores[acc] = score
++
++        # Categorize health
++        if score >= 0.7:
++            status = 'healthy'
++            report['summary']['healthy'] += 1
++        elif score >= 0.4:
++            status = 'warning'
++            report['summary']['warning'] += 1
++        else:
++            status = 'critical'
++            report['summary']['critical'] += 1
++
++        # Check if rotation is recommended
++        should_rot, reason = _should_rotate_proxy(acc, score)
++
++        report['accounts'][acc] = {
++            'port': port,
++            'adapter': adapter,
++            'health_score': round(score, 3),
++            'status': status,
++            'rotation_recommended': should_rot,
++            'rotation_reason': reason if should_rot else None,
++            'rotations_last_hour': _get_rotation_count_last_hour(acc),
++        }
++
++        if should_rot:
++            report['recommendations'].append({
++                'account': acc,
++                'action': 'rotate_proxy',
++                'reason': reason,
++                'current_score': round(score, 3),
++            })
++
++    return report
++
++
++# Track rotation history to prevent excessive rotation
++_ROTATION_HISTORY: dict[str, list[float]] = collections.defaultdict(list)
++_ROTATION_LOCK = threading.Lock()
++
+
+ # ── WiFi SSID マップ（自動再接続用）──
+ # 2026-08-27: TankanNotes → ワイモバイルHR01(10_ymo_HR01)へ切替
+diff --git a/scripts/gen_status_data.py b/scripts/gen_status_data.py
+index 07d9e30..348788e 100644
+--- a/scripts/gen_status_data.py
++++ b/scripts/gen_status_data.py
+@@ -31,7 +31,7 @@ COUNT_FILE = os.path.join(PROJECT_DIR, "data/daily_counts.json")
+ OUTPUT_FILE = os.path.join(PROJECT_DIR, "kensho-status.html")
+ LOG_DIR = os.path.join(PROJECT_DIR, "logs")
+
+-accounts = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "toushiwatch"]
++accounts = ["atushi16", "kudou", "zin20120731", "TankanNotes", "toushiwatch"]
+
+ # ── UNUSED（応募停止済み）アカウント記録 ──
+ # cron再生成でも維持されるようハードコード（2026-08-17現在は応募停止垢なし）
+@@ -481,7 +481,6 @@ except Exception as _he:
+ # ═══════════════════════════════════════════════
+ WIFI_ADAPTER_TO_ACCOUNT = {
+     "kudou_RM10JE_B": "kudou",
+-    "chugakujuken_RM10JE_S": "chugakujuken",
+     "zin_AW6povo": "zin20120731",
+     "Tankan_2_redmi_n9s": "TankanNotes",  # 旧アダプタ名（2_povo_tankanに改名済み・参照残は実害なし）
+     "2_povo_tankan": "TankanNotes",  # 旧アダプタ名（2026-09-10 LAN直結まで実害なしで参照残）
+@@ -492,7 +491,6 @@ WIFI_ADAPTER_TO_ACCOUNT = {
+ }
+ WIFI_ACCOUNT_SSID = {
+     "kudou": "RM10JE_B",
+-    "chugakujuken": "RM10JE_S",
+     "zin20120731": "AiR-WiFi_6_povo",
+     # "TankanNotes": "10_ymo_HR01",  # 2026-09-10: HR01 Wi-Fi不良→LAN直結(Tankan_ETH3)へ移行。netsh wlan監視は不適→除外
+     # "inobase1-4": "ino1_4_oppo_r5a",  # 2026-09-01: 凍結（code 64）→ dashboard除外
