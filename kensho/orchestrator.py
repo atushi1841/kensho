@@ -153,7 +153,7 @@ def get_pending_batches(
             continue
         # ── 日別ランダムジッター（BOT対策）──
         jitter_min = cfg.get("orchestrator", {}).get("batch_jitter_minutes", 0)
-        for batch in acct.get("schedule", {}).get("batches", []):
+        for batch in (acct.get("schedule", {}) or {}).get("batches", []) or []:
             parts = batch["time"].split(":")
             batch_m = int(parts[0]) * 60 + int(parts[1])
             orig_m = batch_m  # 状態比較用に元の時刻を保持

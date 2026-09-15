@@ -144,7 +144,8 @@ accounts:
   #   daily_target: 50
   #   schedule:
   #     collects: false
-  #     batches:
+  #     batches: []        # ★ t_46f09dc1: 空リスト明示。復帰時はこの行か下の時刻行を解凍する
+                           #   （`batches:` だけ解凍し時刻行が全コメントのまま残ると None になり orchestrator が毎回クラッシュした）
         # 2026-08-31: royal のスケジュールを引き継ぎ（非キリ番・70分間隔・最終22:30以前）
         # - { time: "09:46", max: 15 }
         # - { time: "11:03", max: 15 }

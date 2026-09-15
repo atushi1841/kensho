@@ -89,7 +89,7 @@ def get_pending_batches(cfg: dict[str, Any], state: dict[str, Any]) -> list[tupl
 
     for acct in cfg.get("accounts", []):
         key = acct["key"]
-        for batch in acct.get("schedule", {}).get("batches", []):
+        for batch in (acct.get("schedule", {}) or {}).get("batches", []) or []:
             parts = batch["time"].split(":")
             batch_m = int(parts[0]) * 60 + int(parts[1])
 

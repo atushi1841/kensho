@@ -188,7 +188,7 @@ def _check_config_paths() -> str:
         sess_rel = acct.get("session", "")
         sess_path = BASE / sess_rel
         iface = acct.get("network_interface", "未設定")
-        batchn = len(acct.get("schedule", {}).get("batches", []))
+        batchn = len((acct.get("schedule", {}) or {}).get("batches", []) or [])
 
         if not sess_path.exists():
             lines.append(f"  {ERR} {key}: セッションファイルなし ({sess_rel})")
