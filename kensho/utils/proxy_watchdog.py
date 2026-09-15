@@ -19,7 +19,6 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
     # 2026-08-28(提案58): フラッピング監視対象 — Galaxy S10系アダプタ(RM10JE_S)で
     #   royalkensho(air-tra1)と同系構成。watchdog復旧ログ頻発・http_0増加が出たら
     #   要ユーザー対応(提案49方式)へ格上げすること。
-    "chugakujuken": (1083, "chugakujuken_RM10JE_S"),
     "zin20120731": (1084, "zin_AW6povo"),
     # 2026-09-10: HR01 Wi-Fi(RTL8188EU#2 / 10_ymo_HR01)不良（アソシエーション拒否・APIPA）→
     #   ワイモバイルHR01ルーターのLANポートからUSB有線LAN(Tankan_ETH3 / Realtek USB FE)へ直結切替。
@@ -38,7 +37,6 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
 #   （有線リンクDOWN時の復旧はWindows DHCP側で自動。watchdogはプロキシ再起動のみ行う）
 WIFI_SSID_MAP: dict[str, str] = {
     "kudou": "RM10JE_B",
-    "chugakujuken": "RM10JE_S",
     "zin20120731": "AiR-WiFi_6_povo",
     "inobase1-4": "ino1_4_oppo_r5a",
     "toushiwatch": "2_povo_AW",  # 2026-08-31: royal破棄→toushiwatch転用

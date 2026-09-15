@@ -25,7 +25,6 @@ def _get_session_path(account_key: str) -> Path:
     name: str = {
         "atushi16": "x_session.json",
         "kudou": "x_session_kudou.json",
-        "chugakujuken": "x_session_chugakujuken.json",
         "zin20120731": "x_session_c.json",
         "TankanNotes": "x_session_TankanNotes.json",
         "inobase1-4": "x_session_inobase1-4.json",
@@ -104,7 +103,7 @@ def migrate_file_to_keyring(account_key: str) -> bool:
 def migrate_all() -> list[str]:
     """全アカウントをファイル→Credential Managerに移行"""
     results: list[str] = []
-    for acct in ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4", "toushiwatch"]:
+    for acct in ["atushi16", "kudou", "zin20120731", "TankanNotes", "inobase1-4", "toushiwatch"]:
         if migrate_file_to_keyring(acct):
             results.append(f"✅ {acct}")
         else:

@@ -194,7 +194,7 @@ else:
     )
     print("垢別復元内訳を表示（下部）:")
     after = json.loads(COLLECTED.read_text(encoding="utf-8"))["collected"]
-for ac in ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4"]:
+for ac in ["atushi16", "kudou", "zin20120731", "TankanNotes", "inobase1-4"]:
     d = sum(1 for it in after if isinstance((it.get("applied") or {}).get(ac), str))
     n = sum(1 for it in after if (it.get("applied") or {}).get(ac) is None)
     print(f"  {ac:14s} 日付str={d:5d}  None={n:5d}")

@@ -24,7 +24,7 @@ def test_adapter_ipv4_filters_apipa():
 def test_adapter_ipv4_skips_apipa_then_returns_real():
     with patch("kensho.utils.proxy_watchdog.subprocess.run") as mock_run:
         mock_run.return_value.stdout = "169.254.172.42\r\n10.219.234.171\r\n"
-        assert pw._adapter_ipv4("chugakujuken_RM10JE_S") == "10.219.234.171"
+        assert pw._adapter_ipv4("zin20120731_AiR-WiFi_6_povo") == "10.219.234.171"
 
 
 def test_adapter_ipv4_timeout_returns_none():

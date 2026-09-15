@@ -25,11 +25,10 @@ AUDIT_PATH = ROOT / "data" / "audit.jsonl"
 COUNTS_PATH = ROOT / "data" / "daily_counts.json"
 CONFIG_PATH = ROOT / "config.yaml"
 
-ACCOUNTS = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes", "inobase1-4", "toushiwatch"]
+ACCOUNTS = ["atushi16", "kudou", "zin20120731", "TankanNotes", "inobase1-4", "toushiwatch"]
 DEFAULT_TARGET = {
     "atushi16": 75,
     "kudou": 50,
-    "chugakujuken": 50,
     "zin20120731": 50,
     "TankanNotes": 50,
     "inobase1-4": 50,
