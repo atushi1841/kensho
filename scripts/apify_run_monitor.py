@@ -114,11 +114,15 @@ def needs_retry(actor_id: str, token: str | None = None) -> tuple[bool, dict | N
     return is_failed(latest), latest
 
 
-def queue_run(actor_id: str, token: str | None = None) -> dict:
-    """actor をキューに追加して実行。"""
+def queue_run(actor_id: str, token: str | None = None, timeout_secs: int | None = None) -> dict:
+    """actor をキューに追加して実行。timeout_secs を指定すると runs エンドポイントを使用し実行時にtimeoutを上書き。"""
     t = token or APIFY_TOKEN
-    url = f"{API_BASE}/acts/{actor_id}/builds?token={t}"
-    data = json.dumps({"waitForFinish": 0}).encode("utf-8")
+    if timeout_secs is not None:
+        url = f"{API_BASE}/acts/{actor_id}/runs?token={t}"
+        data = json.dumps({"timeoutSecs": timeout_secs, "waitForFinish": 0}).encode("utf-8")
+    else:
+        url = f"{API_BASE}/acts/{actor_id}/builds?token={t}"
+        data = json.dumps({"waitForFinish": 0}).encode("utf-8")
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"}, method="POST")
     with urllib.request.urlopen(req, timeout=30) as resp:
         return json.loads(resp.read().decode("utf-8"))
@@ -205,10 +209,16 @@ def main():
                     retried.append(name)
                 else:
                     try:
-                        result = queue_run(actor_id)
-                        build_id = result.get("id", "?")
-                        retried.append(f"{name}→build:{build_id[:8]}")
-                        print(f"  [RETRY] {name}: queued build {build_id[:8]}")
+                        # Determine timeout for MCP actors to avoid TIMED-OUT
+                        timeout_secs = None
+                        if actor_id == "57SNehd4cHNFyUCj3":  # japan-market-mcp
+                            timeout_secs = 7200
+                        elif actor_id == "RdCHlXHphoLsWnyhh":  # japan-fuel-price-mcp
+                            timeout_secs = 600
+                        result = queue_run(actor_id, timeout_secs=timeout_secs)
+                        run_id = result.get("id", "?")
+                        retried.append(f"{name}→run:{run_id[:8]}")
+                        print(f"  [RETRY] {name}: queued run {run_id[:8]}")
                     except Exception as e:
                         errors.append(f"{name}: retry failed: {e}")
         except TimeoutError:
