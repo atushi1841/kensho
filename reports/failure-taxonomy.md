@@ -26,7 +26,7 @@ Mining" に倣い、done済みタスクの実失敗 traceback を構造化テー
 | 3 | t_c34941bd (v133b QA申し送り) | loop_health park成功後 last_escalate_streak(=11)が現streak(=0)へ再設定されず、不変条件 band<=streak 形式的破れ→healthy boardでescalation焼き続け | memory（古いbandの残留） | park/band再設定ガード v133b (b568410) | `python3 -m pytest tests/test_regression_gates.py::test_loop_health_band_reset_invariant -q`（tmp stateにband=11/streak=0を注入し実測） | 1 passed（escalation=False・band 11→0リセット実証） |
 | 4 | t_7c64a27c (evolution v103導入) | Iteration budget 90/90枯渇runが再ディスパッチでゼロから再走→同じ90回を浪費（過去にt_742cfd52等9件のgave_up系列） | reflection（進捗の自己評価・永続化の欠如） | v103チェックポイント+再開プロトコル（打刻義務化） | `python3 scripts/regression_gates_ledger.py \| python3 -c "import json,sys; g=json.load(sys.stdin)['gates']['checkpoint_missing_on_iteration_exhaustion']; print(g['value'], g['detail'])"` | 0 exhausted since v103; 打刻0件=[]（t_7c64a27c自身は[checkpoint]×4打刻済） |
 | 5 | t_252ab0c2 (critic v139) | research-agent notepad lessons肥大→compression timeout→教訓消失リスク（実測lessons762Bまで圧縮済に回復） | memory（教訓ストア肥大） | 鮮度5条ルール+週次圧縮job+プレースホルダ書込自己修復 | `python3 scripts/regression_gates_ledger.py --md-table \| grep notepad_lessons_bloat` | violations=0（scanned=9 entries、max bullets=5） |
-| 6 | t_a8ede591 (evolution v104) | ai-team-improvement SKILL.md 44,496Bが毎セッション注入（progressive disclosure前状態） | memory（スキル肥大） | references/分割 44.5KB→17.9KB (-59.8%) | `python3 scripts/regression_gates_ledger.py --md-table \| grep skill_md_oversize` | 現値75 > レチェット基準75=ok（kenzho系profile 59件・うちai-team-improvement 24,670Bへ再肥大=監視対象として台帳detailに自動列挙） |
+| 6 | t_a8ede591 (evolution v104) | ai-team-improvement SKILL.md 44,496Bが毎セッション注入（progressive disclosure前状態） | memory（スキル肥大） | references/分割 44.5KB→17.9KB (-59.8%) | `python3 scripts/regression_gates_ledger.py --md-table \| grep skill_md_oversize` | 現値75 = レチェット基準75=ok（kensho系profile 59件・うちai-team-improvement 24,670Bへ再肥大=監視対象として台帳detailに自動列挙） |
 | 7 | t_07e4dc05系 (教訓notepad 9/6 HIGH BUG) | no_agent cron「done」=script作成のみで登録未確認→triage直行タスク28h停滞。同型が9/15現在も生存: job 352914c18733 script='scripts/dm_scan.py'→発火毎 'Script not found: .../scripts/scripts/dm_scan.py' | system（scheduler契約と登録実体の乖離） | 登録3点セット検証(デフォルトapply-mode+cron list+runs last_status) | `python3 scripts/regression_gates_ledger.py --md-table \| grep noagent_script_path` | violations=1（基準1に固定=悪化のみfail。352914c18733修正で0へ自動絞込推奨） |
 | 8 | t_9206eee8 (critic v79) | done_guard条件(d)がrepo-wide検査→他タスクの未コミットファイルを拾って無関係カードをブロック（cross-task bleed） | action（検査スコープの誤り） | `--task`指定時タスク所有ファイルへ限定+実装レポート (304e273) | `python3 -m pytest tests/test_regression_gates.py::test_done_guard_has_result_check -q`（guard条件(h)実在と一体で検査） | 1 passed（guardにresult_column_state+--task実在確認） |
 | 9 | t_360dd497 (critic v94) | Apify課金状態取得の二重障害=APIタイムアウト全放棄+フォールバック路径欠損→有料actorを無料誤報（収益判断汚染） | planning（例外経路の設計欠落） | APIFY_PPE二段試行+per-actor `_CONTINUE_`+unknown判定+24h cache (ecc37ea) | `python3 -m pytest tests/test_revenue_collect.py -q --no-cov` | 70 passed（test_revenue_collect+test_deadline_backfill合算。`_CONTINUE_`フォールバック健在grep=1） |
@@ -43,7 +43,8 @@ $ cd /mnt/d/Project2/kensho && python3 -m pytest tests/test_regression_gates.py 
 ```
 
 新規ゲート3以上の条件: 充足（hard-zero 4種 + ratchet 2種 + 静的/実行検査4種の計10テスト、
-分類済み失敗10件のうち8件(#1,#2,#3,#4,#5,#6,#7,#9,#10)の再検出をコマンド固定）。
+分類済み失敗10件のうち9件(#1,#2,#3,#4,#5,#6,#7,#9,#10)の再検出をコマンド固定。
+#8(done_guard --task)はguard本体が~/.hermes所有のため#1と一体の静的検査でカバー）。
 
 ## 台帳の設計判断
 
