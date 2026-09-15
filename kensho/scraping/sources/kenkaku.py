@@ -21,6 +21,10 @@ _KENKAKU_PAGE_IDS: list[str] = [
     "1045100060",
 ]
 
+# critic v144: ページ単位timeoutリトライ（ken-kaku.com側レイテンシjitter対策）
+_KENKAKU_MAX_RETRIES: int = 2  # 失敗時に追加で最大2回まで再試行
+_KENKAKU_RETRY_BACKOFF: float = 2.0  # 再試行間の待機秒（固定バックオフ）
+
 
 def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -> list[dict[str, Any]]:
     """ken-kaku.com のX/Twitter懸賞セクションからX URLを直接取得。
@@ -33,13 +37,33 @@ def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -
 
     for pid in _KENKAKU_PAGE_IDS:
         url: str = f"{KENKAKU_BASE}present.cgi?id={pid}"
-        try:
-            with httpx.Client(follow_redirects=True, timeout=15) as c:
-                r = c.get(url, headers=headers_jp)
-            if r.status_code != 200:
-                out(f"  [KENKAKU] ページ{pid}: HTTP {r.status_code} - スキップ")
-                continue
+        # fetchのみリトライ対象（critic v144）。最終失敗時はそのページだけスキップ。
+        r: httpx.Response | None = None
+        for attempt in range(1 + _KENKAKU_MAX_RETRIES):
+            try:
+                with httpx.Client(follow_redirects=True, timeout=15) as c:
+                    resp = c.get(url, headers=headers_jp)
+                if resp.status_code != 200:
+                    out(f"  [KENKAKU] ページ{pid}: HTTP {resp.status_code} - スキップ")
+                    resp = None
+                r = resp
+                break
+            except Exception as e:
+                if attempt < _KENKAKU_MAX_RETRIES:
+                    out(
+                        f"  [KENKAKU] ページ{pid}: {type(e).__name__}"
+                        f" → リトライ{attempt + 1}/{_KENKAKU_MAX_RETRIES}（{_KENKAKU_RETRY_BACKOFF:.0f}s待ち）"
+                    )
+                    time.sleep(_KENKAKU_RETRY_BACKOFF)
+                    continue
+                out(f"  [KENKAKU] ページ{pid}: ERROR {type(e).__name__}: {e}")
+                r = None
+                break
+        if r is None:
+            time.sleep(0.3)  # 失敗ページ後も優しい間隔を維持
+            continue
 
+        try:
             html: str = _decode_response(r)
             # X URL を直接抽出
             for m in re.finditer(r"href=\"(https?://x\.com/[a-zA-Z0-9_]+/status/[0-9]+)\"", html):
