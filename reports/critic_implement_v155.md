@@ -2,6 +2,7 @@
 
 日付: 2026-09-16 06:3x JST
 作業者: kensho-revenue-worker (run500)
+カード: t_a085ab68（本レポートは t_a085ab68 の実装証跡。commit b1df38d = t_a085ab68 の受け入れ差分。t_a085ab68 検証時は下記コマンドを再実行すること）
 
 ## 事故根拠（実測）
 - t_ed8baffa run490: 本文「ユーザーGO必須」→ created(blocked) 1789488680
@@ -46,7 +47,7 @@ SELFTEST OK: 検出1件/誤検知0件/dedup/再通知0/exit0
 exit=0
 ```
 
-成否指標① 本番実ボードでt_ed8baffa相当パターンのみ1件検知・誤検知0件
+成否指標① 本番実ボード（t_a085ab68 本番tick）でt_ed8baffa相当パターンのみ1件検知・誤検知0件
 （GOマーカーカードは実測5件のみ: t_ed8baffa=検知 / t_cafe0cdd, t_e366401f,
 t_b9a55d7a=ready起票で非検知 / t_a085ab68=todo起票で非検知）:
 
@@ -77,8 +78,9 @@ $ bash -n ~/.hermes/profiles/kensho-sweeps/scripts/ai-context-monitor.sh && echo
 MON_SYNTAX_OK
 ```
 
-## 既知の限界・次ステップ案
+## 限界・補足（t_a085ab68 本カード）
 - 監視はclaimed検知のみでworkerの実際の作業停止は强制しない（設計どおり、人間/QA委譲）。
-- t_ed8baffa自体は現在blocked(GO待ち)で正常系に復帰済み。検知ログは事故の歴史記録として
-  stateに残り再通知しない。
-- QA検証カードは本レポートとgit commitハッシュを root に再確認のみでよい。
+- 事故カード t_ed8baffa 自体は現在blocked(GO待ち)で正常系に復帰済み。t_ed8baffa の検知ログは
+  事故の歴史記録として t_a085ab68 の監視stateに残り、t_ed8baffa run490 の再通知はしない。
+- t_a085ab68 自身は created=todo 起票のため条件(b)非充足=自己誤検知なし（pytest で固定）。
+- QA検証カードは本レポート(t_a085ab68)とgit commit b1df38d を root に再確認のみでよい。
