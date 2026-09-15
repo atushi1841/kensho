@@ -41,3 +41,23 @@ patchright==1.62.3
 $ test -f /mnt/d/Project2/kensho/reports/critic_v147_patchright163.md && echo OK
 OK
 ```
+
+## verification_evidence
+
+task_id: t_14784137 (dominant-id: t_14784137 — 本検証は同カード実施分のみを証跡化)
+
+```
+$ curl -s https://pypi.org/pypi/patchright/json -o /tmp/patchright.json && grep -o '"version": *"[^"]*"' /tmp/patchright.json | tail -1
+"version":"1.62.3"
+$ grep -o '"1\.63[^"]*"' /tmp/patchright.json; echo "rc=$?"
+rc=1
+$ grep -o '"upload_time":"2026-0[89][^"]*"' /tmp/patchright.json | sort -u | tail -1
+"upload_time":"2026-09-02T22:12:16"
+$ curl -s "https://api.github.com/repos/Kaliiiiiiiiii-Vinyzu/patchright-python/tags?per_page=20" | grep -o '"name": *"[^"]*"' | head -1
+"name": "v1.62.0"
+$ pip show patchright 2>/dev/null | head -2
+Name: patchright
+Version: 1.62.3
+$ git log --oneline -1
+4064173 docs(critic): v147 t_14784137 — patchright 1.63更新は前提不成立でpin見送り(FAIL)
+```
