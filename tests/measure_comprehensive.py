@@ -56,7 +56,7 @@ class _LogProxy:
         pass
 
 
-for acct in ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes"]:
+for acct in ["atushi16", "kudou", "zin20120731", "TankanNotes"]:
     acct_results: dict = {}
     print(f"\n{'=' * 60}")
     print(f"[MEASURE] {acct}")

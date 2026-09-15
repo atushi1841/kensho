@@ -822,7 +822,7 @@ def apply_for_account(
         #   50件/日達成のため、バッチ1回で目標件数まで到達できるようにする。
         session_start: float = time.time()
         # 1800秒(30分)→2400秒(40分)に延長（2026-08-23）: RTフォールバック短縮後も、
-        # 低速回線垢(kudou/chugakujuken/zin/Tankan)はgoto180s・選択待ち等で1アイテム2〜3分消費し、
+        # 低速回線垢(kudou/zin/Tankan)はgoto180s・選択待ち等で1アイテム2〜3分消費し、
         # 30分だとmax 12-14件に達せず6〜8件で打ち切られる。40分に延ばし目標件数まで到達させる。
         SESSION_TIMEOUT: int = 2400  # 30分→40分
 
@@ -1016,7 +1016,6 @@ def apply_for_account(
                 if not body_text and _need_goto:
                     _fixupx_accounts = {
                         "kudou",
-                        "chugakujuken",
                         "zin20120731",
                         "TankanNotes",
                         "inobase1-4",
@@ -1059,7 +1058,6 @@ def apply_for_account(
                     # ★ 低速回線: gotoフォールバック不可（60秒以内にページ読み込み完了しない）
                     _fixupx_accounts = {
                         "kudou",
-                        "chugakujuken",
                         "zin20120731",
                         "TankanNotes",
                         "inobase1-4",
@@ -1075,7 +1073,6 @@ def apply_for_account(
                     _fast_accounts = {"atushi16"}
                     _slow_accounts = {
                         "kudou",
-                        "chugakujuken",
                         "zin20120731",
                         "TankanNotes",
                         "inobase1-4",
@@ -1640,7 +1637,6 @@ def apply_for_account(
                 _account_bias = {
                     "atushi16": (+5, -5, 0),  # しっかり派: follow→like多め
                     "kudou": (-10, +5, +5),  # 気まま: いいね先行多め
-                    "chugakujuken": (0, +5, -5),  # バランス型
                     "zin20120731": (+5, 0, -5),  # 安定志向
                     "TankanNotes": (0, -5, +5),  # ゆったり
                 }.get(account_key, (0, 0, 0))
@@ -1995,7 +1991,7 @@ def apply_for_account(
                     #   既存のDEFER（削除済み14日等・fallback_rt が書いた長期DEFER）は上書きしない。
                     # ★ 2026-08-28提案68: no_follow_button 等の「再試行しても無駄な失敗」は
                     #   30分DEFERでも無駄（同結果を返す）なので即時 applied 付与で完全停止する。
-                    #   実測: korehamiro×3回/chugakujuken・Rakuten_Wallet×4回/zin・steakgusto029×2回/zin
+                    #   実測: korehamiro×3回（削除済み垢）・Rakuten_Wallet×4回/zin・steakgusto029×2回/zin
                     #   が同一バッチ内で連続アクセス → 機械的パターンのBOT検出リスクあり。
                     #   root cause: line 1551 旧 `is None` 判定は、DEFER(30分)期限切れ後の再ピックのたびに
                     #   DEFERを上書きせず素通り → 無限ループ。`not _is_deferred(val)` でDEFER期限切れも対象に。

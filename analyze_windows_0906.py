@@ -13,7 +13,7 @@ def jst(ts):
 
 
 D = "2026-09-06"
-ACCTS = ["atushi16", "kudou", "chugakujuken", "zin20120731", "TankanNotes"]
+ACCTS = ["atushi16", "kudou", "zin20120731", "TankanNotes"]
 win = collections.defaultdict(collections.Counter)
 already = collections.Counter()
 byacct_reason = collections.defaultdict(collections.Counter)

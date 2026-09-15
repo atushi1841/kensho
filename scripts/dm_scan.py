@@ -106,7 +106,6 @@ def load_accounts() -> list[dict]:
 PROXY_MAP = {
     "atushi16": "socks5h://172.26.80.1:1081",
     "kudou": "socks5h://172.26.80.1:1082",
-    "chugakujuken": "socks5h://172.26.80.1:1083",
     "zin20120731": "socks5h://172.26.80.1:1084",
     "TankanNotes": "socks5h://172.26.80.1:1085",
     "inobase1-4": "socks5h://172.26.80.1:1089",

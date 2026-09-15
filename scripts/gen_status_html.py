@@ -14,7 +14,6 @@ ACCOUNT_ADAPTERS = {
     # account: (アダプタ名, SSID, 回線種別)
     "atushi16": ("自宅有線LAN", "RJ45直結", "自宅"),
     "kudou": ("kudou_RM10JE_B", "RM10JE_B", "povo"),
-    "chugakujuken": ("chugakujuken_RM10JE_S", "RM10JE_S", "povo"),
     "zin20120731": ("zin_AW6povo", "AiR-WiFi_6_povo", "povo"),
     "TankanNotes": (
         "Tankan_ETH3",
