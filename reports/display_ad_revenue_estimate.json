@@ -1,0 +1,73 @@
+{
+  "topic": "Display advertising monetization (Google AdSense) — Japan market focus",
+  "currency": "JPY",
+  "usd_jpy_assumption": 150,
+  "benchmark_rates": {
+    "global_adsense_rpm_usd": {"low": 2, "typical": 3, "high_niche": 10},
+    "japan_adsense_rpm_jpy": {
+      "low_general_content": 200,
+      "typical_general_content": 350,
+      "high_general_content": 500,
+      "premium_niche_finance_insurance_software": 1000
+    },
+    "japan_display_cpm_jpy": {
+      "low": 100,
+      "typical": 300,
+      "high_premium": 1000
+    },
+    "notes": "Japan is a Tier-1 (high-CPM) market comparable to US/Western Europe. General-content sites earn far below premium niches (finance, insurance, SaaS, career). RPM (revenue per 1000 pageviews) is the metric AdSense reports; CPM is the advertiser cost per 1000 impressions."
+  },
+  "modeling_assumptions": {
+    "pageviews_per_visitor": 1.5,
+    "rpm_used_for_estimates_jpy": 350,
+    "formula": "monthly_revenue_jpy = (monthly_visitors * pageviews_per_visitor) * rpm / 1000"
+  },
+  "monthly_revenue_estimates_jpy": {
+    "1k_visitors": {
+      "pageviews": 1500,
+      "low_rpm_200": 300,
+      "typical_rpm_350": 525,
+      "high_rpm_500": 750,
+      "range": "¥300 – ¥750",
+      "practical_note": "Below AdSense's $100 (~¥15,000) payout threshold; accumulates but no cash paid until threshold is crossed."
+    },
+    "10k_visitors": {
+      "pageviews": 15000,
+      "low_rpm_200": 3000,
+      "typical_rpm_350": 5250,
+      "high_rpm_500": 7500,
+      "premium_niche_rpm_1000": 15000,
+      "range": "¥3,000 – ¥7,500 (¥15,000 for premium niches)",
+      "practical_note": "Clears payout threshold; realistic side-income tier."
+    },
+    "100k_visitors": {
+      "pageviews": 150000,
+      "low_rpm_200": 30000,
+      "typical_rpm_350": 52500,
+      "high_rpm_500": 75000,
+      "premium_niche_rpm_1000": 150000,
+      "range": "¥30,000 – ¥75,000 (¥150,000+ for premium niches)",
+      "practical_note": "Meaningful recurring income; scaling further depends on niche and ad layout/SEO."
+    }
+  },
+  "time_lag_note": {
+    "summary": "Roughly 1.5–2 months between traffic occurring and cash received.",
+    "details": [
+      "Earnings accrue during month N but are not finalized until ~the 10th–12th of month N+1 (after advertiser corrections/chargebacks).",
+      "Payment is then issued around the 21st–25th of month N+1 — i.e. net ~45–60 days after the traffic was served.",
+      "Minimum payout threshold is $100 (≈¥15,000); balances below it roll over and are never paid out until crossed.",
+      "New AdSense accounts have an additional ~30-day hold on the first payment.",
+      "Implication for forecasting: the revenue you 'see' in month N is realized in cash during month N+2."
+    ]
+  },
+  "key_caveats": [
+    "RPM varies enormously by niche, traffic quality, geo (Japan desktop vs mobile), ad unit placement, and season (Q4 CPM spikes).",
+    "Ad blockers, bot traffic, and invalid-click filtering reduce effective RPM.",
+    "These are display-ad-only estimates; adding affiliate links, native ads, or sponsored posts multiplies monetization beyond AdSense.",
+    "Japanese content + Japan-based audience is required to capture Japan CPMs; foreign traffic earns at lower local rates."
+  ],
+  "sources": [
+    "Google AdSense Help (support.google.com/adsense) — payout schedule, $100 threshold, RPM definition",
+    "Established AdSense benchmark literature (WordStream, MonetizeMore, Ezoic) for global RPM/CPM ranges; Japan treated as Tier-1 high-CPM market"
+  ]
+}
