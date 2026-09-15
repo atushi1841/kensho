@@ -1,5 +1,13 @@
-import base64, hashlib, json, math, os, random, sys, time
-from curl_cffi import requests as C
+import base64
+import hashlib
+import json
+import math
+import os
+import random
+import sys
+import time
+
+from curl_cffi import requests as C  # noqa: N812
 
 BASE = "/mnt/d/Project2/kensho"
 OUT = os.path.join(BASE, "research/adobe_stock_20260909")
@@ -9,25 +17,31 @@ _QUERY_ID_URL = "https://raw.githubusercontent.com/fa0311/TwitterInternalAPIDocu
 _KEYWORD = "obfiowerehiring"
 _pairs = json.load(open(os.path.join(BASE, "kensho/application/transaction_pairs.json")))
 
+
 def _gen_tid(method, path):
     p = random.choice(_pairs)
     key_bytes = list(base64.b64decode(p["verification"]))
-    t = math.floor((time.time()*1000 - 1682924400*1000) / 1000)
-    tb = [(t >> (i*8)) & 0xFF for i in range(4)]
+    t = math.floor((time.time() * 1000 - 1682924400 * 1000) / 1000)
+    tb = [(t >> (i * 8)) & 0xFF for i in range(4)]
     h = list(hashlib.sha256(f"{method}!{path}!{t}{_KEYWORD}{p['animationKey']}".encode()).digest())
-    rn = random.randint(0,255)
-    b = bytearray([rn, *[x ^ rn for x in [*key_bytes,*tb,*h[:16],3]]])
+    rn = random.randint(0, 255)
+    b = bytearray([rn, *[x ^ rn for x in [*key_bytes, *tb, *h[:16], 3]]])
     return base64.b64encode(b).decode().rstrip("=")
 
+
 _cached_api = None
+
+
 def _api():
     global _cached_api
     if _cached_api is None:
         _cached_api = C.get(_QUERY_ID_URL, timeout=20, impersonate="chrome").json()
     return _cached_api
 
+
 def _qid(name):
     return _api()["graphql"][name]["queryId"]
+
 
 class XClient:
     def __init__(self, session_file):
@@ -37,6 +51,7 @@ class XClient:
         self.ct0 = s.get("ct0")
         if not self.auth_token or not self.ct0:
             raise ValueError("missing auth_token/ct0")
+
     def _hdr(self):
         return {
             "authorization": f"Bearer {X_BEARER}",
@@ -47,8 +62,9 @@ class XClient:
             "cookie": f"auth_token={self.auth_token}; ct0={self.ct0}",
             "referer": "https://x.com/",
             "content-type": "application/json",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",  # noqa: E501
         }
+
     def _req(self, op, name, method, body=None):
         q = _qid(name)
         path = f"/i/api/graphql/{q}/{op}"
@@ -61,12 +77,25 @@ class XClient:
         except Exception:
             data = {"_raw": r.text[:500]}
         return {"status": r.status_code, "data": data}
+
     def search(self, query, count=20):
         feat = _api()["graphql"]["SearchTimeline"].get("features", {})
-        return self._req("SearchTimeline", "SearchTimeline", "POST",
-                         {"variables": {"rawQuery": query, "count": count, "cursor": None,
-                                        "querySource": "typed_query", "product": "Top"},
-                          "features": feat})
+        return self._req(
+            "SearchTimeline",
+            "SearchTimeline",
+            "POST",
+            {
+                "variables": {
+                    "rawQuery": query,
+                    "count": count,
+                    "cursor": None,
+                    "querySource": "typed_query",
+                    "product": "Top",
+                },
+                "features": feat,
+            },
+        )
+
 
 QUERIES = {
     "q1_adobe_stock_shueki": "Adobe Stock 収益 lang:ja",
@@ -76,10 +105,14 @@ QUERIES = {
     "q5_adobe_stock_contributor": "Adobe Stockコントリビューター lang:ja",
 }
 
-SESSIONS = ["data/x_session_c.json", "data/x_session_royalkensho.json",
-            "data/x_session_kudou.json", "data/x_session_TankanNotes.json",
-            "data/x_session_chugakujuken.json", "data/x_session_inobase1-4.json",
-            "data/x_session_toushiwatch.json"]
+SESSIONS = [
+    "data/x_session_c.json",
+    "data/x_session_royalkensho.json",
+    "data/x_session_kudou.json",
+    "data/x_session_TankanNotes.json",
+    "data/x_session_inobase1-4.json",
+    "data/x_session_toushiwatch.json",
+]
 
 results = {}
 status_log = []
@@ -112,7 +145,12 @@ for sf in SESSIONS:
     time.sleep(random.uniform(3, 4))
 
 if used_client is None:
-    json.dump({"ok": False, "status_log": status_log}, open(os.path.join(OUT, "fetch_status.json"), "w"), ensure_ascii=False, indent=1)
+    json.dump(
+        {"ok": False, "status_log": status_log},
+        open(os.path.join(OUT, "fetch_status.json"), "w"),
+        ensure_ascii=False,
+        indent=1,
+    )  # noqa: E501
     print("ALL SESSIONS FAILED")
     sys.exit(2)
 
@@ -127,6 +165,9 @@ for key, q in QUERIES.items():
         results[key] = {"query": q, "status": -1, "error": f"{type(e).__name__}: {str(e)[:200]}"}
         status_log.append(f"{key}: EXC {type(e).__name__}")
 
-json.dump({"ok": True, "session": used_client, "status_log": status_log, "results": results},
-          open(os.path.join(OUT, "raw_responses.json"), "w"), ensure_ascii=False)
+json.dump(
+    {"ok": True, "session": used_client, "status_log": status_log, "results": results},
+    open(os.path.join(OUT, "raw_responses.json"), "w"),
+    ensure_ascii=False,
+)
 print("DONE", used_client, len(results))
