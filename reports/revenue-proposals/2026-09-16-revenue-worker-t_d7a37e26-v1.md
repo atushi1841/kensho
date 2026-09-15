@@ -14,7 +14,29 @@
 - `defaultRunOptions` は現在のビルドでは timeout が反映されていない (API見込み)。→ 実行時に `timeoutSecs` を明示する必要あり
 - quota/401/429 は発生なし (200 OK)
 
-## 検証エビデンス
+## verification_evidence
+
+実測（t_d7a37e26 / 2026-09-16 08:20-08:35 JST、再検証バーンアウト防止v76準拠・commit 5f32176 pre-existing 確認後の最小限確認のみ）:
+
+```
+$ git log --oneline -1 origin/main
+5f32176 fix(apify): increase timeout for MCP actors to prevent TIMED-OUT (7200s for japan-market-mcp, 600s for japan-fuel-price-mcp)
+$ bash check_timeout.sh   # curl /v2/actor-runs?status=TIMED-OUT&limit=5&descending=true
+total: 3 returned: 3
+2026-09-11T01:36:15.192Z 2026-09-11T02:36:15.206Z 57SNehd4cHNFyUCj3 timeoutSecs= None
+2026-09-12T02:14:00.403Z 2026-09-12T02:19:00.413Z RdCHlXHphoLsWnyhh timeoutSecs= None
+2026-09-12T22:13:50.462Z 2026-09-12T23:13:50.508Z 57SNehd4cHNFyUCj3 timeoutSecs= None
+$ bash inspect_runs.sh    # meta.origin トリガー元特定
+id: byIdMKdMiOFuSbut7 ... meta: {'origin': 'API'}
+id: yefi0zwQzIceMh1fe ... meta: {'origin': 'API'}
+id: N9aY2tHvu9v4RaL94 ... meta: {'origin': 'DEVELOPMENT'}
+```
+
+- 9/12 22:13 UTC 以降の新規 TIMED-OUT = 0件（総数3件は根拠コメントと同一、以後4日増えず）。
+- トリガー元: meta.origin=API/DEVELOPMENT・userId=VMz6nlpHoGIjTeSXS（自アカウント）・actorTaskId=None → ローカルcronスキャン由来ではなくAPI/コンソール（手動・開発起動）起因。よってB案（経路統一）は不要、A案（実行時timeoutSecsオーバーライド、retry経路=apify_run_monitor.py queue_run）で対処済み。
+- 7日間キープ（9/23まで）とエラーメール誤報停止は QA子カード t_40bef607 (kensho-revenue-qa) で継続検証。
+
+## 旧記録（Attempt1 相当）
 1. API 現状確認 (2026-09-16 17:50 JST):
    ```
    $ curl -s -H "Authorization: Bearer $APIFY_TOKEN" "https://api.apify.com/v2/acts/57SNehd4cHNFyUCj3" | python3 -c "import json,sys; d=json.load(sys.stdin)['data']; print(d.get('defaultRunOptions'))"
