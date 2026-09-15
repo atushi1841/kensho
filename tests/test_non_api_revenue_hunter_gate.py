@@ -196,8 +196,10 @@ class TestWrapperFreeGate:
         gate = hunter.quality_gate(item, created_count=0)
         assert gate is not None and gate[0] == "wrapper_free"
 
-    def test_high_score_wrapper_not_skipped(self):
+    def test_high_score_wrapper_not_skipped(self, monkeypatch):
         """score >= 10 は wrapper_free 対象外 (monetization語があれば従来どおり通過)."""
+        # v148 prescreen のネットワーク参照をモック (fail-open 経路)
+        monkeypatch.setattr(hunter, "_github_meta", lambda o, r: None)
         item = self._gh(15, "Show HN: Open-source CRM with paid cloud", "MIT extension, self-host free")
         assert hunter.quality_gate(item, created_count=0) is None
 
@@ -213,6 +215,116 @@ class TestWrapperFreeGate:
 
     def test_wrapper_free_constant_is_10(self):
         assert hunter.WRAPPER_FREE_MAX_SCORE == 10
+
+
+# ---------------------------------------------------------------------------
+# critic v148 / t_df0bdb4f: 事前スクリーニング (oss_title_only / gh_oss_free)
+# ---------------------------------------------------------------------------
+
+
+class TestPreScreenTitleRule:
+    """ルール1: Show HN + OSS/個人語彙のみ (収益語ゼロ) は HTTP 無しで即スキップ."""
+
+    def test_personal_cli_skipped_without_http(self):
+        item = {
+            "title": "Show HN: My simple TUI for browsing RSS",
+            "text": "open source, just a hobby project",
+            "score": 8,
+            "url": "https://github.com/someone/rsstui",
+        }
+        gate = hunter.quality_gate(item, created_count=0)
+        assert gate is not None
+        assert gate[0] == "oss_title_only"
+        assert "(pre-screen)" in gate[1]
+
+    def test_paid_in_title_not_skipped(self):
+        """タイトルに収益語 (pricing等) があればルール1対象外."""
+        item = {
+            "title": "Show HN: My simple CLI with paid API and pricing tiers",
+            "text": "",
+            "score": 8,
+            "url": "https://example.com",
+        }
+        assert hunter.prescreen_title_only(item) is None
+
+    def test_paid_signal_in_text_not_skipped(self):
+        item = {
+            "title": "Show HN: My hobby library",
+            "text": "now with subscription billing",
+            "score": 8,
+            "url": "https://example.com",
+        }
+        assert hunter.prescreen_title_only(item) is None
+
+    def test_non_show_hn_not_skipped(self):
+        item = {"title": "Ask HN: My simple CLI", "text": "", "score": 8}
+        assert hunter.prescreen_title_only(item) is None
+
+
+class TestPreScreenGithubOss:
+    """ルール2: GitHub stars<200 + MIT/Apache + 料金ページ無し → gh_oss_free."""
+
+    def _item(self, url="https://github.com/foo/bar"):
+        return {"title": "HN: A dataset of prices", "text": "api for sale", "score": 30, "url": url}
+
+    def test_low_stars_mit_no_homepage_skipped(self, monkeypatch):
+        monkeypatch.setattr(hunter, "_github_meta", lambda o, r: {"stars": 5, "license": "MIT", "homepage": ""})
+        gate = hunter.quality_gate(self._item(), created_count=0)
+        assert gate is not None
+        assert gate[0] == "gh_oss_free"
+        assert "OSS無料配布" in gate[1]
+
+    def test_low_stars_apache_pricing_404_skipped(self, monkeypatch):
+        monkeypatch.setattr(
+            hunter, "_github_meta", lambda o, r: {"stars": 10, "license": "Apache-2.0", "homepage": "https://foo.dev"}
+        )
+        monkeypatch.setattr(hunter, "_http_status", lambda url, timeout=8: 404)
+        gate = hunter.quality_gate(self._item(), created_count=0)
+        assert gate is not None and gate[0] == "gh_oss_free"
+
+    def test_pricing_page_live_passes(self, monkeypatch):
+        monkeypatch.setattr(
+            hunter, "_github_meta", lambda o, r: {"stars": 10, "license": "MIT", "homepage": "https://foo.dev"}
+        )
+        monkeypatch.setattr(hunter, "_http_status", lambda url, timeout=8: 200)
+        assert hunter.quality_gate(self._item(), created_count=0) is None
+
+    def test_high_stars_passes(self, monkeypatch):
+        monkeypatch.setattr(hunter, "_github_meta", lambda o, r: {"stars": 5000, "license": "MIT", "homepage": ""})
+        assert hunter.quality_gate(self._item(), created_count=0) is None
+
+    def test_network_failure_fail_open(self, monkeypatch):
+        """meta 取得失敗 (None) は誤判定防止のため通過させる (fail-open)."""
+        monkeypatch.setattr(hunter, "_github_meta", lambda o, r: None)
+        assert hunter.quality_gate(self._item(), created_count=0) is None
+
+    def test_pricing_timeout_fail_open(self, monkeypatch):
+        monkeypatch.setattr(
+            hunter, "_github_meta", lambda o, r: {"stars": 10, "license": "MIT", "homepage": "https://foo.dev"}
+        )
+        monkeypatch.setattr(hunter, "_http_status", lambda url, timeout=8: None)
+        # ステータス不明 = 料金ページ有りと保留 → 通過
+        assert hunter.quality_gate(self._item(), created_count=0) is None
+
+    def test_non_github_url_not_checked(self, monkeypatch):
+        called = []
+        monkeypatch.setattr(hunter, "_github_meta", lambda o, r: called.append(1) or None)
+        item = self._item(url="https://pushie.net")
+        assert hunter.prescreen_gh_oss(item) is None
+        assert called == []
+
+    def test_github_repo_ref_extraction(self):
+        item = {"url": "https://github.com/tokland/tokland", "text": ""}
+        assert hunter._github_repo_ref(item) == ("tokland", "tokland")
+        item2 = {"url": "https://example.com", "text": "see https://github.com/a/b#readme"}
+        assert hunter._github_repo_ref(item2) == ("a", "b")
+        assert hunter._github_repo_ref({"url": "https://example.com", "text": ""}) is None
+        # badge/img は除外
+        assert hunter._github_repo_ref({"url": "https://github.com/assets/badge.png", "text": ""}) is None
+
+    def test_constants(self):
+        assert hunter.OSS_PRESCREEN_MAX_STARS == 200
+        assert "MIT" in hunter.PERMISSIVE_LICENSES and "Apache-2.0" in hunter.PERMISSIVE_LICENSES
 
 
 # ---------------------------------------------------------------------------

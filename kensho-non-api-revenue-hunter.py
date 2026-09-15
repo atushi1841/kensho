@@ -78,6 +78,29 @@ WRAPPER_FREE_RE = re.compile(
     re.IGNORECASE,
 )
 
+# 事前スクリーニング (critic v148 / t_df0bdb4f):
+#   直近30件のworker完了summaryで却下27件=90%、うち13件はGitHub直リンク。
+#   判定がhunter側に無くworkerへ回されているコストの空回りを、カード作成前の
+#   軽量チェック (LLM不使用・HTTP GETのみ) で受け止める。
+#   ルール1: Show HN + OSS/個人開発語彙のみのタイトルは HTTP 無しで即スキップ
+#   ルール2: GitHub stars<200 かつ license=MIT/Apache かつ /pricing 404( or homepage 無し)
+#            → 『OSS無料配布』としてスキップ (ネットワーク障害・未知は誤判定防止のため fail-open)
+OSS_PRESCREEN_MAX_STARS = 200
+PERMISSIVE_LICENSES = {"MIT", "Apache-2.0"}
+SHOW_HN_TITLE_RE = re.compile(r"^\s*(show|launch)\s+hn\s*:", re.IGNORECASE)
+OSS_PERSONAL_TITLE_RE = re.compile(
+    r"\b(my|personal|toy|hobby|simple|small|just a|open[\s-]?source|cli|tui|extension|library|toolkit|dotfile)\b",
+    re.IGNORECASE,
+)
+# タイトルにこれらが1つでもあれば収益候補として扱いルール1は適用しない (見逃し防止)
+PAID_TITLE_RE = re.compile(
+    r"\b(paid|pricing|premium|subscription|saas|mrr|arr|revenue|monetiz\w*|sales|sell|store|"
+    r"marketplace|api|dataset|affiliate|gumroad|ko-?fi|patron|donat\w*|tier|license|enterprise)\b"
+    r"|(有料|販売|収益|サブスク|課金|価格)",
+    re.IGNORECASE,
+)
+GH_REPO_RE = re.compile(r"github\.com/([^/\s]+)/([^/\s#?]+)", re.IGNORECASE)
+
 # monetization モデルを示す語 (本文/タイトルに無ければスキップ)。
 # 有料/データ販売/API化/サブスク/ストア販売/手数料/アフィリエイト 等。
 MONETIZATION_PATTERNS = [
@@ -435,11 +458,137 @@ def is_wrapper_free_oss(item):
     return "github.com" in text.lower()
 
 
+# --- 事前スクリーニング用ヘルパー (critic v148 / t_df0bdb4f) ---
+
+# 1実行あたりの GitHub API 参照上限 (匿名60回/h枠の消費抑制)
+GH_API_BUDGET_PER_RUN = 8
+_gh_meta_cache: dict = {}
+
+
+def _http_status(url, timeout=8):
+    """HEAD→GET フォールバックの HTTP ステータス取得。
+    ネットワーク障害時は None を返し、呼び出し側で fail-open (保留) とする。"""
+    for method in ("HEAD", "GET"):
+        try:
+            req = urllib.request.Request(
+                url,
+                method=method,
+                headers={"User-Agent": "Mozilla/5.0 (kensho-non-api-revenue-hunter/1.0 prescreen)"},
+            )
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.status
+        except urllib.error.HTTPError as e:
+            return e.code
+        except (urllib.error.URLError, TimeoutError, OSError):
+            if method == "HEAD":
+                continue  # HEAD 遮断サイト対策に GET を試す
+            return None
+    return None
+
+
+def _github_repo_ref(item):
+    """item の url/text から github.com/<owner>/<repo> を抽出 (なければ None)"""
+    text = f"{item.get('url', '')} {item.get('text', '')}"
+    m = GH_REPO_RE.search(text)
+    if not m:
+        return None
+    owner, repo = m.group(1), m.group(2)
+    # 誤抽出ガード (badge/img や reserved path)
+    if repo.lower().endswith((".png", ".svg", ".jpg", ".gif")) or owner.lower() in (
+        "assets",
+        "github.com",
+        "badges",
+    ):
+        return None
+    return owner, repo.rstrip(".")
+
+
+def _github_meta(owner, repo):
+    """api.github.com で stars/license/homepage を取得。失敗時 None (fail-open)。"""
+    key = f"{owner}/{repo}"
+    if key in _gh_meta_cache:
+        return _gh_meta_cache[key]
+    if len(_gh_meta_cache) >= GH_API_BUDGET_PER_RUN:
+        return None  # 予算超過
+    body, _ = http_get(
+        f"https://api.github.com/repos/{owner}/{repo}",
+        timeout=10,
+        headers={"User-Agent": "kensho-non-api-revenue-hunter/1.0", "Accept": "application/vnd.github+json"},
+    )
+    meta = None
+    if body:
+        try:
+            d = json.loads(body)
+            if isinstance(d, dict) and "stargazers_count" in d:
+                lic = (d.get("license") or {}).get("spdx_id") or ""
+                meta = {
+                    "stars": int(d.get("stargazers_count") or 0),
+                    "license": lic,
+                    "homepage": (d.get("homepage") or "").strip(),
+                }
+        except json.JSONDecodeError:
+            meta = None
+    _gh_meta_cache[key] = meta
+    return meta
+
+
+def pre_screen(item):
+    """カード作成前の軽量事前スクリーニング (critic v148)。統合入口。
+    戻り値: スキップなら (gate_key, メッセージ)、通過なら None。
+    ※ main ループではコスト効率のため prescreen_title_only / prescreen_gh_oss を
+      分岐実行する (HTTP を要する判定は monetization 通過後のみ)。"""
+    return prescreen_title_only(item) or prescreen_gh_oss(item)
+
+
+def prescreen_title_only(item):
+    """ルール1: Show HN + OSS/個人開発語彙のみ (収益語ゼロ) → HTTP無しで即スキップ。"""
+    title = item.get("title", "") or ""
+    if (
+        SHOW_HN_TITLE_RE.match(title)
+        and OSS_PERSONAL_TITLE_RE.search(title)
+        and not PAID_TITLE_RE.search(title)
+        and not PAID_TITLE_RE.search(item.get("text", "") or "")
+    ):
+        return ("oss_title_only", "(pre-screen) Show HN+OSS/個人語彙のみ (収益語ゼロ) でスキップ")
+    return None
+
+
+def prescreen_gh_oss(item):
+    """ルール2: GitHub直リンク + stars<200 + license MIT/Apache
+    + homepage無し or /pricing 404 → OSS無料配布としてスキップ。
+    ネットワーク障害・API予算超過は fail-open (通過させる)。"""
+    ref = _github_repo_ref(item)
+    if not ref:
+        return None
+    meta = _github_meta(*ref)
+    if meta is None:
+        return None  # 取得失敗/予算超過 → fail-open
+    if meta["stars"] < OSS_PRESCREEN_MAX_STARS and meta["license"] in PERMISSIVE_LICENSES:
+        home = meta["homepage"]
+        if home:
+            base = home if home.startswith("http") else f"https://{home}"
+            st = _http_status(base.rstrip("/") + "/pricing")
+            if st is None:
+                return None  # ステータス不明(ネットワーク障害)は fail-open で通過
+            # 200/30x 等 = 料金ページ有りとして通過。404/410 のみ「無し」と確定できる
+            if st not in (404, 410):
+                return None
+        return (
+            "gh_oss_free",
+            f"(pre-screen) OSS無料配布濃厚 (stars={meta['stars']}<{OSS_PRESCREEN_MAX_STARS}, "
+            f"license={meta['license'] or '?'}, pricing={'無し' if not home else '404'}) でスキップ",
+        )
+    return None
+
+
 def quality_gate(item, created_count):
     """1件の候補に対する品質ゲート判定 (t_2e20f1ef critic_proposal v58)。
     通過なら None、そうでなければ (gate_key, status_message) を返す。
       要件1: score < MIN_HN_SCORE は低シグナルとしてスキップ
+      要件1-pre1 (v148): Show HN+OSS/個人語彙のみは HTTP 無しで即スキップ (oss_title_only)
       要件1: monetization モデル語が本文/タイトルに無ければスキップ
+      要件1-pre2 (v148): GitHub直リンク+低stars+permissive license+料金ページ無し
+        は OSS無料配布としてスキップ (gh_oss_free・monetization通過後のみ・HTTPあり)
       要件1b (v138): score < 10 かつ無料ラッパ型OSS (free/open-source/MIT/extension
         + GitHub直リンク) は monetization通過でもスキップ (wrapper_free)
       要件2: 1実行あたり新規投入 created_count >= MAX_KANBAN_PER_RUN でスキップ
@@ -447,6 +596,9 @@ def quality_gate(item, created_count):
     score = item.get("score", 0) or 0
     if score < MIN_HN_SCORE:
         return ("score_low", f"(gate) score={score} < {MIN_HN_SCORE} でスキップ")
+    t = prescreen_title_only(item)
+    if t is not None:
+        return t
     if score < WRAPPER_FREE_MAX_SCORE and is_wrapper_free_oss(item):
         return (
             "wrapper_free",
@@ -454,6 +606,9 @@ def quality_gate(item, created_count):
         )
     if not has_monetization_signal(item):
         return ("no_monetization", "(gate) monetization シグナル無しでスキップ")
+    g = prescreen_gh_oss(item)
+    if g is not None:
+        return g
     if created_count >= MAX_KANBAN_PER_RUN:
         return ("cap_reached", f"(gate) 投入上限 {MAX_KANBAN_PER_RUN} 件到達のためスキップ")
     return None
@@ -616,7 +771,15 @@ def main():
     #   要件3: HN item_id 主キー dedup は create_kanban_task 内 (hnid-skip)
     kanban_added = []
     seen_urls = set()
-    gate_stats = {"score_low": 0, "wrapper_free": 0, "no_monetization": 0, "cap_reached": 0, "hnid_skip": 0}
+    gate_stats = {
+        "score_low": 0,
+        "wrapper_free": 0,
+        "no_monetization": 0,
+        "cap_reached": 0,
+        "hnid_skip": 0,
+        "oss_title_only": 0,
+        "gh_oss_free": 0,
+    }
     created_count = 0
     for src, item, matches in all_seeds:
         url = item.get("url", "")
@@ -681,8 +844,13 @@ def main():
     # dedup-skip 件数(参考、レポート出力用)
     dedup_skip_count = sum(1 for k in kanban_added if "(dedup-skip)" in k.get("status", ""))
     hnid_skip_count = gate_stats["hnid_skip"]
+    prescreen_skip_count = gate_stats["oss_title_only"] + gate_stats["gh_oss_free"]
     gate_skip_count = (
-        gate_stats["score_low"] + gate_stats["wrapper_free"] + gate_stats["no_monetization"] + gate_stats["cap_reached"]
+        gate_stats["score_low"]
+        + gate_stats["wrapper_free"]
+        + gate_stats["no_monetization"]
+        + gate_stats["cap_reached"]
+        + prescreen_skip_count
     )
     ok_create_count = sum(1 for k in kanban_added if k["task_id"] and not k["task_id"].startswith("("))
 
@@ -691,7 +859,9 @@ def main():
         f"score<{MIN_HN_SCORE}: {gate_stats['score_low']} / "
         f"無料ラッパ型OSS: {gate_stats['wrapper_free']} / "
         f"monetization無: {gate_stats['no_monetization']} / "
-        f"上限到達: {gate_stats['cap_reached']}"
+        f"上限到達: {gate_stats['cap_reached']} / "
+        f"pre-screen(タイトルOSS): {gate_stats['oss_title_only']} / "
+        f"pre-screen(GitHub OSS無料配布): {gate_stats['gh_oss_free']}"
     )
     report_md = f"""# 非API自動収益ハンター レポート
 |**実行日時**: {started.strftime("%Y-%m-%d %H:%M JST")}
@@ -709,6 +879,7 @@ def main():
 | Kanban dedup-skip (title) | {dedup_skip_count} |
 | Kanban hnid-skip (HN item_id) | {hnid_skip_count} |
 | 品質ゲートスキップ | {gate_skip_count} ({gate_breakdown}) |
+| pre-screenスキップ (v148) | {prescreen_skip_count} |
 
 ## ソース別取得数
 
@@ -758,8 +929,11 @@ def main():
 - **重要度「中」: 1つ以上の不確実要素あり (市場規模未確認 / 法務要確認 / 技術難易度高)
 - **重要度「低」**: アイデア倒れに近い / Kenshoで自動化しても旨味が薄い
 
-## 品質ゲート (t_2e20f1ef v58 / critic v138)
+## 品質ゲート (t_2e20f1ef v58 / critic v138 / v148)
 - score < {MIN_HN_SCORE} は低シグナルとしてスキップ
+- pre-screen(v148): Show HN+OSS/個人語彙のみ (収益語ゼロ) は即スキップ (oss_title_only)
+- pre-screen(v148): GitHub直リンク+stars<{OSS_PRESCREEN_MAX_STARS}+MIT/Apache+料金ページ無し/homepage無しは
+  OSS無料配布としてスキップ (gh_oss_free・ネットワーク障害はfail-open)
 - score < {WRAPPER_FREE_MAX_SCORE} かつ 無料/OSS/MIT/extension 語 + GitHub直リンクは
   無料ラッパ型OSSとしてスキップ (wrapper_free: monetization通過でも投入しない)
 - monetization モデル (有料/データ販売/API化等) の語が本文/タイトルに無ければスキップ
