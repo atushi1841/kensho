@@ -36,7 +36,26 @@ if str(REPO_ROOT) not in sys.path:
 KENKAKU = REPO_ROOT / "kensho" / "scraping" / "sources" / "kenkaku.py"
 LOOP_HEALTH = REPO_ROOT / "scripts" / "loop_health.sh"
 LEDGER = REPO_ROOT / "scripts" / "regression_gates_ledger.py"
-GUARD = Path.home() / ".hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py"
+
+
+def _resolve_guard() -> Path:
+    """kanban_done_guard.pyの絶対パス解決（QA run490申し送り対応）。
+
+    cron起動時はHOME=/home/atushi/.hermes/profiles/kensho-sweeps/home
+    （プロファイル内二重HOME）に切り替わるため Path.home() 単独では
+    必ず解決失敗→test_done_guard_has_result_checkが環境依存FAILになる。
+    HOME解決失敗時のフォールバックとして実体のある絶対パスを順に参照する。
+    """
+    rel = Path(".hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py")
+    roots = [Path.home(), Path("/home/atushi")]
+    for root in roots:
+        cand = root / rel
+        if cand.exists():
+            return cand
+    return roots[0] / rel  # 不在時は従来パスをエラーメッセージに使う
+
+
+GUARD = _resolve_guard()
 
 JST = timezone(timedelta(hours=9))
 
@@ -168,7 +187,7 @@ def test_loop_health_band_reset_invariant() -> None:
 # 引き上げ（悪化）は即fail = 該当クラスの再発。
 RATCHETS: dict[str, int] = {
     "skill_md_oversize": 75,  # 9/15実測: 全profile+global SKILL.md >20KB（kensho系59/75）
-    "noagent_script_path_contract": 1,  # 9/15実測: kensho-sweeps/352914c18733 scripts/dm_scan.py
+    "noagent_script_path_contract": 0,  # 9/16 t_4e710909で両job修正済み → hard-zero化（dm_scan.py/apify_run_monitor.py実体配置+登録是正、台帳value=0実測）
 }
 
 

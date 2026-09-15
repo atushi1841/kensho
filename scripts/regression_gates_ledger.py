@@ -26,7 +26,18 @@ import time
 from pathlib import Path
 from typing import Any
 
-HOME = Path.home()
+
+def _resolve_home() -> Path:
+    """Hermesルートの絶対解決（QA run490: cron起動時はHOME=プロファイル内二重HOMEで
+    Path.home() が実体から外れる）。二重HOME側にも.hermesは存在するがkanban board DBを
+    持たないため、board DB実在を以て真のHermesルートを判定する。"""
+    for root in (Path.home(), Path("/home/atushi")):
+        if (root / ".hermes/kanban/boards/kensho-ai-team/kanban.db").exists():
+            return root
+    return Path("")
+
+
+HOME = _resolve_home()
 KANBAN_DB = HOME / ".hermes/kanban/boards/kensho-ai-team/kanban.db"
 PROFILES_GLOB = str(HOME / ".hermes/profiles")
 
