@@ -14,10 +14,12 @@
 import json
 import os
 import sys
+import threading
 import time
 import urllib.error
 import urllib.request
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
 # === Path setup ===
 # realpath: cron実行時はプロファイルscripts直下（実体またはsymlink）から起動されるため、
@@ -49,6 +51,16 @@ FAILURE_WINDOW_HOURS = 24  # この時間内の失敗を監視
 RETRY_LIMIT = 3  # 同actorの再试行上限
 SCAN_DEADLINE_SECONDS = 240  # フルスキャンの実時間上限（cron script timeout内へ収める）
 DRY_RUN = "--dry-run" in sys.argv
+
+# t_cdcfc7aa: MCP常駐actor（名前に -mcp を含むサーバー型）は通常runだと必ず
+# TIMED-OUT → Apifyエラーメールの再発源。自動再試行せず監視のみでskippingする。
+MCP_RESIDENT_SUFFIX = "-mcp"
+
+# 実行時timeout上書き（5f32176由来。常駐型の誤再試行時に備え残す）
+RETRY_TIMEOUT_OVERRIDES = {
+    "57SNehd4cHNFyUCj3": 7200,  # japan-market-mcp
+    "RdCHlXHphoLsWnyhh": 600,  # japan-fuel-price-mcp
+}
 
 
 def get(path: str, token: str | None = None) -> dict | list:
@@ -114,18 +126,76 @@ def needs_retry(actor_id: str, token: str | None = None) -> tuple[bool, dict | N
     return is_failed(latest), latest
 
 
-def queue_run(actor_id: str, token: str | None = None, timeout_secs: int | None = None) -> dict:
-    """actor をキューに追加して実行。timeout_secs を指定すると runs エンドポイントを使用し実行時にtimeoutを上書き。"""
+def queue_run(actor_id: str, token: str | None = None, timeout_secs: int | None = None) -> dict[str, Any]:
+    """actor を再実行（run 再生成）。
+
+    t_cdcfc7aa ギャップ統一: 旧実装は timeout 未指定時に /builds だけを再トリガしていたため、
+    「最新runがFAILED」検出に対してrunが再生成されず実効ゼロ（旧broken buildの再実行ループ）。
+    /runs エンドポイントへ統一し、timeoutSecs は任意上書きとして同じ経路で渡す。
+    """
     t = token or APIFY_TOKEN
+    url = f"{API_BASE}/acts/{actor_id}/runs?token={t}"
+    payload: dict[str, Any] = {"waitForFinish": 0}
     if timeout_secs is not None:
-        url = f"{API_BASE}/acts/{actor_id}/runs?token={t}"
-        data = json.dumps({"timeoutSecs": timeout_secs, "waitForFinish": 0}).encode("utf-8")
-    else:
-        url = f"{API_BASE}/acts/{actor_id}/builds?token={t}"
-        data = json.dumps({"waitForFinish": 0}).encode("utf-8")
+        payload["timeoutSecs"] = timeout_secs
+    data = json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"}, method="POST")
     with urllib.request.urlopen(req, timeout=30) as resp:
         return json.loads(resp.read().decode("utf-8"))
+
+
+def is_resident_mcp(name: str, actor_id: str = "") -> bool:
+    """MCP常駐（サーバー型）actorか。通常runだと必ずTIMED-OUTになりApifyエラーメールの再発源
+    （t_cdcfc7aa実測: japan-market-mcp 9/12 22:13 TIMED-OUT、opts_timeout=None）。自動再試行対象外。"""
+    return name.endswith(MCP_RESIDENT_SUFFIX) or actor_id in RETRY_TIMEOUT_OVERRIDES
+
+
+# --- retry budget (RETRY_LIMITのwindow内実カウント) -----------------------
+# 旧実装は RETRY_LIMIT を「取得run数」にしか使っておらず、失敗が継続するactorを24h窓で毎回
+# 再試行し続けていた（上限3の意図と不一致）。stateファイルで実试行数を刻み上限を強制する。
+
+
+def state_path() -> str:
+    return os.environ.get("APIFY_MONITOR_STATE") or os.path.join(PROJECT_DIR, "data", "apify_monitor_state.json")
+
+
+def load_state() -> dict[str, list[str]]:
+    try:
+        with open(state_path()) as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def save_state(state: dict[str, list[str]]) -> None:
+    p = state_path()
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    tmp = p + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(state, f, ensure_ascii=False, indent=1)
+    os.replace(tmp, p)
+
+
+def prune_attempts(entries: list[str], hours: int = FAILURE_WINDOW_HOURS) -> list[str]:
+    now = datetime.now(UTC)
+    out = []
+    for iso in entries or []:
+        try:
+            ts = datetime.fromisoformat(str(iso))
+        except ValueError:
+            continue
+        if now - ts <= timedelta(hours=hours):
+            out.append(str(iso))
+    return out
+
+
+def retry_allowed(state: dict[str, list[str]], actor_id: str) -> bool:
+    return len(prune_attempts(state.get(actor_id, []))) < RETRY_LIMIT
+
+
+def record_retry(state: dict[str, list[str]], actor_id: str) -> None:
+    state[actor_id] = prune_attempts(state.get(actor_id, [])) + [datetime.now(UTC).isoformat()]
 
 
 def main():
@@ -162,6 +232,8 @@ def main():
     retried = []
     skipped = []
     errors = []
+    resident_skipped = []
+    budget_exhausted = []
 
     print(f"[{datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}] Apify monitor start — {total} actors")
 
@@ -175,6 +247,8 @@ def main():
         todo = [a for a in actors if isinstance(a, dict) and a.get("id")]
 
     deadline = time.monotonic() + SCAN_DEADLINE_SECONDS
+    state = load_state()
+    state_lock = threading.Lock()
 
     def check(actor: dict):
         actor_id = actor.get("id", "")
@@ -203,33 +277,63 @@ def main():
                 if not need:
                     skipped.append(name)
                     continue
+                # MCP常駐actorは通常runだと必ずTIMED-OUT（=Apifyエラーメール再発源）。
+                # 自動再試行せず観測のみでスキップ（t_cdcfc7aa）。
+                if is_resident_mcp(name, actor_id):
+                    resident_skipped.append(name)
+                    continue
+                # RETRY_LIMIT実効化: 24h窓で既に上限回数再試行済みなら打ち切り
+                with state_lock:
+                    allowed = retry_allowed(state, actor_id)
+                if not allowed:
+                    budget_exhausted.append(name)
+                    continue
                 failed_count += 1
                 if DRY_RUN:
                     print(f"  [DRY-RUN] Would retry: {name} ({actor_id})")
                     retried.append(name)
                 else:
                     try:
-                        # Determine timeout for MCP actors to avoid TIMED-OUT
-                        timeout_secs = None
-                        if actor_id == "57SNehd4cHNFyUCj3":  # japan-market-mcp
-                            timeout_secs = 7200
-                        elif actor_id == "RdCHlXHphoLsWnyhh":  # japan-fuel-price-mcp
-                            timeout_secs = 600
-                        result = queue_run(actor_id, timeout_secs=timeout_secs)
-                        run_id = result.get("id", "?")
+                        result = queue_run(actor_id, timeout_secs=RETRY_TIMEOUT_OVERRIDES.get(actor_id))
+                        # Apify POST /runs の応答は {"meta":..,"data":{...}} 入れ子（旧実装は最上位getで常に'?'）
+                        body = result.get("data", result) if isinstance(result, dict) else {}
+                        run_id = str(body.get("id") or "?")
+                        # 無料クレジット枯渇(402等)でrunがqueued/prompt扱いになった場合は
+                        # リトライを打ち切って【要ユーザー対応】を明示する（t_cdcfc7aa）
+                        status = str(body.get("status", "")).lower()
+                        if run_id == "?" and status in ("quota-exceeded", "paused"):
+                            errors.append(
+                                f"{name}: Apify quota state={status} 【要ユーザー対応: FREEクレジット枯渇の可能性】"
+                            )
+                            continue
                         retried.append(f"{name}→run:{run_id[:8]}")
                         print(f"  [RETRY] {name}: queued run {run_id[:8]}")
+                        with state_lock:
+                            record_retry(state, actor_id)
+                            save_state(state)
+                    except urllib.error.HTTPError as e:
+                        if e.code == 402:
+                            errors.append(
+                                f"{name}: HTTP 402 quota exceeded 【要ユーザー対応: FREE枠上限、リトライ抑止】"
+                            )
+                        else:
+                            errors.append(f"{name}: retry failed: HTTP {e.code}")
                     except Exception as e:
                         errors.append(f"{name}: retry failed: {e}")
         except TimeoutError:
             pass  # deadline超過: 以下未処理分はWARNで報告
 
-    if len(skipped) + len(retried) + len(errors) < len(todo) or time.monotonic() >= deadline:
-        print(f"  [WARN] scan deadline hit: processed {len(skipped) + len(retried) + len(errors)}/{len(todo)}")
+    processed_total = len(skipped) + len(retried) + len(errors) + len(resident_skipped) + len(budget_exhausted)
+    if processed_total < len(todo) or time.monotonic() >= deadline:
+        print(f"  [WARN] scan deadline hit: processed {processed_total}/{len(todo)}")
 
     # サマリー
     print("\n=== Apify Monitor Summary ===")
     print(f"Total: {total} | Retried: {len(retried)} | Skipped (ok): {len(skipped)} | Errors: {len(errors)}")
+    if resident_skipped:
+        print(f"Resident-MCP skipped (no auto-retry): {', '.join(resident_skipped[:20])}")
+    if budget_exhausted:
+        print(f"Retry-budget exhausted ({RETRY_LIMIT}/{FAILURE_WINDOW_HOURS}h): {', '.join(budget_exhausted[:20])}")
     if retried:
         print(f"Retried: {', '.join(retried[:20])}")
     if errors:
