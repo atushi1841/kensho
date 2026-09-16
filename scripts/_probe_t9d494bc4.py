@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 
+
 def probe(path, label):
     print(f"===== {label} ({path}) =====")
     d = json.load(open(path))
@@ -9,6 +10,7 @@ def probe(path, label):
         print("keys:", list(d.keys())[:20])
     print()
     return d
+
 
 wins = probe("data/dm_wins.json", "dm_wins.json")
 if isinstance(wins, dict):
@@ -32,7 +34,6 @@ print("items:", len(items) if isinstance(items, list) else "N/A")
 if isinstance(items, list) and items:
     print("first item keys:", list(items[0].keys()))
     # sample a few with x_url containing /status/
-    import re
     cnt = 0
     for it in items:
         x = it.get("x_url") or ""
