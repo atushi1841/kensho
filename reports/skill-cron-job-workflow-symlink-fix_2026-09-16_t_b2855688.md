@@ -46,6 +46,61 @@ scheduler.py の path guard（resolve()後の実体が scripts dir 外 → Block
 - kensho-revenue-worker: 1 ✅
 - kensho-critic / kensho-qa / kensho-revenue-qa: 0（変更なし）
 
+## verification_evidence（実測コマンド出力引用）
+
+1. 改訂マーカー出現数（受け入れ条件①）:
+
+```
+$ cd /home/atushi/.hermes/profiles && grep -c "symlink→" \
+    kensho-worker/.../cron-job-workflow/SKILL.md \
+    kensho-sweeps/.../cron-job-workflow/SKILL.md \
+    kensho-revenue-worker/.../cron-job-workflow/SKILL.md \
+    kensho-critic/.../kensho-qa/.../kensho-revenue-qa/.../SKILL.md
+kensho-worker/skills/software-development/cron-job-workflow/SKILL.md:2
+kensho-sweeps/skills/software-development/cron-job-workflow/SKILL.md:1
+kensho-revenue-worker/skills/software-development/cron-job-workflow/SKILL.md:1
+kensho-critic/skills/software-development/cron-job-workflow/SKILL.md:0
+kensho-qa/skills/software-development/cron-job-workflow/SKILL.md:0
+kensho-revenue-qa/skills/software-development/cron-job-workflow/SKILL.md:0
+```
+
+2. プロファイル間md5差分（改訂前＝QA実測値と一致を確認 → 改訂後）:
+
+```
+$ md5sum ~/.hermes/profiles/*/skills/software-development/cron-job-workflow/SKILL.md   # 改訂前
+47a11c7e60dbeacad9a7dfe13ad885b8  kensho-worker    ← QA実測 47a11c7e と一致
+3baae16dbb083ba712e8a42701c0d90d  kensho-sweeps    ← QA実測 3baae16d と一致
+be15f8e310d3ab6b2ed6015ca14f626d  kensho-revenue-worker
+380da3364c582f5d936a151781a73c4b  kensho-critic / kensho-qa / kensho-revenue-qa（同一版）
+
+$ md5sum kensho-worker/... kensho-sweeps/... kensho-revenue-worker/...SKILL.md   # 改訂後
+477ccadc81f1f1061bc75a919f76cc91  kensho-worker
+1894295a40539fbd832aedcd1447ff73  kensho-sweeps
+3be2bc1e12f9bee9bb1383b62b2d4078  kensho-revenue-worker
+```
+
+3. レポートgit追跡化＋push（受け入れ条件③・done guard条件e）:
+
+```
+$ git commit -m "docs(skill): t_b2855688 ..."
+[main a4343c7] docs(skill): t_b2855688 cron-job-workflow symlink許容記述を実体コピー必須へ改訂（...）
+ 1 file changed, 60 insertions(+)
+ create mode 100644 reports/skill-cron-job-workflow-symlink-fix_2026-09-16_t_b2855688.md
+
+$ git push origin main
+   6385a6f..a4343c7  main -> main
+```
+
+4. 前提検証（改訂対象の実在、t_fa68dc0c条件④の未完了確認）:
+
+```
+$ sed -n '247,258p' ~/.hermes/profiles/kensho-worker/skills/.../SKILL.md   # 改訂前
+247:## no_agent作成時にscriptの解実在を検証してから有効化（t_c6b4e3ed教訓、2026-09-16）
+252:1. **bare filenameで登録** …（repoの `scripts/foo.py` はsymlink元であって…）   ← 許容記述を確認
+256:5. **repo追跡** …profile側はコピーかsymlinkで一元管理…                        ← 許容記述を確認
+```
+
+
 ## 他プロファイルへの展開について（記録）
 
 QA実測でずれていた md5 380da336 版（kensho-critic / kensho-qa / kensho-revenue-qa の3プロファイル共有）は、
