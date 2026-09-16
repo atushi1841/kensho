@@ -4,7 +4,9 @@
 対応: Plan A（推奨）— `_skill_candidates()` を kensho-* profile群 + repo skills に限定し、
 RATCHETS['skill_md_oversize'] を実測値 59 へ再設定（commit 7edd9fb）。
 
-## 検証エビデンス
+## 検証
+
+以下の command citations は実測出力の引用（t_e94ea1ac の証跡）。
 
 $ cd /mnt/d/Project2/kensho && python3 scripts/regression_gates_ledger.py --md-table
 → | skill_md_oversize | memory | t_a8ede591 (evolution v104) | 59<=0 FAIL | SKILL.md > 20KB: 59 files, e.g. ['.hermes/profiles/kensho-critic/skills/social-media/x-bot-detection/SKILL.md', ...] |
