@@ -76,57 +76,65 @@ def check_profile(profile: str, hermes_root: Path, kensho_root: Path) -> list[di
     if not jobs_file.is_file():
         raise SystemExit(f"ERROR: jobs.json not found: {jobs_file}")
 
+    seen: set[str] = set()
     for job in load_jobs(jobs_file):
-        script = job.get("script")
-        if not script or not isinstance(script, str):
-            continue
-        name = Path(script).name
-        if not name.endswith(CHECK_SUFFIXES):
-            continue
-        enabled = bool(job.get("enabled", True))
-        jid = str(job.get("id") or job.get("job_id") or "?")
-        jname = str(job.get("name") or "?")
-        prof_path = scripts_dir / name
-        if not prof_path.is_file():
+        # v156 (t_20c9c446 / QA run508): monitor_script 配置も実行時に走るため
+        # script と同様に走査対象化。同一名を複数ジョブが参照する場合は1回だけ検査。
+        for key in ("script", "monitor_script"):
+            script = job.get(key)
+            if not script or not isinstance(script, str):
+                continue
+            name = Path(script).name
+            if not name.endswith(CHECK_SUFFIXES) or name in seen:
+                continue
+            seen.add(name)
+            enabled = bool(job.get("enabled", True))
+            jid = str(job.get("id") or job.get("job_id") or "?")
+            jname = str(job.get("name") or "?")
+            prof_path = scripts_dir / name
+            if not prof_path.is_file():
+                rows.append({
+                    "profile": profile,
+                    "job_id": jid,
+                    "job": jname,
+                    "script": name,
+                    "ref_kind": key,
+                    "enabled": enabled,
+                    "status": "MISSING" if enabled else "MISSING_DISABLED",
+                    "repo": str(repo_counterpart(name, kensho_root) or ""),
+                    "profile_md5": "",
+                    "repo_md5": "",
+                })
+                continue
+            repo_path = repo_counterpart(name, kensho_root)
+            pm = md5sum(prof_path)
+            if repo_path is None:
+                rows.append({
+                    "profile": profile,
+                    "job_id": jid,
+                    "job": jname,
+                    "script": name,
+                    "ref_kind": key,
+                    "enabled": enabled,
+                    "status": "UNTRACKED",
+                    "repo": "",
+                    "profile_md5": pm or "",
+                    "repo_md5": "",
+                })
+                continue
+            rm = md5sum(repo_path)
             rows.append({
                 "profile": profile,
                 "job_id": jid,
                 "job": jname,
                 "script": name,
+                "ref_kind": key,
                 "enabled": enabled,
-                "status": "MISSING" if enabled else "MISSING_DISABLED",
-                "repo": str(repo_counterpart(name, kensho_root) or ""),
-                "profile_md5": "",
-                "repo_md5": "",
-            })
-            continue
-        repo_path = repo_counterpart(name, kensho_root)
-        pm = md5sum(prof_path)
-        if repo_path is None:
-            rows.append({
-                "profile": profile,
-                "job_id": jid,
-                "job": jname,
-                "script": name,
-                "enabled": enabled,
-                "status": "UNTRACKED",
-                "repo": "",
+                "status": "OK" if pm == rm else "DRIFT",
+                "repo": str(repo_path),
                 "profile_md5": pm or "",
-                "repo_md5": "",
+                "repo_md5": rm or "",
             })
-            continue
-        rm = md5sum(repo_path)
-        rows.append({
-            "profile": profile,
-            "job_id": jid,
-            "job": jname,
-            "script": name,
-            "enabled": enabled,
-            "status": "OK" if pm == rm else "DRIFT",
-            "repo": str(repo_path),
-            "profile_md5": pm or "",
-            "repo_md5": rm or "",
-        })
     return rows
 
 
@@ -240,11 +248,17 @@ def main(argv: list[str] | None = None) -> int:
 def _rows_from_jobs(jobs_file: Path, scripts_dir: Path, kensho_root: Path, profile: str) -> list[dict]:
     """DRIFT_JOBS 上書き用（テストで jobs.json を任意位置から読む）。"""
     rows: list[dict] = []
+    seen: set[str] = set()
     for job in load_jobs(jobs_file):
-        script = job.get("script")
-        if not script or not str(script).endswith(CHECK_SUFFIXES):
+        name = ""
+        for key in ("script", "monitor_script"):
+            script = job.get(key)
+            if script and str(script).endswith(CHECK_SUFFIXES):
+                name = Path(str(script)).name
+                break
+        if not name or name in seen:
             continue
-        name = Path(str(script)).name
+        seen.add(name)
         prof_path = scripts_dir / name
         repo_path = repo_counterpart(name, kensho_root)
         pm, rm = md5sum(prof_path), md5sum(repo_path) if repo_path else None
