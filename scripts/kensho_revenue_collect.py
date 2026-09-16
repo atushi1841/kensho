@@ -725,6 +725,74 @@ def _persist_last_success_at() -> None:
         print(f"  ⚠️ last_success_at永続化失敗: {e}")
 
 
+def _extract_sale_fields(state: dict[str, Any]) -> dict[str, Any]:
+    """gumroad_state.json から売上記録に必要なフィールドを安全に取り出す。"""
+    total_sales = state.get("total_sales", 0)
+    total_earnings = state.get("total_earnings_usd")
+    return {
+        "total_sales": total_sales if isinstance(total_sales, (int, float)) else 0,
+        "total_earnings_usd": total_earnings if isinstance(total_earnings, (int, float)) else None,
+        "balance_usd": state.get("balance_usd"),
+        "login_ok": state.get("login_ok", True),
+        "collected_at": state.get("collected_at") or datetime.now().isoformat(timespec="seconds"),
+    }
+
+
+def record_gumroad_sales(
+    state_file: str | None = None,
+    log_file: str | None = None,
+) -> bool:
+    """Gumroad実売上があれば data/gumroad_sales.log に追記する（提案A受入基準）。
+
+    gumroad_state.json（CDP収集結果）が実売上（total_sales>0 または
+    total_earnings_usd>0）を示した場合のみ1行追記する。既に記録済みの
+    collected_at は重複追記しない（収集runごとに最大1行）。
+
+    返り値: 売上行を書き込んだ場合は True、売上ゼロまたは追記不要なら False。
+    """
+    sf = state_file or GUMROAD_STATE
+    lf = log_file or GUMROAD_SALES_LOG
+    if not os.path.exists(sf):
+        return False
+    try:
+        with open(sf, encoding="utf-8") as f:
+            state = json.load(f)
+        if not isinstance(state, dict):
+            return False
+    except Exception:
+        return False
+
+    fields = _extract_sale_fields(state)
+    has_sale = fields["total_sales"] > 0 or bool(fields["total_earnings_usd"])
+    if not has_sale:
+        return False
+
+    line = (
+        f"{fields['collected_at']} total_sales={fields['total_sales']}"
+        f" earnings_usd={fields['total_earnings_usd']}"
+        f" balance_usd={fields['balance_usd']} login_ok={fields['login_ok']}\n"
+    )
+
+    # 重複防止: 同一 collected_at の行が既にある場合は追記しない
+    try:
+        os.makedirs(os.path.dirname(lf) or ".", exist_ok=True)
+        if os.path.exists(lf):
+            with open(lf, encoding="utf-8") as f:
+                existing = f.read()
+            if existing:
+                marker = f"{fields['collected_at']} total_sales="
+                last_line = existing.splitlines()[-1]
+                if marker in last_line:
+                    return False
+        with open(lf, "a", encoding="utf-8") as f:
+            f.write(line)
+        print(f"✓ Gumroad売上を記録: data/gumroad_sales.log ({line.strip()})")
+        return True
+    except Exception as e:
+        print(f"  ⚠️ gumroad_sales.log 追記失敗: {e}")
+        return False
+
+
 def update_gumroad_state_via_cdp() -> bool:
     """CDP（nodeスクリプト）でGumroad売上データを取得し、gumroad_state.jsonを更新する。
 
@@ -778,7 +846,8 @@ def update_gumroad_state_via_cdp() -> bool:
 def collect_gumroad() -> dict[str, Any]:
     """Gumroad商品情報を読み込む（bundle_info.json + gumroad_state.json）。
 
-    Note: GUMROAD_SALES_LOG受入基準ファイルは本ファイルの責務範囲外。
+    Note: 受入基準ファイル gumroad_sales.log への追記は record_gumroad_sales()
+    が担う（main() 内で collect_gumroad 直後に呼ばれる）。
     """
     result: dict[str, Any] = {
         "source": "gumroad",
@@ -1086,6 +1155,8 @@ def main() -> None:
     # CDPで売上データを更新（Chrome自動起動込み・失敗時は前回値で継続）
     gumroad_updated = update_gumroad_state_via_cdp()
     gumroad = collect_gumroad()
+    # 提案A (t_d7db4ef7): 実売上があれば受入基準ファイル data/gumroad_sales.log に追記
+    record_gumroad_sales()
     print(f"  {'✓' if gumroad.get('products', 0) > 0 else '?'} 商品数: {gumroad.get('products', '?')}")
     if gumroad.get("details"):
         for d in gumroad["details"]:

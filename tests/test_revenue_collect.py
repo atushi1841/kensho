@@ -6,6 +6,7 @@ Tests for scripts/kensho_revenue_collect.py — actors_ppe=0 異常検出・自�
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timedelta
@@ -483,6 +484,58 @@ class TestGumroadCdpResilience:
 
 
 # ── critic v94 (t_360dd497): Apify課金状態の二重障害（APIタイムアウト全放棄+フォールバック路径欠損）──
+
+
+class TestRecordGumroadSales:
+    """record_gumroad_sales: 提案A受入基準ファイル（data/gumroad_sales.log）追記"""
+
+    def _write_state(self, tmp_path: Any, **overrides: Any) -> str:
+        state = {
+            "state_exists": True,
+            "total_sales": 0,
+            "total_earnings_usd": None,
+            "balance_usd": None,
+            "login_ok": True,
+            "collected_at": "2026-09-16T10:00:00",
+        }
+        state.update(overrides)
+        p = tmp_path / "gumroad_state.json"
+        p.write_text(json.dumps(state), encoding="utf-8")
+        return str(p)
+
+    def test_no_sale_writes_nothing(self, tmp_path: Any) -> None:
+        sf = self._write_state(tmp_path, total_sales=0, total_earnings_usd=None)
+        lf = str(tmp_path / "gumroad_sales.log")
+        assert krc.record_gumroad_sales(sf, lf) is False
+        assert not os.path.exists(lf)
+
+    def test_sale_writes_line(self, tmp_path: Any) -> None:
+        sf = self._write_state(tmp_path, total_sales=2, total_earnings_usd=15.5)
+        lf = str(tmp_path / "gumroad_sales.log")
+        assert krc.record_gumroad_sales(sf, lf) is True
+        content = Path(lf).read_text(encoding="utf-8")
+        assert "total_sales=2" in content
+        assert "earnings_usd=15.5" in content
+
+    def test_earnings_alone_is_sale(self, tmp_path: Any) -> None:
+        sf = self._write_state(tmp_path, total_sales=0, total_earnings_usd=1.0)
+        lf = str(tmp_path / "gumroad_sales.log")
+        assert krc.record_gumroad_sales(sf, lf) is True
+
+    def test_dedupes_same_collected_at(self, tmp_path: Any) -> None:
+        sf = self._write_state(tmp_path, total_sales=1, total_earnings_usd=5.0)
+        lf = str(tmp_path / "gumroad_sales.log")
+        assert krc.record_gumroad_sales(sf, lf) is True
+        assert krc.record_gumroad_sales(sf, lf) is False  # 同一collected_at → 追記しない
+        assert len(Path(lf).read_text(encoding="utf-8").splitlines()) == 1
+
+    def test_is_invoked_in_main(self) -> None:
+        """main() のGumroad収集直後に record_gumroad_sales が呼ばれる"""
+        import inspect
+
+        src = inspect.getsource(krc.main)
+        gum_pos = src.index("gumroad = collect_gumroad()")
+        assert src.index("record_gumroad_sales()", gum_pos) > gum_pos
 
 
 class TestV94PpeFallbackPath:
