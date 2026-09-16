@@ -116,8 +116,8 @@ def _run_scrape() -> tuple[list[str], list[dict[str, Any]]]:
 class TestRetryConstants:
     """リトライ定数: kenkaku.py L25-26 の v144 + critic対策（指数バックオフ）仕様との整合アサーション"""
 
-    def test_max_retries_is_2(self) -> None:
-        assert kenkaku._KENKAKU_MAX_RETRIES == 2
+    def test_max_retries_is_3(self) -> None:
+        assert kenkaku._KENKAKU_MAX_RETRIES == 3
 
     def test_backoff_is_2_seconds(self) -> None:
         assert kenkaku._KENKAKU_RETRY_BACKOFF == 2.0
@@ -136,8 +136,8 @@ class TestRetrySuccess:
         factory = client_factory({_URL1: [httpx.ConnectTimeout("boom"), _resp(200, _ITEM_HTML)]})
         logs, items = _run_scrape()
 
-        assert any(f"ページ{_PAGE1}" in m and "リトライ1/2" in m for m in logs)
-        assert not any("リトライ2/2" in m for m in logs), "2回目で成功したのに3回目のリトライログがある"
+        assert any(f"ページ{_PAGE1}" in m and "リトライ1/3" in m for m in logs)
+        assert not any("リトライ2/" in m for m in logs), "2回目で成功したのに3回目のリトライログがある"
         assert not any("ERROR" in m for m in logs)
         assert len(items) == 1
         assert items[0]["x_url"] == "https://x.com/testuser/status/1234567890123"
@@ -150,8 +150,8 @@ class TestRetrySuccess:
         # リトライ2回（=合計3アテンプト）目まで許容される
         factory = client_factory({_URL1: [httpx.ConnectTimeout("b1"), httpx.ReadTimeout("b2"), _resp(200, _ITEM_HTML)]})
         logs, items = _run_scrape()
-        assert any("リトライ1/2" in m for m in logs)
-        assert any("リトライ2/2" in m for m in logs)
+        assert any("リトライ1/3" in m for m in logs)
+        assert any("リトライ2/3" in m for m in logs)
         assert len(items) == 1
         assert factory.calls.count(_URL1) == 3
 
@@ -160,25 +160,29 @@ class TestFinalFailureSkipsPageOnly:
     """② 3回連続失敗 → 最終ERRORログ1回・そのページのみスキップ、他ページは続行"""
 
     def test_three_failures_skip_page_with_single_error_log(self, sleep_spy: list[float], client_factory: Any) -> None:
+        # MAX_RETRIES=3 → 合計4アテンプトまで。最終失敗でERROR1回・そのページのみスキップ
+        n_attempts = 1 + kenkaku._KENKAKU_MAX_RETRIES  # 4
         factory = client_factory({
-            _URL1: [httpx.ConnectTimeout("b") for _ in range(3)],
+            _URL1: [httpx.ConnectTimeout("b") for _ in range(n_attempts)],
             _URL2: [_resp(200, _ITEM_HTML)],
         })
         logs, items = _run_scrape()
 
         error_lines = [m for m in logs if f"ページ{_PAGE1}: ERROR" in m]
         assert len(error_lines) == 1, f"最終ERRORログは1回のはず: {error_lines}"
-        assert any("リトライ1/2" in m for m in logs)
-        assert any("リトライ2/2" in m for m in logs)
-        assert not any("リトライ3/2" in m for m in logs), "MAX_RETRIES=2超のリトライログは不正"
-        assert factory.calls.count(_URL1) == 3
+        assert any("リトライ1/3" in m for m in logs)
+        assert any("リトライ2/3" in m for m in logs)
+        assert any("リトライ3/3" in m for m in logs)
+        assert not any("リトライ4/3" in m for m in logs), "MAX_RETRIES=3超のリトライログは不正"
+        assert factory.calls.count(_URL1) == n_attempts
         # 他ページは続行 → PAGE2のアイテムは取得される
         assert factory.calls.count(_URL2) == 1
         assert len(items) == 1
         assert any(f"ページ{_PAGE2}" in m or "✅" in m for m in logs)
-        # 失敗ページ後も0.3sの間隔維持 + 指数バックオフ（2.0s×1回 + 4.0s×1回）
+        # 失敗ページ後も0.3sの間隔維持 + 指数バックオフ（2.0s×1回 + 4.0s×1回 + 8.0s×1回）
         assert sum(1 for s in sleep_spy if s == kenkaku._KENKAKU_RETRY_BACKOFF) == 1, "1回目=base 2.0s"
         assert sum(1 for s in sleep_spy if s == kenkaku._KENKAKU_RETRY_BACKOFF * 2) == 1, "2回目=4.0s"
+        assert sum(1 for s in sleep_spy if s == kenkaku._KENKAKU_RETRY_BACKOFF * 4) == 1, "3回目=8.0s"
         assert any(s == 0.3 for s in sleep_spy)
 
     def test_total_page_calls_respect_retry_budget(self, sleep_spy: list[float], client_factory: Any) -> None:

@@ -50,7 +50,7 @@ def scrape_kensho_everyday(out: Any, processed_set: set[str], account_keys: list
 
     for article_url in article_links:
         try:
-            code2, html2, _ = _fetch_with_retry(article_url, referer=_KENSHO_EVERY_BASE, timeout=15)
+            code2, html2, _ = _fetch_with_retry(article_url, referer=_KENSHO_EVERY_BASE, timeout=30)
             if code2 != 200:
                 continue
 

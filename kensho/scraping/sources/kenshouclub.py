@@ -31,7 +31,7 @@ def scrape_kenshouclub(out: Any, processed_set: set[str], account_keys: list[str
 
         try:
             # リストページも指数バックオフ付きリトライ（ConnectTimeout削減。critic対策）
-            code, html, _ = _fetch_with_retry(list_url, timeout=15)
+            code, html, _ = _fetch_with_retry(list_url, timeout=30)
             if code != 200:
                 out(f"  [KCLUB] ページ{page}: HTTP {code} - 終了")
                 break
@@ -51,7 +51,7 @@ def scrape_kenshouclub(out: Any, processed_set: set[str], account_keys: list[str
 
             for article_url in article_links:
                 try:
-                    code2, html2, _ = _fetch_with_retry(article_url, referer=list_url, timeout=15)
+                    code2, html2, _ = _fetch_with_retry(article_url, referer=list_url, timeout=30)
                     if code2 != 200:
                         continue
 

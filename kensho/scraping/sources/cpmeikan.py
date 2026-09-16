@@ -29,7 +29,7 @@ def scrape_cpmeikan(out: Any, processed_set: set[str], account_keys: list[str]) 
 
         try:
             # 指数バックオフ付きリトライ（ConnectTimeout削減）。最終失敗時は code=0 で break。
-            code, html, _ = _fetch_with_retry(page_url, timeout=15)
+            code, html, _ = _fetch_with_retry(page_url, timeout=30)
             if code != 200:
                 out(f"  [CPMK] ページ{page_num}: HTTP {code} - 終了")
                 break

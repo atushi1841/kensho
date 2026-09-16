@@ -35,7 +35,7 @@ HEADERS: dict[str, str] = {
 
 # ── 指数バックオフリトライ ──
 def _fetch_with_retry(
-    url: str, referer: str | None = None, max_retries: int = 3, timeout: int = 15
+    url: str, referer: str | None = None, max_retries: int = 5, timeout: int = 30
 ) -> tuple[int, str, str]:
     """
     HTTP GET with exponential backoff.
@@ -78,7 +78,7 @@ def save_json(path: Path, data: Any) -> None:
 
 
 def fetch(
-    url: str, referer: str | None = None, timeout: int = 15, follow_redirects: bool = False
+    url: str, referer: str | None = None, timeout: int = 30, follow_redirects: bool = False
 ) -> tuple[int, str, str]:
     h: dict[str, str] = dict(HEADERS)
     if referer:
