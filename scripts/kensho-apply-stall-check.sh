@@ -9,11 +9,14 @@
 #
 # 判定ロジック
 #   1. 稼働窓外(H<09 or H>23) → SILENT
-#   2. 当日 auto_YYYYMMDD.log の「完了」行を数える:
+#   2. 当日 auto_YYYYMMDD.log の「完了: N成功(N>=1)」行を数える:
 #        >0  → 最新完了行の時刻が閾値内なら稼働中(SILENT)
 #        ==0 → 履歴(当日→日付降順で走査)の最新完了行の時刻から stall 時間を算出
 #   3. stall 時間 >= 閾値 → 通知。sentinel に「その時の最新完了 epoch」を記録し、
 #      送出は停止エピソードにつき1回だけ(次回は同じ epoch なので skip)。
+# v170 (critic実測RCA): 旧 grep '完了' は "完了: 0成功/0エラー" という停止時の
+# 行も完了扱いし、停止が 稼働中SILENT とマスクされた。完了判定は
+# 成功数>=1 の行 (完了:\s*[1-9][0-9]*成功) のみに限定する。
 
 PROJECT_DIR="${KENSO_STALL_PROJECT_DIR:-/mnt/d/Project2/kensho}"
 LOG_DIR="${KENSO_STALL_LOGDIR:-$PROJECT_DIR/logs}"
@@ -21,6 +24,9 @@ THRESHOLD_MIN="${KENSO_STALL_THRESHOLD_MIN:-120}"
 SENTINEL="${KENSO_STALL_SENTINEL:-/tmp/kensho_apply_stall.notified}"
 WINDOW_START_H="${KENSO_STALL_WINDOW_START:-9}"
 WINDOW_END_H="${KENSO_STALL_WINDOW_END:-23}"
+
+# v170: 完了判定は成功数>=1 の行のみ (\d+ だと 0成功 も完了扱いになるため)
+COMPLETE_RE='完了:[[:space:]]*[1-9][0-9]*成功'
 
 DRY_RUN=0
 DAYS=40
@@ -43,7 +49,7 @@ today=$(date +%Y%m%d)
 today_log="$LOG_DIR/auto_${today}.log"
 today_count=0
 if [ -f "$today_log" ]; then
-  today_count=$(grep -c '完了' "$today_log" 2>/dev/null || true)
+  today_count=$(grep -cE "$COMPLETE_RE" "$today_log" 2>/dev/null || true)
 fi
 today_count=$((10#$today_count))
 
@@ -58,7 +64,7 @@ find_last_completion() {
     local f="$LOG_DIR/auto_${suffix}.log"
     [ -f "$f" ] || continue
     local line
-    line=$(grep '完了' "$f" 2>/dev/null | tail -1)
+    line=$(grep -E "$COMPLETE_RE" "$f" 2>/dev/null | tail -1)
     [ -z "$line" ] && continue
     local dstr tstr
     dstr=$(echo "$line" | awk '{print $1}')
@@ -75,7 +81,7 @@ find_last_completion() {
 
 if [ "$today_count" -gt 0 ]; then
   # 当日に完了行あり → 最新 line の時刻
-  line=$(grep '完了' "$today_log" 2>/dev/null | tail -1)
+  line=$(grep -E "$COMPLETE_RE" "$today_log" 2>/dev/null | tail -1)
   dstr=$(echo "$line" | awk '{print $1}')
   tstr=$(echo "$line" | awk '{print $2}')
   last_epoch=$(date -d "$dstr $tstr" +%s 2>/dev/null || echo 0)

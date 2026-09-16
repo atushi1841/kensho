@@ -79,3 +79,37 @@ def test_marker_ok_kanryou_alone_counts_zero(tmp_path):
     out = _run(tmp_path, ["OK 完了 done", "biz OK 完了 batch"])
     assert out["business_done"] == 0
     assert out["business_ok"] is False
+
+
+def test_apply_stopped_zero_success_lines_not_completion(tmp_path):
+    r"""v170 (critic実測RCA, t_2419836e): 停止時の '完了: 0成功/0エラー' 行は完了扱いしない。
+
+    \d+成功 は '0成功' にもマッチするため、停止中に毎15分書かれる0成功完了行が
+    done_count として計上され done_count==0 の停止判定が発動しなかった。
+    成功数>=1 の行 ([1-9][0-9]* 成功) のみ完了扱い → 0成功のみのログは stopped。
+    """
+    out = _run(
+        tmp_path,
+        [
+            "処理待ちのバッチなし",
+            "2026-09-17 07:55:14.443 | INFO | _   完了: 0成功/0エラー（0秒）",
+            "2026-09-17 08:10:00.000 | INFO | _   完了: 0成功/0エラー（5秒）",
+        ],
+    )
+    assert out["business_done"] == 0  # 0成功行は集計されない
+    assert out["business_ok"] is False
+    assert out["score"] <= 60
+
+
+def test_apply_recovered_success_gt0_restores_ok(tmp_path):
+    """v170 復旧後: 成功>0 の完了行が1件あれば business_ok=true / score>=80 へ戻る。"""
+    out = _run(
+        tmp_path,
+        [
+            "処理待ちのバッチなし",
+            "2026-09-17 08:33:03.921 | INFO | _   完了: 15成功/0エラー（1447秒）",
+        ],
+    )
+    assert out["business_done"] >= 1
+    assert out["business_ok"] is True
+    assert out["score"] >= 80
