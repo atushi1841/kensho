@@ -15,7 +15,9 @@
 3. retry budget — `RETRY_LIMIT=3` を24h窓のstateファイル（`data/apify_monitor_state.json`、`APIFY_MONITOR_STATE`で差し替え可）で実カウント強制。
 4. 402/quota-exceeded検出時【要ユーザー対応】行で即打ち切り。応答の `data` 入れ子からrun_id抽出するよう修正。
 
-## 検証コマンド実測
+## verification_evidence
+
+t_cdcfc7aa の検証記録（commit 2516bab push済・以下全項目実測ログのみ）:
 
 $ python3 -m pytest tests/test_apify_run_monitor_retry.py -q --no-cov
 ============================== 6 passed in 0.74s ===============================
