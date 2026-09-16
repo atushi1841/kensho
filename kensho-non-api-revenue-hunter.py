@@ -59,6 +59,14 @@ except ImportError as _e:  # pragma: no cover - import 失敗は致命的
     sys.stderr.write(f"[hunter] kanban_norm import error: {_e}\n")
     raise
 
+# critic v162 (t_37c0fafa): 発券重複防止ガード — 決定的キー hunter-YYYYMMDD-<hash8>
+# + 起票前 open カード走査 (対訳ブリッジ語込み) を共通モジュール化。
+try:
+    import kensho_hunter_guard as _guard  # type: ignore
+except ImportError as _e:  # pragma: no cover
+    sys.stderr.write(f"[hunter] kensho_hunter_guard import error (continue): {_e}\n")
+    _guard = None  # type: ignore
+
 # 品質ゲート (t_2e20f1ef critic_proposal v58):
 #   低シグナル Show HN の一括投入が loop_health を 95→70 に低下させたため、
 #   (1) score ゲート (2) monetization シグナル ゲート (3) 1実行あたり投入上限
@@ -642,6 +650,37 @@ def classify_seed(item):
     return matches
 
 
+def _hunter_guard_key(title: str, extra: str = "") -> str:
+    """決定的 idempotency キー: ガード既定 'hunter-YYYYMMDD-<hash8>'、
+    ガード利用不可時のみ旧 'hn-<sha1_16>' へフォールバック。キー無し発券はしない。"""
+    if _guard is not None:
+        return _guard.hunter_idempotency_key(title, extra=extra)
+    import hashlib
+
+    return "hn-" + hashlib.sha1(_dedup_key(title, "", extra).encode("utf-8")).hexdigest()[:16]
+
+
+def _hunter_guard_scan(title: str, body: str) -> list:
+    """起票前 open カード走査 (critic v162 要件2)。ガード不能/DB障害時は
+    発券を止めない (既存 dedup と同一方針)。テストでは monkeypatch 対象。"""
+    if _guard is None:
+        return []
+    try:
+        return _guard.find_open_duplicates(title, body)
+    except Exception as e:  # pragma: no cover
+        sys.stderr.write(f"[hunter] guard open-scan error (continue): {e}\n")
+        return []
+
+
+def _hunter_guard_comment(task_id: str, title: str, shared: list) -> bool:
+    """新規作らず既存カードへ抑止コメントを追記 (critic v162 要件3)。"""
+    if _guard is None:
+        return False
+    return _guard.comment_instead_of_create(
+        task_id, title, author="kensho-non-api-revenue-hunter", note=f"共通トークン: {shared[:8]} (hunter guard v162)"
+    )
+
+
 def create_kanban_task(title, body, weight, url="", hn_id=""):
     """重要度中以上なら kanban に投入。
     Run 横断 dedup:
@@ -681,12 +720,23 @@ def create_kanban_task(title, body, weight, url="", hn_id=""):
     except Exception as e:  # DB 障害などで dedup が失敗しても create は試みる
         sys.stderr.write(f"[hunter] dedup check error (continue): {e}\n")
     priority = 1 if weight == "高" else 2
-    # 2) title + organizer + condition から決定的な idempotency key を生成 (二重作成の最終防衛)
-    import hashlib
+    # 2) 決定的 idempotency key を生成 (二重作成の最終防衛)。
+    #    critic v162 (t_37c0fafa): ガード既定の 'hunter-YYYYMMDD-<hash8>' 形式へ統一。
+    #    ガード利用不可時のみ旧 hn-<sha1_16> へフォールバック (キーなし発券は絶対にしない)。
 
     organizer = url or ""
     condition = body[:80] if body else ""
-    idem = "hn-" + hashlib.sha1(_dedup_key(title, organizer, condition).encode("utf-8")).hexdigest()[:16]
+    idem = _hunter_guard_key(title, organizer or condition)
+    # 2.5) 起票前ボード走査 (critic v162 要件2): open状態のタイトル+本文と
+    #      対訳ブリッジ語込みのテーマ重複がHitしたら起票中止し、既存カードへ
+    #      コメント追記で代替 (要件3)。HN案件は1)/0)のdedupが主防衛なので、
+    #      ここを通る時点で title/hnid 一致を逃れた cross-lingual 二重登録の候補。
+    #      _hunter_guard_scan / _hunter_guard_comment はテストで monkeypatch 可能。
+    dup_hits = _hunter_guard_scan(title, body)
+    if dup_hits:
+        existing, shared = dup_hits[0]
+        _hunter_guard_comment(existing, title, shared)
+        return None, f"(guard-skip) 既存 {existing} ({', '.join(shared[:4])})"
     try:
         result = subprocess.run(
             [
