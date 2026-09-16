@@ -9,6 +9,9 @@ data/backups/
 .env
 *.env
 
+# セキュリティ: ローカル秘密情報（apiKey等。QA 2026-09-17検出: .secret-local/cracked_ai_workspace.json 未ignore）
+.secret-local/
+
 # ランタイムデータ（git管理不要）
 data/collected.json
 data/processed.json
