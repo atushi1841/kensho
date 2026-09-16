@@ -6,7 +6,7 @@ import re
 import time
 from typing import Any
 
-from .common import HEADERS, _fetch_with_retry, fetch, has_skip_keyword
+from .common import HEADERS, _fetch_with_retry, has_skip_keyword
 
 # ── 第3収集源: kenshou.club（懸賞CLUB）──
 _KENSHOUCLUB_BASE: str = "https://kenshou.club"
@@ -30,7 +30,8 @@ def scrape_kenshouclub(out: Any, processed_set: set[str], account_keys: list[str
             list_url = f"{_KENSHOUCLUB_BASE}{_KENSHOUCLUB_TAG}/page/{page}"
 
         try:
-            code, html, _ = fetch(list_url)
+            # リストページも指数バックオフ付きリトライ（ConnectTimeout削減。critic対策）
+            code, html, _ = _fetch_with_retry(list_url, timeout=15)
             if code != 200:
                 out(f"  [KCLUB] ページ{page}: HTTP {code} - 終了")
                 break

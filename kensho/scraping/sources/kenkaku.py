@@ -22,8 +22,9 @@ _KENKAKU_PAGE_IDS: list[str] = [
 ]
 
 # critic v144: ページ単位timeoutリトライ（ken-kaku.com側レイテンシjitter対策）
-_KENKAKU_MAX_RETRIES: int = 2  # 失敗時に追加で最大2回まで再試行
-_KENKAKU_RETRY_BACKOFF: float = 2.0  # 再試行間の待機秒（固定バックオフ）
+# critic対策: リトライは指数バックオフ（base 2.0s、2回目=4.0s、…）で実行
+_KENKAKU_MAX_RETRIES: int = 2  # 失敗時に追加で最大2回まで再試行（合計3アテンプト）
+_KENKAKU_RETRY_BACKOFF: float = 2.0  # 指数バックオフのベース秒（2.0 * 2**attempt）
 
 
 def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -> list[dict[str, Any]]:
@@ -50,11 +51,13 @@ def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -
                 break
             except Exception as e:
                 if attempt < _KENKAKU_MAX_RETRIES:
+                    # 指数バックオフ（critic対策）: base 2.0s → 2, 4, 8... を試行回数で増やす
+                    delay: float = _KENKAKU_RETRY_BACKOFF * (2**attempt)
                     out(
                         f"  [KENKAKU] ページ{pid}: {type(e).__name__}"
-                        f" → リトライ{attempt + 1}/{_KENKAKU_MAX_RETRIES}（{_KENKAKU_RETRY_BACKOFF:.0f}s待ち）"
+                        f" → リトライ{attempt + 1}/{_KENKAKU_MAX_RETRIES}（{delay:.0f}s待ち）"
                     )
-                    time.sleep(_KENKAKU_RETRY_BACKOFF)
+                    time.sleep(delay)
                     continue
                 out(f"  [KENKAKU] ページ{pid}: ERROR {type(e).__name__}: {e}")
                 r = None

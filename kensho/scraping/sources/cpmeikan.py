@@ -6,7 +6,7 @@ import re
 import time
 from typing import Any
 
-from .common import HEADERS, fetch, has_skip_keyword
+from .common import HEADERS, _fetch_with_retry, has_skip_keyword
 
 # ── 第4収集源: cp.meikan.org（キャンペーン名鑑）──
 _CPMEIKAN_BASE: str = "https://cp.meikan.org/xcp"
@@ -28,7 +28,8 @@ def scrape_cpmeikan(out: Any, processed_set: set[str], account_keys: list[str]) 
             page_url = f"{_CPMEIKAN_BASE}/{page_num}/"
 
         try:
-            code, html, _ = fetch(page_url)
+            # 指数バックオフ付きリトライ（ConnectTimeout削減）。最終失敗時は code=0 で break。
+            code, html, _ = _fetch_with_retry(page_url, timeout=15)
             if code != 200:
                 out(f"  [CPMK] ページ{page_num}: HTTP {code} - 終了")
                 break

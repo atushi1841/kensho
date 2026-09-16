@@ -59,7 +59,7 @@ def test_scrape_kema_pagination_dedup(monkeypatch: pytest.MonkeyPatch) -> None:
             return 404, "", url
         return 200, "<html></html>", url
 
-    monkeypatch.setattr(kema, "fetch", fake_fetch)
+    monkeypatch.setattr(kema, "_fetch_with_retry", fake_fetch)
 
     log = _Log()
     items = kema.scrape_kema(log, set(), ["atushi16"])
@@ -87,7 +87,7 @@ def test_scrape_kema_deadline_and_winner(monkeypatch: pytest.MonkeyPatch) -> Non
     def fake_fetch(url: str, **_: Any) -> tuple[int, str, str]:
         return 200, html, url
 
-    monkeypatch.setattr(kema, "fetch", fake_fetch)
+    monkeypatch.setattr(kema, "_fetch_with_retry", fake_fetch)
     log = _Log()
     items = kema.scrape_kema(log, set(), ["atushi16"])
 
@@ -107,7 +107,7 @@ def test_scrape_kema_process_skip(monkeypatch: pytest.MonkeyPatch) -> None:
     def fake_fetch(url: str, **_: Any) -> tuple[int, str, str]:
         return 200, html, url
 
-    monkeypatch.setattr(kema, "fetch", fake_fetch)
+    monkeypatch.setattr(kema, "_fetch_with_retry", fake_fetch)
     log = _Log()
     items = kema.scrape_kema(log, {"https://x.com/a/status/111"}, ["atushi16"])
 

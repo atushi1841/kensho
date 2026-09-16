@@ -1,8 +1,8 @@
 """
 Tests for kensho/scraping/sources/kenkaku.py — critic v144 retryロジックの恒久モックテスト。
 
-対象仕様（commit 7448138, kenkaku.py L24-26）:
-- _KENKAKU_MAX_RETRIES=2 / _KENKAKU_RETRY_BACKOFF=2.0
+対象仕様（commit 7448138, kenkaku.py L24-26 + critic対策）:
+- _KENKAKU_MAX_RETRIES=2 / _KENKAKU_RETRY_BACKOFF=2.0（指数バックオフ: base 2.0 * 2**attempt）
 - fetchのみリトライ対象。非200は即スキップ（リトライ不発火＝往来動作の回帰防止）
 - 最終失敗時はそのページだけスキップ、他ページは続行
 ネットワーク・sleepは全てmock（tests/AGENTS.mdルール準拠）。
@@ -114,7 +114,7 @@ def _run_scrape() -> tuple[list[str], list[dict[str, Any]]]:
 
 
 class TestRetryConstants:
-    """リトライ定数: kenkaku.py L25-26 の v144 仕様との整合アサーション"""
+    """リトライ定数: kenkaku.py L25-26 の v144 + critic対策（指数バックオフ）仕様との整合アサーション"""
 
     def test_max_retries_is_2(self) -> None:
         assert kenkaku._KENKAKU_MAX_RETRIES == 2
@@ -125,7 +125,8 @@ class TestRetryConstants:
     def test_backoff_sleep_uses_constant(self, sleep_spy: list[float], client_factory: Any) -> None:
         client_factory({_URL1: [httpx.ConnectTimeout("t"), _resp(200, _ITEM_HTML)]})
         _run_scrape()
-        assert kenkaku._KENKAKU_RETRY_BACKOFF in sleep_spy
+        # 1回目のリトライ待機 = base 2.0 * 2**0 = 2.0
+        assert kenkaku._KENKAKU_RETRY_BACKOFF * (2**0) in sleep_spy
 
 
 class TestRetrySuccess:
@@ -142,7 +143,8 @@ class TestRetrySuccess:
         assert items[0]["x_url"] == "https://x.com/testuser/status/1234567890123"
         assert items[0]["source"] == "ken-kaku"
         assert factory.calls.count(_URL1) == 2
-        assert sum(1 for s in sleep_spy if s == 2.0) == 1, "固定バックオフ2.0sが1回だけ"
+        # 1回目のリトライ待機 = 指数バックオフ base 2.0 * 2**0 = 2.0
+        assert sum(1 for s in sleep_spy if s == kenkaku._KENKAKU_RETRY_BACKOFF) == 1, "指数バックオフ(2.0s)が1回だけ"
 
     def test_success_on_third_attempt(self, sleep_spy: list[float], client_factory: Any) -> None:
         # リトライ2回（=合計3アテンプト）目まで許容される
@@ -174,8 +176,9 @@ class TestFinalFailureSkipsPageOnly:
         assert factory.calls.count(_URL2) == 1
         assert len(items) == 1
         assert any(f"ページ{_PAGE2}" in m or "✅" in m for m in logs)
-        # 失敗ページ後も0.3sの間隔維持 + バックオフ2.0×2
-        assert sum(1 for s in sleep_spy if s == 2.0) == 2
+        # 失敗ページ後も0.3sの間隔維持 + 指数バックオフ（2.0s×1回 + 4.0s×1回）
+        assert sum(1 for s in sleep_spy if s == kenkaku._KENKAKU_RETRY_BACKOFF) == 1, "1回目=base 2.0s"
+        assert sum(1 for s in sleep_spy if s == kenkaku._KENKAKU_RETRY_BACKOFF * 2) == 1, "2回目=4.0s"
         assert any(s == 0.3 for s in sleep_spy)
 
     def test_total_page_calls_respect_retry_budget(self, sleep_spy: list[float], client_factory: Any) -> None:

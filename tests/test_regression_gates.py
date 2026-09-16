@@ -77,7 +77,8 @@ def test_kenkaku_per_page_retry_present() -> None:
     assert re.search(r"for\s+attempt\s+in\s+range\(\s*1\s*\+\s*_KENKAKU_MAX_RETRIES\s*\)", src), (
         "retryループ（1+max_attempts形式）が消えた（再発）"
     )
-    assert "time.sleep(_KENKAKU_RETRY_BACKOFF)" in src, "リトライ待機が消えた（再発）"
+    assert "_KENKAKU_RETRY_BACKOFF * (2**attempt)" in src, "指数バックオフ待機（base 2.0*2**attempt）が消えた（再発）"
+    assert "time.sleep(delay)" in src, "リトライ待機が消えた（再発）"
     # retryはfetchのみ対象: パース部（2つ目のtry）へ展開されていないこと
     assert src.count("except Exception as e:") >= 2, "fetch/parseの二層try構造が崩れた"
 
