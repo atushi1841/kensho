@@ -62,6 +62,9 @@ RAPIDAPI_MAX_RETRIES = 1  # 初回失敗後の再試行回数（backoff 5秒）
 RAPIDAPI_RETRY_BACKOFF = 5.0
 GUMROAD_SCRIPT = os.path.join(PROJECT_DIR, "scripts", "gumroad_sales_collect.js")
 GUMROAD_NODE = "/mnt/c/Program Files/nodejs/node.exe"
+# 提案A (t_d7db4ef7): Gumroad初売上を記録する受入基準ファイル。
+# kensho_revenue_collect 実行時に、gumroad_state.json が実売上を示せば追記される。
+GUMROAD_SALES_LOG = os.path.join(DATA_DIR, "gumroad_sales.log")
 MAX_ENTRIES = 90  # 直近90日保持
 
 # Gumroad CDP収集の恒久対策（t_cfe11a7c / critic v60）:
@@ -773,7 +776,10 @@ def update_gumroad_state_via_cdp() -> bool:
 
 
 def collect_gumroad() -> dict[str, Any]:
-    """Gumroad商品情報を読み込む（bundle_info.json + gumroad_state.json）。"""
+    """Gumroad商品情報を読み込む（bundle_info.json + gumroad_state.json）。
+
+    Note: GUMROAD_SALES_LOG受入基準ファイルは本ファイルの責務範囲外。
+    """
     result: dict[str, Any] = {
         "source": "gumroad",
         "products": 0,
