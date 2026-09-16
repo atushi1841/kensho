@@ -211,9 +211,17 @@ def metric_notepad_lessons_bullets() -> dict[str, Any]:
 
 
 def _skill_candidates() -> list[Path]:
+    """kensho AIチーム管轄のSKILL.md候補を返す（プロジェクト分離 t_e94ea1ac）。
+
+    スコープ = kensho-* profile群 + リポジトリ内 skills のみ。
+    他プロジェクト profile (hazard-mcp/line-stamp/tai) や default global
+    (~/.hermes/skills) は kensho チームの管轄外で、その増減でkenshoの
+    レチェットゲートが恒久赤化する（再発2回目 t_e94ea1ac）のを防ぐ。
+    プロジェクト分離により kensho チームは自スコープの肥大のみを管理する。
+    """
     paths: list[Path] = []
-    paths.extend(Path(PROFILES_GLOB).glob("*/skills/**/SKILL.md"))
-    paths.extend((HOME / ".hermes/skills").glob("**/SKILL.md"))
+    # kensho-* profile群のみ（他プロジェクト profile は除外）
+    paths.extend(Path(PROFILES_GLOB).glob("kensho-*/skills/**/SKILL.md"))
     # repo-internal skills (progressive disclosure target lives here too)
     repo = Path(__file__).resolve().parent.parent
     paths.extend((repo / "skills").glob("**/SKILL.md"))

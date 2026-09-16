@@ -187,7 +187,10 @@ def test_loop_health_band_reset_invariant() -> None:
 # 引き下げ（改善）はテストが自動で提案 → 人間がこの値を直して commit。
 # 引き上げ（悪化）は即fail = 該当クラスの再発。
 RATCHETS: dict[str, int] = {
-    "skill_md_oversize": 75,  # 9/15実測: 全profile+global SKILL.md >20KB（kensho系59/75）
+    # 9/17 t_e94ea1ac: プロジェクト分離 — _skill_candidates()をkensho-*+repoに限定。
+    # 実測値59 = kensho-* profile群の>20KB(他プロジェクトhazard-mcp/line-stamp/tai
+    # とdefault globalはスコープ外=数えない)。59→改善は人間がここを引き下げる。
+    "skill_md_oversize": 59,
     # 9/16 t_4e710909で両job修正済み → hard-zero化（dm_scan.py/apify_run_monitor.py実体配置+登録是正）
     "noagent_script_path_contract": 0,
 }
@@ -256,17 +259,18 @@ def test_gate_notepad_lessons_freshness() -> None:
 def test_gate_skill_md_ratchet() -> None:
     """[memory v104 / t_a8ede591] SKILL.md >20KBファイル数のレチェット。
 
-    全profile横断の肥大ファイルは一度に直せない（progressive disclosureは
-    1スキル1カード）ため、v104方式=基準値固定のratchetで悪化のみfail。
-    基準値=RATCHETS['skill_md_oversize']。改善したら台帳のdetail報告を見て
-    人間が基準値を引き下げる。
+    kensho-* profile群 + repo skills のスコープ（t_e94ea1ac: 他プロジェクト
+    profileはゲート対象外にプロジェクト分離）。肥大ファイルは一度に直せない
+    （progressive disclosureは1スキル1カード）ため、v104方式=基準値固定の
+    ratchetで悪化のみfail。基準値=RATCHETS['skill_md_oversize']。改善したら
+    台帳のdetail報告を見て人間が基準値を引き下げる。
     """
     g = _gate(_ledger(), "skill_md_oversize")
     if g["value"] < RATCHETS["skill_md_oversize"]:
         print(
             f"\n[ratchet] skill_md_oversize improved to {g['value']} — "
             f"lower RATCHETS['skill_md_oversize'] in tests/test_regression_gates.py "
-            f"(current {RATCHETS['skill_md_oversize']}), was 75 repo-wide/59 kensho-profile"
+            f"(current {RATCHETS['skill_md_oversize']}), scoped kensho-*+repo only"
         )
     assert g["value"] <= RATCHETS["skill_md_oversize"], (
         f"SKILL.md bloat regressed: {g['value']} > baseline {RATCHETS['skill_md_oversize']} — {g['detail']}"
