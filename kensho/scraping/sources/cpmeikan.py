@@ -99,7 +99,7 @@ def scrape_cpmeikan(out: Any, processed_set: set[str], account_keys: list[str]) 
                 })
                 out(f"    ✅ {x_url[:65]}...")
 
-            out(f"  [CPMK] ページ{page_num}: {len(x_urls)}件")
+            out(f"  [CPMK] ページ{page_num}: 走査{len(x_urls)}件（収集件数ではない）")
             time.sleep(0.3)
 
         except Exception as e:

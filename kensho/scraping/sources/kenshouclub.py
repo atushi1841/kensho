@@ -46,7 +46,7 @@ def scrape_kenshouclub(out: Any, processed_set: set[str], account_keys: list[str
                 out(f"  [KCLUB] ページ{page}: リンクなし - 終了")
                 break
 
-            out(f"  [KCLUB] ページ{page}: {len(article_links)}件の記事")
+            out(f"  [KCLUB] ページ{page}: 記事走査{len(article_links)}件（収集件数ではない）")
 
             for article_url in article_links:
                 try:

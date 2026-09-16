@@ -261,7 +261,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
             break
         page_new: int = sum(1 for link in links if link not in processed_set)
         all_detail_links.extend(links)
-        out(f"  ページ{page}: {len(links)}件（累計{len(all_detail_links)}件, 新規{page_new}件）")
+        out(f"  ページ{page}: 走査{len(links)}件 (累計{len(all_detail_links)}件, 新規{page_new}件 - 収集件数ではない)")
         # ★ knshowは最新順ソート。連続2ページで新規ゼロ＝以降も処理済みの古い案件のみ → 打ち切り
         #   収集を毎回全30ページスキャンして無駄な時間を使うのを防ぐ（2026-08-20最適化）
         if page_new == 0:

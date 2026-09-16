@@ -99,7 +99,7 @@ def scrape_kema(out: Any, processed_set: set[str], account_keys: list[str]) -> l
                 })
                 out(f"    ✅ {x_url[:65]}...")
 
-            out(f"  [KEMA] ページ{page}: {len(x_urls)}件(新規{page_new})")
+            out(f"  [KEMA] ページ{page}: 走査{len(x_urls)}件(新規{page_new}、収集件数ではない)")
             if page_new == 0:
                 empty_pages += 1
             else:

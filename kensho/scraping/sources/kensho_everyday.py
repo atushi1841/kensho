@@ -46,7 +46,7 @@ def scrape_kensho_everyday(out: Any, processed_set: set[str], account_keys: list
         out("  [KENS-EVERY] RSS: 記事リンクなし - 終了")
         return items
 
-    out(f"  [KENS-EVERY] RSS: {len(article_links)}件の記事")
+    out(f"  [KENS-EVERY] RSS: 記事走査{len(article_links)}件（収集件数ではない）")
 
     for article_url in article_links:
         try:

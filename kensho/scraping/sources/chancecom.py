@@ -68,11 +68,13 @@ def scrape_chancecom(out: Any, processed_set: set[str], account_keys: list[str])
                 out(f"  [CHANCE] ページ{page + 1}: detailリンクなし → 終了")
                 break
             detail_urls.extend(found)
-            out(f"  [CHANCE] ページ{page + 1}: {len(found)}件 (累計{len(detail_urls)}件)")
+            out(f"  [CHANCE] ページ{page + 1}: 走査{len(found)}件 (累計走査{len(detail_urls)}件、収集件数ではない)")
         except Exception as e:
             out(f"  [CHANCE] ページ{page + 1}: ERROR {e}")
             break
-    out(f"  [CHANCE] detail URL 計{len(detail_urls)}件")
+    # ここは一覧ページから拾った detail URL の走査数であり、収集件数ではない。
+    # 正しい収集件数は collector.py の Step3 `chance.com: N件` 行のみ（v168語義分離）。
+    out(f"  [CHANCE] detail URL 走査{len(detail_urls)}件（収集件数ではない）")
 
     # ── Step 2: 各detailページから情報抽出 ──
     for idx, detail_url in enumerate(detail_urls):
