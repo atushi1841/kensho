@@ -10,6 +10,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.kensho_winrate_analysis import (  # noqa: E402
+    _time_window_pick,
+    _within_h48,
     aggregate,
     apply_lag_bucket,
     default_week,
@@ -179,3 +181,100 @@ def test_main_cli_end_to_end(tmp_path: Path) -> None:
     assert "# 当選率源別レポート 2026W38" in md
     assert "unmatched" in md
     assert "| knshow | 1 | 1 | 100.00% |" in md
+
+
+def test_time_window_pick_prefers_nearby_campaign(tmp_path: Path) -> None:
+    """同handle複数候補から、当該垢の応募時刻が win 通知時刻の±48h内にある案件を選ぶ（critic v167）。"""
+    # win 通知 2026-09-10 12:00。campA は応募が同日（窓内）、campB は一週間前（窓外）。
+    near = {"applied": {"atushi16": "2026-09-10T11:00:00Z"}, "tweet_id": "111"}
+    far = {"applied": {"atushi16": "2026-09-03T12:00:00Z"}, "tweet_id": "222"}
+    win_time = parse_dt("2026-09-10 12:00")
+    assert win_time is not None
+    picked = _time_window_pick([near, far], "atushi16", win_time)
+    assert picked == near
+    # 窓内候補が無ければ None → 呼び出し側フォールバックへ
+    assert _time_window_pick([far], "atushi16", win_time) is None
+    # 時刻不明 win は None
+    assert _time_window_pick([near], "atushi16", None) is None
+
+
+def test_within_h48() -> None:
+    a = parse_dt("2026-09-10 12:00")
+    b = parse_dt("2026-09-09 13:00")  # 23h差 → 窓内
+    c = parse_dt("2026-09-08 12:00")  # 48h差ちょうど → 窓内
+    d = parse_dt("2026-09-08 11:00")  # 49h差 → 窓外
+    assert a is not None and b is not None and c is not None and d is not None
+    assert _within_h48(a, b) is True
+    assert _within_h48(a, c) is True
+    assert _within_h48(a, d) is False
+
+
+def test_load_campaigns_prefers_dedicated_tweet_id(tmp_path: Path) -> None:
+    """collected アイテムが専用 tweet_id フィールドを持つ場合は x_url 抽出より優先（critic v167）。"""
+    cp = tmp_path / "collected.json"
+    cp.write_text(
+        json.dumps({
+            "collected": [
+                {
+                    "x_url": "https://x.com/h/status/999000111222333444",
+                    "detail_url": "/detail/zzz.html",
+                    "tweet_id": "999000111222333445",
+                    "source": "knshow",
+                    "applied": {"atushi16": "2026-09-01T08:00:00Z"},
+                },
+                # tweet_id 欠損 → x_url の status セグメントへフォールバック
+                {
+                    "x_url": "https://x.com/h2/status/123456789012345678",
+                    "detail_url": "/detail/yyy.html",
+                    "tweet_id": None,
+                    "source": "twscrape",
+                    "applied": {},
+                },
+            ]
+        }),
+        encoding="utf-8",
+    )
+    camps = load_campaigns([str(cp)])
+    values = list(camps.values())
+    by_x = {c["handle"]: c for c in values}
+    assert by_x["h"]["tweet_id"] == "999000111222333445"  # 専用フィールド優先
+    assert by_x["h2"]["tweet_id"] == "123456789012345678"  # フォールバック
+
+
+def test_handle_match_uses_time_window_over_latest(tmp_path: Path) -> None:
+    """win 通知時刻±48h内の応募を持つ案件を、同handle候補から選ぶ（最新応募でなく）。"""
+    cp = tmp_path / "collected.json"
+    # 同handle 'shopX' の2案件：candA は応募時刻が win と近い（窓内）、candB は遠い
+    cp.write_text(
+        json.dumps({
+            "collected": [
+                {
+                    "x_url": "https://x.com/shopX/status/111111111111111111",
+                    "detail_url": "/detail/a.html",
+                    "tweet_id": "111111111111111111",
+                    "source": "knshow",
+                    "applied": {"atushi16": "2026-09-10T11:00:00Z"},
+                },
+                {
+                    "x_url": "https://x.com/shopX/status/200000000000000000",
+                    "detail_url": "/detail/b.html",
+                    "tweet_id": "200000000000000000",
+                    "source": "twscrape",
+                    "applied": {"atushi16": "2026-08-01T12:00:00Z"},
+                },
+            ]
+        }),
+        encoding="utf-8",
+    )
+    wp = tmp_path / "dm_wins.json"
+    wp.write_text(
+        json.dumps({
+            "atushi16": [_win("@shopX", "当選", t="2026-09-10 12:00")],
+        }),
+        encoding="utf-8",
+    )
+    matched, _ = match_wins(load_wins(str(wp)), load_campaigns([str(cp)]))
+    assert len(matched) == 1
+    # 時刻窓で candA (tweet_id=111111111111111111) が選ばれる
+    assert matched[0]["campaign"]["tweet_id"] == "111111111111111111"
+    assert matched[0]["key"] == "handle"  # handle 起点の照合のまま

@@ -94,7 +94,13 @@ def load_campaigns(paths: list[str]) -> dict[str, dict[str, Any]]:
                 continue
             x_url = it.get("x_url") or ""
             m = _X_URL_RE.search(x_url)
-            tweet_id = m.group(2) if m else ""
+            # 専用 tweet_id フィールドを優先し、x_url 正規表現抽出をフォールバックとする
+            # （収集経路により x_url に status セグメントが無い場合でも tweet_id が特定できる）(critic v167)
+            tweet_id = (
+                str(it.get("tweet_id") or "").strip()
+                if it.get("tweet_id") not in (None, "")
+                else (m.group(2) if m else "")
+            )
             handle = m.group(1).lower() if m else ""
             detail = it.get("detail_url") or ""
             key = tweet_id or detail
@@ -214,6 +220,37 @@ def extract_tweet_ids(text: str) -> set[str]:
     return ids
 
 
+def _within_h48(a: datetime, b: datetime) -> bool:
+    """±48時間の時刻窓内か判定（critic v167 handle+時刻窓フォールバック用）。"""
+    return b is not None and a is not None and abs((a - b).total_seconds()) <= 48 * 3600
+
+
+def _time_window_pick(
+    pool: list[dict[str, Any]],
+    acct: str,
+    win_time: datetime | None,
+) -> dict[str, Any] | None:
+    """同handle候補から、当該垢の応募時刻が win 通知時刻の ±48h 窓内にある案件を最優先で選ぶ。
+
+    窓内候補が無ければ None を返し、呼び出し側の既存フォールバック（最新応募）に委ねる。
+    複数窓内候補の場合は応募時刻が win 時刻に最も近いものを採用。 (critic v167)
+    """
+    if win_time is None:
+        return None
+    scored: list[tuple[float, dict[str, Any]]] = []
+    for c in pool:
+        applied_ts = (c.get("applied") or {}).get(acct)
+        applied_dt = parse_dt(applied_ts or "")
+        if applied_dt is None:
+            continue
+        if _within_h48(applied_dt, win_time):
+            scored.append((abs((applied_dt - win_time).total_seconds()), c))
+    if not scored:
+        return None
+    scored.sort(key=lambda kv: kv[0])
+    return scored[0][1]
+
+
 def match_wins(
     wins: list[dict[str, Any]], campaigns: dict[str, dict[str, Any]]
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
@@ -250,12 +287,24 @@ def match_wins(
             with_applied = [c for c in cands if acct in c["applied"]]
             pool = with_applied or cands
             if pool:
-                # 複数該当時は直近応募（最新タイムスタンプ）の案件を採用
-                camp = max(
-                    pool,
-                    key=lambda c: max(c["applied"].values(), default=""),
-                )
-                key = "handle"
+                # 時刻窓(±48h)+垢一致のファジー照合を最優先（critic v167）
+                # 応募時刻が当選通知時刻の近傍にある案件を選ぶ → 同handle多数時の混同抑制。
+                # これは handle 起点の照合（DM本文の tweet_id 一致ではない）なので key=handle のまま保持。
+                win_dt = parse_dt(win.get("message_time") or "")
+                tw = _time_window_pick(pool, acct, win_dt)
+                if tw is not None:
+                    camp, key = tw, "handle"
+                else:
+                    # 窓内候補なし → 既存フォールバック（当該垢の最新応募案件）
+                    camp = (
+                        max(
+                            with_applied,
+                            key=lambda c: max(c["applied"].values(), default=""),
+                        )
+                        if with_applied
+                        else max(pool, key=lambda c: max(c["applied"].values(), default=""))
+                    )
+                    key = "handle"
         if camp is None:
             unmatched.append(win)
         else:
