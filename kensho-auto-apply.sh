@@ -75,18 +75,18 @@ STAGGER_MOD=${KENSO_STAGGER_MOD:-10}   # 0で無効化（ロールバック）
 spawned=0
 for acct in $ACCOUNTS; do
   # 1) その垢の orchestrator が既に動いている → スキップ（二重実行防止）
-  if pgrep -f "kensho/orchestrator.py --account $acct" >/dev/null 2>&1; then
+  if pgrep -f "[k]ensho/orchestrator.py --account $acct" >/dev/null 2>&1; then
     continue
   fi
   # 2) 同時実行数キャップ
-  running=$(pgrep -cf "kensho/orchestrator.py --account" 2>/dev/null || echo 0)
+  running=$(pgrep -cf "[k]ensho/orchestrator.py --account" 2>/dev/null || echo 0)
   if [ "$running" -ge "$MAX_CONCURRENT" ]; then
     log "同時実行上限($MAX_CONCURRENT)到達 → 残りは次tickで回す"
     break
   fi
   # 2b) RAM上限ガード（6垢同時のFirefox OOM防止、安全弁）
   #   available <= RAM_SAFETY_THRESHOLD なら新規スポーンしない（稼働垢の進行は優先）
-  RAM_SAFETY_THRESHOLD="${KENSOHO_RAM_GUARD:-3.0}"  # 残り3GB未満で抑制
+  RAM_SAFETY_THRESHOLD="${KENSOHO_RAM_GUARD:-3}"  # 残り3GB未満で抑制
   avail_gb=$(free -g | awk '/^Mem:/{print $7+0}')
   if [ "$avail_gb" -lt "$RAM_SAFETY_THRESHOLD" ]; then
     log "RAM残り${avail_gb}GB<${RAM_SAFETY_THRESHOLD}GB → 新規スポーン抑制（OOM防止）"
@@ -105,9 +105,9 @@ for acct in $ACCOUNTS; do
     cd '$PROJECT_DIR'
     export HOME=/home/atushi PYTHONPATH='$PROJECT_DIR'
     # 覚醒後ガード: ①二重実行 ②同時実行数 ③RAM（前tick稼働分をカウント）
-    if pgrep -f 'kensho/orchestrator.py --account $acct' >/dev/null 2>&1; then exit 0; fi
-    if [ \$(pgrep -cf 'kensho/orchestrator.py --account' 2>/dev/null || echo 0) -ge $MAX_CONCURRENT ]; then exit 0; fi
-    if [ \$(free -g | awk '/^Mem:/{print \$7+0}') -lt ${KENSOHO_RAM_GUARD:-3.0} ]; then exit 0; fi
+    if pgrep -f '[k]ensho/orchestrator.py --account $acct' >/dev/null 2>&1; then exit 0; fi
+    if [ \$(pgrep -cf '[k]ensho/orchestrator.py --account' 2>/dev/null || echo 0) -ge $MAX_CONCURRENT ]; then exit 0; fi
+    if [ \$(free -g | awk '/^Mem:/{print \$7+0}') -lt ${KENSOHO_RAM_GUARD:-3} ]; then exit 0; fi
     '$VENV_PY' kensho/orchestrator.py --account '$acct'
   " >>"$LOG_FILE" 2>&1 &
   spawned=$((spawned+1))
