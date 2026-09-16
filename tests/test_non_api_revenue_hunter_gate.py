@@ -418,6 +418,11 @@ class TestMainLoopIntegration:
 
         monkeypatch.setattr(hunter, "SOURCES", [])
         monkeypatch.setattr(hunter, "classify_seed", _hi_matches)
+        # v162 guard は実ボードDBを走査するため決定論化 (t_f5f3bc95 テスト衛生)。
+        # モックしないと open案件とのトークン一致で comment代替が上限外に積まれ、
+        # create件数のアサーションが実ボード状態に依存して不安定になる。
+        monkeypatch.setattr(hunter, "_hunter_guard_scan", lambda t, b: [])
+        monkeypatch.setattr(hunter, "_hunter_guard_comment", lambda *a, **k: False)
 
         # fetch 系を差し替えて1ソースから10件返す
         def fake_fetch_hn_list(url, limit):
