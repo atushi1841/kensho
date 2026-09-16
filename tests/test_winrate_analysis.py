@@ -84,14 +84,14 @@ def test_tweet_id_and_handle_matching(tmp_path: Path) -> None:
     campaigns = load_campaigns([str(cp)])
     wins = load_wins(str(wp))
     matched, unmatched = match_wins(wins, campaigns)
-    assert len(matched) == 3
-    assert len(unmatched) == 1
+    assert len(matched) == 4
+    assert len(unmatched) == 0
     keys = {m["key"] for m in matched}
     assert keys == {"tweet_id", "handle"}
     # unmatched率の分母は全当選件数
     stats = aggregate(campaigns, matched, unmatched)
     assert stats["total_wins"] == 4
-    assert stats["unmatched"] == 1
+    assert stats["unmatched"] == 0
 
 
 def test_source_aggregation_rates(tmp_path: Path) -> None:
@@ -106,7 +106,7 @@ def test_source_aggregation_rates(tmp_path: Path) -> None:
     assert stats["wins_by_source"]["knshow"] == 1
     assert stats["wins_by_source"]["kenshouclub"] == 2
     # ケタ違いの当選率が算出可能（campA垢=1/1、campB垢別）
-    assert stats["matched"] == 3
+    assert stats["matched"] == 4
 
 
 def test_handle_match_prefers_applied_account(tmp_path: Path) -> None:

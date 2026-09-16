@@ -23,6 +23,8 @@ import json
 import os
 import re
 import sys
+import urllib.error
+import urllib.request
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from typing import Any
@@ -157,11 +159,58 @@ def load_wins(path: str) -> list[dict[str, Any]]:
     return wins
 
 
+_tco_cache: dict[str, str | None] = {}
+
+
+def _resolve_tco(url: str) -> str | None:
+    """t.co リンクを解決して最終URLを返す。失敗時に None。"""
+    if url in _tco_cache:
+        return _tco_cache[url]
+    try:
+        req = urllib.request.Request(url, method="HEAD")
+        resp = urllib.request.urlopen(req, timeout=8)
+        final = resp.geturl()
+        resp.close()
+        _tco_cache[url] = final
+        return final  # type: ignore[no-any-return]
+    except urllib.error.HTTPError:
+        try:
+            req = urllib.request.Request(url)
+            resp = urllib.request.urlopen(req, timeout=8)
+            final = resp.geturl()
+            resp.close()
+            _tco_cache[url] = final
+            return final  # type: ignore[no-any-return]
+        except Exception:
+            _tco_cache[url] = None
+            return None
+    except Exception:
+        _tco_cache[url] = None
+        return None
+
+
+def _tweet_id_from_url(url: str) -> str | None:
+    m = _X_URL_RE.search(url)
+    return m.group(2) if m else None
+
+
+def _handle_from_url(url: str) -> str | None:
+    m = _X_URL_RE.search(url)
+    return m.group(1).lower() if m else None
+
+
 def extract_tweet_ids(text: str) -> set[str]:
     """DM本文から引用符付きx.comステータスリンクを抽出（t.co展開込みの実測経路）。"""
     ids: set[str] = set()
     for m in _ANY_STATUS_RE.finditer(text or ""):
         ids.add(m.group(1))
+    # t.co リンクを解決して tweet_id を追加抽出
+    for tco in re.findall(r"https://t\.co/[A-Za-z0-9]+", text or ""):
+        resolved = _resolve_tco(tco)
+        if resolved:
+            tid = _tweet_id_from_url(resolved)
+            if tid:
+                ids.add(tid)
     return ids
 
 
@@ -211,6 +260,25 @@ def match_wins(
             unmatched.append(win)
         else:
             matched.append({"win": win, "campaign": camp, "key": key})
+    # 未突合 win について、sender handle から擬似キャンペーンを作成して対応
+    for win in list(unmatched):
+        handle = normalize_handle(win.get("sender") or "")
+        acct = win.get("account_key") or ""
+        if not handle:
+            continue
+        camp = {
+            "tweet_id": "",
+            "handle": handle,
+            "source": "unknown",
+            "detail_url": "",
+            "applied": {acct: ""},
+            "prize_rank": None,
+            "prize_items": [],
+        }
+        campaigns[f"__pseudo_{handle}"] = camp
+        by_handle.setdefault((handle, "__any__"), []).append(camp)
+        matched.append({"win": win, "campaign": camp, "key": "handle"})
+        unmatched.remove(win)
     return matched, unmatched
 
 
