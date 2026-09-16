@@ -46,7 +46,9 @@ scheduler.py の path guard（resolve()後の実体が scripts dir 外 → Block
 - kensho-revenue-worker: 1 ✅
 - kensho-critic / kensho-qa / kensho-revenue-qa: 0（変更なし）
 
-## verification_evidence（実測コマンド出力引用）
+## verification_evidence
+
+t_b2855688 の受け入れ条件①〜③について、実施中の実測コマンド出力を引用する。
 
 1. 改訂マーカー出現数（受け入れ条件①）:
 
