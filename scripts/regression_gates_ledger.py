@@ -92,28 +92,56 @@ def metric_result_empty_done() -> dict[str, Any]:
     }
 
 
+def evaluate_crash_recovery(con: sqlite3.Connection, cutoff: float) -> dict[str, Any]:
+    """crashrunを「回収判定」付きで分類する純関数（テスト可能化のため分離）。
+
+    回収済み = crashより後に同一タスクの新runがある or タスクがdone/archived終端。
+    未回収 = crashが最後のrunのまま板書無しで放置。返り値value=未回収件数。
+    """
+    rows = con.execute(
+        "SELECT r.task_id, r.started_at FROM task_runs r WHERE r.outcome='crashed' AND r.started_at>=?",
+        (cutoff,),
+    ).fetchall()
+    unresolved: dict[str, int] = {}
+    recovered = 0
+    for r in rows:
+        tid, crashed_at = str(r["task_id"]), float(r["started_at"])
+        trow = con.execute("SELECT status FROM tasks WHERE id=?", (tid,)).fetchone()
+        if trow is not None and str(trow["status"]) in ("done", "archived"):
+            recovered += 1
+            continue
+        later = con.execute(
+            "SELECT COUNT(*) c FROM task_runs WHERE task_id=? AND started_at>?",
+            (tid, crashed_at),
+        ).fetchone()["c"]
+        if later:
+            recovered += 1
+            continue
+        unresolved[tid] = unresolved.get(tid, 0) + 1
+    return {
+        "value": sum(unresolved.values()),
+        "limit": 0,
+        "detail": f"unrecovered rc=0 crashes in last 24h: {unresolved} "
+        f"(raw crashed runs={len(rows)}, recovered-by-restart-or-terminal={recovered} excluded; "
+        "recurring-signal; triage per-task, do not treat as one-shot)",
+    }
+
+
 def metric_protocol_violation_crash() -> dict[str, Any]:
-    """rc=0でcomplete/blockせず終了するプロトコル違反（直近24h）。
+    """rc=0でcomplete/blockせず終了するプロトコル違反（直近24h・未回収のみ計上）。
 
     病理: workerが板書せず消える→タスクがreadyへ戻り重複劳动。
     恒久対策はプロンプト側（チェックポイント打刻+完了条件充足即done）なので、
     pytestは再発「検知」のみ担う（ブロッキングし続けることはできない）。
+
+    v167改訂 (t_f5f3bc95 / QA run524): 生のcrash件数を数えると、終端済み案件の
+    crashが24h窓に約24h残り続けて全workerのpytest -x自己ループを恒久赤で阻害する
+    （9/16実測 5件/24h、うち再run回収済み4・done終端2）。回収判定は
+    evaluate_crash_recovery()へ分離しユニットテスト対象。未回収だけが即座に赤。
     """
     con = _db()
     cutoff = time.time() - 24 * 3600
-    rows = con.execute(
-        "SELECT r.task_id, COUNT(*) c FROM task_runs r"
-        " WHERE r.outcome='crashed' AND r.started_at>=?"
-        " GROUP BY r.task_id",
-        (cutoff,),
-    ).fetchall()
-    offenders = {r["task_id"]: r["c"] for r in rows}
-    return {
-        "value": sum(offenders.values()),
-        "limit": 0,
-        "detail": f"crashed rc=0 runs in last 24h: {offenders} (recurring-signal; "
-        "triage per-task, do not treat as one-shot)",
-    }
+    return evaluate_crash_recovery(con, cutoff)
 
 
 def metric_checkpoint_on_exhausted_runs() -> dict[str, Any]:

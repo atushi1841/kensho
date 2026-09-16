@@ -187,7 +187,8 @@ def test_loop_health_band_reset_invariant() -> None:
 # 引き上げ（悪化）は即fail = 該当クラスの再発。
 RATCHETS: dict[str, int] = {
     "skill_md_oversize": 75,  # 9/15実測: 全profile+global SKILL.md >20KB（kensho系59/75）
-    "noagent_script_path_contract": 0,  # 9/16 t_4e710909で両job修正済み → hard-zero化（dm_scan.py/apify_run_monitor.py実体配置+登録是正、台帳value=0実測）
+    # 9/16 t_4e710909で両job修正済み → hard-zero化（dm_scan.py/apify_run_monitor.py実体配置+登録是正）
+    "noagent_script_path_contract": 0,
 }
 
 
@@ -218,13 +219,17 @@ def test_gate_result_column_empty_after_v151() -> None:
 
 
 def test_gate_protocol_violation_crash() -> None:
-    """[reflection v103系] 直近24hにrc=0でcomplete/blockせず消えたrun=0件。
+    """[reflection v103系 / t_f5f3bc95] 直近24hに「未回収」のrc=0 silent exit=0件。
 
     失敗史: t_39687587 4連続・t_aeb1bb44 4連続のprotocol violation（crashed）。
     板書しない完結/中断はカードがreadyへ戻り浪費するため検知専用でhard-zero。
+    v167改訂(t_f5f3bc95): crash後に同一タスクの再run前進済み・またはタスクが
+    done/archived終端済みのものは「回収済み」として除外。crashが最後のrunのまま
+    板書無しで放置されている未回収案件だけを数える（恒久赤で他workerのpytest -x
+    自己ループを阻害する構造問題を解消、QA run524起票）。
     """
     g = _gate(_ledger(), "protocol_violation_crash_24h")
-    assert g["value"] == 0, f"silent-exit recurrence: {g['detail']}"
+    assert g["value"] == 0, f"unrecovered silent-exit recurrence: {g['detail']}"
 
 
 def test_gate_checkpoint_on_exhaustion() -> None:
