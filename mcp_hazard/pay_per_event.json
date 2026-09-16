@@ -1,0 +1,31 @@
+{
+  "name": "get_hazard",
+  "title": "Get Hazard Risk",
+  "description": "指定住所のハザードリスクレベルを取得 (flood, landslide, tsunami, liquefaction 各0-3)",
+  "pricing": {
+    "per_call": 0.005,
+    "currency": "USD"
+  },
+  "input": {
+    "type": "object",
+    "properties": {
+      "address": {"type": "string", "description": "住所"},
+      "lat": {"type": "number", "description": "緯度"},
+      "lon": {"type": "number", "description": "経度"}
+    },
+    "required": ["address", "lat", "lon"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "address": {"type": "string"},
+      "lat": {"type": "number"},
+      "lon": {"type": "number"},
+      "flood": {"type": "integer", "minimum": 0, "maximum": 3},
+      "landslide": {"type": "integer", "minimum": 0, "maximum": 3},
+      "tsunami": {"type": "integer", "minimum": 0, "maximum": 3},
+      "liquefaction": {"type": "integer", "minimum": 0, "maximum": 3},
+      "sources": {"type": "array"}
+    }
+  }
+}

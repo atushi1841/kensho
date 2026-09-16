@@ -1,0 +1,19 @@
+{
+  "name": "mcp-hazard",
+  "version": "0.1.0",
+  "description": "日本物件ハザードリスクMCP - 洪水/土砂/津波/液状化のリスクレベルを返すModel Context Protocolサーバー",
+  "main": "server.py",
+  "author": "atushi",
+  "license": "MIT",
+  "usesStandbyMode": true,
+  "webServerMcpPath": "/mcp",
+  "scripts": {
+    "start": "python server.py"
+  },
+  "env": {
+    "MLIT_API_KEY": {
+      "description": "MLIT不動産情報ライブラリAPIキー",
+      "required": false
+    }
+  }
+}
