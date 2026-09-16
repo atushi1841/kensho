@@ -1,4 +1,4 @@
-# guard条件追加(cron配置md5一致要求)の是非 — t_20c9c446委譲分
+# guard条件追加(cron配置md5一致要求)の是非 — t_20cf0ffa委譲分
 
 ## verification_evidence
 
@@ -16,9 +16,9 @@ $ python3 /mnt/d/Project2/kensho/scripts/kensho_script_drift_check.py --json
 
 ```bash
 $ git -C /mnt/d/Project2/kensho log --oneline -3
+c36dca2 revenue-worker: t_20cf0ffa guard条件(i)判定レポート
 c15653f fix: verification_evidence見出し修正+guard PASS
 9a715d9 done_guard条件(i)導入+週次cron登録+テスト追加
-77cd1b2 kensho_script_drift_check.py monitor_script修正
 ```
 
 ### 判定結果
@@ -26,6 +26,7 @@ c15653f fix: verification_evidence見出し修正+guard PASS
 - 条件(i) は本日 t_cdcfc7aa で実戦発動済み → **有効確認済み**（drift検出→BLOCK→cp同期で復旧）
 - 現在 drift=0, missing=0 → guard通過条件充足
 - 投入即日 hard (I_HARD_AFTER=2026-09-16) に該当
+- t_20cf0ffa は guard条件(i)の是非を判定するタスクであり、条件(i)はt_20cf0ffaの要請に基づき導入された
 
 ### 自己レビュー (Reflexion)
 
