@@ -108,7 +108,8 @@ for acct in $ACCOUNTS; do
     if pgrep -f '[k]ensho/orchestrator.py --account $acct' >/dev/null 2>&1; then exit 0; fi
     if [ \$(pgrep -cf '[k]ensho/orchestrator.py --account' 2>/dev/null || echo 0) -ge $MAX_CONCURRENT ]; then exit 0; fi
     if [ \$(free -g | awk '/^Mem:/{print \$7+0}') -lt ${KENSOHO_RAM_GUARD:-3} ]; then exit 0; fi
-    '$VENV_PY' kensho/orchestrator.py --account '$acct'
+    ORCH_ARG='kensho/orchestrator.py'
+    '$VENV_PY' \$ORCH_ARG --account '$acct'
   " >>"$LOG_FILE" 2>&1 &
   spawned=$((spawned+1))
 done
@@ -136,4 +137,3 @@ r = check_proxy_health(cfg)
 print(f"[PROXY-CHECK] alive={r['alive_ports']} dead={r['dead_ports']} restored={r['restored_ports']} ({time.time()-t0:.1f}s)")
 PY
 ) 9>"$LOCK_DIR/proxy-check.lock" &
-
