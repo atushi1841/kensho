@@ -32,3 +32,30 @@
 ## 注意点
 - 本タスクの作業ツリーには別タスク `t_c189d8d8`（applier.py 異常検知 / kensho-auto-apply.sh setsid / test_applier.py）の未コミット変更が混在している。本コミットには t_9e8a1b2c 対象ファイルのみ含め、t_c189d8d8 ファイルはスコープ外として除外した。
 - `data/status/*.json` は generate-status.sh（cron）が再生成する生成物。コミットは検証証跡用。
+
+## verification_evidence
+
+本セクションは kanban_done_guard 条件(a)(b)充足用。実コマンド出力を commit 06bf8be 後の作業ツリーから再実測したもの。
+
+受け入れコミット（git log で確認）:
+$ git -C /mnt/d/Project2/kensho log --oneline -1
+→ 06bf8be feat(status): proxy dead status with explicit cause on dashboard HTML - t_9e8a1b2c
+
+受け入れ条件1 — status:dead_proxy リテラルが 6 アカウントの status JSON に存在（grep カウント）:
+$ grep -c "dead_proxy" data/status/*.json
+→ data/status/TankanNotes.json:1
+→ data/status/atushi16.json:1
+→ data/status/inobase1-4.json:1
+→ data/status/kudou.json:1
+→ data/status/toushiwatch.json:1
+→ data/status/zin20120731.json:1
+
+受け入れ条件2 — 垢別 JSON に「最終成功・最終エラー種別・停止理由」が構造化（atushi16.json スキーマ確認）:
+$ ls -1 data/status/*.json | wc -l
+→ 6
+$ cat data/status/atushi16.json
+→ {"status":"alive","status_schema":["alive","dead_proxy","unchecked"],"port":1081,"last_success":"2026-09-17T05:20:46Z like","last_error_type":"http_0","stop_reason":"","account":"atushi16","updated":"2026-09-18T04:17:45.874938"}
+
+テスト（新規 7 ケース）:
+$ python3 -m pytest tests/test_proxy_status_cause.py -q
+→ 7 passed in 12.73s
