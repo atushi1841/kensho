@@ -28,7 +28,22 @@
 - 課金化は完了済み。残課題は **発見可能性（mcp.so掲載）** と **直近30日public run=0**（外部評価証拠の欠如）。
 - mcp.so 掲載の有料($39)／無料(issue)の選択は運営判断が必須 → 本カード完了時にQA/運営へ委譲し、人間のGO待ち。
 
-## 検証コマンド引用
+## verification_evidence
+証跡は報告本体（# 実測証拠 1-4）と下記実測ログ。対象: japan-market-mcp / Apify Actor 57SNehd4cHNFyUCj3 / task t_6836b239。実行時刻 2026-09-18 (JST)。
+
+$ curl -s https://api.apify.com/v2/acts/57SNehd4cHNFyUCj3 -H "Authorization: Bearer $APIFY_TOKEN" | jq '{isPublic, pp: .pricingInfos[0]}'
+→ isPublic:true, pricingModel:PAY_PER_EVENT, unitPricePerEvent:$0.001, apifyMarginPercentage:0.2, totalRuns:601, totalUsers:2
+
+$ curl -s https://57SNehd4cHNFyUCj3.apify.actor/mcp -o /dev/null -w "%{http_code}"
+→ 401
+
+$ getent hosts registry.mcp.so
+→ (NXDOMAIN / exit 2, 解決不可)
+
+$ curl -s -o /dev/null -w "%{http_code}" https://mcp.so/server/japan-market-mcp
+→ 404
+
+## 検証コマンド引用（原文）
 ```
 $ GET https://api.apify.com/v2/acts/57SNehd4cHNFyUCj3  → isPublic:true, PAY_PER_EVENT $0.001, 601runs
 $ curl https://57SNehd4cHNFyUCj3.apify.actor/mcp       → 401 api-token-missing
