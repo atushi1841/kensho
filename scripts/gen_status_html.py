@@ -326,6 +326,50 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
             )
         html += "</table></div>"
 
+    # ── プロキシ状態（2026-09-18 t_9e8a1b2c: 死んだプロキシを原因明記で表示）──
+    proxy = data.get("proxy")
+    if proxy and proxy.get("checked"):
+        per_account = proxy.get("accounts") or {}
+        rows_html = ""
+        for acct in sorted(per_account.keys()):
+            pa = per_account[acct]
+            pport = pa.get("port", "—")
+            pstatus = pa.get("status", "unchecked")
+            if pstatus == "dead_proxy":
+                state_badge = '<span class="badge bg-red">status:dead_proxy</span>'
+                stat_color = RED
+            elif pstatus == "alive":
+                state_badge = '<span class="badge bg-green">alive</span>'
+                stat_color = GREEN
+            else:
+                state_badge = '<span class="badge bg-yellow">unchecked</span>'
+                stat_color = YELLOW
+            last_success = pa.get("last_success") or "—"
+            last_error = pa.get("last_error_type") or "なし"
+            stop_reason = pa.get("stop_reason") or "—"
+            rows_html += (
+                f"<tr><td>{acct} <span class='num'>:{pport}</span></td>"
+                f"<td><span style='color:{stat_color};font-weight:700'>{state_badge}</span></td>"
+                f"<td class='num'>{last_success}</td>"
+                f"<td class='num'>{last_error}</td>"
+                f"<td class='num'>{stop_reason}</td></tr>"
+            )
+        if not rows_html:
+            rows_html = '<tr><td colspan="5" class="num">プロキシ状態データなし</td></tr>'
+        alive_txt = ", ".join(proxy.get("alive") or []) or "—"
+        proxy_badge = "✔ 正常" if proxy.get("ok") else "⚠ 不通あり"
+        proxy_color = GREEN if proxy.get("ok") else RED
+        html += (
+            '<div class="card"><div class="card-title">'
+            f"プロキシ状態 (ts={proxy.get('ts', '—')})</div>"
+            f'<div class="note">全体: <strong style="color:{proxy_color}">{proxy_badge}</strong>'
+            f'　👌生存: <span class="accent">{alive_txt}</span>'
+            f'　♻復旧: <span class="num">{proxy.get("restored", 0)}</span></div>'
+            "<table><tr><td>アカウント</td><td>状態</td><td>最終成功</td><td>最終エラー種別</td>"
+            f"<td>停止理由</td></tr>{rows_html}</table>"
+            f'<div class="note">{proxy.get("reason", "")}</div></div>'
+        )
+
     # ── UNUSED（応募停止済み）アカウント ──
     unused = data.get("unused_accounts", [])
     if unused:

@@ -2,6 +2,7 @@ import glob
 import json
 import os
 import re
+import sys
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from typing import Any
@@ -26,6 +27,11 @@ now = datetime.now()
 week_end = today + timedelta(days=(6 - today.weekday()))
 
 PROJECT_DIR = os.environ.get("PROJECT_DIR", "/mnt/d/Project2/kensho")
+# generate-status.sh は PYTHONPATH を設定せず python3 で直接呼ぶため、
+# プロジェクトパッケージ(kensho.utils.proxy_watchdog)が import できない。
+# 自前で project root を sys.path に追加して self-contained にする（2026-09-18 t_9e8a1b2c）。
+if PROJECT_DIR not in sys.path:
+    sys.path.insert(0, PROJECT_DIR)
 DATA_FILE = os.path.join(PROJECT_DIR, "data/collected.json")
 COUNT_FILE = os.path.join(PROJECT_DIR, "data/daily_counts.json")
 OUTPUT_FILE = os.path.join(PROJECT_DIR, "kensho-status.html")
@@ -603,6 +609,113 @@ for wlf in wifi_log_files:
             continue
 
 result["wifi"] = wifi_stats
+
+# ═══════════════════════════════════════════════
+# ── プロキシ状態（2026-09-18 t_9e8a1b2c: 死んだプロキシを原因明記で表示）──
+# kensho-auto-apply.sh が毎tick記録する `[PROXY-CHECK] alive=.. dead=.. restored=..`
+# を当日ログから抽出し、ポート→垢マッピング（proxy_watchdog.PROXY_ADAPTER_MAP）で
+# 「どの垢のプロキシが不通か」を可視化。復旧不可(アダプタ切断)等の原因は watchdog ログ由来。
+# 各垢の status/<acct>.json には「最終成功」「最終エラー種別」「停止理由」を明記し、
+# 死骸は status:dead_proxy で示す（受け入れ: grep dead_proxy data/status/*.json）。
+# ═══════════════════════════════════════════════
+from kensho.utils.proxy_watchdog import (  # noqa: E402  # type: ignore
+    PROXY_ADAPTER_MAP,
+    account_proxy_status,
+    build_proxy_panel,
+)
+
+# audit から垢別の「最終成功」「最終エラー種別」を抽出
+_proxy_last_success: dict[str, tuple[str, str]] = {}  # acct -> (ts, action)
+_proxy_last_error: dict[str, str] = {}  # acct -> error種別
+try:
+    with open(os.path.join(PROJECT_DIR, "data/audit.jsonl"), encoding="utf-8") as _af:
+        for _line in _af:
+            try:
+                _r = json.loads(_line)
+            except Exception:
+                continue
+            _ac = _r.get("account", "")
+            _st = _r.get("status", "")
+            _ts = _r.get("timestamp", "") or ""
+            _act = _r.get("action_type", "") or ""
+            if not _ac:
+                continue
+            if _st == "success":
+                _proxy_last_success[_ac] = (_ts, _act)
+            elif _st == "failed":
+                _proxy_last_error[_ac] = _r.get("error") or _r.get("reason") or "unknown"
+except Exception:
+    pass
+
+proxy_stats: dict[str, Any] = {
+    "ok": True,
+    "checked": False,
+    "alive": [],  # 垢リスト
+    "dead": [],  # [(acct, port)]
+    "restored": 0,
+    "reason": "",
+    "ts": "",
+    "accounts": {},
+}
+try:
+    _PORT_TO_ACCT: dict[int, str] = {p: a for a, (p, _ad) in PROXY_ADAPTER_MAP.items()}
+    # 当日ログ（最近のもの）から最後の [PROXY-CHECK] 行を探す
+    _proxy_log_files = sorted(glob.glob(os.path.join(LOG_DIR, "auto_*.log")), key=os.path.getmtime, reverse=True)
+    _alive_ports: list[int] = []
+    _dead_ports: list[int] = []
+    _restored = 0
+    _found = False
+    for _plf in _proxy_log_files[:10]:
+        try:
+            _txt = open(_plf, encoding="utf-8", errors="replace").read()
+        except Exception:
+            continue
+        _m = re.findall(r"\[PROXY-CHECK\] alive=\[([0-9,\s]*)\]\s+dead=\[([0-9,\s]*)\]\s+restored=(\d+)", _txt)
+        if not _m:
+            continue
+        _alive_s, _dead_s, _restored_s = _m[-1]
+        _alive_ports = [int(x) for x in _alive_s.split(",") if x.strip()]
+        _dead_ports = [int(x) for x in _dead_s.split(",") if x.strip()]
+        try:
+            _restored = int(_restored_s)
+        except ValueError:
+            _restored = 0
+        proxy_stats["ts"] = os.path.basename(_plf).replace("auto_", "").replace(".log", "")
+        _found = True
+        break
+    if _found:
+        proxy_stats["checked"] = True
+        # 全 PROXY_ADAPTER_MAP 垢について status/<acct>.json を生成
+        for _acct, (_port, _adapter) in PROXY_ADAPTER_MAP.items():
+            (_s_ts, _s_act) = _proxy_last_success.get(_acct, ("", ""))
+            _st = account_proxy_status(
+                port=_port,
+                alive_ports=_alive_ports,
+                dead_ports=_dead_ports,
+                success_ts=_s_ts,
+                success_action=_s_act,
+                last_error_type=_proxy_last_error.get(_acct, ""),
+            )
+            proxy_stats["accounts"][_acct] = _st
+        _panel = build_proxy_panel(_alive_ports, _dead_ports, _restored, proxy_stats["accounts"], ts=proxy_stats["ts"])
+        proxy_stats.update(_panel)
+except Exception as _pe:
+    proxy_stats["ok"] = False
+    proxy_stats["reason"] = f"プロキシ状態取得エラー: {str(_pe)[:80]}"
+result["proxy"] = proxy_stats
+
+# ── status/<acct>.json を垢別に書き出し（get 死人死骸の原因明記・検証: grep dead_proxy）──
+_STATUS_DIR = os.path.join(PROJECT_DIR, "data/status")
+try:
+    os.makedirs(_STATUS_DIR, exist_ok=True)
+    for _acct, _st in proxy_stats.get("accounts", {}).items():
+        _st_out = dict(_st)
+        _st_out["account"] = _acct
+        _st_out["updated"] = now.isoformat()
+        with open(os.path.join(_STATUS_DIR, f"{_acct}.json"), "w", encoding="utf-8") as _sf:
+            json.dump(_st_out, _sf, ensure_ascii=False, indent=2)
+except Exception:
+    pass
 
 with open("/tmp/kensho_status_data.json", "w") as f:
     json.dump(result, f, ensure_ascii=False, default=str)

@@ -1,0 +1,14 @@
+{
+  "status": "unchecked",
+  "status_schema": [
+    "alive",
+    "dead_proxy",
+    "unchecked"
+  ],
+  "port": 1087,
+  "last_success": "",
+  "last_error_type": "",
+  "stop_reason": "当該垢は現在の稼働対象外（config外）または未チェック",
+  "account": "toushiwatch",
+  "updated": "2026-09-18T04:17:45.874938"
+}

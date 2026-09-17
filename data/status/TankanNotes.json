@@ -1,0 +1,14 @@
+{
+  "status": "alive",
+  "status_schema": [
+    "alive",
+    "dead_proxy",
+    "unchecked"
+  ],
+  "port": 1085,
+  "last_success": "2026-09-17T07:02:31Z follow",
+  "last_error_type": "http_404",
+  "stop_reason": "",
+  "account": "TankanNotes",
+  "updated": "2026-09-18T04:17:45.874938"
+}

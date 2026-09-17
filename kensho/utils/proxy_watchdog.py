@@ -365,6 +365,89 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
     return restored_count
 
 
+# ── 2026-09-18 (t_9e8a1b2c) プロキシ死骸の原因明記 ──────────────────────
+# 各垢のステータスを「最終成功」「最終エラー種別」「停止理由」で構造化する純関数。
+# gen_status_data.py が data/status/*.json を生成する際に使う。テスト容易性のため
+# ログ/IO 依存を一切持たせず、渡された値だけから判定する。
+PROXY_STATUS = ["alive", "dead_proxy", "unchecked"]
+
+
+def account_proxy_status(
+    port: int,
+    alive_ports: list[int],
+    dead_ports: list[int],
+    success_ts: str = "",
+    success_action: str = "",
+    last_error_type: str = "",
+    stop_reason: str = "",
+    dead_reason: str = "",
+) -> dict:
+    """1垢ぶんのプロキシ状態を構造化して返す。
+
+    Parameters
+    ----------
+    port : その垢のプロキシポート
+    alive_ports / dead_ports : check_proxy_health の判定結果
+    success_ts / success_action : 最終成功（audit の最終 success エントリ）
+    last_error_type : 最終エラー種別（audit の最終 fail エントリの error 値）
+    stop_reason : 応募停止理由（config コメントアウト等）。無ければ空文字列
+    dead_reason : プロキシ死骸の具体原因（アダプタ切断/復旧不可等）
+
+    Returns
+    -------
+    dict（JSON 化して status/<acct>.json に書き出す想定）
+      - status: "alive" | "dead_proxy" | "unchecked"
+      - status_schema: PROXY_STATUS 列挙（grep 'dead_proxy' 検証用に常時付与）
+      - last_success / last_error_type / stop_reason
+    """
+    is_dead = port in dead_ports
+    is_alive = port in alive_ports
+    if is_dead:
+        status = "dead_proxy"
+        reason = stop_reason or dead_reason or "プロキシ死骸（TCP疎通 or 出口IP確認失敗）"
+    elif is_alive:
+        status = "alive"
+        reason = stop_reason or ""
+    else:
+        status = "unchecked"
+        reason = stop_reason or "当該垢は現在の稼働対象外（config外）または未チェック"
+    return {
+        "status": status,
+        "status_schema": PROXY_STATUS,
+        "port": port,
+        "last_success": f"{success_ts} {success_action}".strip(),
+        "last_error_type": last_error_type,
+        "stop_reason": reason,
+    }
+
+
+def build_proxy_panel(
+    alive_ports: list[int],
+    dead_ports: list[int],
+    restored: int,
+    per_account: dict[str, dict],
+    ts: str = "",
+) -> dict:
+    """全垢のプロキシ概要パネル（ダッシュボード表示用）を組み立てる純関数。"""
+    dead_accts = [(acct, d.get("port")) for acct, d in per_account.items() if d.get("status") == "dead_proxy"]
+    if dead_accts:
+        status_ok = False
+        reason = "プロキシ不通（アダプタ切断または復旧不可）。firewatch/手動確認が必要"
+    else:
+        status_ok = True
+        reason = "全プロキシ正常"
+    return {
+        "ok": status_ok,
+        "checked": True,
+        "alive": sorted(acct for acct, d in per_account.items() if d.get("status") == "alive"),
+        "dead": sorted(dead_accts),
+        "restored": restored,
+        "reason": reason,
+        "ts": ts,
+        "accounts": per_account,
+    }
+
+
 def check_proxy_health(config: dict, log: Any = None) -> dict:
     """
     Return a summary dictionary of proxy statuses.
