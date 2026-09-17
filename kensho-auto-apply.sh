@@ -71,6 +71,14 @@ log "垢順(回転$ROTATION): $ACCOUNTS"
 # ・二重実行防止pgrepは就寝後の子プロセス内で行う（前tick稼働中は就寝後に見つけてskip）。
 # ・seedは秒精度tick刻み → 日次決定論（orchestrator側seed=日付+垢+バッチ）と逆引き面が異なる。
 STAGGER_MOD=${KENSO_STAGGER_MOD:-10}   # 0で無効化（ロールバック）
+# QA検出(t_79fb103e): KENSO_STAGGER_MOD が空文字/非数値だと line98の算術と
+# line102の [ "$STAGGER_MOD" -gt 0 ] が "integer expression expected"/"too many arguments"
+# でエラーを吐き、スタガーが実質0化→全垢が同時刻にspawnされ15分グリッド集中が再発する。
+# → 空/非数値は既定(10分)へフォールバック。0は明示的無効化として維持（数値のみ受理）。
+case "$STAGGER_MOD" in
+  ''|*[!0-9]*) STAGGER_MOD=10
+               log "STAGGER_MOD='${KENSO_STAGGER_MOD:-<unset>}'が空/非数値 → 既定10分にフォールバック" ;;
+esac
 
 spawned=0
 for acct in $ACCOUNTS; do
