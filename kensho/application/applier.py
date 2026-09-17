@@ -6,6 +6,7 @@ v3.3: 機能を rate_limiter, reply_generator, state, actions に分割
 from __future__ import annotations
 
 import datetime as dt
+import fcntl
 import json
 import random
 import re
@@ -51,6 +52,7 @@ from kensho.application.rate_limiter import (
 from kensho.application.state import save_collected_safe
 from kensho.application.verifier import AccountHealthVerifier, ConsecutiveFailureTracker
 from kensho.core.config import load as load_config
+from kensho.core.notifier import notify_warning
 from kensho.scraping.scorer import format_prize_info, score_prize
 from kensho.scraping.sources.common import has_skip_keyword
 from kensho.utils.safety import verify_ip_separation
@@ -130,6 +132,112 @@ def _clear_follow_lock(account_key: str, state_path: Path | None = None) -> None
                 path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     except (json.JSONDecodeError, OSError):
         pass
+
+
+# ★ 2026-09-18提案: CAPTCHA連続ロックの24hスキップ（ステートマシン）
+#   inobase1-4でCAPTCHA連続→一時ロック（数時間〜数日）が再発した際、
+#   修正コードの反映はflock解放後の再起動からしかないが、再試行猶予期間中の
+#   自動制御がないという問題への対処。
+#   方針: check_x_login が "challenge"（reCAPTCHA/Cloudflare）を検出した回数を
+#   端末別・アカウント別に永続カウントし、連続3回でそのアカウントを24hスキップ＋
+#   アラート。24h後に自動再試行（ロック期限切れで自動クリア）。
+#   データ形式: {account_key: {"consecutive": int, "lock_until": ISO datetime | null}}
+_CAPTCHA_LOCK_FILE: Path = DATA_DIR / "captcha_lock.json"
+_CAPTCHA_LOCK_THRESHOLD: int = 3  # 連続CAPTCHA失敗でロックする回数
+_CAPTCHA_LOCK_HOURS: float = 24.0  # ロック期間（24h）
+_CAPTCHA_LOG_MARKER: str = "CAPTCHA_LOCK"  # 検証コマンド grep用マーカー
+
+
+def _get_captcha_lock(account_key: str, state_path: Path | None = None) -> datetime | None:
+    """CAPTCHAロックの解除予定時刻を返す。期限切れなら自動クリアしてNone。
+
+    Args:
+        account_key: アカウントキー
+        state_path: テスト用パス（デフォルトは _CAPTCHA_LOCK_FILE）
+    Returns:
+        解除予定時刻（datetime）、または None（ロックなし/期限切れ）
+    """
+    path = state_path or _CAPTCHA_LOCK_FILE
+    try:
+        if not path.exists():
+            return None
+        data = json.loads(path.read_text(encoding="utf-8"))
+        raw = data.get(account_key)
+        if not raw or not isinstance(raw, dict):
+            return None
+        until_raw = raw.get("lock_until")
+        if not until_raw:
+            return None
+        until = datetime.fromisoformat(until_raw)
+        if until > datetime.now():
+            return until
+        # 期限切れ → 自動クリア（連続カウントもリセット → 24h後の自動再試行）
+        data.pop(account_key, None)
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    except (json.JSONDecodeError, OSError, ValueError):
+        pass
+    return None
+
+
+def _get_captcha_consecutive(account_key: str, state_path: Path | None = None) -> int:
+    """現在の連続CAPTCHA失敗カウントを返す（ロックされていなければ）。"""
+    path = state_path or _CAPTCHA_LOCK_FILE
+    try:
+        if not path.exists():
+            return 0
+        data = json.loads(path.read_text(encoding="utf-8"))
+        raw = data.get(account_key)
+        if isinstance(raw, dict):
+            return int(raw.get("consecutive", 0))
+    except (json.JSONDecodeError, OSError, ValueError):
+        pass
+    return 0
+
+
+def _clear_captcha_lock(account_key: str, state_path: Path | None = None) -> None:
+    """アカウントのCAPTCHAロック＋連続カウントを強制クリア（正常ログイン時の自動解除用）。"""
+    path = state_path or _CAPTCHA_LOCK_FILE
+    try:
+        if path.exists():
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if account_key in data:
+                del data[account_key]
+                path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    except (json.JSONDecodeError, OSError):
+        pass
+
+
+def _record_captcha_failure(account_key: str, state_path: Path | None = None) -> bool:
+    """CAPTCHA失敗を永続カウント。閾値（3回）到達で24hロックを設定。
+
+    Args:
+        account_key: アカウントキー
+        state_path: テスト用パス（デフォルトは _CAPTCHA_LOCK_FILE）
+    Returns:
+        True = 今回の失敗でロックが新規発動した（スキップ処理が必要）
+        False = まだカウント段階（1〜2回目）
+    """
+    path = state_path or _CAPTCHA_LOCK_FILE
+    try:
+        data: dict = {}
+        if path.exists():
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                data = {}
+        raw = data.get(account_key)
+        count = int(raw.get("consecutive", 0)) if isinstance(raw, dict) else 0
+        count += 1
+        became_locked = count >= _CAPTCHA_LOCK_THRESHOLD
+        entry: dict[str, Any] = {"consecutive": count, "lock_until": None}
+        if became_locked:
+            entry["lock_until"] = (datetime.now() + dt.timedelta(hours=_CAPTCHA_LOCK_HOURS)).isoformat()
+        data[account_key] = entry
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        return became_locked
+    except (json.JSONDecodeError, OSError):
+        return False
 
 
 def _merge_verify_result(current: bool, verify_success: bool) -> bool:
@@ -323,6 +431,99 @@ def _cross_account_proximity_defer(item: dict[str, Any], account_key: str, cfg: 
                 log.write(_msg)
             return True
     return False
+
+
+# ★ 2026-09-18提案: 複数同時刻応答検知（軽量版）
+#   Xスパムフィルター2026年3月以降厳格化。Kenshoはマルチアカウント運用で、複数垢が
+#   同一キャンペーン(tweet)へ短時間窓内に重複応募すると、Xのネットワーク分析が
+#   「同一クラスター」としてリンク判定し連座凍結される。提案88（近接DEFER 6h）が
+#   通常これを防ぐため、本検知は通常ゼロ発火=スリップスルー監視・アラート専用。
+#   障害時の代替はログ出力のみ（検知してもブロックはManual）に留める軽量版。
+_MULTI_RESPONSE_FILE: Path = DATA_DIR / "multi_response.json"
+_SAME_CAMPAIGN_MARKER: str = "same_campaign_multi"
+
+
+def _multi_response_record(tweet_id: str, account_key: str, cfg: dict, log: Any, state_path: Path | None = None) -> int:
+    """同一キャンペーン(tweet)への複数同時刻応答を共有状態で検知してログ出力（軽量版）。
+
+    垢別ワーカーは独立プロセスで並列実行されるため、応答時刻は共有ファイル
+    （multi_response.json）で追跡する。読み書きは fcntl.flock（LOCK_EX）で直列化し、
+    並列垢ワーカー間の lost update（一方の応答記録が他方の書き込みで消える）を防ぐ。
+    窓内（config applier.multi_response_window_sec、既定1800秒=30分）で同一tweetへ
+    threshold（既定2）垢以上が応募成功した場合、same_campaign_multi をログ出力＋
+    notify_warning。ブロックは行わない（対応はManual・提案88近接DEFERのスリップスルー監視）。
+
+    Args:
+        tweet_id: 応募対象ツイートID（同一キャンペーン判別キー）
+        account_key: 応募成功した垢のキー
+        cfg: 設定（applier.multi_response_window_sec / multi_response_threshold）
+        log: ログライター（None可）
+        state_path: テスト用パス（デフォルトは _MULTI_RESPONSE_FILE）
+    Returns:
+        窓内で応答したアカウント数（検知しなければ 0）。
+    """
+    window_sec = float(cfg.get("applier", {}).get("multi_response_window_sec", 1800))
+    threshold = int(cfg.get("applier", {}).get("multi_response_threshold", 2))
+    path = state_path or _MULTI_RESPONSE_FILE
+    now = datetime.now()
+    count = 0
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(str(path), "a+", encoding="utf-8") as fh:
+            fcntl.flock(fh.fileno(), fcntl.LOCK_EX)
+            try:
+                fh.seek(0)
+                content = fh.read()
+                loaded: Any = json.loads(content) if content.strip() else {}
+            except (json.JSONDecodeError, ValueError):
+                loaded = None
+            data: dict[str, Any] = loaded if isinstance(loaded, dict) else {}
+            raw_entry = data.get(tweet_id)
+            rec: dict[str, Any] = {"accounts": {}, "alerted": False}
+            if isinstance(raw_entry, dict):
+                rec = raw_entry
+            raw_accounts = rec.get("accounts")
+            accounts: dict[str, Any] = raw_accounts if isinstance(raw_accounts, dict) else {}
+            # 窓より古い応答は剪定（連続運用でファイルが肥大化しないように）
+            cutoff = now - dt.timedelta(seconds=window_sec)
+            for acct, iso in list(accounts.items()):
+                try:
+                    if dt.datetime.fromisoformat(str(iso)) < cutoff:
+                        del accounts[acct]
+                except (ValueError, TypeError):
+                    del accounts[acct]
+            accounts[account_key] = now.isoformat()
+            rec["accounts"] = accounts
+            count = len(accounts)
+            if count < threshold:
+                rec["alerted"] = False
+            elif not rec.get("alerted"):
+                rec["alerted"] = True
+                msg = (
+                    f"  [{_SAME_CAMPAIGN_MARKER}] 同一キャンペーン(tweet {tweet_id})へ"
+                    f" {count}垢が {window_sec:.0f}s 内に応答: {', '.join(sorted(accounts))}"
+                    f" → BOT検出リスク（対応はManual）"
+                )
+                if log is not None:
+                    log.write(msg)
+                try:
+                    notify_warning(
+                        "同一キャンペーン複数同時刻応答",
+                        f"{count}垢({', '.join(sorted(accounts))})が{window_sec:.0f}s内に"
+                        f"同一tweet({str(tweet_id)[:20]}...)へ応募成功。（提案88近接DEFERのスリップスルー）",
+                        cfg=cfg,
+                    )
+                except Exception:
+                    pass
+            data[tweet_id] = rec
+            fh.seek(0)
+            fh.truncate()
+            fh.write(json.dumps(data, ensure_ascii=False, indent=2))
+            fh.flush()
+            fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+        return count
+    except (OSError, ValueError):
+        return 0
 
 
 def _save_session_cookies(ctx: Any, account_key: str, session_path: Path) -> None:
@@ -617,6 +818,17 @@ def apply_for_account(
             f"（{_follow_locked_until.strftime('%H:%M')}まで・提案93）。like/RTは継続"
         )
 
+    # ★ 2026-09-18提案: CAPTCHA連続ロック中はバッチ開始前にスキップ（無駄dispatch・再ロック回避）
+    #   _record_captcha_failure() が連続3回で24hロックを設定した垢は、この時点で早期リターン。
+    #   ロック期限切れ（24h後）に自動クリアされ、次バッチで自動再試行される。
+    _captcha_locked_until: datetime | None = _get_captcha_lock(account_key)
+    if _captcha_locked_until is not None:
+        out(
+            f"  [{_CAPTCHA_LOG_MARKER}] {account_key}: CAPTCHAロック中"
+            f"（{_captcha_locked_until.strftime('%m-%d %H:%M')}まで）→ この垢をスキップ"
+        )
+        return (0, 0)
+
     # ★ Failure Ceiling設定読み込み（Loop Engineering）
     fc_cfg: dict = cfg.get("failure_ceiling", {})
     fc_enabled: bool = fc_cfg.get("enabled", True)
@@ -778,10 +990,40 @@ def apply_for_account(
         page = local_page
         page.set_default_timeout(60000)
 
-        login_success = check_x_login(page, log, screen_name=account_key)
+        login_reason: dict[str, str] = {}
+        login_success = check_x_login(page, log, screen_name=account_key, reason_out=login_reason)
         if not login_success:
+            # ★ 2026-09-18提案: CAPTCHA連続ロックの24hスキップ
+            #   check_x_login が "challenge"（reCAPTCHA/Cloudflare）を検出した場合、
+            #   連続3回でこのアカウントを24hスキップ＋アラート。1〜2回目は従来通り
+            #   auth_tokenエラーとして扱う（アラートなし・無駄ログ最小化）。
+            if login_reason.get("reason") == "challenge":
+                became_locked = _record_captcha_failure(account_key)
+                consecutive = _get_captcha_consecutive(account_key)
+                out(
+                    f"  [{_CAPTCHA_LOG_MARKER}] challenge検出: {account_key} "
+                    f"連続CAPTCHA失敗 {consecutive}/{_CAPTCHA_LOCK_THRESHOLD} 回"
+                )
+                if became_locked:
+                    out(
+                        f"  [{_CAPTCHA_LOG_MARKER}] {account_key}: 連続CAPTCHA失敗{_CAPTCHA_LOCK_THRESHOLD}回"
+                        f" → {_CAPTCHA_LOCK_HOURS:.0f}hスキップ（自動再試行）"
+                    )
+                    try:
+                        notify_warning(
+                            f"CAPTCHAロック: {account_key}",
+                            f"連続CAPTCHA失敗{_CAPTCHA_LOCK_THRESHOLD}回→{_CAPTCHA_LOCK_HOURS:.0f}hスキップ。"
+                            f"{_CAPTCHA_LOCK_HOURS:.0f}h後に自動再試行。",
+                            cfg=cfg,
+                        )
+                    except Exception:
+                        pass
+                return (0, 1)  # finally will close browser / context
             out("[NG] ログイン失敗 - auth_tokenが必要")
             return (0, 1)  # finally will close browser / context
+
+        # ★ 2026-09-18提案: ログイン成功 = CAPTCHA解除 → それまでの連続カウント/ロックをクリア
+        _clear_captcha_lock(account_key)
 
         if verif_account_health and not dry_run:
             try:
@@ -1968,6 +2210,12 @@ def apply_for_account(
                         failure_tracker.record_success(account_key)
                     success += 1
                     _hourly_count += 1
+                    # ★ 2026-09-18提案: 複数同時刻応答検知（軽量版）
+                    #   同一キャンペーン(tweet)へ他垢が窓期内に応募成功済みならログで検知
+                    #   （same_campaign_multi）。アラートのみでブロックはしない（対応はManual）。
+                    #   tweet_id無し（フォロー限定案件等）は同一キャンペーン識別不可のため対象外。
+                    if tweet_id:
+                        _multi_response_record(tweet_id, account_key, cfg, out)
                     # ★ 2026-08-25: applied付与を即時保存。
                     #   並列垢ワーカーが同じcollected.jsonを保存するため、バッチ中にappliedが
                     #   他プロセスの保存で失われる問題（実測: 応募成立10件中1件しか保存されず）。

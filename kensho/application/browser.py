@@ -931,10 +931,32 @@ def _session_has_auth_cookies(account_key: str) -> bool:
     return "auth_token" in names and "ct0" in names
 
 
-def check_x_login(page: Any, log: Any = None, screen_name: str | None = None) -> bool:
-    """X.comにログイン済みか確認。戻り値: bool"""
+def check_x_login(
+    page: Any,
+    log: Any = None,
+    screen_name: str | None = None,
+    reason_out: dict[str, str] | None = None,
+) -> bool:
+    """X.comにログイン済みか確認。戻り値: bool
+
+    reason_out: 省略可。与えた場合、失敗時に {"reason": <分類キー>} を書き込む。
+        - "ok"                ログイン確認OK
+        - "no_auth_session"   セッション未認証（auth_token/ct0欠落）
+        - "goto_failed"       x.com/home へのgotoが失敗
+        - "needs_login"       ログイン/flow/signup画面が検出
+        - "rate_limited"      レート制限ページ
+        - "suspended"         アカウント停止
+        - "challenge"         reCAPTCHA/Cloudflare チャレンジ（CAPTCHAロック対象）
+        - "frozen"            プロフィール上で凍結/読み取り専用を検出
+        - "login_failed"      上記いずれにも該当しない失敗
+    """
     if log:
         log.write("Xにログイン確認中...")
+
+    def _ng(reason: str) -> bool:
+        if reason_out is not None:
+            reason_out["reason"] = reason
+        return False
 
     # ★ prop97: セッション未認証の事前検出（auth_token/ct0欠落）
     #   toushiwatch: セッションファイルに auth_token/ct0 が無く guest cookieのみ。
@@ -944,7 +966,7 @@ def check_x_login(page: Any, log: Any = None, screen_name: str | None = None) ->
     if screen_name and not _session_has_auth_cookies(screen_name):
         if log:
             log.write(f"[NG] no_auth_session: {screen_name} セッション未認証（auth_token/ct0欠落・要再取得）")
-        return False
+        return _ng("no_auth_session")
 
     page.set_default_timeout(_CHECK_LOGIN_TIMEOUT)
 
@@ -988,12 +1010,14 @@ def check_x_login(page: Any, log: Any = None, screen_name: str | None = None) ->
             log.write("[NG] suspended: アカウント停止が検出されました")
         return False
 
-    # reCAPTCHA / Cloudflare チャレンジ
+    # reCAPTCHA / Cloudflare チャレンジ（CAPTCHA連続ロックの24hスキップ対象）
+    # ★ 2026-09-18提案: reason を "challenge" として伝え、applier 側で
+    #   連続3回→24hロック＋アラートを発動させる。
     challenge_elem = page.query_selector(".cf-browser-verification, .challenge, #challenge")
     if challenge_elem or "challenge" in body_lower:
         if log:
             log.write("[NG] challenge: reCAPTCHA/Cloudflare チャレンジが検出されました")
-        return False
+        return _ng("challenge")
 
     # 他のログイン誘導（i/flow/signup などは URL チェックでカバー済み）
 

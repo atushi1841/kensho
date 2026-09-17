@@ -337,6 +337,12 @@ applier:
   #   dispatch継続 → 提案93で修正。
   follow_lock_hours: 4
   cross_account_defer_max_hours: 8
+  # ★ 2026-09-18提案: 複数同時刻応答検知（軽量版）の検知窓/閾値。
+  #   同一キャンペーン(tweet)へ multi_response_threshold 垢以上が
+  #   multi_response_window_sec 秒以内に応募成功した場合 same_campaign_multi を
+  #   ログ+アラート（ブロックしない・対応はManual）。提案88近接DEFERのスリップスルー監視。
+  multi_response_window_sec: 1800    # 30分
+  multi_response_threshold: 2
 
 # ── NGワード（除外フィルター）──
 # この文字列を含むツイートは応募をスキップします

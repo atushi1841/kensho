@@ -1156,3 +1156,164 @@ class TestFollowLock93:
         assert _is_follow_suspended_64('{"code":326,"message":"temporarily locked"}') is False
         assert _is_follow_suspended_64("") is False
         assert _is_follow_suspended_64("normal response") is False
+
+
+class TestCaptchaLock:
+    """CAPTCHA連続ロックの24hスキップ（2026-09-18提案）"""
+
+    def test_get_set_clear_lock(self, tmp_path) -> None:
+        """ロックの設定・取得・クリア"""
+        from kensho.application.applier import (
+            _clear_captcha_lock,
+            _get_captcha_lock,
+            _record_captcha_failure,
+        )
+
+        path = tmp_path / "captcha_lock.json"
+        # ロックなし → None
+        assert _get_captcha_lock("inobase1-4", state_path=path) is None
+        # 失敗1回（閾値3未満）→ ロック未発動
+        assert _record_captcha_failure("inobase1-4", state_path=path) is False
+        assert _get_captcha_lock("inobase1-4", state_path=path) is None
+        # 失敗2回 → まだ未発動
+        assert _record_captcha_failure("inobase1-4", state_path=path) is False
+        # 失敗3回 → ロック発動（24h）
+        assert _record_captcha_failure("inobase1-4", state_path=path) is True
+        until = _get_captcha_lock("inobase1-4", state_path=path)
+        assert until is not None
+        # クリア → None
+        _clear_captcha_lock("inobase1-4", state_path=path)
+        assert _get_captcha_lock("inobase1-4", state_path=path) is None
+
+    def test_expired_lock_auto_cleared(self, tmp_path) -> None:
+        """期限切れロックは自動クリアされ、24h後の自動再試行が可能になる"""
+        from kensho.application.applier import _get_captcha_lock
+
+        path = tmp_path / "captcha_lock.json"
+        expired = (_dt.datetime.now() - _dt.timedelta(hours=1)).isoformat()
+        path.write_text(json.dumps({"inobase1-4": {"consecutive": 3, "lock_until": expired}}))
+        assert _get_captcha_lock("inobase1-4", state_path=path) is None
+        data = json.loads(path.read_text())
+        assert "inobase1-4" not in data
+
+    def test_consecutive_counter_resets_on_clear(self, tmp_path) -> None:
+        """クリアで連続カウントがリセットされる"""
+        from kensho.application.applier import (
+            _clear_captcha_lock,
+            _get_captcha_consecutive,
+            _record_captcha_failure,
+        )
+
+        path = tmp_path / "captcha_lock.json"
+        _record_captcha_failure("inobase1-4", state_path=path)
+        _record_captcha_failure("inobase1-4", state_path=path)
+        assert _get_captcha_consecutive("inobase1-4", state_path=path) == 2
+        _clear_captcha_lock("inobase1-4", state_path=path)
+        assert _get_captcha_consecutive("inobase1-4", state_path=path) == 0
+        # クリア後は1回目から台帳トマネされ、再び3回で再ロックされる
+        assert _record_captcha_failure("inobase1-4", state_path=path) is False
+
+    def test_record_tracks_lock_state(self, tmp_path) -> None:
+        """連続カウントとlock_untilが状態ファイルに記録される"""
+        import datetime as _dt2
+
+        from kensho.application.applier import _record_captcha_failure
+
+        path = tmp_path / "captcha_lock.json"
+        _record_captcha_failure("inobase1-4", state_path=path)
+        _record_captcha_failure("inobase1-4", state_path=path)
+        _record_captcha_failure("inobase1-4", state_path=path)
+        data = json.loads(path.read_text())
+        entry = data["inobase1-4"]
+        assert entry["consecutive"] == 3
+        assert entry["lock_until"] is not None
+        until = _dt2.datetime.fromisoformat(entry["lock_until"])
+        assert until > _dt2.datetime.now()
+
+    def test_clearing_lock_on_login_success(self, tmp_path) -> None:
+        """ログイン成功→CAPTCHA解除でロックがクリアされる（_clear_captcha_lock 直接検証）"""
+        from kensho.application.applier import (
+            _clear_captcha_lock,
+            _get_captcha_lock,
+            _record_captcha_failure,
+        )
+
+        path = tmp_path / "captcha_lock.json"
+        # 3回失敗してロック
+        for _ in range(3):
+            _record_captcha_failure("inobase1-4", state_path=path)
+        assert _get_captcha_lock("inobase1-4", state_path=path) is not None
+        # ログイン成功 → クリア
+        _clear_captcha_lock("inobase1-4", state_path=path)
+        assert _get_captcha_lock("inobase1-4", state_path=path) is None
+
+
+class _FakeLog:
+    """write() を受け付けるログスタブ（検知メッセージを捕捉するため）。"""
+
+    def __init__(self) -> None:
+        self.lines: list[str] = []
+
+    def write(self, msg: str) -> None:
+        self.lines.append(msg)
+
+
+class TestMultiResponse:
+    """複数同時刻応答検知（軽量版・2026-09-18提案）"""
+
+    _CFG: dict = {
+        "applier": {"multi_response_window_sec": 1800, "multi_response_threshold": 2},
+    }
+
+    def test_single_account_no_alert(self, tmp_path) -> None:
+        from kensho.application.applier import _multi_response_record
+
+        path = tmp_path / "multi_response.json"
+        log = _FakeLog()
+        # 1垢目 → 閾値2未満なので検知せず、same_campaign_multiログも出ない
+        assert _multi_response_record("tweet123", "kudou", self._CFG, log, state_path=path) == 1
+        assert not any("same_campaign_multi" in ln for ln in log.lines)
+        data = json.loads(path.read_text())
+        assert data["tweet123"]["accounts"]["kudou"]
+
+    def test_two_accounts_triggers_alert(self, tmp_path) -> None:
+        from kensho.application.applier import _multi_response_record
+
+        path = tmp_path / "multi_response.json"
+        log = _FakeLog()
+        _multi_response_record("tweet456", "kudou", self._CFG, log, state_path=path)
+        # 2垢目が窓内に応援 → 検知
+        count = _multi_response_record("tweet456", "zin20120731", self._CFG, log, state_path=path)
+        assert count == 2
+        assert any("same_campaign_multi" in ln for ln in log.lines)
+        assert any("zin20120731, kudou" in ln.replace("kudou, zin20120731", "zin20120731, kudou") for ln in log.lines)
+        # 記録は1回だけ（alertedフラグで再ログ抑止）
+        assert sum(1 for ln in log.lines if "same_campaign_multi" in ln) == 1
+        # 3垢目追加でも再ログしない
+        _multi_response_record("tweet456", "atushi16", self._CFG, log, state_path=path)
+        assert sum(1 for ln in log.lines if "same_campaign_multi" in ln) == 1
+
+    def test_out_of_window_pruned(self, tmp_path) -> None:
+        from kensho.application.applier import _multi_response_record
+
+        path = tmp_path / "multi_response.json"
+        log = _FakeLog()
+        # 窓（30分）より古い応答を事前シード → 剪定され、新垢のみでカウント1に
+        old = (_dt.datetime.now() - _dt.timedelta(hours=1)).isoformat()
+        path.write_text(json.dumps({"tweet789": {"accounts": {"old_acct": old}, "alerted": False}}))
+        assert _multi_response_record("tweet789", "kudou", self._CFG, log, state_path=path) == 1
+        assert not any("same_campaign_multi" in ln for ln in log.lines)
+
+    def test_threshold_config_respected(self, tmp_path) -> None:
+        from kensho.application.applier import _multi_response_record
+
+        path = tmp_path / "multi_response.json"
+        log = _FakeLog()
+        # 閾値を3に上げると2垢では検知しない
+        cfg = {"applier": {"multi_response_window_sec": 1800, "multi_response_threshold": 3}}
+        _multi_response_record("t0", "a", cfg, log, state_path=path)
+        assert _multi_response_record("t0", "b", cfg, log, state_path=path) == 2
+        assert not any("same_campaign_multi" in ln for ln in log.lines)
+        # 3垢目で検知
+        _multi_response_record("t0", "c", cfg, log, state_path=path)
+        assert any("same_campaign_multi" in ln for ln in log.lines)
