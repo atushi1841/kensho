@@ -175,6 +175,13 @@ collection:
   # 収集を応募(orchestrator)から分離: 専用cron(crontab 0 3,9-21)で実行。
   # orchestratorの応募処理が収集の7.5分で圧迫されなくなる。
   separate_cron: true
+  # ★ t_9cc18ba0: research(twscrape X直接検索)の実行時刻をapply非稼働帯に限定。
+  #   twscrapeはXセッション(auth_token)を使う唯一の収集ソースで、applyと同一セッション/IPで
+  #   同時刻(例:12:00収集 vs 11:47〜12:56応募)に走るとX側が「検索+応募の近接実行」と相関
+  #   検出しBOTフラグが付きやすい。research_hours(HH整数リスト)で実行時刻を絞り、
+  #   apply非稼働の深夜(no_action_window 00-07)の収集cron(03:00)でのみX検索する。
+  #   未設定なら従来挙動(毎時)。空リスト禁止(省略時は毎時=分離なし)。
+  research_hours: [3]
   # ★ 2026-09-18 t_442337b4: 収集源ヘルスモニタ（source_health）閾値。
   #   連続失敗 or 日次失敗率が閾値超でそのソースを自動skipしキャッシュ（既収集分）を維持。
   #   全主要源timeout時は前日キャッシュから提供継続＋アラート。欠落時はコード内デフォルト(4/0.5/6)。

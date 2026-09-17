@@ -465,3 +465,47 @@ class TestMergeAppliedFromDisk:
         """空の入力は0を返す"""
         assert _merge_applied_from_disk([], []) == 0
         assert _merge_applied_from_disk([{"detail_url": "x", "x_url": "", "applied": {}}], []) == 0
+
+
+class TestResearchAllowed:
+    """research_allowed: twscrape(X検索=research)をapply同時刻から分離 (t_9cc18ba0)"""
+
+    def test_no_cfg_allows(self) -> None:
+        """cfg未指定 → True（後方互換）"""
+        from kensho.scraping.collector import research_allowed
+
+        assert research_allowed(12, None) is True
+
+    def test_no_research_hours_allows(self) -> None:
+        """research_hours未設定 → True（従来挙動）"""
+        from kensho.scraping.collector import research_allowed
+
+        assert research_allowed(12, {"collection": {}}) is True
+
+    def test_allowed_hour(self) -> None:
+        """research_hours内の時刻 → True"""
+        from kensho.scraping.collector import research_allowed
+
+        cfg = {"collection": {"research_hours": [3]}}
+        assert research_allowed(3, cfg) is True
+
+    def test_disallowed_hour(self) -> None:
+        """research_hours外の時刻（apply稼働中の12:00）→ False"""
+        from kensho.scraping.collector import research_allowed
+
+        cfg = {"collection": {"research_hours": [3]}}
+        assert research_allowed(12, cfg) is False
+
+    def test_multiple_hours(self) -> None:
+        """複数時刻指定のうち1つに一致 → True"""
+        from kensho.scraping.collector import research_allowed
+
+        cfg = {"collection": {"research_hours": [0, 3, 4]}}
+        assert research_allowed(4, cfg) is True
+        assert research_allowed(2, cfg) is False
+
+    def test_empty_research_hours_allows_backcompat(self) -> None:
+        """空リストは未設定扱い → True（後方互換）"""
+        from kensho.scraping.collector import research_allowed
+
+        assert research_allowed(12, {"collection": {"research_hours": []}}) is True

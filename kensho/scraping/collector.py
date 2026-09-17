@@ -65,6 +65,30 @@ _snowflake_ts_ms = snowflake_ts_ms
 _is_stale_empty_deadline = is_stale_empty_deadline
 
 
+def research_allowed(hour: int, cfg: dict[str, Any] | None) -> bool:
+    """twscrape(X直接検索=research)の実行可否を現在時刻で判定 (t_9cc18ba0)。
+
+    背景: twscrape はX APIを叩く唯一の収集ソースで、auth_token(auth_session)をXアカウントの
+    cookie から使う（collects未指定時は home_internet の atushi16 にフォールバック）。
+    apply応募も atushi16 等の同一セッション/同一IPで8:00〜23:00に走るため、収集cronが
+    同時刻（例：12:00収集と11:47〜12:56のapply）にtwscrapeのX検索を実行すると、X側から
+    「同一セッションが検索と応募を近接実行」と相関されBOT検出フラグが付きやすくなる。
+
+    対策: collection.research_hours（HH形式の整数リスト）でresearch実行を apply 非稼働時刻
+    （orchestrator.no_action_window 既定 00:00〜07:00）に限定。デフォルトは ["03"] で、
+    深夜の収集cron（03:00）でのみtwscrapeを実行する（それ以外の時刻は skip）。
+
+    cfg 未指定 or research_hours 未設定 → True（従来挙動・後方互換）。
+    """
+    if not cfg:
+        return True
+    col = cfg.get("collection") or {}
+    research_hours: list[int] | None = col.get("research_hours")
+    if not research_hours:
+        return True  # 未設定 = 従来挙動（毎時の収集で実行）
+    return hour in research_hours
+
+
 def _normalize_x_url(xu: str) -> str:
     """x_url を正規化して同一ツイートの表記揺れを吸収する。
 
@@ -451,19 +475,31 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
 
     # ── Step 2f: twscrape 収集 ──
     out("\n[Step 2f twscrape] X直接検索で懸賞を収集...")
-    session_path: str | None = None
-    for a in cfg.get("accounts", []):
-        if a.get("schedule", {}).get("collects", False):
-            session_path = str(Path(cfg["general"]["project_dir"]) / a["session"])
-            break
-    if not session_path:
-        # collects指定が無い場合でもX検索を回せるよう、自宅/最安全垢のセッションを使う（2026-08-20修正）
-        # X直接検索は読み取りのみ・低リスク。BANへの影響は応募より遥かに小さい。
+    # ★ t_9cc18ba0: research(セッション使用のX検索)をapply時刻と分離 — 同一セッションで
+    #   検索と応募を近接実行するとXのBOT相関検出が付きやすいため、apply非稼働時刻に限定。
+    _research_ok: bool = research_allowed(datetime.now().hour, cfg)
+    twscrape_items: list[dict[str, Any]] = []
+    if not _research_ok:
+        _rh = (cfg or {}).get("collection", {}).get("research_hours")
+        out(
+            f"  [RESEARCH分離] 現在時刻 {datetime.now().strftime('%H:%M')} は research_hours={_rh} "
+            "実行対象外 → X検索(twscrape)をスキップ（apply同時刻のセッション相関防止）"
+        )
+        twscrape_items = []
+    else:
+        session_path: str | None = None
         for a in cfg.get("accounts", []):
-            if a["key"] == "atushi16":  # home_internet正規垢(凍結リスク最低)を優先
+            if a.get("schedule", {}).get("collects", False):
                 session_path = str(Path(cfg["general"]["project_dir"]) / a["session"])
                 break
-    twscrape_items: list[dict[str, Any]] = scrape_twscrape(out, processed_set, account_keys, session_path)
+        if not session_path:
+            # collects指定が無い場合でもX検索を回せるよう、自宅/最安全垢のセッションを使う（2026-08-20修正）
+            # X直接検索は読み取りのみ・低リスク。BANへの影響は応募より遥かに小さい。
+            for a in cfg.get("accounts", []):
+                if a["key"] == "atushi16":  # home_internet正規垢(凍結リスク最低)を優先
+                    session_path = str(Path(cfg["general"]["project_dir"]) / a["session"])
+                    break
+        twscrape_items = scrape_twscrape(out, processed_set, account_keys, session_path)
     out(f"  twscrape: {len(twscrape_items)}件")
     collected.extend(twscrape_items)
 
