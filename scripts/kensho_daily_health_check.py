@@ -10,6 +10,8 @@ kensho_daily_health_check.py — 日次シャドウバン/凍結チェック（�
   - 垢別SOCKS5プロキシ経由で照会 = 適用側と同じ出口IP（IP分離ルール準拠）。
     プロキシ死時は自宅IPへフォールバックせず proxy_down として前回statusを保持。
   - accounts.db(twscrape)へは一切書き込まない（読み取り専用）。
+  - フォロワー数急変アラート: 前回記録された followers から ±10% 超の変動で
+    critical 通知（シャドウバン/凍結の早期シグナル。t_34decbc2 系 KPI と独立）。
 
 出力:
   - data/account_health.json — 既存スキーマ {"accounts": {...}, "last_check": ...} を維持
@@ -79,6 +81,18 @@ def load_tokens(acct: dict) -> tuple[str, str]:
         return ck.get("auth_token", ""), ck.get("ct0", "")
     except Exception:
         return "", ""
+
+
+FOLLOWER_DELTA_PCT = 10.0  # 前日比 ±10% 超で急変アラート
+
+
+def follower_delta_pct(prev: int | None, curr: int | None) -> float | None:
+    """前回→今回のフォロワー変動率(%)。前回値が無い/0以下/同値未達なら None。"""
+    if prev is None or not isinstance(prev, int) or prev <= 0:
+        return None
+    if curr is None or not isinstance(curr, int):
+        return None
+    return (curr - prev) / prev * 100.0
 
 
 def check_one(handle: str, auth: str, ct0: str, proxy: str | None) -> dict:
@@ -238,6 +252,18 @@ def main() -> int:
             "friends": res.get("friends", prev.get("friends")),
         }
         health["accounts"][key] = entry
+
+        # フォロワー数急変アラート（前日比 ±10% 超）— シャドウバン/凍結の早期シグナル
+        delta = follower_delta_pct(prev.get("followers"), res.get("followers")) if status == "healthy" else None
+        if delta is not None and abs(delta) >= FOLLOWER_DELTA_PCT:
+            entry["follower_delta_pct"] = round(delta, 1)
+            msg = (
+                f"  ⚠️ {key}: フォロワー数急変 "
+                f"{prev.get('followers')}→{res.get('followers')} ({delta:+.1f}%、閾値±{FOLLOWER_DELTA_PCT:g}%)"
+            )
+            print(msg)
+            critical.append(f"{key}=follower_delta{delta:+.1f}%")
+
         print(
             f"  {icon.get(status, '❓')} {key}: {status}"
             + (f" ({detail})" if detail else "")
