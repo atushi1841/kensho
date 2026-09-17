@@ -20,7 +20,7 @@
 - 観客を商品へ転換するアセット（属性データ・CtoA・既存トラフィック・売れるサービス）がゼロ。開発者向けモデルで Kensho の観客（懸賞/自動化系）と非重複。
 
 ## 結論
-却下。worker実装タスク（プロトタイプ/ローンチ/集客）は切り出さない。
+却下（t_fa7a9710）。worker実装タスク（プロトタイプ/ローンチ/集客）は切り出さない。
 検出側の教訓（hunterへ回付）: 「Show HN: an open-source LLM model/adapter release (weights free on HF, license:other/Apache, author offers free API + GGUF quants)」は、本文の「efficient / auto / free API / x% speedup」等の語彙がモデル自身の技術特性・無料提供の説明である限り、スコア・ダウンロード・コメントの盛況（本件28 / 80k claims）とは無関係に自動除外してよい。既存除外パターン（Pizza Bot=t_e5fa3d3c、OSS推論ホスティング=t_0bd69b5f、UiPath/coder_eval系）と同枠の「無償OSSモデルリリースゲート」。収益フック（価格・API利用料・独占データ・有償ホスティングの少なくとも1つ）が本文/カードに見えなければ却下で確定。
 
 ## verification_evidence
