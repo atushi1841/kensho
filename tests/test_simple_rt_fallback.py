@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Test simple_rt_classifier fallback logic."""
 import sys
+
 sys.path.insert(0, '.')
-from kensho.scraping.simple_rt_classifier import (
-    FALLBACK_MODEL, SECOND_FALLBACK_MODEL,
-    _log_openrouter_usage, _call_api_with_fallback
-)
-import datetime, json, pathlib
+import datetime
+import json
+import pathlib
+
+from kensho.scraping.simple_rt_classifier import FALLBACK_MODEL, SECOND_FALLBACK_MODEL, _log_openrouter_usage
 
 # 1. Verify constants
 assert FALLBACK_MODEL == "minimax/minimax-m3:free", f"Unexpected FALLBACK_MODEL: {FALLBACK_MODEL}"

@@ -19,7 +19,6 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from mcp_hazard.hazard import get_hazard, geocode_address, CREDIT_TEXT
-from mcp_hazard.apify_shim import Actor
 
 logger = logging.getLogger(__name__)
 

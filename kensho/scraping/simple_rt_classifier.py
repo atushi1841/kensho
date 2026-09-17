@@ -15,11 +15,11 @@ fail-open 設計: どんな失敗でも UNKNOWN を返し、応募側は従来�
 
 from __future__ import annotations
 
+import datetime
 import json
 import os
 import re
 import time
-import datetime
 from pathlib import Path
 from typing import Any
 
