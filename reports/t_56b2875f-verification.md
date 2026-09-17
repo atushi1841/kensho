@@ -10,7 +10,7 @@
 1. **ConnectTimeout時のauto_retry** → kenkaku.py v144 (commit 7448138)
    - `_KENKAKU_MAX_RETRIES=3`, `_KENKAKU_RETRY_BACKOFF=2.0`（指数バックオフ 2/4/8s）
    - fetchのみリトライ、非200は即スキップ。恒久テスト tests/test_kenkaku_retry.py（10件、QA受け入れ済み）
-2. **3回連続失敗で源を一時skip＋他源(KCLUB/CPMK)で補完** → source_health.py (commit b057f73, t_442337b4)
+2. **3回連続失敗で源を一時skip＋他源(KCLUB/CPMK)で補完** → source_health.py (commit b057f73)
    - collector.py `guarded_source()` が threshold 超のソースを自動skipし他源は独立継続。キャッシュ=既収集分維持。
 3. **KENKAKU復帰検知で自動re-add** → 成功時 `record_success()` が consecutive_failures を0へリセット、日跨ぎで日次ロール。
 
