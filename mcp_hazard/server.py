@@ -11,6 +11,7 @@ MCP Hazard Server — Model Context Protocol サーバー
 import json
 import uuid
 import logging
+import os
 from typing import Any
 
 from fastapi import FastAPI, Request, HTTPException
@@ -18,12 +19,40 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from mcp_hazard.hazard import get_hazard, geocode_address, CREDIT_TEXT
+from mcp_hazard.apify_shim import Actor
 
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="MCP Hazard Server", version="0.2.0")
 
 PROTOCOL_VERSION = "2025-06-18"
+
+
+# ── BYOK: APIキー解決 ──
+def _resolve_api_key(arguments: dict[str, Any]) -> str:
+    """APIキー解決: ツール引数 apiKey → 環境変数 MLIT_API_KEY → Actor input → 空。
+
+    BYOK(Bring Your Own Key)方式。利用者が各自のMLITキーを引き渡す。
+    """
+    key = (arguments.get("apiKey") or "").strip()
+    if key:
+        return key
+    key = (os.environ.get("MLIT_API_KEY") or "").strip()
+    if key:
+        return key
+    try:
+        import glob
+
+        cand = glob.glob("/input/INPUT.json") + glob.glob("INPUT.json")
+        if cand:
+            with open(cand[0]) as f:
+                inp = json.load(f)
+            key = (inp.get("MLIT_API_KEY") or "").strip()
+            if key:
+                return key
+    except Exception:  # noqa: BLE001
+        pass
+    return ""
 
 
 # ── MCPリクエスト/レスポンススキーマ ──
@@ -48,6 +77,7 @@ TOOLS = [
                 "address": {"type": "string", "description": "住所 (例: 東京都千代田区丸の内1-1)"},
                 "lat": {"type": "number", "description": "緯度(省略時は住所から解決)"},
                 "lon": {"type": "number", "description": "経度(省略時は住所から解決)"},
+                "apiKey": {"type": "string", "description": "MLIT APIキー (BYOK。未指定時は環境変数/エンドポイント設定のキーを使用)"},
             },
             "required": ["address"],
         },

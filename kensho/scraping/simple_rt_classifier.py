@@ -19,6 +19,7 @@ import json
 import os
 import re
 import time
+import datetime
 from pathlib import Path
 from typing import Any
 
@@ -32,6 +33,7 @@ BAI_API_KEY_UNAME: str = "BAI_API_KEY"
 DEFAULT_MODEL: str = "qwen3.8-flash"
 FALLBACK_API_URL: str = "https://openrouter.ai/api/v1/chat/completions"
 FALLBACK_MODEL: str = "minimax/minimax-m3:free"
+SECOND_FALLBACK_MODEL: str = "nousresearch/hermes-3-mini:free"
 DEFAULT_BATCH_SIZE: int = 8
 
 # Hermes profile側 .env（本番実行時はここに OPENROUTER_API_KEY がある。2026-08-28）
@@ -162,8 +164,42 @@ def _call_api_with_fallback(
     or_key = _load_or_key()
     if not or_key:
         raise  # 両方ない場合はfail-open側でUNKNOWN扱い(呼び出し元except)
-    payload_model = model
-    return _call_api(or_key, batch, payload_model, max_tokens, timeout=timeout, url=FALLBACK_API_URL)
+    # Try primary fallback model
+    payload_model = FALLBACK_MODEL
+    try:
+        content = _call_api(or_key, batch, payload_model, max_tokens, timeout=timeout, url=FALLBACK_API_URL)
+        _log_openrouter_usage(project_root)
+        return content
+    except Exception:
+        # If primary fallback fails, try second fallback
+        try:
+            content = _call_api(or_key, batch, SECOND_FALLBACK_MODEL, max_tokens, timeout=timeout, url=FALLBACK_API_URL)
+            _log_openrouter_usage(project_root)
+            return content
+        except Exception:
+            raise
+
+
+def _log_openrouter_usage(project_root: str | Path | None = None) -> None:
+    """Increment monthly counter for OpenRouter API calls."""
+    try:
+        root = Path(project_root) if project_root else Path(__file__).resolve().parent.parent.parent
+        usage_file = root / "data" / "openrouter_usage.json"
+        usage_file.parent.mkdir(parents=True, exist_ok=True)
+        today = datetime.date.today()
+        key = f"{today.year}-{today.month:02d}"
+        data = {}
+        if usage_file.exists():
+            try:
+                with open(usage_file) as f:
+                    data = json.load(f)
+            except Exception:
+                data = {}
+        data[key] = data.get(key, 0) + 1
+        with open(usage_file, 'w') as f:
+            json.dump(data, f, indent=2)
+    except Exception:
+        pass
 
 
 def classify_texts(
