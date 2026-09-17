@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 import time
+from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,7 @@ from kensho.scraping.common import (
     snowflake_ts_ms,
 )
 from kensho.scraping.dead_source_sentinel import check_dead_sources
+from kensho.scraping.source_health import PRIMARY_SOURCES, SourceHealth, set_active
 from kensho.scraping.sources import (
     BASE_URL,
     _fetch_with_retry,
@@ -224,6 +226,26 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         else:
             print(msg, flush=True)
 
+    # ★ t_442337b4 提案2/3: 収集源ヘルスモニタ — ネットワーク層timeout率を日次trackし、
+    #   閾値超過ソースを自動skip（キャッシュ=既収集分を維持）。全主要源timeout時は前日キャッシュ提供。
+    _hcfg: dict[str, Any] = cfg.get("collection", {})
+    health: SourceHealth = SourceHealth(
+        DATA_DIR,
+        max_consecutive_failures=int(_hcfg.get("health_max_consecutive_failures", 4)),
+        daily_failure_rate=float(_hcfg.get("health_daily_failure_rate", 0.5)),
+        min_attempts=int(_hcfg.get("health_min_attempts", 6)),
+    )
+    health.begin_run()
+    set_active(health)
+
+    def guarded_source(name: str, fn: Callable[..., list[dict[str, Any]]], *args: Any) -> list[dict[str, Any]]:
+        """異常ソースはネットワーク呼び出しを回避して自動スキップ（既収集分=キャッシュを維持）。"""
+        if health.is_unhealthy(name):
+            out(f"  [HEALTH] {name}: 異常 {health.status_line(name)} → 自動skip・キャッシュ（既収集分）維持")
+            health.record_skip(name)
+            return []
+        return fn(*args)
+
     out(f"[Kensho Collection] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     out(f"  最大件数: {max_items}, アカウント: {account_keys}")
 
@@ -401,25 +423,29 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
 
     # ── Step 2b: ken-kaku.com 収集 ──
     out("\n[Step 2b ken-kaku] X懸賞を収集...")
-    kenkaku_items: list[dict[str, Any]] = scrape_kenkaku(out, processed_set, account_keys)
+    kenkaku_items: list[dict[str, Any]] = guarded_source("ken-kaku", scrape_kenkaku, out, processed_set, account_keys)
     out(f"  ken-kaku: {len(kenkaku_items)}件")
     collected.extend(kenkaku_items)
 
     # ── Step 2c: kenshou.club 収集 ──
     out("\n[Step 2c kenshou.club] X懸賞を収集...")
-    kclub_items: list[dict[str, Any]] = scrape_kenshouclub(out, processed_set, account_keys)
+    kclub_items: list[dict[str, Any]] = guarded_source(
+        "kenshou.club", scrape_kenshouclub, out, processed_set, account_keys
+    )
     out(f"  kenshou.club: {len(kclub_items)}件")
     collected.extend(kclub_items)
 
     # ── Step 2d: cp.meikan.org 収集 ──
     out("\n[Step 2d cp.meikan.org] Xキャンペーンを収集...")
-    cpmeikan_items: list[dict[str, Any]] = scrape_cpmeikan(out, processed_set, account_keys)
+    cpmeikan_items: list[dict[str, Any]] = guarded_source(
+        "cp.meikan", scrape_cpmeikan, out, processed_set, account_keys
+    )
     out(f"  cp.meikan.org: {len(cpmeikan_items)}件")
     collected.extend(cpmeikan_items)
 
     # ── Step 2e: ke-ma.net 収集 ──
     out("\n[Step 2e ke-ma.net] X懸賞を収集...")
-    kema_items: list[dict[str, Any]] = scrape_kema(out, processed_set, account_keys)
+    kema_items: list[dict[str, Any]] = guarded_source("ke-ma", scrape_kema, out, processed_set, account_keys)
     out(f"  ke-ma.net: {len(kema_items)}件")
     collected.extend(kema_items)
 
@@ -453,6 +479,28 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     out(f"  kensho-everyday.com: {len(kevery_items)}件")
     collected.extend(kevery_items)
 
+    # ★ t_442337b4 提案3: 全主要ソース（KENKAKU/KCLUB/CPMK/KEMA）がこのrunで1つも応答成功
+    #   → 前日データをキャッシュ(collected.json累積)から提供継続 + アラート。fail-open。
+    if health.all_primary_idle():
+        _unh: list[str] = health.unhealthy_sources()
+        out("\n[FALLBACK] 全主要ソースがこの収集runで応答失敗（全timeout/全異常skip）→ 前日データをキャッシュから提供")
+        out(f"          主要源状態: { {s: health.status_line(s) for s in PRIMARY_SOURCES} }")
+        try:
+            from kensho.core.notifier import notify_warning
+
+            notify_warning(
+                "収集フォールバック（全主要源timeout）",
+                "KENKAKU/KCLUB/KEMA/CPMK 全主要源が応答失敗。前日キャッシュ(collected.json)から提供継続。"
+                f"unhealthy={_unh}",
+                log_path="",
+                cfg=cfg,
+            )
+        except Exception as _fe:  # noqa: BLE001 — fail-open
+            out(f"  [WARN] フォールバック通知失敗（fail-open）: {_fe}")
+    elif health.any_primary_failed():
+        _failed: list[str] = [s for s in PRIMARY_SOURCES if health.run_failures.get(s, 0) > 0]
+        out(f"  [HEALTH] 部分劣化（主要源timeout）: {_failed}")
+
     if not collected and not errors:
         out("\n✅ 全ソースで新規なし。終了。")
         existing: dict[str, Any] = load_json(COLLECTED_FILE, {})
@@ -461,6 +509,8 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         existing["new_items_processed"] = 0
         existing["new_items_by_source"] = {}
         safe_save_json(COLLECTED_FILE, existing, "collected.json")
+        health.save()
+        set_active(None)
         return (0, 0, len(existing.get("collected", [])))
 
     out(
@@ -733,5 +783,12 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         out(f"  {url}")
     if len(x_urls) > 10:
         out(f"  ...他{len(x_urls) - 10}件")
+
+    # ★ t_442337b4 提案2: ヘルスモニタ永続化 + アクティブ解除。fail-open。
+    _unh_list: list[str] = health.unhealthy_sources()
+    if _unh_list:
+        out(f"  [HEALTH] 異常ソース: {_unh_list}（次回収集で自動skip・キャッシュ維持）")
+    health.save()
+    set_active(None)
 
     return (success, len(errors), len(collected))

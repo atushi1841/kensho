@@ -39,6 +39,9 @@ def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -
     for pid in _KENKAKU_PAGE_IDS:
         url: str = f"{KENKAKU_BASE}present.cgi?id={pid}"
         # fetchのみリトライ対象（critic v144）。最終失敗時はそのページだけスキップ。
+        # ★ t_442337b4: ネットワーク層ヘルスモニタへ成功/失敗を記録（提案2）
+        from kensho.scraping.source_health import note_fetch
+
         r: httpx.Response | None = None
         for attempt in range(1 + _KENKAKU_MAX_RETRIES):
             try:
@@ -46,8 +49,11 @@ def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -
                     resp = c.get(url, headers=headers_jp)
                 if resp.status_code != 200:
                     out(f"  [KENKAKU] ページ{pid}: HTTP {resp.status_code} - スキップ")
-                    resp = None
-                r = resp
+                    note_fetch("ken-kaku", False, f"http={resp.status_code}")
+                    r = None
+                else:
+                    r = resp
+                    note_fetch("ken-kaku", True)
                 break
             except Exception as e:
                 if attempt < _KENKAKU_MAX_RETRIES:
@@ -60,6 +66,7 @@ def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -
                     time.sleep(delay)
                     continue
                 out(f"  [KENKAKU] ページ{pid}: ERROR {type(e).__name__}: {e}")
+                note_fetch("ken-kaku", False, type(e).__name__)
                 r = None
                 break
         if r is None:

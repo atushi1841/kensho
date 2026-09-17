@@ -175,6 +175,12 @@ collection:
   # 収集を応募(orchestrator)から分離: 専用cron(crontab 0 3,9-21)で実行。
   # orchestratorの応募処理が収集の7.5分で圧迫されなくなる。
   separate_cron: true
+  # ★ 2026-09-18 t_442337b4: 収集源ヘルスモニタ（source_health）閾値。
+  #   連続失敗 or 日次失敗率が閾値超でそのソースを自動skipしキャッシュ（既収集分）を維持。
+  #   全主要源timeout時は前日キャッシュから提供継続＋アラート。欠落時はコード内デフォルト(4/0.5/6)。
+  health_max_consecutive_failures: 4
+  health_daily_failure_rate: 0.5
+  health_min_attempts: 6
 
 # ── Keepalive ──
 keepalive:

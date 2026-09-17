@@ -35,29 +35,49 @@ HEADERS: dict[str, str] = {
 
 # ── 指数バックオフリトライ ──
 def _fetch_with_retry(
-    url: str, referer: str | None = None, max_retries: int = 5, timeout: int = 30
+    url: str,
+    referer: str | None = None,
+    max_retries: int = 5,
+    timeout: int = 30,
+    source: str | None = None,
 ) -> tuple[int, str, str]:
     """
     HTTP GET with exponential backoff.
     HTTP 5xx / タイムアウト / ネットワークエラー時にリトライ。
+    backoff は初期1s→最大8sにキャップ（t_442337b4 提案1）。
+    source 指定時はヘルスモニタ（source_health）へ成功/失敗を記録（提案2）。
+    戻り値: (code, html, final_url)。code==0 = 全リトライ失敗（ネットワーク不可）。
     """
+    from kensho.scraping.source_health import note_fetch
+
+    def _record(code: int) -> None:
+        if source:
+            if code == 0 or code >= 500:
+                note_fetch(source, False, f"code={code}")
+            else:
+                note_fetch(source, True)
+
+    code, html, final_url = 0, "", ""
     for attempt in range(max_retries):
         try:
             code, html, final_url = fetch(url, referer=referer, timeout=timeout)
             if code < 500:
+                _record(code)
                 return code, html, final_url
         except (httpx.TimeoutException, httpx.ConnectError, httpx.RemoteProtocolError):
-            pass
+            code = 0
         except Exception:
             break
         if attempt < max_retries - 1:
-            delay: float = (2**attempt) + _random.uniform(0, 1)
+            # 指数バックオフ、最大8秒にキャップ。初期1s → 2,4,8,8...
+            delay: float = min((2**attempt), 8.0) + _random.uniform(0, 1)
             time.sleep(delay)
-    code, html, final_url = 0, "", ""
-    try:
-        code, html, final_url = fetch(url, referer=referer, timeout=timeout)
-    except Exception:
-        pass
+    if code == 0:
+        try:
+            code, html, final_url = fetch(url, referer=referer, timeout=timeout)
+        except Exception:
+            code = 0
+    _record(code)
     return code, html, final_url
 
 
