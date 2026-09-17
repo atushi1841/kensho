@@ -108,7 +108,14 @@ for acct in $ACCOUNTS; do
   if [ "$(date +%H%M)" -ge 2230 ] 2>/dev/null && [ "$(date +%H)" = "22" ]; then STAGGER_MIN=0; fi
   STAGGER_SEC=$(( STAGGER_MIN * 60 ))
   if [ "$STAGGER_MOD" -gt 0 ]; then log "stagger $acct +${STAGGER_MIN}分"; fi
-  flock -n "$LOCK_DIR/$acct.lock" -c "
+  # ★ 2026-09-18 FLOCKハング対策 (t_9b0e1c0a): setsid で起動し flock==セッションリーダ化。
+  #   setsid以降: flock.pid == pgid == sid（セッションリーダ）。配下Tree(sleep/orchestrator/
+  #   playwright/ff)は全てこのPGIDを継承するため、kensho-hang-watchdog.sh が
+  #   kill -TERM -- -<PGID> → KILL 昇格でこの垢のツリーだけを確実に終了でき、
+  #   flock含む全プロセスが死ぬとロックが自動解放される。
+  #   根拠: research/flock_kill_watchdog 検証済み(TEST G)。setsid 無しだと全垢が
+  #   ディスパッチャと同一PGIDを共有し、グループkillが全垢を巻き込む（BOT検出リスク）。
+  setsid flock -n "$LOCK_DIR/$acct.lock" -c "
     sleep $STAGGER_SEC
     cd '$PROJECT_DIR'
     export HOME=/home/atushi PYTHONPATH='$PROJECT_DIR'
