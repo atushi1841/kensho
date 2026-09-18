@@ -3,12 +3,13 @@
 
 Launch SeleniumBase in CDP mode against a real browser and open the target,
 matching the task acceptance command:
-    python3 -c "from seleniumbase import SB; sb=SB(CDP_mode=True); sb.open('https://twitter.com'); print('CDP_OK')"
+    python3 scripts/seleniumbase_cdp_bootstrap.py
 
 Env:
   KENSHO_SB_TARGET  override target URL (default https://twitter.com)
   KENSHO_SB_HEADLESS 1 for headless override
 """
+
 import os
 import time
 
@@ -20,7 +21,8 @@ def main() -> int:
     from seleniumbase import SB
 
     t0 = time.monotonic()
-    with SB(CDP_mode=True, headless=HEADLESS, headed=not HEADLESS) as sb:
+    with SB(headless=HEADLESS, headed=not HEADLESS) as sb:
+        sb.activate_cdp_mode(TARGET)
         t_launch = time.monotonic() - t0
         sb.open(TARGET)
         t_open = time.monotonic() - t0
