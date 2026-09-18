@@ -456,6 +456,28 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     out(f"  ken-kaku: {len(kenkaku_items)}件")
     collected.extend(kenkaku_items)
 
+    # ★ t_1cae393c: KENKAKU ConnectTimeoutフェイルオーバー
+    #   ken-kakuに失敗があった場合、CPMK/KEMAで補完収集
+    _kenkaku_fails: int = health.run_failures.get("ken-kaku", 0) if health else 0
+    _failover_items: list[dict[str, Any]] = []
+    if _kenkaku_fails > 0:
+        out(f"  [FALLBACK] ken-kaku失敗{_kenkaku_fails}件 → CPMK/KEMAで補完収集")
+        try:
+            _cp_items = guarded_source("cp.meikan", scrape_cpmeikan, out, processed_set, account_keys)
+            out(f"    [FALLBACK] cp.meikan: {len(_cp_items)}件")
+            _failover_items.extend(_cp_items)
+        except Exception as _e:
+            out(f"    [FALLBACK] cp.meikan失敗: {_e}")
+        try:
+            _ke_items = guarded_source("ke-ma", scrape_kema, out, processed_set, account_keys)
+            out(f"    [FALLBACK] ke-ma: {len(_ke_items)}件")
+            _failover_items.extend(_ke_items)
+        except Exception as _e:
+            out(f"    [FALLBACK] ke-ma失敗: {_e}")
+        health.record_failover("ken-kaku", len(_failover_items))
+        out(f"  [FALLBACK] 補完計{len(_failover_items)}件完了")
+    collected.extend(_failover_items)
+
     # ── Step 2c: kenshou.club 収集 ──
     out("\n[Step 2c kenshou.club] X懸賞を収集...")
     kclub_items: list[dict[str, Any]] = guarded_source(

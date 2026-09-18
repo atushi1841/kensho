@@ -25,6 +25,8 @@ _KENKAKU_PAGE_IDS: list[str] = [
 # critic対策: リトライは指数バックオフ（base 2.0s、2回目=4.0s、…）で実行
 _KENKAKU_MAX_RETRIES: int = 3  # 失敗時に追加で最大3回まで再試行（合計4アテンプト）
 _KENKAKU_RETRY_BACKOFF: float = 2.0  # 指数バックオフのベース秒（2.0 * 2**attempt）
+# t_1cae393c: ConnectTimeout短縮 + フェイルオーバー用10sタイムアウト
+_KENKAKU_TIMEOUT: int = 10
 
 
 def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -> list[dict[str, Any]]:
@@ -45,7 +47,7 @@ def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -
         r: httpx.Response | None = None
         for attempt in range(1 + _KENKAKU_MAX_RETRIES):
             try:
-                with httpx.Client(follow_redirects=True, timeout=30) as c:
+                with httpx.Client(follow_redirects=True, timeout=_KENKAKU_TIMEOUT) as c:
                     resp = c.get(url, headers=headers_jp)
                 if resp.status_code != 200:
                     out(f"  [KENKAKU] ページ{pid}: HTTP {resp.status_code} - スキップ")

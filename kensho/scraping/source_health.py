@@ -138,6 +138,13 @@ class SourceHealth:
         if source not in self.skipped:
             self.skipped.append(source)
 
+    # ── フェイルオーバー記録 (t_1cae393c) ──
+    def record_failover(self, source: str, recovered: int) -> None:
+        """KENKAKU失敗時のCPMK/KEMA補完収集を記録。"""
+        e = self._entry(source)
+        e["failover_count"] = e.get("failover_count", 0) + 1
+        e["failover_recovered"] = e.get("failover_recovered", 0) + recovered
+
     # ── 判定 ──
     def is_unhealthy(self, source: str) -> bool:
         if source not in self._state["sources"]:
