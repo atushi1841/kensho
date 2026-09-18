@@ -159,6 +159,12 @@ def metric_checkpoint_on_exhausted_runs() -> dict[str, Any]:
     missing = []
     for r in rows:
         tid = r["task_id"]
+        # v103 v2 (QA run 2026-09-18): 終端済み(done/archived)のタスクは再ディスパッチ
+        # されないため「枯渇ゼロ再走」リスクが消滅。protocol_violationゲート(v167)の
+        # 回収判定と同様に終端を除外し、恒久赤でpytest -x自己ループを阻害しない。
+        st = con.execute("SELECT status FROM tasks WHERE id=?", (tid,)).fetchone()
+        if st and st["status"] in ("done", "archived"):
+            continue
         cp = con.execute(
             "SELECT COUNT(*) c FROM task_comments WHERE task_id=? AND body LIKE '%[checkpoint]%'",
             (tid,),
