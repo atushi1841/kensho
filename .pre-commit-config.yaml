@@ -14,6 +14,17 @@ repos:
       - id: ruff-format
         types_or: [python, pyi]
 
+  # コミット・プッシュ忘れ防止 (t_c2104009): 未pushコードを自動push、
+  # push不能なら commit をブロック（= 重ね積みを防ぎ guard(e) "unpushed code" の FAILを根絶）
+  - repo: local
+    hooks:
+      - id: push-guard
+        name: "push-guard: commit/push忘れ防止"
+        entry: python3 scripts/push_guard.py --stage pre-commit
+        language: system
+        pass_filenames: false
+        always_run: true
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
