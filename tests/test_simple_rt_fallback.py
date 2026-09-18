@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Test simple_rt_classifier fallback logic."""
+
 import sys
 
-sys.path.insert(0, '.')
+sys.path.insert(0, ".")
 import datetime
 import json
 import pathlib
@@ -11,11 +12,17 @@ from kensho.scraping.simple_rt_classifier import FALLBACK_MODEL, SECOND_FALLBACK
 
 # 1. Verify constants
 assert FALLBACK_MODEL == "minimax/minimax-m3:free", f"Unexpected FALLBACK_MODEL: {FALLBACK_MODEL}"
-assert SECOND_FALLBACK_MODEL == "nousresearch/hermes-3-mini:free", f"Unexpected SECOND_FALLBACK_MODEL: {SECOND_FALLBACK_MODEL}"
+assert SECOND_FALLBACK_MODEL == "nousresearch/hermes-3-mini:free", (
+    f"Unexpected SECOND_FALLBACK_MODEL: {SECOND_FALLBACK_MODEL}"
+)
 print("Constants OK")
 
 # 2. Test _log_openrouter_usage creates file
+#    冪等性: 前回実行の残留カウンタを起点でリセット（/tmp に共有されるため）。
 test_root = pathlib.Path("/tmp/test_or_usage")
+test_usage_file = test_root / "data" / "openrouter_usage.json"
+if test_usage_file.exists():
+    test_usage_file.unlink()
 (test_root / "data").mkdir(parents=True, exist_ok=True)
 _log_openrouter_usage(test_root)
 usage_file = test_root / "data" / "openrouter_usage.json"
