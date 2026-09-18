@@ -5,7 +5,7 @@
 
 確認コマンド（タスク指定）`grep -r 'rt_done_ids\|session_anomaly\|consecutive_reply' kensho/application/`
 は本番スクリプト `kensho/application/applier.py` に `rt_done_ids`（セッション内RT重複防止）を検出。
-本実装は先行タスク（t_99e84648 等）で編入され、commit・push 済み（origin/main 所属）。本 run で
+本実装は先行タスクで編入され、commit・push 済み（origin/main 所属）。本 run で
 受け入れ条件充足を実測確認するのみ（pre-existing・追加実装なし）。
 
 5トリガーの実装内訳:
