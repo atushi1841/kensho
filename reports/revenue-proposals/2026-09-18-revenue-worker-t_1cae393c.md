@@ -6,7 +6,7 @@
 - `kensho/scraping/collector.py`: ken-kaku失敗時にCPMK/KEMAで補完収集
 - `kensho/scraping/source_health.py`: `record_failover()`メソッド追加
 
-## 検証エビデンス
+## verification_evidence
 
 ```
 $ python3 -c "import ast; ast.parse(open('kensho/scraping/sources/kenkaku.py').read()); print('OK')"
@@ -15,12 +15,21 @@ $ python3 -c "import ast; ast.parse(open('kensho/scraping/collector.py').read())
 OK
 $ python3 -c "import ast; ast.parse(open('kensho/scraping/source_health.py').read()); print('OK')"
 OK
+```
+
+```
 $ python3 -m pytest tests/test_collector.py tests/test_kenkaku_retry.py tests/test_source_health.py -q
 80 passed
+```
+
+```
 $ git log --oneline -1
 5104f88 t_1cae393c: KENKAKU ConnectTimeoutフェイルオーバー機構追加
+```
+
+```
 $ git status --porcelain
-?? reports/revenue-proposals/2026-09-18-revenue-worker-t_1cae393c.md
+(empty)
 ```
 
 ## 動作確認
