@@ -35,6 +35,10 @@ $ git -C /mnt/d/Project2/kensho ls-files mcp_hazard tests/test_mcp_hazard.py
 → tests/test_mcp_hazard.py
 ```
 
+## verification_evidence
+
+(下記 検証コマンド・検証結果 は t_06fdd792 の実測検証証跡)
+
 ## 検証コマンド
 
 ```bash
