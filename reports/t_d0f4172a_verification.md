@@ -8,12 +8,13 @@ RTフォールバック分離バグの再発。
 テストは import 時にハードコードされた `/tmp/test_or_usage` の `data/openrouter_usage.json`
 を参照するが、起点リセットが無くカウンタが実行のたびに累積していた。
 実測では前回値 24 に本runの +2 が加わり got=26 となった（expected=2 は最初の1回のみ成立）。
+タスク t_d0f4172a の成功指標は「expected=2 で pass」であり、これを満たすにはテストを冪等化する必要がある。
 
 ## 修正内容
 テスト冒頭で残留 usage ファイルを `unlink` してからカウンタを初期化（冪等化）。
 commit 83656bf（tests/test_simple_rt_fallback.py）。
 
-## 検証エビデンス
+## verification_evidence
 
 ### 1. 失敗の再現（修正前）
 ```text
@@ -56,8 +57,14 @@ $ uvx ruff@0.15.20 check tests/test_simple_rt_fallback.py
 All checks passed!
 ```
 
+### 6. タスク所有パスの git 追跡確認
+```text
+$ git ls-files tests/test_simple_rt_fallback.py reports/t_d0f4172a_verification.md
+tests/test_simple_rt_fallback.py
+reports/t_d0f4172a_verification.md
+```
+
 ## 補足
-全スイートは非関連の既存失敗1件あり
-（`test_regression_gates::test_gate_result_column_empty_after_v151`, offender t_9f37e5e3）。
+全スイートは非関連の既存失敗1件あり（`test_regression_gates::test_gate_result_column_empty_after_v151`）。
 本変更と無関係と確認済み（変更を stash した状態でも再現）。
 push は github.com 443 不通のため未達（ローカル commit 済み、origin/main ref 不在 → guard 条件 e は skip）。
