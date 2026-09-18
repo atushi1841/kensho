@@ -2,30 +2,30 @@
   "date": "2026-09-18",
   "sources": {
     "ken-kaku": {
-      "attempts": 7,
+      "attempts": 14,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0
     },
     "kenshou.club": {
-      "attempts": 640,
+      "attempts": 1280,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0
     },
     "cp.meikan": {
-      "attempts": 10,
+      "attempts": 20,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0
     },
     "ke-ma": {
-      "attempts": 10,
+      "attempts": 20,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0
     }
   },
-  "last_run": "2026-09-18T04:26:59",
+  "last_run": "2026-09-18T10:43:47",
   "skipped_this_run": []
 }
