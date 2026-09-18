@@ -539,7 +539,7 @@ def main(argv: list[str] | None = None) -> int:
     week_new = sum(1 for w in wins if (dt := parse_dt(w.get("message_time") or "")) is not None and start <= dt < end)
     md = render(week, stats, matched, unmatched, collected_paths, week_new)
 
-    out = args.out or os.path.join(pdir, "reports", f"winrate-{week}.md")
+    out = args.out or os.path.join(pdir, "reports", f"weekly_win_analysis_{week}.md")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w", encoding="utf-8") as f:
         f.write(md)
