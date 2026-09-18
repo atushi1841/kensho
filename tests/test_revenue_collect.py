@@ -332,8 +332,26 @@ class TestFetchApifyPricing:
 
     @pytest.fixture(autouse=True)
     def _isolate_cache(self, tmp_path: Any, monkeypatch: Any) -> None:
-        """キャッシュ書込を実データDirへ漏らさない（v94）。"""
+        """キャッシュ書込を実データDirへ漏らさない（v94）。
+
+        加えて fetch_apify_pricing() 先頭の check_apify_health()（requests.get 2本消費）を
+        neutral 化する。health が実ネットワーク/モックの side_effect 長に干渉しないよう
+        status="ok" 固定で上書きする（v94 テストは requests.get を固定長の
+        side_effect リストで渡すため、health が先に2本消費すると StopIteration になる）。
+        """
         monkeypatch.setattr(krc, "PRICING_CACHE", str(tmp_path / "apify_pricing_cache.json"))
+        monkeypatch.setattr(
+            krc,
+            "check_apify_health",
+            lambda: {
+                "status": "ok",
+                "endpoint": "acts",
+                "http_code": 200,
+                "error": None,
+                "recovered": False,
+                "timestamp": "2026-09-18T00:00:00+00:00",
+            },
+        )
 
     def _fake_actor(self, pricing_infos: list[dict[str, Any]]) -> dict[str, Any]:
         return {
@@ -596,6 +614,19 @@ class TestV94FetchPartialResilience:
     @pytest.fixture(autouse=True)
     def _isolate(self, tmp_path: Any, monkeypatch: Any) -> None:
         monkeypatch.setattr(krc, "PRICING_CACHE", str(tmp_path / "cache.json"))
+        # check_apify_health() を neutral 化（requests.get の side_effect 長に影響させない）
+        monkeypatch.setattr(
+            krc,
+            "check_apify_health",
+            lambda: {
+                "status": "ok",
+                "endpoint": "acts",
+                "http_code": 200,
+                "error": None,
+                "recovered": False,
+                "timestamp": "2026-09-18T00:00:00+00:00",
+            },
+        )
 
     def test_one_timeout_keeps_other_results(self) -> None:
         """1本目失敗（例外）→ 2本目成功 → 部分結果を返す（従来は全体{}）"""
@@ -653,6 +684,87 @@ class TestV94FetchPartialResilience:
         cache.write_text(json.dumps({"saved_at": stale, "pricing": {"x": {}}}), encoding="utf-8")
         with patch("requests.get", side_effect=Exception("ConnectTimeout")):
             assert krc.fetch_apify_pricing() == {}
+
+
+class TestApifyHealthGate:
+    """check_apify_health() の結果が fetch_apify_pricing() を正しく分岐させる（commit 45f9349）。"""
+
+    def _ok_actor(self) -> FakeResponse:
+        return FakeResponse({
+            "status_code": 200,
+            "data": {
+                "name": "japan-offmall-market-scraper",
+                "isPublic": True,
+                "pricingInfos": [
+                    {
+                        "pricingModel": "PAY_PER_EVENT",
+                        "pricingPerEvent": {"actorChargeEvents": {"apify-default-dataset-item": {"eventPriceUsd": 0.005}}},
+                    }
+                ],
+            },
+        })
+
+    def test_down_uses_cache(self, tmp_path: Any, monkeypatch: Any) -> None:
+        """health=down → 24h内キャッシュへ早期フォールバック（requests.get は1本も呼ばれない）"""
+        cache = tmp_path / "cache.json"
+        payload = {
+            "saved_at": datetime.now().isoformat(timespec="seconds"),
+            "pricing": {
+                "japan-market-mcp": {"pricing_model": "PAY_PER_EVENT", "price": 5e-05, "is_public": True, "id": "abc"}
+            },
+        }
+        cache.write_text(json.dumps(payload), encoding="utf-8")
+        monkeypatch.setattr(krc, "PRICING_CACHE", str(cache))
+        monkeypatch.setattr(
+            krc,
+            "check_apify_health",
+            lambda: {
+                "status": "down",
+                "endpoint": "both",
+                "http_code": 0,
+                "error": "acts接続失敗: ConnectTimeout",
+                "recovered": False,
+                "timestamp": "2026-09-18T00:00:00+00:00",
+            },
+        )
+        with patch("requests.get", side_effect=Exception("health down では requests を呼ばない")) as mget:
+            result = krc.fetch_apify_pricing()
+        assert "japan-market-mcp" in result
+        mget.assert_not_called()
+
+    def test_down_without_cache_returns_empty(self, tmp_path: Any, monkeypatch: Any) -> None:
+        """health=down かつキャッシュ無し → {}（requests.get は呼ばれない）"""
+        monkeypatch.setattr(krc, "PRICING_CACHE", str(tmp_path / "absent_cache.json"))
+        monkeypatch.setattr(
+            krc,
+            "check_apify_health",
+            lambda: {"status": "down", "endpoint": "both", "http_code": 0, "error": "不通"},
+        )
+        with patch("requests.get", side_effect=Exception("health down では requests を呼ばない")) as mget:
+            assert krc.fetch_apify_pricing() == {}
+        mget.assert_not_called()
+
+    def test_degraded_continues_fetch(self, monkeypatch: Any) -> None:
+        """health=degraded（補助エンドポイント不調）→ 本命fetchは継続し正常に価格を返す"""
+        monkeypatch.setattr(
+            krc,
+            "check_apify_health",
+            lambda: {
+                "status": "degraded",
+                "endpoint": "acts+users/me",
+                "http_code": 403,
+                "error": "users/me: HTTP 403",
+                "recovered": False,
+                "timestamp": "2026-09-18T00:00:00+00:00",
+            },
+        )
+        list_resp = FakeResponse({"data": {"items": [{"id": "zh4k", "name": "japan-offmall-market-scraper"}]}})
+        with patch("requests.get", side_effect=[list_resp, self._ok_actor()]):
+            result = krc.fetch_apify_pricing()
+        got = result.get("japan-offmall-market-scraper")
+        assert got is not None
+        assert got["pricing_model"] == "PAY_PER_EVENT"
+        assert got["price"] == 0.005
 
 
 class TestV94UnknownBilling:
