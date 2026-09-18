@@ -273,6 +273,11 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     out(f"[Kensho Collection] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     out(f"  最大件数: {max_items}, アカウント: {account_keys}")
 
+    # ★ t_d2242716: research(twscrape)ゲートの基準を「収集開始時刻(cron hour)」に固定。
+    #   収集が遅れて Step 2f 到達が 03:00 を跨いでも、cron開始時刻に基づきresearchを実行する
+    #   （壁時計 datetime.now().hour だと実行機会を取り逃すため）。
+    _collect_start_hour: int = datetime.now().hour
+
     t0: float = time.time()
 
     processed: dict[str, Any] = load_json(PROCESSED_FILE, {})
@@ -477,12 +482,14 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     out("\n[Step 2f twscrape] X直接検索で懸賞を収集...")
     # ★ t_9cc18ba0: research(セッション使用のX検索)をapply時刻と分離 — 同一セッションで
     #   検索と応募を近接実行するとXのBOT相関検出が付きやすいため、apply非稼働時刻に限定。
-    _research_ok: bool = research_allowed(datetime.now().hour, cfg)
+    #   t_d2242716: 判定基準を壁時計(datetime.now().hour)ではなく収集開始時刻 _collect_start_hour
+    #   （cron発火時刻）に変更。収集遅延で Step 2f 到達が数時間を跨いでも実行機会を逃さない。
+    _research_ok: bool = research_allowed(_collect_start_hour, cfg)
     twscrape_items: list[dict[str, Any]] = []
     if not _research_ok:
         _rh = (cfg or {}).get("collection", {}).get("research_hours")
         out(
-            f"  [RESEARCH分離] 現在時刻 {datetime.now().strftime('%H:%M')} は research_hours={_rh} "
+            f"  [RESEARCH分離] 収集開始時刻 {_collect_start_hour:02d}:00 は research_hours={_rh} "
             "実行対象外 → X検索(twscrape)をスキップ（apply同時刻のセッション相関防止）"
         )
         twscrape_items = []
