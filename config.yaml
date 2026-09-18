@@ -162,6 +162,13 @@ accounts:
 collection:
   source: "https://knshow.com"
   use_scrapling: true        # true: Cloudflare突破にScrapling（curl_cffi + browserforge）を使用
+  # ★ t_f4698348 代替案: SOCKS5プロキシローテーション（Crawlee互換性なし→既存httpx+SOCKS5で実装）。
+  #   use_scrapling=false の時、この proxy_pool リストが設定されていれば収集fetchをSOCKS5プロキシ
+  #   round-robin（失敗クールダウン5分 + 全滅時ダイレクトフォールバック）経由に切替。
+  #   未設定/空リストなら従来の直接fetch（挙動不変）。プロキシは X セッションと別IPを維持すること。
+  # proxy_pool:
+  #   - "socks5h://172.26.80.1:1081"
+  #   - "socks5h://172.26.80.1:1082"
   times: ["03:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"]
   max_items: 500
   # ★ 2026-08-28: LLMで「フォロー+RTだけで応募完了か」を判定（simple_rt_ok）

@@ -18,6 +18,11 @@ from kensho.scraping.common import (
 )
 from kensho.scraping.dead_source_sentinel import check_dead_sources
 from kensho.scraping.source_health import PRIMARY_SOURCES, SourceHealth, set_active
+from kensho.scraping.socks_rotation import (
+    make_rotator_from_config,
+    proxied_fetch,
+    proxied_fetch_with_retry,
+)
 from kensho.scraping.sources import (
     BASE_URL,
     _fetch_with_retry,
@@ -237,8 +242,19 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
 
     # ── Scrapling モード（Cloudflare突破）──
     use_scrapling: bool = col_cfg.get("use_scrapling", False)
-    _do_fetch = scrapling_fetch if use_scrapling else fetch
-    _do_fetch_retry = scrapling_fetch_with_retry if use_scrapling else _fetch_with_retry
+    # ★ t_f4698348 代替案: SOCKS5プロキシローテーション（Crawlee互換性なし→既存httpx+SOCKS5で実装）
+    #   collection.proxy_pool 配列が設定されていればローテータ生成し、プロキシ経由fetchへ切替。
+    #   未設定/空なら従来の直接fetch（挙動不変）。
+    _rotator = make_rotator_from_config(cfg)
+    if use_scrapling:
+        _do_fetch = scrapling_fetch
+        _do_fetch_retry = scrapling_fetch_with_retry
+    elif _rotator is not None:
+        _do_fetch = lambda u, **kw: proxied_fetch(u, **kw)
+        _do_fetch_retry = lambda u, **kw: proxied_fetch_with_retry(u, rotator=_rotator, **kw)
+    else:
+        _do_fetch = fetch
+        _do_fetch_retry = _fetch_with_retry
 
     DATA_DIR: Path = Path(cfg["general"]["project_dir"]) / "data"
     PROCESSED_FILE: Path = DATA_DIR / "processed.json"

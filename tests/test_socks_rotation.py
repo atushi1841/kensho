@@ -29,6 +29,7 @@ from kensho.scraping.socks_rotation import (
 
 def _rotator(pool: list[str]) -> SocksProxyRotator:
     r = SocksProxyRotator(pool=pool)
+    r._pool = list(pool)  # undo __init__ shuffle → 決定的な順序 (round-robin order)
     r._idx = 0  # determinism
     return r
 
