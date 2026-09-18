@@ -315,13 +315,18 @@ for lf in log_files[-60:]:
     acc_matches = re.findall(r"\s*今回処理:\s*(\d+)垢", log_text)
     if acc_matches:
         entry["accounts"] = int(acc_matches[-1])
-    warn_matches = list(re.finditer(r"⚠️|FAIL|ERROR|失敗", log_text))
-    error_matches = list(re.finditer(r"❌|FATAL", log_text))
-    last_warn = warn_matches[-1] if warn_matches else None
-    last_err = error_matches[-1] if error_matches else None
-    if last_err and (not last_warn or last_err.start() > last_warn.start()):
+    # 2026-09-18 t_d2b1ba39: status判定を「実エラー基準」へ修正。
+    # 旧実装は ⚠️|FAIL|ERROR|失敗 を位置比較で warn 扱いしていたため、
+    # 0エラー完走runでも「[WARN] プロフィール確認失敗（続行）」
+    # 「[i] RT API失敗 → UIフォールバック」「[DEFER] 失敗アクション」
+    # 「[CEILING] 連続失敗」等の benign 行だけで warn になり、
+    # gen_status_html.py が status=="ok" のみを成功集計するため
+    # ダッシュボード成功率が偽の 0.0% になっていた（観測性の偽警報）。
+    # 真の失敗のみ fail 扱い: ❌ / FATAL / [NG] 完了 / [OK] 完了のエラー数>0。
+    fatal_matches = list(re.finditer(r"❌|FATAL|\[NG\] 完了", log_text))
+    if fatal_matches:
         entry["status"] = "error"
-    elif last_warn:
+    elif entry["error"] > 0:
         entry["status"] = "warn"
     else:
         entry["status"] = "ok"
