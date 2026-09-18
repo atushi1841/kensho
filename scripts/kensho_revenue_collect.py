@@ -14,7 +14,7 @@ import json
 import os
 import subprocess
 import time
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
 PROJECT_DIR = "/mnt/d/Project2/kensho"
@@ -89,6 +89,61 @@ def get_apify_token() -> str:
     return os.environ.get("APIFY_TOKEN", "") or APIFY_TOKEN_DEFAULT
 
 
+def check_apify_health() -> dict[str, Any]:
+    """Apify APIの健康状態を確認する。"""
+    token = get_apify_token()
+    result: dict[str, Any] = {
+        "status": "down",
+        "endpoint": "both",
+        "http_code": 0,
+        "error": None,
+        "recovered": False,
+        "timestamp": datetime.now(UTC).isoformat(),
+    }
+
+    import requests as _req
+
+    # 1) /v2/acts?my=true (メインエンドポイント)
+    try:
+        r = _req.get(
+            f"https://api.apify.com/v2/acts?my=true&token={token}",
+            timeout=10,
+        )
+        result["http_code"] = r.status_code
+        if r.status_code == 200:
+            result["status"] = "ok"
+            result["endpoint"] = "acts"
+        elif r.status_code == 404:
+            result["status"] = "degraded"
+            result["error"] = "404: token失効またはendpoint変更の可能性"
+        elif r.status_code == 401:
+            result["status"] = "degraded"
+            result["error"] = "401: トークン無効"
+        else:
+            result["status"] = "degraded"
+            result["error"] = f"HTTP {r.status_code}"
+    except Exception as e:
+        result["error"] = f"acts接続失敗: {type(e).__name__}"
+
+    # 2) /v2/users/me (補助エンドポイント)
+    try:
+        r2 = _req.get(
+            f"https://api.apify.com/v2/users/me?token={token}",
+            timeout=10,
+        )
+        if r2.status_code != 200:
+            if result["status"] == "ok":
+                result["status"] = "degraded"
+                result["endpoint"] = "acts+users/me"
+                result["error"] = f"users/me: HTTP {r2.status_code}"
+    except Exception as e:
+        if result["status"] == "ok":
+            result["status"] = "degraded"
+            result["error"] = f"users/me接続失敗: {type(e).__name__}"
+
+    return result
+
+
 def _save_pricing_cache(pricing: dict[str, dict[str, Any]]) -> None:
     """fetch_apify_pricing 成功結果を data/apify_pricing_cache.json に保存（v94項目4）。"""
     try:
@@ -124,7 +179,7 @@ def fetch_apify_pricing() -> dict[str, dict[str, Any]]:
     """Apify APIからポートフォリオ全アクターの課金状態を直接取得。
 
     pay_per_event.json のような静的ファイルに依存せず、Apify APIの
-    pricingInfos を正とする（t_1323b323: PPE collection accuracy）。
+    pricingInfosを正とする（t_1323b323: PPE collection accuracy）。
 
     返り値: {実API名: {pricing_model, price, is_public}}
     API失敗時は空dictを返し、呼び出し側で pay_per_event.json にフォールバックする。
@@ -137,6 +192,15 @@ def fetch_apify_pricing() -> dict[str, dict[str, Any]]:
     # （9/11 04:20実測: 25本途中でConnectTimeout → result={} → フォールバック空振り）。
     # 1本は try/except+continue、連続3本失敗で以降を打ち切る（レート制限/不通の連鎖防止）。
     consecutive_failures = 0
+    # ── 事前健康度チェック（404/token失効検出・早期フォールバック） ──
+    health = check_apify_health()
+    if health["status"] == "down":
+        print(f"  ⚠️ Apify API不通(健康度チェック): {health.get('error', '不明')} → キャッシュへフォールバック")
+        cached = _load_pricing_cache()
+        if cached:
+            print(f"  ↑ pricingキャッシュ（24h以内）を使用: {len(cached)}件")
+            return cached
+        return {}
     try:
         # 1. 全アクターのID一覧を取得
         resp = requests.get(f"https://api.apify.com/v2/acts?my=true&token={token}", timeout=30)

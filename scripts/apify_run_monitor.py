@@ -83,6 +83,48 @@ def get(path: str, token: str | None = None) -> dict | list:
     raise last_err  # type: ignore[misc]
 
 
+def check_apify_health() -> dict:
+    """Apify API健康度チェック。404/token失効を検出してリカバリ提案を返す。"""
+    t = APIFY_TOKEN
+    if not t:
+        return {"status": "down", "error": "APIFY_TOKEN未設定", "http_code": 0}
+    url = f"{API_BASE}/acts?my=true&token={t}"
+    try:
+        req = urllib.request.Request(url, headers={"Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            code = resp.status
+            if code == 200:
+                return {"status": "ok", "http_code": 200, "error": None}
+            elif code == 404:
+                return {
+                    "status": "degraded",
+                    "http_code": 404,
+                    "error": "404: token失効/endpoint変更",
+                    "recovery": "token再発行またはRapidAPIへ切替",
+                }
+            elif code == 401:
+                return {
+                    "status": "degraded",
+                    "http_code": 401,
+                    "error": "401: トークン無効",
+                    "recovery": "APIFY_TOKEN再設定",
+                }
+            else:
+                return {"status": "degraded", "http_code": code, "error": f"HTTP {code}"}
+    except urllib.error.HTTPError as e:
+        code = e.code if hasattr(e, "code") else 0
+        if code == 404:
+            return {
+                "status": "degraded",
+                "http_code": 404,
+                "error": "404: token失効/endpoint変更",
+                "recovery": "token再発行またはRapidAPIへ切替",
+            }
+        return {"status": "degraded", "http_code": code, "error": f"HTTPError {code}"}
+    except Exception as e:
+        return {"status": "down", "http_code": 0, "error": f"{type(e).__name__}: {e}"}
+
+
 def get_last_runs(actor_id: str, token: str | None = None, limit: int = 5) -> list[dict]:
     """actor の最新実行一覧を取得。data={total,count,items:[...]} 入れ子にも生listにも対応。"""
     try:
