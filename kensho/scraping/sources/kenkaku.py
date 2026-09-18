@@ -22,9 +22,11 @@ _KENKAKU_PAGE_IDS: list[str] = [
 ]
 
 # critic v144: ページ単位timeoutリトライ（ken-kaku.com側レイテンシjitter対策）
-# critic対策: リトライは指数バックオフ（base 2.0s、2回目=4.0s、…）で実行
-_KENKAKU_MAX_RETRIES: int = 3  # 失敗時に追加で最大3回まで再試行（合計4アテンプト）
-_KENKAKU_RETRY_BACKOFF: float = 2.0  # 指数バックオフのベース秒（2.0 * 2**attempt）
+# critic対策: リトライは指数バックオフで実行
+# t_350bc813: リトライ3→5回、バックオフ2/4→3/6/10s（10sキャップ） — ConnectTimeout完全drop回避
+_KENKAKU_MAX_RETRIES: int = 5  # 失敗時に追加で最大5回まで再試行（合計6アテンプト）
+_KENKAKU_RETRY_BACKOFF: float = 3.0  # 指数バックオフのベース秒（3.0 * 2**attempt、10sキャップ）
+_KENKAKU_RETRY_BACKOFF_MAX: float = 10.0  # バックオフ上限（3,6,10,10,10…）
 # t_1cae393c: ConnectTimeout短縮 + フェイルオーバー用10sタイムアウト
 _KENKAKU_TIMEOUT: int = 10
 
@@ -59,8 +61,8 @@ def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -
                 break
             except Exception as e:
                 if attempt < _KENKAKU_MAX_RETRIES:
-                    # 指数バックオフ（critic対策）: base 2.0s → 2, 4, 8... を試行回数で増やす
-                    delay: float = _KENKAKU_RETRY_BACKOFF * (2**attempt)
+                    # 指数バックオフ（critic対策）: base 3.0s → 3,6,12... を10s上限でキャップ（3,6,10,10,10）
+                    delay: float = min(_KENKAKU_RETRY_BACKOFF * (2**attempt), _KENKAKU_RETRY_BACKOFF_MAX)
                     out(
                         f"  [KENKAKU] ページ{pid}: {type(e).__name__}"
                         f" → リトライ{attempt + 1}/{_KENKAKU_MAX_RETRIES}（{delay:.0f}s待ち）"

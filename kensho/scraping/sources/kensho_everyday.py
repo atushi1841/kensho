@@ -6,7 +6,7 @@ import re
 import time
 from typing import Any
 
-from .common import HEADERS, _fetch_with_retry, fetch, has_skip_keyword
+from .common import HEADERS, _fetch_with_retry, has_skip_keyword
 
 # ── 第5b収集源: kensho-everyday.com ──
 _KENSHO_EVERY_BASE: str = "https://kensho-everyday.com"
@@ -29,8 +29,10 @@ def scrape_kensho_everyday(out: Any, processed_set: set[str], account_keys: list
     seen_x_urls: set[str] = set()
 
     # ── RSSフィード取得（X懸賞カテゴリ限定・軽量）──
+    # t_350bc813: 裸の fetch() → _fetch_with_retry（ConnectTimeout時に指数バックオフでリトライ）
+    #   + source_health 記録で継続監視（完全drop回避）。次の正時収集でRSSは再取得可能。
     try:
-        code, rss_html, _ = fetch(_KENSHO_EVERY_RSS)
+        code, rss_html, _ = _fetch_with_retry(_KENSHO_EVERY_RSS, source="kensho-everyday", timeout=30)
         if code != 200:
             out(f"  [KENS-EVERY] RSS: HTTP {code} - 終了")
             return items
