@@ -32,6 +32,12 @@
 | CDP起動テスト | SKIP | WSL環境: DISPLAY未設定（Chrome GUI起動不可） |
 | BOT検出テスト | SKIP | 起動スキップに伴い未実施 |
 
+## verification_evidence
+
+- `$ python scripts/test_selenium_cdp.py` → SeleniumBase import OK + KenshoCDP module import OK (WSL launch SKIP)
+- `$ git status --porcelain -- '*.py' '*.yaml' '*.sh' '*.js'` → clean (commit cf010c3)
+- `$ git log --oneline -1` → cf010c3 feat: SeleniumBase CDP Mode
+
 ## WSL環境制約の説明
 
 WSLではDISPLAY環境変数が未設定のため、ChromeのGUI起動が不可能。
