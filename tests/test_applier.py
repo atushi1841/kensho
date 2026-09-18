@@ -1317,3 +1317,37 @@ class TestMultiResponse:
         # 3垢目で検知
         _multi_response_record("t0", "c", cfg, log, state_path=path)
         assert any("same_campaign_multi" in ln for ln in log.lines)
+
+    def test_anomaly_rt_like_abort_flag(self) -> None:
+        """t_c189d8d8 提案1: 連続RT/いいね異常検知の構造を検証する。
+
+        連続RT/いいねが anomaly_max_consecutive_rt_like（config, デフォルト5）回 成功したら
+        _anomaly_abort フラグが立ち、外側 while ループ頭で検知してバッチを強制終了する。
+        - フラグとカウンタの宣言が存在する
+        - 外側 while 内で `if _anomaly_abort: ... break`
+        - 内側で RT/いいね 成功で `_anomaly_abort = True` を立てる（しきい値到達時）
+        - config キー anomaly_max_consecutive_rt_like が定義されている
+        """
+        import inspect
+
+        from kensho.application import applier
+
+        src = inspect.getsource(applier)
+        # 1. カウンタ・フラグ宣言
+        assert "consecutive_rt_like: int = 0" in src, "consecutive_rt_like カウンタが存在しない"
+        assert "_anomaly_abort: bool = False" in src, "_anomaly_abort フラグが存在しない"
+        # 2. 外側while内で `if _anomaly_abort:` → break
+        _while_idx = src.find("while success < max_n")
+        _abort_check = src.find("if _anomaly_abort:", _while_idx)
+        assert _abort_check > _while_idx, "外側while内に _anomaly_abort チェックがない"
+        # 3. しきい値到達でフラグを立てる代入（ANOMALYログ直後）
+        _anomaly_log_idx = src.find("[ANOMALY]")
+        _assign_idx = src.find("_anomaly_abort = True", _anomaly_log_idx)
+        assert _assign_idx > _anomaly_log_idx, "_anomaly_abort = True の代入が[ANOMALY]ログより後ろにない"
+        # 4. しきい値は config（applier.anomaly_max_consecutive_rt_like）から読み込む
+        assert "anomaly_max_consecutive_rt_like" in src, "configキー anomaly_max_consecutive_rt_like の読み込みがない"
+        # 5. config.yaml にも定義がある
+        cfg_yml = Path(__file__).resolve().parents[1] / "config.yaml"
+        assert "anomaly_max_consecutive_rt_like" in cfg_yml.read_text(encoding="utf-8"), (
+            "config.yaml に anomaly_max_consecutive_rt_like が定義されていない"
+        )

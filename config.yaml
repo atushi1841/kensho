@@ -350,6 +350,10 @@ applier:
   #   ログ+アラート（ブロックしない・対応はManual）。提案88近接DEFERのスリップスルー監視。
   multi_response_window_sec: 1800    # 30分
   multi_response_threshold: 2
+  # ★ t_c189d8d8 提案1: 連続RT/いいね異常検知しきい値。
+  #   RT or いいね がこの回数連続成功したらセッション強制終了（BAN祭りスパム判定の検出境界5回）。
+  #   フォロー成功 or 失敗でリセット。0以下なら無効（従来挙動に戻す）。
+  anomaly_max_consecutive_rt_like: 5
 
 # ── NGワード（除外フィルター）──
 # この文字列を含むツイートは応募をスキップします

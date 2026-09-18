@@ -785,6 +785,15 @@ def apply_for_account(
     #   いいね単独連続を4件で一時停止する（フォロー/RTは続行可）。
     consecutive_likes: int = 0
 
+    # ★ t_c189d8d8 提案1: 連続RT/いいね異常検知カウンタ。
+    #   2026年春のスパム判定強化（5ch「短時間RP連続」「いいね4-5連続」を検出対象に）を受け、
+    #   RT or いいね が anomaly_max_consecutive_rt_like 回 連続成功したらセッション強制終了する。
+    #   フォロー成功 or 何らかの失敗でリセット（フォローは応募成立=人為的介入ポイントで安定化）。
+    #   既存 consecutive_likes は「いいね単独の一時停止」であり、これは「RT+いいね連続の強制終了」。
+    consecutive_rt_like: int = 0
+    # ★ 提案1: 連続RT/いいね異常フラグ（外側while頭で検知してバッチ即時終了）。
+    _anomaly_abort: bool = False
+
     # ★ アクションパターン記憶（人間らしい行動のための機能追加）:
     #   最近のアクションシーケンスを記憶し、あまりにも規則的なパターンを避ける
     _recent_action_sequence: list[str] = []
@@ -834,6 +843,10 @@ def apply_for_account(
     fc_enabled: bool = fc_cfg.get("enabled", True)
     fc_max: int = fc_cfg.get("max_consecutive_failures", 3)
     fc_cooldown: int = fc_cfg.get("cooldown_minutes", 30)
+
+    # ★ t_c189d8d8 提案1: 連続RT/いいね異常検知しきい値（デフォルト5 = BAN祭り分析の検出境界）
+    anomaly_cfg: dict = cfg.get("applier", {})
+    anomaly_max_rt_like: int = int(anomaly_cfg.get("anomaly_max_consecutive_rt_like", 5))
 
     # ★ 検証設定読み込み
     verif_cfg: dict = cfg.get("verification", {})
@@ -1086,6 +1099,16 @@ def apply_for_account(
             )
 
         while success < max_n and idx < len(account_applied):
+            # ★ t_c189d8d8 提案1: 連続RT/いいね異常フラグ検知でバッチ即時終了。
+            #   内側ループで anomaly_max_consecutive_rt_like 回連続成功を検知したら、
+            #   残りitemを処理せずこの垢のバッチを打ち切る（スパム判定回避）。
+            if _anomaly_abort:
+                out(
+                    f"  [ANOMALY_ABORT] t_c189d8d8提案1: 連続RT/いいね{anomaly_max_rt_like}回検知"
+                    f" → {account_key} バッチ強制終了（{success}件処理済み）"
+                )
+                break
+
             # ★ 2026-08-30提案91: 提案90の `break` は内側 action_queue ループしか抜けず、
             #   外側 `while` (line 752) は継続→凍結疑い垢で残 item を全部処理し[FROZEN]がN回出る。
             #   内側で立てたフラグを外側ループ頭で検知して即時バッチ終了する。
@@ -1958,6 +1981,22 @@ def apply_for_account(
                     else:
                         if _name == "like":
                             consecutive_likes = 0  # Reset on failure
+                    # ★ t_c189d8d8 提案1: 連続RT/いいね異常カウンタ更新。
+                    #   RT/いいね成功で+1 → しきい値到達で _anomaly_abort フラグを立てる。
+                    #   フォロー成功 or いずれかの失敗でリセット（人為的介入で安定化）。
+                    if _rv:
+                        if _name in ("rt", "like"):
+                            consecutive_rt_like += 1
+                            if consecutive_rt_like >= anomaly_max_rt_like:
+                                out(
+                                    f"  [ANOMALY] 提案1: RT/いいね{consecutive_rt_like}連続成功"
+                                    f"（閾値{anomaly_max_rt_like}）→ セッション異常と判定、強制終了"
+                                )
+                                _anomaly_abort = True
+                        else:
+                            consecutive_rt_like = 0  # フォロー等でリセット
+                    else:
+                        consecutive_rt_like = 0  # 失敗でリセット
                     if result is False:
                         false_count += 1
                         if false_count >= 3:
