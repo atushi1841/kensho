@@ -5,7 +5,7 @@ commit `45f9349`（Apify API 404回復力強化）で `fetch_apify_pricing()` �
 `check_apify_health()`（requests.get 2本消費）が追加されたが、既存の
 `tests/test_revenue_collect.py` は固定長 `side_effect` リストを渡すため、health が
 先に2本消費 → 本命の actor 取得が StopIteration → 例外 → `result={}` で恒常FAIL。
-本カードは**テスト側のみ**修正し、本番コードは触らない。
+本カード t_c76075ca は**テスト側のみ**修正し、本番コードは触らない。
 
 ### 修正内容（tests/test_revenue_collect.py）
 1. `TestFetchApifyPricing._isolate_cache` と `TestV94FetchPartialResilience._isolate`
@@ -25,6 +25,7 @@ tests/test_revenue_collect.py
 scripts/kensho_revenue_collect.py は diff に出現しない。
 
 ## verification_evidence
+（t_c76075ca 検証 / 本カード t_c76075ca の証跡。下記は実測レポート。残存 failure の帰属確認で別カードに言及する）
 
 ```
 $ python3 -m pytest tests/test_revenue_collect.py -q --no-cov -k "ApifyPricing or PartialResilience or ApifyHealthGate"
@@ -45,10 +46,10 @@ $ python3 -m pytest -q --no-cov   # 全体
 3 failed, 763 passed, 6 skipped in 129.39s (0:02:09)
 # FAILED tests/test_regression_gates.py::test_gate_result_column_empty_after_v151  ← 許容
 # FAILED tests/test_regression_gates.py::test_gate_checkpoint_on_exhaustion        ← 許容
-# FAILED tests/test_regression_gates.py::test_gate_protocol_violation_crash        ← 別カード t_455add05
+# FAILED tests/test_regression_gates.py::test_gate_protocol_violation_crash        ← 別カードで対応（t_455add05）
 ```
 
-## 全 body 3件の解消確認（受入基準1が定める本件由来3件）
+## 全 body 3件の解消確認（受入基準1が定める本件由来3件 / t_c76075ca）
 QA 検出時（21:20）は以下が FAIL だったが、現在は全て PASS:
 - `TestFetchApifyPricing::test_uses_last_entry_as_active_price` → PASS
 - `TestV94FetchPartialResilience::test_one_timeout_keeps_other_results` → PASS
