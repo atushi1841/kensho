@@ -15,7 +15,7 @@
     "/mnt/d/Project2/kensho/reports/t_8da22532_verification.md"
   ],
   "evidence_hashes": [
-    "reports/t_8da22532_verification.md=9ccfaa581af6df512f3edf74519858adfd570797a89332e75552ef2a5dde5ca0"
+    "reports/t_8da22532_verification.md=a492f8ad99103d9f28a765b5d118e16decd1b294f89b6116fc2e9b5d7fbe7b4d"
   ],
   "notes": "項目2完了。項目1(icon=画像ホスティング要)・項目3(version minor bump=ソース/ビルドデプロイ)はフォローアップカードで実施。価格・公開状態・カテゴリ以外は不変。",
   "task_id": "t_8da22532",
