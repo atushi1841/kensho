@@ -1,0 +1,25 @@
+{
+  "success_indicators": [
+    "共通生成API --write-evidence を done-guard に追加: 生成側 (write_evidence) と検証側 (evidence_json_state) が同一定数 EV_JSON_REQUIRED_FIELDS/EV_JSON_CONTENT_FIELDS を共有 → スキーマ対象の形式ドリフト (game of telephone 実体) が構造的に不可能",
+    "critic/worker/QA 全フェーズの成果物受け渡しを Reports/<task_id>_evidence.json の直接書き出しに統一 (LLM が JSON を手書きしない)",
+    "write_evidence は task_id/status を権威値で自動付与・成果物パス実在を生成前に拒否・書き込み後に同モジュールで guard(j)=pass を自己検証",
+    "ai-team-improvement スキルに 条件(j) 節 + write-evidence 節を追記し、completion 順序 ②' として evidence.json 生成を組込"
+  ],
+  "verification_commands": [
+    "$ bash kanban_done_guard.py --selftest => ... j_write=True (生成→検証 round-trip 成功, 空リスト/不実在artifact/非object payload いずれも生成前拒否)",
+    "$ bash kanban_done_guard.py t_clidemo --workdir <tmp>/work --write-evidence --payload-file <payload> => written: <tmp>/work/reports/t_clidemo_evidence.json (guard j verification => pass, sha256=33b925084b...)",
+    "$ git -C ~/.hermes/profiles/kensho-sweeps log --oneline -1 => 1390165 feat(guard): common --write-evidence interface for machine-readable evidence.json handoff (task t_23bc6a5c)",
+    "$ git diff HEAD -- scripts/kanban_done_guard.py => +def write_evidence / +def _selftest_j_write / +if args.write_evidence (evaluate・条件(i) 不触)"
+  ],
+  "artifact_paths": [
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/skills/software-development/ai-team-improvement/SKILL.md",
+    "/mnt/d/Project2/kensho/reports/t_23bc6a5c_verification.md"
+  ],
+  "evidence_hashes": [
+    "1390165 common interface commit (sweeps local-only repo)",
+    "guard --selftest 全体 (e/d/g/h/i は date-hardened で予め赤・j_write=True を追加確認)"
+  ],
+  "task_id": "t_23bc6a5c",
+  "status": "complete"
+}
