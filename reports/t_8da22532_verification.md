@@ -25,13 +25,13 @@ $ python3 live_sweep.py
 → categories <2 (public): 0 / PPE public: 66 / 74 / non-PPE: [] / errors: []
 
 $ git log --oneline -1
-→ <COMMIT_PLACEHOLDER>
+→ 2edad88 docs(evidence): t_8da22532 Apify Store SEO改善 項目2(categories)実測検証記録 + evidence.json
 
 $ git push origin HEAD
-→ <PUSH_PLACEHOLDER>
+→ 22d0d31..2edad88 HEAD -> main
 
 $ bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_8da22532 --workdir /mnt/d/Project2/kensho --write-evidence --payload-file /tmp/t_8da22532_payload.json
-→ written: /mnt/d/Project2/kensho/reports/t_8da22532_evidence.json (guard j verification => pass)
+→ written: /mnt/d/Project2/kensho/reports/t_8da22532_evidence.json (guard j verification => pass, sha256=78b015da55721f161312860563a79d969926d101c84ed6ce13983e2a33f9d08d)
 
 ## 検証結果（ライブ実測）
 
