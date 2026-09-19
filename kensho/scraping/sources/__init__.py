@@ -27,6 +27,7 @@ from .knshow import (
     is_x_url,
     resolve_redirect,
 )
+from .prtimes import scrape_prtimes
 from .scrapling_fetch import (
     is_scrapling_available,
     scrapling_fetch,
@@ -60,4 +61,5 @@ __all__ = [
     "is_scrapling_available",
     "scrape_twscrape",
     "scrape_chancecom",
+    "scrape_prtimes",
 ]

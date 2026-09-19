@@ -1,4 +1,4 @@
-"""Kensho Collector — knshow.com + ken-kaku.com + kenshou.club + cp.meikan.org からX懸賞URLを収集"""
+"""Kensho Collector — knshow.com + ken-kaku.com + kenshou.club + cp.meikan.org + prtimes からX懸賞URLを収集"""
 
 from __future__ import annotations
 
@@ -41,6 +41,7 @@ from kensho.scraping.sources import (
     scrape_kenkaku,
     scrape_kensho_everyday,
     scrape_kenshouclub,
+    scrape_prtimes,
     scrape_twscrape,
     scrapling_fetch,
     scrapling_fetch_with_retry,
@@ -560,6 +561,14 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     out(f"  kensho-everyday.com: {len(kevery_items)}件")
     collected.extend(kevery_items)
 
+    # ── Step 2i: PR TIMES 収集（記念プレゼント・新商品キャンペーン／収集源第5ソース）──
+    out("\n[Step 2i prtimes] PR TIMES プレゼント・新商品キャンペーンを収集...")
+    prtimes_items: list[dict[str, Any]] = guarded_source(
+        "prtimes", scrape_prtimes, out, processed_set, account_keys
+    )
+    out(f"  prtimes: {len(prtimes_items)}件")
+    collected.extend(prtimes_items)
+
     # ★ t_442337b4 提案3: 全主要ソース（KENKAKU/KCLUB/CPMK/KEMA）がこのrunで1つも応答成功
     #   → 前日データをキャッシュ(collected.json累積)から提供継続 + アラート。fail-open。
     if health.all_primary_idle():
@@ -599,6 +608,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         f"kenshou.club {len(kclub_items)}件, cp.meikan {len(cpmeikan_items)}件, "
         f"ke-ma {len(kema_items)}件, twscrape {len(twscrape_items)}件, "
         f"chance.com {len(chancecom_items)}件, kensho-everyday {len(kevery_items)}件, "
+        f"prtimes {len(prtimes_items)}件, "
         f"計{len(collected)}件)"
     )
 
@@ -820,6 +830,7 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
             "twscrape": len(twscrape_items),
             "chance.com": len(chancecom_items),
             "kensho-everyday": len(kevery_items),
+            "prtimes": len(prtimes_items),
         },
     }
     # ★ 2026-09-02 修正: 保存直前にディスクから再読込し、applierが書き込んだ応募日付をマージ。
