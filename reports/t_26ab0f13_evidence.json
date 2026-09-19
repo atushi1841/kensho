@@ -1,0 +1,23 @@
+{
+  "task_id": "t_26ab0f13",
+  "status": "complete",
+  "success_indicators": [
+    "done_guard 条件(j) machine-readable evidence.json handoff 実装(char 707-812, main wiring 1686-1697, output 1833-1838)",
+    "evidence_json_state 検証4経路実測: FAIL(artifact実在なし判別)/PASS(欠落0)/MISSING(必須5フィールド列挙)/SKIP(未作成=md経路維持)",
+    "kanban_complete を --result 付きで呼出 (h:v151 由来 --result 必須と共に完了シグナル消失を機械可読化)"
+  ],
+  "verification_commands": [
+    "$ git -C ~/.hermes/profiles/kensho-sweeps log --oneline -1 kanban_done_guard.py => 6ea91a9 feat(guard): done_guard condition (j)",
+    "$ git rev-parse HEAD => 6ea91a9f6fb2be5d5097db0b534843c54686447f (guard committed, local-only repo, push skip)",
+    "$ sha256sum ~/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py => d7f4dce9... (J condition file fingerprint)",
+    "$ python3 /tmp/jtest_guard.py => FAIL-case: fail missing_arts=['/no/such/file'] | PASS-case: pass [] [] | MISSING-case: fail [5 fields] | SKIP-case: skip"
+  ],
+  "artifact_paths": [
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py",
+    "/mnt/d/Project2/kensho/reports/t_26ab0f13_evidence.json",
+    "/mnt/d/Project2/kensho/reports/t_26ab0f13_verification.md"
+  ],
+  "evidence_hashes": [
+    "d7f4dce91d41c4b084102170928a9eb34a5864bccbdccc2d97576d71274b91db"
+  ]
+}
