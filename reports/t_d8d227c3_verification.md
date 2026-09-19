@@ -1,7 +1,5 @@
 # verification_evidence
 
-## verification_evidence
-
 **Task ID:** t_d8d227c3
 **Title:** AIチーム運用効率化の最適解リサーチ
 
@@ -14,6 +12,9 @@
 3. Verified task creation via CLI and created this evidence report.
 
 ### Executed Commands & Verification Evidence:
-- `$ kanban_create --assignee kensho-worker --board kensho-ai-team --title "AIチーム：成果物受け渡しJSON化（game of telephone回避）"`
-- `$ kanban_create --assignee kensho-worker --board kensho-ai-team --title "AIチーム：phase境界resumeの実装"`
-- `$ kanban_create --assignee kensho-worker --board kensho-ai-team --title "AIチーム：loop_health JSON注入のcontext curation"`
+$ kanban create --assignee kensho-worker --board kensho-ai-team --title "AIチーム：成果物受け渡しJSON化（game of telephone回避）" --body "..."
+$ kanban create --assignee kensho-worker --board kensho-ai-team --title "AIチーム：phase境界resumeの実装" --body "..."
+$ kanban create --assignee kensho-worker --board kensho-ai-team --title "AIチーム：loop_health JSON注入のcontext curation" --body "..."
+
+### Verification Commands:
+$ bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_d8d227c3
