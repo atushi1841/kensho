@@ -20,20 +20,41 @@ notepad プロトコルに従い「完了済み phase はスキップ／残工�
 
 ## verification_evidence
 
-- `$ python3 scripts/phase_checkpoint.py write t_222014ad --phase 1 --name "実装(notepad+skill)" --outcome "...write/read/reset/list 動作確認(t_TESTRESUME)" --next "phase2: 中断→再開の自己検証"`
-  -> `phase_checkpoint: saved phase=1 name='実装(notepad+skill)' tasks=1`
-- `$ python3 scripts/phase_checkpoint.py read t_222014ad`
-  -> `=== AIチーム resume book (phase境界 notepad) ===` / `next: phase2: 中断→再開の自己検証` を返し、中断箇所からの続行点を復元
-- `$ python3 scripts/phase_checkpoint.py write t_222014ad --phase 2 --name "中断→再開の自己検証" --outcome "run792中断→run793 re-dispatch で continue 確認; 全コマンド動作" --next "all done: reset + kanban_complete"`
-  -> `phase_checkpoint: saved phase=2 name='中断→再開の自己検証' tasks=2`
-- `$ python3 scripts/phase_checkpoint.py read t_222014ad`（phase2 完了後・累積確認）
-  -> `completed_phases: 2` / `[phase 1] 実装(notepad+skill)` / `[phase 2] 中断→再開の自己検証` / `next: all done: reset + kanban_complete`
-- `$ python3 scripts/phase_checkpoint.py write t_222014ad --phase 1 --outcome "冪等確認"`（同一 phase 再打刻）
-  -> `phase_checkpoint: saved phase=1 ... tasks=2`（上書き・冪等）
-- `$ python3 scripts/phase_checkpoint.py reset t_222014ad`（kanban_complete 前のクリーンアップ）
-  -> `phase_checkpoint: reset task=t_222014ad` → `read` は `no notepad for task=t_222014ad (fresh start)`
-- `$ python3 scripts/phase_checkpoint.py list`
-  -> `phase_checkpoint: notepad empty`（t_TESTRESUME mock も reset 済み。store の寿命・衝突なし確認）
+```text
+$ python3 scripts/phase_checkpoint.py write t_222014ad --phase 1 --name "実装(notepad+skill)" --outcome "...write/read/reset/list 動作確認(t_TESTRESUME)" --next "phase2: 中断→再開の自己検証"
+-> phase_checkpoint: saved phase=1 name='実装(notepad+skill)' tasks=1
+```
+
+```text
+$ python3 scripts/phase_checkpoint.py read t_222014ad
+-> === AIチーム resume book (phase境界 notepad) ===
+-> next: phase2: 中断→再開の自己検証 を返し、中断箇所からの続行点を復元
+```
+
+```text
+$ python3 scripts/phase_checkpoint.py write t_222014ad --phase 2 --name "中断→再開の自己検証" --outcome "run792中断→run793 re-dispatch で continue 確認; 全コマンド動作" --next "all done: reset + kanban_complete"
+-> phase_checkpoint: saved phase=2 name='中断→再開の自己検証' tasks=2
+```
+
+```text
+$ python3 scripts/phase_checkpoint.py read t_222014ad
+-> completed_phases: 2 / [phase 1] 実装(notepad+skill) / [phase 2] 中断→再開の自己検証 / next: all done: reset + kanban_complete
+```
+
+```text
+$ python3 scripts/phase_checkpoint.py write t_222014ad --phase 1 --outcome "冪等確認"
+-> phase_checkpoint: saved phase=1 ... tasks=2 （上書き・冪等）
+```
+
+```text
+$ python3 scripts/phase_checkpoint.py reset t_222014ad
+-> phase_checkpoint: reset task=t_222014ad → read は no notepad for task=t_222014ad (fresh start)
+```
+
+```text
+$ python3 scripts/phase_checkpoint.py list
+-> phase_checkpoint: notepad empty（t_TESTRESUME mock も reset 済み。store の寿命・衝突なし確認）
+```
 
 ## 結論
 
