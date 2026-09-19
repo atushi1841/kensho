@@ -1,0 +1,32 @@
+{
+  "success_indicators": [
+    "西東京市 事業者サンプル100件 CSV 生成完了 (sample_businesses_nishitokyo_100.csv, 101行=ヘッダ+データ100)",
+    "提案テンプレ3種 作成完了 (基本型/定期更新型/単発急ぎ型)",
+    "再現スクリプト collect_business_sample.py 再実行テスト=既存CSVと行数・内容完全一致 (True/True)",
+    "納品形式定義書 deliverables/README.md 作成"
+  ],
+  "verification_commands": [
+    "$ python3 collect_business_sample.py /tmp/tokyo/13_tokyo_all_20260831_02.csv 西東京市 100 /tmp/repro_sample_test.csv => OK: 西東京市 の事業者 100件 を出力しました",
+    "$ python3 repro比較: 行数一致=True 内容完全一致=True",
+    "$ wc -l sample_businesses_nishitokyo_100.csv => 101",
+    "$ git log --oneline -1 => ec94d80 docs(evidence): t_8bc5e2b4 ...   / git push origin HEAD => 9bdae57..ec94d80"
+  ],
+  "artifact_paths": [
+    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_8bc5e2b4/sample_businesses_nishitokyo_100.csv",
+    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_8bc5e2b4/collect_business_sample.py",
+    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_8bc5e2b4/deliverables/README.md",
+    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_8bc5e2b4/deliverables/提案テンプレ/提案テンプレ_基本型.md",
+    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_8bc5e2b4/deliverables/提案テンプレ/提案テンプレ_定期更新型.md",
+    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_8bc5e2b4/deliverables/提案テンプレ/提案テンプレ_単発急ぎ型.md"
+  ],
+  "evidence_hashes": [
+    "ad67b5a820f9ee66be0adb89521e7eedaa08b5ff6a98ae4a8d68ca1e9202bd85",
+    "2f5a188e90ae23c70df87737378e8dfe50bcdeb03d433723b8da18ac93d6cac8",
+    "f17935e847ad6d9b1ba25286d1de9ac9db32572d8a304a4f1f8ce5584f238bb8",
+    "f7dbbf18c308f60aafc7a81703fc0fc2f7bd1d0a014a4794c8281729009a2614",
+    "426d07dd96744902f4307e8957051d46f20786022e25911845d9095d32b5d325",
+    "9cf43c2c1811b2ce017c63306cc73bafbf5319fe34f6b10dbb09bcd5ba90d496"
+  ],
+  "task_id": "t_8bc5e2b4",
+  "status": "complete"
+}
