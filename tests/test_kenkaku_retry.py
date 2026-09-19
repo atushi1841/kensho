@@ -222,6 +222,28 @@ class TestNon200NoRetry:
         assert kenkaku._KENKAKU_RETRY_BACKOFF not in sleep_spy
 
 
+class TestTelemetrySummary:
+    """t_327fd9f8 提案1: 1セッション当たり取得件数・所要時間・ページ成否をログに集約（可視化基盤）"""
+
+    def test_emits_yield_and_page_stats(self, sleep_spy: list[float], client_factory: Any) -> None:
+        factory = client_factory({
+            _URL1: [_resp(200, _ITEM_HTML)],
+            _URL2: [httpx.ConnectTimeout("boom") for _ in range(1 + kenkaku._KENKAKU_MAX_RETRIES)],
+        })
+        logs, items = _run_scrape()
+        summary = [m for m in logs if "計" in m and "pages ok=" in m]
+        assert len(summary) == 1, f"集約テレメトリは1行: {summary}"
+        line = summary[0]
+        # 取得件数・ページ成否・所要時間が1行に含まれる
+        assert "1件取得" in line, line
+        assert "pages ok=" in line, line
+        assert "fetch_fail=1" in line, line
+        assert "elapsed=" in line, line
+        # 成功ページ1(URL1)・最終失敗ページ1(URL2) → ok=1/total>1
+        assert len(kenkaku._KENKAKU_PAGE_IDS) >= 2
+        assert len(items) == 1
+
+
 class TestParseErrorNotRetried:
     """パース部例外はfetch対象外 — リトライせずERROR1回で他ページ続行（v144仕様: fetchのみリトライ）"""
 

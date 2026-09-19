@@ -39,6 +39,12 @@ def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -
     headers_jp["Accept-Language"] = "ja,en-US;q=0.9,en;q=0.8"
     items: list[dict[str, Any]] = []
     seen_x_urls: set[str] = set()
+    # t_327fd9f8 提案1: 収集効率テレメトリ — 1セッション当たり取得件数・所要時間・
+    #   ページ成功/失敗数をログに集約（critic可視化: 平均20件超/CT≤3へ向けた観測基盤）
+    _t0: float = time.monotonic()
+    _pages_total: int = len(_KENKAKU_PAGE_IDS)
+    _pages_ok: int = 0
+    _pages_fetch_fail: int = 0
 
     for pid in _KENKAKU_PAGE_IDS:
         url: str = f"{KENKAKU_BASE}present.cgi?id={pid}"
@@ -74,9 +80,11 @@ def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -
                 r = None
                 break
         if r is None:
+            _pages_fetch_fail += 1
             time.sleep(0.3)  # 失敗ページ後も優しい間隔を維持
             continue
 
+        _pages_ok += 1
         try:
             html: str = _decode_response(r)
             # X URL を直接抽出
@@ -127,5 +135,11 @@ def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -
         except Exception as e:
             out(f"  [KENKAKU] ページ{pid}: ERROR {type(e).__name__}: {e}")
 
-    out(f"  [KENKAKU] 計{len(items)}件取得")
+    # t_327fd9f8 提案1: 収集効率テレメトリを1行に集約（critic可視化・後続の最適化判断基盤）
+    _elapsed: float = time.monotonic() - _t0
+    out(
+        f"  [KENKAKU] 計{len(items)}件取得 "
+        f"(pages ok={_pages_ok}/{_pages_total}, fetch_fail={_pages_fetch_fail}, "
+        f"elapsed={_elapsed:.1f}s)"
+    )
     return items
