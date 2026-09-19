@@ -1,0 +1,23 @@
+{
+  "title": "Apify Store SEO改善 全3項目中、項目2（Categories複数選択）完了",
+  "success_indicators": [
+    "store count=73 (index崩壊なし)",
+    "公開74本中 カテゴリ2件未満=0本",
+    "変更2本(MCPサーバー)に3カテゴリ付与",
+    "全公開 NON-PPE=0本 (PAY_PER_EVENT維持)"
+  ],
+  "verification_commands": [
+    "python3 live_verify.py → STORE count=73, 2 MCP actors cats=[MCP_SERVERS,DEVELOPER_TOOLS,AI] ppe=PAY_PER_EVENT isPublic=True",
+    "python3 live_sweep.py → live public 74, categories<2=0, non-PPE=[], errors=[]",
+    "git log/push → 受け入れコミット push済み"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_8da22532_verification.md"
+  ],
+  "evidence_hashes": [
+    "reports/t_8da22532_verification.md=a492f8ad99103d9f28a765b5d118e16decd1b294f89b6116fc2e9b5d7fbe7b4d"
+  ],
+  "notes": "項目2完了。項目1(icon=画像ホスティング要)・項目3(version minor bump=ソース/ビルドデプロイ)はフォローアップカードで実施。価格・公開状態・カテゴリ以外は不変。",
+  "task_id": "t_8da22532",
+  "status": "complete"
+}
