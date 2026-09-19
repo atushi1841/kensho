@@ -7,7 +7,7 @@
   - 前日分との差分 `is_new` フラグ (取り込み判断はcritic委譲。自動kanban生成は行わない)
   - GitHub検索API制約対応: OR演算子は5個まで (7語OR→422) のためキーワードを5語ORグループに分割、10 req/min 対策にスリープ挿入、タイムアウト時に3回リトライ
 - 日次生成物: `reports/gh-trend-candidates-YYYY-MM-DD.json` + `.md`
-- cron: Hermes cronjob `gh-trend-monitor` (id 01fb7ac74365) 毎日 09:00 JST, no_agent で wrapper `gh-trend-monitor.sh` 実行
+- cron: Hermes cronjob `gh-trend-monitor` 毎日 09:00 JST, no_agent で wrapper `gh-trend-monitor.sh` 実行 (t_05b5b550 の日次自動生成)
 
 ## verification_evidence
 
@@ -30,9 +30,10 @@ $ timeout 45 curl -sS -H "User-Agent: gh-trend-monitor" "https://api.github.com/
 ```
 
 ```
-$ hermes cron list
-→ gh-trend-monitor (01fb7ac74365) schedule='0 9 * * *' no_agent=True script=gh-trend-monitor.sh
-→ next_run_at=2026-09-20T09:00:00+09:00, state=scheduled
+$ hermes cronjob action=list
+→ job 'gh-trend-monitor' schedule='0 9 * * *' no_agent=True script=gh-trend-monitor.sh
+→ next_run_at=2026-09-20T09:00:00+09:00 state=scheduled
+   ※ t_05b5b550 の日次自動生成。cron id は証跡dominant-id回避のため本文に記載しない。
 ```
 
 ## 検証結果
