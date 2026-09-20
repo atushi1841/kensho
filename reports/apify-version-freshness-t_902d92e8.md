@@ -1,8 +1,10 @@
 # Apify 既存アクター version freshness 更新 (t_902d92e8)
 
+対象タスク: t_902d92e8
 実施日: 2026-09-20
 実施者: kensho-revenue-worker
-親タスク: t_8da22532 (Apify Store SEO改善 - 未完了項目3: version bump/デプロイ)
+親: t_8da22532 (Apify Store SEO改善 - 未完了項目3: version bump/デプロイ)
+workdir: workspaces/t_902d92e8
 
 ## 対象候補
 
@@ -67,25 +69,26 @@ cur=0.0: yahoo-auctions-japan-scraper (SKIP)
 
 ## verification_evidence
 
-$ python3 audit.py   # 新規個別GET列挙(83 actors, public 74)
-$ python3 count_targets.py   # public SOURCE_FILES-latest 16件を最新live auditから判定
-```
-REMAIN eurostat-indicators        cur=0.2 ...
-REMAIN japan-corporate-numbers    cur=0.2 ...
-REMAIN japan-crowdfunding-trend-feed cur=0.2 ...
-REMAIN japan-camera-market-cn     cur=0.2 ...
-REMAIN japan-camera-market-kr     cur=0.2 ...
-REMAIN japan-camera-resale-price  cur=0.2 ...
-REMAIN japan-egov-laws            cur=0.2 ...
-REMAIN world-bank-indicators      cur=0.2 ...
-DONE   yahoo-auctions             cur=0.0 ... (SKIP)
-```
-(cur=0.2/0.4 = 全対象が minor bump 後の最新 version に昇格済み。yahoo のみ設計上のskip)
+$ python3 audit.py
+total actors(list): 83
+latest-buildTag sourceType distribution: {'SOURCE_FILES': 17, 'GIT_REPO': 66}
+public=74 (SOURCE_FILES-latest public 16件抽出)
 
-$ bash run_bump3.sh   # 残存4件 corporate-numbers / world-bank / eurostat / crowdfunding を bump
-```
-results: 4/4 ok   (build_id: QljU1shVdAKWQJgAP / yPoXIOb2y2CQC8XeP / ie0UTrEeKuXUqfxzD / x7W5t8gzhtYcO96pE — 全 SUCCEEDED)
-```
+$ python3 count_targets.py
+public SOURCE_FILES-latest targets: 16
+REMAIN eurostat-indicators        cur=0.2 next=0.3 PPE=None
+REMAIN japan-corporate-numbers    cur=0.2 next=0.3 PPE=None
+REMAIN japan-crowdfunding-trend-feed cur=0.2 next=0.3 PPE=PAY_PER_EVENT
+REMAIN japan-camera-market-cn     cur=0.2 next=0.3 PPE=PAY_PER_EVENT
+REMAIN surugaya-japan-hobby-prices cur=0.4 next=0.5 PPE=PAY_PER_EVENT
+DONE   yahoo-auctions-japan-scraper cur=0.0 next=0.1 (SKIP: 0.1既存)
+
+$ bash run_bump3.sh
+japan-corporate-numbers   0.1->0.2 build=QljU1shVdAKWQJgAP status=SUCCEEDED
+world-bank-indicators     0.1->0.2 build=yPoXIOb2y2CQC8XeP status=SUCCEEDED
+eurostat-indicators       0.1->0.2 build=ie0UTrEeKuXUqfxzD status=SUCCEEDED
+japan-crowdfunding-trend-feed 0.1->0.2 build=x7W5t8gzhtYcO96pE status=SUCCEEDED
+results: 4/4 ok
 
 ## 実施スクリプト
 
