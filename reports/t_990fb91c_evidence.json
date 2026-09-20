@@ -1,0 +1,25 @@
+{
+  "success_indicators": [
+    "cron 13:30 登録 '30 13 * * * .../camera_monitor_7d_daily.sh' (crontab -l 実測)",
+    "日次ラッパー冪等SKIP経路 exit 0 (TODAY=20260920 で 'SKIP: audit already has 20260920')",
+    "7d_repro_audit.csv に Z9/Z8 初期2行(Z9 median 8.1/max 27.0, Z8 median -15.9/max 10.7)"
+  ],
+  "verification_commands": [
+    "$ crontab -l | grep camera_monitor_7d_daily => 30 13 * * * /mnt/d/Project2/kensho/scripts/camera_monitor_7d_daily.sh",
+    "$ bash scripts/camera_monitor_7d_daily.sh (TODAY=20260920) => exit 0, log 'SKIP: audit already has 20260920'",
+    "$ cat data/camera_monitor/7d_repro_audit.csv => 見出し+20260920,Nikon Z8,...,-15.9,10.7+20260920,Nikon Z9,...,8.1,27.0",
+    "$ git log --oneline -1 => 4490f46 feat: 中古カメラ差益アラート7日間監視cron化"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/camera_monitor_7d_daily.sh",
+    "/mnt/d/Project2/kensho/reports/t_990fb91c_verification.md",
+    "/mnt/d/Project2/kensho/data/camera_monitor/7d_repro_audit.csv"
+  ],
+  "evidence_hashes": [
+    "45ef28a894fd9fbc03ef49537c170642b46c76bbba364beb1da2524630a55890",
+    "4f031e761208d42a526a4aeb06df9e1f428929c4257d49334b11e9e6629fec53",
+    "e30028d7abc3a29f17b73026f30bfc2ee2cd2c19262dfc5f6fd0054e8af295f3"
+  ],
+  "task_id": "t_990fb91c",
+  "status": "complete"
+}
