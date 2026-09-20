@@ -47,7 +47,18 @@ _W = _ROOT / "data" / "camera_monitor" / "watchlist.py"
 if str(_W.parent) not in sys.path:
     sys.path.insert(0, str(_W.parent))
 import watchlist as _wl  # noqa
-WATCH = _wl.WATCHLIST
+WATCH = [dict(m) for m in _wl.WATCHLIST]
+for m in WATCH:
+    m.setdefault("category", "camera")
+# 家電・デジタル製品 watchlist（同一差益判定ロジックへ統合）
+try:
+    import watchlist_appliances as _ap  # noqa
+    APPL_WATCH = [dict(m) for m in _ap.WATCHLIST]
+    for m in APPL_WATCH:
+        m.setdefault("category", "appliance")
+    WATCH.extend(APPL_WATCH)
+except Exception as exc:  # watchlist未配置でもカメラ監視は継続
+    print(f"[camera_monitor] watchlist_appliances 読込失敗（skip）: {exc}", flush=True)
 
 APPENDIX = {
     "グリップ": 1, "バッテリー": 1, "ストラップ": 1, "ケース": 1, "三脚": 1,
@@ -254,6 +265,7 @@ def main() -> None:
                 model = m["model"]
                 kw_y = m.get("keyword") or model
                 kw_s = m.get("surugaKeyword") or model
+                cat = m.get("category", "camera")
                 print(f"[{model}] yahoo '{kw_y}' + suruga '{kw_s}'", flush=True)
                 # BOT対策: モデル間はランダム待機（個人収集・堅拗アクセス回避）
                 if len(watch) > 1:
@@ -278,7 +290,7 @@ def main() -> None:
                                             "yahoo": pa["yahoo_title"][:44],
                                             "suruga": pa["suruga_title"][:34]})
                 model_rows.append({
-                    "model": model, "keyword": kw_y, "surugaKeyword": kw_s,
+                    "model": model, "category": cat, "keyword": kw_y, "surugaKeyword": kw_s,
                     "yahoo_buynow": sum(1 for i in yahoo_items if _to_int(i.get("buyNowPrice"))),
                     "suruga_items": len(suruga_items),
                     "matched_pairs": diff["matched"],
@@ -286,7 +298,7 @@ def main() -> None:
                     "max_diff_pct": round(diff["max_diff"]*100, 1) if diff["max_diff"] is not None else "",
                     "median_ge20": diff["median_ge20"], "max_ge30": diff["max_ge30"]})
                 for pa in diff["pairs"]:
-                    all_candidates.append({"model": model, "run_id": run_id,
+                    all_candidates.append({"model": model, "category": cat, "run_id": run_id,
                                            "yahoo_title": pa["yahoo_title"],
                                            "url": pa["url"], "postage": pa["postage"],
                                            "sourcing_cost": pa["sourcing_cost"],
@@ -363,6 +375,18 @@ def main() -> None:
         for c in cands[:10]:
             print(f"  +¥{c['judgment_yen']:,} [{c['model']}] {c['yahoo_title'][:34]} "
                   f"| 仕¥{c['sourcing_cost']:,}→売¥{c['resale_price']:,}")
+
+    # ---- Telegram差益通知（利回り15%以上 / 利益5,000円以上） ----
+    sys.path.insert(0, str(_ROOT))
+    try:
+        import telegram_notifier  # noqa
+        sent = telegram_notifier.notify_spread(cands)
+        log_lines.append(f"telegram_notify: {'sent' if sent else 'no-threshold-or-not-configured'}")
+        (args.report_dir / f"camera_monitor_{today}.log").write_text(
+            "\n".join(log_lines) + "\n", encoding="utf-8")
+    except Exception as exc:
+        print(f"[camera_monitor] telegram_notifier failed: {exc}", flush=True)
+        log_lines.append(f"telegram_notify: ERROR {exc}")
 
 
 if __name__ == "__main__":

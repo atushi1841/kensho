@@ -3,7 +3,9 @@
 #
 # 毎日1回 camera_monitor.py を実行し、出力 model_price_diff_<DATE>.csv から
 # Nikon Z8 / Nikon Z9 の行だけを抽出して data/camera_monitor/7d_repro_audit.csv に追記する。
-# - 既存の監視ロジック(camera_monitor.py)には一切手を加えない。
+# camera_monitor.py は家電・デジタルwatchlist(watchlist_appliances.py)と
+# Telegram差益通知(telegram_notifier.py)を統合済み(t_bf888d80)なので、
+# 本スクリプトを呼ぶだけで監視+通知セットが全体実行される。
 # - 冪等: 当日分のレコードが既に7d_repro_audit.csvに存在すれば実行をスキップ
 #   (cron再発火・手動重複実行による二重追記を防止)。
 # - Bot回避のため1日1回のみ(頻度はcrontab側で担保)。
