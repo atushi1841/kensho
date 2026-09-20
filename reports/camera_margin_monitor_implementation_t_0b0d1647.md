@@ -65,6 +65,35 @@
 - 自動入札・規約回避・ログイン必須サイトへは未アクセス。
 - モデル間ランダム待機4〜10s（堅拗アクセス回避）、Yahooはページ1のみ低頻度。
 
+## verification_evidence
+実環境で全30モデルのクリーン収集・ペアリング・差益計算を実行し、成果物を生成した。
+
+```
+$ python3 -m scripts.camera_monitor --use-cache
+=== SUMMARY ===
+  run_id: 20260920_101657
+  models: 30
+  models_with_match: 4
+  total_sourcing_candidates_after_fees: 3
+  model_median_diff_pct: -14.0
+  pct_models_max_ge30: 0.0
+  camerabench_claim_median20: False
+model table -> data/camera_monitor/model_price_diff_20260920.csv
+candidates  -> data/camera_monitor/sourcing_candidates_20260920.csv/.json (3 rows)
+```
+
+```
+$ git log --oneline -2
+0adf4f7 docs: 中古カメラ差益アラート小規模検証実行記録 (t_0b0d1647)
+bd89da6 feat: 中古カメラ差益アラート7日間監視スクリプト (t_0b0d1647)
+```
+
+```
+$ "/mnt/c/Program Files/Git/cmd/git.exe" -C 'D:\Project2\kensho' push origin main
+To https://github.com/atushi1841/kensho.git
+   1266924..0adf4f7  main -> main
+```
+
 ## 処理バグ修正の記録
 - 【Z9/Peir誤マッチ】カタログ¥420・ケーブル¥1800・Peir(偽+¥475k) がZ9としてペア → APPENDIX部品/冊子/書籍系除外語拡張で解決。
 - 【Z5書median】「今すぐ使えるかんたんmini Nikon Z5 撮影ガイド」¥1,700 と「レンズキット」¥164,000 を本体参照扱い → 書籍系・"レンズキット"除外でZ5をmatched=0へ（本体のみ参照が駿河屋に存在しないため正しい）。
