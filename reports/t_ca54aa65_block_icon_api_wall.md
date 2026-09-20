@@ -6,10 +6,9 @@ Rest API v2 (`PUT /v2/actors/{actorId}` = `UpdateActorRequest`) には設定フ�
 ## verification_evidence
 - **API仕様調査**: `docs.apify.com/api/openapi.json` を全件検索し、`UpdateActorRequest` に `pictureUrl`, `iconUrl`, `customIconUrl` が存在しないことを確認（読み取り専用 `Actor` スキーマのみに存在）。
 - **PUT実測**: 82本のアクターに対し `pictureUrl` を含む PUT を試行し、全件 `HTTP 400 invalid-picture-url` が返ることを確認。
-- **証跡コマンド一覧**:
-  - `python3 application/apify/apply_icons.py`
-  - `grep "HTTP 400" reports/t_ca54aa65_icon_apply.json`
-  - `curl -s https://docs.apify.com/api/openapi.json | jq '.components.schemas.UpdateActorRequest'`
+- 実行コマンド: `python3 application/apify/apply_icons.py`
+- 確認コマンド: `grep "HTTP 400" reports/t_ca54aa65_icon_apply.json`
+- スキーマ確認: `curl -s https://docs.apify.com/api/openapi.json | jq '.components.schemas.UpdateActorRequest'`
 - **他URL検証**: 有効な Apify 公式 CDN の URL や GitHub Raw URL を用いた試行もすべて 400 エラーとなることを確認。
 - **副作用チェック**: `store_count_before: 73` -> `store_count_after: 73` で店頭件数に変動なし。`categories`, `pricingModel`, `isPublic` の退行も 0 件であることを個別 GET で検証済み。
 - **成果物**: 82本分のアクター名に対応した 256x256 PNG アイコン画像を生成し、`kensho-assets` リポジトリへ公開済み（手動設定に流用可能）。
