@@ -1,0 +1,836 @@
+{
+ "task": "t_ca54aa65",
+ "store_count_before": 73,
+ "store_count_after": 73,
+ "total_actors": 82,
+ "icon_urls_verified": 82,
+ "icon_urls_bad": [],
+ "targets_count": 82,
+ "applied_count": 0,
+ "failed_count": 82,
+ "failed": [
+  {
+   "id": "nUm22B2guMo8vXom6",
+   "name": "dmm-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "0eeiFH0nLqlWVoOAc",
+   "name": "rakuten-japan-mcp",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "DOiD9y1NAJfLBcAjT",
+   "name": "kitamura-japan-used-camera-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "6Z7tJ3plfUmAgGmbk",
+   "name": "dlsite-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "FSuoQiX8OG4KuIQ9c",
+   "name": "digimart-japan-used-instrument-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "Db3iY8FIRxPjPag7N",
+   "name": "komehyo-japan-brand-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "vvD9vs8D1AwoQrTTS",
+   "name": "iosys-japan-used-smartphone-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "wxMskoiHMPeeH2qAJ",
+   "name": "tackleberry-japan-fishing-tackle-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "q2E37PVTg5JcGOTEn",
+   "name": "mandarake-auction-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "yN1R26HrV6C2MBKas",
+   "name": "japan-used-instrument-market-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "b0vuqa3ESvy2mOwFB",
+   "name": "japan-luxury-brand-market-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "gMqdrS2evpcybSZc2",
+   "name": "japan-watch-market-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "Zh4kqcS4dYPWpFzBd",
+   "name": "japan-offmall-market-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "hoqt6EVaVcniMXWbK",
+   "name": "japan-watch-market-scraper-cn",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "rEaPnKwB07oS2cyZh",
+   "name": "japan-camera-market-kr-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "OqO1aPmd1njsKQvaW",
+   "name": "japan-camera-market-cn-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "Igcmtgs71DCHze3CL",
+   "name": "japan-luxury-brand-market-cn",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "kDY2AAouEJzp8kfyj",
+   "name": "japan-watch-market-scraper-kr",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "5J3JeV9cOSA3Gha0j",
+   "name": "japan-luxury-brand-market-kr",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "p279xuzqUvvLROE7O",
+   "name": "japan-used-instrument-market-cn",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "agm9XlFlLFj7jlt66",
+   "name": "japan-used-instrument-market-kr",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "57SNehd4cHNFyUCj3",
+   "name": "japan-market-mcp",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "wxLa590euQRaAJNKO",
+   "name": "japan-offmall-market-cn",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "9HSJRPbEIIGc6bHOx",
+   "name": "japan-offmall-market-kr",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "mQaZFo6up4YZKepC3",
+   "name": "japan-used-camera-market-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "5EOtT2UpEGEU83nhO",
+   "name": "japan-rent-market-cn",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "N1o8olAoZyXTJuhnb",
+   "name": "japan-rent-market-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "lWHSccM79ZpPxOLls",
+   "name": "japan-rent-market-kr",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "AiXA2WVMNTaGuHoDh",
+   "name": "japan-property-market-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "aAe1nK4dpqgmBksOK",
+   "name": "japan-property-market-cn",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "CeDRuOvv0IHA8NL4M",
+   "name": "japan-property-market-kr",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "4SjfgE6nF1awZZtEI",
+   "name": "japan-kakaku-price-search-cn",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "XOqsB7rCHYrb42kcY",
+   "name": "japan-kakaku-price-search",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "5hzOkPeYWPzpv6fBd",
+   "name": "japan-kakaku-price-search-kr",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "yCN9ystlovHkgolzw",
+   "name": "kimono-market-scraper-cn",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "8iktWtPM0ZD3ab54f",
+   "name": "kimono-market-scraper-kr",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "bgm5Gxn4BeBmoO7xD",
+   "name": "goo-net-car-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "W9cXhDckzHd9RZWnQ",
+   "name": "biglemon-machinery-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "pcSpFWK2A2HWRE2mx",
+   "name": "goo-net-car-scraper-es",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "ksRNLhw7sjdmoVbVt",
+   "name": "goo-net-car-scraper-pt",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "FzQlnqfCsMfSlRG9j",
+   "name": "suumo-japan-real-estate-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "2Yy3Zu3pw0KzqYOP5",
+   "name": "kimono-market-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "8lfpT6vpZMl9JVagy",
+   "name": "suumo-japan-real-estate-scraper-cn",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "GfdpyUl6gSpCQlGK8",
+   "name": "suumo-japan-real-estate-scraper-kr",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "GXAtS99WP3st7AR27",
+   "name": "suumo-japan-real-estate-scraper-es",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "pZ20lXqRtsJUl9bGk",
+   "name": "rakuten-market-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "NURQEJnUsVAobIiPs",
+   "name": "rakuten-debug-fetch",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "S3IdRuweFhrTwvJJN",
+   "name": "tabelog-debug-fetch",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "vN10EvpaN6lNSRxUo",
+   "name": "goo-net-car-scraper-fr",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "L0xYjvLZT8aYUKjKQ",
+   "name": "goo-net-car-scraper-ru",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "xv30Eoxh7NMJgJIj5",
+   "name": "goobike-motorcycle-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "BdQF1T6wB5T25AO20",
+   "name": "upgarage-parts-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "xPSQSSsdVjRwWQAiA",
+   "name": "golfpartner-used-club-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "whSePszWpMtfeLYBp",
+   "name": "mercari-japan-search-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "UVkH1uhlt57Jf6QnT",
+   "name": "japan-hotpepper-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "8WBam4CPB72q9Rvsd",
+   "name": "yahoo-auctions-japan-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "95ZKdUlpFBo8CBYJh",
+   "name": "japan-hotpepper-cn-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "lRUO0nFDpE66U013r",
+   "name": "mini-actor-test-0903",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "WnrudUFF2kZxZcj7Z",
+   "name": "japan-figure-plamo-resale-price-stats",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "VCKdDJ5BdT9Z8aIDf",
+   "name": "tackleberry-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "6EvRs5kF1mbelC03M",
+   "name": "ai-model-price-api",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "doneSfO13IuNgcWPk",
+   "name": "amazon-paapi-jp-actor",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "pWhvh8aWz4i6OM1ST",
+   "name": "japan-egov-laws",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "62DcoLUAkkOB1hGAH",
+   "name": "japan-mhlw-medical",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "1g84gsOT7vE9yxNla",
+   "name": "japan-jma-weather",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "rIZ3NSg5Ul34PgpYx",
+   "name": "japan-corporate-numbers",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "pAxQ0lRyArudhK9Wx",
+   "name": "eurostat-indicators",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "u2qsG1UfVHWsgl8Dg",
+   "name": "world-bank-indicators",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "FPlcw4CWMAKooZNe6",
+   "name": "japan-prize-giveaway-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "90MPAX9mfR1DbNDJh",
+   "name": "my-actor",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "RdCHlXHphoLsWnyhh",
+   "name": "japan-fuel-price-mcp",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "LSETMqsB30U9slWeU",
+   "name": "japan-crowdfunding-trend-feed",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "SWVTsribU0AIJVXtR",
+   "name": "kensho-high-value-leads",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "ODh1F4XP5sLlXu6Ep",
+   "name": "japan-minimum-wage-mcp",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "BxstMzzxh8jq6UtfS",
+   "name": "japan-jepx-mcp",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "XJCgrhOZE47qc7T3i",
+   "name": "japan-property-hazard-mcp",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "FVJsHJhb4aPq54Uyd",
+   "name": "japan-hotpepper-kr-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "nWf9BR2ndMTYqKxNB",
+   "name": "jackroad-used-watch-scraper",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "F8Hl0a8Cx9bpJBrxR",
+   "name": "surugaya-japan-hobby-prices",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "xUYsD13SVHHRFQS1H",
+   "name": "mandarake-surugaya-mcp",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "xJI4WaPBfQiDJfcnp",
+   "name": "japan-camera-resale-price-stats",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  },
+  {
+   "id": "LXzxoGGC0bmMTqEtd",
+   "name": "test-actor",
+   "err": "HTTP 400 {\n  \"error\": {\n    \"type\": \"invalid-picture-url\",\n    \"message\": \"Invalid picture URL\"\n  }\n}"
+  }
+ ],
+ "regressions": [
+  {
+   "id": "nUm22B2guMo8vXom6",
+   "name": "dmm-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "0eeiFH0nLqlWVoOAc",
+   "name": "rakuten-japan-mcp",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "DOiD9y1NAJfLBcAjT",
+   "name": "kitamura-japan-used-camera-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "6Z7tJ3plfUmAgGmbk",
+   "name": "dlsite-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "FSuoQiX8OG4KuIQ9c",
+   "name": "digimart-japan-used-instrument-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "Db3iY8FIRxPjPag7N",
+   "name": "komehyo-japan-brand-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "vvD9vs8D1AwoQrTTS",
+   "name": "iosys-japan-used-smartphone-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "wxMskoiHMPeeH2qAJ",
+   "name": "tackleberry-japan-fishing-tackle-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "q2E37PVTg5JcGOTEn",
+   "name": "mandarake-auction-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "yN1R26HrV6C2MBKas",
+   "name": "japan-used-instrument-market-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "b0vuqa3ESvy2mOwFB",
+   "name": "japan-luxury-brand-market-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "gMqdrS2evpcybSZc2",
+   "name": "japan-watch-market-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "Zh4kqcS4dYPWpFzBd",
+   "name": "japan-offmall-market-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "hoqt6EVaVcniMXWbK",
+   "name": "japan-watch-market-scraper-cn",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "rEaPnKwB07oS2cyZh",
+   "name": "japan-camera-market-kr-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "OqO1aPmd1njsKQvaW",
+   "name": "japan-camera-market-cn-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "Igcmtgs71DCHze3CL",
+   "name": "japan-luxury-brand-market-cn",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "kDY2AAouEJzp8kfyj",
+   "name": "japan-watch-market-scraper-kr",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "5J3JeV9cOSA3Gha0j",
+   "name": "japan-luxury-brand-market-kr",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "p279xuzqUvvLROE7O",
+   "name": "japan-used-instrument-market-cn",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "agm9XlFlLFj7jlt66",
+   "name": "japan-used-instrument-market-kr",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "57SNehd4cHNFyUCj3",
+   "name": "japan-market-mcp",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "wxLa590euQRaAJNKO",
+   "name": "japan-offmall-market-cn",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "9HSJRPbEIIGc6bHOx",
+   "name": "japan-offmall-market-kr",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "mQaZFo6up4YZKepC3",
+   "name": "japan-used-camera-market-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "5EOtT2UpEGEU83nhO",
+   "name": "japan-rent-market-cn",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "N1o8olAoZyXTJuhnb",
+   "name": "japan-rent-market-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "lWHSccM79ZpPxOLls",
+   "name": "japan-rent-market-kr",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "AiXA2WVMNTaGuHoDh",
+   "name": "japan-property-market-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "aAe1nK4dpqgmBksOK",
+   "name": "japan-property-market-cn",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "CeDRuOvv0IHA8NL4M",
+   "name": "japan-property-market-kr",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "4SjfgE6nF1awZZtEI",
+   "name": "japan-kakaku-price-search-cn",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "XOqsB7rCHYrb42kcY",
+   "name": "japan-kakaku-price-search",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "5hzOkPeYWPzpv6fBd",
+   "name": "japan-kakaku-price-search-kr",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "yCN9ystlovHkgolzw",
+   "name": "kimono-market-scraper-cn",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "8iktWtPM0ZD3ab54f",
+   "name": "kimono-market-scraper-kr",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "bgm5Gxn4BeBmoO7xD",
+   "name": "goo-net-car-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "W9cXhDckzHd9RZWnQ",
+   "name": "biglemon-machinery-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "pcSpFWK2A2HWRE2mx",
+   "name": "goo-net-car-scraper-es",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "ksRNLhw7sjdmoVbVt",
+   "name": "goo-net-car-scraper-pt",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "FzQlnqfCsMfSlRG9j",
+   "name": "suumo-japan-real-estate-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "2Yy3Zu3pw0KzqYOP5",
+   "name": "kimono-market-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "8lfpT6vpZMl9JVagy",
+   "name": "suumo-japan-real-estate-scraper-cn",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "GfdpyUl6gSpCQlGK8",
+   "name": "suumo-japan-real-estate-scraper-kr",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "GXAtS99WP3st7AR27",
+   "name": "suumo-japan-real-estate-scraper-es",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "pZ20lXqRtsJUl9bGk",
+   "name": "rakuten-market-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "NURQEJnUsVAobIiPs",
+   "name": "rakuten-debug-fetch",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "S3IdRuweFhrTwvJJN",
+   "name": "tabelog-debug-fetch",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "vN10EvpaN6lNSRxUo",
+   "name": "goo-net-car-scraper-fr",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "L0xYjvLZT8aYUKjKQ",
+   "name": "goo-net-car-scraper-ru",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "xv30Eoxh7NMJgJIj5",
+   "name": "goobike-motorcycle-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "BdQF1T6wB5T25AO20",
+   "name": "upgarage-parts-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "xPSQSSsdVjRwWQAiA",
+   "name": "golfpartner-used-club-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "whSePszWpMtfeLYBp",
+   "name": "mercari-japan-search-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "UVkH1uhlt57Jf6QnT",
+   "name": "japan-hotpepper-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "8WBam4CPB72q9Rvsd",
+   "name": "yahoo-auctions-japan-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "95ZKdUlpFBo8CBYJh",
+   "name": "japan-hotpepper-cn-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "lRUO0nFDpE66U013r",
+   "name": "mini-actor-test-0903",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "WnrudUFF2kZxZcj7Z",
+   "name": "japan-figure-plamo-resale-price-stats",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "VCKdDJ5BdT9Z8aIDf",
+   "name": "tackleberry-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "6EvRs5kF1mbelC03M",
+   "name": "ai-model-price-api",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "doneSfO13IuNgcWPk",
+   "name": "amazon-paapi-jp-actor",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "pWhvh8aWz4i6OM1ST",
+   "name": "japan-egov-laws",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "62DcoLUAkkOB1hGAH",
+   "name": "japan-mhlw-medical",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "1g84gsOT7vE9yxNla",
+   "name": "japan-jma-weather",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "rIZ3NSg5Ul34PgpYx",
+   "name": "japan-corporate-numbers",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "pAxQ0lRyArudhK9Wx",
+   "name": "eurostat-indicators",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "u2qsG1UfVHWsgl8Dg",
+   "name": "world-bank-indicators",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "FPlcw4CWMAKooZNe6",
+   "name": "japan-prize-giveaway-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "90MPAX9mfR1DbNDJh",
+   "name": "my-actor",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "RdCHlXHphoLsWnyhh",
+   "name": "japan-fuel-price-mcp",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "LSETMqsB30U9slWeU",
+   "name": "japan-crowdfunding-trend-feed",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "SWVTsribU0AIJVXtR",
+   "name": "kensho-high-value-leads",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "ODh1F4XP5sLlXu6Ep",
+   "name": "japan-minimum-wage-mcp",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "BxstMzzxh8jq6UtfS",
+   "name": "japan-jepx-mcp",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "XJCgrhOZE47qc7T3i",
+   "name": "japan-property-hazard-mcp",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "FVJsHJhb4aPq54Uyd",
+   "name": "japan-hotpepper-kr-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "nWf9BR2ndMTYqKxNB",
+   "name": "jackroad-used-watch-scraper",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "F8Hl0a8Cx9bpJBrxR",
+   "name": "surugaya-japan-hobby-prices",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "xUYsD13SVHHRFQS1H",
+   "name": "mandarake-surugaya-mcp",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "xJI4WaPBfQiDJfcnp",
+   "name": "japan-camera-resale-price-stats",
+   "issue": "pictureUrl still unset"
+  },
+  {
+   "id": "LXzxoGGC0bmMTqEtd",
+   "name": "test-actor",
+   "issue": "pictureUrl still unset"
+  }
+ ],
+ "applied": []
+}
