@@ -1,0 +1,27 @@
+{
+  "success_indicators": [
+    "commit a64d79d pushed to origin/main",
+    "pathway_classifier.py created (254行)",
+    "tests/test_pathway_classifier.py 18件全てpass",
+    "mypy strict 0 error",
+    "収集データ全件に導線ラベル付与・非X案件は自動応募対象外"
+  ],
+  "verification_commands": [
+    "$ python3 -m pytest tests/test_pathway_classifier.py --no-cov -q => 18 passed",
+    "$ python3 -m mypy kensho/scraping/pathway_classifier.py tests/test_pathway_classifier.py => Success",
+    "$ git log --oneline -1 => a64d79d feat: 非X応募導線の分類収集と自動応募分離 (t_f7b0d3bd)",
+    "$ git push origin main => a25cfa2..a64d79d main -> main"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_f7b0d3bd_verification.md",
+    "/mnt/d/Project2/kensho/kensho/scraping/pathway_classifier.py",
+    "/mnt/d/Project2/kensho/tests/test_pathway_classifier.py"
+  ],
+  "evidence_hashes": [
+    "sha256:3a9b310fd24e97b8bb93f654d0544085c5d508a983b196c9f2942added81ebc0 reports/t_f7b0d3bd_verification.md",
+    "sha256:e927bbc1697fa87d0a1cc707452fe076ba6255ac59ef72398fa1e260de893599 kensho/scraping/pathway_classifier.py",
+    "sha256:785e63477a22cc9da3723a1564e2ce5d31356ba64afe13e050f845bf69024aba tests/test_pathway_classifier.py"
+  ],
+  "task_id": "t_f7b0d3bd",
+  "status": "complete"
+}
