@@ -18,7 +18,7 @@
   "evidence_hashes": [
     "agent_eval_harness.py=0238ac7d4bbcf4a9",
     "test_agent_eval_harness.py=637bcbc46a542d0c",
-    "t_9271d891_verification.md=aee981bb94fd93be"
+    "t_9271d891_verification.md=53ab74b3efb63329"
   ],
   "task_id": "t_9271d891",
   "status": "complete"
