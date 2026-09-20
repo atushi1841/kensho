@@ -839,6 +839,18 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         if _dropped_n:
             out(f"  [収集フィルタ②] 必須ワードなしを除外: {_dropped_n}件（{_before_n}→{len(merged)}件）")
 
+    # ── 応募導線分類（t_f7b0d3bd）──
+    # 収集データに導入(導線)ラベルを付与し、非X案件(X以外)を自動応募対象から分離する。
+    # ラベル付与率=100%（全件に付与）。X以外は手動・要確認レポートへ割り出す。
+    from kensho.scraping.pathway_classifier import assign_pathway, label_counts
+
+    for _it in merged:
+        assign_pathway(_it)
+    _label_counts: dict[str, int] = label_counts(merged)
+    _nx_n: int = sum(_v for _k, _v in _label_counts.items() if _k != "X")
+    out(f"  [導線] {len(merged)}件に導入ラベル付与 → 非X(自動応募対象外)={_nx_n}件")
+    out(f"         ラベル別: {_label_counts}")
+
     result: dict[str, Any] = {
         "timestamp": datetime.now().isoformat(),
         "total_on_page": len(unique_links),
@@ -888,6 +900,25 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         )
     except Exception as _dse:  # noqa: BLE001
         out(f"  [WARN] dead-source sentinel 失敗（fail-open）: {_dse}")
+
+    # ── 導線スナップショット + 非X手動レポート（t_f7b0d3bd）──
+    # ・data/collected_today.json ← 収集済み全件のJSONリスト（導入ラベル付き）
+    # ・reports/non_x_manual_YYYYMMDD.md ← 非X(自動応募対象外)案件の手動・要確認リスト
+    try:
+        from kensho.scraping.pathway_classifier import build_non_x_report_md
+
+        _today_str: str = datetime.now().strftime("%Y%m%d")
+        _snapshot: list[dict[str, Any]] = list(result.get("collected", []))
+        safe_save_json(DATA_DIR / "collected_today.json", _snapshot, "collected_today.json")
+        _reports_dir: Path = DATA_DIR.parent / "reports"
+        _reports_dir.mkdir(parents=True, exist_ok=True)
+        _report_path: Path = _reports_dir / f"non_x_manual_{_today_str}.md"
+        _report_md: str = build_non_x_report_md(_snapshot, _label_counts, _today_str)
+        _report_path.write_text(_report_md, encoding="utf-8")
+        out(f"  [導線] collected_today.json 保存（{len(_snapshot)}件）")
+        out(f"  [導線] 非X手動レポート: {_report_path}")
+    except Exception as _pe:  # noqa: BLE001 — fail-open
+        out(f"  [WARN] 導線スナップショット/レポート失敗（fail-open）: {_pe}")
 
     elapsed_total: float = time.time() - t0
     out(f"\n{'=' * 50}")

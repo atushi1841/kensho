@@ -55,6 +55,7 @@ from kensho.core.config import load as load_config
 from kensho.core.notifier import notify_warning
 from kensho.scraping.scorer import format_prize_info, score_prize
 from kensho.scraping.sources.common import has_skip_keyword
+from kensho.scraping.pathway_classifier import is_auto_applyable, classify_pathway
 from kensho.utils.safety import verify_ip_separation
 
 DATA_DIR: Path = Path(__file__).parent.parent.parent / "data"
@@ -910,6 +911,16 @@ def apply_for_account(
         # ★ 2026-08-28: LLM判定FLAG（追加操作が必要な案件）をバッチ候補から除外
         #   simple_rt_ok == "FLAG" はフォロー+RTでは当選条件を満たせないため処理しない
         if item.get("simple_rt_ok") == "FLAG":
+            continue
+        # ★ t_f7b0d3bd: 非X応募導線を自動応募対象から除外（安全）
+        #   導入ラベルが X 以外（LINE/Instagram/アプリ/レシート/会員ID/外部フォーム/
+        #   DM/メール/要確認/未判定）は、X操作だけでは応募成立せず自動操作は
+        #   TOS/個人情報リスクが高いため必ず手動・要確認扱いにする。
+        #   ラベル無し(旧データ)は本文から即時分類（安全側・過剰フルストップを回避）。
+        _entry_label = item.get("導線") or classify_pathway(item.get("tweet_text") or "")
+        if not is_auto_applyable(_entry_label):
+            _cand_url: str = item.get("x_url") or item.get("url") or ""
+            out(f"  [SKIP] 非X導線({_entry_label}) → 自動応募対象外: {_cand_url[:60]}")
             continue
         if check_rate_limit(account_key, cfg):
             out(f"[LIMIT] {account_key}: 処理中に上限到達 → 残りスキップ")
