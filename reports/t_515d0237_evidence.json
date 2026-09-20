@@ -1,0 +1,23 @@
+{
+  "success_indicators": [
+    "nightly-qa(033ff6065ef7) promptに観点別分割検証(Sectioning化)ブロックが挿入され、'Sectioning化'文字列がprompt内に実在",
+    "プロンプト長が1992→2707に増加(715字追加・スキル制約100KB内)",
+    "hermes cron edit exit 0でSchedule/Skills/Workdir等の他フィールド無変更",
+    "応募パイプライン・モデル設定・configに一切非接触"
+  ],
+  "verification_commands": [
+    "$ python3 -c \"import json;q=[j for j in json.load(open('/home/atushi/.hermes/profiles/kensho-sweeps/cron/jobs.json')) if j['id']=='033ff6065ef7'][0];print(len(q['prompt']),'Sectioning化' in q['prompt'])\" => 2707 True",
+    "$ hermes cron edit 033ff6065ef7 --prompt \"$(cat /tmp/new_qa_prompt.txt)\" => exit 0, Schedule 10 * * * *, Skills ai-team-improvement, Workdir maintained"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_515d0237_verification.md"
+  ],
+  "evidence_hashes": [
+    {
+      "path": "/mnt/d/Project2/kensho/reports/t_515d0237_verification.md",
+      "sha256": "e96cfcea08822c2204a6bc5b3b40ebcf4f0b8101a9d3e55f99ede52a537fd38d"
+    }
+  ],
+  "task_id": "t_515d0237",
+  "status": "complete"
+}
