@@ -49,3 +49,24 @@ CUA-S1 は、企業 Cua がクラウドデスクトップインフラ（有料Sa
 - GitHub README（curl trycua/cua README.md, MIT, CUA-S1=Fleets誘導/無料モデル + Hugging Face 重み公開、企業収益=Fleets クラウドデスクトップ）
 - HN item 49767564 実測（score 74, コメント8, 内容=特化モデル/MoE 技術論で売買言明なし）
 - trycua.com home 200 / robots.txt 200（llms.txt・docs 許可＝公式ドキュメントあり、ただしスクレイピング商品の素材となる中央データ無し）
+
+## verification_evidence
+検証コマンド(2026-09-20 実測):
+
+$ curl -s -L -m 20 "https://raw.githubusercontent.com/trycua/cua/main/README.md" -o cua_readme.md && wc -l cua_readme.md
+212 cua_readme.md
+
+$ grep -oE "License|MIT|Hugging Face|run.cua.ai|cua-ai/cua-s1-forms" cua_readme.md | sort | uniq -c
+     1 Hugging Face
+     1 MIT
+     3 License
+     1 cua-ai/cua-s1-forms
+     2 run.cua.ai
+
+$ curl -s -L -m 15 -A "Mozilla/5.0" "https://trycua.com/robots.txt" -w "\nrobots:%{http_code}\n" | head -20
+User-agent: *
+Allow: /
+Allow: /llms.txt
+Allow: /docs/llms.txt
+Disallow:
+robots:200
