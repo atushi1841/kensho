@@ -1,0 +1,25 @@
+{
+  "success_indicators": [
+    "pytest tests/test_agent_eval_harness.py 28 passed (各層>=3、合計>=9充足)",
+    "agent_eval_harness dry-run 19/19 correct, gate pass=True",
+    "sim_three_consecutive 3/3 (100.0%) 成功判定率100%",
+    "sim_isolation before==after Kanban件数・notepad一致=本番変更0件"
+  ],
+  "verification_commands": [
+    "$ .venv/bin/python -m pytest tests/test_agent_eval_harness.py -q => 28 passed",
+    "$ python3 scripts/agent_eval_harness.py --dry-run => 19/19 correct_execution, gate pass=True",
+    "$ git log -1 => fb5ee3d (pushed to origin/main)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/agent_eval_harness.py",
+    "/mnt/d/Project2/kensho/tests/test_agent_eval_harness.py",
+    "/mnt/d/Project2/kensho/reports/t_9271d891_verification.md"
+  ],
+  "evidence_hashes": [
+    "agent_eval_harness.py=0238ac7d4bbcf4a9",
+    "test_agent_eval_harness.py=637bcbc46a542d0c",
+    "t_9271d891_verification.md=aee981bb94fd93be"
+  ],
+  "task_id": "t_9271d891",
+  "status": "complete"
+}
