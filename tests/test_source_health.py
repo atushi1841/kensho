@@ -115,6 +115,23 @@ class TestSourceHealth:
         assert "ReadTimeout" in out
         assert h.status_line("cp.meikan2") == "データなし"
 
+    def test_knshow_is_primary_and_tracks_failures_to_unhealthy(self, tmp_path: Path) -> None:
+        # t_52a7fec2: knshow は PRIMARY_SOURCES に含まれ、502連続>=4で異常判定されること。
+        #   （以前は監視対象外=一覧502が source_health.json に蓄積されない盲点だった）
+        assert "knshow" in PRIMARY_SOURCES
+        h = SourceHealth(tmp_path, max_consecutive_failures=4, now_fn=_now("2026-09-18"))
+        for _ in range(4):
+            h.record_failure("knshow", "http=502")
+        e = h._entry("knshow")
+        assert e["attempts"] == 4
+        assert e["failures"] == 4
+        assert e["consecutive_failures"] == 4
+        assert h.is_unhealthy("knshow") is True
+        # 回復(200)で連続失敗リセット → healthy に戻る
+        h.record_success("knshow")
+        assert h.is_unhealthy("knshow") is False
+        assert h._entry("knshow")["consecutive_failures"] == 0
+
 
 class TestFallbackDetection:
     def test_all_primary_idle_when_no_success_and_failures(self, tmp_path: Path) -> None:

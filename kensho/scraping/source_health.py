@@ -40,8 +40,11 @@ from typing import Any, cast
 
 STATE_FILENAME: str = "source_health.json"
 
-# 問題文が名指しする主要4源（WSLネットワーク層不安定の主犯）。new_items_by_source のキー体系と一致。
-PRIMARY_SOURCES: tuple[str, ...] = ("ken-kaku", "kenshou.club", "cp.meikan", "ke-ma")
+# 主要源（WSLネットワーク層不安定の主犯）＋ knshow（t_52a7fec2: 502日次連続で監視対象外だった
+# 事故の再発防止 → PRIMARY_SOURCES へ追加し、任意主要源の連続失敗でも通知が発火するよう統合）。
+# knshow 一覧ページ単体502でも集計に入り、連続>=4で unhealthy + Telegram 通知される。
+# new_items_by_source のキー体系と一致。
+PRIMARY_SOURCES: tuple[str, ...] = ("knshow", "ken-kaku", "kenshou.club", "cp.meikan", "ke-ma")
 
 # デフォルト閾値（collection.health_* で上書き可）
 _DEF_MAX_CONSECUTIVE: int = 4  # 連続失敗がこれを超えたら異常判定

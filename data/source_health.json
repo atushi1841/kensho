@@ -2,43 +2,51 @@
   "date": "2026-09-20",
   "sources": {
     "ken-kaku": {
-      "attempts": 7,
+      "attempts": 28,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0
     },
     "kenshou.club": {
-      "attempts": 638,
+      "attempts": 2555,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0
     },
     "cp.meikan": {
-      "attempts": 10,
+      "attempts": 40,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0
     },
     "ke-ma": {
-      "attempts": 10,
+      "attempts": 40,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0
     },
     "kensho-everyday": {
-      "attempts": 1,
+      "attempts": 4,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0
     },
     "prtimes": {
-      "attempts": 44,
+      "attempts": 176,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0
+    },
+    "knshow": {
+      "attempts": 4,
+      "failures": 4,
+      "consecutive_failures": 4,
+      "skipped": 0,
+      "last_error": "http=502",
+      "last_failure": "2026-09-20T15:03:54"
     }
   },
   "last_roll": "2026-09-19",
-  "last_run": "2026-09-20T04:49:57",
+  "last_run": "2026-09-20T14:48:23",
   "skipped_this_run": []
 }

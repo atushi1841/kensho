@@ -17,7 +17,7 @@ from kensho.scraping.common import (
     snowflake_ts_ms,
 )
 from kensho.scraping.dead_source_sentinel import check_dead_sources
-from kensho.scraping.source_health import PRIMARY_SOURCES, SourceHealth, set_active
+from kensho.scraping.source_health import PRIMARY_SOURCES, SourceHealth, note_fetch, set_active
 from kensho.scraping.socks_rotation import (
     make_rotator_from_config,
     proxied_fetch,
@@ -315,14 +315,41 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
     all_detail_links: list[str] = []
     consecutive_zero: int = 0  # 連続で「全リンク処理済み」のページ数（knshow早期終了用）
     page: int = 1
-    while page <= max_pages:
+    # ★ t_52a7fec2: knshow 連続失敗>=4 で既存 health ロジック通り自動 skip（キャッシュ維持）し、
+    #   Step2a を回さない。unhealthy 判定は前回までの連続失敗集計（Step1 fetch 記録）に基づく。
+    if health.is_unhealthy("knshow"):
+        out(f"  [HEALTH] knshow: 異常 {health.status_line('knshow')} → 自動skip・キャッシュ（既収集分）維持")
+        health.record_skip("knshow")
+    while page <= max_pages and not health.is_unhealthy("knshow"):
         url: str = f"{BASE_URL}/twitter"
         if page > 1:
             url = f"{BASE_URL}/twitter/page:{page}"
         code, html, _ = _do_fetch(url)
         if code != 200:
+            # ★ t_52a7fec2: knshow 一覧ページ失敗を source_health へ追跡（これまで監視対象外=盲点）。
+            #   一覧は Step1 で _do_fetch 直取得のため note_fetch を明示呼び出しして統合。
+            note_fetch("knshow", False, f"http={code}")
+            if health.is_unhealthy("knshow"):
+                # 連続>=4 に達した初回runで Telegram 通知（以後のrunは上記 skip 分岐で記録継続）。
+                try:
+                    from kensho.core.notifier import notify_warning
+
+                    notify_warning(
+                        "収集源異常: knshow.com 連続失敗",
+                        f"knshow.com 一覧({url})が HTTP {code} を "
+                        f"{health.status_line('knshow')} で返却。source_health で異常判定し"
+                        "次回収集から自動skip（既収集分キャッシュ維持）。",
+                        log_path="",
+                        cfg=cfg,
+                    )
+                    out("  [HEALTH] knshow 連続失敗>=4 → Telegram 通知発火")
+                except Exception as _ke:  # noqa: BLE001 — fail-open
+                    out(f"  [WARN] knshow 通知失敗（fail-open）: {_ke}")
             out(f"  ページ{page}: HTTP {code} - 終了")
             break
+        # ★ t_52a7fec2: 一覧取得成功(200)を knshow ヘルスへ記録し連続失敗カウンタをリセット
+        #   （回復後に誤って引き続き異常判定されるのを防ぐ）。
+        note_fetch("knshow", True)
         links: list[str] = extract_detail_links(html)
         if not links:
             out(f"  ページ{page}: リンクなし - 終了")
