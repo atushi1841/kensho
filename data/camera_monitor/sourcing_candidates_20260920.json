@@ -1,0 +1,45 @@
+{
+  "run_id": "20260920_101657",
+  "generatedAt": "2026-09-20T01:24:12.313222+00:00",
+  "candidates": [
+    {
+      "model": "Nikon Z9",
+      "run_id": "20260920_101657",
+      "yahoo_title": "Nikon ミラーレスカメラ 一眼 Z9 ボディ black #4592",
+      "url": "https://paypayfleamarket.yahoo.co.jp/item/z661856686",
+      "postage": null,
+      "sourcing_cost": 408030,
+      "resale_price": 518000,
+      "suruga_title": "Nikonミラーレス一眼カメラ Z9 4571 万画素 (ボディ) [Z9BK]",
+      "source_url": "https://www.suruga-ya.jp/product/detail/711010933",
+      "diff_pct": 27.0,
+      "judgment_yen": 67530
+    },
+    {
+      "model": "Nikon Z9",
+      "run_id": "20260920_101657",
+      "yahoo_title": "Nikon ミラーレスカメラ 一眼 Z9 ボディ black #4592",
+      "url": "https://auctions.yahoo.co.jp/jp/auction/c1240556912",
+      "postage": "＋送料980円",
+      "sourcing_cost": 430500,
+      "resale_price": 518000,
+      "suruga_title": "Nikonミラーレス一眼カメラ Z9 4571 万画素 (ボディ) [Z9BK]",
+      "source_url": "https://www.suruga-ya.jp/product/detail/711010933",
+      "diff_pct": 20.3,
+      "judgment_yen": 45060
+    },
+    {
+      "model": "Nikon Z8",
+      "run_id": "20260920_101657",
+      "yahoo_title": "Nikon Z8 ボディ ニコン ミラーレス一眼カメラ",
+      "url": "https://paypayfleamarket.yahoo.co.jp/item/z654176242",
+      "postage": null,
+      "sourcing_cost": 339800,
+      "resale_price": 376000,
+      "suruga_title": "ミラーレス一眼カメラ Nikon Z8 ボディ(状態：欠品多※詳細については備考をご覧ください)",
+      "source_url": "https://www.suruga-ya.jp/product/detail/711033926",
+      "diff_pct": 10.7,
+      "judgment_yen": 5120
+    }
+  ]
+}

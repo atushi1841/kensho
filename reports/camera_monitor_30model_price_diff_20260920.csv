@@ -1,0 +1,31 @@
+﻿model,keyword,surugaKeyword,yahoo_buynow,suruga_items,matched_pairs,median_diff_pct,max_diff_pct,median_ge20,max_ge30
+Canon EOS R5,EOS R5 ボディ,EOS R5,16,10,0,,,False,False
+Canon EOS R6 Mark II,EOS R6 Mark II ボディ,EOS R6 Mark II,16,1,8,-16.2,-8.8,False,False
+Canon EOS R6,EOS R6 ボディ,EOS R6,13,3,2,-12.1,-8.8,False,False
+Canon EOS R7,EOS R7 ボディ,EOS R7,24,0,0,,,False,False
+Canon EOS R8,EOS R8 ボディ,EOS R8,20,1,0,,,False,False
+Canon EOS R10,EOS R10 ボディ,EOS R10,17,6,0,,,False,False
+Canon EOS R50,EOS R50 ボディ,EOS R50,17,3,0,,,False,False
+Sony α7 IV,SONY ILCE-7M4 ボディ,ILCE-7M4,17,1,0,,,False,False
+Sony α7R V,SONY ILCE-7RM5 ボディ,ILCE-7RM5,25,1,0,,,False,False
+Sony α7R IV,SONY ILCE-7RM4 ボディ,ILCE-7RM4,22,1,0,,,False,False
+Sony α7 III,SONY ILCE-7M3 ボディ,ILCE-7M3,20,2,0,,,False,False
+Sony α7C II,SONY ILCE-7CM2 ボディ,ILCE-7CM2,19,4,0,,,False,False
+Sony α7C,SONY ILCE-7C ボディ,ILCE-7C,22,7,0,,,False,False
+Sony α6700,SONY ILCE-6700 ボディ,ILCE-6700,18,1,0,,,False,False
+Sony α6400,SONY ILCE-6400 ボディ,ILCE-6400,17,6,0,,,False,False
+Sony α7S III,SONY ILCE-7SM3 ボディ,ILCE-7SM3,22,0,0,,,False,False
+Nikon Z8,Nikon Z8 ボディ,Z8,24,24,7,-15.9,10.7,False,False
+Nikon Z9,Nikon Z9 ボディ,Z9,9,24,4,8.1,27.0,False,False
+Nikon Z7 II,Nikon Z7 II ボディ,Z7 II,19,24,0,,,False,False
+Nikon Z6 II,Nikon Z6 II ボディ,Z6 II,23,24,0,,,False,False
+Nikon Z6 III,Nikon Z6 III ボディ,Z6 III,12,24,0,,,False,False
+Nikon Z5,Nikon Z5 ボディ,Z5,21,24,0,,,False,False
+Nikon Z50 II,Nikon Z50 II ボディ,Z50 II,25,24,0,,,False,False
+Fujifilm X-T5,FUJIFILM X-T5 ボディ,X-T5,18,24,0,,,False,False
+Fujifilm X-T4,FUJIFILM X-T4 ボディ,X-T4,22,24,0,,,False,False
+Fujifilm X-T3,FUJIFILM X-T3 ボディ,X-T3,21,24,0,,,False,False
+Fujifilm X100V,FUJIFILM X100V,X100V,24,0,0,,,False,False
+Fujifilm X-H2,FUJIFILM X-H2 ボディ,X-H2,19,24,0,,,False,False
+Fujifilm X-H2S,FUJIFILM X-H2S ボディ,X-H2S,5,8,0,,,False,False
+Fujifilm X-S20,FUJIFILM X-S20 ボディ,X-S20,7,24,0,,,False,False

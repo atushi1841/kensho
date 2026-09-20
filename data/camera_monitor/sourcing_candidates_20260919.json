@@ -1,0 +1,45 @@
+{
+  "run_id": "20260919_231030",
+  "generatedAt": "2026-09-19T23:11:04.549886+00:00",
+  "candidates": [
+    {
+      "model": "Canon EOS R6 Mark II",
+      "run_id": "20260919_231030",
+      "yahoo_title": "◆レンタル◆Canon EOS R6 Mark2ボディ単体◆1日～：4,200円～、前日お届け",
+      "url": "https://auctions.yahoo.co.jp/jp/auction/n1243487786",
+      "postage": "送料未定",
+      "sourcing_cost": 4200,
+      "resale_price": 207000,
+      "suruga_title": "Canon ミラーレス一眼カメラ EOS R6 Mark II ボディ [5666C001]（箱状態難）",
+      "source_url": "",
+      "diff_pct": 4828.6,
+      "fee_stripped_yen": 185240
+    },
+    {
+      "model": "Canon EOS R5",
+      "run_id": "20260919_231030",
+      "yahoo_title": "中古品 ミラーレス一眼カメラ キヤノン Canon EOS R5 ボディ デジタルカメラ",
+      "url": "https://auctions.yahoo.co.jp/jp/auction/1244512880",
+      "postage": "送料は商品ページ参照",
+      "sourcing_cost": 1200,
+      "resale_price": 85800,
+      "suruga_title": "キヤノン ミラーレス一眼カメラ EOS R50 V ボディ (ブラック) [6895C001]",
+      "source_url": "https://www.suruga-ya.jp/product/detail/711033439",
+      "diff_pct": 7050.0,
+      "fee_stripped_yen": 76736
+    },
+    {
+      "model": "Canon EOS R6 Mark II",
+      "run_id": "20260919_231030",
+      "yahoo_title": "Canon キヤノン EOS R6 Mark Ⅱ ボディ 美品",
+      "url": "https://auctions.yahoo.co.jp/jp/auction/r1245211162",
+      "postage": "＋送料750円",
+      "sourcing_cost": 180000,
+      "resale_price": 207000,
+      "suruga_title": "Canon ミラーレス一眼カメラ EOS R6 Mark II ボディ [5666C001]（箱状態難）",
+      "source_url": "",
+      "diff_pct": 15.0,
+      "fee_stripped_yen": 9440
+    }
+  ]
+}

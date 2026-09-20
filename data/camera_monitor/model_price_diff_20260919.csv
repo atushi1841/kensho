@@ -1,0 +1,3 @@
+﻿model,keyword,surugaKeyword,yahoo_buynow,suruga_items,matched_pairs,median_diff_pct,max_diff_pct,median_ge20,max_ge30
+Canon EOS R5,EOS R5 ボディ,EOS R5,16,10,0,,,False,False
+Canon EOS R6 Mark II,EOS R6 Mark II ボディ,EOS R6 Mark II,16,1,8,-16.2,-9.2,False,False
