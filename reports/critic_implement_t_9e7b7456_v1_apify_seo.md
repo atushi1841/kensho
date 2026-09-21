@@ -29,32 +29,46 @@
   新規version bumpは不要（sourceバイト同一のため意義なし）。
 
 ## verification_evidence
-```bash
-git log --oneline -1
-# 78eef51 fix(apify): batch_updater uses categories not categoryIds; pictureUrl API wall documented (t_9e7b7456)
+（1）適用した categories 修正（PUT 実測・永続確認、test-actor / japan-property-hazard-mcp / kensho-high-value-leads）
 ```
-
-```bash
-python3 scripts/apify_batch_updater.py   # 修正版（categories適用・pictureUrl除去）
+$ bash /tmp/test_cats.sh
+id for japan-property-hazard-mcp = XJCgrhOZE47qc7T3i
+PUT categories -> status 200
+  now categories: ['AI', 'DEVELOPER_TOOLS', 'MCP_SERVERS']
 ```
-
-```bash
-python3 -m py_compile scripts/apify_batch_updater.py
-# batch_updater compile OK
+（2）pictureUrl が Rest API で設定不能であることの確定（live openapi.json スキーマ + 有効URLでも400）
 ```
-
-```bash
-bash /tmp/regenerate_diff.sh
-# categories_set: 82 / categories_empty: 0 / pictureUrl_set: 0 / isPublic_true: 75 / changed: 3
+$ bash /tmp/check_openapi.sh
+UpdateActorRequest properties:
+   name / description / isPublic / ... / categories / ...
+  has pictureUrl field? False
+Actor (read) has pictureUrl: True
+icon/picture paths: []
 ```
-
-```bash
-python3 - <<'PY'  # diff検証
-import json
-d=json.load(open('reports/apify_seo_diff_2026-09-21.json'))
-print(d['summary'])
-PY
-# {'categories_set': 82, 'categories_empty': 0, 'pictureUrl_set': 0, 'isPublic_true': 75}
+```
+$ bash /tmp/test_icon_valid.sh
+avatar fetchable: 200 image/png len 282530
+PUT pictureUrl(valid avatar) -> status 400
+  error: invalid-picture-url "Invalid picture URL"
+```
+（3）batch_updater 修正版が構文OK・categoryIds が消えたこと / 最終差分レポート
+```
+$ python3 -m py_compile scripts/apify_batch_updater.py
+batch_updater compile OK
+```
+```
+$ grep -n categoryIds scripts/apify_batch_updater.py
+```
+（grep 出力なし = categoryIds がコードに存在しない / 行数0）
+（4）最終 state（全82本の再GET実測）— diff レポート要約
+```
+$ bash /tmp/regenerate_diff.sh
+categories_set: 82
+categories_empty: 0
+pictureUrl_set: 0
+isPublic_true: 75
+changed this run: 3
+saved reports/apify_seo_diff_2026-09-21.json
 ```
 
 ## 受け入れ判定
