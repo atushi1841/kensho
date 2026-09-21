@@ -28,7 +28,7 @@ assert TOKEN, "no token"
 
 # list my actors
 lst = req("/acts?limit=1000&my=1")
-actors = lst["data"]["items"][:10]
+actors = lst["data"]["items"]
 print(f"total actors(list): {len(actors)}")
 
 rows = []
