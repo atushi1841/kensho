@@ -28,7 +28,7 @@ assert TOKEN, "no token"
 
 # list my actors
 lst = req("/acts?limit=1000&my=1")
-actors = lst["data"]["items"]
+actors = lst["data"]["items"][:10]
 print(f"total actors(list): {len(actors)}")
 
 rows = []
@@ -40,7 +40,7 @@ for a in actors:
     try:
         vs = req(f"/acts/{aid}/versions")["data"]["items"]
         for v in vs:
-            ver_info.append({"versionNumber": v["versionNumber"], "buildTag": v.get("buildTag"), "gitRepoUrl": v.get("gitRepoUrl"), "sourceType": v.get("sourceType")})
+            ver_info.append({"versionNumber": v.get("versionNumber"), "buildTag": v.get("buildTag"), "gitRepoUrl": v.get("gitRepoUrl"), "sourceType": v.get("sourceType")})
     except Exception as e:
         ver_info = [{"error": str(e)}]
     # pictureUrl / icon
@@ -55,7 +55,7 @@ for a in actors:
         "iconLike": icon,
         "categories": d.get("categories"),
         "user": d.get("username"),
-        "versionNumbers": [v["versionNumber"] for v in ver_info],
+        "versionNumbers": [v.get("versionNumber") for v in ver_info if isinstance(v, dict)],
         "versions": ver_info,
         "pricingModel": (d.get("pricingInfos") or [{}])[-1].get("pricingModel") if d.get("pricingInfos") else None,
     })
