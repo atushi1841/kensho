@@ -1,0 +1,20 @@
+{
+  "source": "suruga-ya.jp",
+  "total_observations": 240,
+  "unique_items": 116,
+  "with_used_price": 71,
+  "in_stock": 71,
+  "keywords": [
+    "ポケモンカードゲーム イーブイ",
+    "ポケモンカードゲーム ピカチュウ",
+    "ポケモンカードゲーム ポケモンカード151",
+    "ポケモンカードゲーム ミュウツー",
+    "ポケモンカードゲーム リザードン"
+  ],
+  "first_collected_at": "2026-09-21T23:13:01Z",
+  "last_collected_at": "2026-09-21T23:15:22Z",
+  "price_changed_items": 0,
+  "used_price_movers": [],
+  "latest_csv": "/mnt/d/Project2/kensho/data/tcg_dataset/tcg_dataset_latest.csv",
+  "history_csv": "/mnt/d/Project2/kensho/data/tcg_dataset/tcg_price_history.csv"
+}
