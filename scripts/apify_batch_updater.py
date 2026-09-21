@@ -42,10 +42,6 @@ def main():
     items = get_all_actors()
     print(f"Total actors retrieved: {len(items)}")
 
-    # Standard default pictureUrl to use for actors if they don't have one
-    # Default public icon for Kensho / Data scrapers on GitHub/CDN
-    DEFAULT_PICTURE_URL = "https://raw.githubusercontent.com/atushi1841/apify-actors-assets/main/kensho-default-icon.png"
-
     before_state = []
     after_state = []
 
@@ -72,18 +68,21 @@ def main():
         updated = False
         payload = {}
 
-        # 1. Custom Icon / pictureUrl
-        current_pic = d.get("pictureUrl")
-        if not current_pic:
-            payload["pictureUrl"] = DEFAULT_PICTURE_URL
-            updated = True
+        # 1. Custom Icon / pictureUrl -- NOT WRITABLE VIA REST API (API wall).
+        #    UpdateActorRequest (PUT /v2/acts/{id}) has NO pictureUrl field,
+        #    and the read-only Actor schema's pictureUrl is not in the update
+        #    schema. Even a valid, fetchable PNG URL returns HTTP 400
+        #    `invalid-picture-url`. Custom icons are Console-UI only.
+        #    (verified against live openapi.json, 2026-09-21; prior t_ca54aa65)
+        #    => deliberately SKIPPED here.
 
         # 2. Categorization
         current_cats = d.get("categories") or []
         if not current_cats:
             # Default categories if empty
-            # Apify API expects categoryIds, not categories
-            payload["categoryIds"] = ["DEVELOPER_TOOLS", "AUTOMATION", "ECOMMERCE"]
+            # NOTE: UpdateActorRequest uses `categories` (string list), NOT `categoryIds`
+            # (categoryIds is not in the schema -> HTTP 400 schema-validation).
+            payload["categories"] = ["DEVELOPER_TOOLS", "AUTOMATION", "ECOMMERCE"]
             updated = True
 
         if updated:
