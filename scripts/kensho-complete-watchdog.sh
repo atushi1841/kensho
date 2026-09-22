@@ -97,7 +97,30 @@ while IFS=$'\t' read -r tid flag title assignee; do
   fi
 done <<<"$CANDIDATES"
 
-if [ "${#STALE_TASKS[@]}" -eq 0 ]; then
+# ★ protocol_violation 被災タスクの表面化 (kanban t_848e1beb / 2026-09-22)
+# 背景: worker が rc=0 で kanban_complete/block 未呼出 のまま clean exit すると dispatcher が
+#       protocol_violation として失敗扱いし task を status=blocked に落とす。作業成果は完了済みの
+#       ことが多いのにカードが沈黙ブロック化して放置されるため、unblock再開を促すコメントで表面化。
+# 備考: 既存の「runningハング検知」では status=blocked を捕捉できない(対象が running のみ)ため別途スキャン。
+PVBLOCK=$(python3 - "$DB" <<'PY'
+import sqlite3, sys
+con = sqlite3.connect("file:%s?mode=ro" % sys.argv[1], uri=True)
+rows = con.execute(
+    "SELECT id, title, consecutive_failures FROM tasks "
+    "WHERE status='blocked' AND last_failure_error LIKE '%protocol violation%'").fetchall()
+con.close()
+for tid, title, cf in rows:
+    t = (title or "").replace("\t", " ").encode("utf-8", "replace").decode("utf-8")
+    print("%s\t%s\t%s" % (tid, cf, t))
+PY
+)
+PV_LIST=()
+while IFS=$'\t' read -r tid cf title; do
+  [ -n "$tid" ] || continue
+  PV_LIST+=("$tid|$cf|$title")
+done <<<"$PVBLOCK"
+
+if [ "${#STALE_TASKS[@]}" -eq 0 ] && [ "${#PV_LIST[@]}" -eq 0 ]; then
   # 問題なし → サイレント
   exit 0
 fi
@@ -136,6 +159,13 @@ for tid in "${STALE_TASKS[@]}"; do
   fi
 done
 
+# protocol_violation 被災タスクをリマインド対象に追加 (t_848e1beb)
+for entry in "${PV_LIST[@]}"; do
+  tid="${entry%%|*}"; rest="${entry#*|}"; cf="${rest%%|*}"
+  HAS_ANY=1
+  REMIND_LINES+=("$tid|protocol_violation(cf=$cf)")
+done
+
 if [ "$HAS_ANY" -eq 0 ] || [ "${#REMIND_LINES[@]}" -eq 0 ]; then
   exit 0
 fi
@@ -143,7 +173,9 @@ fi
 if [ "$SILENT" -eq 0 ] || [ "$APPLY" -eq 1 ]; then
   echo "kensho-complete-watchdog: board=$BOARD stale_min=${STALE_MIN}git_days=${GIT_DAYS} candidates=${#STALE_TASKS[@]} remind=${#REMIND_LINES[@]}"
   for line in "${REMIND_LINES[@]}"; do
-    echo "  complete-forgot: $line"
+    ev="${line#*|}"
+    [[ "$ev" == protocol_violation* ]] && lab="protocol-violation" || lab="complete-forgot"
+    echo "  $lab: $line"
   done
 fi
 
@@ -159,12 +191,18 @@ FAILED=0
 for line in "${REMIND_LINES[@]}"; do
   tid="${line%%|*}"; evid="${line#*|}"
   TODAY=$(date +%Y-%m-%d)
-  # 1) 完了忘れリマインドコメント(ASCIIのみ)
-  MSG="[complete-forgot] 実装作業の痕跡(${evid})があるのに kanban_complete/block が未呼び出し。終端処理を要請します。"
+  # 1) 完了忘れリマインドコメント(ASCIIのみ)。protocol_violation被災は別メッセージ
+  if [[ "$evid" == protocol_violation* ]]; then
+    MSG="[protocol-violation-blocked] 終端 kanban_complete/block 未呼出のまま rc=0 で終了し、dispatcherが失敗扱いで blocker化。作業成果は完了済みの可能性が高いため、unblockして再開をご検討ください。"
+  else
+    MSG="[complete-forgot] 実装作業の痕跡(${evid})があるのに kanban_complete/block が未呼び出し。終端処理を要請します。"
+  fi
   if hermes kanban --board "$BOARD" comment "$tid" "$MSG" >/dev/null 2>&1; then
-    # 2) 台帳に同日記録(重複防止)
+    # 2) 台帳に同日記録(重複防止)。タグは事故種別で区別
+    TAG=complete-forgot
+    [[ "$evid" == protocol_violation* ]] && TAG=protocol-violation
     awk -F'\t' -v d="$TODAY" -v t="$tid" '$1!=d || $2!=t' "$LEDGER" > "${LEDGER}.tmp"
-    printf '%s\t%s\tcomplete-forgot\n' "$TODAY" "$tid" >> "${LEDGER}.tmp"
+    printf '%s\t%s\t%s\n' "$TODAY" "$tid" "$TAG" >> "${LEDGER}.tmp"
     mv "${LEDGER}.tmp" "$LEDGER"
     echo "  [ok] reminded $tid (${evid})"
   else
