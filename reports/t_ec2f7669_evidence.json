@@ -1,0 +1,21 @@
+{
+  "success_indicators": [
+    "t_ec2f7669 評価タスク完了: Mini-AGI は収益化対象として不可と結論",
+    "index.lock 除去でリポジトリ復旧、タスク復活",
+    "検証レポート reports/t_ec2f7669_verification.md に評価結論を記載"
+  ],
+  "verification_commands": [
+    "$ ls -la /mnt/d/Project2/kensho/.git/index.lock => 除去前は0バイト残骸が存在、除去後No such file",
+    "$ git status --porcelain => リポジトリ復旧・git操作正常",
+    "$ hermes kanban --board kensho-ai-team claim t_ec2f7669 => Claimed",
+    "$ git ls-files reports/t_ec2f7669_verification.md => 追跡前(今回commitで追跡)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_ec2f7669_verification.md"
+  ],
+  "evidence_hashes": [
+    "b3ddeb723ee51b41020674b3527c1f30c41138748445fadaacd03ca9d576aa38"
+  ],
+  "task_id": "t_ec2f7669",
+  "status": "complete"
+}
