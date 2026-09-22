@@ -20,6 +20,7 @@ from .kema import scrape_kema
 from .kenkaku import scrape_kenkaku
 from .kensho_everyday import scrape_kensho_everyday
 from .kenshouclub import scrape_kenshouclub
+from .kenshofan import scrape_kenshofan
 from .knshow import (
     extract_deadline_and_winners,
     extract_detail_links,
@@ -55,6 +56,7 @@ __all__ = [
     "extract_deadline_and_winners",
     "scrape_kenkaku",
     "scrape_kenshouclub",
+    "scrape_kenshofan",
     "scrape_cpmeikan",
     "scrape_kema",
     "scrape_kensho_everyday",

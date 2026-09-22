@@ -44,7 +44,7 @@ STATE_FILENAME: str = "source_health.json"
 # 事故の再発防止 → PRIMARY_SOURCES へ追加し、任意主要源の連続失敗でも通知が発火するよう統合）。
 # knshow 一覧ページ単体502でも集計に入り、連続>=4で unhealthy + Telegram 通知される。
 # new_items_by_source のキー体系と一致。
-PRIMARY_SOURCES: tuple[str, ...] = ("knshow", "ken-kaku", "kenshou.club", "cp.meikan", "ke-ma")
+PRIMARY_SOURCES: tuple[str, ...] = ("knshow", "ken-kaku", "kenshou.club", "cp.meikan", "ke-ma", "kenshofan")
 
 # デフォルト閾値（collection.health_* で上書き可）
 _DEF_MAX_CONSECUTIVE: int = 4  # 連続失敗がこれを超えたら異常判定

@@ -1,4 +1,4 @@
-"""Kensho Collector — knshow.com + ken-kaku.com + kenshou.club + cp.meikan.org + prtimes からX懸賞URLを収集"""
+"""Kensho Collector — knshow.com + ken-kaku.com + kenshou.club + cp.meikan.org + prtimes + kenshofan.com からX懸賞URLを収集"""
 
 from __future__ import annotations
 
@@ -42,6 +42,7 @@ from kensho.scraping.sources import (
     scrape_kenkaku,
     scrape_kensho_everyday,
     scrape_kenshouclub,
+    scrape_kenshofan,  # ★ 新規: kenshofan.com（懸賞ファン）第5収集源
     scrape_prtimes,
     scrape_twscrape,
     scrapling_fetch,
@@ -625,6 +626,12 @@ def _collect_impl(
     kevery_items: list[dict[str, Any]] = scrape_kensho_everyday(out, processed_set, account_keys)
     out(f"  kensho-everyday.com: {len(kevery_items)}件")
     collected.extend(kevery_items)
+
+    # ── Step 2j: kenshofan.com（懸賞ファン）収集 ──
+    out("\n[Step 2j kenshofan.com] X懸賞を収集...")
+    kenshofan_items: list[dict[str, Any]] = scrape_kenshofan(out, processed_set, account_keys)
+    out(f"  kenshofan: {len(kenshofan_items)}件")
+    collected.extend(kenshofan_items)
 
     # ── Step 2i: PR TIMES 収集（記念プレゼント・新商品キャンペーン／収集源第5ソース）──
     out("\n[Step 2i prtimes] PR TIMES プレゼント・新商品キャンペーンを収集...")
