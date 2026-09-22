@@ -268,6 +268,26 @@ failure_ceiling:
   max_consecutive_failures: 3      # 3回連続失敗で打ち切り
   cooldown_minutes: 30             # 30分後に自動リセット
 
+# ── 自己修復ループ設定 ──
+# Loop Engineering Layer 1-4: 収集/応募の例外・空収集を自動リカバリ。
+# ai_assisted: true にすると OpenROUTER_API_KEY で AI に修正案を聞く（無料モデル）。
+self_healing:
+  enabled: true
+  max_attempts: 3
+  min_delay_sec: 3
+  max_delay_sec: 10
+  failure_ceiling_consecutive: 3
+  failure_ceiling_cooldown_minutes: 30
+  state_file: data/self_heal_state.json
+  log_tail_lines: 60
+  ai_assisted: false
+  ai_timeout_sec: 25
+  ai_model: ""
+  retry_empty_collection: false
+  retry_partial_apply: false
+  notify_on_error: true
+  allowed_ai_actions: "retry,switch_transport,reduce_scope"
+
 # ── アクション検証設定 ──
 # Loop Engineering: page.gotoによる重検証（プロフィールに遷移してボタン状態を確認）
 # コスト高いのでデフォルトOFF。必要なアクションだけONに推奨。

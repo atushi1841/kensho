@@ -688,20 +688,70 @@ def apply_for_account(
     shared_browser: Any = None,
     shared_ipw: Any = None,
 ) -> tuple[int, int]:
-    """
-    指定されたアカウントで未応募の懸賞に応募する。
+    """指定されたアカウントで未応募の懸賞に応募する。自己修復ループで例外をリカバリする。"""
+    from kensho.core.self_heal import RecoverySignal, SelfHealingLoop
 
-    Parameters:
-        account_key: アカウントキー
-        max_n: 最大処理件数
-        cfg: config（Noneなら自動読込）
-        log: LogWriter
-        dry_run: Trueなら実際の応募はせず、処理対象の表示のみ
-        shared_browser: 共有ブラウザオブジェクト（None=従来通り個別起動）
-        shared_ipw: 共有ブラウザのipwインスタンス（shared_browser利用時に必要）
+    def _validate_apply(
+        value: Any,
+        *,
+        exception: BaseException | None = None,
+        context: dict[str, Any] | None = None,
+    ) -> RecoverySignal | None:
+        if not isinstance(value, tuple) or len(value) != 2:
+            return RecoverySignal(kind="invalid_return", recoverable=True, severity="error", message="apply が tuple[int,int] を返さない")
+        _succ, _errs = value
+        if _errs > 0 and _succ == 0:
+            return RecoverySignal(kind="apply_zero_success", recoverable=True, severity="error", message=f"apply 0 success {_errs} errors")
+        if (context or {}).get("retry_partial") and _errs > 0 and _succ > 0:
+            return RecoverySignal(kind="apply_partial", recoverable=True, severity="warn", message=f"apply partial {_succ}/{_errs}")
+        return None
 
-    Returns: (success_count, error_count)
-    """
+    _cfg = dict(cfg) if cfg is not None else load_config()
+    _loop = SelfHealingLoop(
+        cfg=_cfg, pipeline="apply", logger=log,
+        context={"retry_partial": False},
+    )
+
+    def _run() -> tuple[int, int]:
+        return _apply_impl(
+            account_key=account_key, max_n=max_n, cfg=_cfg, log=log,
+            dry_run=dry_run, shared_browser=shared_browser, shared_ipw=shared_ipw,
+        )
+
+    result = _loop.run(_run, validator=_validate_apply)
+    _crash = _cfg.get("general", {}).get("project_dir", ".") + "/data/crash_history.json"
+    try:
+        _cd = Path(_crash)
+    except Exception:
+        _cd = None
+    if result.ok:
+        if _cd and _cd.exists():
+            try:
+                _cd.write_text("[]", encoding="utf-8")
+            except Exception:
+                pass
+    else:
+        if _cd:
+            try:
+                _hist: list[Any] = []
+                if _cd.exists():
+                    _hist = json.loads(_cd.read_text(encoding="utf-8"))
+                _hist.append({"account_key": account_key, "ts": time.time(), "error": str(result.error)})
+                _cd.write_text(json.dumps(_hist, ensure_ascii=False, indent=2), encoding="utf-8")
+            except Exception:
+                pass
+    return result.value_or_raise()
+
+
+def _apply_impl(
+    account_key: str,
+    max_n: int,
+    cfg: dict[str, Any] | None = None,
+    log: Any = None,
+    dry_run: bool = False,
+    shared_browser: Any = None,
+    shared_ipw: Any = None,
+) -> tuple[int, int]:
     t0: float = time.time()
     if cfg is None:
         cfg = load_config()

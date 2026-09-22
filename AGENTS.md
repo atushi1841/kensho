@@ -35,7 +35,7 @@
 - `orchestrator.py` — 全体オーケストレーター
 - `scraping/` — スクレイピングモジュール
 - `application/` — 応募処理
-- `core/` — コア機能（config, logger, notifier, encoding, cleanup）
+- `core/` — コア機能（config, logger, notifier, encoding, cleanup, self_heal）
 - `keepalive/` — ネットワーク監視（checker, wifi_manager）
 - `utils/` — ユーティリティ（backup, network, process）
 - `scripts/` — 補助スクリプト（health check, cron worker）

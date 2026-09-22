@@ -226,7 +226,42 @@ def _merge_applied_from_disk(result_items: list[dict[str, Any]], disk_items: lis
     return _matched
 
 
-def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int = 99) -> tuple[int, int, int]:
+def collect(
+    cfg: dict[str, Any] | None = None,
+    log: Any = None,
+    max_pages: int = 99,
+) -> tuple[int, int, int]:
+    """収集を実行し、自己修復ループで例外/空収集をリカバリする。"""
+    from kensho.core.self_heal import SelfHealingLoop, RecoverySignal
+
+    def _validate_collect(
+        value: Any,
+        *,
+        exception: BaseException | None = None,
+        context: dict[str, Any] | None = None,
+    ) -> RecoverySignal | None:
+        if not isinstance(value, tuple) or len(value) != 3:
+            return RecoverySignal(kind="invalid_return", recoverable=True, severity="error", message="collect が tuple[int,int,int] を返さない")
+        _succ, _errs, _total = value
+        if _errs > 0 and _succ == 0 and _total == 0:
+            return RecoverySignal(kind="empty_after_errors", recoverable=True, severity="error", message=f"collect 0 success {_errs} errors")
+        if (context or {}).get("retry_empty_collection") and _succ == 0 and _errs == 0 and _total == 0:
+            return RecoverySignal(kind="empty_collection", recoverable=True, severity="warn", message="collect が空")
+        return None
+
+    _cfg = dict(cfg) if cfg is not None else load_config()
+    _loop = SelfHealingLoop(
+        cfg=_cfg, pipeline="collection", logger=log,
+        context={"retry_empty_collection": True},
+    )
+    return _loop.run(_collect_impl, validator=_validate_collect).value_or_raise()
+
+
+def _collect_impl(
+    cfg: dict[str, Any] | None = None,
+    log: Any = None,
+    max_pages: int = 99,
+) -> tuple[int, int, int]:
     """
     収集を実行。
     cfg: config.yaml の内容（Noneなら自動読込）
