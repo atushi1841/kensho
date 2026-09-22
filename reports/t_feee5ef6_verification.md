@@ -4,7 +4,8 @@
 
 ## 修正対象
 - ファイル: `/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-kanban-sync.sh`（kensho-sweeps repo 管理、repo外スクリプト）
-- コミット: `e43a1d0`（kensho-sweeps repo）
+- 本タスク受け入れコミット(証跡レポート): `e4388e0` + `4eb66d7`（kensho repo / 本レポート git追跡・push済み）
+- kensho-sweeps repo 修正 hash `e43a1d0`（実装本体）
 
 ## 修正内容
 
@@ -46,8 +47,8 @@ ready AND assignee IS NULL = 0
 補足（実測）:
 - プローブカード t_6730ef47 を create → assignee=kensho-worker で ready 化を実測確認後、即 archive で無効化（dispatcher 起動なし、task_runs=0）。ボードはクリーンに復帰。
 - sync critic 本runは t_18ecf0a5（done, body "critic proposal 2026-09-22"）を dedupe 検出 → `[skip]`。要件どおり重複作成なし。
-- 実装は kensho-sweeps repo commit e43a1d0 で git 追跡済み。
+- 実装は kensho-sweeps repo の修正（hash e43a1d0）で git 追跡済み（参照: 上記 修正対象/修正コミット 節）。
 
 ## changed_files
-- /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-kanban-sync.sh（v3: --assignee 付与 + body 参照 dedupe。commit e43a1d0）
+- /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-kanban-sync.sh（v3: --assignee 付与 + body 参照 dedupe。kensho-sweeps 修正 hash e43a1d0）
 - /mnt/d/Project2/kensho/reports/t_feee5ef6_verification.md（本レポート）
