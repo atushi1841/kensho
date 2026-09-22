@@ -24,7 +24,7 @@
 - FALLBACK（pre-create guard）: sync を本 run で直接修正したため不要。
 
 ## verification_evidence
-実行コマンドと実出力（記録値は実走査のもの）。
+t_feee5ef6 の 検証実行コマンドと実出力（記録値は実走査のもの）。
 
 ```
 $ bash -n /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-kanban-sync.sh && echo SYNTAX-OK
