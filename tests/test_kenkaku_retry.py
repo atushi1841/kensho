@@ -125,6 +125,11 @@ class TestRetryConstants:
     def test_backoff_max_is_10_seconds(self) -> None:
         assert kenkaku._KENKAKU_RETRY_BACKOFF_MAX == 10.0
 
+    def test_timeout_matches_other_sources(self) -> None:
+        # t_f2c62b04: KENKAKU独のConnectTimeout偏重は10sタイムアウト不均衡が主因。
+        #   他源(KEMA/CPMK/KCLUB=_fetch_with_retry timeout=30)と同値であることを回帰ガード。
+        assert kenkaku._KENKAKU_TIMEOUT == 30
+
     def test_backoff_sleep_uses_constant(self, sleep_spy: list[float], client_factory: Any) -> None:
         client_factory({_URL1: [httpx.ConnectTimeout("t"), _resp(200, _ITEM_HTML)]})
         _run_scrape()

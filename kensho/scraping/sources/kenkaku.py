@@ -27,8 +27,10 @@ _KENKAKU_PAGE_IDS: list[str] = [
 _KENKAKU_MAX_RETRIES: int = 5  # 失敗時に追加で最大5回まで再試行（合計6アテンプト）
 _KENKAKU_RETRY_BACKOFF: float = 3.0  # 指数バックオフのベース秒（3.0 * 2**attempt、10sキャップ）
 _KENKAKU_RETRY_BACKOFF_MAX: float = 10.0  # バックオフ上限（3,6,10,10,10…）
-# t_1cae393c: ConnectTimeout短縮 + フェイルオーバー用10sタイムアウト
-_KENKAKU_TIMEOUT: int = 10
+# t_f2c62b04: ConnectTimeout源別偏重対策 — 他源(KEMA/CPMK/KCLUB)と同値の30sへ復元。
+#   t_1cae393c が fail-fast 目的で10sに短縮したが、ken-kaku.com の遅延TCP受付
+#   (>10s かつ <30s)でKENKAKUだけに7件/dayのConnectTimeoutが偏重。設計不均衡を解消。
+_KENKAKU_TIMEOUT: int = 30
 
 
 def scrape_kenkaku(out: Any, processed_set: set[str], account_keys: list[str]) -> list[dict[str, Any]]:
