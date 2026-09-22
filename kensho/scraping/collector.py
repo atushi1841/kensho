@@ -31,6 +31,7 @@ from kensho.scraping.sources import (
     extract_detail_links,
     extract_rd_link,
     fetch,
+    fetch_listing_with_retry,
     has_skip_keyword,
     is_x_url,
     load_json,
@@ -324,7 +325,9 @@ def collect(cfg: dict[str, Any] | None = None, log: Any = None, max_pages: int =
         url: str = f"{BASE_URL}/twitter"
         if page > 1:
             url = f"{BASE_URL}/twitter/page:{page}"
-        code, html, _ = _do_fetch(url)
+        # critic t_18ecf0a5: knshow 一覧ページは単発fetchで 502 を通していた → kenkaku v144移植の
+        #   ページ単位指数バックオフリトライ（3アテンプト・10sキャップ）に差し替え。
+        code, html, _ = fetch_listing_with_retry(_do_fetch, url, out=out)
         if code != 200:
             # ★ t_52a7fec2: knshow 一覧ページ失敗を source_health へ追跡（これまで監視対象外=盲点）。
             #   一覧は Step1 で _do_fetch 直取得のため note_fetch を明示呼び出しして統合。

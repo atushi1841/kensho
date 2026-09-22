@@ -3,10 +3,50 @@
 from __future__ import annotations
 
 import re
+import time
+from collections.abc import Callable
 
 import httpx
 
 from .common import BASE_URL, HEADERS
+
+# critic t_18ecf0a5: knshow 502部分劣化対策 — kenkaku v144ページ単位リトライを移植。
+#   knshow 一覧ページ/リダイレクト解決が単発fetch(timeout=15)で 502 を通し、knshow=0 の
+#   セッションを生んでいた。指数バックオフリトライ3アテンプト（base 3s → 3,6 → 10sキャップ）
+#   を適用し、knshow=0 セッションを7日間で半減させる。
+_KNSHOW_MAX_TRIES: int = 3  # 合計3アテンプト（初期試行 + リトライ2回）
+_KNSHOW_RETRY_BACKOFF: float = 3.0  # 指数バックオフ base 3.0s
+_KNSHOW_RETRY_BACKOFF_MAX: float = 10.0  # バックオフ上限（3,6 → 10sキャップ）
+_KNSHOW_TIMEOUT: int = 15
+
+
+def fetch_listing_with_retry(
+    fetcher: Callable[..., tuple[int, str, str]],
+    url: str,
+    *,
+    out: Callable[[str], None] | None = None,
+) -> tuple[int, str, str]:
+    """knshow 一覧ページ単位の指数バックオフリトライ（kenkaku v144移植 / critic t_18ecf0a5）。
+
+    scrapeモード別fetcher（scrapling/proxy/fetch等）を包む。HTTP 5xx(502含む)/ネットワーク例外
+    のみ 3アテンプトまでリトライ（バックオフ 3,6 → 10sキャップ）。非5xx(404等)は即スキップ。
+    最終失敗コードを返し、成功/失敗の判定とヘルス記録は呼出側（collector Step1）が担う。
+    """
+    code, html, final_url = 0, "", ""
+    for attempt in range(_KNSHOW_MAX_TRIES):
+        try:
+            code, html, final_url = fetcher(url)
+        except Exception:  # noqa: BLE001 — ConnectTimeout/ReadTimeout等はリトライ対象
+            code, html, final_url = 0, "", ""
+        if code != 0 and code < 500:
+            return code, html, final_url
+        if attempt < _KNSHOW_MAX_TRIES - 1:
+            delay: float = min(_KNSHOW_RETRY_BACKOFF * (2**attempt), _KNSHOW_RETRY_BACKOFF_MAX)
+            if out:
+                _label: str = f"HTTP {code}" if code else "ネットワーク例外"
+                out(f"  [KNSHOW] 一覧: {_label} → リトライ{attempt + 1}/{_KNSHOW_MAX_TRIES - 1}（{delay:.0f}s待ち）")
+            time.sleep(delay)
+    return code, html, final_url
 
 
 def extract_detail_links(html: str) -> list[str]:
@@ -28,13 +68,22 @@ def extract_rd_link(html: str) -> str | None:
 def resolve_redirect(rd_path: str) -> str:
     h: dict[str, str] = dict(HEADERS)
     h["Referer"] = f"{BASE_URL}/twitter"
-    with httpx.Client(follow_redirects=True, timeout=15) as c:
-        r = c.get(f"{BASE_URL}{rd_path}", headers=h)
-        url: str = str(r.url)
-        # knshow が tracking hash (#508 など) を付与するので除去
-        if "#" in url:
-            url = url.split("#")[0]
-        return url
+    # critic t_18ecf0a5: ネットワーク例外で指数バックオフリトライ（kenkaku v144移植・3アテンプト）
+    for attempt in range(_KNSHOW_MAX_TRIES):
+        try:
+            with httpx.Client(follow_redirects=True, timeout=_KNSHOW_TIMEOUT) as c:
+                r = c.get(f"{BASE_URL}{rd_path}", headers=h)
+            url: str = str(r.url)
+            # knshow が tracking hash (#508 など) を付与するので除去
+            if "#" in url:
+                url = url.split("#")[0]
+            return url
+        except Exception:
+            if attempt == _KNSHOW_MAX_TRIES - 1:
+                raise
+            delay: float = min(_KNSHOW_RETRY_BACKOFF * (2**attempt), _KNSHOW_RETRY_BACKOFF_MAX)
+            time.sleep(delay)
+    return ""  # 到達しない（ループ内で return or raise）
 
 
 def is_x_url(url: str) -> bool:
