@@ -1,0 +1,21 @@
+{
+  "success_indicators": [
+    "commit 0a6b851 knshow 502リトライ移植 + test_knshow_retry.py 全13件",
+    "pytest 78件全数通過 (test_knshow_retry/test_kenkaku_retry/test_collector)",
+    "git push 4107349..0a6b851 main 反映済み",
+    "fetch経路全種が3値タプル (code,html,final_url) を返すことを実測確認"
+  ],
+  "verification_commands": [
+    "$ python -m pytest tests/test_knshow_retry.py tests/test_kenkaku_retry.py tests/test_collector.py -q => 78 passed in 17.81s",
+    "$ git push origin main => 4107349..0a6b851 main -> main",
+    "$ git log --oneline -1 => 0a6b851 knshow 502部分劣化対策"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_18ecf0a5_verification.md"
+  ],
+  "evidence_hashes": [
+    "ev:knshow_retry_78passed"
+  ],
+  "task_id": "t_18ecf0a5",
+  "status": "complete"
+}
