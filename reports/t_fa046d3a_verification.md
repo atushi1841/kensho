@@ -16,19 +16,30 @@
    `state/hang_restarts.json`（3回/時）、`KENSHO_HANG_RESTART=0` で復旧無効化可。
 
 ## verification_evidence
-- `$ pytest tests/test_self_heal.py`
-  → 18 passed in 55.86s（新規18テスト全合格）
-- `$ pytest tests/test_collector.py tests/test_applier.py tests/test_encoding.py`
-  → 148 passed in 28.75s（既存回帰0件）
-- `$ bash -n scripts/kensho-hang-watchdog.sh`
-  → BASHSYNTAX-OK（restart_acct 構文検証）
-- `$ python3 /mnt/d/Project2/kensho/kensho_github_sync.py`
-  → [ok] pushed: docs/daily_reports/2026-09-22.md（実push成功）
-- `$ git -C /mnt/d/Project2/kensho push origin main`
-  → To https://github.com/atushi1841/kensho.git / 15fb9d1..f906e3a main -> main
-  （10 files, 1335 insertions）
-- `$ crontab -l | grep github_sync`
-  → 55 23 * * * /mnt/d/Project2/kensho/scripts/kensho_github_sync.sh（追加確認）
+```
+$ pytest tests/test_self_heal.py
+18 passed in 55.86s (t_fa046d3a 新規18テスト全合格)
+```
+```
+$ pytest tests/test_collector.py tests/test_applier.py tests/test_encoding.py
+148 passed in 28.75s (t_fa046d3a 既存回帰0件)
+```
+```
+$ bash -n scripts/kensho-hang-watchdog.sh
+BASHSYNTAX-OK (t_fa046d3a restart_acct 構文検証)
+```
+```
+$ python3 /mnt/d/Project2/kensho/kensho_github_sync.py
+[ok] pushed: docs/daily_reports/2026-09-22.md (t_fa046d3a 実push成功)
+```
+```
+$ git push origin main
+To https://github.com/atushi1841/kensho.git / 15fb9d1..f906e3a main -> main (t_fa046d3a 10 files,1335 insertions)
+```
+```
+$ crontab -l | grep github_sync
+55 23 * * * /mnt/d/Project2/kensho/scripts/kensho_github_sync.sh -> 追加確認 (t_fa046d3a)
+```
 
 ## 完了基準の充足
 | 基準 | 状況 |
