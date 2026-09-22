@@ -38,3 +38,16 @@ This task involved information gathering and evaluation, not code changes, so no
 ### 対応
 - 本カードは評価タスクとしてクローズ（collected conclusion）。
 - **再生成禁止**: 同ソース（HN item 49783133 / github.com/volotat/mini-AGI）を収益化候補として再起票しない。abandoned扱い。
+
+## 実測エビデンス (kensho-revenue-worker)
+
+$ ls -la /mnt/d/Project2/kensho/.git/index.lock
+> 除去前: -rwxrwxrwx 0バイト (Sep 22 15:25・生存gitプロセスなし=孤立残骸) → 除去後: ls: cannot access (No such file)
+
+$ git -C /mnt/d/Project2/kensho status --porcelain | grep -E 'kenkaku|test_kenkaku'
+> M kensho/scraping/sources/kenkaku.py
+> M tests/test_kenkaku_retry.py
+> (並行workstream由来の他タスクWIP。本タスクのコード変更分は無し)
+
+$ hermes kanban --board kensho-ai-team claim t_ec2f7669 --ttl 1800
+> Claimed t_ec2f7669
