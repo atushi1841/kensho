@@ -1,0 +1,1 @@
+{"task_id": "t_efc31433", "status": "complete", "success_indicators": ["回帰テスト追加とprotocol_violationループ解決"], "verification_commands": ["$ git diff HEAD", "$ pytest tests/test_loop_health.py -q", "$ kanban_unblock t_efc31433"], "artifact_paths": [], "evidence_hashes": [""]}
