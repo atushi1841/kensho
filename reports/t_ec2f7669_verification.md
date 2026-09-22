@@ -1,4 +1,10 @@
-## verification_evidence
+# 検証証跡: t_ec2f7669 — Mini-AGI 非API自動収益化 評価タスク
+
+## summary
+- 本タスク t_ec2f7669 のゴール: Show HN Mini-AGI(継続学習AGIモデル, 8GB VRAM)を Kensho 収益化ツールとして実装可能か評価する。
+- 判定根拠を検証し、収益化対象として採用可否の結論を確定してクローズする。
+
+## verification_evidence [t_ec2f7669]
 
 I have reviewed the Mini-AGI project and extracted the following key information:
 
