@@ -1,7 +1,7 @@
 {
   "source": "suruga-ya.jp",
-  "total_observations": 480,
-  "unique_items": 116,
+  "total_observations": 600,
+  "unique_items": 125,
   "with_used_price": 71,
   "in_stock": 71,
   "keywords": [
@@ -12,9 +12,24 @@
     "ポケモンカードゲーム リザードン"
   ],
   "first_collected_at": "2026-09-21T23:13:01Z",
-  "last_collected_at": "2026-09-22T00:21:01Z",
-  "price_changed_items": 0,
-  "used_price_movers": [],
+  "last_collected_at": "2026-09-22T22:30:40Z",
+  "price_changed_items": 2,
+  "used_price_movers": [
+    {
+      "name": "【BOX】ポケモンカードゲーム スカーレット＆バイオレット 強化拡張パック ポケモンカード151",
+      "first_price_jpy": 49800,
+      "last_price_jpy": 46800,
+      "delta_jpy": -3000,
+      "observations": 5
+    },
+    {
+      "name": "054/103：(キラ)ミュウツー",
+      "first_price_jpy": 160,
+      "last_price_jpy": 180,
+      "delta_jpy": 20,
+      "observations": 5
+    }
+  ],
   "latest_csv": "/mnt/d/Project2/kensho/data/tcg_dataset/tcg_dataset_latest.csv",
   "history_csv": "/mnt/d/Project2/kensho/data/tcg_dataset/tcg_price_history.csv"
 }
