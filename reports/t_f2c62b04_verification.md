@@ -14,13 +14,13 @@ KENKAKU 単独でタイムアウトが発生。他源は timeout=30 のため偏
 - `tests/test_kenkaku_retry.py`: 回帰ガード追加 `test_timeout_matches_other_sources`
 
 ## verification_evidence
-- `grep -n "timeout" kensho/scraping/sources/common.py` → `timeout: int = 30`（他源デフォルトは30s）
-- `grep -n "timeout=30" kensho/scraping/sources/kema.py kensho/scraping/sources/cpmeikan.py kensho/scraping/sources/kenshouclub.py kensho/scraping/sources/kensho_everyday.py` → KEMA/CPMK/KCLUB/KENS-EVERY 全て timeout=30
-- `git show -s --format=%B 5104f88` → "kenkaku.py: timeout 30s→10s短縮"（偏重の発生源を確認）
-- `git show 5104f88~1:kensho/scraping/sources/kenkaku.py` → 短縮前は30s
-- `grep -n "_KENKAKU_TIMEOUT" kensho/scraping/sources/kenkaku.py` → `_KENKAKU_TIMEOUT: int = 30`（30sへ復元確認）
-- `grep -n "test_timeout_matches_other_sources" tests/test_kenkaku_retry.py` → `assert kenkaku._KENKAKU_TIMEOUT == 30`
-- `python -m pytest tests/test_kenkaku_retry.py -q` → `13 passed in 28.08s`
+- t_f2c62b04: `grep -n "timeout" kensho/scraping/sources/common.py` → `timeout: int = 30`（他源デフォルトは30s）
+- t_f2c62b04: `grep -n "timeout=30" kensho/scraping/sources/kema.py kensho/scraping/sources/cpmeikan.py kensho/scraping/sources/kenshouclub.py kensho/scraping/sources/kensho_everyday.py` → KEMA/CPMK/KCLUB/KENS-EVERY 全て timeout=30
+- t_f2c62b04: `git show -s --format=%B 5104f88` → "kenkaku.py: timeout 30s→10s短縮"（偏重の発生源を確認）
+- t_f2c62b04: `git show 5104f88~1:kensho/scraping/sources/kenkaku.py` → 短縮前は30s
+- t_f2c62b04: `grep -n "_KENKAKU_TIMEOUT" kensho/scraping/sources/kenkaku.py` → `_KENKAKU_TIMEOUT: int = 30`（30sへ復元確認）
+- t_f2c62b04: `grep -n "test_timeout_matches_other_sources" tests/test_kenkaku_retry.py` → `assert kenkaku._KENKAKU_TIMEOUT == 30`
+- t_f2c62b04: `python -m pytest tests/test_kenkaku_retry.py -q` → `13 passed in 28.08s`
 
 ## 残課題（QA委譲：3日間数値検証）
 成功指標「実行後3日間のConnectTimeout合計が平均3件/day以下」は観察期間が要るため本runでは
