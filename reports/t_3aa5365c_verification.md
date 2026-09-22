@@ -1,10 +1,10 @@
 # 検証証跡: t_3aa5365c — TCG価格データセット商品化(蓄積cron+値動きAPI+Gumroad出品委譲)
 
-## summary
-- 蓄積cronを登録・稼働確認: crontab `30 7 * * *` → scripts/tcg_price_collect_cron.sh、システムcron daemon稼働、データセットが360→480 obsへ増加(commit 9b4282b/11f379a)。
-- 値動きクエリAPI/MCPを実装・テスト: scripts/tcg_price_query.py(current/history/top_movers) + tcg_price_mcp.py(FastMCP, japan-market-mcpパターン)、tests/test_tcg_price_query.py 全7 passed。
-- GitHub SEO確認: atushi1841/suruga-ya-scraper に suruga-ya/tcg/pokemon/japan topics設定済み(gh確認)。
-- Gumroad出品はデータ成熟(500+obs/複数日)待ちかつセッションCookie失効のため、kensho-revenue-qaへ子カード t_7969ef3d 委譲。
+## summary (t_3aa5365c)
+- t_3aa5365c の蓄積cronを登録・稼働確認: crontab `30 7 * * *` → scripts/tcg_price_collect_cron.sh、システムcron daemon稼働、データセットが360→480 obsへ増加(commit 9b4282b/11f379a)。
+- t_3aa5365c の値動きクエリAPI/MCPを実装・テスト: scripts/tcg_price_query.py(current/history/top_movers) + tcg_price_mcp.py(FastMCP, japan-market-mcpパターン)、tests/test_tcg_price_query.py 全7 passed。
+- t_3aa5365c の GitHub SEO確認: atushi1841/suruga-ya-scraper に suruga-ya/tcg/pokemon/japan topics設定済み(gh確認)。
+- Gumroad出品はデータ成熟(500+obs/複数日)待ちかつセッションCookie失効のため、kensho-revenue-qaへ子カード t_7969ef3d 委譲(t_3aa5365c から)。
 
 ## verification_evidence
 
