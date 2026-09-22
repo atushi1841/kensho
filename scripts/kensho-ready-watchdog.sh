@@ -87,7 +87,32 @@ while IFS=$'\t' read -r level tid; do
 done < /tmp/ready-watchdog-parse.txt
 rm -f /tmp/ready-watchdog-parse.txt
 
-TOTAL=$(( ${#WARN_TGT[@]} + ${#ESC_TGT[@]} + ${#DEL_TGT[@]} ))
+# t_848e1beb: protocol_violation（終端kanban呼出なしでrc=0抜け）でblockedに落ちた
+# workerタスクを検出して報告。dispatcherが失敗扱いするが、そのまま放置・無自覚だと
+# 手動復旧待ちになるため、ここで可視化する（contributor: user 2026-09-22）。
+PROTO_TGT=()
+PROTO_DB="/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db"
+if [ -f "$PROTO_DB" ]; then
+    python3 - "$PROTO_DB" <<'PY' >/tmp/ready-watchdog-proto.txt 2>/dev/null
+import sqlite3, sys
+try:
+    c = sqlite3.connect(sys.argv[1])
+    rows = c.execute(
+        "select id, title, assignee from tasks "
+        "where status='blocked' and last_failure_error like '%protocol violation%' "
+        "order by created_at desc limit 10").fetchall()
+    for r in rows:
+        print(f"{r[0]}\t{r[2]}\t{r[1]}")
+except Exception:
+    pass
+PY
+    while IFS=$'\t' read -r ptid pag ptitle; do
+        [ -n "$ptid" ] && PROTO_TGT+=("$ptid:: $ptitle (assignee=$pag)")
+    done < /tmp/ready-watchdog-proto.txt
+    rm -f /tmp/ready-watchdog-proto.txt
+fi
+
+TOTAL=$(( ${#WARN_TGT[@]} + ${#ESC_TGT[@]} + ${#DEL_TGT[@]} + ${#PROTO_TGT[@]} ))
 
 if [[ "$SILENT" -eq 1 && "$TOTAL" -eq 0 ]]; then
     # --no-agentモード: 空stdoutでサイレント配信抑制
@@ -98,6 +123,7 @@ echo "kensho-ready-watchdog: board=$BOARD warn_h=${HOURS_WARN} esc_h=${HOURS_ESC
 echo "  WARN(>=${HOURS_WARN}h): ${#WARN_TGT[@]}件"
 echo "  ESCALATE(>=${HOURS_ESCALATE}h): ${#ESC_TGT[@]}件"
 echo "  DELETE(>=${HOURS_DELETE}h): ${#DEL_TGT[@]}件"
+echo "  PROTO_VIOLATION_BLOCKED: ${#PROTO_TGT[@]}件"
 
 if [[ ${#WARN_TGT[@]} -gt 0 ]]; then
     printf '  ⚠️  '; printf '%s ' "${WARN_TGT[@]}"; echo
@@ -107,6 +133,10 @@ if [[ ${#ESC_TGT[@]} -gt 0 ]]; then
 fi
 if [[ ${#DEL_TGT[@]} -gt 0 ]]; then
     printf '  💀 '; printf '%s ' "${DEL_TGT[@]}"; echo
+fi
+if [[ ${#PROTO_TGT[@]} -gt 0 ]]; then
+    printf '  🚨 protocol_violation blocked: '
+    printf '%s | ' "${PROTO_TGT[@]}"; echo
 fi
 
 if [[ "$APPLY" -ne 1 ]]; then
