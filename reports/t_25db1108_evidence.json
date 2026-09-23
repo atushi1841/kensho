@@ -1,0 +1,47 @@
+{
+  "success_indicators": [
+    "step1 所要時間: before 345秒(3試行全滅) → after 47秒(1試行で成功)",
+    "exit code: before 1 → after 0（同一条件・実ネットワーク T4/T5 実測）",
+    "ConnectTimeout による run全損: before 1回(致命) → after 0回（2回発生するも接続先ローテーションで復帰）",
+    "新ZIP生成: japan-hobby-dataset-20260907.zip のまま陳腐化 → japan-hobby-dataset-20260924.zip 486103B",
+    "陳腐化ZIPの成功扱い: before exit 0 で配布継続 → after 実行開始前のZIPを検出して exit 1"
+  ],
+  "verification_commands": [
+    "$ bash -n /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-dataset-weekly.sh => SYNTAX OK",
+    "$ DATASET_PIPELINE_CMD=false DATASET_RETRY_MAX=2 DATASET_RETRY_BACKOFF=1 bash <script> => [retry] データ収集 失敗 (試行 2/2) / [ERROR] データ収集 が 2 回失敗 / [T1] exit=1 elapsed=1s",
+    "$ DATASET_PIPELINE_CMD=\"bash /tmp/ds_stub_recheck.sh\" DATASET_RETRY_BACKOFF=1 DATASET_STOP_AFTER=1 bash <script> => [retry] データ収集 成功 (試行 2/3) / stub: attempt 2 OK (recovered) / [T2-recheck] exit=0",
+    "$ DATASET_PIPELINE_CMD=true DATASET_STOP_AFTER=3 bash <script> => [ERROR] 今回の実行でZIPが生成されていない（最新=japan-hobby-dataset-20260907.zip / 生成=2026-09-07 10:01:04） / [T3] exit=1",
+    "$ DATASET_STOP_AFTER=3 bash <script> => [T5] exit=0 elapsed=47s / [2] ZIP: japan-hobby-dataset-20260924.zip (486103B)",
+    "$ grep -c 'http]' /mnt/d/Project2/gumroad-automation/logs/dataset_weekly_20260924-081138.log => 2（ConnectTimeout 2回→いずれも [http] 接続先候補を切替 で復帰）"
+  ],
+  "artifact_paths": [
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-dataset-weekly.sh",
+    "/mnt/d/Project2/gumroad-automation/kensho_data_pipeline.py",
+    "/mnt/d/Project2/gumroad-automation/japan-hobby-dataset-20260924.zip",
+    "/mnt/d/Project2/gumroad-automation/bundle_info.json",
+    "/mnt/d/Project2/gumroad-automation/logs/dataset_weekly_20260924-081138.log",
+    "/mnt/d/Project2/kensho/reports/t_25db1108_verification.md"
+  ],
+  "evidence_hashes": [
+    "4b6667d8a5615d00dd029a7f19509d09275b4982e30fa4e2ca2d460ce52a7aca",
+    "6bf130f7ea580076ba4b29c68b6d5d081c4d989d5f2b16226b98ac0592848ab6",
+    "467c23af5638259548d8cd6329812f6dd214f68b7a5cdf6185a6238b191d1fa1",
+    "29c60bd56f3101bb52bc42d4cb92edafc1d045030386cea94cbfbbe4b34d5e67",
+    "165d93fe8b5e7de67065a3270a8cb83fcefe1fe6e130c7793c0d91a9c4ba587a",
+    "2647889526fdec1be6dbc8d9d12b1db80e1f33f1025a9842ff6db8fede604c77"
+  ],
+  "outcome": [
+    {
+      "metric": "step1_elapsed_sec",
+      "before": 345,
+      "after": 47
+    },
+    {
+      "metric": "exit_code",
+      "before": 1,
+      "after": 0
+    }
+  ],
+  "task_id": "t_25db1108",
+  "status": "complete"
+}
