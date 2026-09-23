@@ -19,6 +19,11 @@
     "/mnt/d/Project2/kensho/reports/t_d5ac9f32_qa_verification.md",
     "/mnt/d/Project2/kensho/reports/t_d5ac9f32_verification.md"
   ],
+  "outcome": {
+    "metric": "本カード(t_8e1e4934)の検証条件 PASS 数 / 6条件",
+    "before": "5/6 PASS (条件3 FAIL = 兄弟タスクWIP起因の構造的充足不能)",
+    "after": "6/6 PASS (guard d no uncommitted code: True, scope=repo)"
+  },
   "evidence_hashes": [
     "sha256:4e796160601110bc1e4762fa21eedd96002a566fae3bc98165640543e40ba7ff  reports/t_8e1e4934_verification.md",
     "sha256:225ca594107c01517d7aa63f82a42dcb6cec232c6db76ff76340f01b710a7393  reports/t_d5ac9f32_qa_verification.md",
