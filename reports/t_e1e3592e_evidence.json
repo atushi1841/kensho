@@ -1,0 +1,41 @@
+{
+  "success_indicators": [
+    "直近24hの reclaimed 件数 ≤3（目標0）。計測: task_runs status=reclaimed の24h窓",
+    "変更後の claim で claim_expires − claimed_at ≥ 3600（実測 3597秒）",
+    "nightly-worker prompt に --ttl 3600 が存在し --ttl 1800 が消滅（read-back 一致）"
+  ],
+  "verification_commands": [
+    "$ python3 /tmp/t_e1e3592e_audit.py => reclaimed last24h = 6 / reclaimed last48h = 6（全件 worker_pid=None）",
+    "$ hermes kanban claim t_e1e3592e --ttl 3600 => Claimed t_e1e3592e",
+    "$ python3 /tmp/t_e1e3592e_audit.py => t_e1e3592e ... lock=N100:4044243 expires_in=3597s pid=None",
+    "$ bash /tmp/t_e1e3592e_apply.sh => Name: nightly-worker / EXIT=0",
+    "$ python3 /tmp/t_e1e3592e_verify.py => prompt == expected True / \"--ttl 1800\" absent True / 他フィールド差分なし / 全ジョブ数 59 -> 59"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_e1e3592e_verification.md",
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-24-revenue-worker.md",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/cron/jobs.json",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/cron/jobs.json.bak-ttl3600-20260924"
+  ],
+  "evidence_hashes": [
+    "/mnt/d/Project2/kensho/reports/t_e1e3592e_verification.md  sha256=4adf977be48b0276d0cc5e9f039997ced005b3bb2f88c0c95b0d95bba643f9de",
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-24-revenue-worker.md  sha256=e7e07bad8ad28e46bd7321de0ba540242c757f3b922c416ad64a7edfaba627cb",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/cron/jobs.json  sha256=29fea1fc36a66ce4672dc5fd0b27ee07fc28c9ba842ce8934f17340d3a1a0c88",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/cron/jobs.json.bak-ttl3600-20260924  sha256=f38558ac04f242f9e9c68a27c2d7fe3f50be4115b44063e866c40036d2ee6117"
+  ],
+  "outcome": [
+    {
+      "metric": "claim の有効窓(秒) claim_expires-claimed_at",
+      "before": 1800,
+      "after": 3597
+    },
+    {
+      "metric": "stale_lock reclaim 件数/24h（24h後判定・本値は変更直前時点の暫定）",
+      "before": 6,
+      "after": 6
+    }
+  ],
+  "notes": "CLI claim は worker_pid=NULL のため自動延長不能（kanban.py:2188 / kanban_db.py:5011-5016）。対策=TTL3600＋50分ルール（分割/nohup切り離し）。24h後の reclaim 計測は QA カードへ引き継ぎ。",
+  "task_id": "t_e1e3592e",
+  "status": "complete"
+}
