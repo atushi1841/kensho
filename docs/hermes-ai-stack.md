@@ -110,7 +110,12 @@
 | **inobase1-4凍結表示** | ✅ 自動解決 | 15:00更新でdashboard除外完了 |
 | **Cron continuity** | ✅ 3ジョブ適用 | critic/worker/qa, 実行間学習 |
 
+## 2026-09-24 追加: エージェント実行テレメトリ (span) の emit 箇所
+
+- **どこで emit しているか**: critic / worker / qa のレポート生成が通る共通ヘルパー `kensho-kanban-sync.sh <role>` の**末尾 1 箇所**が `scripts/agent_span_emit_role.py --agent "$ROLE"`（安全版・`|| true`）を呼び、`data/agent_spans/YYYY-MM-DD.jsonl` に 1 実行 = 1 span を append する（t_4ec92f06 配線。実体: `/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-kanban-sync.sh` ほか配布コピー 2 本）。
+
 ## 参考リンク
+
 - Hermes Docs: https://hermes-agent.nousresearch.com/docs/
 - llms.txt: https://hermes-agent.nousresearch.com/docs/llms.txt
 - Hermes Atlas: https://hermesatlas.com/ecosystem/

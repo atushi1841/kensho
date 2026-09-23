@@ -1,0 +1,51 @@
+{
+  "success_indicators": [
+    "自動配線由来の agent span 生成 = 3役割分（critic/worker/qa）・配線前は自動生成 0 件（2026-09-24 実測、spans_valid 4→5）",
+    "pytest passed 963 → 988（新規テスト 27 件追加・fail は board-state ライブゲート 3 件のみで本変更と独立）",
+    "emit 失敗（role 未特定）時も exit 0・span 書き込みなし（本番経路を落とさない）",
+    "配線箇所 = kensho-kanban-sync.sh の末尾 1 行 × 配布 3 コピー（重複 emit なし）"
+  ],
+  "verification_commands": [
+    "$ ROLE=worker KENSHO_TASK_ID=t_4ec92f06 KENSHO_MODEL=auto python3 scripts/agent_span_emit_role.py --agent \"$ROLE\" --duration-ms 1234; echo emit_exit=$? => emit_exit=0",
+    "$ python3 scripts/agent_span_report.py --date 2026-09-24 --json | python3 -c \"...print(spans_valid)\" => spans 5 agents ['critic','qa','worker']",
+    "$ python3 scripts/agent_span_emit_role.py --agent \"\" => warning: 役割が特定できません（span を書きません） / exit=0",
+    "$ python3 -m pytest tests/test_agent_span_emit_role.py tests/test_agent_span_emit.py -q => 42 passed in 21.76s",
+    "$ python3 -m pytest -q => 3 failed, 988 passed, 6 skipped in 169.95s (board-state live gates only)",
+    "$ grep -n agent_span_emit_role <3 sync copies> => 各1行 (line 80 / 98 / 80)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/agent_span_emit_role.py",
+    "/mnt/d/Project2/kensho/tests/test_agent_span_emit_role.py",
+    "/mnt/d/Project2/kensho/docs/hermes-ai-stack.md",
+    "/mnt/d/Project2/kensho/reports/t_4ec92f06_verification.md",
+    "/mnt/d/Project2/kensho/data/agent_spans/2026-09-24.jsonl",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-kanban-sync.sh"
+  ],
+  "evidence_hashes": [
+    "sha256:0c93971bbc61839b6038e723eedbbef73ed5b501f21d6738f3c535356726d7cb  /mnt/d/Project2/kensho/scripts/agent_span_emit_role.py",
+    "sha256:7c811004cd0e1fa4dc3284eddbbc7850e55c2ee93514e7b5e26f00e6a5c79e4c  /mnt/d/Project2/kensho/tests/test_agent_span_emit_role.py",
+    "sha256:9984c253d22a45bc22c81e011208e51014bcdea469ca0e39e17c33551676d41b  /mnt/d/Project2/kensho/docs/hermes-ai-stack.md",
+    "sha256:ce2d6cd244b0046cfd39dfd2d01258ed2b8d424d7219810c7376c9e1281e504e  /mnt/d/Project2/kensho/reports/t_4ec92f06_verification.md",
+    "sha256:4c02e2a178104458f70db5c65caa2aaa58824f82ed7f508b8b2338179a552433  /mnt/d/Project2/kensho/data/agent_spans/2026-09-24.jsonl",
+    "sha256:59edadfa8f34c1f9e5753b9866912e0c1a090336adb776b0ecc1439dda174715  /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-kanban-sync.sh"
+  ],
+  "outcome": [
+    {
+      "metric": "agent_span 自動emit由来の spans_valid（2026-09-24）",
+      "before": 0,
+      "after": 4
+    },
+    {
+      "metric": "pytest passed",
+      "before": 963,
+      "after": 988
+    },
+    {
+      "metric": "kensho-kanban-sync.sh への emit 配線箇所",
+      "before": 0,
+      "after": 3
+    }
+  ],
+  "task_id": "t_4ec92f06",
+  "status": "complete"
+}
