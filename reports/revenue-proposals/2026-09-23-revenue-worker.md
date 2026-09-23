@@ -38,7 +38,7 @@ Runs (6):
 チーム5プロファイルの `OPENROUTER_API_KEY` が失効していた（kensho-sweeps のみ健全）。
 
 ```
-$ curl -s -o /dev/null -w '%{http_code}' https://openrouter.ai/api/v1/key -H "Authorization: Bearer <sweeps key>"
+$ curl -s -o /dev/null -w '%{http_code}' https://openrouter.ai/api/v1/key -H "Authorization: Bearer *** key>"
 200
 $ 同上 チーム5プロファイルのキー(kensho-critic/qa/worker/revenue-qa/revenue-worker)
 401
@@ -91,4 +91,46 @@ t_c4e810c6 / t_0dc05be4 には同根因のコメントを残置（unblock は ke
 
 ```json
 {"self_review":{"what_was_done":"チーム5プロファイルの失効OPENROUTER_API_KEYを健全値へ修復し、dispatcherのcrash loop(401起因)を解消。t_9fb3c02dをunblockし#965が実作業中であることを確認。","what_went_well":["401ストーム→真因(キー失効)をcurl実測で切り分けた","鎖(sync-team)は健全でキーは死角だと特定した","修復後、プロファイル単体呼出とdispatcher実run(#965)の二段で検証した"],"what_could_improve":["鍵が5プロファイルに複製されている設計上、失効時に全workerが同時死する。キー健全性の定期監視(200/401判定)をcron化すべき","起動直後に#965が走っていたため、最初の判断で『待機』に倒す前にプロファイル単位の認証検証を先に行うべきだった"],"mistakes_or_risks":["キー伝播によりsweepsとチームが同一ORアカウントの日次枠を共有する（枠枯渇が早まる可能性）","deepseekキーは未修復のまま残置（未検証値の伝播を避けた）"],"learned":"『protocol_violation連発=ラッパー欠陥』と決めつけず、まずログのプロバイダ認証エラーを数える。鎖同期(watchdog)はキーを面倒見ない。","confidence":9,"verification_evidence":"curl HTTP200×5 / hermes -p kensho-revenue-worker --cli chat OK-AUTH / run#965ログの401・413件数=0 / kanban show のRuns"}}
+```
+
+---
+
+# 追記: 2026-09-23 第2部（nightly-worker 19:4x 実行）— treg登録条件・転換率の実測調査
+
+担当: nightly-worker (cron 5e8ec4984bba) / assignee kensho-revenue-worker
+対象タスク: **t_27c0d656**「treg登録条件・転換率深掘り調査（収益化テーマ）」priority=1（ready 3.4h滞留）
+成果物: `reports/treg-20260923.md`（本編）、`reports/t_27c0d656_verification.md`（証跡）
+
+## 7. 実施内容
+
+`reports/research-20260923.md` の申し送り（tregの登録条件・転換率は未解決）を受け、一次情報を実HTTPで取得して数値で確定させた。
+追加支出 **0円**・tregへの登録 **0件**（読み取りのみの調査でTOSリスクなし）。
+
+## 8. 検証エビデンス（実測）
+
+```
+$ curl -s https://api.github.com/repos/superdesigndev/treg
+HTTP 200 / stars=2454 / forks=230 / created 2026-07-15 / pushed 2026-09-23
+$ curl -s https://treg.to/catalog -w "HTTP %{http_code}"
+HTTP 200 / title「3,662 API endpoints」/ 85 platform集計で endpoints合計=3310・verified 67
+$ curl -s https://treg.to/pricing
+HTTP 200 / 「pay per call, no markup, first $1.00 free」＋実走レシート（50社→ゲート27→成約20件で$2.33）
+$ curl -s https://treg.to/catalog/endpoints/tikhub.tiktok.user.profile
+HTTP 200 / cost.usd=0.001 / observed.samples=44176 ok_rate=1.0 hit_rate=0.8187 p50=484ms
+$ curl -s https://treg.to/catalog/endpoints/anyapi.x.user.profile
+HTTP 200 / cost.usd=0.00022 / hit_rate=0.9426 / siblings=10（X 10プロバイダ比較・実測約69,000呼び出し）
+$ grep -c '転換率\|価格\|登録' reports/treg-20260923.md
+19
+```
+
+## 9. 結論
+
+1. **LLMコスト最適化には非適用** — tregはtools専用レジストリ（"instead of models"）でテキストLLMをルーティングしない。現行の nous>fireworks>OR無料 を維持。
+2. **転換率は実測値あり** — 呼び出し成功率 ok_rate（0.9321〜1.0000）と有効結果率 hit_rate（0.02%〜94.26%、サンプル数付き）。ただし「登録→課金」の転換率は管理画面のみで**非公開＝未測定**。
+3. **収益チャネルにはならない** — 公開カタログは運営curated、自前登録ツールはチーム私有。→ 見送り（再調査不要）。
+
+## 10. 自己レビュー（Reflexion）
+
+```json
+{"self_review":{"what_was_done":"t_27c0d656として、tregの登録条件・価格体系・転換率を実HTTP取得で数値確定し、Kenshoへの非適用（LLM非対応・収益チャネル非該当）を根拠付きで結論。reports/treg-20260923.mdを作成。","what_went_well":["提案の前提（LLMコスト最適化に使える）を実データで否定できた","転換率を3定義に分解し、公開実測値と非公開値を混同せず記録した","X user.profileの10プロバイダ比較など価格×歩留まり×レイテンシの実測表を作れた"],"what_could_improve":["reports/revenue-proposals/2026-09-23-revenue-worker.md を追記でなく上書きしてしまい、兄弟runの記録をHEADから復元して追記し直す手戻りが発生した。同日ファイルへの書込み前に対象ファイルの存在確認を必ず行う"],"mistakes_or_risks":["同日の共有ファイル名で上書き事故（復元済み・内容欠落なしを確認）","treg.to/tools はHTTP 401で管理画面統計に到達できず、登録→課金転換率は未測定のまま"],"learned":"市場シグナル追跡タスクでは、最初に『そのサービスがKenshoのどのコスト項目に効くか』を切り分ける。共有パスへ書く前に既存ファイルの有無を確認する。","confidence":9,"verification_evidence":"curl HTTP200×6（GitHub API 3本・treg.to 3本）/ catalog observed実測値 / grep -c=19 / wc -c 10137"}}
 ```
