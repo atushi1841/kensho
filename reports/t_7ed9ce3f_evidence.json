@@ -1,0 +1,22 @@
+{
+  "success_indicators": [
+    "t_9fb3c02d早期完了検証PASS",
+    "pytest 30pass",
+    "Apify API reachable"
+  ],
+  "verification_commands": [
+    "$ git merge-base --is-ancestor a17db25 HEAD => YES-ancestor",
+    "$ git status --porcelain '*.py' => (empty)",
+    "$ python -m pytest tests/test_kenkaku_retry.py tests/test_source_health.py => 30 passed"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_9fb3c02d_verification.md",
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-23-qa-nightly.md"
+  ],
+  "evidence_hashes": [
+    "3a8443d7c79bf399262bb90ed9b89400e3bac8edaff19f371ebb1af28cd8c98c",
+    "7b3307d079742524ea9817272c3c0c31b659269754edb174b414e2f6c2e9c998"
+  ],
+  "task_id": "t_7ed9ce3f",
+  "status": "complete"
+}
