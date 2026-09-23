@@ -1,0 +1,28 @@
+{
+  "success_indicators": [
+    "設定済みチーム5プロファイル判定率100%（5/5検査）",
+    "ライブ実測で401失効(deepseek)を全5プロファイル検出、200正常(openrouter/fireworks/groq/gemini)を判定",
+    "認証鍵完全形がログ・報告に0件（mask_keyのみ）",
+    "tests/test_api_key_health.py 7 passed"
+  ],
+  "verification_commands": [
+    "$ cd /mnt/d/Project2/kensho && python -m pytest tests/test_api_key_health.py -q => 7 passed in 11.18s",
+    "$ bash scripts/check_api_key_health.sh --timeout 15 => 5プロファイル判定率100%, deepseek=401(all), openrouter/fireworks/groq/gemini=200",
+    "$ grep -rE 'sk-[A-Za-z0-9]{20,}' reports/t_2dccb8b3_verification.md | wc -l => 0"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_2dccb8b3_verification.md",
+    "/mnt/d/Project2/kensho/scripts/api_key_health.py",
+    "/mnt/d/Project2/kensho/scripts/check_api_key_health.sh",
+    "/mnt/d/Project2/kensho/tests/test_api_key_health.py"
+  ],
+  "evidence_hashes": [
+    "report:dbde379a2c9b008eb2ca89d13a5f1be06270f86862631ca0ad14580587467633",
+    "api_key_health.py:c75f4c6f86e6b3a1b6435f1d7fa62c6ad172c6cf07952c2a8328df9ea91509d7",
+    "check_api_key_health.sh:4b96164d383a2bb478aa34651766d1190442a2c02142f165b3fcc232a1359cc9",
+    "test_api_key_health.py:1ad61a5deb35e75c642574cde1a1a7729880b08bc9829e67be726ccc191b384d",
+    "commit:6e550fac3431558c5a13f3fc8d2aed35d8eea98e"
+  ],
+  "task_id": "t_2dccb8b3",
+  "status": "complete"
+}
