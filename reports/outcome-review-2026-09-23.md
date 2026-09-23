@@ -3,9 +3,9 @@
 対象: 過去7日間（2026-09-16以降）に done になったタスク
 
 ### 事後効果測定（Outcome Review / 過去7日 done）
-- 対象: done=122件（2026-09-16以降）/ 数値KPIあり=10件
-- 実測確認: あり=3件 / 未実測=7件 / KPI非該当=112件
-- 実測確認率: 30.0%（目標>50%） → 未達
+- 対象: done=123件（2026-09-16以降）/ 数値KPIあり=11件
+- 実測確認: あり=4件 / 未実測=7件 / KPI非該当=112件
+- 実測確認率: 36.4%（目標>50%） → 未達
 - 未実測タスク（before/after の数値を追記してクローズすること）:
   - `t_2dccb8b3` 全プロファイルのAPI鍵健全性を応募前に検知する監視を追加（kensho-revenue-worker）
   - `t_18ecf0a5` knshow 502 partial-degradation: port kenkaku v144 page retry（kensho-revenue-worker）
@@ -15,6 +15,7 @@
   - `t_8da22532` Apify Store SEO改善・未完了3項目（Custom icon/Categories複数選択/version更（kensho-revenue-worker）
   - `t_8bc5e2b4` 公開事業者リスト受託・初期提案セット作成(サンプル100件+3テンプレ)（kensho-revenue-worker）
 - 実測済みタスク:
+  - `t_27c0d656` チーム内で実測できたtregカタログendpoints数 0→3662
   - `t_2b64cf2c` 検証セクションに before→after 記載
   - `t_d2b1ba39` 検証セクションに before→after 記載
   - `t_9d494bc4` 検証セクションに before→after 記載

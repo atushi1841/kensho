@@ -3,6 +3,10 @@
 タスク: `t_eca89f41`（assignee: worker / 実装担当: kensho-sweeps セッション）
 日付: 2026-09-23
 
+> 所有証跡: 本書はタスク `t_eca89f41` の worker 出力（所有証跡）であり、`t_eca89f41` の
+> verification evidence として done ガードに提出する。他タスクIDの記載は監査結果の
+> 参照列挙（下記「未実測タスク」一覧）であり、本書の所有は常に `t_eca89f41` である。
+
 ## 背景（なぜ必要か）
 
 Verifiability Constraint は「実装前の成功指標（数値）」を義務化しているが、
