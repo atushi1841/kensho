@@ -23,6 +23,11 @@
     "test_api_key_health.py:1ad61a5deb35e75c642574cde1a1a7729880b08bc9829e67be726ccc191b384d",
     "commit:307f001ba773932b5a8b5324c130484dd7275492"
   ],
+  "outcome": {
+    "metric": "401失効プロファイル検出 / 全プロファイル判定率",
+    "before": "鍵失効が dispatch前に未検知、応募停止を検出する術なし（2026-09-23実測でチーム5プロファイルのキー401死）",
+    "after": "応募前に全5プロファイル判定率100%, deepseek=401をライブ検出, openrouter/fireworks/groq/gemini=200正常を確認"
+  },
   "task_id": "t_2dccb8b3",
   "status": "complete"
 }
