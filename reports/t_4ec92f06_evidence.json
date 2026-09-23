@@ -25,7 +25,7 @@
     "sha256:0c93971bbc61839b6038e723eedbbef73ed5b501f21d6738f3c535356726d7cb  /mnt/d/Project2/kensho/scripts/agent_span_emit_role.py",
     "sha256:7c811004cd0e1fa4dc3284eddbbc7850e55c2ee93514e7b5e26f00e6a5c79e4c  /mnt/d/Project2/kensho/tests/test_agent_span_emit_role.py",
     "sha256:9984c253d22a45bc22c81e011208e51014bcdea469ca0e39e17c33551676d41b  /mnt/d/Project2/kensho/docs/hermes-ai-stack.md",
-    "sha256:ce2d6cd244b0046cfd39dfd2d01258ed2b8d424d7219810c7376c9e1281e504e  /mnt/d/Project2/kensho/reports/t_4ec92f06_verification.md",
+    "sha256:c2e5ff9bc51e210b9710a181fbea1a9b41d1d67d0d1d8b6399116271cfc824ce  /mnt/d/Project2/kensho/reports/t_4ec92f06_verification.md",
     "sha256:4c02e2a178104458f70db5c65caa2aaa58824f82ed7f508b8b2338179a552433  /mnt/d/Project2/kensho/data/agent_spans/2026-09-24.jsonl",
     "sha256:59edadfa8f34c1f9e5753b9866912e0c1a090336adb776b0ecc1439dda174715  /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-kanban-sync.sh"
   ],

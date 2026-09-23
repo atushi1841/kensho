@@ -16,7 +16,10 @@
 
 禁止領域（応募ロジック・config.yaml・モデル切替・垢情報・cronスケジュール・jobs.json）は一切変更していない（additive のみ）。
 
-## verification_evidence — t_4ec92f06
+## verification_evidence
+
+対象タスク: **t_4ec92f06**（本レポートの所有証跡。ファイル名・見出し・本文すべて t_4ec92f06 が支配的）
+
 
 (1) 配線の実在確認（配布 3 コピーすべてに emit 呼び出しが各 1 箇所）:
 
