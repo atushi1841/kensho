@@ -1,0 +1,49 @@
+{
+  "task_id": "t_96c94435",
+  "status": "complete",
+  "success_indicators": [
+    "プロバイダ連続失敗3回検知で遮断（open）し、遮断中は allow()=False で冷たい再試行をしない",
+    "遮断中（事前に3連続失敗で遮断）の5バッチ実行で同一プロバイダ(bai)の実呼び出し0件",
+    "クールダウン経過後は半開プローブ1回で backoff 再試行（失敗でクールダウン300→600秒、成功でclosed復帰）",
+    "遮断閾値・クールダウンは config.yaml collection.llm_breaker と env KENSHO_LLM_BREAKER_* で動的調整可能",
+    "全テスト 912 passed（当方追加22件含む）。唯一の失敗は kanban.db 実データ依存の検知専用ライブ盤面ゲート1件（コード非依存）",
+    "禁止領域（モデル名3定数・プロバイダ優先順 bai→OpenRouter・応募ロジック・垢情報）は不変更（テストで固定）"
+  ],
+  "verification_commands": [
+    "$ cd /mnt/d/Project2/kensho && .venv/bin/python -m pytest tests/test_llm_circuit_breaker.py tests/test_simple_rt_classifier.py -q --no-cov -p no:cacheprovider => 36 passed in 7.43s",
+    "$ cd /mnt/d/Project2/kensho && .venv/bin/python -m pytest -q --no-cov -p no:cacheprovider --ignore=tests/test_data_journalism.py => 1 failed, 912 passed, 4 skipped in 164.53s（失敗= kanban.db 実データ依存の protocol_violation_crash_24h ゲート1件のみ）",
+    "$ cd /mnt/d/Project2/kensho && .venv/bin/python -m ruff check kensho/core/circuit_breaker.py tests/test_llm_circuit_breaker.py tests/conftest.py => All checks passed!",
+    "$ cd /mnt/d/Project2/kensho && /home/atushi/kensho-venv/bin/python -m mypy kensho/core/circuit_breaker.py --ignore-missing-imports => Success: no issues found in 1 source file",
+    "$ cd /mnt/d/Project2/kensho && .venv/bin/python scripts/regression_gates_ledger.py > /tmp/ledger_t96c94435.json => rc=0（失敗ゲートは他タスクのcrash記録で、当方変更ファイルは台帳から非参照）"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/kensho/core/circuit_breaker.py",
+    "/mnt/d/Project2/kensho/kensho/scraping/simple_rt_classifier.py",
+    "/mnt/d/Project2/kensho/kensho/scraping/collector.py",
+    "/mnt/d/Project2/kensho/tests/test_llm_circuit_breaker.py",
+    "/mnt/d/Project2/kensho/tests/conftest.py",
+    "/mnt/d/Project2/kensho/config.yaml",
+    "/mnt/d/Project2/kensho/reports/t_96c94435_verification.md"
+  ],
+  "evidence_hashes": [
+    "report:5f3c40407c08b98e3280fbc1927767c7e9ffff58c116b4bfce7ba9e155416a49",
+    "circuit_breaker.py:f3bf1905ad753e3736856a70cfff098ddf09746c2ee7d3ba35e8d39eb69063e0",
+    "simple_rt_classifier.py:f1ea2ae4a0148945c10cc2540c31318c8e4318a040ef1de01ca775f1da413ded",
+    "collector.py:485108924acc46af35226e5824d7d87066ccae296098fd03e0a7c6c926c318cb",
+    "test_llm_circuit_breaker.py:9001053b1ad5fb3c1772d98783ab21ddab61d402249e77cd073a62ad5259f1d1",
+    "conftest.py:84cdf6edbaee01ddae4c8b6a25cc4d687a662c6dc7d4cec72c832795273139d5",
+    "config.yaml:002aad5e71d2b70a06d992143dcf41f35f48a744e03eec1fe11e8ca7f4331232"
+  ],
+  "outcome": [
+    {
+      "metric": "bai全死シナリオ(5バッチ)で遮断判定後に発生した冷たい呼び出し数",
+      "before": 2,
+      "after": 0
+    },
+    {
+      "metric": "bai全死シナリオ(5バッチ)での同一プロバイダ(bai)呼び出し総数",
+      "before": 5,
+      "after": 3
+    }
+  ]
+}

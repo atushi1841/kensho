@@ -861,13 +861,25 @@ def _collect_impl(
     _llm_classify: bool = (cfg or {}).get("collection", {}).get("llm_classify", False)
     if _llm_classify:
         try:
-            from kensho.scraping.simple_rt_classifier import classify_collected_items
+            from kensho.scraping.simple_rt_classifier import breaker_snapshot, classify_collected_items
 
             _llm_model: str = (cfg or {}).get("collection", {}).get("llm_model", "deepseek-v4-flash")
             _llm_batch: int = int((cfg or {}).get("collection", {}).get("llm_batch_size", 8))
-            _c_n, _f_n, _u_n = classify_collected_items(merged, model=_llm_model, batch_size=_llm_batch, log=log)
+            # ★ t_96c94435: プロバイダ遮断閾値（config.yaml collection.llm_breaker）。
+            #   未設定なら circuit_breaker 側の既定値（3回/300秒）。
+            _llm_breaker: dict[str, Any] | None = (cfg or {}).get("collection", {}).get("llm_breaker")
+            _c_n, _f_n, _u_n = classify_collected_items(
+                merged,
+                model=_llm_model,
+                batch_size=_llm_batch,
+                log=log,
+                breaker_config=_llm_breaker,
+            )
             if _c_n:
                 out(f"  [simple_rt LLM判定] {_c_n}件（FLAG={_f_n} / OK={_c_n - _f_n - _u_n} / UNKNOWN={_u_n}）")
+                _blocked = sum(int(b.get("blocked_count", 0)) for b in breaker_snapshot().values())
+                if _blocked:
+                    out(f"  [simple_rt LLM判定] サーキットブレーカー遮断により防いだ冷たい再試行={_blocked}件")
         except Exception as e:  # noqa: BLE001 — fail-open
             out(f"  [simple_rt LLM判定] 失敗（fail-open・応募継続）: {e}")
 

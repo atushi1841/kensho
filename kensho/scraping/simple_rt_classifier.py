@@ -25,6 +25,8 @@ from typing import Any
 
 import httpx
 
+from kensho.core.circuit_breaker import BreakerConfig, get_breaker, load_breaker_config, snapshots
+
 API_URL: str = "https://api.b.ai/v1/chat/completions"
 # ★ 2026-09-07: 収集判定LLMを bai/qwen3.8-flash へ（新メインと統一）。
 #   baiはOpenAI互換・chat_template_kwargs容認（enable_thinking無しでもOK）。
@@ -35,6 +37,27 @@ FALLBACK_API_URL: str = "https://openrouter.ai/api/v1/chat/completions"
 FALLBACK_MODEL: str = "minimax/minimax-m3:free"
 SECOND_FALLBACK_MODEL: str = "nousresearch/hermes-3-mini:free"
 DEFAULT_BATCH_SIZE: int = 8
+
+# ★ t_96c94435 (2026-09-23): プロバイダ別サーキットブレーカー名。
+#   連続失敗が閾値に達したプロバイダは一定時間「遮断」され、遮断中は冷たい呼び出しを
+#   せず即フォールバックする（＝死んでいるプロバイダへの再試行は0件）。
+#   閾値・クールダウンは config.yaml `collection.llm_breaker` で動的調整。
+#   モデル名・優先順（bai → OpenRouter無料枠）は本タスクでは変更しない（禁止領域）。
+BREAKER_BAI: str = "bai"
+BREAKER_OPENROUTER: str = "openrouter"
+
+
+def _resolve_breaker_config(breaker_config: dict[str, Any] | None) -> BreakerConfig:
+    """呼び出し元指定の閾値dict → 無指定なら config.yaml から解決。"""
+    if breaker_config is not None:
+        return BreakerConfig.from_mapping(breaker_config)
+    return load_breaker_config()
+
+
+def breaker_snapshot() -> dict[str, dict[str, Any]]:
+    """プロバイダ別遮断状態のスナップショット（可視化・health指標用）。"""
+    return snapshots()
+
 
 # Hermes profile側 .env（本番実行時はここに OPENROUTER_API_KEY がある。2026-08-28）
 # テストで monkeypatch できるようモジュール定数化（テスト分離のため）
@@ -150,34 +173,56 @@ def _call_api_with_fallback(
     timeout: int = 300,
     api_key: str | None = None,
     project_root: str | Path | None = None,
+    breaker_config: dict[str, Any] | None = None,
 ) -> str:
     """bai判定LLM優先。死活/エラー時だけOpenRouter無料枠へフォールバック（収集を止めない）。
 
     api_key/project_root が明示された場合はそれを優先（呼び出し元の解決を尊重）。
+
+    ★ t_96c94435: 各プロバイダはサーキットブレーカー経由で呼ぶ。
+      - 連続失敗が閾値（既定3）に達したプロバイダは遮断され、遮断中は
+        `allow()` が False を返すため **冷たい呼び出しをせず** 即フォールバックする
+        （bai全死時に毎バッチbaiを叩く無駄をゼロにする）。
+      - クールダウン経過後は半開プローブ1回で再試行（backoff）、成功で閉じる。
+      - 優先順・モデル名は変更しない（禁止領域）。
     """
+    cfg = _resolve_breaker_config(breaker_config)
     key = api_key if api_key is not None else _load_api_key(project_root)
     if key:
-        try:
-            return _call_api(key, batch, model, max_tokens, timeout=timeout)
-        except Exception:
-            pass  # bai失敗 → OR退避へ
+        bai_breaker = get_breaker(BREAKER_BAI, cfg)
+        if bai_breaker.allow():
+            try:
+                content = _call_api(key, batch, model, max_tokens, timeout=timeout)
+            except Exception:
+                bai_breaker.record_failure()  # bai失敗 → OR退避へ
+            else:
+                bai_breaker.record_success()
+                return content
     or_key = _load_or_key()
     if not or_key:
-        raise  # 両方ない場合はfail-open側でUNKNOWN扱い(呼び出し元except)
-    # Try primary fallback model
-    payload_model = FALLBACK_MODEL
-    try:
-        content = _call_api(or_key, batch, payload_model, max_tokens, timeout=timeout, url=FALLBACK_API_URL)
-        _log_openrouter_usage(project_root)
-        return content
-    except Exception:
-        # If primary fallback fails, try second fallback
+        raise RuntimeError("no available provider: bai失敗（または遮断中）かつOpenRouterキー無し")
+    or_breaker = get_breaker(BREAKER_OPENROUTER, cfg)
+    # Try primary fallback model（遮断中は冷たい呼び出しをせず即fail-openへ）
+    if or_breaker.allow():
         try:
-            content = _call_api(or_key, batch, SECOND_FALLBACK_MODEL, max_tokens, timeout=timeout, url=FALLBACK_API_URL)
+            content = _call_api(or_key, batch, FALLBACK_MODEL, max_tokens, timeout=timeout, url=FALLBACK_API_URL)
+        except Exception:
+            or_breaker.record_failure()
+        else:
+            or_breaker.record_success()
             _log_openrouter_usage(project_root)
             return content
+    # If primary fallback fails, try second fallback
+    if or_breaker.allow():
+        try:
+            content = _call_api(or_key, batch, SECOND_FALLBACK_MODEL, max_tokens, timeout=timeout, url=FALLBACK_API_URL)
         except Exception:
-            raise
+            or_breaker.record_failure()
+        else:
+            or_breaker.record_success()
+            _log_openrouter_usage(project_root)
+            return content
+    raise RuntimeError("all providers unavailable: OpenRouter無料枠が遮断中または失敗")
 
 
 def _log_openrouter_usage(project_root: str | Path | None = None) -> None:
@@ -209,6 +254,7 @@ def classify_texts(
     batch_size: int = DEFAULT_BATCH_SIZE,
     project_root: str | Path | None = None,
     log: Any = None,
+    breaker_config: dict[str, Any] | None = None,
 ) -> dict[str, str]:
     """(id, tweet_text) のリストを LLM で分類。
 
@@ -217,6 +263,8 @@ def classify_texts(
     - 例外・パース失敗・本文空は UNKNOWN（fail-open）
     - 小バッチ（既定8件）で送るのは、OpenRouter無料モデルのレート制限(429)と
       推論型モデルのトークン枯渇（本文空）を避けるため。
+    - breaker_config: 遮断閾値の上書き（config.yaml `collection.llm_breaker` と同形式）。
+      None なら config.yaml の値を用いる。
     """
     if not pairs:
         return {}
@@ -228,11 +276,23 @@ def classify_texts(
     for i in range(0, len(pairs), batch_size):
         batch = [{"id": pid, "text": txt[:800]} for pid, txt in pairs[i : i + batch_size]]
         try:
-            content = _call_api_with_fallback(batch, model, max_tokens=2000, api_key=api_key, project_root=project_root)
+            content = _call_api_with_fallback(
+                batch,
+                model,
+                max_tokens=2000,
+                api_key=api_key,
+                project_root=project_root,
+                breaker_config=breaker_config,
+            )
             # 推論トークン枯渇で本文空 → 上限を増やして1回だけ再試行
             if not content.strip():
                 content = _call_api_with_fallback(
-                    batch, model, max_tokens=4000, api_key=api_key, project_root=project_root
+                    batch,
+                    model,
+                    max_tokens=4000,
+                    api_key=api_key,
+                    project_root=project_root,
+                    breaker_config=breaker_config,
                 )
             parsed = _extract_json(content) or []
             for item in parsed:
@@ -253,6 +313,7 @@ def classify_collected_items(
     model: str = DEFAULT_MODEL,
     batch_size: int = DEFAULT_BATCH_SIZE,
     log: Any = None,
+    breaker_config: dict[str, Any] | None = None,
 ) -> tuple[int, int, int]:
     """collected の各アイテムに simple_rt_ok を設定して更新。
 
@@ -271,7 +332,14 @@ def classify_collected_items(
     if not targets:
         return (0, 0, 0)
     pairs = [(it["tweet_id"], it["tweet_text"]) for it in targets]
-    decisions = classify_texts(pairs, api_key=api_key, model=model, batch_size=batch_size, log=log)
+    decisions = classify_texts(
+        pairs,
+        api_key=api_key,
+        model=model,
+        batch_size=batch_size,
+        log=log,
+        breaker_config=breaker_config,
+    )
     flag_n = 0
     unknown_n = 0
     for it in targets:

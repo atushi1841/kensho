@@ -179,6 +179,19 @@ collection:
   #   ローカル死活時のみコード内フォールバックでOpenRouter無料枠(minimax-m3:free)へ自動退避。
   llm_model: "qwen3.8-27b"
   llm_batch_size: 8
+  # ★ t_96c94435 (2026-09-23): LLMプロバイダ呼び出しのサーキットブレーカー（故障遮断）。
+  #   連続失敗 failure_threshold 回でそのプロバイダを遮断し、遮断中は冷たい再試行を
+  #   せず次の候補（OpenRouter無料枠）へ即フォールバックする（＝遮断中の再試行は0件）。
+  #   クールダウン経過後は半開プローブ1回で再試行（backoff）し、成功で閉じ、
+  #   失敗ならクールダウンを backoff_multiplier 倍（上限 max_cooldown_seconds）に延長。
+  #   モデル名・優先順は変更しない（禁止領域）。環境変数
+  #   KENSHO_LLM_BREAKER_THRESHOLD / _COOLDOWN_SECONDS / _BACKOFF_MULTIPLIER /
+  #   _MAX_COOLDOWN_SECONDS でも動的上書きできる。セクション欠落時はコード内既定(3/300/2.0/3600)。
+  llm_breaker:
+    failure_threshold: 3
+    cooldown_seconds: 300
+    backoff_multiplier: 2.0
+    max_cooldown_seconds: 3600
   # 収集を応募(orchestrator)から分離: 専用cron(crontab 0 3,9-21)で実行。
   # orchestratorの応募処理が収集の7.5分で圧迫されなくなる。
   separate_cron: true
