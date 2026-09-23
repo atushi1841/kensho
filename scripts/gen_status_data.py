@@ -209,10 +209,142 @@ for ac in accounts:
 
 # ── 収集ソース分布 ──
 source_dist = {}
+items_by_source = defaultdict(list)
 for it in items:
     src = it.get("source", "unknown")
     source_dist[src] = source_dist.get(src, 0) + 1
+    _src_disp = it.get("source_display", src)
+    items_by_source[src].append({
+        "title": (it.get("tweet_text", "") or "")[:40],
+        "deadline": it.get("deadline", "—"),
+        "status": "applied" if any(
+            isinstance(v, str) for v in (it.get("applied") or {}).values()
+        ) else "pending",
+        "source_display": _src_disp,
+    })
 result["stats"]["source_dist"] = source_dist
+result["stats"]["items_by_source"] = dict(items_by_source)
+
+# ── 収集元別の内訳可視化（t_c4e810c6: 有効案件数/応募済/未応募/高優先/重複/本日新着）──
+SOURCE_LABELS = {
+    "knshow": "knshow.com",
+    "ken-kaku": "ken-kaku.com",
+    "kema": "ke-ma(kema)",
+    "kenshouclub": "kenshou.club",
+    "kensho-everyday": "kensho-everyday",
+    "cpmeikan": "cp.meikan.org",
+    "chancecom": "chancecom",
+    "twscrape": "twscrape",
+    "unknown": "未知",
+}
+
+# tweet_id(=x_url末尾) 単位で出現ソース集合を集計（重複＝同じ懸賞が複数ソースに存在）
+_tweet_sources: dict[str, set[str]] = defaultdict(set)
+for it in items:
+    tid = it.get("tweet_id") or ""
+    if not tid:
+        m = re.search(r"/status/(\d+)", it.get("x_url") or "")
+        tid = m.group(1) if m else ""
+    if tid:
+        _tweet_sources[tid].add(it.get("source", "unknown"))
+
+_dup_tweets: set[str] = {
+    tid for tid, srcs in _tweet_sources.items() if len(srcs) > 1
+}
+
+# 本日の新着（日付起点baseline差分による算出）
+# data/status/source_new_day.json にその日の最初のrun時点のソース別件数を記録し、
+# 以降のrunでは「前回までの件数」からの増分を本日新着として数える。
+SRC_NEW_DATEFILE = os.path.join(PROJECT_DIR, "data/status/source_new_day.json")
+source_stats: dict[str, Any] = {
+    src: {"label": SOURCE_LABELS.get(src, src), "total": 0, "applied": 0,
+          "pending": 0, "high_prio": 0, "dup": 0, "new_today": 0}
+    for src in source_dist
+}
+for it in items:
+    src = it.get("source", "unknown")
+    st = source_stats[src]
+    st["total"] += 1
+    ap = it.get("applied") or {}
+    applied_any = any(v is not None for v in ap.values()) if isinstance(ap, dict) else False
+    if applied_any:
+        st["applied"] += 1
+    else:
+        st["pending"] += 1
+    ps = it.get("prize_score") or {}
+    if isinstance(ps, dict) and ps.get("priority", 0) >= 2.5:
+        st["high_prio"] += 1
+    tid = it.get("tweet_id") or ""
+    if (tid and tid in _dup_tweets) or (not tid and it.get("x_url") or "") in _dup_tweets:
+        st["dup"] += 1
+
+try:
+    with open(SRC_NEW_DATEFILE, encoding="utf-8") as _nf:
+        _prev = json.load(_nf)
+    _prev_date = _prev.get("date", "")
+    _first_seen = _prev.get("first_seen") or {}
+    if _prev_date != today_str:
+        _first_seen = {}  # 新しい日：当日起点は空 → 全件を本日新着として数える
+except Exception:
+    _prev_date = ""
+    _first_seen = {}
+for src, st in source_stats.items():
+    base = _first_seen.get(src, 0)
+    st["new_today"] = max(0, st["total"] - base)
+# 当日の「最初のrunの件数」を基準として記録（次回以降の増分算出用に保持）
+try:
+    os.makedirs(os.path.dirname(SRC_NEW_DATEFILE), exist_ok=True)
+    _cur_first = {src: st["total"] for src, st in source_stats.items()}
+    _merge_first = _first_seen if _prev_date == today_str else {}
+    for src, tot in _cur_first.items():
+        # 当日基準は最初のrunの値を固定（増減でぶれないよう最大値でなく初回値）
+        _merge_first.setdefault(src, tot)
+    with open(SRC_NEW_DATEFILE, "w", encoding="utf-8") as _nf:
+        json.dump({"date": today_str, "first_seen": _merge_first}, _nf, ensure_ascii=False)
+except Exception:
+    pass
+result["stats"]["source_stats"] = source_stats
+
+# ── フィルタUI用の案件リスト（source / 当選人数 / 締切 属性付き）──
+def _deadline_days(dl: Any):
+    if not dl:
+        return None
+    try:
+        return (datetime.strptime(str(dl), "%Y-%m-%d").date() - today).days
+    except Exception:
+        return None
+
+_dashboard_items: list[dict[str, Any]] = []
+for it in items:
+    src = it.get("source", "unknown")
+    dl = it.get("deadline", "")
+    dd = _deadline_days(dl)
+    wc = it.get("winner_count")
+    wc = wc if isinstance(wc, (int, float)) and wc > 0 else None
+    ap = it.get("applied") or {}
+    applied_any = any(v is not None for v in ap.values()) if isinstance(ap, dict) else False
+    ps = it.get("prize_score") or {}
+    _text = ((it.get("tweet_text") or "") or "").replace("\n", " ").strip()
+    _dashboard_items.append({
+        "source": src,
+        "source_display": SOURCE_LABELS.get(src, src),
+        "deadline": dl if dd is not None else "",
+        "deadline_days": dd,
+        "winner_count": wc,
+        "applied": applied_any,
+        "high_prio": bool(isinstance(ps, dict) and ps.get("priority", 0) >= 2.5),
+        "tweet_id": it.get("tweet_id", ""),
+        "detail_url": it.get("detail_url", ""),
+        "x_url": it.get("x_url", ""),
+        "title": _text[:120],
+        "prize_rank": it.get("prize_rank", 0),
+    })
+# 締切が近い順 → 当選人数が多い順
+_dashboard_items.sort(
+    key=lambda x: ((x["deadline_days"] is None), x["deadline_days"] if x["deadline_days"] is not None else 999,
+                   -(x["winner_count"] or 0))
+)
+result["items"] = _dashboard_items
 
 # ── 期限分布 ──
 dl_dist = {"expired": 0, "today": 0, "3days": 0, "week": 0, "future": 0, "no_deadline": 0}

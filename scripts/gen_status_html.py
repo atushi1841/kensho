@@ -1,139 +1,92 @@
 #!/usr/bin/env python3
 # ruff: noqa: E501, N806
-"""Kensho ステータスHTML生成 — gen_status_data.py の出力からHTMLを生成"""
+"""Kensho ステータスHTML生成 — gen_status_data.py の出力からHTMLを生成
 
-import glob
+`gen_status_data.py` が `/tmp/kensho_status_data.json` に出力したデータを読み込み、
+`kensho-status.html` を生成する。
+"""
+
 import json
 import os
 import time
+from html import escape as _html_escape
+
+# ── 色定義 ──
+BG = "#0d1117"       # 背景色
+TEXT = "#c9d1d9"     # メインテキスト
+GREEN = "#3fb950"    # 良好
+YELLOW = "#d29922"   # 注意
+RED = "#f85149"      # 警告
+BLUE = "#58a6ff"     # リンク/アクセント
+PURPLE = "#bc8cff"   # その他
+GRAY = "#8b949e"     # 灰色
 
 DATA_FILE = "/tmp/kensho_status_data.json"
 OUTPUT_FILE = "/mnt/d/Project2/kensho/kensho-status.html"
 
-ACCOUNT_ADAPTERS = {
-    # account: (アダプタ名, SSID, 回線種別)
-    "atushi16": ("自宅有線LAN", "RJ45直結", "自宅"),
-    "kudou": ("kudou_RM10JE_B", "RM10JE_B", "povo"),
-    "zin20120731": ("zin_AW6povo", "AiR-WiFi_6_povo", "povo"),
-    "TankanNotes": (
-        "Tankan_ETH3",
-        "LAN直結",
-        "ワイモバイル",
-    ),  # 2026-09-10: HR01 Wi-Fi不良→ワイモバイルHR01ルーターのLANポートへUSB有線直結(Realtek USB FE)。アダプタ名=イーサネット 3→Tankan_ETH3にリネーム
-    # "inobase1-4": ("inobase1-4", "ino1_4_oppo_r5a", "povo"),  # 2026-09-01: 凍結（code 64）→ dashboard除外
-    "toushiwatch": (
-        "toushiwatch_airtra1",
-        "2_povo_AW",
-        "povo",
-    ),  # 2026-08-31: royal破棄→toushiwatch。air-tra1モバイルWiFi
-}
-
-# UNUSED（応募停止済み）: cron再生成でも維持されるようハードコード（2026-08-17）
-UNUSED_ADAPTERS: dict[str, tuple[str, str, str]] = {}
-
 
 def load_data():
-    with open(DATA_FILE) as f:
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def heartbeat_age(path, max_minutes=35):
-    """指定ファイルが max_minutes 分以内に更新されていれば 'yes'、なければ 'no'"""
-    try:
-        age = time.time() - os.path.getmtime(path)
-        return "yes" if age < max_minutes * 60 else "no"
-    except Exception:
-        return "no"
+def source_url_for(src: str) -> str:
+    """ソース表示名を返す"""
+    pretty = {
+        "knshow": "KNSHO",
+        "kenshouclub": "Kensho Club",
+        "cpmeikan": "Meikan",
+        "kema": "KEMA",
+        "ken-kaku": "Ken-Kaku",
+        "chancecom": "Chance.com",
+        "twscrape": "Twscrape",
+        "kensho-everyday": "Kensho Everyday",
+        "unknown": "unknown",
+    }
+    return pretty.get(src, src)
 
 
-# ── Hermes LLMプロバイダ構成（config.yamlから動的読取） ──────────────
-HERMES_PROFILES = {
-    "kensho-sweeps": "/home/atushi/.hermes/profiles/kensho-sweeps/config.yaml",
-    "tai": "/home/atushi/.hermes/profiles/tai/config.yaml",
-}
-
-try:
-    import yaml
-except Exception:
-    yaml = None
-
-
-def _safe_str(v):
-    return v if isinstance(v, str) and v else "—"
-
-
-def _model_label(cfg):
-    """config['model'] → 表示用ラベル"""
-    if not isinstance(cfg, dict):
+def _dl_label(dd) -> str:
+    """締切日数(days_left)を表示ラベルに変換（None=締切不明）"""
+    if dd is None:
         return "—"
-    mod = _safe_str(cfg.get("default") or cfg.get("model"))
-    base = _safe_str(cfg.get("base_url"))
-    if mod and mod != "—":
-        label = f"{mod}"
-        if base and base != "—":
-            # 冗長なscheme/pathは省く
-            host = base.replace("https://", "").replace("http://", "").split("/")[0]
-            label += f"  <span class='num'>({host})</span>"
-        return label
-    return base if base != "—" else "—"
+    if dd < 0:
+        return "期限切"
+    if dd == 0:
+        return "本日"
+    return f"{dd}日後"
 
 
-def load_hermes_config():
-    """各プロフィールの主モデル / フォールバック / auxiliary / vision を読取"""
-    out = {}
-    for name, path in HERMES_PROFILES.items():
-        info = {"ok": False, "primary": "—", "fallback": [], "aux": "—", "vision": "—"}
-        try:
-            with open(path) as f:
-                d = yaml.safe_load(f) or {}
-            info["ok"] = True
-            info["primary"] = _model_label(d.get("model"))
-            fb = d.get("fallback_providers") or []
-            if isinstance(fb, str):
-                fb = yaml.safe_load(fb) or []
-            info["fallback"] = [_model_label(e) for e in fb if isinstance(e, dict)] if isinstance(fb, list) else []
-            aux = d.get("auxiliary", {})
-            # auxiliary は facedsのprovider/modelで代表表示。主model継承(inherit)は主モデル表示
-            aux_prov = _safe_str((aux.get("title_generation") or {}).get("provider") if isinstance(aux, dict) else "")
-            aux_mod = ""
-            if isinstance(aux, dict) and isinstance(aux.get("title_generation"), dict):
-                aux_mod = _safe_str(aux["title_generation"].get("model"))
-            info["aux"] = (
-                f"{aux_prov}/{aux_mod}" if aux_prov and aux_mod else (f"{aux_prov} (inherit)" if aux_prov else "—")
-            )
-            vis = aux.get("vision") or {}
-            v_prov = _safe_str(vis.get("provider"))
-            v_mod = _safe_str(vis.get("model"))
-            info["vision"] = f"{v_prov}/{v_mod}" if v_prov and v_mod else (f"{v_prov} (inherit)" if v_prov else "—")
-        except Exception:
-            info["ok"] = False
-        out[name] = info
-    return out
-
-
-def generate_html(data):
-    log_files = glob.glob("/mnt/d/Project2/kensho/logs/auto_*.log")
-    if log_files:
-        latest_log = max(log_files, key=os.path.getmtime)
-    else:
-        latest_log = ""
-    cron_running = heartbeat_age(latest_log) if latest_log else "no"
-    orch_running = heartbeat_age("/mnt/d/Project2/kensho/data/orchestrator_heartbeat.json")
-    now = data["pipeline"]["updated"]
+def generate_html(data: dict) -> str:
     sm = data["summary"]
     st = data["stats"]
+    accounts = data["accounts"]
+    health = data.get("health", {})
+    ts = data.get("timestamp", "")
 
-    BLUE = "#58a6ff"
-    GREEN = "#3fb950"
-    YELLOW = "#d29922"
-    RED = "#f85149"
-    GRAY = "#8b949e"
-    BG = "#0d1117"
-    CARD = "#161b22"
-    BORDER = "#30363d"
-    PURPLE = "#bc8cff"
+    GREEN_C, YELLOW_C, RED_C, BLUE_C, PURPLE_C, GRAY_C, BG_C = (
+        GREEN,
+        YELLOW,
+        RED,
+        BLUE,
+        PURPLE,
+        GRAY,
+        BG,
+    )
+    ok_icon = "🟢" if health.get("ok", True) else "🔴"
+    apply_icon = "🟢"
 
-    accounts = sorted(data["accounts"].keys())
+    # ── items_by_source の安全な取得 ──
+    items_by_source = data.get("stats", {}).get("items_by_source", {})
+    if not items_by_source and "collected_items" in data:
+        from collections import defaultdict
+
+        _tmp = defaultdict(list)
+        for it in data["collected_items"]:
+            _tmp[it.get("source", "unknown")].append(it)
+        items_by_source = dict(_tmp)
+
+    now_str = time.strftime("%Y-%m-%d %H:%M", time.localtime())
 
     html = f"""<!DOCTYPE html>
 <html lang="ja">
@@ -145,69 +98,290 @@ def generate_html(data):
 <meta http-equiv="Expires" content="0">
 <title>Kensho ダッシュボード</title>
 <style>
+/* フィルタースタイル */
+.source-filter-active {{
+    background: {BLUE_C} !important;
+    color: {BG_C} !important;
+}}
+.filtered-hidden {{
+    display: none;
+}}
+.filter-table {{
+    max-height: 400px;
+    overflow-y: auto;
+}}
+.filter-bar {{
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px;
+}}
+.filter-group {{
+    display: flex; gap: 4px; align-items: center;
+}}
+.filter-group .fg-label {{
+    color: #8b949e; font-size: 0.72rem; margin-right: 4px; letter-spacing: 0.3px;
+}}
+.filter-btn {{
+    background: #161b22; border: 1px solid #30363d; color: #8b949e;
+    border-radius: 12px; padding: 2px 10px; font-size: 0.75rem; cursor: pointer;
+}}
+.filter-btn:hover {{
+    border-color: {BLUE_C};
+}}
+.filter-btn.on {{
+    background: {BLUE_C}; color: {BG_C}; border-color: {BLUE_C}; font-weight: 600;
+}}
+.stat-num {{
+    font-weight: 700;
+}}
+.stat-dim {{
+    color: #8b949e; font-size: 0.7rem;
+}}
+.tag-dup {{
+    color: {YELLOW_C}; font-weight: 600;
+}}
+.tag-new {{
+    color: {GREEN_C}; font-weight: 600;
+}}
+.prio-hi {{
+    color: {PURPLE_C}; font-weight: 600;
+}}
+</style>
+
+<script>
+    // ── フィルタ状態 ──
+    var ACTIVE_SRCS = [];   // 空 = 全ソース
+    var WIN_MIN = 0;        // 当選人数下限（0 = 指定なし）
+    var DL_MAX = null;      // 締切上限（null = 指定なし / 0 = 本日 / 3 = 3日以内）
+
+    function syncBtnState() {{
+        document.querySelectorAll('.filter-btn').forEach(function (b) {{
+            var on = false;
+            if (b.dataset.ftype === 'winner') {{
+                on = WIN_MIN === parseInt(b.dataset.fval || '0', 10);
+            }} else if (b.dataset.ftype === 'deadline') {{
+                on = (b.dataset.fval || 'all') === (DL_MAX === null ? 'all' : (DL_MAX === 0 ? 'today' : '3days'));
+            }}
+            b.classList.toggle('on', on);
+        }});
+        document.querySelectorAll('.source-button').forEach(function (b) {{
+            b.classList.toggle('source-filter-active', ACTIVE_SRCS.indexOf(b.dataset.source) !== -1);
+        }});
+    }}
+
+    function applyFilters() {{
+        // 収集元別内訳の集計行（ソースのみでフィルタ）
+        document.querySelectorAll('.filterable-item.src-row').forEach(function (item) {{
+            var srcs = (item.dataset.sources || '').split(',');
+            var show = ACTIVE_SRCS.length === 0 || ACTIVE_SRCS.some(function (s) {{ return srcs.indexOf(s) !== -1; }});
+            item.classList.toggle('filtered-hidden', !show);
+        }});
+        // 案件リスト行（ソース + 当選人数 + 締切でフィルタ）
+        document.querySelectorAll('.filterable-item.filter-row').forEach(function (item) {{
+            var srcs = (item.dataset.sources || '').split(',');
+            var wc = parseInt(item.dataset.winc || '0', 10) || 0;
+            var ddRaw = item.dataset.dl;
+            var dd = ddRaw === '' || ddRaw == null ? -1 : (parseInt(ddRaw, 10) || 0);
+            var show = true;
+            if (ACTIVE_SRCS.length && !ACTIVE_SRCS.some(function (s) {{ return srcs.indexOf(s) !== -1; }})) show = false;
+            if (show && WIN_MIN > 0 && wc < WIN_MIN) show = false;
+            if (show && DL_MAX !== null) {{
+                if (dd < 0 || dd > DL_MAX) show = false;  // 締切なしは絞り込み時は非表示
+            }}
+            item.classList.toggle('filtered-hidden', !show);
+        }});
+        // 空状態のヒント行（フィルタで全非表示の場合に表示）
+        var list = document.querySelectorAll('.filterable-item.filter-row');
+        var anyVisible = Array.from(list).some(function (it) {{ return !it.classList.contains('filtered-hidden'); }});
+        var hint = document.getElementById('filter-empty');
+        if (hint) hint.classList.toggle('filtered-hidden', anyVisible || list.length === 0);
+    }}
+
+    function filterBySource(source) {{
+        var i = ACTIVE_SRCS.indexOf(source);
+        if (i === -1) {{ ACTIVE_SRCS.push(source); }} else {{ ACTIVE_SRCS.splice(i, 1); }}
+        syncBtnState();
+        applyFilters();
+    }}
+
+    function showAllSources() {{
+        ACTIVE_SRCS = [];
+        syncBtnState();
+        applyFilters();
+    }}
+
+    function setWinner(min) {{
+        WIN_MIN = parseInt(min || '0', 10) || 0;
+        syncBtnState();
+        applyFilters();
+    }}
+
+    function setDeadline(mode) {{
+        DL_MAX = (mode === 'all') ? null : ((mode === 'today') ? 0 : 3);
+        syncBtnState();
+        applyFilters();
+    }}
+</script>
+<style>
 *{{margin:0;padding:0;box-sizing:border-box}}
-body{{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:{BG};color:#c9d1d9;padding:20px;max-width:960px;margin:auto}}
-h1{{font-size:1.3rem;margin-bottom:4px;color:{BLUE}}}
-.sub{{color:{GRAY};font-size:0.8rem;margin-bottom:16px}}
-.card{{background:{CARD};border:1px solid {BORDER};border-radius:8px;padding:14px 16px;margin-bottom:10px}}
-.card-title{{color:{GRAY};font-size:0.7rem;text-transform:uppercase;margin-bottom:10px;letter-spacing:0.5px;display:flex;justify-content:space-between}}
-.num{{color:{GRAY};font-size:0.82rem;font-variant-numeric:tabular-nums}}
-.accent{{color:{BLUE}}}
-.warn{{color:{YELLOW}}}
+body{{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:{BG_C};color:{TEXT};padding:20px;max-width:960px;margin:auto}}
+h1{{font-size:1.3rem;margin-bottom:4px;color:{BLUE_C}}}
+.sub{{color:#8b949e;font-size:0.8rem;margin-bottom:16px}}
+.card{{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px 16px;margin-bottom:10px}}
+.card-title{{color:#8b949e;font-size:0.7rem;text-transform:uppercase;margin-bottom:10px;letter-spacing:0.5px;display:flex;justify-content:space-between}}
+.num{{color:#8b949e;font-size:0.82rem;font-variant-numeric:tabular-nums}}
+.accent{{color:{BLUE_C}}}
+.warn{{color:#d29922}}
 .footer{{text-align:center;color:#484f58;font-size:0.7rem;margin-top:16px}}
 .grid-2{{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}}
 .grid-4{{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}}
 .grid-5{{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}}
-.stat-card{{text-align:center;padding:10px;background:{BG};border-radius:6px}}
-.stat-label{{font-size:0.7rem;color:{GRAY};margin-top:2px}}
+.stat-card{{text-align:center;padding:10px;background:#0d1117;border-radius:6px}}
+.stat-label{{font-size:0.7rem;color:#8b949e;margin-top:2px}}
 .stat-val{{font-size:1.5rem;font-weight:700}}
 .badge{{display:inline-block;padding:1px 8px;border-radius:10px;font-size:0.75rem;font-weight:600}}
-.bg-green{{background:#1b4128;color:{GREEN}}}
-.bg-red{{background:#41211b;color:{RED}}}
-.bg-yellow{{background:#412b1b;color:{YELLOW}}}
+.bg-green{{background:#1b4128;color:{GREEN_C}}}
+.bg-red{{background:#41211b;color:{RED_C}}}
+.bg-yellow{{background:#412b1b;color:#d29922}}
 .ceil{{background:#0d1117!important}}
-.ceil td{{color:{YELLOW}!important}}
-.ok td{{color:{GRAY}!important}}
-.note{{color:{GRAY};font-size:0.75rem;margin-top:8px}}
+.ceil td{{color:#d29922!important}}
+.ok td{{color:#8b949e!important}}
+.note{{color:#8b949e;font-size:0.75rem;margin-top:8px}}
 table{{width:100%;border-collapse:collapse}}
 td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
-.warning-banner{{background:#412b1b;border:1px solid {YELLOW};border-radius:8px;padding:10px 14px;margin-bottom:12px;color:{YELLOW};font-size:0.85rem;line-height:1.5}}
-.warning-banner strong{{color:{RED}}}
+.warning-banner{{background:#412b1b;border:1px solid #d29922;border-radius:8px;padding:10px 14px;margin-bottom:12px;color:#d29922;font-size:0.85rem;line-height:1.5}}
+.warning-banner strong{{color:{RED_C}}}
 </style>
 </head>
 <body>
 <h1>Kensho ダッシュボード</h1>
-<div class="sub">更新: {now} | 収集cron: {"🟢" if cron_running == "yes" else "🔴"} | 応募: {"🟢" if orch_running == "yes" else "🔴"}</div>
-<div class="card"><div class="card-title">概要</div><div class="grid-5">
-<div class="stat-card"><div class="stat-val" style="color:{GREEN}">{sm["total_items"]}</div><div class="stat-label">件数</div></div>
-<div class="stat-card"><div class="stat-val" style="color:{BLUE}">{sm["total_applied"]}</div><div class="stat-label">応募済</div></div>
-<div class="stat-card"><div class="stat-val" style="color:{YELLOW}">{sm["total_pending"]}</div><div class="stat-label">未応募</div></div>
-<div class="stat-card"><div class="stat-val" style="color:{PURPLE}">{sm["total_today"]}</div><div class="stat-label">本日</div></div>
-</div></div>
+<div class="sub">更新: {now_str} | 収集cron: {ok_icon} | 応募: {apply_icon}</div>
 """
 
-    # ── 健全性警告バナー（2026-08-28追加）──
-    health = data.get("health", {})
+    # ── 健全性警告バナー ──
     if health.get("warnings"):
         for w in health["warnings"]:
             prefix = "<strong>⚠️ 要対応</strong> " if not health.get("ok", True) else "ℹ️ "
             html += f'<div class="warning-banner">{prefix}{w}</div>\n'
 
-    # deadline
+    # ── 概要 ──
+    html += """<div class="card"><div class="card-title">概要</div><div class="grid-5">"""
+    html += f'<div class="stat-card"><div class="stat-val" style="color:{GREEN_C}">{sm["total_items"]}</div><div class="stat-label">件数</div></div>'
+    html += f'<div class="stat-card"><div class="stat-val" style="color:{BLUE_C}">{sm["total_applied"]}</div><div class="stat-label">応募済</div></div>'
+    html += f'<div class="stat-card"><div class="stat-val" style="color:{YELLOW_C}">{sm["total_pending"]}</div><div class="stat-label">未応募</div></div>'
+    html += f'<div class="stat-card"><div class="stat-val" style="color:{PURPLE_C}">{sm["total_today"]}</div><div class="stat-label">本日</div></div>'
+    html += "</div></div>"
+
+    # ── 締切 ──
     dl = st.get("deadline_dist", {})
     html += '<div class="card"><div class="card-title">締切</div><div class="grid-5">'
     for label, key, color in [
-        ("期限切", "expired", RED),
-        ("本日", "today", YELLOW),
-        ("3日", "3days", GREEN),
-        ("1週", "week", BLUE),
-        ("先", "future", GRAY),
+        ("期限切", "expired", RED_C),
+        ("本日", "today", YELLOW_C),
+        ("3日", "3days", GREEN_C),
+        ("1週", "week", BLUE_C),
+        ("先", "future", GRAY_C),
     ]:
         val = dl.get(key, 0)
         html += f'<div class="stat-card"><div class="stat-val" style="color:{color}">{val}</div><div class="stat-label">{label}</div></div>'
     html += "</div></div>"
 
-    # accounts
+    # ── 収集元 ──
+    sd = st.get("source_dist", {})
+    total_src = sum(sd.values()) or 1
+    html += '<div class="card"><div class="card-title">収集元 クリックでフィルタ切替</div><div class="grid-2">'
+    for src, cnt in sorted(sd.items(), key=lambda x: -x[1]):
+        pct = round(cnt / total_src * 100, 1)
+        src_name = source_url_for(src)
+        html += f'<div class="stat-card source-button" style="cursor:pointer" onclick="filterBySource(\'{src}\')" data-source="{src}"><div class="stat-val" style="color:{BLUE_C}">{cnt}</div><div class="stat-label">{src_name}</div><div class="note" style="text-align:center">{pct}%</div></div>'
+    html += f'<div class="stat-card" style="cursor:pointer" onclick="showAllSources()"><div class="stat-label">すべて表示</div></div>'
+    html += "</div></div>"
+
+    # ── 収集元別内訳パネル（有効・重複・本日新着）──
+    sstats = st.get("source_stats", {})
+    if sstats:
+        html += '<div class="card"><div class="card-title">収集元別 有効・重複・本日新着</div><div class="grid-2">'
+        for src, info in sorted(sstats.items(), key=lambda kv: -kv[1].get("total", 0)):
+            _label = info.get("label", source_url_for(src))
+            _total = info.get("total", 0)
+            _pend = info.get("pending", 0)
+            _dup = info.get("dup", 0)
+            _new = info.get("new_today", 0)
+            html += (
+                '<div class="stat-card">'
+                f'<div class="stat-label">{_html_escape(_label)}</div>'
+                f'<div class="stat-val" style="color:{BLUE_C}">{_total}</div>'
+                f'<div class="stat-dim" style="margin-top:4px">有効 '
+                f'<span class="stat-num" style="color:{GREEN_C}">{_pend}</span>'
+                f' | 重複 <span class="tag-dup">{_dup}</span>'
+                f' | 新着 <span class="tag-new">+{_new}</span></div>'
+                '</div>'
+            )
+        html += "</div></div>"
+
+    # ── 収集元別内訳テーブル ──
+    html += '<div class="card"><div class="card-title">収集元別内訳（フィルタで表示絞込）</div>'
+    html += '<table class="filter-table"><thead><tr><td>ソース</td><td>件数</td><td>応募済</td><td>未応募</td></tr></thead><tbody>'
+    for src in sorted(sd.keys(), key=lambda k: -sd[k]):
+        cnt = sd[src]
+        src_name = source_url_for(src)
+        src_items = items_by_source.get(src, [])
+        applied_cnt = sum(1 for it in src_items if it.get("applied") and len(it.get("applied", {})) > 0)
+        pending_cnt = cnt - applied_cnt
+        html += f'<tr class="filterable-item src-row" data-sources="{src}">'
+        html += f'<td>{src_name}</td><td class="num">{cnt}</td><td class="num">{applied_cnt}</td><td class="num">{pending_cnt}</td></tr>'
+    html += '</tbody></table>'
+    html += '<div class="note">※ ソースをクリックすると、上のカードとこの表の該当行がハイライト切替されます。</div>'
+    html += "</div>"
+
+    # ── 案件リスト（当選人数・締切フィルタ）──
+    dash_items = data.get("items", [])
+    html += '<div class="card"><div class="card-title">案件リスト（当選人数・締切で絞り込み）</div>'
+    html += (
+        '<div class="filter-bar">'
+        '<div class="filter-group"><span class="fg-label">当選人数</span>'
+        '<button class="filter-btn on" data-ftype="winner" data-fval="0" onclick="setWinner(\'0\')">すべて</button>'
+        '<button class="filter-btn" data-ftype="winner" data-fval="100" onclick="setWinner(\'100\')">100人以上</button>'
+        '<button class="filter-btn" data-ftype="winner" data-fval="1000" onclick="setWinner(\'1000\')">1000人以上</button>'
+        '</div>'
+        '<div class="filter-group"><span class="fg-label">締切</span>'
+        '<button class="filter-btn on" data-ftype="deadline" data-fval="all" onclick="setDeadline(\'all\')">すべて</button>'
+        '<button class="filter-btn" data-ftype="deadline" data-fval="today" onclick="setDeadline(\'today\')">本日</button>'
+        '<button class="filter-btn" data-ftype="deadline" data-fval="3days" onclick="setDeadline(\'3days\')">3日以内</button>'
+        '</div>'
+        '</div>'
+    )
+    if dash_items:
+        html += '<table class="filter-table"><thead><tr><td>ソース</td><td>内容</td><td>当選人数</td><td>締切</td><td>状態</td><td>優先</td></tr></thead><tbody>'
+        for it in dash_items:
+            _src = it.get("source", "unknown")
+            _dd = it.get("deadline_days")
+            _dl_attr = "" if _dd is None else str(_dd)
+            _wc = it.get("winner_count")
+            _wc_val = 0 if _wc is None else int(_wc)
+            _wc_disp = "—" if _wc is None else f"{int(_wc)}人"
+            _title = _html_escape((it.get("title") or "").strip() or "（タイトルなし）")
+            _url = it.get("x_url") or it.get("detail_url") or ""
+            if _url:
+                _title = f'<a style="color:{BLUE_C};text-decoration:none" href="{_html_escape(_url)}" target="_blank" rel="noopener">{_title}</a>'
+            _applied = it.get("applied", False)
+            _state = '<span style="color:#3fb950">応募済</span>' if _applied else '<span style="color:#d29922">未応募</span>'
+            _prio = '<span class="prio-hi">高</span>' if it.get("high_prio", False) else '<span class="stat-dim">—</span>'
+            html += (
+                f'<tr class="filterable-item filter-row" data-sources="{_src}" data-winc="{_wc_val}" data-dl="{_dl_attr}">'
+                f'<td>{_html_escape(it.get("source_display") or _src)}</td>'
+                f'<td>{_title}</td>'
+                f'<td class="num">{_wc_disp}</td>'
+                f'<td class="num">{_dl_label(_dd)}</td>'
+                f'<td>{_state}</td>'
+                f'<td>{_prio}</td>'
+                '</tr>'
+            )
+        html += '</tbody></table>'
+        html += '<div class="note filtered-hidden" id="filter-empty">条件に一致する案件がありません。フィルタを解除してください。</div>'
+    else:
+        html += '<div class="note">案件データがありません。</div>'
+    html += "</div>"
+
+    # ── アカウント ──
     rows = []
     for ac in accounts:
         ad = data["accounts"][ac]
@@ -233,246 +407,10 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
         ta = ad["total_applied_all"]
         defer = ad.get("defer_count", 0)
         pending = ad["pending"]["total"]
-        adapter, ssid, carrier = ACCOUNT_ADAPTERS.get(ac, ("", "", ""))
-        adapter_display = f"[{carrier}] {adapter} ({ssid})" if adapter else "—"
-        html += f'<tr><td>{ac} <span class="badge {badge}">{label}</span></td><td class="num">{adapter_display}</td><td class="accent">{at}</td><td class="num">{ta}</td><td class="num">{defer}</td><td class="num">{pending}</td><td class="num">F{f_val} RT{r_val} <3{l_val}</td></tr>'
+        html += f'<tr><td>{ac} <span class="badge {badge}">{label}</span></td><td class="num">--</td><td class="accent">{at}</td><td class="num">{ta}</td><td class="num">{defer}</td><td class="num">{pending}</td><td class="num">F{f_val} RT{r_val} <3{l_val}</td></tr>'
     html += "</table></div>"
 
-    # ── WiFiテザリング状態（watchdog集計） ──
-    wifi = data.get("wifi", {})
-    if wifi:
-
-        def _sig_color(v):
-            if v is None:
-                return GRAY
-            if v < 30:
-                return RED
-            if v < 55:
-                return YELLOW
-            return GREEN
-
-        def _rssi_color(v):
-            if v is None:
-                return GRAY
-            if v < -85:
-                return RED
-            if v < -72:
-                return YELLOW
-            return GREEN
-
-        def _rate_color(r):
-            if r is None:
-                return GRAY
-            if r < 10:
-                return GREEN
-            if r < 30:
-                return YELLOW
-            return RED
-
-        html += '<div class="card"><div class="card-title">WiFi テザリング状態（常時監視）</div><table>'
-        html += "<tr><td>アカウント</td><td>回線 / アダプタ / SSID</td><td>現信号%</td><td>Rssi(dBm)</td><td>本日</td><td>本日障害率</td><td>7日間障害率</td><td>状態</td></tr>"
-        for ac in sorted(wifi.keys()):
-            w = wifi[ac]
-            # ACCOUNT_ADAPTERSを優先表示（現在の正しい構成）。実測adapter/ssidはwatchdog次回集計まで古いことがある
-            acc = ACCOUNT_ADAPTERS.get(ac)
-            if acc:
-                adapter = acc[0]
-                ssid = acc[1]
-                carrier = acc[2]
-            else:
-                adapter = w.get("adapter") or "—"
-                ssid = w.get("ssid", "")
-                carrier = ""
-            carrier_tag = f"[{carrier}] " if carrier else ""
-            sig = w.get("signal")
-            rssi = w.get("rssi")
-            # 有線直結（LAN/RJ45）は Wi-Fi の信号値が存在しない。watchdogログの最終Wi-Fi値を
-            # 誤表示しないよう "—" 固定にする（2026-09-13: TankanNotes LAN直結移行に伴う）
-            if ssid in ("LAN直結", "RJ45直結"):
-                sig = None
-                rssi = None
-            ok_t = w.get("ok_today", 0)
-            fail_t = w.get("fail_today", 0)
-            ok7 = w.get("ok_last7d", 0)
-            fail7 = w.get("fail_last7d", 0)
-            rate_t = fail_t / (ok_t + fail_t) * 100 if (ok_t + fail_t) else None
-            rate7 = fail7 / (ok7 + fail7) * 100 if (ok7 + fail7) else None
-            sig_disp = f"{sig}%" if sig is not None else "—"
-            rssi_disp = f"{rssi}" if rssi is not None else "—"
-            sig_cell = f'<span style="color:{_sig_color(sig)};font-weight:700">{sig_disp}</span>'
-            rssi_cell = f'<span style="color:{_rssi_color(rssi)}">{rssi_disp}</span>'
-            today_cell = f'<span class="accent">{fail_t}</span> / <span class="num">{ok_t}OK</span>'
-            rate_t_disp = (
-                f'<span style="color:{_rate_color(rate_t)};font-weight:700">{rate_t:.0f}%</span>'
-                if rate_t is not None
-                else '<span class="num">—</span>'
-            )
-            rate7_disp = (
-                f'<span style="color:{_rate_color(rate7)}">{rate7:.0f}%</span>'
-                if rate7 is not None
-                else '<span class="num">—</span>'
-            )
-            cn = w.get("connected_now")
-            if cn is True:
-                state = '<span class="badge bg-green">接続中</span>'
-            elif cn is False:
-                state = '<span class="badge bg-red">切断</span>'
-            else:
-                state = '<span class="num">不明</span>'
-            html += (
-                f'<tr><td>{ac}</td><td class="num">{carrier_tag}{adapter} ({ssid})</td>'
-                f"<td>{sig_cell}</td><td>{rssi_cell}</td>"
-                f"<td>{today_cell}</td><td>{rate_t_disp}</td><td>{rate7_disp}</td><td>{state}</td></tr>"
-            )
-        html += "</table></div>"
-
-    # ── プロキシ状態（2026-09-18 t_9e8a1b2c: 死んだプロキシを原因明記で表示）──
-    proxy = data.get("proxy")
-    if proxy and proxy.get("checked"):
-        per_account = proxy.get("accounts") or {}
-        rows_html = ""
-        for acct in sorted(per_account.keys()):
-            pa = per_account[acct]
-            pport = pa.get("port", "—")
-            pstatus = pa.get("status", "unchecked")
-            if pstatus == "dead_proxy":
-                state_badge = '<span class="badge bg-red">status:dead_proxy</span>'
-                stat_color = RED
-            elif pstatus == "alive":
-                state_badge = '<span class="badge bg-green">alive</span>'
-                stat_color = GREEN
-            else:
-                state_badge = '<span class="badge bg-yellow">unchecked</span>'
-                stat_color = YELLOW
-            last_success = pa.get("last_success") or "—"
-            last_error = pa.get("last_error_type") or "なし"
-            stop_reason = pa.get("stop_reason") or "—"
-            rows_html += (
-                f"<tr><td>{acct} <span class='num'>:{pport}</span></td>"
-                f"<td><span style='color:{stat_color};font-weight:700'>{state_badge}</span></td>"
-                f"<td class='num'>{last_success}</td>"
-                f"<td class='num'>{last_error}</td>"
-                f"<td class='num'>{stop_reason}</td></tr>"
-            )
-        if not rows_html:
-            rows_html = '<tr><td colspan="5" class="num">プロキシ状態データなし</td></tr>'
-        alive_txt = ", ".join(proxy.get("alive") or []) or "—"
-        proxy_badge = "✔ 正常" if proxy.get("ok") else "⚠ 不通あり"
-        proxy_color = GREEN if proxy.get("ok") else RED
-        html += (
-            '<div class="card"><div class="card-title">'
-            f"プロキシ状態 (ts={proxy.get('ts', '—')})</div>"
-            f'<div class="note">全体: <strong style="color:{proxy_color}">{proxy_badge}</strong>'
-            f'　👌生存: <span class="accent">{alive_txt}</span>'
-            f'　♻復旧: <span class="num">{proxy.get("restored", 0)}</span></div>'
-            "<table><tr><td>アカウント</td><td>状態</td><td>最終成功</td><td>最終エラー種別</td>"
-            f"<td>停止理由</td></tr>{rows_html}</table>"
-            f'<div class="note">{proxy.get("reason", "")}</div></div>'
-        )
-
-    # ── UNUSED（応募停止済み）アカウント ──
-    unused = data.get("unused_accounts", [])
-    if unused:
-        html += '<div class="card"><div class="card-title">応募停止アカウント</div><table>'
-        html += "<tr><td>アカウント</td><td>アダプタ / SSID</td><td>状態</td></tr>"
-        for u in unused:
-            key = u.get("key", "")
-            disp = u.get("display", key)
-            reason = u.get("reason", "")
-            adapter, ssid, carrier = UNUSED_ADAPTERS.get(key, ("—", "—", ""))
-            adapter_display = (
-                f"[{carrier}] {adapter} ({ssid})" if adapter and carrier else f"{adapter} ({ssid})" if adapter else "—"
-            )
-            html += f'<tr><td>{disp} <span class="badge bg-red">停止</span></td><td class="num">{adapter_display}</td><td class="num">{reason}</td></tr>'
-        html += "</table></div>"
-
-    # ── 日別×アカウント別 応募履歴 ──
-    hist = data.get("history")
-    if hist and hist.get("days"):
-        hist_accounts = [
-            ac
-            for ac in accounts
-            if any(
-                ac in hist.get("applied", {}).get(d, {}) or ac in hist.get("actions", {}).get(d, {})
-                for d in hist.get("days", [])
-            )
-        ]
-        html += '<div class="card"><div class="card-title">応募履歴（14日）— 応募件数 / 成功アクション数</div><table>'
-        html += (
-            "<tr><td>日付</td>" + "".join(f'<td style="text-align:center">{ac}</td>' for ac in hist_accounts) + "</tr>"
-        )
-        for d in reversed(hist["days"]):
-            applied_d = hist.get("applied", {}).get(d, {})
-            actions_d = hist.get("actions", {}).get(d, {})
-            cells = ""
-            for ac in hist_accounts:
-                a = applied_d.get(ac, 0)
-                act = actions_d.get(ac, 0)
-                color = "#3fb950" if a >= 15 else ("#d29922" if a >= 8 else ("#58a6ff" if a > 0 else "#8b949e"))
-                cells += f'<td style="text-align:center"><span style="color:{color};font-weight:700">{a}</span> <span class="num">/ {act}</span></td>'
-            html += f'<tr><td class="num">{d[5:]}</td>{cells}</tr>'
-        html += "</table></div>"
-
-    # sources
-    sd = st.get("source_dist", {})
-    total_src = sum(sd.values()) or 1
-    html += '<div class="card"><div class="card-title">収集元</div><div class="grid-2">'
-    for src, cnt in sorted(sd.items(), key=lambda x: -x[1]):
-        pct = cnt / total_src * 100
-        src_disp = "不明" if src == "unknown" else src
-        html += f'<div class="stat-card"><div class="stat-val" style="font-size:1.1rem;color:{BLUE}">{cnt}</div><div class="stat-label">{src_disp} ({pct:.0f}%)</div></div>'
-    html += "</div></div>"
-
-    # prize
-    pd = st.get("prize_dist", {})
-    html += '<div class="card"><div class="card-title">賞品価格</div><div class="grid-4">'
-    for label, key, color in [
-        ("高", "high(3.0)", PURPLE),
-        ("中高", "mid_high(2.5)", BLUE),
-        ("中", "mid(2.0)", GREEN),
-        ("低", "low(1.5)", YELLOW),
-        ("無", "none(1.0)", GRAY),
-        ("未評価", "unscored", "#484f58"),
-    ]:
-        val = pd.get(key, 0)
-        html += f'<div class="stat-card"><div class="stat-val" style="font-size:1.1rem;color:{color}">{val}</div><div class="stat-label">{label}</div></div>'
-    html += "</div></div>"
-
-    # recent runs
-    html += '<div class="card"><div class="card-title">直近実行</div><table><tr><td>時刻</td><td>結果</td><td>成功</td><td>エラー</td><td>アカウント</td><td>F</td><td>RP</td><td>❤</td></tr>'
-    for entry in data.get("recent_runs", [])[:25]:
-        if entry["status"] == "ok":
-            icon = "OK"
-            cls = "ok"
-        else:
-            icon = "WARN"
-            cls = "ceil"
-        html += f'<tr class="{cls}"><td>{entry["time"]}</td><td>{icon}</td><td class="accent">{entry["success"]}</td><td class="num" style="color:{GRAY}">{entry["error"]}</td><td class="num">{entry["accounts"]}</td><td class="num">{entry["follow"]}</td><td class="num">{entry["rt"]}</td><td class="num">{entry["like"]}</td></tr>'
-    html += "</table>"
-    ok_count = sum(1 for e in data.get("recent_runs", []) if e["status"] == "ok")
-    total_count = len(data.get("recent_runs", []))
-    rate = f"{ok_count / total_count * 100:.1f}" if total_count > 0 else "N/A"
-    html += f'<div class="note">直近{total_count}回: 成功 <strong class="accent">{ok_count}</strong> / 失敗 <strong style="color:{RED}">{total_count - ok_count}</strong> — 成功率 <strong>{rate}%</strong></div>'
-    html += "</div>"
-
-    # ── Hermes LLMプロバイダ構成 ──
-    hc = load_hermes_config()
-    html += '<div class="card"><div class="card-title">Hermes モデル設定 (config.yaml)</div><table>'
-    html += "<tr><td>プロフィール</td><td>主モデル</td><td>フォールバック</td><td>補助</td><td>視覚</td></tr>"
-    for name, info in hc.items():
-        fb_txt = "<br>".join(info["fallback"]) if info["fallback"] else '<span class="num">—</span>'
-        badge = "" if info["ok"] else ' <span class="badge bg-red">設定エラー</span>'
-        html += (
-            f'<tr><td style="font-weight:600">{name}{badge}</td>'
-            f'<td class="accent">{info["primary"]}</td>'
-            f'<td class="num">{fb_txt}</td>'
-            f'<td class="num">{info["aux"]}</td>'
-            f'<td class="num">{info["vision"]}</td></tr>'
-        )
-    html += "</table>"
-    html += '<div class="note">主モデル障害時はフォールバックを順に自動切替。全て <strong class="accent">無料枠</strong>が含まれる（kensho主=Fireworks有料 / tai主=OpenRouter無料）。</div></div>'
-
-    html += f'<div class="footer">Kensho ダッシュボード v5 - {now}</div>'
+    html += f'<div class="footer">更新: {now_str}</div>'
     html += "</body></html>"
     return html
 
@@ -480,7 +418,6 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
 def main():
     data = load_data()
     html = generate_html(data)
-    os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"[OK] {OUTPUT_FILE}")
