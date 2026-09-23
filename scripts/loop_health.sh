@@ -1,7 +1,34 @@
 #!/usr/bin/env bash
-# Loop Health Checker v137 (t_296c3dbc: top_task不倒修正 / t_5086aef7: PARK_AFTER_H gate 実装 + 重複状態書き込み解消)
+# Loop Health Checker v141 (t_5af1b5d8: bare hermes絶対パス解決 / t_e474c675: business KPI gate完成マーカー修正 / t_08b42528: business KPI gate / t_296c3dbc: top_task不倒修正 / t_5086aef7: PARK_AFTER_H gate)
 # Detects Kanban loop stagnation and escalates via Telegram.
 # HARD LIMIT: Output max 5 lines.
+#
+# v141 changes (2026-09-24, t_5af1b5d8):
+#   - cron の最小PATH(/usr/bin:/bin)では bare `hermes` が解決できず、下記6箇所の
+#     呼出が全て空を返し running/blocked が無音で 0 に縮退していた (score は 100 の
+#     まま ALERT も escalation も出ず、advice.priority=blocked_triage が二度と出ない
+#     = AIチーム全ジョブの行動方針選択が壊れる)。HERMES_VENV_BIN(既定
+#     /home/atushi/.hermes/hermes-agent/venv/bin) を PATH 前置 → command -v hermes
+#     フォールバック の順で HERMES_BIN を解決し、解決不能時に CLI が必須なら PATH と
+#     HERMES_VENV_BIN を stderr に記録して exit 127（無音縮退の再発防止）。
+#   - 置換箇所: 142/143(blocked/running 取得)・431(backlog 先頭)・487(park対象の
+#     status)・496/498([loop-health] comment/schedule = auto-park 通報路)。
+#   - 判定ロジック・閾値・score 計算・advice 文言・JSON スキーマは一切不変。
+#   - --tasks/--db 注入時は CLI 不要なので縮退させない(WARN のみで継続)。
+#
+# v139 changes (2026-09-17, t_e474c675):
+#   - business KPI gate の完成マーカー修正: grep "OK 完了" は実ログ(auto_<YMD>.log)の
+#     完了行形式 "[OK] 完了: N成功 / Mエラー"・INFO 行 "完了: N成功/Mエラー（Xs秒）" に
+#     一致せず常に 0 → 毎日 business_ok:false の偽陽性WARN。完了行が「成功>0 の応募完了
+#     + 完了行 0 判定」を満たすよう正規表現 r"完了:\s*\d+成功" で件数を数える
+#     (稼働日9/15=96件 / 停止日9/17=0件)。
+#
+# v138 changes (2026-09-17, t_08b42528):
+#   - business KPI gate: 当日ログ(auto_<YMD>.log)の完了行数 grep "OK 完了" を数え、
+#     JST 09:00以降(no_action_window 外)で完了行=0 のとき apply stopped と判定。
+#     score を上限60に制限、JSON に "business_ok": false、alert を "WARN: apply stopped" に変更。
+#   - LOOPHEALTH_LOG_PATH でログパス上書き(テスト用)、LOOPHEALTH_JST_HOUR で時刻を再現(テスト用)。
+#   - no_action_window は config.yaml orchestrator.no_action_window から読取(既定 00:00-07:00)。
 #
 # v133 changes (2026-09-11, kensho-revenue-worker):
 #   - PARK_AFTER_H (default 24h): once escalation has been ACTIVE CONTINUOUSLY for
@@ -75,6 +102,30 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# ─── hermes CLI resolution (v141 / t_5af1b5d8) ──────────────────────────────
+# cron の最小PATH(/usr/bin:/bin)では bare `hermes` が解決できず、blocked/running の
+# 取得が空を返して無音で 0 件に縮退する。HERMES_VENV_BIN を PATH 前置 →
+# command -v hermes フォールバック → それでも駄目なら PATH と HERMES_VENV_BIN を
+# stderr に記録して非0終了（CLI が必須な場合のみ。--tasks/--db 注入時は WARN のみ）。
+HERMES_VENV_BIN="${HERMES_VENV_BIN:-/home/atushi/.hermes/hermes-agent/venv/bin}"
+[ -d "$HERMES_VENV_BIN" ] && PATH="$HERMES_VENV_BIN:$PATH"
+if [ -z "${HERMES_BIN:-}" ] || [ ! -x "${HERMES_BIN:-}" ]; then
+  if command -v hermes >/dev/null 2>&1; then
+    HERMES_BIN="$(command -v hermes)"
+  else
+    HERMES_BIN=""
+  fi
+fi
+if [ -z "${HERMES_BIN:-}" ]; then
+  echo "loop_health: ERROR: hermes CLI not found (PATH=${PATH}, HERMES_VENV_BIN=${HERMES_VENV_BIN})" >&2
+  if [ -n "$TASKS_JSON" ] || [ -n "${TASKS_JSON_OVERRIDE:-}" ]; then
+    echo "loop_health: WARN: continuing with injected task list (no board CLI needed)" >&2
+  else
+    echo "loop_health: ERROR: cannot read kanban board state; refusing to silently degrade to 0 running/blocked" >&2
+    exit 127
+  fi
+fi
+
 # ─── Auto-detect DB if not found ─────────────────────────────────────────────
 if [[ ! -f "$DB_PATH" ]]; then
   for board in kensho-ai-team default; do
@@ -125,8 +176,8 @@ if [[ -z "$TASKS_JSON" ]]; then
     TASKS_JSON="$TASKS_JSON_OVERRIDE"
   else
     _TASKS_TMP=$(mktemp /tmp/loop_health_tasks.XXXXXX.json)
-    _B=$(hermes kanban --board "$BOARD" list --json --status blocked 2>/dev/null)
-    _R=$(hermes kanban --board "$BOARD" list --json --status running 2>/dev/null)
+    _B=$("$HERMES_BIN" kanban --board "$BOARD" list --json --status blocked 2>/dev/null)
+    _R=$("$HERMES_BIN" kanban --board "$BOARD" list --json --status running 2>/dev/null)
     printf '%s' "${_B:-[]}" > "${_TASKS_TMP}.b"
     printf '%s' "${_R:-[]}" > "${_TASKS_TMP}.r"
     jq -s 'add // []' "${_TASKS_TMP}.b" "${_TASKS_TMP}.r" > "$_TASKS_TMP" 2>/dev/null \
@@ -149,11 +200,11 @@ fi
 trap 'rm -f "$TASKS_FILE"' EXIT
 
 NOW=$(date +%s)
-export _LH_TASKS_FILE="$TASKS_FILE" _LH_NOW="$NOW" _LH_PREV="$PREV_STREAK"
+export _LH_TASKS_FILE="$TASKS_FILE" _LH_NOW="$NOW" _LH_PREV="$PREV_STREAK" _LH_DB="$DB_PATH"
 
 # ─── Analyze ─────────────────────────────────────────────────────────────────
 ANALYSIS=$(python3 - <<'PYEOF'
-import json, os, re, time
+import json, os, re, sqlite3, time
 
 tasks = json.loads(open(os.environ.get("_LH_TASKS_FILE", "/dev/null")).read() or "[]")
 now = int(os.environ.get("_LH_NOW", str(int(time.time()))))
@@ -223,7 +274,82 @@ else:
 if blocked_with_done_parent:
     score -= 15
 
+# ── Zombie task detection (t_7748d284) ──────────────────────────────────────
+# ゾンビタスク = blocked のまま worker が正常終了(rc=0)しても kanban_complete を
+# 呼ばず、プロトコル違反で回路遮断された永久滞留タスク。dispatcher は遮断時に
+# 必ず last_failure_error へ protocol violation 文言を刻むため、その LIKE 一致を
+# 唯一の疎シグナルにする（run metadata fallback は iteration-budget 等の別原因
+# 遮断まで誤検知するため使わない）。1件あたり -10。
+# LOOPHEALTH_ZOMBIE_COUNT で個数を上書き(テスト用)。DB 不可時は 0 で無害。
+zombie_task_count = 0
+_zombie_override = os.environ.get("LOOPHEALTH_ZOMBIE_COUNT", "")
+if _zombie_override.isdigit():
+    zombie_task_count = int(_zombie_override)
+else:
+    try:
+        _dbp = os.environ.get("_LH_DB", "")
+        if _dbp and os.path.exists(_dbp):
+            with sqlite3.connect("file:%s?mode=ro" % _dbp, uri=True) as _conn:
+                _conn.row_factory = sqlite3.Row
+                zombie_task_count = _conn.execute(
+                    "SELECT count(*) c FROM tasks t WHERE t.status='blocked' "
+                    "AND t.last_failure_error IS NOT NULL "
+                    "AND t.last_failure_error LIKE '%protocol violation%'"
+                ).fetchone()["c"]
+    except Exception:
+        zombie_task_count = 0
+if zombie_task_count:
+    score -= 10 * zombie_task_count
+
 score = max(0, min(100, score))
+
+# ── Business KPI gate (t_08b42528: apply stopped detection) ──
+# ループ健康(ボード)に加え「成果」(当日応募完了行)を見る。当日ログの完了行=0 かつ
+# JST 09:00以降(no_action_window外)のとき apply stopped と判定し score 上限60/WARN。
+# LOOPHEALTH_LOG_PATH: テスト用にログパスを上書き(逃げ道)。LOOPHEALTH_JST_HOUR: 時刻再現用。
+import os as _os, datetime as _dt, re as _re
+
+_kpi_log = _os.environ.get("LOOPHEALTH_LOG_PATH", "")
+if not _kpi_log:
+    _kpi_log = ("/mnt/d/Project2/kensho/logs/auto_"
+                + _dt.datetime.now(_dt.timezone(_dt.timedelta(hours=9))).strftime("%Y%m%d")
+                + ".log")
+_done_count = 0
+if _os.path.exists(_kpi_log):
+    try:
+        # v139: 実ログの完成マーカーは "[OK] 完了: N成功 / Mエラー" と INFO
+        # ログ "完了: N成功/Mエラー（Xs秒）" の2形。旧 "OK 完了" は両方に一致せず
+        # 常に0 → 稼働日を偽陽性WARN化。完了行/成功数は "完了: <N>成功" で集計。
+        # v170 (critic実測RCA): \d+成功 は "完了: 0成功..." にも一致し、停止時の
+        # "0成功" 行を完了扱い → done_count=0 にならず停止判定が発動しない。
+        # 成功数>=1 の行のみ完了扱いする ([1-9][0-9]* で 0成功 を除外)。
+        with open(_kpi_log, encoding="utf-8", errors="ignore") as _f:
+            _done_count = sum(1 for _line in _f if _re.search(r"完了:\s*[1-9][0-9]*成功", _line))
+    except Exception:
+        _done_count = 0
+
+_jst_hour_raw = _os.environ.get("LOOPHEALTH_JST_HOUR", "")
+_jst_hour = int(_jst_hour_raw) if _jst_hour_raw.isdigit() else _dt.datetime.now(
+    _dt.timezone(_dt.timedelta(hours=9))).hour
+
+# orchestrator.no_action_window を config.yaml から取得(欠落/読取失敗時は既定 00:00-07:00)。
+_no_action_hours = set(range(0, 7))
+try:
+    _cfg_txt = open("/mnt/d/Project2/kensho/config.yaml", encoding="utf-8").read()
+    _m_win = _re.search(r"no_action_window:\s*\[\s*\"(\d{2}):\d{2}\"\s*,\s*\"(\d{2}):\d{2}\"\s*\]", _cfg_txt)
+    if _m_win:
+        _sh, _eh = int(_m_win.group(1)), int(_m_win.group(2))
+        if _sh <= _eh:
+            _no_action_hours = set(range(_sh, _eh))
+        else:
+            _no_action_hours = set(h % 24 for h in range(_sh, _eh + 24))
+except Exception:
+    pass
+
+_business_detect = (_jst_hour >= 9) and (_jst_hour not in _no_action_hours) and (_done_count == 0)
+business_ok = (not _business_detect)
+if _business_detect:
+    score = max(0, min(score, 60))
 
 # Build lines output (max 5)
 lines = []
@@ -256,6 +382,11 @@ print(json.dumps({
     "top_task": by_age[0]["id"] if by_age else None,
     "repeats": repeats,
     "done_blocked": blocked_with_done_parent,
+    "zombie_task_count": zombie_task_count,
+    "business_ok": bool(business_ok),
+    "business_done": _done_count,
+    "business_hour": _jst_hour,
+    "business_log": _kpi_log,
     "lines": lines[:5]
 }))
 PYEOF
@@ -273,6 +404,7 @@ STREAK_COUNT=$(echo "$ANALYSIS" | jq -r '.streak')
 TOP_TASK=$(echo "$ANALYSIS" | jq -r '.top_task // empty')
 REPEATS=$(echo "$ANALYSIS" | jq -r '.repeats | length')
 DONE_BLOCKED=$(echo "$ANALYSIS" | jq -r '.done_blocked | length')
+BUSINESS_STOPPED=$(echo "$ANALYSIS" | jq -r 'if .business_ok == false then true else false end')
 
 # ─── Alert decision (v24/v30 band logic preserved) ──────────────────────────
 ESCALATE_THRESHOLD=55
@@ -333,10 +465,10 @@ ESCALATION_TARGET=""
 if [[ -n "$TOP_TASK" && "$TOP_TASK" != "null" ]]; then
   ESCALATION_TARGET="$TOP_TASK"
 else
-  _OLDEST_BACKLOG=$(hermes kanban --board "$BOARD" list 2>/dev/null | \
+  _OLDEST_BACKLOG=$("$HERMES_BIN" kanban --board "$BOARD" list 2>/dev/null | \
     awk '/running|blocked/{print} ' | \
     head -1 | \
-    grep -oE 't_[a-f0-9]{8}')
+    grep -oE 't_[a-f0-9]{8}' | head -1)
   if [[ -n "$_OLDEST_BACKLOG" ]]; then
     ESCALATION_TARGET="$_OLDEST_BACKLOG"
   else
@@ -389,7 +521,7 @@ if [[ "$ESCALATION_OUTPUT" == "true" && -n "$PARK_TARGET" && "$PARK_TARGET" != "
     PARK_ACTION="cooldown"
   else
     # idempotency: never park a task that is not an actionable open state
-    TARGET_STATUS=$(hermes kanban --board "$BOARD" show "$PARK_TARGET" --json 2>/dev/null | jq -r '.task.status // .status // empty')
+    TARGET_STATUS=$("$HERMES_BIN" kanban --board "$BOARD" show "$PARK_TARGET" --json 2>/dev/null | jq -r '.task.status // .status // empty')
     case "$TARGET_STATUS" in
       scheduled)
         PARK_ACTION="already_scheduled"
@@ -398,9 +530,9 @@ if [[ "$ESCALATION_OUTPUT" == "true" && -n "$PARK_TARGET" && "$PARK_TARGET" != "
       running|blocked|ready|todo)
         MARKER="[loop-health] SLA ${ESC_AGE_H}h > ${PARK_AFTER_H}h parking gate"
         if [[ "$DRY_RUN" -eq 0 ]]; then
-          hermes kanban --board "$BOARD" comment "$PARK_TARGET" \
+          "$HERMES_BIN" kanban --board "$BOARD" comment "$PARK_TARGET" \
             "${MARKER}: escalation active ${ESC_AGE_H}h (since epoch ${ESCALATED_AT}), score=${SCORE}, streak=${STREAK_COUNT}. Auto-parking per t_5086aef7; needs human decision — see hermes kanban show ${PARK_TARGET}." >/dev/null 2>&1
-          if hermes kanban --board "$BOARD" schedule "$PARK_TARGET" \
+          if "$HERMES_BIN" kanban --board "$BOARD" schedule "$PARK_TARGET" \
              "${MARKER} (auto-scheduled by loop_health v133)" >/dev/null 2>&1; then
           PARK_ACTION="parked"
           # v133b (QA run395①): park成功で持続bandを再設定。bandを旧値(例11)のまま
@@ -445,6 +577,7 @@ STATE_JSON=$(jq -n \
   --argjson streak "$STREAK_COUNT" \
   --argjson last_escalate_streak "$LAST_ESCALATE_STREAK" \
   --argjson last_low_band "$LAST_LOW_BAND" \
+  --argjson business_ok "$BUSINESS_STOPPED" \
   --arg escalated_at "${ESCALATED_AT:-}" \
   --argjson park_cooldown_until "$PARK_CD_UNTIL" \
   --arg park_after_h "$PARK_AFTER_H" \
@@ -459,6 +592,7 @@ STATE_JSON=$(jq -n \
     streak: $streak,
     last_escalate_streak: $last_escalate_streak,
     last_low_band: $last_low_band,
+    business_ok: ($business_ok | not),
     escalated_at: $escalated_at,
     park_cooldown_until: $park_cooldown_until,
     park_after_h: $park_after_h,
@@ -477,11 +611,17 @@ fi
 # ─── Output (max 5 lines) ───────────────────────────────────────────────────
 ESCALATION_TARGET_JSON="null"
 if [[ -n "$ESCALATION_TARGET" ]]; then
-  ESCALATION_TARGET_JSON=$(echo "$ESCALATION_TARGET" | jq -R .)
+  # -Rs (raw slurp) emits ONE JSON string even if the id is multiline;
+  # -R would emit multiple strings and break --argjson below.
+  # Use printf '%s' (NOT echo): echo injects a trailing \n that -Rs would fold
+  # into the JSON value, corrupting the single-id guarantee (FINDING2 regression
+  # test asserts no newline in escalation_target).
+  ESCALATION_TARGET_JSON=$(printf '%s' "$ESCALATION_TARGET" | jq -Rs .)
 fi
 
 echo "$ANALYSIS" | jq \
   --argjson escalation "$ESCALATION_OUTPUT" \
+  --argjson business_stopped "$BUSINESS_STOPPED" \
   --argjson target "$ESCALATION_TARGET_JSON" \
   --arg escalate_streak "$LAST_ESCALATE_STREAK" \
   --arg escalated_at "${ESCALATED_AT:-}" \
@@ -489,7 +629,7 @@ echo "$ANALYSIS" | jq \
   --arg park_after_h "$PARK_AFTER_H" \
   --arg park_action "$PARK_ACTION" \
   '. + {
-    alert: (if .score < 70 then "ALERT" else "OK" end),
+    alert: (if $business_stopped then "WARN: apply stopped" else (if .score < 70 then "ALERT" else "OK" end) end),
     escalation: $escalation,
     escalation_target: $target,
     escalate_streak: ($escalate_streak | tonumber),
@@ -498,4 +638,34 @@ echo "$ANALYSIS" | jq \
     park_after_h: ($park_after_h | tonumber),
     park_action: $park_action,
     action: null
-  } | if .alert == "ALERT" then .action = (.repeats | if . != {} then ("Loop detected: " + (to_entries | .[0] | "task(s) " + (.value | join(",")) + " all output same result")) else null end) else . end'
+  }
+  # v140 (t_ef9e899f): role別 curated injection。full JSON をトップレベルに温存したまま
+  # (board_state_monitor_*.sh が score/counts/escalation等をパースするため削れない)、
+  # LLMプロンプト注入用に role_summary.<role> を追加。各report scriptは自分のroleだけを
+  # 注入し、Attention Budgetを最適化する(不要フィールドをpromptに入れない)。
+  | . + {
+    role_summary: {
+      critic: {
+        alert: .alert, score: .score, streak: .streak,
+        running: .running, blocked: .blocked,
+        escalation: (.escalation | tostring), escalation_target: .escalation_target,
+        escalation_age_h: .escalation_age_h, top_task: .top_task,
+        repeats: (.repeats | length), done_blocked: (.done_blocked | length),
+        zombie_task_count: .zombie_task_count, business_ok: .business_ok,
+        park_action: .park_action, park_after_h: .park_after_h
+      },
+      worker: {
+        alert: .alert, score: .score, streak: .streak,
+        running: .running, escalation: (.escalation | tostring),
+        top_task: .top_task, business_ok: .business_ok
+      },
+      qa: {
+        alert: .alert, score: .score, streak: .streak,
+        running: .running, blocked: .blocked,
+        escalation: (.escalation | tostring), top_task: .top_task,
+        done_blocked: (.done_blocked | length), repeats: (.repeats | length),
+        zombie_task_count: .zombie_task_count, business_ok: .business_ok
+      }
+    }
+  }
+  | if .alert == "ALERT" then .action = (.repeats | if . != {} then ("Loop detected: " + (to_entries | .[0] | "task(s) " + (.value | join(",")) + " all output same result")) else null end) else . end'

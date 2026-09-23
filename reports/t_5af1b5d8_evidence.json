@@ -1,0 +1,52 @@
+{
+  "success_indicators": [
+    "最小PATH(env -i PATH=/usr/bin:/bin)実行の running/blocked: before 0/0 (無音縮退) -> after 3/1 (実ボード実測値と一致)",
+    "最小PATH実行 と 通常PATH実行 の JSON 正規化diff: before 36行 -> after 0行 (CLI出力を凍結フィクスチャに固定した比較でも 0行)",
+    "loop_health.sh 内の bare hermes 実行呼出: before 6箇所 -> after 0箇所 (実行箇所すべて \"$HERMES_BIN\" 経由)",
+    "hermes CLI 解決不能時: before stderr無出力/rc=0/running=0縮退 -> after rc=127 + PATH と HERMES_VENV_BIN を stderr 記録",
+    "auto-park 破壊的経路(comment/schedule): argv記録シムで捕捉のみ・実DB fingerprint 6項目 delta 0・[loop-health]マーカー増加0",
+    "移設の byte 同一性: sha256 5755526e... が profile実物 -> repo実体 で一致 (28866B・1バイトも不変)",
+    "回帰: tests/test_loop_health.py + tests/test_loop_health_business.py 8 passed (v137不変条件テストとv139 business gateテストがv141でも緑)"
+  ],
+  "verification_commands": [
+    "env -i HOME=/home/atushi PATH=/usr/bin:/bin bash /mnt/d/Project2/kensho/scripts/loop_health.sh --state /tmp/t_5af1b5d8/state/after_min.json --no-park",
+    "diff /tmp/t_5af1b5d8/logs/after_min.sorted.json /tmp/t_5af1b5d8/logs/after_norm.sorted.json",
+    "diff /tmp/t_5af1b5d8/logs/before_min.sorted.json /tmp/t_5af1b5d8/logs/before_norm.sorted.json",
+    "sha256sum /home/atushi/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh /mnt/d/Project2/kensho/scripts/loop_health.sh",
+    "cat /tmp/t_5af1b5d8/logs/shim_a7.log",
+    "python3 /tmp/t_5af1b5d8/db_fingerprint.py",
+    "env -i HOME=/home/atushi PATH=/usr/bin:/bin HERMES_VENV_BIN=/nonexistent-venv-dir bash /mnt/d/Project2/kensho/scripts/loop_health.sh --state /tmp/t_5af1b5d8/state/after_abort.json --no-park",
+    "cd /mnt/d/Project2/kensho && python3 -m pytest tests/test_loop_health.py tests/test_loop_health_business.py -q"
+  ],
+  "artifact_paths": [
+    "scripts/loop_health.sh",
+    "reports/t_5af1b5d8_verification.md"
+  ],
+  "evidence_hashes": [
+    "scripts/loop_health.sh (v141, 本カードの変更後): f1a07893b6de9c1a8f7f24bb7cd0b8d5b324b47a1305bbd620f9ffcc53882c97",
+    "scripts/loop_health.sh (v139 移設直後・byte一致検証): 5755526e48e00200a91d6615e64676d791cfd1975c77249cdf9f9da738fc0690",
+    "scripts/loop_health.sh (repo 側 v137 旧コピー・移設前): f58b0c6cddb100851c96ab14a8998e80478c850778cb1a0297bd4feb93bdb7d8",
+    "kanban board tasks(id,status) digest (A7 前後で不変): f7b3858fa32856b853f7b4ba6927b58ae63c0c8cf8a8f854e340fc5c3e13d508",
+    "reports/t_5af1b5d8_verification.md: 99fd31a0e892f7897b7925e69f4893a0be89d8847768a9c7f5b210ba1187e6dd"
+  ],
+  "outcome": [
+    {
+      "metric": "最小PATH実行の running 件数(縮退の有無)",
+      "before": 0,
+      "after": 3
+    },
+    {
+      "metric": "最小PATH実行 vs 通常実行の JSON diff 行数",
+      "before": 36,
+      "after": 0
+    },
+    {
+      "metric": "bare hermes 実行呼出箇所数",
+      "before": 6,
+      "after": 0
+    }
+  ],
+  "notes": "symlink 化により profile スクリプトの物理実体は /mnt/d/Project2/kensho/scripts/loop_health.sh。ロールバックは git revert + /tmp/t_5af1b5d8/backup/loop_health.sh.v139.orig を profile へ戻す(chmod +x)。判定ロジック・閾値・score計算・advice文言・JSONスキーマは不変。検証ログ実物は /tmp/t_5af1b5d8/logs/。",
+  "task_id": "t_5af1b5d8",
+  "status": "complete"
+}
