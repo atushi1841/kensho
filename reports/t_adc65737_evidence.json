@@ -1,9 +1,10 @@
 {
   "success_indicators": [
     "cron相当の最小環境(env -i HOME=/home/atushi PATH=/usr/bin:/bin)で complete_watchdog --apply が exit 0",
-    "新ログ logs/complete_watchdog_cron.log の 'comment failed' 件数 = 0（修正前は54/54失敗）",
-    "kanban DB task_comments に t_adc65737 宛コメント id=1133 が実在（送信路の疎通を実測）",
-    "同日2回目の実行でログ0行増・コメント0件増（台帳dedupの\\tバグ是正を回帰確認）"
+    "comment失敗 54→0（新ログ logs/complete_watchdog_cron.log の 'comment failed' 件数）",
+    "cron環境での comment 送信成功率 0/54(0%)→1/1(100%)、DB task_comments id=1133 が t_adc65737 に実在",
+    "同日重複リマインド 毎回→0件（2回目実行でログ0行増・コメント0件増＝台帳dedupの\\tバグ是正の回帰確認）",
+    "失敗時ログ: rc/bin/stderr を記録（修正前は '[err] comment failed: <id>' のみ）"
   ],
   "verification_commands": [
     "$ env -i HOME=/home/atushi PATH=/usr/bin:/bin SHELL=/bin/sh /bin/sh -c 'hermes kanban --board kensho-ai-team comment t_adc65737 \"test\"' => /bin/sh: 1: hermes: not found / EXIT=127",
@@ -11,6 +12,7 @@
     "$ grep -c \"comment failed\" logs/complete_watchdog_cron.log => 0",
     "$ HERMES_BIN=/bin/false bash scripts/kensho-complete-watchdog.sh --apply --ledger /tmp/cw_test_ledger.txt => [err] comment failed: t_adc65737 rc=1 bin=/bin/false err=<no stderr> / EXIT=1",
     "$ grep -qE \"^2026-09-24\\tt_adc65737\\t\" logs/complete_watch_ledger.txt => old_pattern_match_exit=1 ; grep -q \"^2026-09-24\"$'\\t'\"t_adc65737\"$'\\t' => new_pattern_match_exit=0",
+    "$ python3 -c 'sqlite3 ... task_comments where task_id=t_adc65737' => 1133 tai [complete-forgot] ...",
     "$ git log --oneline -1 => a89e457 fix(t_adc65737): complete_watchdog のコメント送信路を絶対パス解決へ"
   ],
   "artifact_paths": [
@@ -20,9 +22,14 @@
   ],
   "evidence_hashes": [
     "sha256:8bba191360185f7af4cb95ceb549f8caf1fe0c40a6ab5ebdcb2ab518e85d3ee1",
-    "sha256:4e3af78b34eab330aae8af703a6476c73a0d686396dd3241ec93da8315799df3",
+    "sha256:fc1319eaa9b0ad40115721e5e97c781406c71915184ccb818946838dd70f282b",
     "sha256:b9180fcd411eadbc5dcbcd09a25060904edb07057e5bc0f4a974b3a724930081"
   ],
+  "outcome": {
+    "metric": "cron comment送信失敗数 (comment failed)",
+    "before": 54,
+    "after": 0
+  },
   "task_id": "t_adc65737",
   "status": "complete"
 }
