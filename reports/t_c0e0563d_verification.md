@@ -155,6 +155,18 @@ tests/test_run_budget.py .........                                       [  9 pa
 `tests/test_run_budget.py:205` が monkeypatch していた `collector.fetch_listing_with_retry` は改名で消えたため、
 monkeypatch 対象を `fetch_knshow_listing`（4要素返却）へ更新した。t_b64c35ea の回帰テストは green に戻っている。
 
+### 8. コミット済み状態のクリーンチェックアウト検証
+
+作業ツリーには並行カードの未コミット変更が同居しているため、commit 4be8243 を切り出した独立 worktree で再実行した。
+
+```
+$ git worktree add -q --detach /tmp/t_c0e0563d/verify_wt HEAD
+$ git -C /tmp/t_c0e0563d/verify_wt rev-parse --short HEAD
+4be8243
+$ python -m pytest -q --no-cov tests/test_knshow_cloudflare.py tests/test_run_budget.py tests/test_knshow_retry.py tests/test_collector.py
+============================= 101 passed in 14.43s =============================
+```
+
 ## 申し送り
 
 1. **CF origin 障害は当方で解消不能**。knshow 側の復旧を待つしかない（復旧すれば既存の自動復帰経路でそのまま収集が戻る）。
