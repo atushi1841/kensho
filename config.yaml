@@ -67,17 +67,28 @@ accounts:
     daily_target: 50
     schedule:
       collects: false
+      # ★ 2026-09-24 03:4x 応募バッチ一時停止（統括 kensho-sweeps / t_66c14eb4 のQA結果に基づく）
+      #   理由1: プロキシ 1084 (adapter zin_AW6povo) が dead。`data/status/zin20120731.json` = dead_proxy、
+      #          本日 03:00-03:2x のログに "Proxy zin20120731:1084 is dead" が14回以上、watchdog の復旧も失敗中。
+      #   理由2: セッション失効。session ファイル `data/x_session_c.json` の最終更新は 2026-09-18、
+      #          ログは「最終更新: 5日前」のまま。last_success も 2026-09-18 で以降 0 件。
+      #   根拠: 応募 自己修復最終失敗 32件中 29件が本垢（apply 0 success 1 errors）。self_heal の3回リトライが
+      #         ブラウザ起動＋Xログインを再実行し、goto failed 63→227件/日・ログイン試行 約55→108回/日 に増幅（BOTシグナル）。
+      #   方針: プロキシ死垢は自宅IPへフォールバックさせない（2026-08-01 確定ルール）ため応募を停止。
+      #          垢ブロック自体は残置＝proxy_watchdog の復旧試行は継続する（accounts から外すと復旧が止まるため外していない）。
+      #   復帰条件: (1) プロキシ1084の疎通回復（egress確認） (2) Xセッション再取得（ユーザー確認が必要な操作）
+      #   復帰方法: 下記 batches のコメントを外すだけ（このブロックを戻す）。
       batches:
         # 2026-08-28 増量対応: max 10→15（8/24-25実績160件/dayを再現）
         # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "08:06", max: 15 }
-        - { time: "10:44", max: 15 }
-        - { time: "11:59", max: 15 }
-        - { time: "14:28", max: 15 }
-        - { time: "16:39", max: 15 }
-        - { time: "18:29", max: 15 }
-        - { time: "20:09", max: 15 }
-        - { time: "22:13", max: 15 }
+        # - { time: "08:06", max: 15 }
+        # - { time: "10:44", max: 15 }
+        # - { time: "11:59", max: 15 }
+        # - { time: "14:28", max: 15 }
+        # - { time: "16:39", max: 15 }
+        # - { time: "18:29", max: 15 }
+        # - { time: "20:09", max: 15 }
+        # - { time: "22:13", max: 15 }
 
   # ★ 2026-08-23 復帰: 書き込みAPI認証エラーは「セッション(auth_token)失効」が原因と判明。
   #   Chromeで通常表示(凍結なし)→ 新auth_token/ct0に更新済み(x_session_TankanNotes.json)。復帰。
