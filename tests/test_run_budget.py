@@ -202,7 +202,11 @@ class TestCollectorDeadline:
     ) -> None:
         """ken-kaku まで収集 → そこで上限到達 → kclub以降は打ち切り、それでも保存は行われる"""
         calls: list[str] = []
-        monkeypatch.setattr(collector, "fetch_listing_with_retry", lambda *a, **k: (200, "<html></html>", None))
+        # t_c0e0563d: Step1 の knshow 一覧取得は fetch_listing_with_retry → fetch_knshow_listing
+        #   （Cloudflare 失敗分類付き・4要素返却）へ変更されたため、monkeypatch 対象と返却形を更新。
+        monkeypatch.setattr(
+            collector, "fetch_knshow_listing", lambda *a, **k: (200, "<html></html>", None, "ok")
+        )
         for attr in _SOURCE_ATTRS:
             ret = [_canned_item()] if attr == "scrape_kenkaku" else None
             monkeypatch.setattr(collector, attr, _recorder(attr, calls, ret))

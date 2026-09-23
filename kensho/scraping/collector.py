@@ -28,13 +28,16 @@ from kensho.scraping.socks_rotation import (
 )
 from kensho.scraping.sources import (
     BASE_URL,
+    BROWSER_OK,
+    CF_BOT_CHALLENGE,
+    CF_ORIGIN_OUTAGE,
     _fetch_with_retry,
     _is_expired,
     extract_deadline_and_winners,
     extract_detail_links,
     extract_rd_link,
     fetch,
-    fetch_listing_with_retry,
+    fetch_knshow_listing,
     has_skip_keyword,
     is_x_url,
     load_json,
@@ -230,6 +233,29 @@ def _merge_applied_from_disk(result_items: list[dict[str, Any]], disk_items: lis
     return _matched
 
 
+def _knshow_error_label(code: int, kind: str) -> str:
+    """source_health の last_error 用ラベル（t_c0e0563d）。
+
+    `http=502(origin_outage)` / `http=503(bot_challenge)` のように失敗種別を併記し、
+    source_health / Telegram 警報から「CF origin 障害」か「ボットチャレンジ」かを切り分け可能にする。
+    判定不能（unknown/ok）は従来互換の `http=<code>` に留める（既存ログ解析を壊さない）。
+    """
+    base: str = f"http={code}" if code else "network"
+    return base if kind not in (CF_ORIGIN_OUTAGE, CF_BOT_CHALLENGE) else f"{base}({kind})"
+
+
+def _knshow_cf_hint(kind: str) -> str:
+    """Telegram 警報本文へ載せる Cloudflare 切り分け文（t_c0e0563d）。"""
+    if kind == CF_ORIGIN_OUTAGE:
+        return (
+            "Cloudflare origin 障害疑い"
+            "（502/520-524 系＝実ブラウザでも不通。当方の対策では解消せず knshow 側の復旧待ち）。"
+        )
+    if kind == CF_BOT_CHALLENGE:
+        return "Cloudflare ボットチャレンジ疑い（実ブラウザフォールバックも不成立）。"
+    return "原因分類不能。"
+
+
 def collect(
     cfg: dict[str, Any] | None = None,
     log: Any = None,
@@ -386,13 +412,18 @@ def _collect_impl(
         url: str = f"{BASE_URL}/twitter"
         if page > 1:
             url = f"{BASE_URL}/twitter/page:{page}"
-        # critic t_18ecf0a5: knshow 一覧ページは単発fetchで 502 を通していた → kenkaku v144移植の
-        #   ページ単位指数バックオフリトライ（3アテンプト・10sキャップ）に差し替え。
-        code, html, _ = fetch_listing_with_retry(_do_fetch, url, out=out)
+        # critic t_c0e0563d: knshow 一覧は Cloudflare 失敗分類付きで取得。403/503+「Just a moment…」等の
+        #   ボットチャレンジのときだけ実ブラウザ（patchright headless）でフォールバックし、502/520-524 の
+        #   origin 障害（ブラウザでも通らない）はブラウザを起動せず即 fail-open する。
+        code, html, _final_url, _kind = fetch_knshow_listing(_do_fetch, url, out=out)
         if code != 200:
             # ★ t_52a7fec2: knshow 一覧ページ失敗を source_health へ追跡（これまで監視対象外=盲点）。
             #   一覧は Step1 で _do_fetch 直取得のため note_fetch を明示呼び出しして統合。
-            note_fetch("knshow", False, f"http={code}")
+            #   t_c0e0563d: 失敗種別（origin_outage / bot_challenge / unknown）も last_error に付けて
+            #   「CF origin 障害」か「ボットチャレンジ」かを source_health から切り分け可能にする。
+            note_fetch("knshow", False, _knshow_error_label(code, _kind))
+            if _kind == BROWSER_OK:  # 到達しない（ブラウザ成功時は code=200）
+                out("  [KNSHOW] ブラウザフォールバックで取得成功")
             if health.is_unhealthy("knshow"):
                 # 連続>=4 に達した初回runで Telegram 通知（以後のrunは上記 skip 分岐で記録継続）。
                 try:
@@ -401,7 +432,8 @@ def _collect_impl(
                     notify_warning(
                         "収集源異常: knshow.com 連続失敗",
                         f"knshow.com 一覧({url})が HTTP {code} を "
-                        f"{health.status_line('knshow')} で返却。source_health で異常判定し"
+                        f"{health.status_line('knshow')} で返却。{_knshow_cf_hint(_kind)}"
+                        "source_health で異常判定し"
                         "次回収集から自動skip（既収集分キャッシュ維持）。",
                         log_path="",
                         cfg=cfg,
@@ -409,11 +441,14 @@ def _collect_impl(
                     out("  [HEALTH] knshow 連続失敗>=4 → Telegram 通知発火")
                 except Exception as _ke:  # noqa: BLE001 — fail-open
                     out(f"  [WARN] knshow 通知失敗（fail-open）: {_ke}")
-            out(f"  ページ{page}: HTTP {code} - 終了")
+            out(f"  ページ{page}: HTTP {code} [{_kind}] - 終了")
             break
         # ★ t_52a7fec2: 一覧取得成功(200)を knshow ヘルスへ記録し連続失敗カウンタをリセット
-        #   （回復後に誤って引き続き異常判定されるのを防ぐ）。
+        #   （回復後に誤って引き続き異常判定されるのを防ぐ）。t_c0e0563d: ブラウザ経路での成功も
+        #   同経路でカウンタがリセットされる（fail-open の逆方向＝自動復帰）。
         note_fetch("knshow", True)
+        if _kind == BROWSER_OK:
+            out("  [KNSHOW] 一覧: httpx 経路の失敗をブラウザ経路で回復（カウンタリセット）")
         links: list[str] = extract_detail_links(html)
         if not links:
             out(f"  ページ{page}: リンクなし - 終了")

@@ -8,6 +8,7 @@ from collections.abc import Callable
 
 import httpx
 
+from .browser_fetch import fetch_via_browser
 from .common import BASE_URL, HEADERS
 
 # critic t_18ecf0a5: knshow 502部分劣化対策 — kenkaku v144ページ単位リトライを移植。
@@ -18,6 +19,94 @@ _KNSHOW_MAX_TRIES: int = 3  # 合計3アテンプト（初期試行 + リトラ�
 _KNSHOW_RETRY_BACKOFF: float = 3.0  # 指数バックオフ base 3.0s
 _KNSHOW_RETRY_BACKOFF_MAX: float = 10.0  # バックオフ上限（3,6 → 10sキャップ）
 _KNSHOW_TIMEOUT: int = 15
+
+# ── Cloudflare 失敗分類（critic t_c0e0563d / 2026-09-24 実測）──
+# 実測: knshow.com は 2026-09-23 13:00 JST 以降 Cloudflare から 502 を返し続けている。
+#   応答は body "error code: 502" / 実ブラウザでは title "knshow.com | 502: Bad gateway"。
+#   同一IPの実ブラウザ（patchright chromium headless）でも 502、robots.txt は
+#   cf-cache-status: STALE（= origin 再検証失敗によるキャッシュ配信）、動的パスは全て 502。
+#   → これは Cloudflare ボットチャレンジではなく **origin 障害**であり、ブラウザ化では通らない。
+# 一方 403/503 + "Just a moment..." は CF ボットチャレンジで、実ブラウザなら通過しうる。
+#   両者を混同すると「無条件にブラウザ起動」= 高コストかつ無効な対策に進むため分類して分岐する。
+CF_ORIGIN_OUTAGE: str = "origin_outage"
+CF_BOT_CHALLENGE: str = "bot_challenge"
+CF_UNKNOWN: str = "unknown"
+KNSHOW_OK: str = "ok"
+BROWSER_OK: str = "browser_ok"
+
+_CF_ORIGIN_MARKERS: tuple[str, ...] = (
+    "error code: 502",
+    "502: bad gateway",
+    "error code: 520",
+    "521: web server is down",
+    "522: connection timed out",
+    "523: origin is unreachable",
+    "524: a timeout occurred",
+)
+_CF_CHALLENGE_MARKERS: tuple[str, ...] = (
+    "just a moment",
+    "cf-mitigated",
+    "challenge-platform",
+    "__cf_chl",
+    "attention required! | cloudflare",
+    "enable javascript and cookies to continue",
+)
+
+
+def classify_knshow_failure(code: int, html: str | None) -> str:
+    """knshow の非200応答を Cloudflare 失敗種別へ分類する（fail-open: 判定不能は unknown）。
+
+    origin_outage = CF の origin 障害ページ（ブラウザでも解決不能）/ bot_challenge = 実ブラウザで
+    通過しうるチャレンジ / unknown = 判別不能。呼出側は source_health の last_error へ記録し、
+    アラート本文で「origin 障害」か「ボットチャレンジ」かを切り分ける。
+    """
+    low: str = (html or "").lower()
+    for marker in _CF_ORIGIN_MARKERS:
+        if marker in low:
+            return CF_ORIGIN_OUTAGE
+    for marker in _CF_CHALLENGE_MARKERS:
+        if marker in low:
+            return CF_BOT_CHALLENGE
+    if code in (403, 429, 503):
+        return CF_BOT_CHALLENGE
+    return CF_UNKNOWN
+
+
+def fetch_knshow_listing(
+    fetcher: Callable[..., tuple[int, str, str]],
+    url: str,
+    *,
+    out: Callable[[str], None] | None = None,
+    browser_fetcher: Callable[[str], tuple[int, str] | None] | None = None,
+) -> tuple[int, str, str, str]:
+    """一覧取得（リトライ付き）+ ボットチャレンジ時のみ実ブラウザフォールバック（t_c0e0563d）。
+
+    戻り値 (code, html, final_url, kind)。kind は ok / origin_outage / bot_challenge /
+    unknown / browser_ok。ブラウザ経路の失敗（patchright 不在・起動不能・タイムアウト）は
+    fail-open: 従来 httpx 経路の失敗結果をそのまま返し、収集全体は止めない。
+    """
+    code, html, final_url = fetch_listing_with_retry(fetcher, url, out=out)
+    if code == 200:
+        return code, html, final_url, KNSHOW_OK
+    kind: str = classify_knshow_failure(code, html)
+    if kind != CF_BOT_CHALLENGE:
+        return code, html, final_url, kind
+    if out:
+        out(f"  [KNSHOW] 一覧: ボットチャレンジ検出（HTTP {code}）→ 実ブラウザで再取得")
+    bf: Callable[[str], tuple[int, str] | None] = browser_fetcher if browser_fetcher is not None else fetch_via_browser
+    got: tuple[int, str] | None = None
+    try:
+        got = bf(url)
+    except Exception as e:  # noqa: BLE001 — fail-open（収集全体を止めない）
+        if out:
+            out(f"  [KNSHOW] ブラウザフォールバック例外（fail-open）: {e}")
+    if got is not None and got[0] == 200 and got[1]:
+        if out:
+            out(f"  [KNSHOW] 一覧: ブラウザフォールバック成功（チャレンジ通過 {len(got[1])}bytes）")
+        return 200, got[1], url, BROWSER_OK
+    if out:
+        out("  [KNSHOW] ブラウザフォールバック不成立 → 従来経路の失敗を維持（fail-open）")
+    return code, html, final_url, kind
 
 
 def fetch_listing_with_retry(
