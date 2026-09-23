@@ -1,0 +1,55 @@
+{
+  "success_indicators": [
+    "cron最小PATH(/usr/bin:/bin)下の起票経路 exit code: before=127 → after=0",
+    "bare hermes を持つ crontab参照スクリプト数(20本中): before=1本 → after=0本",
+    "DRY実走(起票条件成立)で hermes resolved を出力し起票スキップ exit=0 (1回)",
+    "hermes解決不能時の失敗理由ログ(PATH/HERMES_VENV_BIN)を stderr に出力 exit=127",
+    "実台帳 logs/timeout_watch.tsv の sha256 前後不変: eab610f574c7da7345e3a561998dffb28e7d73a3a3398076f134fbd18f806322",
+    "実カード起票数: before=0 → after=0 (検証で実カードを作らない)"
+  ],
+  "verification_commands": [
+    "$ env -i HOME=/home/atushi PATH=/usr/bin:/bin bash -c 'command -v hermes' => NOT_FOUND (真因クラスの再現)",
+    "$ env -i HOME=/home/atushi PATH=/usr/bin:/bin TIMEOUT_WATCH_DATE=2026-09-23 TIMEOUT_WATCH_STATE=/tmp/t_e67d5550/state_before.tsv TIMEOUT_WATCH_THRESHOLD=5 bash /tmp/t_e67d5550/backup/kensho-timeout-watch.sh.orig => line 100: hermes: command not found / ERROR: kanban create failed rc=127 / EXIT=127",
+    "$ env -i HOME=/home/atushi PATH=/usr/bin:/bin TIMEOUT_WATCH_DRY=1 TIMEOUT_WATCH_DATE=2026-09-23 TIMEOUT_WATCH_STATE=/tmp/t_e67d5550/state.tsv TIMEOUT_WATCH_THRESHOLD=5 bash ~/.hermes/profiles/kensho-revenue-worker/scripts/kensho-timeout-watch.sh => hermes resolved: /home/atushi/.hermes/hermes-agent/venv/bin/hermes / DRY-RUN would create critic card / EXIT=0",
+    "$ env -i HOME=/home/atushi PATH=/usr/bin:/bin HERMES_VENV_BIN=/nonexistent TIMEOUT_WATCH_DATE=2026-09-23 TIMEOUT_WATCH_STATE=/tmp/t_e67d5550/state.tsv TIMEOUT_WATCH_THRESHOLD=5 bash /mnt/d/Project2/kensho/scripts/kensho-timeout-watch.sh => ERROR: hermes CLI not found (PATH=/usr/bin:/bin, HERMES_VENV_BIN=/nonexistent); kanban create skipped / EXIT=127",
+    "$ env -i HOME=/home/atushi PATH=/usr/bin:/bin TIMEOUT_WATCH_STATE=/tmp/t_e67d5550/state_normal.tsv bash ~/.hermes/profiles/kensho-revenue-worker/scripts/kensho-timeout-watch.sh => escalation not triggered (cur=9 prev=10) / EXIT=0",
+    "$ bash /tmp/t_e67d5550/rescan_bare_hermes.sh => crontab参照20本 [OK] 残存0本 / 本修正対象 fixed(timeout-watch) [OK]",
+    "$ grep -n 'ROW=' /mnt/d/Project2/kensho/scripts/kensho-timeout-watch.sh | cat -A => 79:ROW=\"${DATE}^I${TOTAL}^I... (実タブ保持)",
+    "$ sha256sum /mnt/d/Project2/kensho/logs/timeout_watch.tsv => eab610f574c7da7345e3a561998dffb28e7d73a3a3398076f134fbd18f806322 (before=after 不変)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/kensho-timeout-watch.sh",
+    "/mnt/d/Project2/kensho/reports/t_e67d5550_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:6e9cd6cb06505155cc29848c3658fea20b41454a2ec207faabfa3284f993574c scripts/kensho-timeout-watch.sh",
+    "sha256:53f8f2a7aadcfe8ab3ae8100fc59d12e7620be3943dd6714fc12f59ae8d3e350 reports/t_e67d5550_verification.md"
+  ],
+  "outcome": [
+    {
+      "metric": "escalation create path exit code under cron minimal PATH",
+      "before": 127,
+      "after": 0
+    },
+    {
+      "metric": "crontab-referenced scripts with bare hermes (of 20)",
+      "before": 1,
+      "after": 0
+    },
+    {
+      "metric": "real kanban cards created during verification",
+      "before": 0,
+      "after": 0
+    }
+  ],
+  "notes": {
+    "task": "t_e67d5550",
+    "parent": "t_adc65737",
+    "change": "+43/-3 in scripts/kensho-timeout-watch.sh; profile path symlinked to repo file",
+    "verification_log": "/tmp/t_e67d5550/verify.log",
+    "rescan_log": "/tmp/t_e67d5550/rescan.log",
+    "follow_up": "scripts/loop_health.sh (profile real file, 5 bare hermes calls at 142/143/431/487/496) remains same-class; repo copy is a stale 14-line-offset duplicate. Blast radius is the health gate -> separate card recommended."
+  },
+  "task_id": "t_e67d5550",
+  "status": "complete"
+}
