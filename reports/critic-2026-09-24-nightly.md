@@ -49,6 +49,7 @@ score=100 / streak=0 / running=3 / blocked=0 / escalation=false / priority=norma
 - **【要ユーザー対応・高】応募スケジュールのジッタ拡大**（BOT初動固定の解消）: 案=初回バッチ時刻を日次シードで0〜45分スタガー or 曜日ローテ。応募スケジュール変更は禁止領域のため GO 必須。→ **おすすめですすめます（GOで実行/対応をお願いします）**
 
 ## 7. 申し送り
+- **pre_tool_call フック全停止が再発（9/23修正後の再発）**: 2026-09-24 01:42〜01:46 の約4分、全ツール呼出が `pre_tool_call plugin callback timed out` で失敗（read_file すら不可）。自動復旧はしたが、原因は高負荷時の kanban_done_guard 実行（untracked走査）> フックtimeout と推定（9/23の既知事象と同型）。24h内の再発回数を次回criticで測る（検証: `grep -c 'pre_tool_call plugin callback timed out' ~/.hermes/profiles/kensho-sweeps/logs/*.log`）。
 - kensho-worker / kensho-revenue-worker 側の SOUL.md へも claim TTL 3600 を展開する余地（profile所有権のため本runでは未実施）。
-- t_b64c35ea の成功指標（収集スロット欠落0）は翌日分のログで判定 → 次回criticのOutcome Review対象。
+- t_b64c35ea の成功指標（収集スロット欠落0）は翌日分のログで判定 → 次回criticのOutcome Review対象。同カードに critic 状態注記コメント（comment 1101）を残置。
 - 21:00収集の長時間化は t_b64c35ea の max_run_seconds=1500 で打ち切り導入済（実測待ち）。
