@@ -101,6 +101,19 @@ comments on t_adc65737 = 3
 
 再実行でログ0行増・コメント0件増 = 同日重複リマインド抑止が機能。
 
+### 3-5 実cron（05:00 tick）での無回帰確認
+
+```
+$ grep -h "complete-watchdog" /var/log/syslog | tail -1
+2026-09-24T05:00:01.073223+09:00 N100 CRON[390970]: (atushi) CMD (bash /home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/kensho-complete-watchdog.sh --apply >> /mnt/d/Project2/kensho/logs/complete_watchdog_cron.log 2>&1)
+$ wc -l logs/complete_watchdog_cron.log; grep -c "comment failed" logs/complete_watchdog_cron.log
+6 logs/complete_watchdog_cron.log
+0
+```
+
+修正デプロイ後の実 cron tick（05:00:01）はログ0行追加・`comment failed` 0。対象候補 t_adc65737 は同日リマインド済みのため
+dedup で正常スキップ（問題0件時のサイレント規約どおり）。送信路の実疎通は 3-1 の cron 相当環境実行と 3-2 のDB実在で確認済み。
+
 ### 4. 自己レビュー（Reflexion）
 
 ```json

@@ -13,7 +13,8 @@
     "$ HERMES_BIN=/bin/false bash scripts/kensho-complete-watchdog.sh --apply --ledger /tmp/cw_test_ledger.txt => [err] comment failed: t_adc65737 rc=1 bin=/bin/false err=<no stderr> / EXIT=1",
     "$ grep -qE \"^2026-09-24\\tt_adc65737\\t\" logs/complete_watch_ledger.txt => old_pattern_match_exit=1 ; grep -q \"^2026-09-24\"$'\\t'\"t_adc65737\"$'\\t' => new_pattern_match_exit=0",
     "$ python3 -c 'sqlite3 ... task_comments where task_id=t_adc65737' => 1133 tai [complete-forgot] ...",
-    "$ git log --oneline -1 => a89e457 fix(t_adc65737): complete_watchdog のコメント送信路を絶対パス解決へ"
+    "$ git log --oneline -1 => a89e457 fix(t_adc65737): complete_watchdog のコメント送信路を絶対パス解決へ",
+    "$ grep -h \"complete-watchdog\" /var/log/syslog | tail -1 => 2026-09-24T05:00:01 CRON[390970] CMD (bash .../kensho-complete-watchdog.sh --apply ...) ; wc -l log => 6 ; grep -c \"comment failed\" => 0"
   ],
   "artifact_paths": [
     "/mnt/d/Project2/kensho/scripts/kensho-complete-watchdog.sh",
@@ -22,7 +23,7 @@
   ],
   "evidence_hashes": [
     "sha256:8bba191360185f7af4cb95ceb549f8caf1fe0c40a6ab5ebdcb2ab518e85d3ee1",
-    "sha256:fc1319eaa9b0ad40115721e5e97c781406c71915184ccb818946838dd70f282b",
+    "sha256:c388cfebc40b2726b89e53ecdc633e97ee8eb35464b830bc0b01d03e51bf0420",
     "sha256:b9180fcd411eadbc5dcbcd09a25060904edb07057e5bc0f4a974b3a724930081"
   ],
   "outcome": {
