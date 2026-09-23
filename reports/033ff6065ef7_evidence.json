@@ -1,0 +1,25 @@
+{
+  "task_id": "033ff6065ef7",
+  "status": "complete",
+  "success_indicators": [
+    "loop_health score=100, streak=0, healthy",
+    "Worker OR key fix verified: 5 profiles curl HTTP 200",
+    "Dispatcher crash loop resolved, t_9fb3c02d unblocked, #965 running",
+    "kenkaku.py proxy param added for SOCKS5 isolation"
+  ],
+  "verification_commands": [
+    "$ curl -s -o /dev/null -w %{http_code} https://openrouter.ai/api/v1/key → 200 (5 profiles)",
+    "$ hermes -p kensho-revenue-worker --cli chat -q Reply with exactly: OK-AUTH → OK-AUTH",
+    "$ git log --oneline -3 → a5b82fa qa: OR key復旧検証..."
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-23-nightly-qa.md",
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-23-revenue-worker.md",
+    "/mnt/d/Project2/kensho/reports/t_5e16a983_verification.md"
+  ],
+  "evidence_hashes": [
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-23-nightly-qa.md:18c94656195be552",
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-23-revenue-worker.md:ac6cdc4d33ece672",
+    "/mnt/d/Project2/kensho/reports/t_5e16a983_verification.md:f0f509c1fb7d5d1f"
+  ]
+}
