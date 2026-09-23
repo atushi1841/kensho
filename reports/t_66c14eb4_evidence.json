@@ -1,0 +1,67 @@
+{
+  "task_id": "t_66c14eb4",
+  "status": "complete",
+  "verdict": "PASS_WITH_FOLLOWUP",
+  "summary": "self_heal の本番発動を一次ログで実証（apply 32件 + collection 4件 = 36件の最終失敗、全件 attempts=3）。retry の実在は操作再実行トレース22件の完全一致で裏取り。ただし apply 最終失敗以降の露出は0回で『失敗ゼロ』は改善の証拠にならず、48時間窓は未達。BOTシグナルは失効セッション垢への盲目的リトライで増幅（goto failed 63→227/日、ログイン確認中 約55→108/日）。",
+  "success_indicators": [
+    "self_heal の最終失敗を一次ログで36件確認（apply 32件 + collection 4件、全件 attempts=3）＝ 発動事例1件以上の受け入れ条件を充足",
+    "apply側 retry の実在を操作再実行トレースで復元: 22/32件が attempts=3 と完全一致、27/32件で3件以上のトレースを復元",
+    "collection側 4件の最終失敗は guarded_source 引数不整合バグ由来で収集runが丸ごと異常終了（収集0件）。commit 290c480 修正後は収集run 1件中0件失敗（36989 bytes 完了）",
+    "apply 自己修復最終失敗レートは 0.952件/h（32.58h窓で31件）から 0.186件/h（5.38h窓で1件）へ低下",
+    "BOTシグナル増幅を実測: goto failed 63件/日(09-20)→227件/日(09-23, 3.6倍)、auth_token失効ログイン失敗 12件(09-21)→75件(09-23, 6.25倍)、ログイン試行 約55回/日→108回/日(約2.2倍)",
+    "設計欠陥6件を実測で特定（F1 logger未使用による回復イベント不可観測 / F2 ai_assisted不活性 / F3 session系回復アクション不在 / F4 max_attempts=3で回復順後半に到達不能 / F5 failure ceilingが毎時cronで発動不能 / F6 config値がハードコードで上書き）",
+    "pytest 回帰: tests/test_self_heal.py 18 passed、tests/test_guarded_source_arity.py + tests/test_self_heal.py 23 passed"
+  ],
+  "verification_commands": [
+    "$ python3 -m pytest tests/test_self_heal.py -q --no-cov => 18 passed in 57.91s",
+    "$ python3 -m pytest tests/test_guarded_source_arity.py tests/test_self_heal.py -q --no-cov => 23 passed in 43.54s",
+    "$ for f in logs/auto_*.log; do grep -c 'self_heal failed:' $f; done => 09-13..09-21: 0 / 09-22: 21 / 09-23: 75 / 09-24: 0 (1失敗=3行 → 32失敗)",
+    "$ grep -ho 'self_heal failed: [^)]*)' logs/auto_*.log | sort | uniq -c => 64 'self_heal failed: apply 0 success 1 errors (attempts=3)'",
+    "$ grep -rh 'self_heal failed' logs/collect_*.log | sed -E 's/.*self_heal failed: //' | sort | uniq -c => 3 lambda missing 3 required positional arguments + 1 guarded_source unexpected keyword 'proxy' (attempts=3)",
+    "$ python3 reports/t_66c14eb4_self_heal_analyzer.py => sh_fail_total=32, attempts_values={'3':32}, by_day={09-22:7, 09-23:25}, apply_operation_starts_since_last_failure=0",
+    "$ python3 reports/t_66c14eb4_attribution_check.py => failures=32, chain_match_attempts=22, account_distribution={zin20120731:29, atushi16:1, TankanNotes:2}",
+    "$ grep -n logger kensho/core/self_heal.py => 312: logger param / 318: self.logger = logger （参照は代入のみ＝HealingEventは未出力）",
+    "$ grep -rn ai_assisted --include=*.py --include=*.yaml . => config.yaml:303 / self_heal.py:173(既定値) / tests:222 のみ（実行経路に参照なし）",
+    "$ cat data/self_heal_state.json => apply count=0 first_fail_time=2026-09-22T15:06:28.137352, collection count=0 first_fail_time=2026-09-23T17:01:53.345701, updated=2026-09-24T00:25:46",
+    "$ for d in 18 19 20 21 22 23; do grep -c 'goto failed (attempt' logs/auto_202609$d.log; done => 18/43/63/36/81/227",
+    "$ for f in logs/collect_20260923_{17,18,19,20,21}*.log; do echo $f $(grep -c 'self_heal failed' $f) $(stat -c%s $f); done => 17:2/4129 18:2/3963 19:2/3963 20:2/4323 21:0/36989",
+    "$ git log -1 --format='%h %ci %s' 290c480 => 290c480 2026-09-23 21:27:04 +0900 fix(scraping): guarded_source 引数不整合による収集全停止を修正 + 回帰テスト"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_66c14eb4_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_66c14eb4_self_heal_analyzer.py",
+    "/mnt/d/Project2/kensho/reports/t_66c14eb4_attribution_check.py",
+    "/mnt/d/Project2/kensho/reports/t_66c14eb4_analyzer_output.json",
+    "/mnt/d/Project2/kensho/reports/t_66c14eb4_attribution_output.json"
+  ],
+  "evidence_hashes": [
+    "sha256:6d788e598b984a45b08115aef9fd8a8563b911afa28d74faccad6bd8804a4923  reports/t_66c14eb4_verification.md",
+    "sha256:8ccbca3fe93ec5c296b34511d3ebbcda5849e3f7fb58af0a8d45bc62cdd4ff55  reports/t_66c14eb4_self_heal_analyzer.py",
+    "sha256:8c6db3c7f9628813512827a8fd27020e18457032294ba15d7a8a7b525a5a3ec6  reports/t_66c14eb4_attribution_check.py",
+    "sha256:034f359130fe8673d873ffb9cbf75056a2ed1450be71864022ba2c5b58ad6d7f  reports/t_66c14eb4_analyzer_output.json",
+    "sha256:9918b105a373450f0f58015d41cb81f4244c63918977e8a52da79a056fc823b2  reports/t_66c14eb4_attribution_output.json"
+  ],
+  "outcome": [
+    {"metric": "apply 自己修復最終失敗レート（件/時間）", "before": 0.952, "after": 0.186,
+     "note": "before=09-22 12:52:20〜09-23 21:27:04(32.58h)で31件 / after=09-23 21:27:04〜09-24 02:50(5.38h)で1件"},
+    {"metric": "apply 操作開始あたり最終失敗率（%）", "before": 20.81, "after": 33.33,
+     "note": "after の分母は3操作開始のみで統計的意味なし。悪化方向の数値も併記"},
+    {"metric": "collection 自己修復最終失敗率（収集runあたり %）", "before": 100.0, "after": 0.0,
+     "note": "before=09-23 17:00〜21:27 の4run中4run失敗(収集全停止) / after=09-23 21:27〜09-24 02:50 の1run中0run失敗"},
+    {"metric": "self_heal 最終失敗の可観測件数（ログ復元、件）", "before": 0, "after": 36,
+     "note": "導入前は self_heal 自体が存在しない=0。導入後は apply 32 + collection 4"},
+    {"metric": "1失敗あたり実測試行回数（回）", "before": 0, "after": 3.0, "note": "36/36件が attempts=3"},
+    {"metric": "最終失敗以降の apply 露出（操作開始回数）", "before": 0, "after": 0,
+     "note": "2026-09-23 22:19:25 以降の操作開始は0回。ゆえに『失敗ゼロ』を改善の証拠にできない（右打ち切り）"},
+    {"metric": "BOTシグナル: goto failed 件/日", "before": 63, "after": 227,
+     "note": "09-20 → 09-23。失効垢への盲目的リトライによる悪化（3.6倍）"},
+    {"metric": "BOTシグナル: ログイン試行(Xにログイン確認中) 回/日", "before": 54, "after": 108,
+     "note": "09-20 → 09-23（約2.2倍）。self_heal の retry がブラウザ起動とログインを再実行するため"}
+  ],
+  "open_items": [
+    "48時間窓は未達: 導入から37.7時間、apply最終失敗以降の露出0回、収集修正後の収集runは1回のみ。再測は 2026-09-24 09:00 以降の稼働帯を通過後（追跡タスクを t_66c14eb4 の子として起票）",
+    "F1(可観測性)/F4(max_attempts)/F5(failure ceiling)/F3(session系回復)/F6(config乖離) の恒久修正はコード変更のため未実施（QA権限外）。修正案は verification.md の『config.yaml self_healing 調整案』に記載",
+    "zin20120731 のセッション(auth_token)が 2026-09-19 頃から失効したまま（ログ上『最終更新: 5日前』が 09-24 02:33 まで継続）。運用側のセッション再取得が必要"
+  ],
+  "bot_signal_impact": "self_heal は BOTシグナルを低減していない。失効セッション垢に対しリトライがブラウザ起動＋Xログインを丸ごと再実行するため、ログイン失敗リトライを約2倍に増幅した。max_attempts の増加は禁止。ceiling のアカウント粒度化と session 系回復の導入で増幅を止めるべき。"
+}

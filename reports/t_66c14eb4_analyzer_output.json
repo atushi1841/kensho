@@ -1,0 +1,141 @@
+{
+  "generated_at": "2026-09-24 02:33:52",
+  "self_heal_introduced": "2026-09-22 12:52:20",
+  "self_heal_commit": "2026-09-22 13:22:42",
+  "collector_fix_commit_290c480": "2026-09-23 21:27:04",
+  "sh_fail_total": 32,
+  "sh_fail_first": "2026-09-22 15:06:28",
+  "sh_fail_last": "2026-09-23 22:19:25",
+  "sh_fail_attempts_values": {
+    "3": 32
+  },
+  "sh_fail_by_day": {
+    "2026-09-22": 7,
+    "2026-09-23": 25
+  },
+  "sh_fail_distinct_messages": {
+    "apply 0 success 1 errors": 32
+  },
+  "ctor_typeerror_events": 2,
+  "ctor_typeerror_ts": [
+    "2026-09-22 12:52:20",
+    "2026-09-22 12:53:52"
+  ],
+  "hours_since_last_failure": 4.24,
+  "hours_of_observation_since_intro": 37.69,
+  "hours_of_observation_since_last_failure": 4.24,
+  "apply_operation_starts_since_last_failure": 0,
+  "applied_ok_since_last_failure": 0,
+  "apply_operation_starts_total": 572,
+  "applied_ok_total": 3301,
+  "login_fail_total": 279,
+  "retry_trace_cross_check": {
+    "failures": 32,
+    "attempts_reported_matches_retry_trace": 19,
+    "examples": [
+      {
+        "ts": "2026-09-22 15:06:28",
+        "msg": "apply 0 success 1 errors",
+        "attempts_reported": 3,
+        "account_guess": "zin20120731",
+        "account_lines_within_30min": [
+          "2026-09-22 14:53:56",
+          "2026-09-22 14:57:02",
+          "2026-09-22 15:03:20"
+        ],
+        "account_lines_same_acct_count": 3
+      },
+      {
+        "ts": "2026-09-22 15:35:41",
+        "msg": "apply 0 success 1 errors",
+        "attempts_reported": 3,
+        "account_guess": "zin20120731",
+        "account_lines_within_30min": [
+          "2026-09-22 15:26:12",
+          "2026-09-22 15:29:24",
+          "2026-09-22 15:33:44"
+        ],
+        "account_lines_same_acct_count": 3
+      },
+      {
+        "ts": "2026-09-22 16:48:45",
+        "msg": "apply 0 success 1 errors",
+        "attempts_reported": 3,
+        "account_guess": "zin20120731",
+        "account_lines_within_30min": [
+          "2026-09-22 16:39:59",
+          "2026-09-22 16:42:17",
+          "2026-09-22 16:46:36"
+        ],
+        "account_lines_same_acct_count": 3
+      },
+      {
+        "ts": "2026-09-22 18:31:05",
+        "msg": "apply 0 success 1 errors",
+        "attempts_reported": 3,
+        "account_guess": "zin20120731",
+        "account_lines_within_30min": [
+          "2026-09-22 18:20:50",
+          "2026-09-22 18:23:47",
+          "2026-09-22 18:28:52"
+        ],
+        "account_lines_same_acct_count": 3
+      },
+      {
+        "ts": "2026-09-22 18:59:20",
+        "msg": "apply 0 success 1 errors",
+        "attempts_reported": 3,
+        "account_guess": "zin20120731",
+        "account_lines_within_30min": [
+          "2026-09-22 18:49:50",
+          "2026-09-22 18:52:46",
+          "2026-09-22 18:57:07"
+        ],
+        "account_lines_same_acct_count": 3
+      },
+      {
+        "ts": "2026-09-22 20:27:11",
+        "msg": "apply 0 success 1 errors",
+        "attempts_reported": 3,
+        "account_guess": "zin20120731",
+        "account_lines_within_30min": [
+          "2026-09-22 20:05:06",
+          "2026-09-22 20:08:37",
+          "2026-09-22 20:24:09"
+        ],
+        "account_lines_same_acct_count": 3
+      }
+    ]
+  },
+  "kpi_window_A_intro_to_collect_fix": {
+    "from": "2026-09-22 12:52:20",
+    "to": "2026-09-23 21:27:04",
+    "self_heal_final_failures": 31,
+    "apply_operation_starts": 149,
+    "applied_ok": 651,
+    "failure_rate_per_operation_start": 0.2081
+  },
+  "kpi_window_B_collect_fix_to_now": {
+    "from": "2026-09-23 21:27:04",
+    "to": "2026-09-24 02:33:53",
+    "self_heal_final_failures": 1,
+    "apply_operation_starts": 3,
+    "applied_ok": 0,
+    "failure_rate_per_operation_start": 0.3333
+  },
+  "kpi_window_C_last_failure_to_now": {
+    "from": "2026-09-23 22:19:25",
+    "to": "2026-09-24 02:33:53",
+    "self_heal_final_failures": 1,
+    "apply_operation_starts": 0,
+    "applied_ok": 0,
+    "failure_rate_per_operation_start": null
+  },
+  "kpi_histogram_account_lines_per_failure": {
+    "1": 3,
+    "3": 19,
+    "4": 5,
+    "5": 2,
+    "6": 3
+  }
+}
