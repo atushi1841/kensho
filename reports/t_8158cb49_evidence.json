@@ -24,7 +24,7 @@
     "sha256:94d577cc11fbd8b0c7366ae1d848549e98fd5343a625a424a8825687c413f64c  scripts/agent_span_emit.py",
     "sha256:2eef1d1b86bf7fd1d2f105601253e1f4c9231b5238def288e60d4a192cfb2a09  scripts/agent_span_report.py",
     "sha256:17e3f2b13082ba2fb0e5e61d3b671ff71c01343ffc8b26714166c94558068c63  tests/test_agent_span_emit.py",
-    "sha256:3742b840b22b1cc56c7fe2e768aa39d2a190fa15f0c9ffd7ad8fec1aa9b02eb5  reports/t_8158cb49_verification.md",
+    "sha256:cc3ce505b7806021efe9ddc9564c403aae3530a1338d43bf28cc0ace8fc5b260  reports/t_8158cb49_verification.md",
     "sha256:d19ed759a3406a5d23ccf5acfdac944d1b9ca873bdf3dfa9eaa248abefa1e4fb  data/agent_spans/2026-09-23.jsonl"
   ],
   "outcome": {
