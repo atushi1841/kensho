@@ -7,6 +7,7 @@ import time
 from typing import Any
 
 from .common import HEADERS, _fetch_with_retry, has_skip_keyword
+from ..run_budget import RunBudget, check_budget
 
 # ── 第3収集源: kenshou.club（懸賞CLUB）──
 _KENSHOUCLUB_BASE: str = "https://kenshou.club"
@@ -14,10 +15,21 @@ _KENSHOUCLUB_TAG: str = "/archives/tag/twitter%E3%81%A7%E5%BF%9C%E5%8B%9F"
 _KENSHOUCLUB_MAX_PAGES: int = 24
 
 
-def scrape_kenshouclub(out: Any, processed_set: set[str], account_keys: list[str]) -> list[dict[str, Any]]:
+def scrape_kenshouclub(
+    out: Any,
+    processed_set: set[str],
+    account_keys: list[str],
+    *,
+    budget: RunBudget | None = None,
+) -> list[dict[str, Any]]:
     """kenshou.club のX/Twitter懸賞一覧からX URLを収集。
     一覧ページ → 各記事ページ → X URL抽出 の2段階。
     戻り値: collected.json 互換のアイテムリスト。
+
+    budget (t_b64c35ea): run予算。渡された場合、ページ/記事の区切りで上限到達を検知したら
+    残りを打ち切って return する（＝それまでの収集分は呼び出し側で保存される）。
+    24ページ×各26記事と最重量のため、collector側の phase 単位打ち切りだけでは
+    1ソース内で上限を超過しうるための内側ガード。
     """
     headers_jp: dict[str, str] = dict(HEADERS)
     headers_jp["Accept-Language"] = "ja,en-US;q=0.9,en;q=0.8"
@@ -25,6 +37,8 @@ def scrape_kenshouclub(out: Any, processed_set: set[str], account_keys: list[str
     seen_x_urls: set[str] = set()
 
     for page in range(1, _KENSHOUCLUB_MAX_PAGES + 1):
+        if budget is not None and check_budget(budget, "kenshou.club内ページ", out):
+            break
         list_url: str = f"{_KENSHOUCLUB_BASE}{_KENSHOUCLUB_TAG}"
         if page > 1:
             list_url = f"{_KENSHOUCLUB_BASE}{_KENSHOUCLUB_TAG}/page/{page}"
@@ -50,6 +64,8 @@ def scrape_kenshouclub(out: Any, processed_set: set[str], account_keys: list[str
             out(f"  [KCLUB] ページ{page}: 記事走査{len(article_links)}件（収集件数ではない）")
 
             for article_url in article_links:
+                if budget is not None and check_budget(budget, "kenshou.club内記事", out):
+                    break
                 try:
                     code2, html2, _ = _fetch_with_retry(
                         article_url, referer=list_url, timeout=30, source="kenshou.club"

@@ -9,9 +9,13 @@
     実測: logs/collect_20260923_180002.log / 190001.log / 200001.log（3回連続 Traceback）。
     修正後: logs/collect_20260923_210002.log で Step 2b ken-kaku 19件 → Step 2c 進行を確認。
 
-本テストは collector.py の全ての ``guarded_source(...)`` 呼び出しについて
+本テストは collector.py の全ての ``guarded_source(...)`` / ``_run_source(...)`` 呼び出しについて
 「callable が、その後ろに渡された位置引数で実際に呼べるか」を静的に検証する。
 ネットワーク不要・高速・決定的。
+
+2026-09-24 更新 (t_b64c35ea): 予算付きラッパー ``_run_source(name, fn, *args)``
+（run_budget 導入時に追加・中身は guarded_source へ委譲）も検証対象に含めた。
+呼び出し側の名前が変わっても arity 不整合の検出能力は維持される。
 """
 
 from __future__ import annotations
@@ -24,6 +28,9 @@ from typing import Any
 import kensho.scraping.collector as collector
 
 SRC_PATH = Path(collector.__file__)
+
+#: 検証対象のラッパー名（いずれも ``fn(*args)`` で callable を呼ぶ実装）。
+GUARD_WRAPPERS: tuple[str, ...] = ("guarded_source", "_run_source")
 
 
 def _sig_from_lambda(node: ast.Lambda) -> inspect.Signature:
@@ -65,12 +72,14 @@ def _resolve(node: ast.expr) -> Any:
     if isinstance(node, ast.Attribute):
         base = _resolve(node.value)
         return getattr(base, node.attr, None) if base is not None else None
-    if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
-        if node.func.attr == "partial":
-            base = _resolve(node.args[0])
-            # partial の keyword は実行時まで評価できないため「束縛済み」として名前だけ扱う
-            prebound = {k.arg for k in node.keywords if k.arg}
-            return ("partial", base, prebound)
+    if isinstance(node, ast.Call) and (
+        (isinstance(node.func, ast.Attribute) and node.func.attr == "partial")
+        or (isinstance(node.func, ast.Name) and node.func.id == "partial")
+    ):
+        base = _resolve(node.args[0])
+        # partial の keyword は実行時まで評価できないため「束縛済み」として名前だけ扱う
+        prebound = {k.arg for k in node.keywords if k.arg}
+        return ("partial", base, prebound)
     return None
 
 
@@ -98,7 +107,7 @@ def _can_bind(resolved: Any, n_args: int) -> bool:
 
 
 def find_arity_violations(source: str) -> list[str]:
-    """guarded_source 呼び出しのうち、callable と位置引数が噛み合わないものを列挙。"""
+    """guarded_source / _run_source 呼び出しのうち、callable と位置引数が噛み合わないものを列挙。"""
     tree = ast.parse(source)
     violations: list[str] = []
     for node in ast.walk(tree):
@@ -106,7 +115,7 @@ def find_arity_violations(source: str) -> list[str]:
             continue
         func = node.func
         name = func.id if isinstance(func, ast.Name) else getattr(func, "attr", None)
-        if name != "guarded_source" or len(node.args) < 2:
+        if name not in GUARD_WRAPPERS or len(node.args) < 2:
             continue
         target, extra = node.args[1], node.args[2:]
         resolved: Any = _sig_from_lambda(target) if isinstance(target, ast.Lambda) else _resolve(target)
@@ -131,13 +140,35 @@ def test_kenkaku_call_passes_three_positional_args() -> None:
     tree = ast.parse(source)
     found = False
     for node in ast.walk(tree):
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "guarded_source":
-            if node.args and isinstance(node.args[0], ast.Constant) and node.args[0].value == "ken-kaku":
+        if not isinstance(node, ast.Call):
+            continue
+        if not (isinstance(node.func, ast.Name) and node.func.id in GUARD_WRAPPERS):
+            continue
+        if node.args and isinstance(node.args[0], ast.Constant):
+            if node.args[0].value == "ken-kaku":
                 found = True
                 assert len(node.args) >= 5, (
                     "ken-kaku 呼び出しは callable + out/processed_set/account_keys の3引数が必要"
                 )
-    assert found, "ken-kaku の guarded_source 呼び出しが見つからない"
+    assert found, "ken-kaku の guarded_source/_run_source 呼び出しが見つからない"
+
+
+def test_detector_checks_partial_bare_name() -> None:
+    """負のコントロール: `from functools import partial` の素の Name 呼び出しでも arity を検証する。
+
+    以前は ``functools.partial``（Attribute）しか解決できず、collector.py が実際に使う
+    ``partial(...)``（Name）は「解決不能=対象外」として素通りしていた（＝検出力の穴）。
+    """
+    buggy = (
+        "def _collect_impl():\n"
+        "    items = _run_source(\n"
+        '        "ken-kaku",\n'
+        "        partial(scrape_kenkaku, proxy=p),\n"
+        "        out,\n"
+        "    )\n"
+    )
+    violations = find_arity_violations(buggy)
+    assert len(violations) == 1, f"partial(Name) の arity 不整合を検出できない: {violations}"
 
 
 def test_detector_catches_the_historical_bug() -> None:

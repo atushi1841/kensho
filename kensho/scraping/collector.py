@@ -20,6 +20,7 @@ from kensho.scraping.common import (
 )
 from kensho.scraping.dead_source_sentinel import check_dead_sources
 from kensho.scraping.source_health import PRIMARY_SOURCES, SourceHealth, note_fetch, set_active
+from kensho.scraping.run_budget import DEFAULT_MAX_RUN_SECONDS, MARKER, RunBudget, check_budget
 from kensho.scraping.socks_rotation import (
     make_rotator_from_config,
     proxied_fetch,
@@ -279,6 +280,10 @@ def _collect_impl(
 
     col_cfg: dict[str, Any] = cfg.get("collection", {})
     max_items: int = col_cfg.get("max_items", 200)
+    # ★ t_b64c35ea: 1runの実行時間上限（秒）。超過したら残ソースを打ち切り、収集済み分は部分保存する。
+    #   毎時収集のflockが長時間保持され後続スロットが丸ごと欠落する事故（9/21-23で14中6件）の防止。
+    #   0以下を指定すると時間制限なし（従来挙動）。
+    max_run_seconds: float = float(col_cfg.get("max_run_seconds", DEFAULT_MAX_RUN_SECONDS) or 0)
 
     # ── Scrapling モード（Cloudflare突破）──
     use_scrapling: bool = col_cfg.get("use_scrapling", False)
@@ -336,6 +341,22 @@ def _collect_impl(
 
     t0: float = time.time()
 
+    # ★ t_b64c35ea: run単位の実行時間予算。超過した phase はネットワーク処理を行わず skip し、
+    #   そのまま通常の保存フローへ進む（＝収集済み分の部分保存。プロセスは強制終了しない）。
+    _budget = RunBudget(max_run_seconds)
+
+    def _budget_hit(phase: str) -> bool:
+        """実行上限到達なら True（呼び出し側はその phase を skip する）。"""
+        return check_budget(_budget, phase, out)
+
+    def _run_source(name: str, fn: Callable[..., list[dict[str, Any]]], *args: Any) -> list[dict[str, Any]]:
+        """予算チェック付き guarded_source。上限到達時はネットワーク呼び出しを行わず空を返す。"""
+        if _budget_hit(name):
+            return []
+        return guarded_source(name, fn, *args)
+
+    out(f"  実行時間上限: {max_run_seconds:.0f}秒（超過時は残ソース打ち切り・部分保存）")
+
     processed: dict[str, Any] = load_json(PROCESSED_FILE, {})
     processed_set: set[str] = set(processed.get("ids", []))
     out(f"  既処理: {len(processed_set)}件")
@@ -360,6 +381,8 @@ def _collect_impl(
         out(f"  [HEALTH] knshow: 異常 {health.status_line('knshow')} → 自動skip・キャッシュ（既収集分）維持")
         health.record_skip("knshow")
     while page <= max_pages and not health.is_unhealthy("knshow"):
+        if _budget_hit("Step1 knshow一覧"):
+            break
         url: str = f"{BASE_URL}/twitter"
         if page > 1:
             url = f"{BASE_URL}/twitter/page:{page}"
@@ -433,6 +456,8 @@ def _collect_impl(
     if new_links:
         out(f"\n[Step 2a knshow] {len(new_links)}件を処理...")
         for i, detail_url in enumerate(new_links):
+            if _budget_hit("Step2a knshow詳細"):
+                break
             t1: float = time.time()
             try:
                 code, html, _ = _do_fetch_retry(f"{BASE_URL}{detail_url}", referer=f"{BASE_URL}/twitter")
@@ -538,7 +563,7 @@ def _collect_impl(
     # ── Step 2b: ken-kaku.com 収集 ──
     _kenkaku_proxy: str | None = col_cfg.get("kenkaku_proxy") or os.getenv("KENKAKU_PROXY") or None
     out("\n[Step 2b ken-kaku] X懸賞を収集...")
-    kenkaku_items: list[dict[str, Any]] = guarded_source(
+    kenkaku_items: list[dict[str, Any]] = _run_source(
         "ken-kaku",
         # ★ 2026-09-23 修正: guarded_source(name, fn, *args) は fn(*args) を呼ぶ。
         #   1b55c7d(t_c5097d30)が引数なしlambdaを渡したため fn() が TypeError となり
@@ -559,13 +584,13 @@ def _collect_impl(
     if _kenkaku_fails > 0:
         out(f"  [FALLBACK] ken-kaku失敗{_kenkaku_fails}件 → CPMK/KEMAで補完収集")
         try:
-            _cp_items = guarded_source("cp.meikan", scrape_cpmeikan, out, processed_set, account_keys)
+            _cp_items = _run_source("cp.meikan", scrape_cpmeikan, out, processed_set, account_keys)
             out(f"    [FALLBACK] cp.meikan: {len(_cp_items)}件")
             _failover_items.extend(_cp_items)
         except Exception as _e:
             out(f"    [FALLBACK] cp.meikan失敗: {_e}")
         try:
-            _ke_items = guarded_source("ke-ma", scrape_kema, out, processed_set, account_keys)
+            _ke_items = _run_source("ke-ma", scrape_kema, out, processed_set, account_keys)
             out(f"    [FALLBACK] ke-ma: {len(_ke_items)}件")
             _failover_items.extend(_ke_items)
         except Exception as _e:
@@ -576,15 +601,21 @@ def _collect_impl(
 
     # ── Step 2c: kenshou.club 収集 ──
     out("\n[Step 2c kenshou.club] X懸賞を収集...")
-    kclub_items: list[dict[str, Any]] = guarded_source(
-        "kenshou.club", scrape_kenshouclub, out, processed_set, account_keys
+    kclub_items: list[dict[str, Any]] = _run_source(
+        # ★ t_b64c35ea: kclubは24ページ×各記事fetchで最重量。内側ループにも budget を渡し、
+        #   1ページ/1記事の区切りで打ち切れるようにする（途中までの収集結果は保持される）。
+        "kenshou.club",
+        partial(scrape_kenshouclub, budget=_budget),
+        out,
+        processed_set,
+        account_keys,
     )
     out(f"  kenshou.club: {len(kclub_items)}件")
     collected.extend(kclub_items)
 
     # ── Step 2d: cp.meikan.org 収集 ──
     out("\n[Step 2d cp.meikan.org] Xキャンペーンを収集...")
-    cpmeikan_items: list[dict[str, Any]] = guarded_source(
+    cpmeikan_items: list[dict[str, Any]] = _run_source(
         "cp.meikan", scrape_cpmeikan, out, processed_set, account_keys
     )
     out(f"  cp.meikan.org: {len(cpmeikan_items)}件")
@@ -592,7 +623,7 @@ def _collect_impl(
 
     # ── Step 2e: ke-ma.net 収集 ──
     out("\n[Step 2e ke-ma.net] X懸賞を収集...")
-    kema_items: list[dict[str, Any]] = guarded_source("ke-ma", scrape_kema, out, processed_set, account_keys)
+    kema_items: list[dict[str, Any]] = _run_source("ke-ma", scrape_kema, out, processed_set, account_keys)
     out(f"  ke-ma.net: {len(kema_items)}件")
     collected.extend(kema_items)
 
@@ -604,7 +635,9 @@ def _collect_impl(
     #   （cron発火時刻）に変更。収集遅延で Step 2f 到達が数時間を跨いでも実行機会を逃さない。
     _research_ok: bool = research_allowed(_collect_start_hour, cfg)
     twscrape_items: list[dict[str, Any]] = []
-    if not _research_ok:
+    if _budget_hit("Step2f twscrape"):
+        twscrape_items = []
+    elif not _research_ok:
         _rh = (cfg or {}).get("collection", {}).get("research_hours")
         out(
             f"  [RESEARCH分離] 収集開始時刻 {_collect_start_hour:02d}:00 は research_hours={_rh} "
@@ -630,25 +663,31 @@ def _collect_impl(
 
     # ── Step 2g: chance.com 収集 ──
     out("\n[Step 2g chance.com] X懸賞を収集...")
-    chancecom_items: list[dict[str, Any]] = scrape_chancecom(out, processed_set, account_keys)
+    chancecom_items: list[dict[str, Any]] = (
+        [] if _budget_hit("Step2g chance.com") else scrape_chancecom(out, processed_set, account_keys)
+    )
     out(f"  chance.com: {len(chancecom_items)}件")
     collected.extend(chancecom_items)
 
     # ── Step 2h: kensho-everyday.com 収集（X懸賞カテゴリRSS）──
     out("\n[Step 2h kensho-everyday.com] X懸賞RSSを収集...")
-    kevery_items: list[dict[str, Any]] = scrape_kensho_everyday(out, processed_set, account_keys)
+    kevery_items: list[dict[str, Any]] = (
+        [] if _budget_hit("Step2h kensho-everyday") else scrape_kensho_everyday(out, processed_set, account_keys)
+    )
     out(f"  kensho-everyday.com: {len(kevery_items)}件")
     collected.extend(kevery_items)
 
     # ── Step 2j: kenshofan.com（懸賞ファン）収集 ──
     out("\n[Step 2j kenshofan.com] X懸賞を収集...")
-    kenshofan_items: list[dict[str, Any]] = scrape_kenshofan(out, processed_set, account_keys)
+    kenshofan_items: list[dict[str, Any]] = (
+        [] if _budget_hit("Step2j kenshofan") else scrape_kenshofan(out, processed_set, account_keys)
+    )
     out(f"  kenshofan: {len(kenshofan_items)}件")
     collected.extend(kenshofan_items)
 
     # ── Step 2i: PR TIMES 収集（記念プレゼント・新商品キャンペーン／収集源第5ソース）──
     out("\n[Step 2i prtimes] PR TIMES プレゼント・新商品キャンペーンを収集...")
-    prtimes_items: list[dict[str, Any]] = guarded_source(
+    prtimes_items: list[dict[str, Any]] = _run_source(
         "prtimes", scrape_prtimes, out, processed_set, account_keys
     )
     out(f"  prtimes: {len(prtimes_items)}件")
@@ -683,6 +722,10 @@ def _collect_impl(
         existing["total_on_page"] = len(unique_links)
         existing["new_items_processed"] = 0
         existing["new_items_by_source"] = {}
+        # ★ t_b64c35ea: 打ち切りが発生した run でも「何が起きたか」を残す（観測可能性）。
+        existing["run_budget_seconds"] = _budget.max_seconds
+        existing["deadline_exceeded"] = _budget.expired()
+        existing["skipped_phases"] = list(_budget.expired_phases)
         safe_save_json(COLLECTED_FILE, existing, "collected.json")
         health.save()
         set_active(None)
@@ -755,6 +798,8 @@ def _collect_impl(
         _guard = load_guard(_guard_path)
         _guard_hits = 0
         for idx, item in enumerate(text_candidates):
+            if _budget_hit("Step4 ツイート本文取得"):
+                break
             x_url: str = item["x_url"]
             if is_blocked(_guard, x_url):
                 _guard_hits += 1
@@ -859,7 +904,7 @@ def _collect_impl(
     #   診断/写真投稿/シェア等）が必要な案件を捕捉する。実測7/7正解。
     #   fail-open: LLM失敗・APIキーなし・未設定は従来挙動（応募継続）のまま。
     _llm_classify: bool = (cfg or {}).get("collection", {}).get("llm_classify", False)
-    if _llm_classify:
+    if _llm_classify and not _budget_hit("Step5 LLM判定"):
         try:
             from kensho.scraping.simple_rt_classifier import breaker_snapshot, classify_collected_items
 
@@ -930,6 +975,10 @@ def _collect_impl(
         "collected": merged,
         "error_details": errors,
         "elapsed_seconds": round(time.time() - t0, 1),
+        # ★ t_b64c35ea: 実行時間上限と打ち切り phase（死活監視・事後分析用）
+        "run_budget_seconds": _budget.max_seconds,
+        "deadline_exceeded": _budget.expired(),
+        "skipped_phases": list(_budget.expired_phases),
         "new_items_by_source": {  # 診断用: ソース別新規取得数
             "knshow": success,
             "ken-kaku": len(kenkaku_items),
@@ -996,6 +1045,14 @@ def _collect_impl(
     out(f"  成功: {success}件")
     out(f"  エラー: {len(errors)}件")
     out(f"  処理済み累計: {len(processed_set)}件")
+    # ★ t_b64c35ea: 1runの実測所要と上限・打ち切り有無を必ず1ブロックで出す
+    #   （「前回の収集がまだ継続中 → スキップ」多発の原因をログだけで追えるようにする）。
+    out(
+        f"  実行時間: 実測{elapsed_total:.1f}秒 / 上限{_budget.max_seconds:.0f}秒"
+        f"（打ち切り={'あり' if _budget.expired() else 'なし'}）"
+    )
+    if _budget.expired_phases:
+        out(f"  {MARKER} 打ち切りphase: {_budget.expired_phases}（収集済み分は保存済み）")
 
     x_urls: list[str] = [item["x_url"] for item in collected]
     out("\n収集したX URL:")
