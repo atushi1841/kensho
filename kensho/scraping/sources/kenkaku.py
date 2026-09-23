@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 import time
 from typing import Any
@@ -24,13 +25,17 @@ _KENKAKU_PAGE_IDS: list[str] = [
 # critic v144: ページ単位timeoutリトライ（ken-kaku.com側レイテンシjitter対策）
 # critic対策: リトライは指数バックオフで実行
 # t_350bc813: リトライ3→5回、バックオフ2/4→3/6/10s（10sキャップ） — ConnectTimeout完全drop回避
-_KENKAKU_MAX_RETRIES: int = 5  # 失敗時に追加で最大5回まで再試行（合計6アテンプト）
+# t_c5097d30: リトライ上限5→2回(合計3アテンプト)に短縮し、失敗分を次バッチへ。
+#   接続タイムアウトを10s→5sに短縮(Readは30s維持)、KENKAKU専用プロキシ経由も可能。
+_KENKAKU_MAX_RETRIES: int = 2  # 失敗時に追加で最大2回まで再試行（合計3アテンプト）
 _KENKAKU_RETRY_BACKOFF: float = 3.0  # 指数バックオフのベース秒（3.0 * 2**attempt、10sキャップ）
-_KENKAKU_RETRY_BACKOFF_MAX: float = 10.0  # バックオフ上限（3,6,10,10,10…）
+_KENKAKU_RETRY_BACKOFF_MAX: float = 10.0  # バックオフ上限（3,6,10…）
 # t_f2c62b04: ConnectTimeout源別偏重対策 — 他源(KEMA/CPMK/KCLUB)と同値の30sへ復元。
 #   t_1cae393c が fail-fast 目的で10sに短縮したが、ken-kaku.com の遅延TCP受付
 #   (>10s かつ <30s)でKENKAKUだけに7件/dayのConnectTimeoutが偏重。設計不均衡を解消。
-_KENKAKU_TIMEOUT: int = 30
+# t_c5097d30: 接続タイムアウトを10s→5sに短縮(Read 30s維持)。KENKAKUの遅延TCPは
+#   5s以内に応答する見込み。それでも繋がらない場合は即リトライへ。
+_KENKAKU_TIMEOUT = httpx.Timeout(connect=5.0, read=30.0, write=30.0, pool=30.0)
 
 
 def scrape_kenkaku(

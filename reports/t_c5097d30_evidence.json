@@ -1,0 +1,20 @@
+{
+  "success_indicators": [
+    "13 pytest passed",
+    "kenkaku 19 items fetched with retry1/2 recovery"
+  ],
+  "verification_commands": [
+    "$ python -m pytest tests/test_kenkaku_retry.py -q => 13 passed",
+    "$ python -c scrape_kenkaku => items 19"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-23-revenue-worker-v1.md",
+    "/tmp/kt_out.txt"
+  ],
+  "evidence_hashes": [
+    "a1419f771c133866377a5e6c936dbda14a8101283ac42cdff2e1ab764a0a9fa9",
+    "d858461d72c1181b8bd7757f54a78a850e5008ffa8983153e60fdc16e0141c63"
+  ],
+  "task_id": "t_c5097d30",
+  "status": "complete"
+}

@@ -66,6 +66,7 @@ def fill_defaults(cfg: dict[str, Any]) -> None:
     col.setdefault("source", "https://knshow.com")
     col.setdefault("times", ["09:00", "13:00", "18:00"])
     col.setdefault("max_items", 200)
+    col.setdefault("kenkaku_proxy", "")
 
     ka: dict[str, Any] = cfg.setdefault("keepalive", {})
     ka.setdefault("interval_minutes", 5)

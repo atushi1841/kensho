@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 import time
 from collections.abc import Callable
@@ -534,8 +535,12 @@ def _collect_impl(
         out("\n✅ knshow.com: 新規なし")
 
     # ── Step 2b: ken-kaku.com 収集 ──
+    _kenkaku_proxy: str | None = col_cfg.get("kenkaku_proxy") or os.getenv("KENKAKU_PROXY") or None
     out("\n[Step 2b ken-kaku] X懸賞を収集...")
-    kenkaku_items: list[dict[str, Any]] = guarded_source("ken-kaku", scrape_kenkaku, out, processed_set, account_keys)
+    kenkaku_items: list[dict[str, Any]] = guarded_source(
+        "ken-kaku",
+        lambda out, ps, ak: scrape_kenkaku(out, ps, ak, proxy=_kenkaku_proxy),
+    )
     out(f"  ken-kaku: {len(kenkaku_items)}件")
     collected.extend(kenkaku_items)
 
