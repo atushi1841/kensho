@@ -1,0 +1,74 @@
+{
+  "task_id": "t_5dff275b",
+  "status": "done",
+  "title": "github_sync の push 復旧（credential不在 + index.lock競合 + 接続間欠）",
+  "summary": "cron 最小PATHで cmd.exe が解決できず credential が空になる問題を実測で特定し、PATH非依存化 + repo外 env token で非対話 push を成立させた。index.lock は flock 直列化＋退避リトライ＋stale回収で競合を吸収し、push失敗は exit code/理由をログ・state に記録して次回実行で再送する。",
+  "success_indicators": [
+    "cron相当env(PATH=/usr/bin:/bin)での github_sync 自走push成功回数: 0回/1実行 → 2回/2実行 (100%)",
+    "index.lock 保持中の commit 成功率: 0% (exit 128 即死) → 100% (commit attempt=6 で成功)",
+    "push失敗時の exit code/理由のログ記録件数: 0件 → 1件 (result=push_failed exit=2 reason=auth exit_code=128 pending=1)",
+    "未push分の次回持ち越し再送: 未実装(持ち越し不能) → 実装 ([carry] 検出 + pending_before=2 を再送して 0 に)",
+    "接続失敗の再試行: 0回 → 2回 (push attempt=3 で成功)",
+    "origin/main..HEAD の未pushコミット: 1件(09-23 23:56時点) → 0件",
+    "新規回帰テスト: 32件すべて pass"
+  ],
+  "verification_commands": [
+    "printf 'protocol=https\\nhost=github.com\\n\\n' | env -i PATH=/usr/bin:/bin HOME=/home/atushi /home/atushi/.git-credential-helper-wsl.sh get",
+    "env -i PATH=/usr/bin:/bin HOME=/home/atushi bash scripts/kensho_github_sync.sh",
+    "git log --oneline origin/main..HEAD",
+    "git reflog show origin/main --date=iso | head -3",
+    "tail -12 logs/github_sync_cron.log",
+    "cat logs/github_sync_state.json",
+    "python3 -m pytest tests/test_kensho_github_sync.py -p no:cacheprovider --no-cov -q",
+    ".venv/bin/python -m pytest -p no:cacheprovider --no-cov -q",
+    "bash /tmp/lock_race_demo.sh 25",
+    "python3 scripts/kensho_script_drift_check.py --json",
+    "env -i PATH=/usr/bin:/bin HOME=/home/atushi GITHUB_TOKEN=invalid_token_for_test_5dff275b python3 kensho_github_sync.py --date 2026-09-24"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/kensho_github_sync.py",
+    "/mnt/d/Project2/kensho/scripts/kensho_github_sync.sh",
+    "/mnt/d/Project2/kensho/scripts/git-credential-kensho-env.sh",
+    "/mnt/d/Project2/kensho/scripts/make_github_sync_env.py",
+    "/mnt/d/Project2/kensho/tests/test_kensho_github_sync.py",
+    "/mnt/d/Project2/kensho/reports/t_5dff275b_verification.md"
+  ],
+  "evidence_hashes": {
+    "kensho_github_sync.py": "sha256:14bc54a4c1f9f5d41ab8a964833640b08572116a20914900ec81aa0ed9b3d6f0",
+    "scripts/kensho_github_sync.sh": "sha256:7b44ef578f5ae4e05322dc54b182d2824545698d5ba01b0a0819e52c19602119",
+    "scripts/git-credential-kensho-env.sh": "sha256:eb4466fce2936766d6d02fee2f86040654735f4625bc5a430dfe68d00d4b7341",
+    "scripts/make_github_sync_env.py": "sha256:0ced027dd7d759b77267291dca8032ca995977f9d7f2443f8aada10a2de53c6f",
+    "tests/test_kensho_github_sync.py": "sha256:d127d25cb7849f8c3ec31d64dd95caa8163339b33408ea196456c9196db00df6",
+    "/home/atushi/.config/kensho/github-sync.env (repo外・mode 600・値は非公開)": "sha256:336e71a99dd7bea15b6524f671761b0f95622e685f9abd6b032f5d8435f00d34"
+  },
+  "outcome": [
+    {"metric": "cron相当envでの自走push成功回数(/実行)", "before": 0, "after": 2, "unit": "回", "evidence": "logs/github_sync_cron.log result=ok / reflog update by push"},
+    {"metric": "index.lock 競合時の commit 失敗率", "before": 100, "after": 0, "unit": "%", "evidence": "lock_race_demo: [ok] commit (attempt=6)"},
+    {"metric": "未pushコミット残数", "before": 1, "after": 0, "unit": "件", "evidence": "git log --oneline origin/main..HEAD"},
+    {"metric": "push失敗の理由記録率", "before": 0, "after": 100, "unit": "%", "evidence": "result=push_failed exit=2 reason=auth exit_code=128 pending=1"},
+    {"metric": "github_sync 回帰テスト数", "before": 0, "after": 32, "unit": "件", "evidence": "32 passed in 3.56s"}
+  ],
+  "changed_files": [
+    "kensho_github_sync.py",
+    "scripts/kensho_github_sync.sh",
+    "scripts/git-credential-kensho-env.sh",
+    "scripts/make_github_sync_env.py",
+    "tests/test_kensho_github_sync.py"
+  ],
+  "commit": "bd4b9a4",
+  "acceptance": {
+    "cond1_cron_noninteractive_push": "PASS (wrapper_exit=0 / credential=token(env-file:...))",
+    "cond2_index_lock_exclusion": "PASS (flock直列化 + 退避リトライ + stale回収、実測 commit attempt=6)",
+    "cond3_failure_logging_and_carryover": "PASS (exit code/理由をログ+state に記録、[carry] で次回再送)",
+    "cond4_verification": "PASS (origin/main..HEAD=0 / reflog push 04:52:45・05:04:06 が実行時刻以降)"
+  },
+  "security": {
+    "token_location": "/home/atushi/.config/kensho/github-sync.env (repo外, chmod 600)",
+    "token_in_repo": false,
+    "note": "repo内 helper は環境変数を読むだけ。token 値はこのJSON・ログ・コミットに含まれない。"
+  },
+  "handoff": {
+    "for_review_card": "docs/daily_reports/ の連続push日数の再判定は再監視カードへ。2026-09-24 分は origin/main 到達済み。",
+    "known_limit": "WSL↔GitHub の接続間欠性そのものは環境要因。失敗時は持ち越し再送で吸収する設計。"
+  }
+}
