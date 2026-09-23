@@ -13,11 +13,17 @@
 import json
 import os
 import subprocess
+import sys
 import time
 from datetime import UTC, datetime
 from typing import Any
 
 PROJECT_DIR = "/mnt/d/Project2/kensho"
+
+# 収集ボリューム指標（本日収集実績/累計）の単一情報源（2026-09-23・手書き値の自動化）
+if PROJECT_DIR not in sys.path:
+    sys.path.insert(0, PROJECT_DIR)
+from kensho.core import collection_volume  # noqa: E402
 
 
 # ── 簡易.envローダー（9/7追加: 401対策。dotenv無しのstandalone実装） ──
@@ -969,8 +975,13 @@ def build_revenue_summary(
     apify: dict[str, Any],
     rapidapi: dict[str, Any],
     gumroad: dict[str, Any],
+    volume: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """全収益源を集約したサマリーを生成。"""
+    """全収益源を集約したサマリーを生成。
+
+    volume: 収集ボリューム指標（未指定なら collection_volume から実データ集計）。
+            テストで決定的な値を注入するための入口（2026-09-23）。
+    """
     now = datetime.now()
     entry: dict[str, Any] = {
         "date": now.strftime("%Y-%m-%d"),
@@ -1032,6 +1043,17 @@ def build_revenue_summary(
         "rapidapi_ok": "error" not in rapidapi,
         "gumroad_ok": bool(gumroad.get("state_exists")),
     }
+    # 2026-09-23 (t_5e16a983申し送り): 収集ボリュームを実データから自動計上。
+    #   従来は revenue-status.html のカードと collectors.collected_today を手書きしており、
+    #   ダッシュボード再生成でカードが消える／値が222のまま固定化する虚偽リスクがあった。
+    try:
+        _volume = volume if volume is not None else collection_volume.volume_stats(PROJECT_DIR)
+        collectors["collected_today"] = _volume["collected_today"]
+        collectors["collected_total"] = _volume["collected_total"]
+        collectors["collected_today_source"] = _volume["collected_today_source"]
+        collectors["collected_today_runs"] = _volume["collected_today_runs"]
+    except Exception as e:  # noqa: BLE001 — 計測失敗で収集全体は止めない
+        warnings.append(f"収集ボリューム集計に失敗（dashboardは前回値表示）: {e}")
     if rapidapi.get("fallback") == "last_known_state":
         collectors["rapidapi_cache_fallback"] = True
         collectors["rapidapi_fallback_state_saved_at"] = rapidapi.get("fallback_state_saved_at")

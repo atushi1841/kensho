@@ -8,12 +8,18 @@ cronで毎日収集後に自動生成される。
 
 import json
 import os
+import sys
 from datetime import datetime
 from typing import Any
 
 PROJECT_DIR = "/mnt/d/Project2/kensho"
 DATA_FILE = os.path.join(PROJECT_DIR, "data", "revenue-daily.json")
 OUTPUT = os.path.join(PROJECT_DIR, "revenue-status.html")
+
+# 収集ボリューム指標の単一情報源（2026-09-23: 手書き値の自動化）
+if PROJECT_DIR not in sys.path:
+    sys.path.insert(0, PROJECT_DIR)
+from kensho.core import collection_volume  # noqa: E402
 
 
 def load_data() -> list[dict[str, Any]]:
@@ -37,6 +43,18 @@ def render(entries: list[dict[str, Any]]) -> str:
     rapidapi = last.get("rapidapi", {})
     gumroad = last.get("gumroad", {})
     rev = last.get("revenue_estimate", {})
+
+    # 収集ボリューム（2026-09-23: 実データから自動集計。再生成でカードが消える/値が固定化する事故の恒久対策）
+    try:
+        _volume: dict[str, Any] = collection_volume.volume_stats(PROJECT_DIR)
+    except Exception:
+        _volume = {}
+    _collectors = last.get("collectors", {})
+    vol_today: object = _volume.get("collected_today", _collectors.get("collected_today", "—"))
+    vol_total: object = _volume.get("collected_total", _collectors.get("collected_total", "—"))
+    vol_source: str = str(_volume.get("collected_today_source", "logs/collect_<日付>_*.log"))
+    vol_runs = _volume.get("collected_today_runs")
+    vol_runs_label = f"当日の収集run {vol_runs}本" if isinstance(vol_runs, int) else "run数不明"
 
     # 直近の推移（7日分）
     recent = entries[-7:]
@@ -150,6 +168,15 @@ li{{font-size:0.85rem;margin-bottom:4px}}
 <div class="stat-card"><div class="stat-val" style="color:#d29922">{rapidapi.get("apis_total", 0)}</div><div class="stat-label">RapidAPI API</div></div>
 </div>
 <p class="sub" style="margin-top:8px">{rev.get("note", "")}</p>
+</div>
+
+<div class="card">
+<div class="card-title">収集ボリューム（実データ自動集計）</div>
+<div class="grid-3">
+<div class="stat-card"><div class="stat-val" style="color:#3fb950">{vol_today}</div><div class="stat-label">本日収集実績</div></div>
+<div class="stat-card"><div class="stat-val" style="color:#58a6ff">{vol_total}</div><div class="stat-label">収集済み総数</div></div>
+</div>
+<p class="sub" style="margin-top:8px">本日収集実績=当日の収集ログ({vol_source})に出現したユニークX URL数（走査件数ではなく収集URL件数・{vol_runs_label}）／収集済み総数=data/collected.json の累計（重複排除済み）。Apifyアクター数とは別指標。</p>
 </div>
 
 <div class="card">

@@ -916,8 +916,30 @@ class TestV140CollectorsTopLayer:
 
     def test_collectors_ok_when_no_error(self) -> None:
         entry = krc.build_revenue_summary(_make_normal_apify(n_ppe=5), _empty_rapidapi(), _empty_gumroad())
-        assert entry["collectors"] == {"apify_ok": True, "rapidapi_ok": True, "gumroad_ok": False}
+        collectors = entry["collectors"]
+        assert collectors["apify_ok"] is True
+        assert collectors["rapidapi_ok"] is True
+        assert collectors["gumroad_ok"] is False
         assert "last_known_total" not in entry
+        # 2026-09-23: 収集ボリュームは実データ（収集ログ/collected.json）から自動計上される
+        assert isinstance(collectors["collected_today"], int)
+        assert isinstance(collectors["collected_total"], int)
+
+    def test_collectors_include_volume_stats(self) -> None:
+        """volume注入で決定的に検証（dashboardと共有する収集実績の値）。"""
+        volume = {
+            "collected_today": 478,
+            "collected_total": 1191,
+            "collected_today_runs": 14,
+            "collected_today_source": "logs/collect_20260923_*.log",
+        }
+        entry = krc.build_revenue_summary(
+            _make_normal_apify(n_ppe=5), _empty_rapidapi(), _empty_gumroad(), volume=volume
+        )
+        assert entry["collectors"]["collected_today"] == 478
+        assert entry["collectors"]["collected_total"] == 1191
+        assert entry["collectors"]["collected_today_runs"] == 14
+        assert entry["collectors"]["collected_today_source"] == "logs/collect_20260923_*.log"
 
     def test_fallback_records_top_layer(self) -> None:
         rap = {
