@@ -7,6 +7,7 @@ import re
 import time
 from collections.abc import Callable
 from datetime import datetime
+from functools import partial
 from pathlib import Path
 from typing import Any
 
@@ -539,7 +540,14 @@ def _collect_impl(
     out("\n[Step 2b ken-kaku] X懸賞を収集...")
     kenkaku_items: list[dict[str, Any]] = guarded_source(
         "ken-kaku",
-        lambda out, ps, ak: scrape_kenkaku(out, ps, ak, proxy=_kenkaku_proxy),
+        # ★ 2026-09-23 修正: guarded_source(name, fn, *args) は fn(*args) を呼ぶ。
+        #   1b55c7d(t_c5097d30)が引数なしlambdaを渡したため fn() が TypeError となり
+        #   SelfHealingLoop が3回失敗→Step 2c以降の全収集源が巻き添えで停止していた。
+        #   proxy は keyword-only なので partial で束縛し、out/ps/ak は位置引数で渡す。
+        partial(scrape_kenkaku, proxy=_kenkaku_proxy),
+        out,
+        processed_set,
+        account_keys,
     )
     out(f"  ken-kaku: {len(kenkaku_items)}件")
     collected.extend(kenkaku_items)
