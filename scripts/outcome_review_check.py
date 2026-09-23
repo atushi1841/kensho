@@ -1,0 +1,355 @@
+#!/usr/bin/env python3
+"""outcome_review_check.py — 事後効果測定（Outcome Review）の定期再確認。
+
+タスク t_eca89f41（二重ループ学習）の中核。AIチームの提案は「実装前の成功指標（数値）」
+を義務化しているが、実装後に「その指標が実際に改善したか」を遡って確認する工程が
+無かった（テスト通過＝done で終わり、実KPIが動いたかは不明だった）。
+
+本スクリプトは過去 N 日間に done になったタスクの
+`reports/<task_id>_evidence.json` と `reports/<task_id>_verification.md` を再読し、
+before/after の実測値が数値で確認できるか（＝改善が実測されたか）を集計する。
+
+nightly-critic（cron 4baf143523e0 / kensho-revenue-report.sh）から毎時呼ばれ、
+出力が critic のプロンプトに注入される = 「critic定期実行に過去N日doneタスクの
+実測値再確認ステップを追加」の実体。
+
+判定規則は done ガード（kanban_done_guard.py 条件(k)）の outcome_review_state() と同一:
+  pass    : evidence.json の outcome={metric,before,after} または検証セクションの
+            before→after 数値比較が存在
+  missing : 数値KPIありなのに before/after 実測値が無い（要フォロー）
+  na      : 成功指標に数値KPIが無い（対象外・縛らない）
+加えて after < before のエントリを regression（悪化疑い）として明示する。
+
+使い方:
+  python3 scripts/outcome_review_check.py                       # markdown を stdout
+  python3 scripts/outcome_review_check.py --days 7 --json       # 機械可読JSON
+  python3 scripts/outcome_review_check.py --write-report        # reports/ に保存
+  python3 scripts/outcome_review_check.py --strict              # 実測確認率<50% で exit 1
+"""
+
+from __future__ import annotations
+
+import argparse
+import datetime as _dt
+import json
+import re
+import sqlite3
+import sys
+from pathlib import Path
+from typing import Any
+
+DEFAULT_DB = "/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db"
+DEFAULT_REPO = Path("/mnt/d/Project2/kensho")
+DEFAULT_DAYS = 7
+# 成功指標: 提案クローズのうち実KPI改善が数値で確認できる割合 > 50%（タスク本文の指標）
+TARGET_RATE = 50.0
+
+# ガード条件(k) と同一の必須キー・数値KPI検出規則（ドリフト検出テスト付き）
+OUTCOME_REQUIRED_KEYS = ("metric", "before", "after")
+_NUMERIC_KPI_RE = re.compile(r"[0-9]+\s*(%|％|件|本|回|円|B|GB|MB|KB|秒|分|人|日|倍|点)")
+
+
+def _md_before_after_patterns() -> list[re.Pattern[str]]:
+    """検証セクションの before→after 数値パターン（ガード条件(k) と同一）。"""
+    num = r"-?\d+(?:[,.]\d+)?"
+    unit = r"[%％,.;×x]?"
+    return [
+        re.compile(rf"before\s*[=:]\s*{num}{unit}\s*(?:→|->|から)?\s*after\s*[=:]\s*{num}{unit}", re.I),
+        re.compile(rf"{num}\s*%\s*→\s*{num}\s*%"),
+        re.compile(rf"改善前[：:]\s*{num}{unit}.*?改善後[：:]\s*{num}{unit}"),
+        re.compile(rf"改修前[：:]\s*{num}{unit}.*?改修後[：:]\s*{num}{unit}"),
+    ]
+
+
+def looks_numeric_kpi(text: str) -> bool:
+    """成功指標文字列が数値KPI（%・件・円 等）を含むか。"""
+    return bool(_NUMERIC_KPI_RE.search(text or ""))
+
+
+def outcome_entries(evidence_data: dict[str, Any] | None) -> list[dict[str, Any]]:
+    """evidence.json の outcome フィールドを正規化して返す（単一dict / list 両対応）。"""
+    if not isinstance(evidence_data, dict):
+        return []
+    raw = evidence_data.get("outcome")
+    if isinstance(raw, dict):
+        raw = [raw]
+    if not isinstance(raw, list):
+        return []
+    return [x for x in raw if isinstance(x, dict)]
+
+
+def _entries_complete(entries: list[dict[str, Any]]) -> bool:
+    """全エントリが metric/before/after を持ち before/after が数値か。"""
+    if not entries:
+        return False
+    for e in entries:
+        if not all(k in e for k in OUTCOME_REQUIRED_KEYS):
+            return False
+        if not isinstance(e.get("before"), (int, float)) or isinstance(e.get("before"), bool):
+            return False
+        if not isinstance(e.get("after"), (int, float)) or isinstance(e.get("after"), bool):
+            return False
+    return True
+
+
+def detect_md_before_after(evidence_text: str) -> list[str]:
+    """検証セクション中の before→after 数値パターンにマッチした pattern を返す。"""
+    hits: list[str] = []
+    for p in _md_before_after_patterns():
+        if p.search(evidence_text or ""):
+            hits.append(p.pattern)
+    return hits
+
+
+def classify(evidence_text: str, evidence_data: dict[str, Any] | None) -> dict[str, Any]:
+    """1タスクの事後効果測定状態を判定する（ガード条件(k) と同一規則）。
+
+    status: pass / missing / na
+    """
+    entries = outcome_entries(evidence_data)
+    md_hits = detect_md_before_after(evidence_text)
+    outcome_ok = _entries_complete(entries)
+
+    if outcome_ok or md_hits:
+        return {
+            "status": "pass",
+            "outcome_ok": outcome_ok,
+            "md_hits": md_hits,
+            "entries": entries,
+            "note": "before/after comparable metric present",
+        }
+
+    indicators: list[str] = []
+    if isinstance(evidence_data, dict):
+        si = evidence_data.get("success_indicators")
+        if isinstance(si, list):
+            indicators = [str(x) for x in si if x is not None]
+    has_numeric_kpi = any(looks_numeric_kpi(s) for s in indicators)
+    if not has_numeric_kpi:
+        return {
+            "status": "na",
+            "outcome_ok": False,
+            "md_hits": [],
+            "entries": [],
+            "note": "no numeric KPI in success_indicators (outcome review not applicable)",
+        }
+    return {
+        "status": "missing",
+        "outcome_ok": False,
+        "md_hits": [],
+        "entries": [],
+        "note": "numeric success_indicators present but before/after real metrics missing",
+    }
+
+
+def regressions(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """after < before のエントリ（悪化疑い）を返す。"""
+    out: list[dict[str, Any]] = []
+    for e in entries:
+        b, a = e.get("before"), e.get("after")
+        if isinstance(b, (int, float)) and isinstance(a, (int, float)) and not isinstance(b, bool):
+            if a < b:
+                out.append(e)
+    return out
+
+
+def fetch_done_tasks(db_path: Path, since_epoch: int, limit: int = 200) -> list[dict[str, Any]]:
+    """completed_at >= since_epoch の done タスクを取得する。"""
+    con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+    try:
+        cur = con.execute(
+            "SELECT id, title, assignee, completed_at, result FROM tasks "
+            "WHERE status='done' AND completed_at IS NOT NULL AND completed_at >= ? "
+            "ORDER BY completed_at DESC LIMIT ?",
+            (since_epoch, limit),
+        )
+        rows = cur.fetchall()
+    finally:
+        con.close()
+    tasks: list[dict[str, Any]] = []
+    for tid, title, assignee, completed_at, result in rows:
+        tasks.append(
+            {
+                "id": str(tid),
+                "title": str(title or ""),
+                "assignee": str(assignee or ""),
+                "completed_at": int(completed_at),
+                "completed_date": _dt.datetime.fromtimestamp(int(completed_at)).strftime("%Y-%m-%d"),
+                "result": str(result or ""),
+            }
+        )
+    return tasks
+
+
+def find_evidence(reports_dir: Path, task_id: str) -> Path | None:
+    """reports/<task_id>_evidence.json を優先し、無ければ *<task_id>*evidence*.json を探す。"""
+    exact = reports_dir / f"{task_id}_evidence.json"
+    if exact.is_file():
+        return exact
+    cands = sorted(p for p in reports_dir.glob(f"*{task_id}*evidence*.json") if p.is_file())
+    return cands[0] if cands else None
+
+
+def find_verification(reports_dir: Path, task_id: str) -> Path | None:
+    """reports/<task_id>_verification.md を優先し、無ければ *<task_id>*.md を探す。"""
+    exact = reports_dir / f"{task_id}_verification.md"
+    if exact.is_file():
+        return exact
+    cands = sorted(
+        p for p in reports_dir.glob(f"*{task_id}*.md") if p.is_file() and "evidence" not in p.name
+    )
+    return cands[0] if cands else None
+
+
+def audit_task(task: dict[str, Any], reports_dir: Path) -> dict[str, Any]:
+    """1タスクを監査して判定結果を返す。"""
+    tid = str(task["id"])
+    ev_path = find_evidence(reports_dir, tid)
+    md_path = find_verification(reports_dir, tid)
+
+    evidence_data: dict[str, Any] | None = None
+    if ev_path is not None:
+        try:
+            loaded = json.loads(ev_path.read_text(encoding="utf-8", errors="replace"))
+            if isinstance(loaded, dict):
+                evidence_data = loaded
+        except (json.JSONDecodeError, OSError):
+            evidence_data = None
+
+    evidence_text = ""
+    if md_path is not None:
+        try:
+            evidence_text = md_path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            evidence_text = ""
+
+    state = classify(evidence_text, evidence_data)
+    entries = state.get("entries") or []
+    return {
+        "id": tid,
+        "title": task["title"],
+        "assignee": task["assignee"],
+        "completed_date": task["completed_date"],
+        "evidence_path": str(ev_path) if ev_path else None,
+        "verification_path": str(md_path) if md_path else None,
+        "status": state["status"],
+        "outcome": entries,
+        "regressions": regressions(entries),
+        "note": state["note"],
+    }
+
+
+def summarize(records: list[dict[str, Any]], days: int, since_date: str) -> dict[str, Any]:
+    """集計サマリを組み立てる。"""
+    measured = [r for r in records if r["status"] == "pass"]
+    missing = [r for r in records if r["status"] == "missing"]
+    na = [r for r in records if r["status"] == "na"]
+    denom = len(measured) + len(missing)
+    rate = (100.0 * len(measured) / denom) if denom else None
+    return {
+        "days": days,
+        "since": since_date,
+        "counts": {
+            "done": len(records),
+            "measured": len(measured),
+            "missing": len(missing),
+            "na": len(na),
+            "numeric_kpi_tasks": denom,
+            "regressed": sum(1 for r in records if r["regressions"]),
+        },
+        "measured_rate": rate,
+        "target_rate": TARGET_RATE,
+        "target_met": bool(rate is not None and rate >= TARGET_RATE),
+        "measured": measured,
+        "missing": missing,
+        "regressions": [r for r in records if r["regressions"]],
+        "tasks": records,
+    }
+
+
+def render_markdown(summary: dict[str, Any]) -> str:
+    """critic プロンプト注入用のコンパクトな markdown を組み立てる。"""
+    c = summary["counts"]
+    rate = summary["measured_rate"]
+    rate_txt = "n/a" if rate is None else f"{rate:.1f}%"
+    lines = [
+        f"### 事後効果測定（Outcome Review / 過去{summary['days']}日 done）",
+        f"- 対象: done={c['done']}件（{summary['since']}以降）/ 数値KPIあり={c['numeric_kpi_tasks']}件",
+        f"- 実測確認: あり={c['measured']}件 / 未実測={c['missing']}件 / KPI非該当={c['na']}件",
+        f"- 実測確認率: {rate_txt}（目標>{summary['target_rate']:.0f}%）"
+        f" → {'達成' if summary['target_met'] else '未達'}",
+    ]
+    if c["regressed"]:
+        lines.append(f"- ⚠️ after<before（悪化疑い）: {c['regressed']}件")
+    if summary["missing"]:
+        lines.append("- 未実測タスク（before/after の数値を追記してクローズすること）:")
+        for r in summary["missing"][:10]:
+            lines.append(f"  - `{r['id']}` {r['title'][:60]}（{r['assignee']}）")
+    if summary["measured"]:
+        lines.append("- 実測済みタスク:")
+        for r in summary["measured"][:10]:
+            if r["outcome"]:
+                detail = ", ".join(
+                    f"{e.get('metric')} {e.get('before')}→{e.get('after')}" for e in r["outcome"]
+                )
+            else:
+                detail = "検証セクションに before→after 記載"
+            lines.append(f"  - `{r['id']}` {detail}")
+    if summary["regressions"]:
+        lines.append("- 悪化疑いの詳細:")
+        for r in summary["regressions"][:10]:
+            for e in r["regressions"]:
+                lines.append(
+                    f"  - `{r['id']}` {e.get('metric')}: {e.get('before')}→{e.get('after')}"
+                )
+    return "\n".join(lines)
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description="Outcome Review 定期再確認（過去N日 done タスク）")
+    ap.add_argument("--days", type=int, default=DEFAULT_DAYS, help="遡る日数（既定7）")
+    ap.add_argument("--db", type=Path, default=Path(DEFAULT_DB), help="kanban DB パス")
+    ap.add_argument("--reports-dir", type=Path, default=DEFAULT_REPO / "reports")
+    ap.add_argument("--limit", type=int, default=200, help="取得する done タスク上限")
+    ap.add_argument("--json", action="store_true", help="JSON で出力")
+    ap.add_argument("--write-report", action="store_true", help="reports/outcome-review-<date>.md に保存")
+    ap.add_argument("--strict", action="store_true", help="実測確認率が目標未達なら exit 1")
+    args = ap.parse_args(argv)
+
+    if not args.db.is_file():
+        print(f"[outcome_review_check] kanban DB が見つかりません: {args.db}", file=sys.stderr)
+        return 3
+
+    now = _dt.datetime.now()
+    since = now - _dt.timedelta(days=args.days)
+    since_date = since.strftime("%Y-%m-%d")
+    records = [audit_task(t, args.reports_dir) for t in fetch_done_tasks(args.db, int(since.timestamp()), args.limit)]
+    summary = summarize(records, args.days, since_date)
+
+    if args.json:
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
+    else:
+        print(render_markdown(summary))
+
+    if args.write_report:
+        args.reports_dir.mkdir(parents=True, exist_ok=True)
+        out = args.reports_dir / f"outcome-review-{now.strftime('%Y-%m-%d')}.md"
+        body = [
+            f"# Outcome Review 定期再確認 {now.strftime('%Y-%m-%d')}",
+            "",
+            f"対象: 過去{args.days}日間（{since_date}以降）に done になったタスク",
+            "",
+            render_markdown(summary),
+            "",
+        ]
+        out.write_text("\n".join(body), encoding="utf-8")
+        if not args.json:
+            print(f"\n- レポート保存: {out}")
+
+    if args.strict and summary["measured_rate"] is not None and not summary["target_met"]:
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

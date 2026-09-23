@@ -1,0 +1,47 @@
+{
+  "success_indicators": [
+    "事後効果測定の定期再確認ステップを critic 定期実行に配線: 1箇所（kensho-revenue-report.sh step 8, cron 4baf143523e0）",
+    "実測確認率の自動算出: 過去7日 done=122件を走査し 数値KPIあり10件中 実測あり3件=30.0% を実測",
+    "自動テスト: tests/test_outcome_review_check.py 11件 pass（ガード条件(k)とのドリフト検出含む）",
+    "mypy strict 0 error（新規2ファイル）"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/outcome_review_check.py --days 7 --reports-dir reports --write-report => 対象done=122件 / 数値KPIあり=10 / 実測あり=3 / 未実測=7 / 実測確認率30.0%（未実測7件を自動列挙）",
+    "$ python3 -m pytest tests/test_outcome_review_check.py -q -p no:cacheprovider --no-cov => 11 passed in 4.46s",
+    "$ python3 -m mypy scripts/outcome_review_check.py tests/test_outcome_review_check.py --strict => Success: no issues found in 2 source files",
+    "$ bash -n ~/.hermes/profiles/kensho-sweeps/scripts/kensho-revenue-report.sh => bash syntax OK",
+    "$ python3 ~/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py --selftest => EXIT=0 / (k) outcome-review before/after gate works"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/outcome_review_check.py",
+    "/mnt/d/Project2/kensho/tests/test_outcome_review_check.py",
+    "/mnt/d/Project2/kensho/reports/outcome-review-2026-09-23.md",
+    "/mnt/d/Project2/kensho/reports/t_eca89f41_verification.md",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-revenue-report.sh",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py"
+  ],
+  "evidence_hashes": [
+    "17057ffe76d5b041c47611ed1e6cd9dd39d511010e695e1fad1d1518de60e12f",
+    "d646526d35d7754ca1e528d17046eeac9ac57b50875fe08b7f6ba2916e6c8a53",
+    "be1fdf7f066eed4eec8b6bf9450421330d9d02d489a5bc0b7f26de4b1614e30c",
+    "a1525b0e44b5d2267d944b5c96add3b92cbaff70da027119844cba4c0519a753",
+    "3e03814df4e2cd1c7e6c874b98c9be8da6203911b28e8929e7f22e140fc45335",
+    "275cd76878e77004c2a24256f2a310f66965a5963ee33c70bf082b8c3fba0d15"
+  ],
+  "outcome": [
+    {
+      "metric": "critic定期実行に組み込まれた事後効果測定ステップ数",
+      "before": 0,
+      "after": 1,
+      "note": "kensho-revenue-report.sh step 8 で毎時自動実行（実測確認率を算出）"
+    },
+    {
+      "metric": "実測確認率（過去7日doneの数値KPIタスク）",
+      "before": 0.0,
+      "after": 30.0,
+      "note": "before=計測手段なしのため0%、after=3/10件を実測（目標>50%は未達・可視化により検知）"
+    }
+  ],
+  "task_id": "t_eca89f41",
+  "status": "complete"
+}
