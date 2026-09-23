@@ -1,0 +1,452 @@
+{
+  "total_campaigns": 112,
+  "accounts": [
+    "TankanNotes",
+    "atushi16",
+    "atushi1840",
+    "inobase1-4",
+    "kudou",
+    "royalkensho",
+    "toushiwatch",
+    "zin20120731"
+  ],
+  "total_entries": 120,
+  "coverage_rate": 0.13392857142857142,
+  "value_known": 17,
+  "value_from_text": 17,
+  "deadline_known": 78,
+  "text_missing": 1,
+  "category_unclassified": 51,
+  "total_estimated_value_jpy": 47030,
+  "total_seats": 2286,
+  "by_category": {
+    "食品・飲料": {
+      "n": 17.0,
+      "entries": 33.0,
+      "value": 7500.0,
+      "wins": 0.0,
+      "seats": 457.0
+    },
+    "グッズ・ノベルティ": {
+      "n": 17.0,
+      "entries": 1.0,
+      "value": 6050.0,
+      "wins": 0.0,
+      "seats": 29.0
+    },
+    "デジタル特典": {
+      "n": 3.0,
+      "entries": 0.0,
+      "value": 10000.0,
+      "wins": 0.0,
+      "seats": 1002.0
+    },
+    "体験・チケット": {
+      "n": 5.0,
+      "entries": 4.0,
+      "value": 0.0,
+      "wins": 0.0,
+      "seats": 310.0
+    },
+    "分類不能・情報欠損": {
+      "n": 51.0,
+      "entries": 46.0,
+      "value": 3990.0,
+      "wins": 0.0,
+      "seats": 167.0
+    },
+    "Amazonギフト券": {
+      "n": 8.0,
+      "entries": 9.0,
+      "value": 14500.0,
+      "wins": 0.0,
+      "seats": 231.0
+    },
+    "化粧品・日用品": {
+      "n": 5.0,
+      "entries": 14.0,
+      "value": 0.0,
+      "wins": 0.0,
+      "seats": 11.0
+    },
+    "旅行・宿泊": {
+      "n": 1.0,
+      "entries": 4.0,
+      "value": 0.0,
+      "wins": 0.0,
+      "seats": 3.0
+    },
+    "家電・ガジェット": {
+      "n": 1.0,
+      "entries": 0.0,
+      "value": 0.0,
+      "wins": 0.0,
+      "seats": 5.0
+    },
+    "金券・現金": {
+      "n": 2.0,
+      "entries": 9.0,
+      "value": 1000.0,
+      "wins": 0.0,
+      "seats": 66.0
+    },
+    "Pay系・ポイント": {
+      "n": 1.0,
+      "entries": 0.0,
+      "value": 3990.0,
+      "wins": 0.0,
+      "seats": 5.0
+    },
+    "ゲーム機・ゲームソフト": {
+      "n": 1.0,
+      "entries": 0.0,
+      "value": 0.0,
+      "wins": 0.0,
+      "seats": 0.0
+    }
+  },
+  "by_wincount": {
+    "21〜100名": {
+      "n": 10.0,
+      "entries": 22.0,
+      "wins": 0.0
+    },
+    "1名（最難関）": {
+      "n": 26.0,
+      "entries": 22.0,
+      "wins": 0.0
+    },
+    "枠数不明・記載なし": {
+      "n": 23.0,
+      "entries": 7.0,
+      "wins": 0.0
+    },
+    "2〜5名": {
+      "n": 37.0,
+      "entries": 41.0,
+      "wins": 0.0
+    },
+    "6〜20名": {
+      "n": 15.0,
+      "entries": 28.0,
+      "wins": 0.0
+    },
+    "101名以上（大量枠）": {
+      "n": 1.0,
+      "entries": 0.0,
+      "wins": 0.0
+    }
+  },
+  "by_deadline": {
+    "31日以上": 18,
+    "期限未記載": 34,
+    "8〜30日": 8,
+    "本日締切": 12,
+    "2〜3日": 14,
+    "明日締切": 6,
+    "4〜7日": 20
+  },
+  "by_route": {
+    "X": 110,
+    "LINE": 1,
+    "未判定": 1
+  },
+  "by_source": {
+    "twscrape": 106,
+    "kema": 1,
+    "kenshouclub": 5
+  },
+  "by_account": {
+    "atushi16": 29,
+    "kudou": 31,
+    "TankanNotes": 26,
+    "atushi1840": 1,
+    "zin20120731": 29,
+    "inobase1-4": 2,
+    "toushiwatch": 1,
+    "royalkensho": 1
+  },
+  "keywords": [
+    {
+      "keyword": "#プレゼント企画",
+      "campaigns": 15,
+      "coverage": 0.10833333333333334,
+      "lift": -0.025595238095238088,
+      "avg_entries": 0.8666666666666667
+    },
+    {
+      "keyword": "BOOTH",
+      "campaigns": 7,
+      "coverage": 0.07142857142857142,
+      "lift": -0.0625,
+      "avg_entries": 0.5714285714285714
+    },
+    {
+      "keyword": "#その場で当たる",
+      "campaigns": 6,
+      "coverage": 0.3333333333333333,
+      "lift": 0.1994047619047619,
+      "avg_entries": 2.6666666666666665
+    },
+    {
+      "keyword": "Amazon",
+      "campaigns": 6,
+      "coverage": 0.125,
+      "lift": -0.008928571428571425,
+      "avg_entries": 1.0
+    },
+    {
+      "keyword": "#VRChat",
+      "campaigns": 6,
+      "coverage": 0.08333333333333333,
+      "lift": -0.050595238095238096,
+      "avg_entries": 0.6666666666666666
+    },
+    {
+      "keyword": "菓子",
+      "campaigns": 5,
+      "coverage": 0.275,
+      "lift": 0.1410714285714286,
+      "avg_entries": 2.2
+    },
+    {
+      "keyword": "チケット",
+      "campaigns": 5,
+      "coverage": 0.025,
+      "lift": -0.10892857142857143,
+      "avg_entries": 0.2
+    },
+    {
+      "keyword": "毎日",
+      "campaigns": 4,
+      "coverage": 0.3125,
+      "lift": 0.17857142857142858,
+      "avg_entries": 2.5
+    },
+    {
+      "keyword": "連携",
+      "campaigns": 4,
+      "coverage": 0.25,
+      "lift": 0.11607142857142858,
+      "avg_entries": 2.0
+    },
+    {
+      "keyword": "#ポケモン配布",
+      "campaigns": 4,
+      "coverage": 0.09375,
+      "lift": -0.040178571428571425,
+      "avg_entries": 0.75
+    },
+    {
+      "keyword": "色違",
+      "campaigns": 4,
+      "coverage": 0.09375,
+      "lift": -0.040178571428571425,
+      "avg_entries": 0.75
+    },
+    {
+      "keyword": "ギフト",
+      "campaigns": 4,
+      "coverage": 0.0,
+      "lift": -0.13392857142857142,
+      "avg_entries": 0.0
+    },
+    {
+      "keyword": "URL",
+      "campaigns": 4,
+      "coverage": 0.0,
+      "lift": -0.13392857142857142,
+      "avg_entries": 0.0
+    },
+    {
+      "keyword": "当選者発表",
+      "campaigns": 4,
+      "coverage": 0.0,
+      "lift": -0.13392857142857142,
+      "avg_entries": 0.0
+    },
+    {
+      "keyword": "ページ",
+      "campaigns": 4,
+      "coverage": 0.0,
+      "lift": -0.13392857142857142,
+      "avg_entries": 0.0
+    },
+    {
+      "keyword": "衣装",
+      "campaigns": 4,
+      "coverage": 0.0,
+      "lift": -0.13392857142857142,
+      "avg_entries": 0.0
+    },
+    {
+      "keyword": "セール",
+      "campaigns": 4,
+      "coverage": 0.0,
+      "lift": -0.13392857142857142,
+      "avg_entries": 0.0
+    },
+    {
+      "keyword": "#MILK",
+      "campaigns": 4,
+      "coverage": 0.0,
+      "lift": -0.13392857142857142,
+      "avg_entries": 0.0
+    },
+    {
+      "keyword": "ARENA",
+      "campaigns": 4,
+      "coverage": 0.0,
+      "lift": -0.13392857142857142,
+      "avg_entries": 0.0
+    },
+    {
+      "keyword": "TOUR",
+      "campaigns": 4,
+      "coverage": 0.0,
+      "lift": -0.13392857142857142,
+      "avg_entries": 0.0
+    }
+  ],
+  "missed": [
+    {
+      "title": "フォロー＆リポストキャンペーン詳細はこちら📣",
+      "value": 10000,
+      "seats": 1000,
+      "missing": 8,
+      "deadline": "2026-10-04",
+      "source": "twscrape"
+    },
+    {
+      "title": "🍅兵庫県産トマト好き必見企画🍅",
+      "value": 7000,
+      "seats": 5,
+      "missing": 8,
+      "deadline": "2026-09-24",
+      "source": "twscrape"
+    },
+    {
+      "title": "🎮#アニモ × Game*Spark キャンペーン🎮",
+      "value": 5000,
+      "seats": 5,
+      "missing": 6,
+      "deadline": "2026-09-29",
+      "source": "twscrape"
+    },
+    {
+      "title": "🎁 MIRAGE 新作「Ouka no Mai (桜花の舞)」RT & 引用RT EVENT 🎁",
+      "value": 3990,
+      "seats": 5,
+      "missing": 8,
+      "deadline": "2026-09-24",
+      "source": "twscrape"
+    },
+    {
+      "title": "⼗五夜プレゼントキャンペーン🌕",
+      "value": 3000,
+      "seats": 10,
+      "missing": 8,
+      "deadline": "未記載",
+      "source": "twscrape"
+    },
+    {
+      "title": "＼🎁radikoプレゼントキャンペーン🎁／",
+      "value": 3000,
+      "seats": 10,
+      "missing": 4,
+      "deadline": "2026-09-24",
+      "source": "kenshouclub"
+    },
+    {
+      "title": "月曜ですが、キャンペーンはそのまま受付中です🎁",
+      "value": 2990,
+      "seats": 3,
+      "missing": 8,
+      "deadline": "2026-10-04",
+      "source": "twscrape"
+    },
+    {
+      "title": "🎁 『マッチ売りの大富豪』 (2860円)",
+      "value": 2860,
+      "seats": 0,
+      "missing": 8,
+      "deadline": "未記載",
+      "source": "twscrape"
+    },
+    {
+      "title": "🎉 新作衣装『Vermilion』本日発売！",
+      "value": 2400,
+      "seats": 5,
+      "missing": 8,
+      "deadline": "2026-09-28",
+      "source": "twscrape"
+    },
+    {
+      "title": "#Chikemoo ＃推し活 支援キャンペーン第1弾🫶",
+      "value": 1000,
+      "seats": 100,
+      "missing": 8,
+      "deadline": "2026-09-23",
+      "source": "twscrape"
+    }
+  ],
+  "wins": {
+    "matched": 4,
+    "unmatched": 12,
+    "total": 16,
+    "by_category": {
+      "分類不能・情報欠損": 2,
+      "グッズ・ノベルティ": 2
+    },
+    "by_wincount": {
+      "6〜20名": 2,
+      "2〜5名": 2
+    },
+    "by_source": {
+      "kenshouclub": 4
+    },
+    "matched_keys": {
+      "handle": 4
+    },
+    "entries_by_category": {
+      "Amazonギフト券": 124,
+      "ゲーム機・ゲームソフト": 29,
+      "体験・チケット": 66,
+      "分類不能・情報欠損": 649,
+      "金券・現金": 179,
+      "グッズ・ノベルティ": 136,
+      "食品・飲料": 178,
+      "家電・ガジェット": 79,
+      "デジタル特典": 25,
+      "旅行・宿泊": 32,
+      "Pay系・ポイント": 29,
+      "化粧品・日用品": 37
+    },
+    "entries_total": 1563
+  },
+  "wow": {
+    "prev_size": 586,
+    "size_delta": -474,
+    "new_campaigns": 112,
+    "disappeared": 586,
+    "value_delta": -366543,
+    "entries_delta": -617,
+    "new_sample": [
+      "@donki_donki ドン・キホーテ公式さん、素敵なキャンペーンありがとうございます！",
+      "🎮#アニモ × Game*Spark キャンペーン🎮",
+      "【RP＆フォローで応募！】",
+      "【本日最終日！5⃣日目】",
+      "🎉 オープン記念プレゼント企画 第4弾！ 🎉"
+    ]
+  },
+  "route_unknown": 1,
+  "week_label": "2026W39",
+  "scope": "week",
+  "generated_at": "2026-09-24 00:24 JST",
+  "data_files": [
+    "data/collected_today.json",
+    "data/collected.json",
+    "data/collected_history/collected_20260923.json"
+  ],
+  "fingerprint": "24996894bc04c75d64cfc67d9692a6bf55a959358f53af23c90e215e324da3e9"
+}
