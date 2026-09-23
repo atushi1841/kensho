@@ -33,6 +33,22 @@ REPO="/mnt/d/Project2/kensho"
 BOARD="kensho-ai-team"
 DB="/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db"
 LEDGER="$REPO/logs/complete_watch_ledger.txt"
+
+# --- 送信路の堅牢化 (t_adc65737) -------------------------------------------------
+# 実測: cron の最小 PATH(/usr/bin:/bin) では `hermes` が解決できず、
+# リマインドコメントが 54/54 で exit 127 (= `hermes: not found`) で全滅していた。
+# → PATH 依存をやめ、絶対パスで hermes を解決する（見つからなければ失敗理由をログに残す）。
+export HOME="${HOME:-/home/atushi}"
+HERMES_VENV_BIN="/home/atushi/.hermes/hermes-agent/venv/bin"
+[ -d "$HERMES_VENV_BIN" ] && PATH="$HERMES_VENV_BIN:$PATH"
+if [ -z "${HERMES_BIN:-}" ] || [ ! -x "${HERMES_BIN:-}" ]; then
+  if command -v hermes >/dev/null 2>&1; then
+    HERMES_BIN="$(command -v hermes)"
+  else
+    HERMES_BIN=""
+  fi
+fi
+# --------------------------------------------------------------------------------
 STALE_MIN="${STALE_MIN:-90}"      # 最後のheartbeatからの経過分。>=これならセッション終了/ハング扱い
 GIT_DAYS="${GIT_DAYS:-2}"         # 実装完了証拠: 直近N日以内のコミットを探索
 APPLY=0
@@ -152,7 +168,10 @@ for tid in "${STALE_TASKS[@]}"; do
     HAS_ANY=1
     TODAY=$(date +%Y-%m-%d)
     # 台帳で同日リマインド済みか重複チェック
-    if [ -f "$LEDGER" ] && grep -qE "^${TODAY}\t${tid}\t" "$LEDGER" 2>/dev/null; then
+    # 注意: grep -E の `\t` はタブに展開されない（GNU grep は 't' 扱い）。
+    #       実測 2026-09-24: 旧実装では同日2回目の実行でも重複投稿が発生したため、
+    #       $'\t'（実タブ）を埋め込む形へ是正 (t_adc65737)。
+    if [ -f "$LEDGER" ] && grep -q "^${TODAY}"$'\t'"${tid}"$'\t' "$LEDGER" 2>/dev/null; then
       continue
     fi
     REMIND_LINES+=("$tid|$EVID")
@@ -197,7 +216,15 @@ for line in "${REMIND_LINES[@]}"; do
   else
     MSG="[complete-forgot] 実装作業の痕跡(${evid})があるのに kanban_complete/block が未呼び出し。終端処理を要請します。"
   fi
-  if hermes kanban --board "$BOARD" comment "$tid" "$MSG" >/dev/null 2>&1; then
+  if [ -z "$HERMES_BIN" ]; then
+    RC=127
+    ERRLOG="hermes binary not found (PATH=$PATH)"
+  else
+    # stderr だけを捕捉（送信路の失敗理由をログに残す = 受入条件2）
+    ERRLOG="$("$HERMES_BIN" kanban --board "$BOARD" comment "$tid" "$MSG" 2>&1 >/dev/null)"
+    RC=$?
+  fi
+  if [ "$RC" -eq 0 ]; then
     # 2) 台帳に同日記録(重複防止)。タグは事故種別で区別
     TAG=complete-forgot
     [[ "$evid" == protocol_violation* ]] && TAG=protocol-violation
@@ -206,7 +233,8 @@ for line in "${REMIND_LINES[@]}"; do
     mv "${LEDGER}.tmp" "$LEDGER"
     echo "  [ok] reminded $tid (${evid})"
   else
-    echo "  [err] comment failed: $tid" >&2
+    ERR1="$(printf '%s' "$ERRLOG" | tr '\n' ' ' | cut -c1-300)"
+    echo "  [err] comment failed: $tid rc=$RC bin=${HERMES_BIN:-none} err=${ERR1:-<no stderr>}" >&2
     FAILED=$((FAILED+1))
     continue
   fi
