@@ -16,7 +16,7 @@
     "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py"
   ],
   "evidence_hashes": [
-    "sha256:f30a95324d61d48727f567ce0a2e4b3285172528d9903f0dd24f0cc199fcccc6 reports/t_f8a8b8d3_verification.md",
+    "sha256:7974c64fc2d2b6550c8c481779c86ca5dca7a25b32ba8f225d56af4ada1eaf7e reports/t_f8a8b8d3_verification.md",
     "sha256:7c2202d1693107d20f6d6a827b2de30fe31e027fa3aee4936a49e75451485af8 /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py"
   ],
   "task_id": "t_f8a8b8d3",

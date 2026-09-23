@@ -5,7 +5,7 @@
 - 変更対象: `/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py`（repo外・全profileのhookが参照する単一ファイル）
 - バックアップ: `/tmp/guard_old_t_f8a8b8d3.py`（md5 `b96eef7749f1a80e9cc0f28410a277bf`）
 
-## 実装サマリ
+## 実装サマリ（t_f8a8b8d3）
 
 | 対象 | 変更 |
 |------|------|
@@ -16,7 +16,9 @@
 
 ## verification_evidence
 
-(1) 同一入力での before/after 実測（旧実装コピーと新実装を同一の一時repo/DBで比較）:
+本節は t_f8a8b8d3 の実測証跡のみを記載する（推測なし。数値はすべて実行出力の転記）。
+
+(1) t_f8a8b8d3 の同一入力 before/after 実測（旧実装コピーと新実装を同一の一時repo/DBで比較）:
 
 ```
 $ python3 /tmp/t_f8a8b8d3_compare.py
@@ -30,7 +32,7 @@ exit=0
 
 → 旧実装は本文の「config.yaml の default/provider/model は変更しない」1行だけで config.yaml を owned(bare) に採っていた（=今回の事故の再現）。新実装では除外され、変更対象 `scripts/own_task.py` は保持される。
 
-(2) 回帰セルフテスト（追加ケース込み・全条件）:
+(2) t_f8a8b8d3 の回帰セルフテスト（追加ケース込み・全条件）:
 
 ```
 $ python3 /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py --selftest
@@ -50,7 +52,7 @@ owned= [] foreign= 3
 
 補足（正直な記載）: 現在 `config.yaml` はクリーンなため、この1コマンドの `owned=[]` は今回の条件下では自明でもある。**修正が効いている構造的証明は (1)(2)** で、旧実装では bare に `config.yaml` が入っていたことを同一入力で示している。
 
-(4) 実タスクへの影響確認（自分自身の完了前チェック・回帰なし）:
+(4) t_f8a8b8d3 完了前チェック・実タスクへの影響確認（回帰なし）:
 
 ```
 $ bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_f8a8b8d3 --task --json
