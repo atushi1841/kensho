@@ -1,0 +1,39 @@
+{
+  "success_indicators": [
+    "pytest tests/test_run_budget.py + tests/test_guarded_source_arity.py => 14 passed（新規run_budget 9件含む）",
+    "pytest 全体 => 962 passed / 7 skipped / 1 failed（失敗は無関係のライブゲート test_gate_protocol_violation_crash: t_8e1e4934）",
+    "config.yaml collection.max_run_seconds=1500 が実行時に RunBudget.max_seconds=1500.0 / disabled=False として読まれる（実測）",
+    "予算超過時に収集源を一切呼ばず collected.json へ deadline_exceeded=true / run_budget_seconds=1500.0 / skipped_phases を保存（統合テストで実測）",
+    "ベースライン再現: 9/23 の収集ログ14件中6件が1行スキップ・21:00run elapsed_seconds=12319.2",
+    "mypy（変更5ファイル）= error 0（既存 scorer.py の type-arg 2件のみ）"
+  ],
+  "verification_commands": [
+    "$ python -m pytest -q tests/test_run_budget.py tests/test_guarded_source_arity.py => 14 passed in 116.01s",
+    "$ python -m pytest -q -p no:cacheprovider => 1 failed, 962 passed, 7 skipped in 616.58s（FAILED: tests/test_regression_gates.py::test_gate_protocol_violation_crash = t_8e1e4934 の未回収rc=0・本変更と無関係）",
+    "$ python3 -c \"import yaml; from kensho.scraping.run_budget import RunBudget; cfg=yaml.safe_load(open('config.yaml',encoding='utf-8')); b=RunBudget(float(cfg['collection']['max_run_seconds'])); print(cfg['collection']['max_run_seconds'], b.max_seconds, b.disabled)\" => 1500 1500.0 False",
+    "$ python3 -c \"import json; d=json.load(open('data/collected.json')); print('elapsed_seconds=',d.get('elapsed_seconds'))\" => elapsed_seconds= 12319.2",
+    "$ for f in logs/collect_20260923_*.log; do n=$(wc -l < \"$f\"); echo \"$(basename $f) lines=$n\"; done => 1行のみ（スキップ）が 10,11,12,14,15,16時 の6件",
+    "$ python -m mypy kensho/scraping/run_budget.py kensho/scraping/collector.py kensho/scraping/sources/kenshouclub.py tests/test_run_budget.py tests/test_guarded_source_arity.py => 変更ファイル error 0",
+    "$ git log --oneline -1 => 2605f40 t_b64c35ea: 毎時収集の1run実行時間上限(max_run_seconds)と部分保存を導入"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/kensho/scraping/run_budget.py",
+    "/mnt/d/Project2/kensho/kensho/scraping/collector.py",
+    "/mnt/d/Project2/kensho/kensho/scraping/sources/kenshouclub.py",
+    "/mnt/d/Project2/kensho/tests/test_run_budget.py",
+    "/mnt/d/Project2/kensho/tests/test_guarded_source_arity.py",
+    "/mnt/d/Project2/kensho/config.yaml",
+    "/mnt/d/Project2/kensho/reports/t_b64c35ea_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:db57c614fd27ffb3fec6e11e10f95ff43bc46cb9c1d68adeb217568bb0cd92e1 kensho/scraping/run_budget.py",
+    "sha256:6eb2aa448083d74991cabe2a75986a7f9eb4740b229cc86f68d927d133732976 kensho/scraping/collector.py",
+    "sha256:2c838575e360c1f8cb2e4c2ad88654f593d272b8b51127939953386d0bca60a8 kensho/scraping/sources/kenshouclub.py",
+    "sha256:98a25eae363fd52032a2ad86793d9fb6a0d0ecd00b228ccebbf3789dd8195b3c tests/test_run_budget.py",
+    "sha256:fc123d59612c5d5a32ff8053567f416819b6750c170d6e07cfeb02443c091a92 tests/test_guarded_source_arity.py",
+    "sha256:7fd634dd59bf90913ec3e1178293ba0d441f0c63a3a172a1dce9f356df83a7fc config.yaml",
+    "sha256:dcc44461d9d122a1c4cd3b75096ed99a8487df39a3f765020b007e3d25d7f19d reports/t_b64c35ea_verification.md"
+  ],
+  "task_id": "t_b64c35ea",
+  "status": "complete"
+}
