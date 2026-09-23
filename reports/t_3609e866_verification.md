@@ -62,6 +62,11 @@
 - `docs/daily_reports/` の2コミットは origin/main には到達しているが、到達時刻は
   **同期実行（23:56）より後**＝他エージェントの push に便乗して運ばれたもの。
   「同期が push できている」証拠にはならない。
+- 検証中（09-24 04:00）に本検証者自身が `git push origin main` を試行したところ
+  `Failed to connect to github.com port 443 after 134543 ms: Couldn't connect to server` で失敗。
+  すなわち push 不成立の原因は**資格情報不在（cron環境）と接続不能（WSL側）の二重**であり、
+  credential helper だけ直しても同期は復旧しない可能性が高い（同一時刻 03:43 には
+  他エージェントの push が成功しており、接続は間欠的）。
 
 ### 稼働欠損（ネットワーク系 watchdog、参考）
 
@@ -123,6 +128,10 @@ cdec6a4 refs/remotes/origin/main@{2026-09-24 03:04:30 +0900}: update by push
 $ git log --oneline origin/main..HEAD | wc -l
 0
 → 未pushコミットは 0（daily_reports の2件は他エージェント push 便乗で到達済み）
+
+$ git push origin main
+fatal: unable to access 'https://github.com/atushi1841/kensho.git/': Failed to connect to github.com port 443 after 134543 ms: Couldn't connect to server
+→ 検証時点(09-24 04:00)は WSL 側の接続自体が不能（cron側の資格情報エラーと別要因）
 
 $ cat -n logs/github_sync_cron.log
      1	[warn] git 操作失敗 (128): fatal: Unable to create '/mnt/d/Project2/kensho/.git/index.lock': File exists.
