@@ -1,0 +1,115 @@
+{
+  "task_id": "t_3609e866",
+  "title": "自律稼働工場化: 本番安定性1週間モニタリング",
+  "status": "fail",
+  "verdict": "受入条件 未達 (FAIL) — 同期エラー実在 / docs/daily_reports 7日連続は 2/7日 / Telegram 通知は経路未配線で検証不能",
+  "verified_at": "2026-09-24T03:15:00+09:00",
+  "verifier": "kensho-qa",
+  "watch_window": {
+    "retrospective_7d": "2026-09-18..2026-09-24",
+    "self_heal_exposure_hours": 51.3,
+    "self_heal_landed": "2026-09-22",
+    "note": "1週間窓(168h)に対し実装後露出は51.3h(31%)のため、受入条件1は現時点で証明不能"
+  },
+  "success_indicators": [
+    "self_heal 発動 36件 (apply 32 + collection 4) / 全件 attempts=3 = 回復失敗",
+    "collection self_heal: 09-23 17:00/18:00/19:00/20:00 の4連続失敗(guarded_source proxy kwarg不整合) → 21:00以降 0件",
+    "hang_watchdog: 7日窓 HANG 7件(09-18 x3, 09-19 x2, 09-23 x2) / 09-20-22,09-24 は 0件",
+    "hang_watchdog: 09-23 の 2件は TERM→SIGKILL→RESTART(re-spawn) で自動復帰 = 自動回復2/2 (100%)",
+    "complete_watchdog: 48 run / 候補54件 / 対象18タスク / 誤検知 0件 (17件は done 化で解消)",
+    "complete_watchdog: リマインドコメント送信 54/54 失敗 = 送信成功率 0%",
+    "github_sync: 生成 2件 / push 失敗 1件 / index.lock 競合 1件 / 自走 push 成功 0回",
+    "docs/daily_reports: 実在 2ファイル (09-22, 09-23) = 7日連続の 2/7日",
+    "Telegram: 7日窓の言及 0行 / notifier.log なし / token・chat_id 未設定 / error イベント呼び出し無し",
+    "WiFi 再接続失敗: zin_AW6povo 132回(09-19..09-24継続) / chugakujuken_RM10JE_S 71回 / kudou_RM10JE_B 9回",
+    "BOT影響: apply 32件は全件 attempts=3 のリトライ再実行(ブラウザ再起動込み) = 先行実測 63→227 の増幅要因"
+  ],
+  "verification_commands": [
+    "ls -1 docs/daily_reports/",
+    "git log --format=\"%h %ci %s\" -- docs/daily_reports/",
+    "git reflog show origin/main --date=iso | head -3",
+    "git log --oneline origin/main..HEAD | wc -l",
+    "cat -n logs/github_sync_cron.log",
+    "python3 /tmp/t3609_logs.py",
+    "python3 /tmp/t3609_wd.py",
+    "python3 /tmp/t3609_sh.py",
+    "python3 /tmp/t3609_wifi.py",
+    "python3 /tmp/t3609_ap.py",
+    "grep -c \"self_heal failed\" logs/collect_20260923_170001.log logs/collect_20260923_200001.log logs/collect_20260923_210002.log logs/collect_20260924_030001.log",
+    "crontab -l | grep -nE \"watchdog|github_sync\"",
+    "grep -rn \"send_notification(\" --include=*.py .",
+    "bash ~/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_3609e866 --workdir /mnt/d/Project2/kensho --task"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_3609e866_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_3609e866_evidence.json",
+    "/mnt/d/Project2/kensho/logs/complete_watchdog_cron.log",
+    "/mnt/d/Project2/kensho/logs/github_sync_cron.log",
+    "/mnt/d/Project2/kensho/logs/hang_watchdog.log",
+    "/mnt/d/Project2/kensho/logs/auto_20260923.log",
+    "/mnt/d/Project2/kensho/logs/collect_20260923_170001.log"
+  ],
+  "evidence_hashes": {
+    "/mnt/d/Project2/kensho/reports/t_3609e866_verification.md": "9c52ab126ae302b78939b3c0baaa5722c89e070354f1be58465c8cc45cfb701e"
+  },
+  "outcome": [
+    {
+      "metric": "self_heal 発動件数 (apply+collection, 7日窓)",
+      "before": 0,
+      "after": 36,
+      "unit": "件",
+      "note": "before=実装前(09-18..09-21)の発動0件。after は全件 attempts=3 で回復失敗"
+    },
+    {
+      "metric": "HANG 検知時の自動復帰率",
+      "before": 0,
+      "after": 100,
+      "unit": "%",
+      "note": "before=re-spawn未実装(09-18/19はkillのみ) / after=09-23の2件がRESTARTで復帰(2/2)"
+    },
+    {
+      "metric": "docs/daily_reports 連続 push 日数",
+      "before": 0,
+      "after": 2,
+      "unit": "日",
+      "target": 7,
+      "note": "受入条件は7日連続。実在2日分かつ同期自身のpush成功0回"
+    },
+    {
+      "metric": "github_sync 自走 push 成功率",
+      "before": 0,
+      "after": 0,
+      "unit": "%",
+      "note": "cron環境で could not read Username for https://github.com → 0回成功"
+    },
+    {
+      "metric": "complete_watchdog リマインド送信成功率",
+      "before": 0,
+      "after": 0,
+      "unit": "%",
+      "note": "54/54 が [err] comment failed = 検出しても届かない"
+    },
+    {
+      "metric": "complete_watchdog 誤検知件数",
+      "before": 54,
+      "after": 0,
+      "unit": "件",
+      "note": "候補54件のうち誤検知0件（17件は done 化で解消、1件は痕跡付き ready）"
+    },
+    {
+      "metric": "Telegram エラー通知 送出経路の有無",
+      "before": 0,
+      "after": 0,
+      "unit": "本",
+      "note": "token/chat_id 未設定 + error イベント呼び出し無し = 未配線(検証不能)"
+    }
+  ],
+  "followups": [
+    "[最優先/BOT] 失敗垢のリトライ増幅(attempts=3)に対する垢単位サーキットブレーカの実効化",
+    "[同期] kensho_github_sync.sh の push 認証(credential helper不在)+ index.lock 競合の解消",
+    "[監視] kensho-complete-watchdog.sh --apply のコメント送信 54/54 失敗の修復",
+    "[通知] Telegram エラー通知の配線 or 要件再定義",
+    "[稼働] zin_AW6povo / chugakujuken_RM10JE_S の WiFi プロファイル復旧",
+    "[本タスク] 7日窓の再監視は子タスクへ引き継ぎ"
+  ]
+}
