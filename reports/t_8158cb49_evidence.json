@@ -1,0 +1,37 @@
+{
+  "success_indicators": [
+    "report outputs 3 agent rows (critic/worker/qa) + TOTAL for 2026-09-23 (requirement: >=3 rows)",
+    "emit appended 9 spans for 2026-09-23 as append-only JSONL: spans_valid=9, spans_skipped=0, warnings=0, report exit 0",
+    "8 required OTel GenAI semconv keys present on every physical line; error.type only on the failing span (1 of 9)",
+    "new regression tests: 15 passed; full suite: 762 passed, 1 failed (unrelated board-state gate), 5 skipped"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/agent_span_emit.py --agent kensho-qa --model deepseek-v4-flash --task-id t_8158cb49 --tokens-in 100 --tokens-out 50 --duration-ms 1200 => appended 1 span -> data/agent_spans/2026-09-23.jsonl (agent=qa, error.type=-)",
+    "$ python3 scripts/agent_span_report.py --date 2026-09-23 => spans_valid=9 spans_skipped=0 warnings=0 | critic runs=3 succ%=100.0 avg_ms=2500.0 | worker runs=3 succ%=100.0 avg_ms=1800.0 | qa runs=3 succ%=66.7 error_types=timeout=1 | TOTAL runs=9 ok=8 err=1 tokens_in=1270 tokens_out=540 ; exit=0",
+    "$ python3 scripts/agent_span_report.py --date 2026-09-23 --json => valid JSON with date/source/spans_valid=9/agents{critic,worker,qa}/totals/warnings=[] ; exit=0",
+    "$ python3 -m pytest tests/test_agent_span_emit.py -q => 15 passed in 25.47s",
+    "$ python3 -m pytest -x -q => 762 passed, 1 failed, 5 skipped in 174.02s (single failure = unrelated board-state gate test_gate_protocol_violation_crash)",
+    "$ wc -l data/agent_spans/2026-09-23.jsonl => 9 spans (1 run = 1 physical line)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/agent_span_emit.py",
+    "/mnt/d/Project2/kensho/scripts/agent_span_report.py",
+    "/mnt/d/Project2/kensho/tests/test_agent_span_emit.py",
+    "/mnt/d/Project2/kensho/reports/t_8158cb49_verification.md",
+    "/mnt/d/Project2/kensho/data/agent_spans/2026-09-23.jsonl"
+  ],
+  "evidence_hashes": [
+    "sha256:94d577cc11fbd8b0c7366ae1d848549e98fd5343a625a424a8825687c413f64c  scripts/agent_span_emit.py",
+    "sha256:2eef1d1b86bf7fd1d2f105601253e1f4c9231b5238def288e60d4a192cfb2a09  scripts/agent_span_report.py",
+    "sha256:17e3f2b13082ba2fb0e5e61d3b671ff71c01343ffc8b26714166c94558068c63  tests/test_agent_span_emit.py",
+    "sha256:3742b840b22b1cc56c7fe2e768aa39d2a190fa15f0c9ffd7ad8fec1aa9b02eb5  reports/t_8158cb49_verification.md",
+    "sha256:d19ed759a3406a5d23ccf5acfdac944d1b9ca873bdf3dfa9eaa248abefa1e4fb  data/agent_spans/2026-09-23.jsonl"
+  ],
+  "outcome": {
+    "metric": "machine-readable agent run telemetry spans aggregated by agent_span_report (before: telemetry layer absent, text logs only)",
+    "before": 0,
+    "after": 9
+  },
+  "task_id": "t_8158cb49",
+  "status": "complete"
+}
