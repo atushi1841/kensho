@@ -44,7 +44,13 @@ $ stat -c '%y %s' revenue-status.html => 2026-09-23 21:56:01 → 2026-09-23 22:5
 2. `data/revenue-daily.json` の `collectors.collected_today=222` は**記録時点のスナップショット**（ライブ=478）。チェッカーは「ライブ値を正」として比較するため誤検知しないが、JSON側の値の意味はドキュメント化済み（チェッカー出力のℹ️行）。
 3. 日次アカウント健全性チェックは `zin20120731=連続失敗6(要確認)` を検出（垢側の問題・禁止領域のため不着手。毎日8:15のTelegram通知で可視）。
 
-## 4. 自己レビュー（Reflexion）
+## 5. 追記（同セッション内の追加実測）
+
+- push確認: `cmd.exe /c "cd /d D:\Project2\kensho && git ls-remote origin main"` => `453c2485ef6fc82d8335e12dcfa158b2aec8270b refs/heads/main`（WSL側のls-remoteは443タイムアウトするが、push自体は `7b64380..453c248 main -> main` で成功済み）
+- 21:00収集の長時間化は t_96c94435 の未コミット `kensho/scraping/collector.py` 変更（サーキットブレーカー/再試行）の影響を受けている可能性がある。同タスク完了コミット `f960c5e` の後に同条件で1runの所要時間を再測定し、閾値（例: 60分）を決めるのが妥当。
+- 収集は 23:01 時点でも進行中（`logs/collect_20260923_210002.log` 12190B・KCLUB走査の継続）。停止ではなく低速であることはCPU時間とログ増加で確認済み（`$ cut -d' ' -f14,15 /proc/3275012/stat` => utime 4380 → 4428 と増加）。
+
+## 6. 自己レビュー（Reflexion）
 
 ```json
 {"self_review":{"what_was_done":"収益ダッシュボードの鮮度（毎時再生成）と整合性監視（日次8:15のTelegram watchdogへ統合）を実装し、前回runの誤った申し送り（存在しないcronジョブの作成提案）を実測で訂正した","what_went_well":["jobs.jsonを直接読み、申し送りを鵜呑みにせず事実確認して重複cron作成を未然に防止","✅/❌両分岐をfixtureで実測し、通知経路もstubで発火確認","新規cronを増やさず既存の監視・通知経路へ相乗りした（運用面の複雑化ゼロ）"],"what_could_improve":["kensho-collect-only.sh全体の実走検証がflock保持中でできず、ブロック単体実行に留まった","21:00収集の長時間化という別の異常は検出したが不着手（所有権の都合）"],"mistakes_or_risks":["毎時再生成によりrevenue-status.htmlが常時dirtyになる（HTMLはguard対象外・データ集計はライブ値が正）","並行収集を避けるためlockを迂回する検証は行わなかった"],"learned":"他runの申し送りは事実確認してから着手する。既存ジョブの有無はjobs.json直読みが最も確実（存在しない前提で新規作成すると重複事故になる）","confidence":9,"verification_evidence":"bash -n×3 OK / checker prod exit0(478=478) / fixture ❌exit1・✅exit0 / health-check正常時📊0件・stubで📊発火 / 挿入ブロックverbatim実行で生成完了・mtime更新"}}
