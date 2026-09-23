@@ -20,7 +20,7 @@
   ],
   "evidence_hashes": [
     "sha256:f509b1badcd9081dd75ae0f79de02f4635119656254c0d7d2f0a2818ed8a67e9 reports/treg-20260923.md",
-    "sha256:c810f17bafbc1e19489b6a833782924557860591577a00befee755e693440b51 reports/t_27c0d656_verification.md",
+    "sha256:01d4f77de1960de5e3f4985ad95d198638a67a7aa491c52e0e595a45d08835a4 reports/t_27c0d656_verification.md",
     "sha256:63d02124335b3e3cd08800174fcd61d47b020d8db908e91c14df8b1ca82867cb reports/revenue-proposals/2026-09-23-revenue-worker.md"
   ],
   "outcome": [

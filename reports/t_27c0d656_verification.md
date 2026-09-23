@@ -4,7 +4,7 @@
 実施: 2026-09-23 / kensho-revenue-worker / 作業ディレクトリ /mnt/d/Project2/kensho
 成果物: reports/treg-20260923.md、reports/revenue-proposals/2026-09-23-revenue-worker.md
 
-## 実測ログ（実行コマンドと生出力）
+## verification_evidence
 
 $ curl -s https://api.github.com/repos/superdesigndev/treg
 HTTP 200 / full_name=superdesigndev/treg / stargazers_count=2454 / forks_count=230 / created_at=2026-07-15 / pushed_at=2026-09-23
