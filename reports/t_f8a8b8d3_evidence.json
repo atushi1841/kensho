@@ -1,0 +1,24 @@
+{
+  "success_indicators": [
+    "修正前/修正後を同一入力で比較: 旧実装 bare=['config.yaml'] (誤owned) → 新実装 bare=[] / 変更対象 scripts/own_task.py は exact に保持",
+    "--selftest に d_prohibited ケースを追加し SELFTEST OK / exit=0（prohibited_excluded=True, foreign_dirty_config cond(d)_pass=True）",
+    "再現カード t_8e1e4934 の card-scoped guard で owned=[] / foreign=3（並行dirtyは foreign 扱いのまま）",
+    "実地効果: 本タスク自身の guard で未コミットの兄弟3ファイルを owned に数えず d:no_uncommitted_code=True"
+  ],
+  "verification_commands": [
+    "$ python3 /tmp/t_f8a8b8d3_compare.py => before(旧): exact=['scripts/own_task.py'] bare=['config.yaml'] / after(新): exact=['scripts/own_task.py'] bare=[] / COMPARE RESULT: OK / exit=0",
+    "$ python3 /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py --selftest => selftest d_prohibited: target_kept=True prohibited_excluded=True / foreign_dirty_config cond(d)_pass=True / SELFTEST OK / selftest_exit=0",
+    "$ bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_8e1e4934 --task --json => owned= [] foreign= 3",
+    "$ ls -la /home/atushi/.hermes/profiles/*/scripts/kanban_done_guard.py => 実体は kensho-sweeps の1ファイルのみ（5プロファイルが config.yaml 経由で同ファイルを参照）"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_f8a8b8d3_verification.md",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py"
+  ],
+  "evidence_hashes": [
+    "sha256:f30a95324d61d48727f567ce0a2e4b3285172528d9903f0dd24f0cc199fcccc6 reports/t_f8a8b8d3_verification.md",
+    "sha256:7c2202d1693107d20f6d6a827b2de30fe31e027fa3aee4936a49e75451485af8 /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py"
+  ],
+  "task_id": "t_f8a8b8d3",
+  "status": "complete"
+}
