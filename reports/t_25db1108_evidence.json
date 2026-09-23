@@ -12,7 +12,8 @@
     "$ DATASET_PIPELINE_CMD=\"bash /tmp/ds_stub_recheck.sh\" DATASET_RETRY_BACKOFF=1 DATASET_STOP_AFTER=1 bash <script> => [retry] データ収集 成功 (試行 2/3) / stub: attempt 2 OK (recovered) / [T2-recheck] exit=0",
     "$ DATASET_PIPELINE_CMD=true DATASET_STOP_AFTER=3 bash <script> => [ERROR] 今回の実行でZIPが生成されていない（最新=japan-hobby-dataset-20260907.zip / 生成=2026-09-07 10:01:04） / [T3] exit=1",
     "$ DATASET_STOP_AFTER=3 bash <script> => [T5] exit=0 elapsed=47s / [2] ZIP: japan-hobby-dataset-20260924.zip (486103B)",
-    "$ grep -c 'http]' /mnt/d/Project2/gumroad-automation/logs/dataset_weekly_20260924-081138.log => 2（ConnectTimeout 2回→いずれも [http] 接続先候補を切替 で復帰）"
+    "$ grep -c 'http]' /mnt/d/Project2/gumroad-automation/logs/dataset_weekly_20260924-081138.log => 2（ConnectTimeout 2回→いずれも [http] 接続先候補を切替 で復帰）",
+    "$ DATASET_STOP_AFTER=1 bash <script> (T2再走 08:48) => [retry] データ収集 成功 (試行 2/3) / [T2-recheck] exit=0"
   ],
   "artifact_paths": [
     "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-dataset-weekly.sh",
@@ -28,7 +29,7 @@
     "467c23af5638259548d8cd6329812f6dd214f68b7a5cdf6185a6238b191d1fa1",
     "29c60bd56f3101bb52bc42d4cb92edafc1d045030386cea94cbfbbe4b34d5e67",
     "165d93fe8b5e7de67065a3270a8cb83fcefe1fe6e130c7793c0d91a9c4ba587a",
-    "2647889526fdec1be6dbc8d9d12b1db80e1f33f1025a9842ff6db8fede604c77"
+    "1d70495ab65c89d457e372a1ecbd9b63101310d7d96427e28e6a55cb771e0d40"
   ],
   "outcome": [
     {

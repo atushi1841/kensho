@@ -7,7 +7,9 @@
   1. `/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-dataset-weekly.sh`（バックアップ: 同 `.bak-retry-20260924`）
   2. `/mnt/d/Project2/gumroad-automation/kensho_data_pipeline.py`（変更前の復元コピー: 同 `.bak-pre-t_25db1108`・構文OK）
 
-## verification_evidence (t_25db1108)
+## verification_evidence
+
+対象タスク: t_25db1108（所有束縛: ファイル名 + 本見出し直下にタスクID）
 
 ### 0. 症状（before・実測）
 job c0e8e4d76933 の `last_status=error`。失敗は 8/31 に2回、9/21 に1回で、成功は 9/07 のみ。
@@ -114,3 +116,22 @@ non-retryable: OK (immediate raise)
 ```json
 {"self_review":{"what_was_done":"週次データセット更新の3/5回失敗を、シェル側リトライだけでなく到達不能Aレコードのローテーションまで含めて恒久修正し、before/after実測で示した","what_went_well":["T4で真因(Aレコード片方が到達不能)を実測特定し、推測で済ませなかった","before(345s/fail) → after(47s/exit0) の同一条件対比を取得","陳腐化ZIPの成功扱い(第2の潜在バグ)も同時に塞いだ"],"what_could_improve":["変更前バックアップを最初に取得すべきだった(pipelineは復元コピーで代用)","TLSプローブ方式を先に試して間欠性のため破棄した分の往復が発生した"],"mistakes_or_risks":["リゾルバ順序は環境依存のため将来Apifyがアドレスを変更すると再発し得る(ローテーションで緩和済)","step4-6(Gumroad実アップロード)は未検証のまま次回定時に委譲"],"learned":"httpx/httpcoreは接続先アドレスのフェイルオーバーを持たないため、複数Aレコードの公開ホストでは「1リクエストのタイムアウト=run全損」になる。connectタイムアウト短縮+候補ローテーション+リトライの3点セットが有効。","confidence":9,"verification_evidence":"T1-T3(スタブ実測) / T4(before 345s exit1) / T5(after 47s exit0・新ZIP 486103B・ConnectTimeout2回復帰)"}}
 ```
+
+### 6. 追補（2026-09-24 08:50 JST / nightly-worker role kensho-revenue-worker・job 5e8ec4984bba）
+
+実装済みだったが終端処理（kanban_complete）が未発行のまま run が落ちていたため、独立に再実測して引き継いだ（t_25db1108）。
+
+```
+$ printf '... attempt1 FAIL / attempt2 OK ...' > /tmp/ds_stub_recheck.sh; rm -f /tmp/ds_att
+$ DATASET_PIPELINE_CMD="bash /tmp/ds_stub_recheck.sh" DATASET_RETRY_BACKOFF=1 DATASET_STOP_AFTER=1 bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-dataset-weekly.sh
+[retry] データ収集 試行 1/3 2026-09-24 08:48:35 / [retry] データ収集 失敗 (試行 1/3) / [retry] 1s 待機して再試行
+[retry] データ収集 成功 (試行 2/3) ログ: /mnt/d/Project2/gumroad-automation/logs/dataset_weekly_20260924-084835.log
+stub: attempt 2 OK (recovered)
+[T2-recheck] exit=0
+
+$ grep -c "http]" /mnt/d/Project2/gumroad-automation/logs/dataset_weekly_20260924-081138.log
+2
+```
+
+- 補足: `[retry] 成功 (試行 2/3)` の後に行が重複して見えるのは `run_with_retry` の `tail -3 "$RUN_LOG"` 出力であり、**パイプラインの二重実行ではない**（ログ内の試行回数は 1 回のみ）。
+- 機械可読ハンドオフ: `reports/t_25db1108_evidence.json`（guard 条件(j) 合格を生成API自身が検証）。
