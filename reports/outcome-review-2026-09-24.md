@@ -4,11 +4,12 @@
 
 ### 事後効果測定（Outcome Review / 過去7日 done）
 - KPI方向性ルール: 各 before→after の末尾に `(方向: up/down/equal)` を明記する。 この語は数値の上下のみを表し、良悪は指標の意味に依存する（例: 失敗回数・試行回数・所要秒数の down は改善 / 未pushコミット残数の up は悪化）。
-- 対象: done=132件（2026-09-17以降）/ 数値KPIあり=27件
-- 実測確認: あり=19件 / 未実測=8件 / KPI非該当=105件
-- 実測確認率: 70.4%（目標>50%） → 達成
+- 対象: done=134件（2026-09-17以降）/ 数値KPIあり=28件
+- 実測確認: あり=19件 / 未実測=9件 / KPI非該当=106件
+- 実測確認率: 67.9%（目標>50%） → 達成
 - ⚠️ after<before（悪化疑い）: 10件
 - 未実測タスク（before/after の数値を追記してクローズすること）:
+  - `t_e1407687` 幽霊assignee検出ガード実装: ヘルパーへのassignee実在チェック追加（kensho-revenue-worker）
   - `t_8e1e4934` QA: t_d5ac9f32 done_guard 準拠検証（DeepSeek鍵ローテーション）（kensho-qa）
   - `t_2dccb8b3` 全プロファイルのAPI鍵健全性を応募前に検知する監視を追加（kensho-revenue-worker）
   - `t_18ecf0a5` knshow 502 partial-degradation: port kenkaku v144 page retry（kensho-revenue-worker）
