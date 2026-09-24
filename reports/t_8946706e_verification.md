@@ -16,6 +16,15 @@
 
 対象タスク: **t_8946706e**（所有束縛: ファイル名 `t_8946706e_verification.md` + 本見出し直下のタスクID）
 
+### 0.5 数値サマリ（改修前 → 改修後）
+- セッション失効垢の apply 試行回数（1失敗あたり）: **3回 → 1回**（operation_calls 3 → 1）
+- ceiling の遮断キー: **apply（全垢共通） → apply:<account_key>**（他垢の成功でリセットされない）
+- 毎時cron（60分間隔）3連続失敗での遮断発動: **false → true**（blocked_until = 失敗時刻+30分）
+- プロキシ死骸垢（本番 status=dead_proxy）の応募試行: **警告のみで試行継続 → 試行ゼロ（gate=SKIP）**
+- 回復イベントのログ行数: **0行 → 1イベント1行（[SELF-HEAL] 構造化）**
+- `max_attempts`: **3 → 3**（不変・値の変更行ゼロ）
+- テスト件数: **18件 → 30件**（tests/test_self_heal.py）／全35 passed
+
 ### 0. 症状（before・親タスクのQA実測を再確認）
 - apply 自己修復の最終失敗 32件中 **29件が1垢（zin20120731）のセッション失効**、全件 attempts=3。
 - BOTシグナル増幅: `goto failed` 63件/日(09-20) → 227件/日(09-23)、ログイン試行 約55→108回/日。
@@ -69,6 +78,35 @@ $ python reports/t_8946706e_repro_self_heal.py HEAD 2>&1 | grep -m2 "SELF-HEAL"
 [SELF-HEAL] pipeline=apply key=apply:zin20120731 attempt=1 error_kind=no_auth_session action=stop_fatal detail=non_retryable:no_auth_session message=apply 0 success 1 errors (no_auth_session)
 [SELF-HEAL] pipeline=apply key=apply:zin20120731 attempt=1 error_kind=none action=final detail=fatal message=apply 0 success 1 errors (no_auth_session)
 ```
+
+### 2.5 実測1b — 本番 config + 本番 applier 経路での再現（`apply_for_account` を実コードで通す）
+
+`data/` を一時ディレクトリへコピーして実 state を汚さずに、**実際の applier エントリ**（`apply_for_account`）と
+実 config（`config.yaml` の self_healing / collection）を使って測る:
+
+```
+$ python reports/t_8946706e_repro_check.py
+config.yaml self_healing.max_attempts = 3
+collection.max_pages = 99
+== 1/2. セッション失効垢は1回で停止＋ceiling キーが垢単位 ==
+[SELF-HEAL] pipeline=apply key=apply:zin20120731 attempt=1 error_kind=goto_failed action=stop_fatal detail=non_retryable:goto_failed
+apply_for_account raised (期待どおり最終失敗): self_heal failed: apply 0 success 1 errors (goto_failed) (attempts=1)
+_apply_impl calls (旧実装=3回リトライ / 修正後=1回): 1
+state ceilings keys: ['apply:zin20120731']
+blocked entry: {"count": 4, "blocked_until": "2026-09-24T10:18:09", "blocked_reason": "failure_ceiling"}
+== 3. 毎時runでも ceiling が発動する ==
+  run1: attempts=3 ok=False blocked=False
+  run2: attempts=3 ok=False blocked=False   ← この run で transport_fallback / scope_reduction を実際に実行（F4）
+  run3: attempts=1 ok=False blocked=True    ← プラン枯渇で即停止＋ceiling 発動（F5）
+auto-blocked on 3rd hourly failure: True
+== 4. プロキシ死骸垢は応募を試行しない（実 status ファイル参照） ==
+safety.dead_proxy_accounts(real_cfg) = ['zin20120731']
+applier._FATAL_APPLY_REASONS = ['challenge', 'dead_proxy', 'frozen', 'goto_failed', 'login_failed', 'needs_login', 'no_auth_session', 'rate_limited', 'suspended']
+```
+
+同ログの `action=transport_fallback detail=toggled_scrapling:True->False` と
+`action=scope_reduction detail=max_pages_set_1` が、**F4 の到達可能性を実コードで示している**
+（`max_attempts=3` のままで後段アクションに到達し、枯渇後は `stop_no_recovery` で即停止）。
 
 ### 3. 実測2 — プロキシ死骸垢は応募を試行しない（本番データ・モックなし）
 
