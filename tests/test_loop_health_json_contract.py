@@ -144,7 +144,7 @@ def test_loop_health_mutated_repeat_detection() -> None:
 # 2. レポートの HEALTH_DEGRADED 行検出 (transform test)
 # ---------------------------------------------------------------------------
 REPORT_DIR = REPO_ROOT / "reports"
-REPORT_FILES = ["kensho-worker-report.md", "kensho-qa-report.md", "kensho-revenue-report.md"]
+REPORT_FILES = ["kensho-worker-report.sh", "kensho-qa-report.sh", "kensho-revenue-report.sh"]
 
 
 def _find_report_files() -> list[Path]:
