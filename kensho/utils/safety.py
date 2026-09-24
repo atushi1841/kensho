@@ -85,8 +85,9 @@ def network_outage_reason(cfg: dict[str, Any], account_key: str) -> str:
         return ""
 
     state = account_entry.get("adapter_state", "")
-    # "切断" or "未検出" → ネットワーク出区（WiFi圏外/電源OFF/バックOFF）
-    if state in ("切断", "未検出"):
+    proxy_state = account_entry.get("proxy_state", "")
+    # "切断" or "未検出"でもプロキシがlisten中なら圏外扱いしない
+    if state in ("切断", "未検出") and proxy_state != "listen":
         return f"ネットワーク出区: アカウント '{account_key}' のWiFiが{state}状態"
     # "有線(NIC)" は有線LAN接続 → WiFi出区ではない
     if state == "有線(NIC)":
