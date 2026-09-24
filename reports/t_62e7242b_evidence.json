@@ -1,31 +1,41 @@
 {
-  "task_id": "t_62e7242b",
-  "status": "complete",
   "success_indicators": [
-    "方向: up/down 記載数（件）5件以上"
+    "reports/outcome-review-2026-09-24.md 内の `方向:` 行数 33件（カード成功指標は ≥5）",
+    "方向ラベル付き KPI エントリ数 58件（down 38 / up 15 / equal 5）",
+    "tests/test_outcome_review_check.py passed 12→13・mypy strict エラー 0"
   ],
   "verification_commands": [
-    "pytest -q tests/test_outcome_review_check.py",
-    "python3 scripts/outcome_review_check.py --days 7 --write-report",
-    "grep -c \"方向:\" reports/outcome-review-2026-09-24.md"
+    "grep -c \"方向:\" reports/outcome-review-2026-09-24.md",
+    "python -m pytest tests/test_outcome_review_check.py -q",
+    "python -m mypy scripts/outcome_review_check.py tests/test_outcome_review_check.py",
+    "python scripts/outcome_review_check.py --reports-dir reports --write-report"
   ],
   "artifact_paths": [
-    "/mnt/d/Project2/kensho/scripts/outcome_review_check.py",
-    "/mnt/d/Project2/kensho/tests/test_outcome_review_check.py",
-    "/mnt/d/Project2/kensho/reports/outcome-review-2026-09-24.md",
-    "/mnt/d/Project2/kensho/reports/t_62e7242b_verification.md"
+    "scripts/outcome_review_check.py",
+    "tests/test_outcome_review_check.py",
+    "reports/outcome-review-2026-09-24.md",
+    "reports/t_62e7242b_verification.md"
   ],
   "evidence_hashes": [
-    "2a98eb96 scripts/outcome_review_check.py",
-    "d09b39fa tests/test_outcome_review_check.py",
-    "c8b4cbdf reports/outcome-review-2026-09-24.md",
-    "4384371b reports/t_62e7242b_verification.md"
+    "e515115"
   ],
   "outcome": [
     {
-      "metric": "方向: up/down 記載数",
+      "metric": "outcome-review レポート内の `方向:` 行数",
       "before": 0,
-      "after": 28
+      "after": 33
+    },
+    {
+      "metric": "方向ラベル付き KPI エントリ数",
+      "before": 0,
+      "after": 58
+    },
+    {
+      "metric": "tests/test_outcome_review_check.py passed",
+      "before": 12,
+      "after": 13
     }
-  ]
+  ],
+  "task_id": "t_62e7242b",
+  "status": "complete"
 }
