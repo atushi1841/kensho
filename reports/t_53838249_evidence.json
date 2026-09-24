@@ -1,30 +1,8 @@
 {
   "task_id": "t_53838249",
-  "status": "success",
-  "success_indicators": {
-    "script_runs": ["dry-run", "apply-dry-run", "minimal-path-dry-run"],
-    "hermes_resolution": "all calls use HERMES_BIN",
-    "error_handling": "exits 127 when CLI missing",
-    "rollback_available": "git revert bf56e2f"
-  },
-  "verification_commands": [
-    "bash scripts/kensho-ready-watchdog.sh --dry-run",
-    "bash scripts/kensho-ready-watchdog.sh --apply --dry-run",
-    "env -i HOME=/home/atushi PATH=/usr/bin:/bin bash scripts/kensho-ready-watchdog.sh --dry-run",
-    "grep -n HERMES_BIN scripts/kensho-ready-watchdog.sh",
-    "git diff HEAD scripts/kensho-ready-watchdog.sh"
-  ],
-  "artifact_paths": [
-    "/mnt/d/Project2/kensho/scripts/kensho-ready-watchdog.sh",
-    "/mnt/d/Project2/kensho/reports/t_53838249_verification.md",
-    "/mnt/d/Project2/kensho/reports/t_53838249_evidence.json"
-  ],
-  "evidence_hashes": {
-    "commit_bf56e2f": "7203 bytes"
-  },
-  "rollback_commands": [
-    "git revert bf56e2f",
-    "rm /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-ready-watchdog.sh",
-    "git checkout -- /mnt/d/Project2/kensho/scripts/kensho-ready-watchdog.sh"
-  ]
+  "status": "abandoned",
+  "success_indicators": ["duplicate task detection", "redundancy resolution", "resource conservation"],
+  "verification_commands": ["hermes kanban show t_53838249", "hermes kanban complete t_53838249 --summary \"重複済みバグのため放棄\" --result \"duplicate work already completed\"", "git log --oneline -5 | grep t_5af1b5d8"],
+  "artifact_paths": [],
+  "evidence_hashes": {}
 }
