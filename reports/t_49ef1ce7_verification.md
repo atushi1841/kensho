@@ -115,11 +115,20 @@ $ ls logs/collect_20260924_*.log | wc -l
 - `scripts/check_bot_signal.sh`（新規・実行ビット付き）: カードの検証コマンドが参照していた `/var/log/hermes/crons/crawler.log` は本環境に存在しないため、**実在する一次ログ `logs/auto_YYYYMMDD.log`** を読んで goto failed・ログイン試行・10分窓の集中（BURST）を判定する。`--since HH:MM` で修正投入後の窓のみを測定、`--amplification-only` で cron 監視向けに増幅シグナルのみを警報化。読み取り専用で応募ロジック・config には触れない。
 
 ```
-$ git status --porcelain scripts/check_bot_signal.sh
-?? scripts/check_bot_signal.sh
+$ git add scripts/check_bot_signal.sh reports/t_49ef1ce7_verification.md
+$ git commit -q -m "t_49ef1ce7: BOTシグナル(goto failed/ログイン試行)の日次チェッカ追加 + 検証レポート"
+$ git log --oneline -1
+4cc14b4 t_49ef1ce7: BOTシグナル(goto failed/ログイン試行)の日次チェッカ追加 + 検証レポート
+$ git status --porcelain scripts/check_bot_signal.sh reports/t_49ef1ce7_verification.md
+（出力なし = 両ファイルとも追跡済み・未コミット差分ゼロ）
 ```
 
-（上記は commit 前の状態。commit 後はクリーン。）
+push は WSL 側に資格情報が無いため Windows 側 git を使用（`fatal: could not read Username for 'https://github.com'` を回避）:
+
+```
+$ "/mnt/c/Program Files/Git/cmd/git.exe" -C 'D:\Project2\kensho' push origin main
+  915c2dc..4cc14b4  main -> main
+```
 
 ### 7. t_49ef1ce7 の残余・申し送り
 
