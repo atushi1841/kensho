@@ -1,0 +1,269 @@
+[SELF-HEAL] pipeline=apply key=apply:zin20120731 attempt=1 error_kind=no_auth_session action=stop_fatal detail=non_retryable:no_auth_session message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=apply key=apply:zin20120731 attempt=1 error_kind=none action=final detail=fatal message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=collection key=collection attempt=1 error_kind=runtime action=final detail= message=collection boom
+[SELF-HEAL] pipeline=collection key=collection attempt=1 error_kind=runtime action=final detail= message=collection boom
+[SELF-HEAL] pipeline=collection key=collection attempt=1 error_kind=runtime action=final detail= message=collection boom
+[SELF-HEAL] pipeline=apply key=apply attempt=1 error_kind=no_auth_session action=stop_fatal detail=non_retryable:no_auth_session message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=apply key=apply attempt=1 error_kind=none action=final detail=fatal message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=apply key=apply attempt=1 error_kind=no_auth_session action=stop_fatal detail=non_retryable:no_auth_session message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=apply key=apply attempt=1 error_kind=none action=final detail=fatal message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=apply key=apply attempt=1 error_kind=no_auth_session action=stop_fatal detail=non_retryable:no_auth_session message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=apply key=apply attempt=1 error_kind=none action=final detail=fatal message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=apply key=apply:acctA attempt=1 error_kind=no_auth_session action=stop_fatal detail=non_retryable:no_auth_session message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=apply key=apply:acctA attempt=1 error_kind=none action=final detail=fatal message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=apply key=apply:acctA attempt=1 error_kind=no_auth_session action=stop_fatal detail=non_retryable:no_auth_session message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=apply key=apply:acctA attempt=1 error_kind=none action=final detail=fatal message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=apply key=apply:acctA attempt=1 error_kind=no_auth_session action=stop_fatal detail=non_retryable:no_auth_session message=apply 0 success 1 errors (no_auth_session)
+[SELF-HEAL] pipeline=apply key=apply:acctA attempt=1 error_kind=none action=final detail=fatal message=apply 0 success 1 errors (no_auth_session)
+{
+  "task": "t_8946706e",
+  "before_ref": "22c50a9",
+  "scenario1_session_failure_retry": {
+    "before": {
+      "operation_calls(browser+login回数)": 3,
+      "attempts": 3,
+      "events": [
+        "jitter_retry",
+        "jitter_retry"
+      ],
+      "blocked(apply:zin20120731)": false,
+      "ceilings": {
+        "apply:zin20120731": 1
+      }
+    },
+    "after": {
+      "operation_calls(browser+login回数)": 1,
+      "attempts": 1,
+      "events": [
+        "stop_fatal",
+        "final"
+      ],
+      "blocked(apply:zin20120731)": true,
+      "ceilings": {
+        "apply:zin20120731": 4
+      }
+    }
+  },
+  "scenario2_hourly_ceiling": {
+    "before": {
+      "runs": [
+        {
+          "run": "T+0h",
+          "count": 1,
+          "first_fail_time": "2026-09-24T09:13:15.510692",
+          "last_fail_time": null,
+          "blocked_until": null,
+          "is_blocked": false
+        },
+        {
+          "run": "T+1h",
+          "count": 2,
+          "first_fail_time": "2026-09-24T09:13:15.510692",
+          "last_fail_time": null,
+          "blocked_until": null,
+          "is_blocked": false
+        },
+        {
+          "run": "T+2h",
+          "count": 3,
+          "first_fail_time": "2026-09-24T09:13:15.510692",
+          "last_fail_time": null,
+          "blocked_until": null,
+          "is_blocked": false
+        }
+      ],
+      "blocked_after_3rd": false
+    },
+    "after": {
+      "runs": [
+        {
+          "run": "T+0h",
+          "count": 1,
+          "first_fail_time": "2026-09-24T09:13:15.516478",
+          "last_fail_time": "2026-09-24T09:13:15.516478",
+          "blocked_until": null,
+          "is_blocked": false
+        },
+        {
+          "run": "T+1h",
+          "count": 2,
+          "first_fail_time": "2026-09-24T09:13:15.516478",
+          "last_fail_time": "2026-09-24T10:13:15.518242",
+          "blocked_until": null,
+          "is_blocked": false
+        },
+        {
+          "run": "T+2h",
+          "count": 3,
+          "first_fail_time": "2026-09-24T09:13:15.516478",
+          "last_fail_time": "2026-09-24T11:13:15.521293",
+          "blocked_until": "2026-09-24T11:43:15.521293",
+          "is_blocked": true
+        }
+      ],
+      "blocked_after_3rd": true
+    }
+  },
+  "scenario3_ceiling_key_per_account": {
+    "before_module": {
+      "before_style(apply 全体キー)": {
+        "history": [
+          {
+            "run": "T+0h",
+            "actor": "acctA(失効)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+1h",
+            "actor": "acctB(成功)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+2h",
+            "actor": "acctA(失効)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+3h",
+            "actor": "acctB(成功)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+4h",
+            "actor": "acctA(失効)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+5h",
+            "actor": "acctB(成功)",
+            "A_blocked": false
+          }
+        ],
+        "A_failures": 3,
+        "A_blocked_at_end": false,
+        "ceiling_keys": {
+          "apply": 0
+        }
+      },
+      "after_style(apply:<acct> キー)": {
+        "history": [
+          {
+            "run": "T+0h",
+            "actor": "acctA(失効)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+1h",
+            "actor": "acctB(成功)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+2h",
+            "actor": "acctA(失効)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+3h",
+            "actor": "acctB(成功)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+4h",
+            "actor": "acctA(失効)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+5h",
+            "actor": "acctB(成功)",
+            "A_blocked": false
+          }
+        ],
+        "A_failures": 3,
+        "A_blocked_at_end": false,
+        "ceiling_keys": {
+          "apply:acctA": 3
+        }
+      }
+    },
+    "after_module": {
+      "before_style(apply 全体キー)": {
+        "history": [
+          {
+            "run": "T+0h",
+            "actor": "acctA(失効)",
+            "A_blocked": true
+          },
+          {
+            "run": "T+1h",
+            "actor": "acctB(成功)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+2h",
+            "actor": "acctA(失効)",
+            "A_blocked": true
+          },
+          {
+            "run": "T+3h",
+            "actor": "acctB(成功)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+4h",
+            "actor": "acctA(失効)",
+            "A_blocked": true
+          },
+          {
+            "run": "T+5h",
+            "actor": "acctB(成功)",
+            "A_blocked": false
+          }
+        ],
+        "A_failures": 3,
+        "A_blocked_at_end": false,
+        "ceiling_keys": {
+          "apply": 0
+        }
+      },
+      "after_style(apply:<acct> キー)": {
+        "history": [
+          {
+            "run": "T+0h",
+            "actor": "acctA(失効)",
+            "A_blocked": true
+          },
+          {
+            "run": "T+1h",
+            "actor": "acctB(成功)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+2h",
+            "actor": "acctA(失効)",
+            "A_blocked": true
+          },
+          {
+            "run": "T+3h",
+            "actor": "acctB(成功)",
+            "A_blocked": false
+          },
+          {
+            "run": "T+4h",
+            "actor": "acctA(失効)",
+            "A_blocked": true
+          },
+          {
+            "run": "T+5h",
+            "actor": "acctB(成功)",
+            "A_blocked": false
+          }
+        ],
+        "A_failures": 3,
+        "A_blocked_at_end": false,
+        "ceiling_keys": {
+          "apply:acctA": 6
+        }
+      }
+    }
+  }
+}

@@ -96,6 +96,15 @@ self_heal の retry は**操作（＝ブラウザ起動とXログイン）を丸
 
 ## 検出した設計上の欠陥（実測に基づく）
 
+> **対応状況（2026-09-24 追記 / 恒久修正カード）**: 下記 F1〜F6 はすべて修正カード **t_8946706e**（commit **4ef200d**）で実装・テスト済み。
+> - F1 対応済み: commit 4ef200d — 回復イベントを `[SELF-HEAL] …` の構造化1行として logger へ
+> - F2 対応済み: commit 4ef200d — `ai_assisted=false` なら `ai_consult` をプランから除外（no-op attempt を廃止）
+> - F3 対応済み: commit 4ef200d — session/auth/dead_proxy 系を非リトライ分類（1回で停止＋当該垢のみ遮断＋通知）
+> - F4 対応済み: commit 4ef200d — 回復プランを永続カーソルで段階消費（`max_attempts=3` のまま `transport_fallback`/`scope_reduction` へ到達）
+> - F5 対応済み: commit 4ef200d — `last_fail_time` + `blocked_until` 方式へ変更＋ceiling キーを垢単位（`apply:<key>`）化
+> - F6 対応済み: commit 4ef200d — collector/applier が config（`retry_empty_collection` / `retry_partial_apply`）を尊重
+> 検証の実測は `reports/t_8946706e_verification.md`（35 passed / before-after 再現）を参照。
+
 - **F1 self_heal の回復イベントが一切ログに残らない（可観測性ゼロ）**
   `SelfHealingLoop.__init__` は `logger` を受け取るが、`self.logger` は代入のみで**どこからも使われていない**（`grep -n logger kensho/core/self_heal.py` は 312 と 318 の2行のみ）。`HealingEvent`（どの回復アクションが何をしたか）はメモリ上で捨てられ、`value_or_raise()` の最終失敗だけが呼出側のログに出る。今回 retry の実在を証明するために操作開始行の時系列復元を要したのは、この欠落の直接の帰結。
 

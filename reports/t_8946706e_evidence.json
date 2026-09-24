@@ -1,0 +1,48 @@
+{
+  "task_id": "t_8946706e",
+  "status": "complete",
+  "success_indicators": [
+    "F1: 回復イベントが '[SELF-HEAL] pipeline=... key=... attempt=... error_kind=... action=... ' の構造化1行として logger に残る（repro 実測で stop_fatal / final の2行）",
+    "P0/F3: セッション失効（no_auth_session）は attempts=1 / operation_calls=1 で停止（修正前: attempts=3 / calls=3）",
+    "P0: failure ceiling のキーが apply:<account_key> 単位。別垢（acctB）の成功でリセットされない（ceilings={'apply:acctA': n}）",
+    "P1/F5: 毎時cron相当（run間隔60分×3回失敗）で failure ceiling が発動（修正前: 4連続失敗でも不発）",
+    "P2/F2: ai_assisted=false なら ai_consult をプランから除外（no-op attempt を作らない）",
+    "P2/F4: max_attempts=3 のまま transport_fallback / scope_reduction へ到達可能（永続カーソルで段階消費・枯渇時は即停止）",
+    "P2/F6: collector/applier が config（retry_empty_collection / retry_partial_apply）を尊重（呼出側ハードコード廃止）",
+    "追加要件: 本番データで zin20120731（data/status/zin20120731.json = dead_proxy）が gate=SKIP となり応募を試行しない（自宅IPフォールバックなし）",
+    "テスト: tests/test_self_heal.py 30件 + tests/test_guarded_source_arity.py 5件 = 35 passed（既存18件を落とさず新規12件を追加）",
+    "max_attempts は 3 のまま（差分に値変更なし・grep で確認）"
+  ],
+  "verification_commands": [
+    "$ python -m pytest tests/test_self_heal.py tests/test_guarded_source_arity.py -q --no-cov => 35 passed in 46.58s",
+    "$ python reports/t_8946706e_repro_self_heal.py HEAD => scenario1 before: attempts=3 calls=3 blocked=false / after: attempts=1 calls=1 blocked(apply:zin20120731)=true",
+    "$ python reports/t_8946706e_repro_self_heal.py HEAD => scenario2 before: blocked_after_3rd=false / after: blocked_after_3rd=true (blocked_until=+30分)",
+    "$ python reports/t_8946706e_repro_self_heal.py HEAD => scenario3 before: ceilings={'apply': 0} A_blocked=false / after: ceilings={'apply:acctA': 6} A_blocked=true",
+    "$ python reports/t_8946706e_dead_proxy_gate_check.py => zin20120731 status=dead_proxy gate=SKIP reason=プロキシ死骸（TCP疎通 or 出口IP確認失敗） / dead_proxy_accounts=['zin20120731']",
+    "$ git diff 22c50a9..4ef200d --unified=0 -- config.yaml kensho/core/self_heal.py | grep -E '^[-+].*max_attempts' => 追加行はコメントとローカル変数化のみ（値の変更なし）",
+    "$ grep -n max_attempts config.yaml => 315:  max_attempts: 3",
+    "$ grep -c 'def test_' tests/test_self_heal.py => 30",
+    "$ git status --porcelain kensho/core/self_heal.py kensho/application/applier.py kensho/scraping/collector.py kensho/utils/safety.py tests/test_self_heal.py => (出力なし=クリーン)",
+    "$ git show --stat --oneline 4ef200d => 7 files changed, 999 insertions(+), 71 deletions(-)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_8946706e_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_8946706e_repro_output.json",
+    "/mnt/d/Project2/kensho/reports/t_8946706e_repro_self_heal.py",
+    "/mnt/d/Project2/kensho/reports/t_8946706e_dead_proxy_gate_check.py",
+    "/mnt/d/Project2/kensho/kensho/core/self_heal.py",
+    "/mnt/d/Project2/kensho/kensho/application/applier.py",
+    "/mnt/d/Project2/kensho/kensho/utils/safety.py",
+    "/mnt/d/Project2/kensho/kensho/scraping/collector.py",
+    "/mnt/d/Project2/kensho/tests/test_self_heal.py"
+  ],
+  "evidence_hashes": [
+    "sha256 cfbae46a3c8c062b621ebfa4c71e08e2f6d4aa964e8e4eef593cfa23f4a7a0ac  reports/t_8946706e_verification.md",
+    "sha256 336cb1a215c49c67580a9914bbd23f3fe693c488f214f2767bdf29de86f5a5f8  reports/t_8946706e_repro_output.json",
+    "sha256 fd84b8efcb1854d5005cc8dace0fabb94f2ee0139f10262b3d90143b4520751f  kensho/core/self_heal.py",
+    "sha256 3ee3e2c239de180da99210057121647b7eee44144683d747f06267d4da8f158f  tests/test_self_heal.py",
+    "sha256 89613968c95ba10827aeb065d4c8688c0f05ca1d41e5e1b9456de5cb61a12f03  kensho/application/applier.py",
+    "sha256 739569acbc7491da22ddb66b78b97744ac9f2ac1c7ef76040103f3f0bc455bed  kensho/utils/safety.py",
+    "sha256 daa873b39ffb9755031f680f23eb175ef36e9cb4c7ea3c7d9c9deb7545e65a3e  kensho/scraping/collector.py"
+  ]
+}
