@@ -139,11 +139,21 @@ class TestSafeWriter:
         assert len(claims) == 0
 
     def test_claim_conflict(self):
-        self._run_safe_write(['--claim', '--path', str(self.test_file), '--task', 'task-1'])
-        code, stdout, stderr = self._run_safe_write([
-            '--claim', '--path', str(self.test_file), '--task', 'task-2'
-        ])
-        assert code == 4, f"Expected exit 4, got {code}: {stderr}"
+            # Seed claims file with a live PID (the test process) so prune doesn't remove it
+            claims_file = Path(self.tmp) / "data" / "edit_claims.json"
+            claims_file.parent.mkdir(parents=True, exist_ok=True)
+            live_pid = str(os.getpid())
+            with open(claims_file, 'w') as f:
+                json.dump([{
+                    'path': str(self.test_file),
+                    'task_id': 'task-1',
+                    'pid': live_pid,
+                    'timestamp': time.time(),
+                }], f)
+            code, stdout, stderr = self._run_safe_write([
+                '--claim', '--path', str(self.test_file), '--task', 'task-2'
+            ])
+            assert code == 4, f"Expected exit 4 for conflict, got {code}: {stderr}"
 
     def test_release_nonexistent(self):
         code, stdout, stderr = self._run_safe_write([
@@ -158,7 +168,17 @@ class TestSafeWriter:
         assert 'task-1' in stdout or 'Claims' in stdout
 
     def test_claims_json(self):
-        self._run_safe_write(['--claim', '--path', str(self.test_file), '--task', 'task-1'])
+        # Seed claims file with a live PID (the test process) so prune doesn't remove it
+        claims_file = Path(self.tmp) / "data" / "edit_claims.json"
+        claims_file.parent.mkdir(parents=True, exist_ok=True)
+        live_pid = str(os.getpid())
+        with open(claims_file, 'w') as f:
+            json.dump([{
+                'path': str(self.test_file),
+                'task_id': 'task-1',
+                'pid': live_pid,
+                'timestamp': time.time(),
+            }], f)
         code, stdout, stderr = self._run_safe_write(['--claims', '--json'])
         assert code == 0, f"Claims JSON failed: {stderr}"
         claims = json.loads(stdout)

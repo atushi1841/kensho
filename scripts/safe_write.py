@@ -58,53 +58,53 @@ class SafeWriter:
         return original_length - len(claims)
 
     def write(self, path, expected_hash, from_file=None, stdin=False):
-        file_path = Path(path)
-
-        # Get current hash of the target file
-        current_hash = self._get_file_hash(file_path)
-
-        # Verify hash matches expected
-        if current_hash != expected_hash:
-            if current_hash is None:
-                print(f"ERROR: File '{path}' does not exist", file=sys.stderr)
+            file_path = Path(path)
+        
+            # Read content FIRST (before hash check)
+            if from_file:
+                with open(from_file, 'rb') as f:
+                    content = f.read()
+            elif stdin:
+                content = sys.stdin.buffer.read()
             else:
-                print(f"CONFLICT: current={current_hash}, expected={expected_hash}", file=sys.stderr)
-            sys.exit(3)
-
-        # Read content
-        if from_file:
-            with open(from_file, 'rb') as f:
-                content = f.read()
-        elif stdin:
-            content = sys.stdin.buffer.read()
-        else:
-            print("ERROR: Must specify --from-file or --stdin", file=sys.stderr)
-            sys.exit(1)
-
-        # Ensure directory exists
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        temp_file = file_path.with_suffix(file_path.suffix + '.tmp')
-        try:
-            # Write to temp file
-            with open(temp_file, 'wb') as f:
-                f.write(content)
-
-            # Atomic replace
-            os.replace(temp_file, file_path)
-
-            # Sync to disk
-            with open(file_path, 'rb') as f:
-                f.read()
-
-            print(f"SUCCESS: Written to '{path}'")
-            sys.exit(0)
-
-        except Exception as e:
-            # Clean up temp file if it exists
-            if temp_file.exists():
-                temp_file.unlink()
-            print(f"ERROR: Failed to write '{path}': {e}", file=sys.stderr)
-            sys.exit(5)
+                print("ERROR: Must specify --from-file or --stdin", file=sys.stderr)
+                sys.exit(1)
+        
+            # Get current hash of the target file
+            current_hash = self._get_file_hash(file_path)
+        
+            # Verify hash matches expected
+            if current_hash != expected_hash:
+                if current_hash is None:
+                    print(f"ERROR: File '{path}' does not exist", file=sys.stderr)
+                else:
+                    print(f"CONFLICT: current={current_hash}, expected={expected_hash}", file=sys.stderr)
+                sys.exit(3)
+        
+            # Ensure directory exists
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            temp_file = file_path.with_suffix(file_path.suffix + '.tmp')
+            try:
+                # Write to temp file
+                with open(temp_file, 'wb') as f:
+                    f.write(content)
+            
+                # Atomic replace
+                os.replace(temp_file, file_path)
+            
+                # Sync to disk
+                with open(file_path, 'rb') as f:
+                    f.read()
+            
+                print(f"SUCCESS: Written to '{path}'")
+                sys.exit(0)
+        
+            except Exception as e:
+                # Clean up temp file if it exists
+                if temp_file.exists():
+                    temp_file.unlink()
+                print(f"ERROR: Failed to write '{path}': {e}", file=sys.stderr)
+                sys.exit(5)
 
     def read(self, path):
         file_path = Path(path)
@@ -179,6 +179,8 @@ class SafeWriter:
 
 def main():
     parser = argparse.ArgumentParser(description='Safe file writing with CAS')
+    parser.add_argument('--data-dir', type=str, default='data',
+                        help='Directory for claims data (default: ./data)')
     parser.add_argument('--write', action='store_true')
     parser.add_argument('--path', type=str)
     parser.add_argument('--expect-sha256', type=str)
@@ -193,7 +195,7 @@ def main():
     parser.add_argument('--ttl', type=int, default=3600)
 
     args = parser.parse_args()
-    w = SafeWriter()
+    w = SafeWriter(data_dir=args.data_dir)
 
     if args.write:
         w.write(args.path, args.expect_sha256, args.from_file, args.stdin)
