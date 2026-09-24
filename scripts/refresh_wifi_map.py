@@ -122,6 +122,24 @@ def main() -> int:
         print(f"[warn] {MAP} を読めません: {exc}")
         return 1
 
+    # ★ 2026-09-25 QA修正(2) 実測: 掻き回し用の一時スクリプト(test_fix.py 等)が
+    #   data/account_wifi_map.json を live 項目だけの最小JSONで上書きすると、静的対応
+    #   (adapter/port)が失われる。以降の全tickで adapter が引けず proxy_state="停止"
+    #   (実際はLISTEN)という偽マップが書き込まれ続け、applier の network_outage_reason が
+    #   稼働垢を「圏外」と誤判定して応募を止める（実測: kudou が 08:00 から停止する状態）。
+    #   静的対応が欠けた map は破損とみなし、書き込みを行わず既存値を保持する。
+    broken = [
+        str(ent.get("key", "?"))
+        for ent in data.get("accounts", [])
+        if not str(ent.get("adapter", "")).strip() or not isinstance(ent.get("port"), int)
+    ]
+    if broken:
+        print(
+            f"[error] 静的対応(adapter/port)が欠落した垢: {broken} — "
+            "map破損の疑いがあるため書き込みを中止します（既存値を保持）"
+        )
+        return 2
+
     ips, wlan, ports = collect_ips(), collect_wlan(), collect_ports()
     home = _curl_ip([])  # 自宅回線のグローバルIP（プロキシ未使用）
     # ★ 2026-09-25 QA修正: 実測系が全滅した場合は「停止」「未検出」を書かない（既存値を保持）。

@@ -97,3 +97,36 @@ def test_successful_measurement_writes_measured_values(
     assert ent["egress_ip"] == "106.146.21.233"
     assert ent["egress_ok"] is True
     assert ent["egress_warn_home"] is False
+
+
+def test_broken_static_contract_aborts_write(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """静的対応(adapter/port)が欠落した破損mapは上書きせず、exit 2で中止する。
+
+    背景（2026-09-25 QA実測）: live項目だけの最小JSONで data/account_wifi_map.json を
+    上書きすると adapter が引けず proxy_state="停止"（実際はLISTEN）が毎tick書き込まれ、
+    稼働垢 kudou(50件/日) が network_outage_reason で「圏外」になり応募停止した。
+    破損マップは触らないことを固定する。
+    """
+    map_path = tmp_path / "account_wifi_map.json"
+    broken = {
+        "accounts": [
+            {"key": "kudou", "display": "@kudou_aoshi", "adapter_state": "未検出",
+             "proxy_state": "停止", "egress_ip": "", "egress_ok": False}
+        ],
+        "home_ip": "219.104.132.236",
+        "measurement_ok": True,
+    }
+    raw = json.dumps(broken, ensure_ascii=False) + "\n"
+    map_path.write_text(raw, encoding="utf-8")
+    monkeypatch.setattr(m, "MAP", map_path)
+    monkeypatch.setattr(m, "collect_ips", lambda: {"kudou_RM10JE_B": "10.32.223.239"})
+    monkeypatch.setattr(m, "collect_wlan",
+                        lambda: {"kudou_RM10JE_B": {"state": "接続", "ssid": "RM10JE_B"}})
+    monkeypatch.setattr(m, "collect_ports", lambda: {1082})
+    monkeypatch.setattr(m, "_curl_ip", lambda *a, **k: "219.104.132.236")
+
+    assert m.main() == 2
+    assert map_path.read_text(encoding="utf-8") == raw  # 破損mapを書き換えていない
+    assert "adapter/port" in capsys.readouterr().out

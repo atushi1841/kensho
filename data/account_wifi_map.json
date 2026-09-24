@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-25T05:26:49+09:00",
+  "updated_at": "2026-09-25T06:20:25+09:00",
   "source": "Windows実測: netsh wlan show interfaces / Get-NetIPAddress / 稼働中kensho_proxyプロセスのCommandLine",
   "note": "「状態」は Windows実測（netsh / Get-NetIPAddress / LISTENポート）。回線の出口IPはプロキシ経由で別途実測。垢バン垢は表から除外。",
   "accounts": [
@@ -63,7 +63,7 @@
       "signal": "",
       "proxy_state": "listen",
       "note": "2026-09-10 Wi-Fi→有線直結へ切替",
-      "egress_ip": "126.245.20.141",
+      "egress_ip": "126.245.21.254",
       "egress_warn_home": false,
       "egress_ok": true
     },
