@@ -1,13 +1,13 @@
 {
   "task_id": "t_d1fee074",
   "status": "partial",
-  "verdict": "条件1・3・4達成 / 条件2未達（到達不能コード）/ 7日連続push未達",
+  "verdict": "条件1・3・4達成 / 条件2未達（到達不能コード）/ 7日連続push未達 / 48h条件未満 (23h)",
   "success_indicators": [
     "attempts=3 ライン数: 64 -> 0 件/事後窓",
     "CEILING 連続失敗 最大: 3回 -> 2回",
     "complete_watchdog comment failed: 54 -> 0件",
-    "github_sync cron自走push 0/1 -> 2/2",
-    "self_heal pytest 30 passed"
+    "github_sync cron自走push: 0/1 -> 2/2",
+    "self_heal pytest: 30 passed"
   ],
   "verification_commands": [
     "bash ~/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_d1fee074 --workdir /mnt/d/Project2/kensho --task",
@@ -17,11 +17,12 @@
     "python3 /home/atushi/.hermes/profiles/kensho-qa/cache/scratch/scan_days.py"
   ],
   "artifact_paths": [
-    "/mnt/d/Project2/kensho/reports/t_d1fee074_verification.md"
+    "/mnt/d/Project2/kensho/reports/t_d1fee074_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_d1fee074_evidence.json"
   ],
   "evidence_hashes": {
     "reports/t_d1fee074_verification.md": "sha256:tbd",
-    "logs/complete_watchdog_cron.log": "sha256:tbd"
+    "reports/t_d1fee074_evidence.json": "sha256:tbd"
   },
   "outcome": [
     {
@@ -29,14 +30,14 @@
       "before": 64,
       "after": 0,
       "unit": "件",
-      "evidence": "logs/auto_20260924.log / scan_days.py 09-24 0件 / 09-25 0件"
+      "evidence": "logs/auto_20260924.log scan_days.py: 09-24 0件, 09-25 0件"
     },
     {
-      "metric": "CEILING 連続失敗 最大",
+      "metric": "CEILING 連続失敗 最大値",
       "before": 3,
       "after": 2,
       "unit": "回",
-      "evidence": "scan_days.py 09-24 最大2回 / 09-25 0回"
+      "evidence": "scan_days.py: 09-24 最大2回, 09-25 0回"
     },
     {
       "metric": "complete_watchdog comment failed",
@@ -46,14 +47,14 @@
       "evidence": "logs/complete_watchdog_cron.log grep -c = 0"
     },
     {
-      "metric": "github_sync cron push",
+      "metric": "github_sync cron push /実行",
       "before": 0,
       "after": 2,
-      "unit": "回/実行",
-      "evidence": "env -i cron envで2/2成功"
+      "unit": "回",
+      "evidence": "env -i cron envで2/2成功 (reflog origin/main 04:52, 05:04)"
     },
     {
-      "metric": "self_heal pytest",
+      "metric": "self_heal pytest passed",
       "before": "N/A",
       "after": 30,
       "unit": "pass",
@@ -70,7 +71,8 @@
     "cond2_network_outage_skip": "FAIL (到達不能コード)",
     "cond3_24h_after": "PASS",
     "cond4_bot_constraints": "PASS",
-    "cond5_7day_push": "FAIL (3/7日)"
+    "cond5_7day_push": "FAIL (3/7日)",
+    "cond6_48h_minimum": "FAIL (23h経過、48h未満)"
   },
   "findings": [
     "条件1効果: attempts=3 64→0件, CEILING連続最大3→2回",
