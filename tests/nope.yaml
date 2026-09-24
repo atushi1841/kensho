@@ -1,0 +1,2 @@
+rate_limits:
+  max_actions_per_hour: 25
