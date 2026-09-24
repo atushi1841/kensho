@@ -13,18 +13,41 @@ from __future__ import annotations
 
 import datetime
 import json
+import os
 import re
+import shutil
 import subprocess
 from pathlib import Path
 
 MAP = Path("/mnt/d/Project2/kensho/data/account_wifi_map.json")
+
+# ★ 2026-09-25 QA修正 (nightly-qa 05:2x 実測):
+#   cronの最小PATH(/usr/bin:/bin)では bare な `powershell.exe` が解決できず、_ps() が
+#   無音で空文字を返す → ports=[] / wlan={} → 「全垢 proxy_state=停止」「adapter_state=未検出」
+#   という偽マップを書き込む。これが applier の network_outage_reason() を経由して
+#   稼働中の kudou(50件/日) を「圏外」と誤判定し応募をスキップさせる
+#   （再現: `env -i PATH=/usr/bin:/bin python3 scripts/refresh_wifi_map.py` → ports=[]）。
+#   Windows実測に使う実行ファイルは絶対パスで解決する。
+PS_CANDIDATES = (
+    "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe",
+    "/mnt/c/Program Files/PowerShell/7/pwsh.exe",
+)
+PS_FALLBACK = "powershell.exe"
+
+
+def _powershell() -> str:
+    """cron最小PATHでも解決できるPowerShell実行ファイルの絶対パスを返す。"""
+    for cand in PS_CANDIDATES:
+        if os.path.exists(cand):
+            return cand
+    return shutil.which(PS_FALLBACK) or PS_FALLBACK
 
 
 def _ps(cmd: str, timeout: int = 25) -> str:
     """powershell.exe を実行して stdout を返す（失敗時は空文字）。"""
     try:
         r = subprocess.run(
-            ["powershell.exe", "-NoProfile", "-Command", cmd],
+            [_powershell(), "-NoProfile", "-Command", cmd],
             capture_output=True, text=True, timeout=timeout, errors="replace",
         )
         return r.stdout or ""
@@ -101,6 +124,9 @@ def main() -> int:
 
     ips, wlan, ports = collect_ips(), collect_wlan(), collect_ports()
     home = _curl_ip([])  # 自宅回線のグローバルIP（プロキシ未使用）
+    # ★ 2026-09-25 QA修正: 実測系が全滅した場合は「停止」「未検出」を書かない（既存値を保持）。
+    #   測定失敗をそのままmapに書くと、稼働プロキシの垢が圏外扱いで応募スキップされる。
+    measured_ok = bool(ips) or bool(wlan)
     changed = 0
     for ent in data.get("accounts", []):
         adapter = str(ent.get("adapter", "")).strip()
@@ -126,27 +152,34 @@ def main() -> int:
             ent["adapter_state"] = "\u6709\u7dda(NIC)" if wired else ent.get("adapter_state", "")
             ent["signal"] = ""
         elif adapter and adapter not in ips and not adapter.startswith("("):
-            ent["adapter_state"] = "\u672a\u691c\u51fa"
-            ent["signal"] = ""
+            if measured_ok:
+                ent["adapter_state"] = "\u672a\u691c\u51fa"
+                ent["signal"] = ""
         # プロキシ待受 + 出口IP実測（自宅IPと一致したら警告）
-        new_state = "listen" if (isinstance(port, int) and port in ports) else "\u505c\u6b62"
-        if ent.get("proxy_state") != new_state:
-            ent["proxy_state"] = new_state
-            changed += 1
-        if new_state == "listen":
-            eg = egress_ip(port)
-            ent["egress_ip"] = eg
-            # 自宅IPは atushi16 のみ許可（絶対ルール）。他垢が自宅IPで出たら重大違反。
-            ent["egress_warn_home"] = bool(
-                eg and home and eg == home and str(ent.get("key", "")) != "atushi16"
-            )
-            ent["egress_ok"] = bool(eg)
-            changed += 1
+        if not ports and not measured_ok:
+            # ★ 2026-09-25 QA修正: 実測全滅（cron最小PATH等）→ 偽の「停止」を書かず既存値を保持
+            pass
         else:
-            ent["egress_ip"] = ""
-            ent["egress_ok"] = False
-            ent["egress_warn_home"] = False
+            new_state = "listen" if (isinstance(port, int) and port in ports) else "\u505c\u6b62"
+            if ent.get("proxy_state") != new_state:
+                ent["proxy_state"] = new_state
+                changed += 1
+            if new_state == "listen":
+                eg = egress_ip(port)
+                if eg:
+                    ent["egress_ip"] = eg
+                    # 自宅IPは atushi16 のみ許可（絶対ルール）。他垢が自宅IPで出たら重大違反。
+                    ent["egress_warn_home"] = bool(
+                        home and eg == home and str(ent.get("key", "")) != "atushi16"
+                    )
+                    ent["egress_ok"] = True
+                    changed += 1
+            else:
+                ent["egress_ip"] = ""
+                ent["egress_ok"] = False
+                ent["egress_warn_home"] = False
     data["home_ip"] = home
+    data["measurement_ok"] = measured_ok
 
     data["updated_at"] = datetime.datetime.now().astimezone().isoformat(timespec="seconds")
     MAP.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
