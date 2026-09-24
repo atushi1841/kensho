@@ -14,7 +14,7 @@ from typing import Any
 # Proxy map
 # ============================================================================
 PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
-    "atushi16": (1081, "192.168.1.220"),  # wired ethernet – no restart
+    "atushi16": (1081, "192.168.1.220"),  # static wired IP – restartable directly (t_ae1a265f)
     "kudou": (1082, "kudou_RM10JE_B"),
     # 2026-08-28(提案58): フラッピング監視対象 — Galaxy S10系アダプタ(RM10JE_S)で
     #   royalkensho(air-tra1)と同系構成。watchdog復旧ログ頻発・http_0増加が出たら
@@ -168,6 +168,31 @@ def _wait_for_adapter_ipv4(adapter: str, wait_seconds: int = 20) -> str | None:
     return None
 
 
+def _restart_proxy(account: str, adapter: str, port: int, log: Any) -> bool:
+    """Kill existing listeners and restart kensho_proxy for a single account.
+
+    Returns True on a successful restart, False otherwise.  Used both by the
+    main recovery path and the atushi16 shortcut (t_ae1a265f).
+    """
+    _kill_listeners(port)
+    no_bind_arg = ""
+    restart_script = (
+        f"Start-Process "
+        f"-FilePath 'C:\\Users\\1F\\AppData\\Local\\Programs\\Python\\Python311\\python.exe' "
+        f"-ArgumentList 'C:\\tools\\kensho-proxy\\kensho_proxy.py'{no_bind_arg},'{adapter}','{port}' "
+        f"-WindowStyle Hidden"
+    )
+    restart_cmd = [PS, "-Command", restart_script]
+    try:
+        subprocess.run(restart_cmd, timeout=10, capture_output=True, text=True, errors="replace")
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        log.error("Failed to restart proxy for %s: %s", account, exc)
+        return False
+    log.info("Proxy for %s restarted successfully", account)
+    time.sleep(1.5)
+    return True
+
+
 def restore_dead_proxies(config: dict, log: Any = None) -> int:
     """
     Try to restart dead proxy processes for active accounts.
@@ -216,10 +241,13 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
             log.warning("Proxy %s:%d is dead", account, port)
 
         # ------------------------------------------------------------------
-        # atushi16 uses a wired ethernet IP – cannot be restarted via adapter
+        # atushi16 uses a static wired IP (192.168.1.220) – no adapter to
+        # query/reconnect. Skip the adapter-status block and restart the
+        # proxy directly against the known static bind IP (t_ae1a265f).
         # ------------------------------------------------------------------
         if account == "atushi16":
-            log.info("Skipping %s (wired ethernet – no adapter to restart)", account)
+            if _restart_proxy(account, adapter, port, log):
+                restored_count += 1
             continue
 
         # ------------------------------------------------------------------
@@ -342,17 +370,8 @@ def restore_dead_proxies(config: dict, log: Any = None) -> int:
             #    current IPv4 at startup (auto-handles DHCP changes).
             #    # 2026-08-29: Changed from IP bind to adapter name bind (提案62)
             # ------------------------------------------------------------------
-            no_bind_arg = ""
-            restart_script = (
-                f"Start-Process "
-                f"-FilePath 'C:\\Users\\1F\\AppData\\Local\\Programs\\Python\\Python311\\python.exe' "
-                f"-ArgumentList 'C:\\tools\\kensho-proxy\\kensho_proxy.py'{no_bind_arg},'{adapter}','{port}' "
-                f"-WindowStyle Hidden"
-            )
-            restart_cmd = [PS, "-Command", restart_script]
-            subprocess.run(restart_cmd, timeout=10, capture_output=True, text=True, errors="replace")
-            restored_count += 1
-            log.info("Proxy for %s restarted successfully (restored %d)", account, restored_count)
+            if _restart_proxy(account, adapter, port, log):
+                restored_count += 1
 
             # Short delay to let the process start
             time.sleep(1.5)

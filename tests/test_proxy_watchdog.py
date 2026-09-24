@@ -1,7 +1,8 @@
 """Tests for kensho.utils.proxy_watchdog.
 
 Covers the IPv4-wait helper (WiFi link-establishment race that caused
-kensho_proxy.py to exit(2) on restart) and the wired-ethernet skip for atushi16.
+kensho_proxy.py to exit(2) on restart) and the direct-restart path for
+atushi16's static wired IP (t_ae1a265f).
 """
 
 from unittest.mock import patch
@@ -52,10 +53,26 @@ def test_wait_for_adapter_ipv4_timeout_returns_none():
         assert pw._wait_for_adapter_ipv4("foo", wait_seconds=1) is None
 
 
-def test_restore_dead_proxies_skips_wired_ethernet():
+def test_restore_dead_proxies_restores_wired_static_ip():
+    """atushi16(1081) is a static wired IP – watchdog now restarts it directly.
+
+    Regression guard for t_ae1a265f: the old code `continue`d on every
+    atushi16 dead port, so a dead 1081 could never self-heal (31 dead in 2
+    days, 0 restored).
+    """
     config = {"accounts": [{"key": "atushi16"}]}
-    with patch("kensho.utils.proxy_watchdog._port_reachable", return_value=False):
-        assert pw.restore_dead_proxies(config) == 0
+    with (
+        patch("kensho.utils.proxy_watchdog._port_reachable", return_value=False),
+        patch("kensho.utils.proxy_watchdog.subprocess.run") as mock_run,
+        patch("kensho.utils.proxy_watchdog.time.sleep"),
+    ):
+        mock_run.return_value.stdout = ""
+        assert pw.restore_dead_proxies(config) == 1
+        # The PowerShell command must restart kensho_proxy on the static IP, port 1081
+        commands = [" ".join(c.args[0]) for c in mock_run.call_args_list]
+        assert any("Start-Process" in c and "1081" in c and "192.168.1.220" in c for c in commands)
+        # No Get-NetAdapter call for a static-IP account (no adapter to query)
+        assert not any("Get-NetAdapter" in c for c in commands)
 
 
 def test_restore_dead_proxies_skips_alive():
