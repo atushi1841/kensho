@@ -1,0 +1,15 @@
+{
+  "success_indicators": [
+    "watchdog最小PATHで無音欠火検出復旧: シェルスクリプト絶対パス修正",
+    "kensho-research-agent出力長制約追記: 2KB以内に収め、詳細はreports/へ書き出す旨をプロンプトに追記",
+    "変更ファイル数: 0 → 2"
+  ],
+  "outcome": [
+    {
+      "metric": "changed_files",
+      "before": 0,
+      "after": 2,
+      "direction": "up"
+    }
+  ]
+}
