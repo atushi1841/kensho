@@ -1,11 +1,25 @@
 {
-  "commit": "9cf97de",
-  "evidence": [
-    {"cmd": "git log -1 --oneline", "output": "9cf97de fix(proxy_watchdog): atushi16(1081) direct restart for dead proxy (t_ae1a265f)"},
-    {"cmd": "python -m pytest tests/test_proxy_watchdog.py::test_restore_dead_proxies_restores_wired_static_ip -q", "output": "1 passed"},
-    {"cmd": "grep -n 'if account == \"atushi16\"' kensho/utils/proxy_watchdog.py", "output": "248:        if account == \"atushi16\":"},
-    {"cmd": "python -m pytest tests/test_proxy_watchdog.py -q", "output": "15 passed"}
-  ],
   "task_id": "t_ae1a265f",
-  "tests_passed": 15
+  "status": "verified",
+  "commit": "9cf97dee0aae98f875d7310af45cf18f12d80414",
+  "verification_commands": [
+    "git log -1 --oneline",
+    "python -m pytest tests/test_proxy_watchdog.py::test_restore_dead_proxies_restores_wired_static_ip -q",
+    "grep -n 'if account == \"atushi16\"' kensho/utils/proxy_watchdog.py",
+    "python -m pytest tests/test_proxy_watchdog.py -q"
+  ],
+  "success_indicators": [
+    "9cf97de fix(proxy_watchdog): atushi16(1081) direct restart for dead proxy (t_ae1a265f)",
+    "1 passed",
+    "248:        if account == \"atushi16\":",
+    "15 passed"
+  ],
+  "artifact_paths": [
+    "kensho/utils/proxy_watchdog.py",
+    "tests/test_proxy_watchdog.py",
+    "reports/t_ae1a265f_verification.md"
+  ],
+  "evidence_hashes": [
+    "9cf97dee0aae98f875d7310af45cf18f12d80414"
+  ]
 }
