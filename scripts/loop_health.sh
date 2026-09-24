@@ -231,6 +231,15 @@ except Exception:
 running = [t for t in tasks if t.get("status") == "running"]
 blocked = [t for t in tasks if t.get("status") == "blocked"]
 
+# Detect same-result repeat (v142: 定義が v142 リライトで失われていたため再導入)
+results = {}
+for t in tasks:
+    res = t.get("result") or ""
+    if res:
+        results.setdefault(res, []).append(t["id"])
+
+repeats = {r: ids for r, ids in results.items() if len(ids) >= 2}
+
 # v137b+ (t_83ce94c5): tasks.started_at = 初回 dispatch 時刻で更新されない。
 # 実活動時刻を task_runs.status='running' の最新 started_at から取得。
 # 各タスクごとに effective_started_at を構築し、ソート・減点・top_task
@@ -275,13 +284,6 @@ by_age = sorted(
     key=lambda t: (effective_started_at.get(t["id"], t.get("started_at") or now)),
     reverse=False,
 )
-
-# Detect blocked tasks whose parent is done (wasteful block)
-blocked_with_done_parent = []
-for t in blocked:
-    res = t.get("result") or ""
-    if "already completed" in res.lower() or "no action needed" in res.lower():
-        blocked_with_done_parent.append(t["id"])
 
 # ── Score calculation (v142 / t_9f14ee5d) ──────────────────────────────
 # config-based max_in_progress penalty, streak reset on zero real deductions

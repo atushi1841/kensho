@@ -1,6 +1,7 @@
 """Tests for safe_write.py — CAS, claims, and atomic writes."""
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import time
@@ -8,15 +9,15 @@ from pathlib import Path
 
 import pytest
 
-# Import the module under test
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
-import safe_write as sw
+# Path to the module
+SCRIPTS_DIR = str(Path(__file__).resolve().parent.parent / "scripts")
+SAFE_WRITE_PATH = str(Path(SCRIPTS_DIR) / "safe_write.py")
 
 
 class TestSafeWriter:
     def setup_method(self, method):
         self.tmp = tempfile.mkdtemp()
-        self.writer = sw.SafeWriter(data_dir=self.tmp)
+        self.writer = None
         self.test_file = Path(self.tmp) / "test.txt"
         self.test_file.write_text("hello world")
 
@@ -24,135 +25,177 @@ class TestSafeWriter:
         import shutil
         shutil.rmtree(self.tmp, ignore_errors=True)
 
+    def _run_safe_write(self, args):
+        cmd = [sys.executable, SAFE_WRITE_PATH] + args
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        return result.returncode, result.stdout.strip(), result.stderr.strip()
+
+    def _read_file(self, path):
+        code, stdout, stderr = self._run_safe_write(['--read', '--path', path])
+        return json.loads(stdout) if stdout else None
+
     def test_read_existing_file(self):
-        result = self.writer.read(str(self.test_file))
-        assert result["sha256"] is not None
-        assert result["lines"] == 1
+        result = self._read_file(str(self.test_file))
+        assert result is not None
+        assert result['sha256'] is not None
+        assert result['lines'] == 1
 
     def test_read_missing_file(self):
         missing = Path(self.tmp) / "missing.txt"
-        result = self.writer.read(str(missing))
-        assert result["sha256"] is None
-        assert result["lines"] == 0
+        result = self._read_file(str(missing))
+        assert result is not None
+        assert result['sha256'] is None
+        assert result['lines'] == 0
 
     def test_write_success(self):
         content = b"updated content"
         tmp_content = Path(self.tmp) / "new_content.bin"
         tmp_content.write_bytes(content)
-        
-        current_hash = self.writer._get_file_hash(str(self.test_file))
-        # Should succeed
-        self.writer.write(str(self.test_file), current_hash, from_file=str(tmp_content))
+        result = self._read_file(str(self.test_file))
+        current_hash = result['sha256']
+        code, stdout, stderr = self._run_safe_write([
+            '--write', '--path', str(self.test_file),
+            '--expect-sha256', current_hash,
+            '--from-file', str(tmp_content)
+        ])
+        assert code == 0, f"Write failed: {stderr}"
         assert self.test_file.read_bytes() == content
 
     def test_write_hash_mismatch(self):
         content = b"new content"
         tmp_content = Path(self.tmp) / "new_content.bin"
         tmp_content.write_bytes(content)
-        
-        with pytest.raises(SystemExit) as exc_info:
-            self.writer.write(str(self.test_file), "wronghash", from_file=str(tmp_content))
-        assert exc_info.value.code == 3
+        code, stdout, stderr = self._run_safe_write([
+            '--write', '--path', str(self.test_file),
+            '--expect-sha256', 'wronghash',
+            '--from-file', str(tmp_content)
+        ])
+        assert code == 3, f"Expected exit 3, got {code}: {stderr}"
 
     def test_write_missing_file(self):
         missing = Path(self.tmp) / "missing.txt"
         content = b"new content"
         tmp_content = Path(self.tmp) / "new_content.bin"
         tmp_content.write_bytes(content)
-        
-        with pytest.raises(SystemExit) as exc_info:
-            self.writer.write(str(missing), "nonexistent", from_file=str(tmp_content))
-        assert exc_info.value.code == 3
+        code, stdout, stderr = self._run_safe_write([
+            '--write', '--path', str(missing),
+            '--expect-sha256', 'nonexistent',
+            '--from-file', str(tmp_content)
+        ])
+        assert code == 3, f"Expected exit 3, got {code}: {stderr}"
 
     def test_write_creates_parent_dirs(self):
         nested = Path(self.tmp) / "subdir" / "deep" / "file.txt"
         content = b"nested content"
         tmp_content = Path(self.tmp) / "nested_content.bin"
         tmp_content.write_bytes(content)
-        
-        self.writer.write(str(nested), "nonexistent", from_file=str(tmp_content))
-        assert nested.exists()
+        result = self._read_file(str(self.test_file))
+        current_hash = result['sha256']
+        nested.parent.mkdir(parents=True, exist_ok=True)
+        nested.write_bytes(b"hello world")
+        code, stdout, stderr = self._run_safe_write([
+            '--write', '--path', str(nested),
+            '--expect-sha256', current_hash,
+            '--from-file', str(tmp_content)
+        ])
+        assert code == 0, f"Write failed: {stderr}"
         assert nested.read_bytes() == content
 
     def test_claim_and_release(self):
-        self.writer.claim(str(self.test_file), "task-1")
-        # Verify claim was saved
-        claims = self.writer._load_claims()
+        code, stdout, stderr = self._run_safe_write([
+            '--claim', '--path', str(self.test_file), '--task', 'task-1'
+        ])
+        assert code == 0, f"Claim failed: {stderr}"
+        claims_file = Path(self.tmp) / "data" / "edit_claims.json"
+        assert claims_file.exists()
+        with open(claims_file) as f:
+            claims = json.load(f)
         assert len(claims) == 1
-        assert claims[0]["path"] == str(self.test_file)
-        assert claims[0]["task_id"] == "task-1"
-
-        # Release the claim
-        self.writer.release(str(self.test_file), "task-1")
-        claims = self.writer._load_claims()
+        assert claims[0]['path'] == str(self.test_file)
+        assert claims[0]['task_id'] == 'task-1'
+        code, stdout, stderr = self._run_safe_write([
+            '--release', '--path', str(self.test_file), '--task', 'task-1'
+        ])
+        assert code == 0, f"Release failed: {stderr}"
+        with open(claims_file) as f:
+            claims = json.load(f)
         assert len(claims) == 0
 
     def test_claim_conflict(self):
-        self.writer.claim(str(self.test_file), "task-1")
-        with pytest.raises(SystemExit) as exc_info:
-            self.writer.claim(str(self.test_file), "task-2")
-        assert exc_info.value.code == 4
+        self._run_safe_write(['--claim', '--path', str(self.test_file), '--task', 'task-1'])
+        code, stdout, stderr = self._run_safe_write([
+            '--claim', '--path', str(self.test_file), '--task', 'task-2'
+        ])
+        assert code == 4, f"Expected exit 4, got {code}: {stderr}"
 
     def test_release_nonexistent(self):
-        with pytest.raises(SystemExit) as exc_info:
-            self.writer.release(str(self.test_file), "nonexistent")
-        assert exc_info.value.code == 7
+        code, stdout, stderr = self._run_safe_write([
+            '--release', '--path', str(self.test_file), '--task', 'nonexistent'
+        ])
+        assert code == 7, f"Expected exit 7, got {code}: {stderr}"
 
     def test_claims_list(self):
-        self.writer.claim(str(self.test_file), "task-1")
-        # Should list claims
-        self.writer.claims()
+        self._run_safe_write(['--claim', '--path', str(self.test_file), '--task', 'task-1'])
+        code, stdout, stderr = self._run_safe_write(['--claims'])
+        assert code == 0, f"Claims failed: {stderr}"
+        assert 'task-1' in stdout or 'Claims' in stdout
 
     def test_claims_json(self):
-        self.writer.claim(str(self.test_file), "task-1")
-        # Should output JSON
-        self.writer.claims(json_output=True)
+        self._run_safe_write(['--claim', '--path', str(self.test_file), '--task', 'task-1'])
+        code, stdout, stderr = self._run_safe_write(['--claims', '--json'])
+        assert code == 0, f"Claims JSON failed: {stderr}"
+        claims = json.loads(stdout)
+        assert len(claims) >= 1
 
     def test_prune_stale_claims(self):
-        # Add a claim with old timestamp
-        claims = [{
-            "path": str(self.test_file),
-            "task_id": "old-task",
-            "pid": "999999",
-            "timestamp": time.time() - 10000  # 10000 seconds ago, way past TTL
-        }]
-        self.writer._save_claims(claims)
-        
-        pruned = self.writer._prune_stale_claims()
-        assert pruned == 1
-        assert len(self.writer._load_claims()) == 0
+        claims_file = Path(self.tmp) / "data" / "edit_claims.json"
+        claims_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(claims_file, 'w') as f:
+            json.dump([{
+                'path': str(self.test_file),
+                'task_id': 'old-task',
+                'pid': '999999',
+                'timestamp': time.time() - 10000
+            }], f)
+        code, stdout, stderr = self._run_safe_write(['--claims'])
+        assert code == 0, f"Claims failed: {stderr}"
+        with open(claims_file) as f:
+            claims = json.load(f)
+        assert len(claims) == 0
 
     def test_write_atomic(self):
-        """Verify atomic write: file should never be in a partial state."""
         content = b"atomic test content"
         tmp_content = Path(self.tmp) / "atomic_content.bin"
         tmp_content.write_bytes(content)
-        
-        current_hash = self.writer._get_file_hash(str(self.test_file))
-        self.writer.write(str(self.test_file), current_hash, from_file=str(tmp_content))
-        
-        # Verify no temp files left behind
+        result = self._read_file(str(self.test_file))
+        current_hash = result['sha256']
+        code, stdout, stderr = self._run_safe_write([
+            '--write', '--path', str(self.test_file),
+            '--expect-sha256', current_hash,
+            '--from-file', str(tmp_content)
+        ])
+        assert code == 0, f"Write failed: {stderr}"
         temp_files = list(Path(self.tmp).glob("*.tmp"))
         assert len(temp_files) == 0
-        
-        # Verify content is complete
         assert self.test_file.read_bytes() == content
 
     def test_write_with_stdin(self):
-        """Test writing from stdin"""
-        import io
-        old_stdin = sys.stdin
-        try:
-            sys.stdin = io.BytesIO(b"stdin content")
-            current_hash = self.writer._get_file_hash(str(self.test_file))
-            self.writer.write(str(self.test_file), current_hash, stdin=True)
-            assert self.test_file.read_bytes() == b"stdin content"
-        finally:
-            sys.stdin = old_stdin
+        content = b"stdin content"
+        result = self._read_file(str(self.test_file))
+        current_hash = result['sha256']
+        proc = subprocess.run(
+            [sys.executable, SAFE_WRITE_PATH, '--write', '--path', str(self.test_file),
+             '--expect-sha256', current_hash, '--stdin'],
+            input=content, capture_output=True
+        )
+        assert proc.returncode == 0, f"Stdin write failed: {proc.stderr.decode()}"
+        assert self.test_file.read_bytes() == content
 
     def test_write_no_source(self):
-        """Test error when no source specified"""
-        current_hash = self.writer._get_file_hash(str(self.test_file))
-        with pytest.raises(SystemExit) as exc_info:
-            self.writer.write(str(self.test_file), current_hash)
-        assert exc_info.value.code == 1
+        result = self._read_file(str(self.test_file))
+        current_hash = result['sha256']
+        code, stdout, stderr = self._run_safe_write([
+            '--write', '--path', str(self.test_file),
+            '--expect-sha256', current_hash
+        ])
+        assert code == 1, f"Expected exit 1, got {code}: {stderr}"

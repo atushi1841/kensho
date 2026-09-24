@@ -58,6 +58,43 @@ def dead_proxy_reason(cfg: dict[str, Any], account_key: str) -> str:
     return f"{detail} / 最終確認 {updated}" if updated else detail
 
 
+def network_outage_reason(cfg: dict[str, Any], account_key: str) -> str:
+    """`data/account_wifi_map.json` から WiFi 状態をチェックし、
+    SSID圏外/電源OFF/バックOFFの状態を検出する。
+
+    戻り値: ネットワーク出区なら理由文字列、正常時は空文字列
+    """
+    wifi_map_path = Path(
+        str((cfg.get("general") or {}).get("project_dir", ""))
+        + "/data/account_wifi_map.json"
+    )
+    if not wifi_map_path.exists():
+        return ""
+    try:
+        wifi_map = json.loads(wifi_map_path.read_text(encoding="utf-8"))
+    except Exception:
+        return ""
+
+    account_entry = None
+    for entry in wifi_map.get("accounts", []):
+        if entry.get("key") == account_key:
+            account_entry = entry
+            break
+
+    if not account_entry:
+        return ""
+
+    state = account_entry.get("adapter_state", "")
+    # "切断" or "未検出" → ネットワーク出区（WiFi圏外/電源OFF/バックOFF）
+    if state in ("切断", "未検出"):
+        return f"ネットワーク出区: アカウント '{account_key}' のWiFiが{state}状態"
+    # "有線(NIC)" は有線LAN接続 → WiFi出区ではない
+    if state == "有線(NIC)":
+        return ""
+    # その他（接続中など）→ 正常
+    return ""
+
+
 def dead_proxy_accounts(cfg: dict[str, Any], accounts: list[str] | None = None) -> list[str]:
     """プロキシ死骸と判定されている垢の一覧（ブロック対象）。"""
     keys = accounts if accounts is not None else [str(a.get("key", "")) for a in cfg.get("accounts", [])]
