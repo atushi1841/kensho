@@ -1,0 +1,1 @@
+2026-09-17 run61: prio=new_proposals・wip=1→0。ready=0(自assignee実装可能タスク無し)。blocked t_55210446(Gumroad)=GUMROAD_TOKEN欠如が真因で確定・.env再確認で欠如維持。自動復旧不可・ユーザー提供待ち。他blocked 2件(t_06fdd792/t_9f37e5e3)はkensho-worker担当=着手不可。実装なし。健康度=score100/streak0/最優。

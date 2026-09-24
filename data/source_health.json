@@ -1,52 +1,30 @@
 {
-  "date": "2026-09-20",
+  "date": "2026-09-24",
   "sources": {
+    "knshow": {
+      "attempts": 3,
+      "failures": 3,
+      "consecutive_failures": 3,
+      "skipped": 0,
+      "last_error": "http=502(origin_outage)",
+      "last_failure": "2026-09-24T10:00:20"
+    },
     "ken-kaku": {
-      "attempts": 28,
+      "attempts": 21,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0
     },
     "kenshou.club": {
-      "attempts": 2555,
-      "failures": 0,
+      "attempts": 279,
+      "failures": 2,
       "consecutive_failures": 0,
-      "skipped": 0
-    },
-    "cp.meikan": {
-      "attempts": 40,
-      "failures": 0,
-      "consecutive_failures": 0,
-      "skipped": 0
-    },
-    "ke-ma": {
-      "attempts": 40,
-      "failures": 0,
-      "consecutive_failures": 0,
-      "skipped": 0
-    },
-    "kensho-everyday": {
-      "attempts": 4,
-      "failures": 0,
-      "consecutive_failures": 0,
-      "skipped": 0
-    },
-    "prtimes": {
-      "attempts": 176,
-      "failures": 0,
-      "consecutive_failures": 0,
-      "skipped": 0
-    },
-    "knshow": {
-      "attempts": 4,
-      "failures": 4,
-      "consecutive_failures": 4,
       "skipped": 0,
-      "last_error": "http=502",
-      "last_failure": "2026-09-20T15:03:54"
+      "last_error": "code=0",
+      "last_failure": "2026-09-24T09:28:06"
     }
   },
-  "last_roll": "2026-09-19",
-  "last_run": "2026-09-20T14:48:23",
+  "last_roll": "2026-09-23",
+  "last_run": "2026-09-24T10:25:37",
   "skipped_this_run": []
 }

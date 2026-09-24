@@ -1,0 +1,12 @@
+{
+  "run_id": "20260922_133007",
+  "generatedAt": "2026-09-22T05:07:16.529295+00:00",
+  "models": 42,
+  "models_with_match": 8,
+  "total_sourcing_candidates_after_fees": 17,
+  "model_median_diff_pct": -6.3,
+  "pct_models_median_ge20": 25.0,
+  "pct_models_max_ge30": 37.5,
+  "camerabench_claim_median20": false,
+  "camerabench_claim_third_30": true
+}

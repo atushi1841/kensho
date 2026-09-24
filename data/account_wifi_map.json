@@ -1,0 +1,100 @@
+{
+  "updated_at": "2026-09-24T10:15:01+09:00",
+  "source": "Windows実測: netsh wlan show interfaces / Get-NetIPAddress / 稼働中kensho_proxyプロセスのCommandLine",
+  "note": "「状態」は Windows実測（netsh / Get-NetIPAddress / LISTENポート）。回線の出口IPはプロキシ経由で別途実測。垢バン垢は表から除外。",
+  "accounts": [
+    {
+      "key": "atushi16",
+      "display": "@atushi16",
+      "transport": "自宅有線LAN",
+      "ssid": "(自宅ルーター/有線)",
+      "adapter": "(有線 NIC)",
+      "local_ip": "192.168.1.220",
+      "port": 1081,
+      "adapter_state": "有線(NIC)",
+      "signal": "",
+      "proxy_state": "停止",
+      "note": "自宅IPを使うのはこの垢のみ（絶対ルール）",
+      "egress_ip": "",
+      "egress_warn_home": false,
+      "egress_ok": false
+    },
+    {
+      "key": "kudou",
+      "display": "@kudou_aoshi",
+      "transport": "POVOスマホHS",
+      "ssid": "RM10JE_B",
+      "adapter": "kudou_RM10JE_B",
+      "local_ip": "10.32.223.239",
+      "port": 1082,
+      "adapter_state": "未検出",
+      "signal": "",
+      "proxy_state": "停止",
+      "note": "",
+      "egress_ip": "",
+      "egress_warn_home": false,
+      "egress_ok": false
+    },
+    {
+      "key": "zin20120731",
+      "display": "@zin20120731",
+      "transport": "楽天モバイル",
+      "ssid": "AiR-WiFi_6_povo",
+      "adapter": "zin_AW6povo",
+      "local_ip": "192.168.43.223",
+      "port": 1084,
+      "adapter_state": "未検出",
+      "signal": "",
+      "proxy_state": "停止",
+      "note": "ユーザー報告: アダプタを一旦取り外し済み→別WiFiへ変更予定。応募は停止中（プロキシ死→自宅IPフォールバック禁止＋Xセッション失効）",
+      "egress_ip": "",
+      "egress_warn_home": false,
+      "egress_ok": false
+    },
+    {
+      "key": "TankanNotes",
+      "display": "@TankanNotes",
+      "transport": "有線LAN直結",
+      "ssid": "(HR01 Wi-Fi不良→有線)",
+      "adapter": "Tankan_ETH3",
+      "local_ip": "192.168.128.136",
+      "port": 1085,
+      "adapter_state": "有線(NIC)",
+      "signal": "",
+      "proxy_state": "停止",
+      "note": "2026-09-10 Wi-Fi→有線直結へ切替",
+      "egress_ip": "",
+      "egress_warn_home": false,
+      "egress_ok": false
+    },
+    {
+      "key": "toushiwatch",
+      "display": "@toushiwatch",
+      "transport": "モバイル回線（RM10JE_S）",
+      "ssid": "RM10JE_S",
+      "adapter": "RM10JE_S",
+      "local_ip": "10.172.70.130",
+      "port": 1087,
+      "adapter_state": "未検出",
+      "signal": "",
+      "proxy_state": "停止",
+      "note": "2026-09-24 垢バン垢(旧chugakujuken)の回線を転用。アダプタ改名済み・出口IP 106.133.45.122・X API healthy（応募は未再開）",
+      "egress_ip": "",
+      "egress_warn_home": false,
+      "egress_ok": false
+    }
+  ],
+  "banned": [
+    {
+      "display": "@chugakujuken",
+      "reason": "垢バン（2026-09-24 ユーザー申告）→ 削除",
+      "freed": "RM10JE_S回線・アダプタRM10JE_S・proxy1083"
+    },
+    {
+      "display": "@inobase128508",
+      "reason": "垢バン（2026-09-24 ユーザー申告）→ 削除",
+      "freed": "ino1_4_oppo_r5a回線・proxy1089"
+    }
+  ],
+  "home_ip": "219.104.132.236"
+}

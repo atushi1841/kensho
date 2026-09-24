@@ -1,0 +1,14 @@
+{
+  "ceilings": {
+    "apply": {
+      "count": 0,
+      "first_fail_time": "2026-09-22T15:06:28.137352"
+    },
+    "collection": {
+      "count": 0,
+      "first_fail_time": ""
+    }
+  },
+  "updated": "2026-09-24T10:25:37.595902",
+  "recovery_cursor": {}
+}

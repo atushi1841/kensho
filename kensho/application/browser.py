@@ -169,35 +169,6 @@ FINGERPRINTS: dict[str, dict[str, Any]] = {
             "security.ssl.enable_ocsp_must_staple": True,
         },
     },
-    "inobase1-4": {
-        "seed": 44,
-        "accept_language": "ja,en;q=0.9,zh-CN;q=0.7,ko;q=0.5",
-        "screen_width": 1280,
-        "screen_height": 720,
-        "pixel_ratio": 1.0,
-        "locale": "ja-JP",
-        "timezone_id": "Asia/Tokyo",
-        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0",
-        "webgl_vendor": "Google Inc. (Intel)",
-        "webgl_renderer": "Intel Iris Xe Graphics",
-        "profile": {
-            "active_hours": ("09:00", "21:00"),
-            "max_per_day": {"follow": 40, "rt": 12, "like": 70},
-            "skip_rate": {"follow": 0.03, "rt": 0.02, "like": 0.04},
-            "persona": "book_culture",
-            "work_style": "morning_person",
-            "typing_speed": 100,
-            "click_delay": 50,
-            "scroll_pattern": "aggressive",
-        },
-        "tls": {
-            "security.tls.version.min": 3,
-            "security.tls.version.max": 4,
-            "security.tls.hello_downgrade": True,
-            "security.ssl.enable_ocsp_stapling": True,
-            "security.ssl.enable_ocsp_must_staple": False,
-        },
-    },
     "toushiwatch": {
         "seed": 13,
         "accept_language": "ja,ja-JP;q=0.9,en-US;q=0.8,en;q=0.7",
@@ -235,7 +206,6 @@ PROXY_MAP: dict[str, str] = {
     "kudou": "socks5h://172.26.80.1:1082",
     "zin20120731": "socks5h://172.26.80.1:1084",
     "TankanNotes": "socks5h://172.26.80.1:1085",
-    "inobase1-4": "socks5h://172.26.80.1:1089",
     "toushiwatch": "socks5h://172.26.80.1:1087",
 }
 
@@ -981,7 +951,10 @@ def check_x_login(
             if attempt < max_attempts:
                 time.sleep(_CHECK_LOGIN_RETRY_DELAY)
             else:
-                return False
+                # ★ t_8946706e: goto 失敗（セッション失効 or プロキシ死骸）を分類して伝える。
+                #   reason 未設定だと applier 側で「一般エラー」に見え、自己修復が3回リトライして
+                #   ブラウザ起動＋ログイン再試行を反復する（goto failed 63→227件/日に増幅した実測原因）。
+                return _ng("goto_failed")
     time.sleep(random.uniform(3, 6))
 
     # 各種異常状態の検出
@@ -989,7 +962,7 @@ def check_x_login(
     if "login" in url_lower or "flow" in url_lower or "signup" in url_lower:
         if log:
             log.write("[NG] needs_login: ログイン画面が検出されました")
-        return False
+        return _ng("needs_login")
 
     # ページ本文を取得（不完全な可能性もあるが目安）
     try:
@@ -1002,13 +975,13 @@ def check_x_login(
     if "rate limit" in body_lower or "rate_limit" in body_lower:
         if log:
             log.write("[NG] rate_limited: レート制限ページが検出されました")
-        return False
+        return _ng("rate_limited")
 
     # アカウント停止
     if "account suspended" in body_lower or "凍結" in body_lower or "suspended" in body_lower:
         if log:
             log.write("[NG] suspended: アカウント停止が検出されました")
-        return False
+        return _ng("suspended")
 
     # reCAPTCHA / Cloudflare チャレンジ（CAPTCHA連続ロックの24hスキップ対象）
     # ★ 2026-09-18提案: reason を "challenge" として伝え、applier 側で
@@ -1039,7 +1012,7 @@ def check_x_login(
             if any(kw in profile_lower for kw in frozen_keywords):
                 if log:
                     log.write("[NG] frozen: アカウント凍結（読み取り専用）が検出されました")
-                return False
+                return _ng("frozen")
         except Exception:
             if log:
                 log.write("[WARN] プロフィール確認失敗（続行）")

@@ -38,6 +38,7 @@ from kensho.scraping.sources import (
     extract_rd_link,
     fetch,
     fetch_knshow_listing,
+    fetch_via_browser,
     has_skip_keyword,
     is_x_url,
     load_json,
@@ -436,7 +437,7 @@ def _collect_impl(
         # critic t_c0e0563d: knshow 一覧は Cloudflare 失敗分類付きで取得。403/503+「Just a moment…」等の
         #   ボットチャレンジのときだけ実ブラウザ（patchright headless）でフォールバックし、502/520-524 の
         #   origin 障害（ブラウザでも通らない）はブラウザを起動せず即 fail-open する。
-        code, html, _final_url, _kind = fetch_knshow_listing(_do_fetch, url, out=out)
+        code, html, _final_url, _kind = fetch_knshow_listing(_do_fetch, url, out=out, browser_fetcher=fetch_via_browser)
         if code != 200:
             # ★ t_52a7fec2: knshow 一覧ページ失敗を source_health へ追跡（これまで監視対象外=盲点）。
             #   一覧は Step1 で _do_fetch 直取得のため note_fetch を明示呼び出しして統合。

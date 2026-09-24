@@ -30,6 +30,18 @@ def load_data():
         return json.load(f)
 
 
+WIFI_MAP_FILE = "/mnt/d/Project2/kensho/data/account_wifi_map.json"
+
+
+def load_wifi_map():
+    """アカウント×WiFi(IP分離)マッピングを読む — scripts/refresh_wifi_map.py が更新する。"""
+    try:
+        with open(WIFI_MAP_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
 def source_url_for(src: str) -> str:
     """ソース表示名を返す"""
     pretty = {
@@ -174,7 +186,6 @@ def generate_html(data: dict) -> str:
             var show = ACTIVE_SRCS.length === 0 || ACTIVE_SRCS.some(function (s) {{ return srcs.indexOf(s) !== -1; }});
             item.classList.toggle('filtered-hidden', !show);
         }});
-        // 案件リスト行（ソース + 当選人数 + 締切でフィルタ）
         document.querySelectorAll('.filterable-item.filter-row').forEach(function (item) {{
             var srcs = (item.dataset.sources || '').split(',');
             var wc = parseInt(item.dataset.winc || '0', 10) || 0;
@@ -332,53 +343,61 @@ td{{padding:5px 8px;border-bottom:1px solid #21262d;font-size:0.82rem}}
     html += '<div class="note">※ ソースをクリックすると、上のカードとこの表の該当行がハイライト切替されます。</div>'
     html += "</div>"
 
-    # ── 案件リスト（当選人数・締切フィルタ）──
-    dash_items = data.get("items", [])
-    html += '<div class="card"><div class="card-title">案件リスト（当選人数・締切で絞り込み）</div>'
-    html += (
-        '<div class="filter-bar">'
-        '<div class="filter-group"><span class="fg-label">当選人数</span>'
-        '<button class="filter-btn on" data-ftype="winner" data-fval="0" onclick="setWinner(\'0\')">すべて</button>'
-        '<button class="filter-btn" data-ftype="winner" data-fval="100" onclick="setWinner(\'100\')">100人以上</button>'
-        '<button class="filter-btn" data-ftype="winner" data-fval="1000" onclick="setWinner(\'1000\')">1000人以上</button>'
-        '</div>'
-        '<div class="filter-group"><span class="fg-label">締切</span>'
-        '<button class="filter-btn on" data-ftype="deadline" data-fval="all" onclick="setDeadline(\'all\')">すべて</button>'
-        '<button class="filter-btn" data-ftype="deadline" data-fval="today" onclick="setDeadline(\'today\')">本日</button>'
-        '<button class="filter-btn" data-ftype="deadline" data-fval="3days" onclick="setDeadline(\'3days\')">3日以内</button>'
-        '</div>'
-        '</div>'
-    )
-    if dash_items:
-        html += '<table class="filter-table"><thead><tr><td>ソース</td><td>内容</td><td>当選人数</td><td>締切</td><td>状態</td><td>優先</td></tr></thead><tbody>'
-        for it in dash_items:
-            _src = it.get("source", "unknown")
-            _dd = it.get("deadline_days")
-            _dl_attr = "" if _dd is None else str(_dd)
-            _wc = it.get("winner_count")
-            _wc_val = 0 if _wc is None else int(_wc)
-            _wc_disp = "—" if _wc is None else f"{int(_wc)}人"
-            _title = _html_escape((it.get("title") or "").strip() or "（タイトルなし）")
-            _url = it.get("x_url") or it.get("detail_url") or ""
-            if _url:
-                _title = f'<a style="color:{BLUE_C};text-decoration:none" href="{_html_escape(_url)}" target="_blank" rel="noopener">{_title}</a>'
-            _applied = it.get("applied", False)
-            _state = '<span style="color:#3fb950">応募済</span>' if _applied else '<span style="color:#d29922">未応募</span>'
-            _prio = '<span class="prio-hi">高</span>' if it.get("high_prio", False) else '<span class="stat-dim">—</span>'
+    # ── アカウント × WiFi（どの垢がどの回線を使っているか）──
+    wmap = load_wifi_map()
+    html += '<div class="card"><div class="card-title">アカウント × WiFi（IP分離の現況）</div>'
+    if wmap and wmap.get("accounts"):
+        html += ('<table class="filter-table"><thead><tr>'
+                 '<td>アカウント</td><td>回線（SSID）</td><td>Windowsアダプタ</td>'
+                 '<td>ローカルIP</td><td>プロキシ</td><td>出口IP</td>'
+                 '<td>状態（プロキシ／回線）</td><td>備考</td>'
+                 '</tr></thead><tbody>')
+        for _e in wmap["accounts"]:
+            _live = str(_e.get("proxy_state", "")) == "listen"
+            # 状態: 出口まで通っている / 待受のみ（出口なし） / 停止 の3値で表示
+            if _live and _e.get("egress_ok"):
+                _badge = f'<span style="color:{GREEN}">稼働中（出口OK）</span>'
+            elif _live:
+                _badge = '<span style="color:#e0a020">待受のみ（出口なし）</span>'
+            else:
+                _badge = f'<span style="color:{RED}">停止</span>'
+            _sig = _html_escape(str(_e.get("signal", "")))
+            _ip = _html_escape(str(_e.get("local_ip", "")) or "—")
+            # 出口IP（プロキシ経由の実測）— 自宅IPと一致したら赤で警告（IP分離違反の検知）
+            _eg = _html_escape(str(_e.get("egress_ip", "")) or "—")
+            if _e.get("egress_warn_home"):
+                _eg = f'<span style="color:{RED}">{_eg} ← 自宅IP!</span>'
+            elif not _e.get("egress_ok"):
+                _eg = f'<span class="stat-dim">{_eg}</span>'
+            _line = _html_escape(str(_e.get("adapter_state", "")))
+            if _sig:
+                _line = f'{_line} {_sig}'
             html += (
-                f'<tr class="filterable-item filter-row" data-sources="{_src}" data-winc="{_wc_val}" data-dl="{_dl_attr}">'
-                f'<td>{_html_escape(it.get("source_display") or _src)}</td>'
-                f'<td>{_title}</td>'
-                f'<td class="num">{_wc_disp}</td>'
-                f'<td class="num">{_dl_label(_dd)}</td>'
-                f'<td>{_state}</td>'
-                f'<td>{_prio}</td>'
-                '</tr>'
+                f'<tr>'
+                f'<td><b>{_html_escape(str(_e.get("display", "")))}</b><br>'
+                f'<span class="stat-dim">{_html_escape(str(_e.get("key", "")))}</span></td>'
+                f'<td>{_html_escape(str(_e.get("ssid", "")))}<br>'
+                f'<span class="stat-dim">{_html_escape(str(_e.get("transport", "")))}</span></td>'
+                f'<td>{_html_escape(str(_e.get("adapter", "")))}</td>'
+                f'<td class="num">{_ip}</td>'
+                f'<td class="num">172.26.80.1:{_html_escape(str(_e.get("port", "")))}</td>'
+                f'<td class="num">{_eg}</td>'
+                f'<td>{_badge}<br><span class="stat-dim">回線:</span> {_line}</td>'
+                f'<td>{_html_escape(str(_e.get("note", "")))}</td>'
+                f'</tr>'
             )
         html += '</tbody></table>'
-        html += '<div class="note filtered-hidden" id="filter-empty">条件に一致する案件がありません。フィルタを解除してください。</div>'
+        html += (f'<div class="note">最終更新: {_html_escape(str(wmap.get("updated_at", "")))}'
+                 f' ／ 出典: {_html_escape(str(wmap.get("source", "")))}</div>')
+        html += f'<div class="note">{_html_escape(str(wmap.get("note", "")))}</div>'
+        _banned = wmap.get("banned") or []
+        if _banned:
+            _b = " ／ ".join(
+                f'{_html_escape(str(x.get("display","")))}（{_html_escape(str(x.get("reason","")))}）' for x in _banned
+            )
+            html += f'<div class="note">垢バン等で削除: {_b}</div>'
     else:
-        html += '<div class="note">案件データがありません。</div>'
+        html += '<div class="note">アカウント×WiFi情報（data/account_wifi_map.json）がありません。</div>'
     html += "</div>"
 
     # ── アカウント ──

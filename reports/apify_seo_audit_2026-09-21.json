@@ -1,0 +1,1632 @@
+{
+  "timestamp": "2026-09-21 14:50:36",
+  "summary": {
+    "total_actors": 82,
+    "pictureUrl_null": 82,
+    "categories_null": 82,
+    "categoryIds_null": 82,
+    "no_latest_version": 0
+  },
+  "actors": [
+    {
+      "id": "F8Hl0a8Cx9bpJBrxR",
+      "name": "surugaya-japan-hobby-prices",
+      "title": "Suruga-ya Scraper — 駿河屋 中古フィギュア・ホビー価格",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": null,
+          "gitRepoUrl": "https://github.com/atushi1841/suruga-ya-scraper.git"
+        },
+        {
+          "versionNumber": "0.3",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.4",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "q2E37PVTg5JcGOTEn",
+      "name": "mandarake-auction-scraper",
+      "title": "Mandarake Auction Japan Scraper - Used Collectibles Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": "https://github.com/atushi1841/mandarake-auction-scraper.git"
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": "https://github.com/atushi1841/mandarake-auction-scraper.git"
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/mandarake-auction-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "xUYsD13SVHHRFQS1H",
+      "name": "mandarake-surugaya-mcp",
+      "title": "Japan Suruga-ya Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/mandarake-surugaya-mcp.git"
+        }
+      ]
+    },
+    {
+      "id": "0eeiFH0nLqlWVoOAc",
+      "name": "rakuten-japan-mcp",
+      "title": "Japan Rakuten Ichiba Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/rakuten-japan-mcp.git"
+        }
+      ]
+    },
+    {
+      "id": "6Z7tJ3plfUmAgGmbk",
+      "name": "dlsite-scraper",
+      "title": "DLsite Japan Scraper - Doujin & Digital Product Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/dlsite-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "nUm22B2guMo8vXom6",
+      "name": "dmm-scraper",
+      "title": "DMM Japan Scraper - Product & Rental Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/dmm-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "wxMskoiHMPeeH2qAJ",
+      "name": "tackleberry-japan-fishing-tackle-scraper",
+      "title": "Tackleberry Japan Scraper - Used Fishing Tackle Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/tackleberry-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "DOiD9y1NAJfLBcAjT",
+      "name": "kitamura-japan-used-camera-scraper",
+      "title": "Japan Kitamura Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/kitamura-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "nWf9BR2ndMTYqKxNB",
+      "name": "jackroad-used-watch-scraper",
+      "title": "Japan watches Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/jackroad-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "Db3iY8FIRxPjPag7N",
+      "name": "komehyo-japan-brand-scraper",
+      "title": "Japan Komehyo Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/komehyo-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "vvD9vs8D1AwoQrTTS",
+      "name": "iosys-japan-used-smartphone-scraper",
+      "title": "Japan IOSYS Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/iosys-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "FSuoQiX8OG4KuIQ9c",
+      "name": "digimart-japan-used-instrument-scraper",
+      "title": "Japan Digimart Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/digimart-japan-instrument-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "mQaZFo6up4YZKepC3",
+      "name": "japan-used-camera-market-scraper",
+      "title": "Japan cameras Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-used-camera-market-scraper"
+        }
+      ]
+    },
+    {
+      "id": "yN1R26HrV6C2MBKas",
+      "name": "japan-used-instrument-market-scraper",
+      "title": "Japan musical instruments Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-used-instrument-market-scraper"
+        }
+      ]
+    },
+    {
+      "id": "gMqdrS2evpcybSZc2",
+      "name": "japan-watch-market-scraper",
+      "title": "Japan watches Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-watch-market-scraper"
+        }
+      ]
+    },
+    {
+      "id": "b0vuqa3ESvy2mOwFB",
+      "name": "japan-luxury-brand-market-scraper",
+      "title": "Japan luxury brand Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-luxury-brand-market-scraper"
+        }
+      ]
+    },
+    {
+      "id": "57SNehd4cHNFyUCj3",
+      "name": "japan-market-mcp",
+      "title": "Japan MCP Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-market-mcp"
+        }
+      ]
+    },
+    {
+      "id": "Zh4kqcS4dYPWpFzBd",
+      "name": "japan-offmall-market-scraper",
+      "title": "Japan Hard Off OffMall Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-offmall-market-scraper"
+        }
+      ]
+    },
+    {
+      "id": "OqO1aPmd1njsKQvaW",
+      "name": "japan-camera-market-cn-scraper",
+      "title": "Japan cameras Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": "https://github.com/atushi1841/japan-camera-market-cn-scraper"
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "rEaPnKwB07oS2cyZh",
+      "name": "japan-camera-market-kr-scraper",
+      "title": "Japan cameras Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": "https://github.com/atushi1841/japan-camera-market-kr-scraper"
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "hoqt6EVaVcniMXWbK",
+      "name": "japan-watch-market-scraper-cn",
+      "title": "Japan watches Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-watch-market-scraper-cn"
+        }
+      ]
+    },
+    {
+      "id": "kDY2AAouEJzp8kfyj",
+      "name": "japan-watch-market-scraper-kr",
+      "title": "Japan watches Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-watch-market-scraper-kr"
+        }
+      ]
+    },
+    {
+      "id": "Igcmtgs71DCHze3CL",
+      "name": "japan-luxury-brand-market-cn",
+      "title": "Japan luxury brand Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-luxury-brand-market-cn"
+        }
+      ]
+    },
+    {
+      "id": "5J3JeV9cOSA3Gha0j",
+      "name": "japan-luxury-brand-market-kr",
+      "title": "Japan luxury brand Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-luxury-brand-market-kr"
+        }
+      ]
+    },
+    {
+      "id": "p279xuzqUvvLROE7O",
+      "name": "japan-used-instrument-market-cn",
+      "title": "Japan musical instruments Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-used-instrument-market-cn"
+        }
+      ]
+    },
+    {
+      "id": "agm9XlFlLFj7jlt66",
+      "name": "japan-used-instrument-market-kr",
+      "title": "Japan musical instruments Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-used-instrument-market-kr"
+        }
+      ]
+    },
+    {
+      "id": "wxLa590euQRaAJNKO",
+      "name": "japan-offmall-market-cn",
+      "title": "Japan Hard Off OffMall Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-offmall-market-cn"
+        }
+      ]
+    },
+    {
+      "id": "9HSJRPbEIIGc6bHOx",
+      "name": "japan-offmall-market-kr",
+      "title": "Japan Hard Off OffMall Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-offmall-market-kr"
+        }
+      ]
+    },
+    {
+      "id": "N1o8olAoZyXTJuhnb",
+      "name": "japan-rent-market-scraper",
+      "title": "Japan Rental Market Scraper - Rent & Lease Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-rent-market-scraper"
+        }
+      ]
+    },
+    {
+      "id": "5EOtT2UpEGEU83nhO",
+      "name": "japan-rent-market-cn",
+      "title": "Japan Rental Market Scraper (CN) - Rent & Lease Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-rent-market-cn"
+        }
+      ]
+    },
+    {
+      "id": "lWHSccM79ZpPxOLls",
+      "name": "japan-rent-market-kr",
+      "title": "Japan Rental Market Scraper (KR) - Rent & Lease Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-rent-market-kr"
+        }
+      ]
+    },
+    {
+      "id": "AiXA2WVMNTaGuHoDh",
+      "name": "japan-property-market-scraper",
+      "title": "Japan Real Estate Market Scraper - Property Listing Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-property-market-scraper"
+        }
+      ]
+    },
+    {
+      "id": "aAe1nK4dpqgmBksOK",
+      "name": "japan-property-market-cn",
+      "title": "Japan Real Estate Market Scraper (CN) - Property Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-property-market-cn"
+        }
+      ]
+    },
+    {
+      "id": "CeDRuOvv0IHA8NL4M",
+      "name": "japan-property-market-kr",
+      "title": "Japan Real Estate Market Scraper (KR) - Property Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-property-market-kr"
+        }
+      ]
+    },
+    {
+      "id": "XOqsB7rCHYrb42kcY",
+      "name": "japan-kakaku-price-search",
+      "title": "Kakaku Japan Price Search - Product Price Comparison API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-kakaku-price-search"
+        }
+      ]
+    },
+    {
+      "id": "4SjfgE6nF1awZZtEI",
+      "name": "japan-kakaku-price-search-cn",
+      "title": "Kakaku Japan Price Search (CN) - Product Price Comparison API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-kakaku-price-search-cn"
+        }
+      ]
+    },
+    {
+      "id": "5hzOkPeYWPzpv6fBd",
+      "name": "japan-kakaku-price-search-kr",
+      "title": "Kakaku Japan Price Search (KR) - Product Price Comparison API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-kakaku-price-search-kr"
+        }
+      ]
+    },
+    {
+      "id": "2Yy3Zu3pw0KzqYOP5",
+      "name": "kimono-market-scraper",
+      "title": "Japan Kimono & Wa Price Scraper - Secondhand Kimono Market API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/kimono-market-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "yCN9ystlovHkgolzw",
+      "name": "kimono-market-scraper-cn",
+      "title": "Japan Kimono Price Scraper (CN) - Secondhand Kimono Market API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/kimono-market-scraper-cn.git"
+        }
+      ]
+    },
+    {
+      "id": "8iktWtPM0ZD3ab54f",
+      "name": "kimono-market-scraper-kr",
+      "title": "Japan Kimono Price Scraper (KR) - Secondhand Kimono Market API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/kimono-market-scraper-kr.git"
+        }
+      ]
+    },
+    {
+      "id": "bgm5Gxn4BeBmoO7xD",
+      "name": "goo-net-car-scraper",
+      "title": "Japan car market Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/goo-net-car-scraper"
+        }
+      ]
+    },
+    {
+      "id": "W9cXhDckzHd9RZWnQ",
+      "name": "biglemon-machinery-scraper",
+      "title": "BigLemon Japan Machinery Scraper - Used Heavy Equipment Prices",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/biglemon-machinery-scraper"
+        }
+      ]
+    },
+    {
+      "id": "pcSpFWK2A2HWRE2mx",
+      "name": "goo-net-car-scraper-es",
+      "title": "Japan car market Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/goo-net-car-scraper-es"
+        }
+      ]
+    },
+    {
+      "id": "ksRNLhw7sjdmoVbVt",
+      "name": "goo-net-car-scraper-pt",
+      "title": "Japan car market Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/goo-net-car-scraper-pt"
+        }
+      ]
+    },
+    {
+      "id": "FzQlnqfCsMfSlRG9j",
+      "name": "suumo-japan-real-estate-scraper",
+      "title": "SUUMO Japan Real Estate Scraper - Property Listings Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": false,
+      "versions": [
+        {
+          "error": "<urlopen error timed out>"
+        }
+      ]
+    },
+    {
+      "id": "8lfpT6vpZMl9JVagy",
+      "name": "suumo-japan-real-estate-scraper-cn",
+      "title": "SUUMO Japan Real Estate Scraper (CN) - Listings Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/suumo-japan-real-estate-scraper-cn.git"
+        }
+      ]
+    },
+    {
+      "id": "GfdpyUl6gSpCQlGK8",
+      "name": "suumo-japan-real-estate-scraper-kr",
+      "title": "SUUMO Japan Real Estate Scraper (KR) - Listings Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/suumo-japan-real-estate-scraper-kr.git"
+        }
+      ]
+    },
+    {
+      "id": "GXAtS99WP3st7AR27",
+      "name": "suumo-japan-real-estate-scraper-es",
+      "title": "SUUMO Japan Real Estate Scraper (ES) - Listings Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/suumo-japan-real-estate-scraper-es.git"
+        }
+      ]
+    },
+    {
+      "id": "pZ20lXqRtsJUl9bGk",
+      "name": "rakuten-market-scraper",
+      "title": "Rakuten Japan Scraper - Marketplace Product Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/rakuten-japan-market-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "NURQEJnUsVAobIiPs",
+      "name": "rakuten-debug-fetch",
+      "title": "Japan Japan market data Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "S3IdRuweFhrTwvJJN",
+      "name": "tabelog-debug-fetch",
+      "title": "Japan Japan market data Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "vN10EvpaN6lNSRxUo",
+      "name": "goo-net-car-scraper-fr",
+      "title": "Japan car market Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/goo-net-japan-used-car-scraper-fr.git"
+        }
+      ]
+    },
+    {
+      "id": "L0xYjvLZT8aYUKjKQ",
+      "name": "goo-net-car-scraper-ru",
+      "title": "Japan car market Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/goo-net-japan-used-car-scraper-ru.git"
+        }
+      ]
+    },
+    {
+      "id": "xv30Eoxh7NMJgJIj5",
+      "name": "goobike-motorcycle-scraper",
+      "title": "GooBike Japan Scraper - Used Motorcycle Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/goobike-motorcycle-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "BdQF1T6wB5T25AO20",
+      "name": "upgarage-parts-scraper",
+      "title": "UP-GARAGE Japan Scraper - Used Auto Parts Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/upgarage-parts-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "xPSQSSsdVjRwWQAiA",
+      "name": "golfpartner-used-club-scraper",
+      "title": "Golf Partner Japan Scraper - Used Golf Club Prices API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/golfpartner-used-club-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "8WBam4CPB72q9Rvsd",
+      "name": "yahoo-auctions-japan-scraper",
+      "title": "Japan Yahoo Auctions Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": "https://github.com/atushi1841/yahoo-auctions-japan-scraper"
+        }
+      ]
+    },
+    {
+      "id": "whSePszWpMtfeLYBp",
+      "name": "mercari-japan-search-scraper",
+      "title": "Japan Mercari Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/mercari-japan-search-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "UVkH1uhlt57Jf6QnT",
+      "name": "japan-hotpepper-scraper",
+      "title": "Japan HotPepper Beauty Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-hotpepper-scraper.git"
+        }
+      ]
+    },
+    {
+      "id": "95ZKdUlpFBo8CBYJh",
+      "name": "japan-hotpepper-cn-scraper",
+      "title": "Japan HotPepper Beauty Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-hotpepper-scraper-cn.git"
+        }
+      ]
+    },
+    {
+      "id": "FVJsHJhb4aPq54Uyd",
+      "name": "japan-hotpepper-kr-scraper",
+      "title": "Japan HotPepper Beauty Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-hotpepper-scraper-kr.git"
+        }
+      ]
+    },
+    {
+      "id": "xJI4WaPBfQiDJfcnp",
+      "name": "japan-camera-resale-price-stats",
+      "title": "Japan cameras Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "lRUO0nFDpE66U013r",
+      "name": "mini-actor-test-0903",
+      "title": "Japan Japan market data Prices — Listings & Market Data",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "WnrudUFF2kZxZcj7Z",
+      "name": "japan-figure-plamo-resale-price-stats",
+      "title": "Japan Figure & Plamo Resale Price Stats API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "VCKdDJ5BdT9Z8aIDf",
+      "name": "tackleberry-scraper",
+      "title": "Tackleberry B-net Japan Fishing Tackle Scraper",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "doneSfO13IuNgcWPk",
+      "name": "amazon-paapi-jp-actor",
+      "title": "Amazon PA-API v5 Search (JP / US / UK / DE)",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "6EvRs5kF1mbelC03M",
+      "name": "ai-model-price-api",
+      "title": "AI Model Price API (3,974 LLM models)",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "pWhvh8aWz4i6OM1ST",
+      "name": "japan-egov-laws",
+      "title": "Japan e-Gov Laws & Regulations Scraper",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "1g84gsOT7vE9yxNla",
+      "name": "japan-jma-weather",
+      "title": "Japan JMA Weather Data Scraper",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": false,
+      "versions": [
+        {
+          "error": "<urlopen error timed out>"
+        }
+      ]
+    },
+    {
+      "id": "62DcoLUAkkOB1hGAH",
+      "name": "japan-mhlw-medical",
+      "title": "Japan MHLW Medical Facility Search API (Official)",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "rIZ3NSg5Ul34PgpYx",
+      "name": "japan-corporate-numbers",
+      "title": "Japan NTA Corporate Number Lookup (Official)",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "u2qsG1UfVHWsgl8Dg",
+      "name": "world-bank-indicators",
+      "title": "World Bank Indicators (50 countries × 7 indicators, 2015-2024)",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "pAxQ0lRyArudhK9Wx",
+      "name": "eurostat-indicators",
+      "title": "Eurostat Indicators (EU 27 countries, official API)",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "LSETMqsB30U9slWeU",
+      "name": "japan-crowdfunding-trend-feed",
+      "title": "Japan Crowdfunding Trend Feed - CAMPFIRE backed Projects",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": null,
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.2",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "90MPAX9mfR1DbNDJh",
+      "name": "my-actor",
+      "title": "My Actor — Test PUT",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-prize-giveaway-scraper"
+        }
+      ]
+    },
+    {
+      "id": "FPlcw4CWMAKooZNe6",
+      "name": "japan-prize-giveaway-scraper",
+      "title": "Japan X Prize Giveaways (懸賞) — Scraper & Stats API",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-prize-giveaway-scraper"
+        }
+      ]
+    },
+    {
+      "id": "RdCHlXHphoLsWnyhh",
+      "name": "japan-fuel-price-mcp",
+      "title": "Japan Fuel Price MCP — METI Weekly Gasoline/Diesel/Kerosene",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-fuel-price-mcp.git"
+        }
+      ]
+    },
+    {
+      "id": "SWVTsribU0AIJVXtR",
+      "name": "kensho-high-value-leads",
+      "title": "Kensho High-Value Giveaway Leads",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "1.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "LXzxoGGC0bmMTqEtd",
+      "name": "test-actor",
+      "title": "Test Actor",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        }
+      ]
+    },
+    {
+      "id": "ODh1F4XP5sLlXu6Ep",
+      "name": "japan-minimum-wage-mcp",
+      "title": "Japan Minimum Wage MCP — MHLW Prefecture Rates",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-minimum-wage-mcp.git"
+        }
+      ]
+    },
+    {
+      "id": "XJCgrhOZE47qc7T3i",
+      "name": "japan-property-hazard-mcp",
+      "title": "日本物件ハザードリスクMCP",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-property-hazard-mcp"
+        }
+      ]
+    },
+    {
+      "id": "BxstMzzxh8jq6UtfS",
+      "name": "japan-jepx-mcp",
+      "title": "Japan JEPX Electricity Spot Price MCP",
+      "pictureUrl": null,
+      "categories": [],
+      "categoryIds": null,
+      "isPublic": null,
+      "hasLatestVersion": true,
+      "versions": [
+        {
+          "versionNumber": "0.0",
+          "buildTag": "latest",
+          "gitRepoUrl": null
+        },
+        {
+          "versionNumber": "0.1",
+          "buildTag": "latest",
+          "gitRepoUrl": "https://github.com/atushi1841/japan-jepx-mcp.git"
+        }
+      ]
+    }
+  ]
+}

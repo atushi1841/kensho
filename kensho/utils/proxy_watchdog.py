@@ -24,11 +24,11 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
     #   ワイモバイルHR01ルーターのLANポートからUSB有線LAN(Tankan_ETH3 / Realtek USB FE)へ直結切替。
     #   旧 Tankan_HR01 は運用除外。回線自体は同じワイモバイルなので出口IPは126.133系のはず。
     "TankanNotes": (1085, "Tankan_ETH3"),
-    # 2026-08-28(提案69): inobase1-4(1089)もフラッピング監視対象に追加。
-    #   8/28 22:19-22:23 に1回フラップ（自己復旧・POVO系テザリング一時不安定）。
-    #   頻発（1日2回以上）する場合は要ユーザー対応（提案49方式）へ格上げ。
-    "inobase1-4": (1089, "inobase1-4"),
-    "toushiwatch": (1087, "toushiwatch_airtra1"),  # 2026-08-31: royal破棄→toushiwatch。2_povo_AW(air-tra1/povo)
+    # 2026-09-24: inobase1-4(1089) は垢バン確定（@inobase128508）→ マップから削除。
+    #   accounts からも外れているため watchdog の復旧対象にしない（復旧試行＝BOTシグナル増幅の元）。
+    # 2026-09-24: @toushiwatch を RM10JE_S 回線（旧 chugakujuken 用アダプタ。垢バンで解放）へ載せ替え。
+    #   実測: 出口IP 106.133.45.122 / egress OK / X API healthy。アダプタ名も chugakujuken_RM10JE_S→RM10JE_S に改名済。
+    "toushiwatch": (1087, "RM10JE_S"),
 }
 
 # ── WiFi SSID マップ（自動再接続用）──
@@ -38,8 +38,8 @@ PROXY_ADAPTER_MAP: dict[str, tuple[int, str]] = {
 WIFI_SSID_MAP: dict[str, str] = {
     "kudou": "RM10JE_B",
     "zin20120731": "AiR-WiFi_6_povo",
-    "inobase1-4": "ino1_4_oppo_r5a",
-    "toushiwatch": "2_povo_AW",  # 2026-08-31: royal破棄→toushiwatch転用
+    # 2026-09-24: inobase1-4 は垢バンで削除。toushiwatch は RM10JE_S へ載せ替え。
+    "toushiwatch": "RM10JE_S",
 }
 
 PROXY_HOST = "172.26.80.1"
