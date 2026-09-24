@@ -1,0 +1,46 @@
+{
+  "success_indicators": [
+    "tests/test_revenue_collect.py: 59 passed -> 63 passed（t_fda64102 で部分取得系4件を追加）",
+    "data/apify_pricing_cache.json の pricing: 1件 -> 25件（fetched=25 / merged_from_cache=0 を記録）",
+    "collect_apify 実測: actors_free 20件誤報告(9/19) -> 0件（actors_ppe=25 / actors_unknown=0）",
+    "commit 108aba9 を origin/main へ push 済み（未コミットコード0件）"
+  ],
+  "verification_commands": [
+    "$ cd /mnt/d/Project2/kensho && python3 -m pytest tests/test_revenue_collect.py -q --no-cov => 63 passed in 6.12s",
+    "$ python3 -c \"...fetch_apify_pricing...\" => fetched_api= 25 / cache= 25 fetched= 25 merged_from_cache= 0",
+    "$ python3 -c \"...collect_apify...\" => {'date': '2026-09-24', 'actors_total': 25, 'actors_ppe': 25, 'actors_free': 0, 'actors_unknown': 0, 'actors_public': 25}",
+    "$ git log --oneline -1 => 108aba9 fix(revenue): t_fda64102 Apify pricing部分取得でfree誤判定/キャッシュ縮小を修正",
+    "$ git status --porcelain | grep -E '\\.(py|yaml|sh|js)$' => (出力なし)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_fda64102_verification.md",
+    "/mnt/d/Project2/kensho/scripts/kensho_revenue_collect.py",
+    "/mnt/d/Project2/kensho/tests/test_revenue_collect.py",
+    "/mnt/d/Project2/kensho/data/apify_pricing_cache.json"
+  ],
+  "evidence_hashes": [
+    "92640f579689409c9c463a3f7b8c4c863a8656390d39cbdd9c1aec68ee68d66f  reports/t_fda64102_verification.md",
+    "9bf29eefcdff20658b697d053db33bd8a8d8114be96d6159bb6babed0917f2da  scripts/kensho_revenue_collect.py",
+    "c70aef6e0f23f858601b033abc31b3262304347eb8240dd5640ca158bc84482f  tests/test_revenue_collect.py",
+    "0fc265075bbf2bbb5ae3a86ab859c72ee92099ceb4cd998255da6639bdbe26c4  data/apify_pricing_cache.json"
+  ],
+  "outcome": [
+    {
+      "metric": "actors_free（誤報告件数）",
+      "before": 20,
+      "after": 0
+    },
+    {
+      "metric": "apify_pricing_cache の pricing 件数",
+      "before": 1,
+      "after": 25
+    },
+    {
+      "metric": "tests/test_revenue_collect.py の passed 件数",
+      "before": 59,
+      "after": 63
+    }
+  ],
+  "task_id": "t_fda64102",
+  "status": "complete"
+}
