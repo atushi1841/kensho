@@ -182,6 +182,10 @@ collection:
   #   - "socks5h://172.26.80.1:1082"
   times: ["03:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"]
   max_items: 500
+  # ★ t_8946706e: scope_reduction（自己修復アクション）が対象にするページ数上限。
+  #   未設定だと scope_reduction は no-op のままプランから除外され「到達不能な設定」になるため、
+  #   実効値（99=全ページ）を明示する。99 → 回復時のみ 1 ページに縮小される（通常runの挙動は不変）。
+  max_pages: 99
   # ★ t_b64c35ea (2026-09-23): 1runの実行時間上限（秒）。超過したら残ソースを打ち切り、
   #   それまでに収集できた分を部分保存する（プロセスは強制終了しない）。
   #   理由: 毎時収集は /tmp/kensho-collect.lock の flock を collect の子プロセスが保持し続けるため、
@@ -318,6 +322,18 @@ self_healing:
   retry_partial_apply: false
   notify_on_error: true
   allowed_ai_actions: "retry,switch_transport,reduce_scope"
+  # ★ t_8946706e (2026-09-24): 回復アクションの順序。使えない（対象パイプラインで意味の無い）アクションは
+  #   実行時に自動で除外される — ai_assisted=false なら ai_consult、apply なら transport_fallback /
+  #   scope_reduction は「使われない設定」として残さない。プランは run をまたぐ永続カーソルで
+  #   段階消費するため、max_attempts=3 のままでも後段のアクションへ到達できる（F4）。
+  #   ★ max_attempts は絶対に増やさないこと（増やすとセッション失効垢への盲目的リトライが復活し、
+  #     goto failed / ログイン試行が倍増＝BOTシグナル増幅。実測 63→227件/日）。
+  recovery_order: "jitter_retry,ai_consult,network_check,transport_fallback,scope_reduction"
+  # 自己修復では回復不能な失敗の種類/マーカー（1回で停止＋その垢だけ failure_ceiling_cooldown_minutes 遮断）。
+  # セッション失効・認証・プロキシ死骸・アカウント停止を「リトライ対象外」に分類する。
+  # kinds は applier/browser が返す理由キー（browser.check_x_login の reason_out）と一致させること。
+  fatal_signal_kinds: "session,auth,dead_proxy,rate_limit,rate_limited,suspended,frozen,no_auth_session,needs_login,login_failed,goto_failed,challenge"
+  fatal_signal_markers: "auth_token,no_auth_session,needs_login,not logged in,login failed,ログイン失敗,invalid session,cookie expired,session expired,dead_proxy,http_0,goto_failed,goto failed,proxy is dead,プロキシ死骸,rate_limited,account suspended,frozen,読み取り専用"
 
 # ── アクション検証設定 ──
 # Loop Engineering: page.gotoによる重検証（プロフィールに遷移してボタン状態を確認）
@@ -337,6 +353,10 @@ safety:
   ip_separation_check: true        # true: 応募前に各プロキシ経由IPがユニークか確認
   ip_check_timeout: 10             # 各プロキシ接続のタイムアウト(秒)
   cache_ttl_seconds: 300           # チェック結果のキャッシュ時間(秒)。5分（自宅IP変動の早期検出）
+  # ★ t_8946706e (2026-09-24): true なら data/status/<acct>.json が dead_proxy の垢を blocked 扱いにして
+  #   応募を試行しない（従来は警告のみで応募処理に進み、goto失敗→ログイン再試行を反復＝BOTシグナル増幅）。
+  #   自宅IPへのフォールバックは行わない（死骸のまま停止する）。
+  dead_proxy_check: true
   home_internet_accounts:
     - "atushi16"                   # 自宅インターネット回線を使う正規アカウント（他アカウントは個別SOCKS5プロキシ必須）
     # ↓ 凍結済み（削除済み）

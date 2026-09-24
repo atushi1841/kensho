@@ -1,15 +1,67 @@
 """
 Kensho Safety — 安全チェック機能
 - IP分離検証: 各アカウントのSOCKS5プロキシ経由で異なるIPが出ているか確認
+- プロキシ死骸検出: data/status/<acct>.json が dead_proxy の垢は応募を試行しない（t_8946706e）
 """
 
 from __future__ import annotations
 
+import json
 import time
+from pathlib import Path
 from typing import Any
 
 # チェック結果のキャッシュ（プロセス内で1回だけ実行）
 _ip_verified: tuple[bool, list[str], float] | None = None  # (result, blocked_accounts, timestamp)
+
+
+def dead_proxy_reason(cfg: dict[str, Any], account_key: str) -> str:
+    """`data/status/<acct>.json` を見て、その垢のプロキシが死骸なら理由文字列を返す（健全/未検査なら ""）。
+
+    ★ t_8946706e: 死骸プロキシの垢を「警告のみ」で応募処理へ進めると、goto失敗→ログイン再試行が
+    繰り返され BOTシグナルを増幅する（実測 goto failed 63→227件/日）。status ファイルは
+    proxy_watchdog が「最終成功」「最終エラー種別」「停止理由」付きで書く唯一のオフライン信号なので、
+    これを blocked 判定の一次入力にする（追加のネットワーク試行はしない）。
+    無効化は config `safety.dead_proxy_check: false`。
+
+    鮮度ガード: status 生成が止まると死骸のまま永久ブロックになるため、`updated` が
+    `safety.dead_proxy_max_age_hours`（既定6時間）より古い場合は判定不能として扱う
+    （生死の最終防衛線は実行時の check_ip_separation 側にある）。
+    """
+    if not cfg.get("safety", {}).get("dead_proxy_check", True):
+        return ""
+    project_dir = str((cfg.get("general") or {}).get("project_dir") or "")
+    if not project_dir:
+        return ""
+    status_path = Path(project_dir) / "data" / "status" / f"{account_key}.json"
+    if not status_path.exists():
+        return ""
+    try:
+        data = json.loads(status_path.read_text(encoding="utf-8"))
+    except Exception:
+        return ""
+    if not isinstance(data, dict):
+        return ""
+    if str(data.get("status", "")).strip() != "dead_proxy":
+        return ""
+    max_age_h = float(cfg.get("safety", {}).get("dead_proxy_max_age_hours", 6) or 0)
+    updated = str(data.get("updated") or "")
+    if max_age_h > 0 and updated:
+        try:
+            from datetime import datetime
+            age_h = (datetime.now() - datetime.fromisoformat(updated.replace("Z", ""))).total_seconds() / 3600
+            if age_h > max_age_h:
+                return ""
+        except Exception:
+            pass
+    detail = str(data.get("stop_reason") or data.get("last_error_type") or "proxy unreachable")
+    return f"{detail} / 最終確認 {updated}" if updated else detail
+
+
+def dead_proxy_accounts(cfg: dict[str, Any], accounts: list[str] | None = None) -> list[str]:
+    """プロキシ死骸と判定されている垢の一覧（ブロック対象）。"""
+    keys = accounts if accounts is not None else [str(a.get("key", "")) for a in cfg.get("accounts", [])]
+    return sorted(k for k in keys if k and dead_proxy_reason(cfg, k))
 
 
 def _get_ip_via_socks5(host: str, port: int, timeout: int = 10) -> str | None:
@@ -111,8 +163,20 @@ def check_ip_separation(cfg: dict[str, Any], log: Any = None) -> tuple[bool, lis
             seen_ips[ip] = name
 
     # 不通があっても他が正常なら続行（不通垢だけスキップ）
+    # ★ t_8946706e: 不通垢を「警告のみ」で応募処理へ進めていたため、死骸プロキシの垢が
+    #   応募を試行し続けた（実測 zin20120731 は dead_proxy なのに apply 試行が記録され続けた）。
+    #   不通＝その垢は blocked 扱いにして停止する（自宅IPへフォールバックはさせない）。
     if unreachable:
-        messages.append(f"  ⚠️ 不通アカウント（スキップ）: {', '.join(unreachable)}")
+        messages.append(
+            f"  ⚠️ 不通アカウント（ブロック→応募を試行しない）: {', '.join(unreachable)}"
+        )
+
+    # ★ t_8946706e: status/<acct>.json が dead_proxy の垢もブロック（オフライン信号での多重防御）
+    offline_dead = dead_proxy_accounts(cfg)
+    if offline_dead:
+        messages.append(
+            f"  [ブロック] プロキシ死骸（status=dead_proxy）: {', '.join(offline_dead)} → 応募を試行しない"
+        )
 
     if duplicates:
         messages.append("  ❌ IP重複あり → 先着優先で最初のアカウントのみ許可、他はブロック")
@@ -146,6 +210,11 @@ def check_ip_separation(cfg: dict[str, Any], log: Any = None) -> tuple[bool, lis
             messages.append("  ❌ 全アカウント不通 → 応募不可")
             all_ok = False
             blocked = []
+
+    # ★ t_8946706e: 不通垢・プロキシ死骸垢を blocked に合流させる（呼出側 applier がこのリストで当該垢だけスキップ）
+    blocked = sorted(set(blocked) | set(unreachable) | set(offline_dead))
+    if blocked:
+        messages.append(f"  → blocked（応募を試行しない）: {', '.join(blocked)}")
 
     return (all_ok, messages, blocked)
 

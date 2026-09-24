@@ -280,11 +280,32 @@ def collect(
         return None
 
     _cfg = dict(cfg) if cfg is not None else load_config()
+    _sh: dict[str, Any] = _cfg.get("self_healing", {}) or {}
     _loop = SelfHealingLoop(
         cfg=_cfg, pipeline="collection", logger=log,
-        context={"retry_empty_collection": True},
+        # F6: 呼出側のハードコード（常に True）をやめ、config.yaml の self_healing を尊重する。
+        context={"retry_empty_collection": bool(_sh.get("retry_empty_collection", False))},
     )
-    return _loop.run(_collect_impl, validator=_validate_collect).value_or_raise()
+
+    def _run_collect() -> tuple[int, int, int]:
+        """回復アクション（transport_fallback / scope_reduction）を retry に効かせる再実行。
+
+        F4: アクションは自己修復ループ側の設定を書き換えるため、再実行時にその collection 設定を
+        呼出側 config へ重ねて渡す（従来は load_config() を読み直しており、アクションが無効だった）。
+        """
+        loop_coll: dict[str, Any] = dict(_loop.cfg.get("collection") or {})
+        run_cfg: dict[str, Any] = dict(_cfg)
+        if loop_coll:
+            merged_coll: dict[str, Any] = dict(_cfg.get("collection") or {})
+            merged_coll.update(loop_coll)
+            run_cfg["collection"] = merged_coll
+        try:
+            pages = int((run_cfg.get("collection") or {}).get("max_pages", max_pages) or max_pages)
+        except Exception:
+            pages = max_pages
+        return _collect_impl(cfg=run_cfg, log=log, max_pages=min(int(max_pages), pages))
+
+    return _loop.run(_run_collect, validator=_validate_collect).value_or_raise()
 
 
 def _collect_impl(

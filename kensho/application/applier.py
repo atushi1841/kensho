@@ -56,6 +56,7 @@ from kensho.core.notifier import notify_warning
 from kensho.scraping.scorer import format_prize_info, score_prize
 from kensho.scraping.sources.common import has_skip_keyword
 from kensho.scraping.pathway_classifier import is_auto_applyable, classify_pathway
+from kensho.utils.safety import dead_proxy_reason as _dead_proxy_reason
 from kensho.utils.safety import verify_ip_separation
 
 DATA_DIR: Path = Path(__file__).parent.parent.parent / "data"
@@ -147,6 +148,24 @@ _CAPTCHA_LOCK_FILE: Path = DATA_DIR / "captcha_lock.json"
 _CAPTCHA_LOCK_THRESHOLD: int = 3  # 連続CAPTCHA失敗でロックする回数
 _CAPTCHA_LOCK_HOURS: float = 24.0  # ロック期間（24h）
 _CAPTCHA_LOG_MARKER: str = "CAPTCHA_LOCK"  # 検証コマンド grep用マーカー
+
+# ★ t_8946706e (2026-09-24): 自己修復で回復不能な失敗理由（リトライ対象外）。
+#   セッション失効・認証失敗・プロキシ死骸は3回リトライしても回復せず、
+#   ブラウザ起動＋Xログインを再実行するだけ（=goto failed / ログイン試行が倍増し BOTシグナルを増幅）。
+#   実測: 最終失敗32件中29件が1垢（zin20120731）のセッション失効で、goto failed は 63件/日(09-20)
+#   →227件/日(09-23)、ログイン試行は約55→108回/日 に増幅していた。
+#   これらは validator で recoverable=False として返し、self_heal が1回で停止＋当該垢のみ遮断する。
+_FATAL_APPLY_REASONS: frozenset[str] = frozenset({
+    "no_auth_session",  # auth_token/ct0 欠落（セッション失効）
+    "goto_failed",      # x.com/home へのgoto失敗（プロキシ死骸 or セッション失効）
+    "needs_login",      # ログイン/flow/signup 画面＝セッション失効
+    "login_failed",     # 上記以外のログイン失敗
+    "challenge",        # reCAPTCHA/Cloudflare（24hロック対象・リトライ無意味）
+    "rate_limited",     # Xレート制限（同一run内リトライは露出を増やすだけ）
+    "suspended",        # アカウント停止
+    "frozen",           # 凍結・読み取り専用
+    "dead_proxy",       # プロキシ死骸（自宅IPへフォールバックしない絶対ルール）
+})
 
 
 def _get_captcha_lock(account_key: str, state_path: Path | None = None) -> datetime | None:
@@ -691,6 +710,12 @@ def apply_for_account(
     """指定されたアカウントで未応募の懸賞に応募する。自己修復ループで例外をリカバリする。"""
     from kensho.core.self_heal import RecoverySignal, SelfHealingLoop
 
+    # ★ t_8946706e: 自己修復の失敗理由シンク。_apply_impl が「なぜ失敗したか」を書き、
+    #   validator がそれを見て非リトライ（セッション失効/認証/プロキシ死骸）を判定する。
+    #   従来はこの情報が無く、auth失効が「apply 0 success 1 errors」＝一般エラーに見えて
+    #   3回リトライされ、ブラウザ起動＋Xログインを反復して BOTシグナルを増幅していた。
+    _fatal: dict[str, str] = {}
+
     def _validate_apply(
         value: Any,
         *,
@@ -701,21 +726,32 @@ def apply_for_account(
             return RecoverySignal(kind="invalid_return", recoverable=True, severity="error", message="apply が tuple[int,int] を返さない")
         _succ, _errs = value
         if _errs > 0 and _succ == 0:
+            _why = str(_fatal.get("kind", ""))
+            if _why in _FATAL_APPLY_REASONS:
+                # 回復不能: リトライせず即停止（self_heal 側が当該垢を遮断＋通知する）
+                return RecoverySignal(kind=_why, recoverable=False, severity="error",
+                                      message=f"apply 0 success {_errs} errors ({_why})")
             return RecoverySignal(kind="apply_zero_success", recoverable=True, severity="error", message=f"apply 0 success {_errs} errors")
         if (context or {}).get("retry_partial") and _errs > 0 and _succ > 0:
             return RecoverySignal(kind="apply_partial", recoverable=True, severity="warn", message=f"apply partial {_succ}/{_errs}")
         return None
 
     _cfg = dict(cfg) if cfg is not None else load_config()
+    _sh: dict[str, Any] = _cfg.get("self_healing", {}) or {}
     _loop = SelfHealingLoop(
         cfg=_cfg, pipeline="apply", logger=log,
-        context={"retry_partial": False},
+        # F6: retry_partial を config から読む（従来は False 固定で config が無効）。
+        # P0: failure ceiling を垢単位にする（全体キーだと他垢の成功で毎回リセットされ遮断が不発）。
+        context={"retry_partial": bool(_sh.get("retry_partial_apply", False)),
+                 "key": f"apply:{account_key}"},
     )
 
     def _run() -> tuple[int, int]:
+        _fatal.clear()
         return _apply_impl(
             account_key=account_key, max_n=max_n, cfg=_cfg, log=log,
             dry_run=dry_run, shared_browser=shared_browser, shared_ipw=shared_ipw,
+            reason_out=_fatal,
         )
 
     result = _loop.run(_run, validator=_validate_apply)
@@ -751,10 +787,16 @@ def _apply_impl(
     dry_run: bool = False,
     shared_browser: Any = None,
     shared_ipw: Any = None,
+    reason_out: dict[str, str] | None = None,
 ) -> tuple[int, int]:
     t0: float = time.time()
     if cfg is None:
         cfg = load_config()
+
+    def _set_reason(kind: str) -> None:
+        """自己修復に「なぜ失敗したか」を伝える（リトライ可否の判定入力）。"""
+        if reason_out is not None:
+            reason_out["kind"] = kind
 
     # 時間帯チェック
     if not is_active_hours(cfg):
@@ -805,6 +847,24 @@ def _apply_impl(
 
     display: str = acct.get("display", account_key)
     session_path: Path = Path(cfg["general"]["project_dir"]) / acct["session"]
+
+    # ★ t_8946706e: プロキシ死骸垢は応募を一切試行しない。
+    #   data/status/<acct>.json が dead_proxy（=proxy_watchdog が死骸と判定）なら、ブラウザを起動せず即スキップ。
+    #   死骸プロキシのままブラウザを起動すると goto 失敗→ログイン再試行を繰り返し、BOTシグナルを増幅する
+    #   （実測: goto failed 63→227件/日・ログイン試行 約55→108回/日）。自宅IPへフォールバックさせない
+    #   絶対ルール（2026-08-01 確定）を守ったまま、試行回数そのものをゼロにする。
+    _dead = _dead_proxy_reason(cfg, account_key)
+    if _dead:
+        _set_reason("dead_proxy")
+        msg = (
+            f"[SKIP] {account_key}: プロキシ死骸（{_dead}）→ 応募を試行しない"
+            f"（dead_proxy / 自宅IPフォールバック禁止）"
+        )
+        if log:
+            log.write(msg)
+        else:
+            print(msg, flush=True)
+        return (0, 0)
 
     # レート制限設定
     limits: dict[str, Any] = cfg.get("rate_limits", {})
@@ -1067,6 +1127,9 @@ def _apply_impl(
         login_reason: dict[str, str] = {}
         login_success = check_x_login(page, log, screen_name=account_key, reason_out=login_reason)
         if not login_success:
+            # ★ t_8946706e: 「なぜログインできなかったか」を自己修復へ伝える。
+            #   reason が無い旧経路でも auth 系として扱い、3回リトライ（=ブラウザ起動＋ログイン再試行）を防ぐ。
+            _set_reason(login_reason.get("reason") or "login_failed")
             # ★ 2026-09-18提案: CAPTCHA連続ロックの24hスキップ
             #   check_x_login が "challenge"（reCAPTCHA/Cloudflare）を検出した場合、
             #   連続3回でこのアカウントを24hスキップ＋アラート。1〜2回目は従来通り
