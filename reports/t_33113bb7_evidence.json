@@ -8,22 +8,22 @@
   ],
   "verification_commands": [
     "$ python -m pytest tests/test_audit_bot_safety_regularity.py tests/test_follow_state.py -q => 34 passed in 31.19s",
-    "$ grep -rn 'daily_target' --include='*.py' kensho/ => verified references in rate_limiter.py",
-    "$ git diff HEAD~1 -- kensho/application/rate_limiter.py scripts/audit_bot_safety.py kensho/application/follow_state_manager.py"
+    "$ sha256sum kensho/application/rate_limiter.py scripts/audit_bot_safety.py kensho/application/follow_state_manager.py",
+    "$ git log --oneline -5"
   ],
   "artifact_paths": [
     "/mnt/d/Project2/kensho/reports/t_33113bb7_verification.md",
     "/mnt/d/Project2/kensho/reports/t_33113bb7_evidence.json"
   ],
   "evidence_hashes": {
-    "kensho/application/rate_limiter.py": "<rate_limiter.py sha256>",
-    "scripts/audit_bot_safety.py": "<audit_bot_safety.py sha256>",
-    "kensho/application/follow_state_manager.py": "<follow_state_manager.py sha256>"
+    "kensho/application/rate_limiter.py": "3ee7c4768ba6c27a74d21ae8b52e749ea92fd6bfc40d4532ff49ccb7f0717ee9",
+    "scripts/audit_bot_safety.py": "1642a53afe90d8263b630531b3256439bc7b8f1fca0ea526540c89b6a9b00e7b",
+    "kensho/application/follow_state_manager.py": "8013f55d26bea8ade817bfbf027742a8b958b3ed745356c248a2ae37e52b0584"
   },
   "command_citations": [
     "$ python -m pytest tests/test_audit_bot_safety_regularity.py tests/test_follow_state.py -q => 34 passed in 31.19s",
-    "$ grep -rn 'daily_target' --include='*.py' kensho/ => verified references in rate_limiter.py",
-    "$ git diff HEAD~1 -- kensho/application/rate_limiter.py scripts/audit_bot_safety.py kensho/application/follow_state_manager.py"
+    "$ sha256sum kensho/application/rate_limiter.py scripts/audit_bot_safety.py kensho/application/follow_state_manager.py => 3ee7c476... 1642a53a... 8013f55d...",
+    "$ git log --oneline -5 => e4db9f8 完成 BOT対策強化 / 3f6ff49 更新 BOT対策強化の検証証跡 t_33113bb7 / 1a56884 更新 BOT対策強化の検証証跡 t_33113bb7"
   ],
   "verification_evidence_section": {
     "success_indicators": [
@@ -33,8 +33,8 @@
     ],
     "verification_commands": [
       "$ python -m pytest tests/test_audit_bot_safety_regularity.py tests/test_follow_state.py -q => 34 passed in 31.19s",
-      "$ grep -rn 'daily_target' --include='*.py' kensho/ => verified references in rate_limiter.py",
-      "$ git diff HEAD~1 -- kensho/application/rate_limiter.py scripts/audit_bot_safety.py kensho/application/follow_state_manager.py"
+      "$ sha256sum kensho/application/rate_limiter.py scripts/audit_bot_safety.py kensho/application/follow_state_manager.py => 3ee7c476... 1642a53a... 8013f55d...",
+      "$ git log --oneline -5 => e4db9f8 完成 BOT対策強化 / 3f6ff49 更新 BOT対策強化の検証証跡 t_33113bb7 / 1a56884 更新 BOT対策強化の検証証跡 t_33113bb7"
     ]
   },
   "result": "完成 BOT対策強化：(A) daily_target を実効化、(B) 監査閾値を config から読込、(C) kudou の no_follow_button 再試行を抑制。検証テスト34/34 合格。"
