@@ -10,50 +10,6 @@ from typing import Any
 JST = timezone(timedelta(hours=9))
 
 
-def _filter_proxy_check_rows(
-    txt: str, gen_start: datetime, best_ts: datetime | None
-) -> tuple[datetime | None, list[int], list[int], int, datetime | None]:
-    """Proxy-CHECK行からポートリストと時刻を抽出し、gen_start 以降の最新を返す。
-    戻り値: (row_ts, alive_ports, dead_ports, restored, updated_best_ts)
-    """
-    row_ts: datetime | None = None
-    alive_ports: list[int] = []
-    dead_ports: list[int] = []
-    restored = 0
-    adopted = False
-    for line in txt.splitlines():
-        mt = re.match(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\]", line)
-        if mt:
-            try:
-                row_ts = datetime.strptime(mt.group(1), "%Y-%m-%d %H:%M:%S")
-            except ValueError:
-                row_ts = None
-            continue
-        mm = re.search(
-            r"\[PROXY-CHECK\] alive=\[([0-9,\s]*)\]\s+dead=\[([0-9,\s]*)\]\s+restored=(\d+)",
-            line,
-        )
-        if not mm:
-            continue
-        # PROXY-CHECK 行の時刻 = 直前の spawn 行時刻（row_ts）。gen_start 以前の PROXY-CHECK は前 tick の死骸 → スキップ。
-        if row_ts is None or row_ts < gen_start:
-            continue
-        alive_s, dead_s, restored_s = mm.groups()
-        alive_ports = [int(x) for x in alive_s.split(",") if x.strip()]
-        dead_ports = [int(x) for x in dead_s.split(",") if x.strip()]
-        try:
-            restored = int(restored_s)
-        except ValueError:
-            restored = 0
-        if best_ts is None or row_ts > best_ts:
-            best_ts = row_ts
-            adopted = True
-        # 同tick内では最新を採用（複数PROXY-CHECK行のため）
-    if adopted:
-        return (best_ts, alive_ports, dead_ports, restored, best_ts)
-    return (None, [], [], 0, best_ts)
-
-
 def _audit_jst_date(ts: str) -> str:
     """audit.jsonlのUTCタイムスタンプ(例: 2026-08-28T00:22:12Z)をJST日付文字列に変換"""
     if not ts:
@@ -807,57 +763,89 @@ from kensho.utils.proxy_watchdog import (  # noqa: E402  # type: ignore
 def _filter_proxy_check_rows(
     txt: str, gen_start: datetime, best_ts: datetime | None
 ) -> tuple[datetime | None, list[int], list[int], int, datetime | None]:
-    """PROXY-CHECK 行の時系列フィルタ — 生成時刻以降の最新 PROXY-CHECK のみ採用。旧実装は当日ログの「最後の PROXY-CHECK 行」を採用していた。PROXY-CHECK 行自体にタイムスタンプがないため、前 tick の spawn 時刻に完了した PROXY-CHECK（死骸）が生成時刻以降の最新 PROXY-CHECK より後ろに並んでいた場合、その死骸を status に反映するバグ（1 tick 延命で dead_proxy が書かれた）が起きた。
+    """PROXY-CHECK 行の時系列フィルタ — 生成時刻以降に完走した最新行のみ採用する。
 
-このフィルタ関数は `scripts/gen_status_data.py` 内に配置する。コードの後方は保持し、コード後方（およそ line 830）で PROXY-CHECK 行の抽出ループが回され、_filter_proxy_check_rows が単一の当該ログテキストを解析して、
-- 候補の時間戳行（timestamp）より Older 行は即破棄
-- 既に採用されたより Older best_ts を持つ行は即破棄
-- それ以外は alive/dead/restored パース
+    PROXY-CHECK 行自体に時刻が無いため、直前の `[YYYY-MM-DD HH:MM:SS]` 行（tick 開始時刻）を
+    その行の時刻とみなす。旧実装は当日ログの「最後の PROXY-CHECK 行」を無条件に採用していたため、
+    生成時刻より前に完走した前 tick の行（死骸）を根拠に status=dead_proxy を書く 1 tick 偽判定が
+    起きていた（2026-09-25 01:15 実測: 実測 alive=[1081, 1082, 1085] に対し dead=[1081, 1084] を記録）。
+
+    採用条件:
+    - 直前の時刻行が gen_start 以降（＝同一 tick の行のみ。古い行は捨てる）
+    - best_ts が渡された場合は、それより新しい行のみ採用（複数ログファイル走査時の単調性）
+    - 条件を満たす行が1つも無ければ (None, [], [], 0, best_ts) を返す。呼出側はこれを
+      「該当行なし」として扱い、status を書き換えず前回値を保持する（偽 dead_proxy を書かない）
     """
     from datetime import datetime as _dt
+    import re
     lines = txt.splitlines()
-    # 時刻不明時の安全処理: PROXY-CHECK 行の直前に spawn 行がない場合は時刻不明 → スキップ
+
+    # スキャン結果: 最後に採用した最新の PROXY-CHECK の情報
+    result_ts: datetime | None = None
+    result_alive: list[int] = []
+    result_dead: list[int] = []
+    result_restored: int = 0
+
+    # すべての行をスキャン
     i = 0
     while i < len(lines):
         line = lines[i].strip()
-        # タイムスタンプ行: [YYYY-MM-DD HH:MM:SS] 形式
-        if line.startswith("[") and " " in line and ":" in line:
-            ts_str = line.strip("[]")
-            try:
-                ts = _dt.strptime(ts_str, "%Y-%m-%d %H:%M:%S")
-            except ValueError:
+
+        # PROXY-CHECK 行を発見
+        if line.startswith("[PROXY-CHECK]"):
+            # 直前のタイムSTAMP行を探す（ backwards search）
+            prev_ts: datetime | None = None
+            j = i - 1
+            while j >= 0:
+                prev_line = lines[j].strip()
+                # 正規表現で YYYY-MM-DD HH:MM:SS 形式の時刻行をマッチ
+                m = re.match(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\]", prev_line)
+                if m:
+                    prev_ts = _dt.strptime(m.group(1), "%Y-%m-%d %H:%M:%S")
+                    break  # 最初に見つかった（最新の）タイムSTAMPを採用
+                j -= 1
+
+            # タイムSTAMPが見つからない、または生成時刻より前ならスキップ
+            if prev_ts is None or prev_ts < gen_start:
                 i += 1
                 continue
-            i += 1
-            # 次の行が [PROXY-CHECK] なら解析
-            if i < len(lines) and lines[i].strip().startswith("[PROXY-CHECK]"):
-                proxy_line = lines[i].strip()
-                # alive=[...], dead=[...] を抽出 - より正確なマッチング
-                import re
-                alive = []
-                dead = []
-                restored = 0
-                alive_match = re.search(r"alive=\[(.*?)\]", proxy_line)
-                if alive_match:
-                    alive_str = alive_match.group(1)
-                    alive = [int(x.strip()) for x in alive_str.split(",") if x.strip()]
-                dead_match = re.search(r"dead=\[(.*?)\]", proxy_line)
-                if dead_match:
-                    dead_str = dead_match.group(1)
-                    dead = [int(x.strip()) for x in dead_str.split(",") if x.strip()]
-                restored_match = re.search(r"restored=(\d+)", proxy_line)
-                if restored_match:
-                    restored = int(restored_match.group(1))
-                # フィルタ条件: 候補が生成時刻以降かつ現在まで見た中で最新
-                if ts >= gen_start and (best_ts is None or ts > best_ts):
-                    return ts, alive, dead, restored, ts
-                else:
-                    # より新しい候補が見つかるまで i を進める
-                    i += 1
-                    continue
-        else:
-            i += 1
-    return None, [], [], 0, best_ts
+
+            # best_ts が与えられており、この行のタイムSTAMPが best_ts 以下ならスキップ
+            # (best_ts は既に採用された「現在の最新」タイムSTAMPであり、それより新しい行のみを採用する)
+            if best_ts is not None and prev_ts <= best_ts:
+                i += 1
+                continue
+
+            # 1行から alive/dead/restored を抽出する
+            proxy_line = line
+            alive = []
+            dead = []
+            restored = 0
+            alive_match = re.search(r"alive=\[(.*?)\]", proxy_line)
+            if alive_match:
+                alive_str = alive_match.group(1)
+                alive = [int(x.strip()) for x in alive_str.split(",") if x.strip()]
+            dead_match = re.search(r"dead=\[(.*?)\]", proxy_line)
+            if dead_match:
+                dead_str = dead_match.group(1)
+                dead = [int(x.strip()) for x in dead_str.split(",") if x.strip()]
+            restored_match = re.search(r"restored=(\d+)", proxy_line)
+            if restored_match:
+                restored = int(restored_match.group(1))
+
+            # 現在の結果をこの行で上書き（常に最新の1行だけを保持）
+            result_ts = prev_ts
+            result_alive = alive
+            result_dead = dead
+            result_restored = restored
+
+        i += 1
+
+    # 結果を返す
+    if result_ts is not None:
+        return result_ts, result_alive, result_dead, result_restored, result_ts
+    else:
+        return None, [], [], 0, best_ts
 
 # audit から垢別の「最終成功」「最終エラー種別」を抽出
 _proxy_last_success: dict[str, tuple[str, str]] = {}  # acct -> (ts, action)
