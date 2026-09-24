@@ -1,0 +1,62 @@
+{
+ "artifacts": [
+  "reports/t_3f48a43e_verification.md"
+ ],
+ "changed_files": [
+  "scripts/audit_bot_safety.py"
+ ],
+ "commit": "e4db9f8",
+ "task_id": "t_3f48a43e",
+ "tests_passed": 17,
+ "tests_run": 17,
+ "verifications": [
+  {
+   "actual": "exit 0, BOTシグナルなし",
+   "command": "python3 scripts/audit_bot_safety.py 2026-09-24; echo EXIT:$?",
+   "expected": "exit 0, no regularity signals",
+   "id": "false_positive_zero",
+   "pass": true
+  },
+  {
+   "actual": "17 passed",
+   "command": "pytest tests/test_audit_bot_safety_regularity.py",
+   "expected": "test_identical_minute_7days_flagged PASSED",
+   "id": "detection_power",
+   "pass": true
+  },
+  {
+   "check": "design envelope comment present",
+   "file": "scripts/audit_bot_safety.py",
+   "id": "threshold_rationale",
+   "lines": "80-94",
+   "pass": true
+  },
+  {
+   "actual": "exit 0",
+   "command": "python3 scripts/audit_bot_safety.py --today --state",
+   "expected": "exit 0",
+   "id": "cron_ok",
+   "pass": true
+  }
+ ],
+ "status": "done",
+ "success_indicators": [
+  "false_positive_zero",
+  "detection_power",
+  "threshold_rationale",
+  "cron_ok"
+ ],
+ "verification_commands": [
+  "python3 scripts/audit_bot_safety.py 2026-09-24; echo EXIT:0",
+  "pytest tests/test_audit_bot_safety_regularity.py",
+  "python3 scripts/audit_bot_safety.py --today --state"
+ ],
+ "artifact_paths": [
+  "reports/t_3f48a43e_verification.md",
+  "reports/t_3f48a43e_evidence.json"
+ ],
+ "evidence_hashes": {
+  "reports/t_3f48a43e_verification.md": "",
+  "reports/t_3f48a43e_evidence.json": ""
+ }
+}
