@@ -21,15 +21,27 @@
     "/mnt/d/Project2/kensho/scripts/loop_health.sh"
   ],
   "evidence_hashes": [
-    "reports/t_de7d7e84_verification.md sha256=907f9c7bdd584c5eb498f2442eb4c8d307fa7113d9bcc9f95dac253c114750a2",
+    "reports/t_de7d7e84_verification.md sha256=ce83fdde5c312c46d1cb152da7946c626dd3350df6395976db54b8ed3e565130",
     "scripts/loop_health.sh sha256=018afbc277d8ca1b2a1213065a9e521b138bbf3c95b54ee0b74792ec6e070310",
-    "git_commit=2ed0374 以降を origin/main へ push"
+    "git_commit=8af95d1 (pushed)"
   ],
-  "outcome": {
-    "metric": "loop_health.sh 有効JSON率 / monitor parse_error / pytest pass",
-    "before": "0/3 有効JSON・parse_error=1・pytest 3 failed",
-    "after": "3/3 有効JSON(score=100)・parse_error=0・pytest 3 passed"
-  },
+  "outcome": [
+    {
+      "metric": "loop_health.sh 有効JSON率(%, 3回実行)",
+      "before": 0,
+      "after": 100
+    },
+    {
+      "metric": "board_state_monitor parse_error 件数",
+      "before": 1,
+      "after": 0
+    },
+    {
+      "metric": "tests/test_loop_health.py passed",
+      "before": 0,
+      "after": 3
+    }
+  ],
   "task_id": "t_de7d7e84",
   "status": "complete"
 }

@@ -93,4 +93,7 @@ kanban_done_guard task=t_de7d7e84 -> BLOCK (1 not met: command_citations>=3)   �
 | tests/test_loop_health.py | 3 failed in 32.02s | 3 passed in 33.26s |
 | loop_health.sh md5 安定性 | 10分で5回変化（04:11〜04:23 md5 1b515859→8fd674ba） | 65秒不変（1b0fe2ef…→1b0fe2ef…） |
 
-metric=loop_health 有効JSON率 / before=0/3 / after=3/3。カード所有は t_de7d7e84 のまま。
+metric=loop_health 有効JSON率: before=0% → after=100%（3回連続有効JSON / t_de7d7e84）。
+metric=monitor parse_error 件数: before=1 → after=0。
+metric=tests/test_loop_health.py passed: before=0 → after=3。
+カード所有は t_de7d7e84 のまま。
