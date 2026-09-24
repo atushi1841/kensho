@@ -348,7 +348,11 @@ def main() -> int:
     #     同一パターンが run ごとに別物として再追記・毎時再通知されていた（鳴り続け）。
     if "--state" in sys.argv:
         state = _load_state()
-        known = set(state.get(date_s, []))
+        # ★ t_3f48a43e 再校正: 既報は正規化キーで照合する。旧実装は生問題文をキーに
+        # していたため、state に生文字列が残り続け（09-21〜24 の 63件重複）、
+        # 毎時再通知＝鳴り続けのままだった。ロード時に全キーを正規化することで
+        # 過去データも即座に効くgether、新規検出時のみ追記する。
+        known = {_dedupe_key(x) for x in state.get(date_s, [])}
         keys = [_dedupe_key(p) for p in problems]
         new_problems = [p for p, k in zip(problems, keys) if k not in known]
         if problems:
