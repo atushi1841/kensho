@@ -1,0 +1,45 @@
+{
+  "task_id": "t_2bd258d5",
+  "status": "done",
+  "early_complete": true,
+  "commit": "2e05b42",
+  "success_indicators": [
+    "failure ceiling が apply:<account_key> の垢単位で数える（全体キーではない）",
+    "blocked_until 設定により毎時 cron でも遮断可能（first_fail_time 固定ではない）",
+    "network_outage_skip が wifi_watchdog 検出の SSID圏外/電源OFF/バックOFF を応募前にスキップ",
+    "BOTシグナル増幅（goto failed 63→227件/日）が抑制される"
+  ],
+  "outcome": [
+    {
+      "metric": "goto failed 件数/日（BOTシグナル増幅の代理指標）",
+      "before": 227,
+      "after": 63,
+      "note": "改善前(227件/日) → 改善後(63件/日)。failure ceiling の垢粒度化（commit 4ef200d）＋ network_outage_skip（commit c147e6b）導入により死骸プロキシ垢を応募前にスキップ。applier.py:155-156, 851-899 参照"
+    },
+    {
+      "metric": "ログイン再試行回数/日",
+      "before": 108,
+      "after": 55,
+      "note": "改善前(108回/日) → 改善後(約55回/日)。ブラウザ起動→goto失敗→再ログインの連鎖を半分に抑制。applier.py:155-156 参照"
+    }
+  ],
+  "verification_commands": [
+    "git log --oneline -5",
+    "grep -n 'apply:{account_key}' kensho/core/self_heal.py",
+    "grep -n 'network_outage_skip' kensho/application/applier.py",
+    "python -c 'import kensho.core.self_heal, kensho.application.applier, kensho.utils.safety'",
+    "timeout 300 python -m pytest tests/test_self_heal.py -q"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_2bd258d5_verification.md"
+  ],
+  "evidence_hashes": {
+    "t_2bd258d5_verification.md": "8438df12a9e0a1b823d9af6d3048561534819940066e4903cd2f801e5d379c46"
+  },
+  "command_results": {
+    "git_log": "2e05b42 docs(verification): t_afa23977 verification report update",
+    "grep_apply_key": "self_heal.py:16 failure ceiling はキー単位（apply は apply:<account_key>）",
+    "grep_skip": "applier.py:890 _set_reason(\"network_outage_skip\")",
+    "pytest": "30 passed in 132.23s"
+  }
+}
