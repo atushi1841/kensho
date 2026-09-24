@@ -963,3 +963,99 @@ class TestV140CollectorsTopLayer:
         assert any("last-known-stateフォールバック" in w for w in entry["warnings"])
         # 非公開API机会検出はフォールバックdetailsでも機能する
         assert any("RapidAPI非公開API" in o for o in entry["opportunities"])
+
+
+# ── t_fda64102 (2026-09-25): Apify pricing部分取得の誤free判定 / キャッシュ縮小 ──
+
+
+def _ppe_entry(price: float = 0.005, aid: str = "x") -> dict[str, Any]:
+    return {"pricing_model": "PAY_PER_EVENT", "price": price, "is_public": True, "id": aid}
+
+
+class TestTfda64102PartialPricing:
+    """API部分取得時に「無料」と断定しない / 部分保存でキャッシュを縮小させない。"""
+
+    @pytest.fixture(autouse=True)
+    def _isolate(self, tmp_path: Any, monkeypatch: Any) -> None:
+        monkeypatch.setattr(krc, "APIFY_PPE_CANDIDATES", [str(tmp_path / "absent.json")])
+        monkeypatch.setattr(krc, "APIFY_PPE", str(tmp_path / "absent.json"))
+        monkeypatch.setattr(krc, "PRICING_CACHE", str(tmp_path / "apify_pricing_cache.json"))
+
+    def _stats(self, tmp_path: Any, names: list[str], monkeypatch: Any) -> None:
+        entry: dict[str, Any] = {"date": "2026-09-25"}
+        for n in names:
+            entry[n] = {"users": 1, "u30d": 2, "runs": 3}
+        stats = tmp_path / "stats.json"
+        stats.write_text(json.dumps([entry]), encoding="utf-8")
+        monkeypatch.setattr(krc, "APIFY_STATS", str(stats))
+
+    def test_partial_api_missing_actor_is_unknown_not_free(
+        self, tmp_path: Any, monkeypatch: Any
+    ) -> None:
+        """一部アクターの pricing が取れない場合、その分を free ではなく unknown にする。"""
+        self._stats(tmp_path, ["japan-camera-market", "japan-watch-market"], monkeypatch)
+        partial = {"japan-used-camera-market-scraper": _ppe_entry(0.005, "cam")}
+        with (
+            patch.object(krc, "fetch_apify_pricing", return_value=partial),
+            patch.object(krc, "get_apify_token", return_value=""),
+        ):
+            result = krc.collect_apify()
+        by_name = {d["name"]: d for d in result["details"]}
+        assert by_name["japan-camera-market"]["billing"] == "ppe"
+        assert by_name["japan-watch-market"]["billing"] == "unknown"
+        assert result["actors_free"] == 0
+        assert result["actors_unknown"] == 1
+
+    def test_partial_api_missing_actor_uses_24h_cache(
+        self, tmp_path: Any, monkeypatch: Any
+    ) -> None:
+        """24h以内キャッシュに既知エントリがあれば、それを第2ソースとして ppe を維持する。"""
+        self._stats(tmp_path, ["japan-camera-market", "japan-watch-market"], monkeypatch)
+        Path(krc.PRICING_CACHE).write_text(
+            json.dumps({
+                "saved_at": datetime.now().isoformat(timespec="seconds"),
+                "fetched": 1,
+                "merged_from_cache": 0,
+                "pricing": {"japan-watch-market-scraper": _ppe_entry(0.005, "wch")},
+            }),
+            encoding="utf-8",
+        )
+        partial = {"japan-used-camera-market-scraper": _ppe_entry(0.005, "cam")}
+        with (
+            patch.object(krc, "fetch_apify_pricing", return_value=partial),
+            patch.object(krc, "get_apify_token", return_value=""),
+        ):
+            result = krc.collect_apify()
+        by_name = {d["name"]: d for d in result["details"]}
+        assert by_name["japan-watch-market"]["billing"] == "ppe"
+        assert result["actors_free"] == 0
+        assert result["actors_unknown"] == 0
+
+    def test_save_pricing_cache_merges_within_ttl(self, tmp_path: Any, monkeypatch: Any) -> None:
+        """部分保存（1件）でも24h以内の既存エントリを保持し、取得件数を記録する。"""
+        cache = Path(krc.PRICING_CACHE)
+        cache.write_text(
+            json.dumps({
+                "saved_at": datetime.now().isoformat(timespec="seconds"),
+                "pricing": {"a": _ppe_entry(0.001, "a"), "b": _ppe_entry(0.002, "b")},
+            }),
+            encoding="utf-8",
+        )
+        krc._save_pricing_cache({"c": _ppe_entry(0.003, "c")})
+        payload = json.loads(cache.read_text(encoding="utf-8"))
+        assert sorted(payload["pricing"]) == ["a", "b", "c"]
+        assert payload["fetched"] == 1
+        assert payload["merged_from_cache"] == 2
+
+    def test_save_pricing_cache_does_not_merge_stale(self, tmp_path: Any, monkeypatch: Any) -> None:
+        """24h超のキャッシュは鮮度上限を守ってマージしない。"""
+        cache = Path(krc.PRICING_CACHE)
+        stale = (datetime.now() - timedelta(hours=25)).isoformat(timespec="seconds")
+        cache.write_text(
+            json.dumps({"saved_at": stale, "pricing": {"a": _ppe_entry(0.001, "a")}}),
+            encoding="utf-8",
+        )
+        krc._save_pricing_cache({"b": _ppe_entry(0.002, "b")})
+        payload = json.loads(cache.read_text(encoding="utf-8"))
+        assert sorted(payload["pricing"]) == ["b"]
+        assert payload["merged_from_cache"] == 0

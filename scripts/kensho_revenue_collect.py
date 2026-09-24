@@ -151,11 +151,21 @@ def check_apify_health() -> dict[str, Any]:
 
 
 def _save_pricing_cache(pricing: dict[str, dict[str, Any]]) -> None:
-    """fetch_apify_pricing 成功結果を data/apify_pricing_cache.json に保存（v94項目4）。"""
+    """fetch_apify_pricing 成功結果を data/apify_pricing_cache.json に保存（v94項目4）。
+
+    t_fda64102 (2026-09-25): 部分取得（25件中一部のみ/0件）で既存キャッシュが縮小し、
+    次回の判定が free/unknown へ化ける事故を防ぐ。24h以内の既存エントリはマージして
+    保持し、取得件数（fetched）とキャッシュ由来件数（merged_from_cache）を記録する。
+    """
     try:
+        fresh = {k: v for k, v in pricing.items() if not k.startswith("_")}
+        merged = dict(_load_pricing_cache())  # 24h以内の既存のみ
+        merged.update(fresh)  # 今回取得分を優先
         payload = {
             "saved_at": datetime.now().isoformat(timespec="seconds"),
-            "pricing": {k: v for k, v in pricing.items() if not k.startswith("_")},
+            "fetched": len(fresh),
+            "merged_from_cache": len(merged) - len(fresh),
+            "pricing": merged,
         }
         os.makedirs(os.path.dirname(PRICING_CACHE), exist_ok=True)
         with open(PRICING_CACHE, "w", encoding="utf-8") as f:
@@ -518,6 +528,7 @@ def collect_apify() -> dict[str, Any]:
     # 課金状態はApify APIのpricingInfosを正とする（pay_per_event.jsonはフォールバック）
     api_pricing = fetch_apify_pricing()
     api_pricing = {k: v for k, v in api_pricing.items() if not k.startswith("_")}
+    cached_pricing = _load_pricing_cache()  # t_fda64102: API部分失敗時の第2ソース（24h以内）
     ppe_actors = load_ppe_actors()  # フォールバック用
     use_api = bool(api_pricing)
     # v94項目3: APIもフォールバックファイルも空 → 「無料」と断定せず unknown 扱い
@@ -545,6 +556,20 @@ def collect_apify() -> dict[str, Any]:
                     billing = "ppe" if info["pricing_model"] == "PAY_PER_EVENT" else "free"
                     price = info["price"]
                     is_public = info["is_public"]
+                elif actual_name in cached_pricing:
+                    # t_fda64102: APIが部分取得（一部アクター欠落）でも、24h以内のキャッシュに
+                    # 既知エントリがあればそれを第2ソースとして使う（誤free判定の防止）。
+                    info = cached_pricing[actual_name]
+                    billing = "ppe" if info["pricing_model"] == "PAY_PER_EVENT" else "free"
+                    price = info["price"]
+                    is_public = info["is_public"]
+                elif use_api:
+                    # t_fda64102: API自体は生きているが、このアクターの pricing が取れなかった場合。
+                    # pay_per_event.json に載っている場合のみ ppe として救済し、それ以外は
+                    # 「無料設定」と断定せず unknown にする（9/19に20本を誤ってfree報告した根因）。
+                    price = ppe_actors.get(actual_name)
+                    billing = "ppe" if price is not None else "unknown"
+                    is_public = True
                 elif not use_api and fallback_empty:
                     # v94項目3: API失敗＋pay_per_event.jsonも不在/空 → 課金状態不明。
                     # 「無料設定」と断定すると収益判断を誤る（9/11 04:20誤報の再発防止）。
