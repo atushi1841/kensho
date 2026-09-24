@@ -215,6 +215,8 @@ class TestCollectorWiring:
     def test_step1_uses_classified_listing_fetch(self) -> None:
         """Step1 一覧取得が分類付き fetch_knshow_listing を経由していること（配線の回帰ガード）。"""
         src: str = Path(collector.__file__).read_text(encoding="utf-8")
-        assert "fetch_knshow_listing(_do_fetch, url, out=out)" in src
+        # ★ t_4624904b: 完全一致から部分一致へ。実装は browser_fetcher=fetch_via_browser を
+        #   追加で受け取るため、呼出先の前方一致で十分（将来のコード引数追加に追従しない硬いガード）。
+        assert "fetch_knshow_listing(_do_fetch, url, out=out" in src
         assert "note_fetch(\"knshow\", False, _knshow_error_label(code, _kind))" in src
         assert "_knshow_cf_hint(_kind)" in src
