@@ -524,8 +524,12 @@ def _multi_response_record(tweet_id: str, account_key: str, cfg: dict, log: Any,
                     f" {count}垢が {window_sec:.0f}s 内に応答: {', '.join(sorted(accounts))}"
                     f" → BOT検出リスク（対応はManual）"
                 )
-                if log is not None:
-                    log.write(msg)
+                # ★ t_64f60f04: log は None / LogWriter(.write) / callable のいずれでも可。
+                #   呼出し元が closure 関数（out）を渡した場合の AttributeError を防ぎ、
+                #   将来の認配線でも警告が死なないよう汎容化する。
+                _emit = log.write if hasattr(log, "write") else (log if callable(log) else None)
+                if _emit is not None:
+                    _emit(msg)
                 try:
                     notify_warning(
                         "同一キャンペーン複数同時刻応答",
@@ -2408,7 +2412,7 @@ def _apply_impl(
                     #   （same_campaign_multi）。アラートのみでブロックはしない（対応はManual）。
                     #   tweet_id無し（フォロー限定案件等）は同一キャンペーン識別不可のため対象外。
                     if tweet_id:
-                        _multi_response_record(tweet_id, account_key, cfg, out)
+                        _multi_response_record(tweet_id, account_key, cfg, log)
                     # ★ 2026-08-25: applied付与を即時保存。
                     #   並列垢ワーカーが同じcollected.jsonを保存するため、バッチ中にappliedが
                     #   他プロセスの保存で失われる問題（実測: 応募成立10件中1件しか保存されず）。

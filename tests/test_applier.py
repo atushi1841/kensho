@@ -1318,6 +1318,25 @@ class TestMultiResponse:
         _multi_response_record("t0", "c", cfg, log, state_path=path)
         assert any("same_campaign_multi" in ln for ln in log.lines)
 
+    def test_callable_log_does_not_crash(self, tmp_path) -> None:
+        """t_64f60f04: callable（.write なし）の log でも例外化せず検知できる。"""
+        from kensho.application.applier import _multi_response_record
+
+        path = tmp_path / "multi_response.json"
+        captured: list[str] = []
+
+        def callable_log(msg: str) -> None:
+            captured.append(msg)
+
+        # 1垢目 → 閾値未満で検知なし（例外なし）
+        assert _multi_response_record("t1", "a", self._CFG, callable_log, state_path=path) == 1
+        assert captured == []
+        # 2垢目 → 検知、callable に渡る
+        assert _multi_response_record("t1", "b", self._CFG, callable_log, state_path=path) == 2
+        assert any("same_campaign_multi" in ln for ln in captured)
+        # None でも例外なし
+        assert _multi_response_record("t2", "a", self._CFG, None, state_path=path) == 1
+
     def test_anomaly_rt_like_abort_flag(self) -> None:
         """t_c189d8d8 提案1: 連続RT/いいね異常検知の構造を検証する。
 
