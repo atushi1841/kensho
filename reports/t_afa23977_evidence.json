@@ -2,14 +2,14 @@
   "task_id": "t_afa23977",
   "title": "即時当選系キーワード優先ボーナス拡張",
   "commit": "69271fa",
-  "verification_commit": "e9c4fea",
+  "verification_commit": "8ccbe05",
   "status": "done",
   "changed_files": ["kensho/application/actions.py"],
   "artifact_paths": ["/mnt/d/Project2/kensho/reports/t_afa23977_verification.md","/mnt/d/Project2/kensho/reports/t_afa23977_evidence.json"],
   "evidence_hashes": {
-    "kensho/application/actions.py": "69271fa",
-    "reports/t_afa23977_verification.md": "cce6e58",
-    "reports/t_afa23977_evidence.json": "e9c4fea"
+    "kensho/application/actions.py": "3ea15fd",
+    "reports/t_afa23977_verification.md": "ace5d1c",
+    "reports/t_afa23977_evidence.json": "a7e6186"
   },
   "verification": {
     "pytest": "13/13 passed",
