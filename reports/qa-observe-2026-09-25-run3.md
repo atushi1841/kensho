@@ -111,3 +111,20 @@ toushiwatch(1087) -> 停止（応募対象外）
 ```json
 {"evaluation":{"technical":{"score":7,"assessment":"loop_health は復旧・3連続JSON・HEADも緑、pytest 3 passed。cron最小PATHの無音縮退を1ファイル修正＋回帰テスト4本で恒久化。残: loop_health の重複ブロック、commitメッセージ不一致再発","evidence":"score=80/streak=0/escalation=false/3連続OK/md5不変/pytest 7 passed。修正前: ports=[] → kudou 未検出 → 圏外判定、修正後: ports=[1081,1082,1085] → kudou ''"},"business_kpi":{"score":8,"assessment":"応募停止なし。ただし今回修正しなければ本日08:00から kudou(50件/日) が圏外スキップされる状態だった","evidence":"9/24 成立870行・垢別 daily_counts 98/100/100。修正前は network_outage_reason(kudou)=未検出 → skip、修正後=''"},"cost_efficiency":{"score":6,"assessment":"同一ファイルへの並行投資（t_9f14ee5d/t_83ce94c5/t_e20b2d54 が loop_health.sh を奪い合い）は依然として無駄。証跡の重複生成も継続","evidence":"3カードが loop_health.sh を変更（e85ce48/17840cf/f20bf96）、メッセージは全て別タスク名"}},"loop_health":{"score":80,"stagnation_streak":0,"verdict":"healthy"},"self_review_quality":{"valid":true,"notes":"5観点を個別に記録。delegate_task は本runのツールセット外のため単一パスで観点別記録（代替案どおり）"},"verdict":"conditional_pass","next_steps":["t_9db50654 完了後に t_4624904b を復活（(d)誤所有の解消が前提）","t_de7d7e84 のデッドロック解消（t_83ce94c5 復活 or t_47a5b3fe への統合）","loop_health.sh L250-286 の重複ブロック除去","commit メッセージ/差分の一致ゲートを done_guard に追加（再発3件）","09:00-10:00 の応募ログで kudou の成立行を実測（本修正の効果測定）","09:00以降に has no attribute 'write' と multi_response accounts>=2 を再測"]}
 ```
+
+## 6. 追記（05:4x のライブ変化 — 数値の読み替え注意）
+
+検証中に盤面が動き、最終スナップショットは次のとおり:
+```
+$ bash .../scripts/loop_health.sh | python3 -c "..."
+score 60 / streak 2 / alert ALERT / escalation false / running 8 / blocked 4 / business_ok true
+```
+- **loop_health.sh 自体は健全**（有効JSON・内容は実測と一致）。score が 80→60 に下がったのは
+  `running=8 > max_in_progress=4` の過並列減点（-10×4）による**設計どおりの警告**であり、故障ではありません。
+- 同時刻の盤面: running 8（t_e2b356ce / t_9f14ee5d / t_9db50654 / t_4e6a5290 / t_47a5b3fe / t_c63c9f95 /
+  t_7d853147 / **t_1570eca6（新規＝run2 の「commit前テスト緑ゲート」提案がカード化**））、
+  blocked 4（t_4624904b を残し他は解消）、ready 2（**t_83ce94c5 が誰かにより unblock 済**＋本run起票の t_d304c7fc）、todo 2。
+- したがって「score=80/streak=0」は 05:2x 時点の復旧確認値、「60/streak=2」は 05:4x の過並列警告値。
+  過並列の設計値乖離（実効ランナー数 vs max_in_progress=4）は t_9f14ee5d の担当範囲。
+- **本runの修正は本番cronで動作確認済み**: 05:30:12 に 15分cron (generate-kensho-status) が書いた map が
+  `measurement_ok: true` / kudou=接続 listen 106.146.21.233 を記録（修正前は同経路が kudou=未検出 を書いていた）。
