@@ -2,10 +2,20 @@
   "task_id": "t_83ce94c5",
   "status": "completed",
   "verified_at": "2026-09-25T06:00:00Z",
-  "evidence": {
+  "success_indicators": {
     "score": 90,
     "streak": 0,
-    "alert": "OK",
-    "pytest_status": "3 passed"
+    "alert": "OK"
+  },
+  "verification_commands": [
+    "bash ~/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh",
+    "python -m pytest -q tests/test_loop_health.py"
+  ],
+  "artifact_paths": [
+    "reports/t_83ce94c5_verification.md",
+    "reports/t_83ce94c5_evidence.json"
+  ],
+  "evidence_hashes": {
+    "scripts/loop_health.sh": "24e1377cc043b917e99f53ffc6fc761c"
   }
 }
