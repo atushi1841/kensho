@@ -1,1 +1,28 @@
-{"changed_files":["kensho/application/actions.py"],"commit":"69271fa","status":"done","success_indicators":[{"after":56,"before":41,"direction":"up","metric":"detected_items"},{"after":"13 passed","before":"13 passed","direction":"equal","metric":"pytest"}],"task_id":"t_afa23977","title":"即時当選系キーワード優先ボーナス拡張","verification":{"git_commit":"69271fa","pytest":"13/13 passed"},"verification_commands":["git -C /mnt/d/Project2/kensho log --oneline -1","python3 -c \"import json;d=json.load(open('data/collected.json'));items=d['collected'] if isinstance(d,dict) and 'collected' in d else d;print(sum(1 for i in items if any(k in (i.get('tweet_text') or '') for k in ['その場','今すぐ','先着','即時'])))\""],"verification_commit":"cce6e58"}
+{
+  "task_id": "t_afa23977",
+  "title": "即時当選系キーワード優先ボーナス拡張",
+  "commit": "69271fa",
+  "verification_commit": "e9c4fea",
+  "status": "done",
+  "changed_files": ["kensho/application/actions.py"],
+  "artifact_paths": ["/mnt/d/Project2/kensho/reports/t_afa23977_verification.md","/mnt/d/Project2/kensho/reports/t_afa23977_evidence.json"],
+  "evidence_hashes": {
+    "kensho/application/actions.py": "69271fa",
+    "reports/t_afa23977_verification.md": "cce6e58",
+    "reports/t_afa23977_evidence.json": "e9c4fea"
+  },
+  "verification": {
+    "pytest": "13/13 passed",
+    "git_log": "69271fa feat(sort): extend instant bonus keywords 今すぐ/即時/先着/なくなり次第",
+    "detected": 56
+  },
+  "verification_commands": [
+    "git -C /mnt/d/Project2/kensho log --oneline -1",
+    "python3 -c \"import json;d=json.load(open('data/collected.json'));items=d['collected'] if isinstance(d,dict) and 'collected' in d else d;print(sum(1 for i in items if any(k in (i.get('tweet_text') or '') for k in ['その場','今すぐ','先着','即時'])))\"",
+    "cd /mnt/d/Project2/kensho && pytest -q tests/test_applier.py::TestSortItems"
+  ],
+  "success_indicators": [
+    {"metric": "detected_items","before":41,"after":56,"direction":"up"},
+    {"metric":"pytest_pass","before":"13 passed","after":"13 passed","direction":"equal"}
+  ]
+}
