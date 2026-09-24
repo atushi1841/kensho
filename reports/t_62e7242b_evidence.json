@@ -1,0 +1,31 @@
+{
+  "task_id": "t_62e7242b",
+  "status": "complete",
+  "success_indicators": [
+    "方向: up/down 記載数（件）5件以上"
+  ],
+  "verification_commands": [
+    "pytest -q tests/test_outcome_review_check.py",
+    "python3 scripts/outcome_review_check.py --days 7 --write-report",
+    "grep -c \"方向:\" reports/outcome-review-2026-09-24.md"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/outcome_review_check.py",
+    "/mnt/d/Project2/kensho/tests/test_outcome_review_check.py",
+    "/mnt/d/Project2/kensho/reports/outcome-review-2026-09-24.md",
+    "/mnt/d/Project2/kensho/reports/t_62e7242b_verification.md"
+  ],
+  "evidence_hashes": [
+    "2a98eb96 scripts/outcome_review_check.py",
+    "d09b39fa tests/test_outcome_review_check.py",
+    "c8b4cbdf reports/outcome-review-2026-09-24.md",
+    "4384371b reports/t_62e7242b_verification.md"
+  ],
+  "outcome": [
+    {
+      "metric": "方向: up/down 記載数",
+      "before": 0,
+      "after": 28
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "success_indicators": [
+    "goto failed ページ失敗グループ数（同一時刻窓 08:00:00-12:48:59）: 27 (9/23) → 0 (9/24) = 成功指標 <100件/日 を充足",
+    "goto failed attempt 件数（同一時刻窓）: 81 (9/23) → 0 (9/24)",
+    "Xにログイン確認中 件数（同一時刻窓）: 41 (9/23) → 11 (9/24)",
+    "根本原因の特定: Playwright 'Page.goto: Timeout 30000ms exceeded' の連鎖（9/23全日 76グループ/227attempt）を self_heal の失効垢リトライが増幅 → commit 4ef200d で垢粒度 failure ceiling + 非回復種別のリトライ停止として恒久修正済み",
+    "未pushコミット0（HEAD == origin/main 536d3a5）"
+  ],
+  "verification_commands": [
+    "$ git show -s --format='%h %ci %s' 4ef200d => 4ef200d 2026-09-24 09:19:37 +0900 fix(t_8946706e): self_heal 恒久修正",
+    "$ grep -c \"goto failed (attempt\" logs/auto_20260923.log => 227",
+    "$ grep -c \"goto failed (attempt\" logs/auto_20260924.log => 3",
+    "$ grep -c \"goto failed (attempt 1)\" logs/auto_20260923.log => 76",
+    "$ grep -c \"goto failed (attempt 1)\" logs/auto_20260924.log => 1",
+    "$ grep -c \"Xにログイン確認中\" logs/auto_20260923.log => 108",
+    "$ grep -c \"Xにログイン確認中\" logs/auto_20260924.log => 11",
+    "$ python3 (同一窓比較 08:00:00-12:48:59) => 20260923 gotoGroups=27 attempts=81 login=41 / 20260924 gotoGroups=0 attempts=0 login=11",
+    "$ .venv/bin/python -m pytest tests/test_self_heal.py -q --no-cov => 1 failed, 29 passed in 125.78s（FAIL=test_safety_blocks_dead_proxy_status・時刻依存フレーク・別カード申し送り）",
+    "$ git rev-parse HEAD origin/main => 536d3a56b1de90cc6888d6795794317f5577885 (両者一致)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_1a366e78_verification.md",
+    "/mnt/d/Project2/kensho/logs/auto_20260923.log",
+    "/mnt/d/Project2/kensho/logs/auto_20260924.log"
+  ],
+  "evidence_hashes": [
+    "sha256:e262b1fad7890a83384d57d42cc94259c1c16e65d529bc72a006986828538a5f reports/t_1a366e78_verification.md",
+    "sha256:25b7c779228ab6cecf159edce4c0a579126cd75dd69ea2e0e9cb58c8dd82c3dc logs/auto_20260923.log",
+    "sha256:0fa5d83b4ab72c019fbe28b170804f9b6e318092da26cdf3a1c61f38e5add0be logs/auto_20260924.log"
+  ],
+  "outcome": [
+    {
+      "metric": "goto failed attempt (窓08:00-12:48)",
+      "before": 81,
+      "after": 0,
+      "direction": "down"
+    },
+    {
+      "metric": "goto failed ページ失敗グループ (窓08:00-12:48)",
+      "before": 27,
+      "after": 0,
+      "direction": "down"
+    },
+    {
+      "metric": "login試行 Xにログイン確認中 (窓08:00-12:48)",
+      "before": 41,
+      "after": 11,
+      "direction": "down"
+    }
+  ],
+  "task_id": "t_1a366e78",
+  "status": "complete"
+}
