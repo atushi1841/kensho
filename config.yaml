@@ -120,9 +120,9 @@ accounts:
         - { time: "20:12", max: 15 }
         - { time: "22:07", max: 15 }
 
-  # ★ 2026-09-01: inobase1-4 凍結（2度目・ユーザー確認済み・ログアウト済み）→ 応募停止。
-  #   いいね/フォロー/RT すべて停止。configコメントアウトでdispatchから除外。
-  #   復帰条件: 新規アカウント再作成 or 解除後、セッション再取得してからコメント解除。
+  # ★ 2026-09-24: inobase1-4（@inobase128508）は垢バン確定（ユーザー申告）→ 削除。
+  #   config / proxy_watchdog / browser.py(PROXY_MAP・fingerprint) から削除済み。プロキシ1089は起動しない。
+  #   以下は履歴（復帰予定なし）。
   # - key: inobase1-4
   #   display: "@inobase128508"
   #   session: "data/x_session_inobase1-4.json"
@@ -148,6 +148,10 @@ accounts:
   #   アダプタを toushiwatch_airtra1 にリネーム。回線 2_povo_AW(air-tra1/povo) 引き継ぎ。
   # ★ 2026-08-31 15:21: 応募停止（セッションにauth_token/ct0が無く未ログインのまま失敗アクション続行中）。
   #   BOT検出リスク回避のためコメントアウト。セッション再取得（ブラウザでログイン→auth_token/ct0保存）後に復帰。
+  # ★ 2026-09-24: 回線載せ替え完了 — 垢バンで解放された RM10JE_S（旧 chugakujuken 用アダプタ）へ転用。
+  #   アダプタ改名 chugakujuken_RM10JE_S→RM10JE_S、プロキシ1087を RM10JE_S 束縛で起動。
+  #   実測: 出口IP 106.133.45.122（自宅219.104.132.236とは別）／egress OK／X API healthy（friends 6）／auth_token+ct0 有。
+  #   残作業: 応募再開はこの下のバッチ時刻行のコメント解除（＝ユーザーGO待ち）。
   # - key: toushiwatch
   #   display: "@toushiwatch"
   #   session: "data/x_session_toushiwatch.json"
