@@ -46,6 +46,9 @@ Result: 404
 python3 -c "import re; title='Show HN: Whiteboard (YC W26) – An open-source IDE for thoughtful software design'; keywords=['revenue', 'monetize', 'pricing', 'commercial', 'paid', 'freemium', 'subscription', 'enterprise']; found=[k for k in keywords if k in title.lower()]; print('Found:', found)"
 Result: Found: []
 
+4. ライセンス確認:
+curl -s https://raw.githubusercontent.com/devdotfast/whiteboard/main/LICENSE | grep -q "MIT" && echo "MIT" || echo "Not MIT"
+
 ### 7. 自己評価の証跡
 - ★ OSS ステータス確認: MIT ライセンス、stars 139 (< 200 閾値)
 - ★ 価格ページ確認: 404 エラー (price ページなし)
