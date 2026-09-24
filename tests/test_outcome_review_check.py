@@ -87,6 +87,47 @@ def test_regressions_detects_after_lower_than_before() -> None:
     assert [e["metric"] for e in mod.regressions(entries)] == ["A"]
 
 
+def test_direction_label_reports_numeric_movement_not_quality() -> None:
+    assert mod.direction_label(10, 5) == "方向: down"
+    assert mod.direction_label(5, 10) == "方向: up"
+    assert mod.direction_label(3, 3) == "方向: equal"
+    assert mod.direction_label("5/6 PASS", "6/6 PASS") is None
+
+
+def test_render_markdown_adds_direction_to_every_outcome_entry() -> None:
+    summary = {
+        "days": 7,
+        "since": "2026-09-17",
+        "counts": {"done": 1, "measured": 1, "missing": 0, "na": 0, "numeric_kpi_tasks": 1, "regressed": 1},
+        "measured_rate": 100.0,
+        "target_rate": 50.0,
+        "target_met": True,
+        "measured": [
+            {
+                "id": "t_ok",
+                "outcome": [
+                    {"metric": "latency", "before": 10, "after": 5},
+                    {"metric": "throughput", "before": 5, "after": 10},
+                    {"metric": "unchanged", "before": 3, "after": 3},
+                ],
+            }
+        ],
+        "missing": [],
+        "regressions": [{"id": "t_ok", "regressions": [{"metric": "latency", "before": 10, "after": 5}]}],
+        "tasks": [],
+    }
+
+    md = mod.render_markdown(summary)
+    measured_line = next(line for line in md.splitlines() if "`t_ok`" in line and "latency" in line)
+    regression_line = next(line for line in md.splitlines() if "悪化疑い" not in line and line.endswith("10→5 (方向: down)"))
+
+    assert measured_line.count("方向:") == 3
+    assert "方向: down" in measured_line
+    assert "方向: up" in measured_line
+    assert "方向: equal" in measured_line
+    assert regression_line == "  - `t_ok` latency 10→5 (方向: down)"
+
+
 # --- audit / summarize / render --------------------------------------------
 
 
@@ -157,7 +198,8 @@ def test_cli_write_report(tmp_path: Path) -> None:
     )
     db = _make_db(tmp_path / "kanban.db", [("t_ok", "実測済み", "w", int(time.time()))])
     assert mod.main(["--db", str(db), "--reports-dir", str(reports), "--write-report"]) == 0
-    assert list(reports.glob("outcome-review-*.md"))
+    report = next(reports.glob("outcome-review-*.md"))
+    assert "方向:" in report.read_text(encoding="utf-8")
 
 
 # --- ドリフト検出（ガード条件(k) と同一規則であること） ----------------------

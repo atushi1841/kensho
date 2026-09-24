@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-24T11:45:03+09:00",
+  "updated_at": "2026-09-24T12:00:02+09:00",
   "source": "Windows実測: netsh wlan show interfaces / Get-NetIPAddress / 稼働中kensho_proxyプロセスのCommandLine",
   "note": "「状態」は Windows実測（netsh / Get-NetIPAddress / LISTENポート）。回線の出口IPはプロキシ経由で別途実測。垢バン垢は表から除外。",
   "accounts": [

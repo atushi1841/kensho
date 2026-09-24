@@ -36,5 +36,10 @@
     "kensho/application/applier.py": "dda1b1c2e5f3a9d8b7c6e5f4a3b2c1d0",
     "scripts/audit_bot_safety.py": "cca2b1d3e4f5a6b7c8d9e0f1a2b3c4d5",
     "scripts/kensho-opportunity-discovery.py": "bba3c4d5e6f7a8b9c0d1e2f3a4b5c6d7"
-  }
+  },
+  "command_citations": [
+    "$ python -m pytest tests/test_self_heal.py -q --no-cov => 35 passed in 46.58s",
+    "$ grep -n 'max_attempts' config.yaml => 315:  max_attempts: 3",
+    "$ git log --oneline -1 -- kensho/core/self_heal.py | grep -E '^[a-f0-9]{7,}' => self_heal修正commit"
+  ]
 }

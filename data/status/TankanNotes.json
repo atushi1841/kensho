@@ -6,9 +6,9 @@
     "unchecked"
   ],
   "port": 1085,
-  "last_success": "2026-09-24T02:42:55Z rt",
+  "last_success": "2026-09-24T02:54:56Z follow",
   "last_error_type": "rt_confirm_missing",
   "stop_reason": "",
   "account": "TankanNotes",
-  "updated": "2026-09-24T11:45:04.194181"
+  "updated": "2026-09-24T12:00:03.155238"
 }

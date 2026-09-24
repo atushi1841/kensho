@@ -153,6 +153,30 @@ def regressions(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return out
 
 
+def direction_label(before: Any, after: Any) -> str | None:
+    """数値before/afterの移動方向を返す。良悪ではなく上下のみを意味する。"""
+    if not isinstance(before, (int, float)) or isinstance(before, bool):
+        return None
+    if not isinstance(after, (int, float)) or isinstance(after, bool):
+        return None
+    if after < before:
+        return "方向: down"
+    if after > before:
+        return "方向: up"
+    return "方向: equal"
+
+
+def format_outcome_entry(entry: dict[str, Any]) -> str:
+    """KPIのbefore→afterを表示し、数値時には上下を明記する。"""
+    metric = str(entry.get("metric", "KPI"))
+    before = entry.get("before")
+    after = entry.get("after")
+    change = f"{before}→{after}"
+    direction = direction_label(before, after)
+    suffix = f" ({direction})" if direction else ""
+    return f"{metric} {change}{suffix}"
+
+
 def fetch_done_tasks(db_path: Path, since_epoch: int, limit: int = 200) -> list[dict[str, Any]]:
     """completed_at >= since_epoch の done タスクを取得する。"""
     con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
@@ -289,9 +313,7 @@ def render_markdown(summary: dict[str, Any]) -> str:
         lines.append("- 実測済みタスク:")
         for r in summary["measured"][:10]:
             if r["outcome"]:
-                detail = ", ".join(
-                    f"{e.get('metric')} {e.get('before')}→{e.get('after')}" for e in r["outcome"]
-                )
+                detail = ", ".join(format_outcome_entry(e) for e in r["outcome"])
             else:
                 detail = "検証セクションに before→after 記載"
             lines.append(f"  - `{r['id']}` {detail}")
@@ -299,9 +321,7 @@ def render_markdown(summary: dict[str, Any]) -> str:
         lines.append("- 悪化疑いの詳細:")
         for r in summary["regressions"][:10]:
             for e in r["regressions"]:
-                lines.append(
-                    f"  - `{r['id']}` {e.get('metric')}: {e.get('before')}→{e.get('after')}"
-                )
+                lines.append(f"  - `{r['id']}` {format_outcome_entry(e)}")
     return "\n".join(lines)
 
 
