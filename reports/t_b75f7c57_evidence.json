@@ -1,0 +1,19 @@
+{
+  "task_id": "t_b75f7c57",
+  "verification": {
+    "test_command": "python3 -m pytest tests/test_loop_health_json_contract.py -q",
+    "test_result": "4 passed",
+    "changed_files": [
+      "tests/test_loop_health_json_contract.py",
+      "scripts/loop_health.sh"
+    ],
+    "loop_health_output_sample": {
+      "score": 100,
+      "streak": 0,
+      "priority": "LOW",
+      "stagnation_streak": 0,
+      "advice": null
+    }
+  },
+  "timestamp": "2026-09-25T08:30:00+09:00"
+}
