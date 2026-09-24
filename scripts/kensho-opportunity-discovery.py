@@ -28,8 +28,7 @@ CATEGORIES = [
             "データセット 販売 収益",
             "japan hobby market data",
         ],
-        "evaluate": "技術実装可否・TOSリスク（大企業/公式APIありは即却下）・競合数"
-        "・需要シグナル（Reddit/Xの実声・プロキシ代行の存在）",
+        "evaluate": "技術実装可否・TOSリスク（大企業/公式APIありは即却下）・競合数、需要シグナル（Reddit/Xの実声・プロキシ代行の存在）",
     },
     {
         "id": 2,
@@ -43,8 +42,7 @@ CATEGORIES = [
             "API marketplace passive income",
             "AI agent call API monetize",
         ],
-        "evaluate": "既存資産（Apify 58本/RapidAPI 20本）で実現可能か・PPE単価の妥当性"
-        "・AIエージェントからの発見可能性（README最適化）",
+        "evaluate": "既存資産（Apify 58本/RapidAPI 20本）で実現可能か・PPE単価の妥当性、AIエージェントからの発見可能性（README最適化）",
     },
     {
         "id": 3,
@@ -158,7 +156,11 @@ def main():
         "       `hermes kanban comment <既存ID> '収益機会自動発見(YYYY-MM-DD): 再確認、本カードで追跡'`"
         " で代替（新規を作らない）"
     )
-    lines.append("     - exit 0 = stdout に決定的キー hunter-YYYYMMDD-<hash8> が出力される → それを流用:")
+    lines.append("     - exit 2 = 幽霊assignee（実在しないassignee）→ 起票中止")
+    lines.append("       `hermes kanban create ... --assignee <assignee>` は --assignee の後に")
+    lines.append("       kensho_hunter_guard.py check --assignee <assignee> を自動的に実行")
+    lines.append("       ことが要件")
+    lines.append("   - exit 0 = stdout に決定的キー hunter-YYYYMMDD-<hash8> が出力される → それを流用:")
     lines.append(
         "   - hermes kanban create '<タスク名>' --assignee kensho-worker --ready"
         " --idempotency-key '<checkが出力したhunter-YYYYMMDD-...キー>'"

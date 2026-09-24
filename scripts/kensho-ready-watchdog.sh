@@ -3,7 +3,6 @@
 #
 # 目的: Kanbanボード(kensho-ai-team)のreadyタスク停滞を3段階で警告/処分
 #       worker throughput crisis対応(v19-B / v22-A)
-#       cron-watchdog.sh の構造をVERBATIM再利用(grepカウント+SILENT)
 #
 # 仕様:
 #   - 24h停滞 → comment '[warn] ready 24h'
@@ -18,22 +17,25 @@
 #   bash scripts/kensho-ready-watchdog.sh --hours 12 --dry-run   # 閾値12hで確認
 #
 # Cron統合: job 8d22d346627b (daily 09:00, --no-agent)
+#
 
 set -euo pipefail
 
-# ── hermes CLI resolution (cf. loop_health.sh v141 / t_5af1b5d8) ──────────────────────────────
+# ── hermes CLI resolution (v141 / t_5af1b5d8) ──────────────────────────────
 HERMES_VENV_BIN="${HERMES_VENV_BIN:-/home/atushi/.hermes/hermes-agent/venv/bin}"
-[ -d "$HERMES_VENV_BIN" ] && PATH="$HERMES_VENV_BIN:$PATH"
-if [ -z "${HERMES_BIN:-}" ] || [ ! -x "${HERMES_BIN:-}" ]; then
-  if command -v hermes >/dev/null 2>&1; then
-    HERMES_BIN="$(command -v hermes)"
-  else
-    HERMES_BIN=""
-  fi
+# 前置し、${HERMES_VENV_BIN}/hermes に解決するように強制
+HERMES_BIN="$HERMES_VENV_BIN/hermes"
+if [ ! -x "$HERMES_BIN" ]; then
+    # 見つからない場合は、$PATH（最小PATHを含む）上で resolve
+    if command -v hermes >/dev/null 2>&1; then
+        HERMES_BIN="$(command -v hermes)"
+    else
+        HERMES_BIN=""
+    fi
 fi
 if [ -z "${HERMES_BIN:-}" ]; then
-  echo "kensho-ready-watchdog: ERROR: hermes CLI not found (PATH=${PATH}, HERMES_VENV_BIN=${HERMES_VENV_BIN})" >&2
-  exit 127
+    echo "kensho-ready-watchdog: ERROR: hermes CLI not found (PATH=${PATH}, HERMES_VENV_BIN=${HERMES_VENV_BIN})" >&2
+    exit 127
 fi
 # ───────────────────────────────────────────────────────────────────────────────────────
 

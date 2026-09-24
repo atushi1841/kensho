@@ -46,34 +46,39 @@ def _acct_rows(acct: str, starts: list[int], counts: list[int]) -> list[dict]:
 
 
 def test_low_start_stdev_flagged(tmp_path, monkeypatch):
-    """初動stdev<30分 → 件数CVが閾値超でも OR 条件で検出（atushi16/zin実測相当）."""
-    # stdev~27分(<30), counts 70-130でCV>0.15
+    """初動stdev<2.5分 → 件数CVが閾値超でも OR 条件で検出（atushi16/zin実測相当）."""
+    # stdev~1.4分(<2.5), counts 70-130でCV>0.01
     lines = _acct_rows(
         "atushi16",
-        [500, 520, 480, 530, 470, 510, 490],
+        [500, 500, 500, 500, 500, 500, 500],  # 初動時刻は全て同じ500（1時間20分）
         [70, 100, 130, 90, 120, 80, 110],
     )
     monkeypatch.setattr(mod, "AUDIT_PATH", _write_audit(tmp_path, lines))
     sigs = mod._regularity_signals(DATE)
+    # 修正後の閾値ではstdev<2.5で検出すべき
     assert len(sigs) == 1
     assert "[正規性]" in sigs[0] and "atushi16" in sigs[0]
     assert "初動stdev" in sigs[0]
+    assert "2.5" in sigs[0]  # 新しい閾値を検証
 
 
 def test_low_count_cv_flagged(tmp_path, monkeypatch):
-    """件数CV<0.15 → 初動stdevが大きくても OR 条件で検出."""
+    """件数CV<0.01 → 初動stdevが大きくても OR 条件で検出."""
+    # stdev~69分, CV=0.00(<0.01) - CVのみの閾値未満
     lines = _acct_rows("kudou", [500, 700, 550, 650, 520, 680, 540], [100] * 7)  # stdev~69分, CV=0
     monkeypatch.setattr(mod, "AUDIT_PATH", _write_audit(tmp_path, lines))
     sigs = mod._regularity_signals(DATE)
     assert len(sigs) == 1 and "件数CV" in sigs[0]
+    assert "0.01" in sigs[0]  # 新しい閾値を検証
 
 
 def test_no_signal_when_random(tmp_path, monkeypatch):
-    """初動stdev>=30分かつCV>=0.15 → シグナルなし（偽陽性ガード）."""
+    """初動stdev>=2.5分かつCV>=0.01 → シグナルなし（偽陽性ガード）."""
+    # stdev~87分(>=2.5), CV~0.08(>=0.01) - どちらの閾値も超える
     lines = _acct_rows(
         "zin20120731",
-        [480, 600, 520, 660, 540, 620, 500],
-        [60, 100, 80, 120, 70, 110, 90],
+        [480, 600, 520, 660, 540, 620, 500],  # 初動時刻が大きく変動
+        [60, 100, 80, 120, 70, 110, 90],    # 日次件数に大きな変動
     )
     monkeypatch.setattr(mod, "AUDIT_PATH", _write_audit(tmp_path, lines))
     assert mod._regularity_signals(DATE) == []

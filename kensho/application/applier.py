@@ -878,6 +878,26 @@ def _apply_impl(
     break_min: float = limits.get("break_min_seconds", 30)
     break_max: float = limits.get("break_max_seconds", 90)
 
+    # ★ t_37e25225: ネットワーク圏外垢スキップ（条件2）
+    #   wifi_watchdog が検出した SSID圏外/電源OFF/バックOFF中のアカウントは、
+    #   募集前にスキップし、dead_proxy_reason 相当の軽量チェックでBOTシグナル増幅を防ぐ。
+    try:
+        # status/<acct>.json のオフライン状態をチェック - dead_proxy_reason で使用されるステータスと同じ
+        # 死骸以外のオフライン判定も含めて、1回で停止してBOTシグナル増幅を防ぐ
+        from kensho.utils.safety import dead_proxy_reason
+        skip_reason = dead_proxy_reason(cfg, account_key)
+        if skip_reason:
+            _set_reason("network_outage_skip")
+            msg = f"[SKIP] {account_key}: ネットワーク圏外/電源OFF/バックOFF（wifi_watchdog検出） → スキップ"
+            if log:
+                log.write(msg)
+            else:
+                print(msg, flush=True)
+            return (0, 0)
+    except Exception:
+        # 補助的チェック、失敗時は従来の死骸チェックのみ使用
+        pass
+
     # ★ 時間あたりアクション制限（ループ内でカウント）
     _hourly_max: int = limits.get("max_actions_per_hour", 20)
     _hourly_start: float = time.time()

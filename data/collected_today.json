@@ -2862,27 +2862,6 @@
     "導線": "X"
   },
   {
-    "detail_url": "/twscrape/tweet/2097862626323927158",
-    "x_url": "https://x.com/callc01syou/status/2097862626323927158",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_text": "✿新商品登場　キャンペーン✿\n10名様に　#抽選　で当たる \n✿応募方法\n①@callc01syou をフォロー \n②リツイート＆いいね \n③興味ある商品番号をコメント \n\n#モニター企画 #懸賞企画 #プレゼント企画 #モニター募集 #レビュー募集 #試供品 #懸賞 #拡散希望 https://t.co/fPqoxsMSaY",
-    "tweet_id": "2097862626323927158",
-    "prize_rank": 0,
-    "simple_rt_ok": "FLAG",
-    "導線": "X"
-  },
-  {
     "detail_url": "/twscrape/tweet/2097882765936976117",
     "x_url": "https://x.com/and_company_ltd/status/2097882765936976117",
     "source": "twscrape",
@@ -13988,7 +13967,7 @@
     "winner_count": 1,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
+      "atushi16": "2026-09-24T11:24:38.187599",
       "kudou": null,
       "zin20120731": null,
       "TankanNotes": null
@@ -18759,10 +18738,10 @@
     "winner_count": 15,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
+      "atushi16": "2026-09-24T10:38:44.862663",
       "kudou": null,
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T17:52:13.530594"
     },
     "keyword_flag": false,
     "tweet_id": "2100752070148227203",

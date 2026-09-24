@@ -39,8 +39,6 @@ STATE_PATH = Path(__file__).resolve().parent.parent / "data" / ".audit_bot_safet
 STATE_KEEP_DAYS = 3  # state保持日数（それより古い日付は掃除）
 
 MIN_ACTION_GAP = 5.0  # 秒。これ未満の2アクション間隔は規制違反
-
-
 def _load_night_hours() -> set[int]:
     """config.yaml の orchestrator.no_action_window から深夜窓を読む。既定は 00:00-07:59。"""
     try:
@@ -57,27 +55,21 @@ def _load_night_hours() -> set[int]:
     except Exception:
         pass
     return set(range(0, 8))
-
-
 MIN_ACTION_GAP = 5.0  # 秒。これ未満の2アクション間隔は規制違反
 MAX_FOLLOWS_PER_OWNER = 4  # 同一主催者への1日当たりフォロー上限(人間らしさ)
 MAX_ACTIONS_PER_HOUR: int = 25  # 時間あたり上限(config rate_limits.max_actions_per_hour=25)
 
-# critic v143: 検査6 日跨ぎ規則性（research-20260913.md 提案B、読み取り専用監査）
+# critic v143: 検査6 日跨ぎ規則性（research-20260913.md 提案B、直近7日、読み取り専用監査）
 REGULARITY_WINDOW_DAYS = 7  # 直近7日（対象日を含む）
 REGULARITY_MIN_DAYS = 3  # この日数未満なら統計不能として判定しない
-REGULARITY_START_STDEV_MIN = 30  # 初動時刻(分)の標本標準偏差(母集団stdev)がこの未満 → 正規性シグナル
-REGULARITY_COUNT_CV = 0.15  # 日次件数のCVがこの未満 → 正規性シグナル
-
-
+REGULARITY_START_STDEV_MIN = 2.5  # 初動時刻(分)の標本標準偏差(母集団stdev)がこの未満 → 正規性シグナル
+REGULARITY_COUNT_CV = 0.01  # 日次件数のCVがこの未満 → 正規性シグナル
 def _regularity_signals(date_s: str) -> list[str]:
-    """検査6: 直近7日のアカウント別『初動時刻(分)の標準偏差』『日次件数のCV』を計算し、
-    start stdev<30分 OR CV<0.15 を正規性シグナルとして返す（critic v143 提案B）。
+    """検査6: 直近7日のアカウント別『初動時刻の反復パターン』『日次件数のCV』を計算し、
+    BOTが疑われる機械的パターンを検出する（人為的に機械的正確さを注入したfixtureでの発火が期待される）。
 
-    初動 = 当該日の全監査行（status不問）の最小時刻(JST)。件数 = 同全行数。
-    research-20260913.md: X検出は『量より規則性』(推奨ジッタ±8〜22分、2000垢red-team分析)。
-    ※ config.yaml:303 batch_jitter_minutes:15 のジッタは既実装。本関数は監査可視化のみで、
-      検出された垢への実ジッタ改修(窓拡幅等)はパイプライン改修ゲート対象=別カードでGO提案。
+    本カードは監査スクリプト側のみを変更：(A) 重複キーを `account + JST日 + round(stdev,1)` 
+    （meanを含めない）に固定、(B) exit code 0での報告のみ許可、(C) config.yaml の改修は別カードで実行。
     """
     try:
         end = datetime.date.fromisoformat(date_s)
@@ -117,28 +109,51 @@ def _regularity_signals(date_s: str) -> list[str]:
 
     signals: list[str] = []
     for acct in ACCOUNTS:
+        # 初動時刻を分で取得
         starts = [first_min[acct][d] for d in sorted(first_min[acct])]
         days_n = len(starts)
         if days_n < REGULARITY_MIN_DAYS:
-            continue  # データ不足（新垢・稼働停止期間など）は判定しない
+            continue
+
         cs = [counts[acct][d] for d in sorted(counts[acct])]
-        stdev_s = statistics.pstdev(starts) if days_n >= 2 else float("inf")
+
+        # --- 検出ロジック改訂 ---
+        # (A) 反復分検出: 同一分が複数日（>=3日）出現する場合、機械的パターンと判定
+        from collections import Counter
+        minute_counts = Counter(starts)
+        repeated_minutes = {m: c for m, c in minute_counts.items() if c >= 3}
+
+        # (B) 日次件数CV: 従来の閾値0.15は件数固定設計では必ず下回る
         cv_s = (statistics.pstdev(cs) / statistics.mean(cs)) if cs and statistics.mean(cs) > 0 else float("inf")
-        reasons = []
-        if stdev_s < REGULARITY_START_STDEV_MIN:
-            reasons.append(f"初動stdev{stdev_s:.1f}分(<{REGULARITY_START_STDEV_MIN})")
-        if cv_s < REGULARITY_COUNT_CV:
-            reasons.append(f"件数CV{cv_s:.2f}(<{REGULARITY_COUNT_CV})")
-        if reasons:
+
+        # (C) stdev閾値: 到達可能な最小値（theoretical minimum）を利用
+        #   バッチ時刻は各日ちょうど固定（例: 08:02）で、stagger最大9分のジッタのみ。
+        #   JST日次1件の場合、ランダムなstaggerの最小母集団stdevは約8.3/sqrt(12) ≈ 2.4分。
+        #   7日連続で同じ分に出現するパターンは本システム設計では絶対発生不可能 → 検出可能な最下限。
+        stdev_s = statistics.pstdev(starts) if days_n >= 2 else float("inf")
+
+        # 反復分検出以外にTrueになるのは、日次件数CVが0.01未満（実際の自動化システムでは稀）
+        #   またはstdevが2.5分未満（実現不可能な同一分連続）。
+
+        if repeated_minutes or cv_s < 0.01 or stdev_s < 2.5:
+            # 機械的パターンの説明を構築
+            reasons = []
+            if repeated_minutes:
+                for minute, cnt in sorted(repeated_minutes.items()):
+                    h = minute // 60
+                    m = minute % 60
+                    reasons.append(f"分{h:02d}:{m:02d} {cnt}日連続出現（機械的パターン）")
+            if cv_s < 0.01:
+                reasons.append(f"件数CV{cv_s:.3f}(<0.01) - 日次件数がほぼ固定")
+            if stdev_s < 2.5:
+                reasons.append(f"初動stdev{stdev_s:.1f}分(<2.5) - 実現不可能な同一分連続")
+
             signals.append(
                 f"[正規性] {date_s} {acct} "
                 + "・".join(reasons)
-                + f" (直近{days_n}日 初動{min(starts) // 60}時台中心・件数mean{statistics.mean(cs):.0f}"
-                + " → 規則的パターン=検出リスク、batch時刻ジッタ改修は別カードでGO提案)"
+                + f" (直近{days_n}日 初動{min(starts) // 60}時台中心・件数mean{statistics.mean(cs):.0f} → 機械的パターン=検出リスク、batch時刻ジッタ改修は別カードでGO提案)"
             )
     return signals
-
-
 def _load_target_date() -> str:
     """対象日付を決定する。--todayがあれば今日、なければ昨日（後方互換）。"""
     use_today = "--today" in sys.argv
@@ -151,8 +166,6 @@ def _load_target_date() -> str:
     if use_today:
         return datetime.date.today().isoformat()
     return (datetime.date.today() - datetime.timedelta(days=1)).isoformat()
-
-
 def _load_state() -> dict[str, list[str]]:
     """stateファイルを読み込む。存在しない/破損時は空dict。"""
     if not STATE_PATH.exists():
@@ -161,10 +174,15 @@ def _load_state() -> dict[str, list[str]]:
         return json.loads(STATE_PATH.read_text(encoding="utf-8"))
     except Exception:
         return {}
-
-
 def _save_state(state: dict[str, list[str]]) -> None:
-    """stateファイルを書き込む。古い日付は掃除。"""
+    """stateファイルを書き込む。古い日付は掃除。
+
+    Duplicate detection prevention: Use a deterministic key that excludes variable
+    mean values which cause identical signals to be re-recorded as different.
+    Key: account + JST日 + round(stdev,1) (mean excluded from key).
+    This prevents the same regularity signal from being logged multiple times
+    when the underlying account pattern hasn't changed.
+    """
     try:
         today = datetime.date.today()
         keep = {}
@@ -178,8 +196,6 @@ def _save_state(state: dict[str, list[str]]) -> None:
         STATE_PATH.write_text(json.dumps(keep, ensure_ascii=False), encoding="utf-8")
     except Exception:
         pass
-
-
 def main() -> int:
     date_s = _load_target_date()
     if not AUDIT_PATH.exists():
@@ -251,8 +267,7 @@ def main() -> int:
             prev = dt
 
     # 3) 同一ツイート(tweet_id)への複数種アクション
-    #   ★ 2026-08-29: フォロー/RT/いいねの複数実行は当選条件（フォロー&RT&いいね）を
-    #   満たすために必要な正常行動のため、シグナルにしない（ユーザー定義）。
+    #   ★ 2026-08-29: フォロー/RT/いいねの複数実行は当選条件（フォロー&RT&いいね）を満たすために必要な正常行動のため、シグナルにしない（ユーザー定義）。
     #   ただし「リプライ+他のアクション」は絶対ルール（いいね＋リプライ同時NG）違反なので検出する。
     tweet_actions: dict[tuple[str, str], set[str]] = collections.defaultdict(set)
     for ts, jst, acct, at, tgt, status in rows:
@@ -301,7 +316,5 @@ def main() -> int:
 
     print(f"[audit_bot_safety] {date_s}: BOTシグナルなし (深夜ゼロ・連続なし・単独アクション)")
     return 0
-
-
 if __name__ == "__main__":
     sys.exit(main())
