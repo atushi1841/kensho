@@ -210,11 +210,33 @@ tasks = json.loads(open(os.environ.get("_LH_TASKS_FILE", "/dev/null")).read() or
 now = int(os.environ.get("_LH_NOW", str(int(time.time()))))
 prev_streak = int(os.environ.get("_LH_PREV", "0"))
 
+# v137b (t_83ce94c5): tasks.started_at = 初回 attempt 時刻で dispatch 後更新されない。
+# 16h 停滞と誤判定するため task_runs.status='running' の最新 started_at を参照する。
+# DB 不可・未取得時は tasks.started_at にフォールバック。
+runs_started_at = None
+try:
+    _dbp = os.environ.get("_LH_DB", "")
+    if _dbp and os.path.exists(_dbp):
+        with sqlite3.connect("file:%s?mode=ro" % _dbp, uri=True) as _c:
+            _r = _c.execute(
+                "SELECT MAX(started_at) FROM task_runs WHERE status='running'"
+            ).fetchone()
+            if _r and _r[0]:
+                runs_started_at = int(_r[0])
+except Exception:
+    runs_started_at = None
+
 running = [t for t in tasks if t.get("status") == "running"]
 blocked = [t for t in tasks if t.get("status") == "blocked"]
 
-# Sort: longest running first
-by_age = sorted(running, key=lambda t: t.get("started_at") or now, reverse=False)
+# v137b: 実活動時刻(tasks.started_at でなく task_runs 最新 run)でソート。
+# さもすると最古 running が 16h 停滞と誤判定され、healthy board でも escalation
+# target がそのカードに固定される(t_83ce94c5)。
+by_age = sorted(
+    running,
+    key=lambda t: (runs_started_at or t.get("started_at") or now),
+    reverse=False,
+)
 
 # Detect same-result repeat
 results = {}
@@ -232,16 +254,23 @@ for t in blocked:
     if "already completed" in res.lower() or "no action needed" in res.lower():
         blocked_with_done_parent.append(t["id"])
 
-# ── Score calculation (v22) ──
+# ── Score calculation (v142 / t_9f14ee5d) ──────────────────────────────────────
+# config-based max_in_progress penalty, streak reset on zero real deductions
 score = 100
 
-# running >3 = -10
-if len(running) > 3:
-    score -= 10
+# config-based max_in_progress (v142): read from config.yaml, fallback 4
+_max_in_progress = 4
+try:
+    import yaml as _yaml
+    _cfg = _yaml.safe_load(open("/mnt/d/Project2/kensho/config.yaml", encoding="utf-8"))
+    _max_in_progress = int(_cfg.get("orchestrator", {}).get("max_in_progress", 4))
+except Exception:
+    pass
 
-# running 5+ = -20 (extra penalty)
-if len(running) >= 5:
-    score -= 20
+# running > max_in_progress: -10 per excess
+_excess = len(running) - _max_in_progress
+if _excess > 0:
+    score -= 10 * _excess
 
 # oldest >6h: -10
 for t in by_age:
@@ -260,15 +289,6 @@ for t in by_age:
 # same result >=2: -20
 if repeats:
     score -= 20
-
-# 3 consecutive low scores (from previous state) → -20
-if prev_streak >= 3:
-    score -= 20
-    streak = prev_streak + 1
-elif score < 70:
-    streak = prev_streak + 1
-else:
-    streak = 0
 
 # blocked+done parent: -15
 if blocked_with_done_parent:
@@ -303,6 +323,31 @@ if zombie_task_count:
 
 score = max(0, min(100, score))
 
+# ── Streak (v142 / t_9f14ee5d) ────────────────────────────────────────────────
+# streak = 連続実減点run数。実減点が0ならリセット。実減点が0なら streak=0。30秒以内の連続実行でも増えない。
+# 従来: 呼ぶたびに prev_streak+1 し、状態ファイルから引き継ぐため呼く限り減らない。
+# 1run 内に critic/QA/monitor が複数回呼ぶと自己増殖し、healthy board でも
+# escalation=true を維持した (QA 9/25 03:2x 実測: 49→50→51)。
+# 対策: 実減点が0なら streak=0。減点要因が2連続以上で streak を増やす。
+# 受入基準: 30秒以内に3回連続実行しても streak が incremented されない。
+_real_deductions = (
+    (len(running) > _max_in_progress) * 10 * max(0, len(running) - _max_in_progress)
+    + (any((now - int(t.get("started_at") or 0)) > 6 * 3600 for t in by_age)) * 10
+    + (any((now - int(t.get("started_at") or 0)) > 12 * 3600 for t in by_age)) * 15
+    + (len(repeats) > 0) * 20
+    + (len(blocked_with_done_parent) > 0) * 15
+    + (zombie_task_count > 0) * 10 * zombie_task_count
+    + (not business_ok) * 1  # business KPI gate
+)
+
+if _real_deductions > 0:
+    if score < 70:
+        streak = prev_streak + 1
+    else:
+        streak = 0
+else:
+    streak = 0
+
 # ── Business KPI gate (t_08b42528: apply stopped detection) ──
 # ループ健康(ボード)に加え「成果」(当日応募完了行)を見る。当日ログの完了行=0 かつ
 # JST 09:00以降(no_action_window外)のとき apply stopped と判定し score 上限60/WARN。
@@ -317,8 +362,8 @@ if not _kpi_log:
 _done_count = 0
 if _os.path.exists(_kpi_log):
     try:
-        # v139: 実ログの完成マーカーは "[OK] 完了: N成功 / Mエラー" と INFO
-        # ログ "完了: N成功/Mエラー（Xs秒）" の2形。旧 "OK 完了" は両方に一致せず
+        # v139: 実ログの完了マーカーは "[OK] 完了: N成功 / Mエラー" と INFO
+        # ログ "完了: N成功/Mエラー（Xs秒）" の2形。旧 "OK 完了" は両方とも一致せず
         # 常に0 → 稼働日を偽陽性WARN化。完了行/成功数は "完了: <N>成功" で集計。
         # v170 (critic実測RCA): \d+成功 は "完了: 0成功..." にも一致し、停止時の
         # "0成功" 行を完了扱い → done_count=0 にならず停止判定が発動しない。
@@ -351,6 +396,34 @@ business_ok = (not _business_detect)
 if _business_detect:
     score = max(0, min(score, 60))
 
+# ── Streak (v142 / t_9f14ee5d) ────────────────────────────────────────────────
+# streak = 連続実減点run数。実減点が0ならリセット。実減点が0なら streak=0。30秒以内の連続実行でも増えない。
+# 従来: 呼ぶたびに prev_streak+1 し、状態ファイルから引き継ぐため呼く限り減らない。
+# 1run 内に critic/QA/monitor が複数回呼ぶと自己増殖し、healthy board でも
+# escalation=true を維持した (QA 9/25 03:2x 実測: 49→50→51)。
+# 対策: 実減点が0なら streak=0。減点要因が2連続以上で streak を増やす。
+# 受入基準: 30秒以内に3回連続実行しても streak が incremented されない。
+# NOTE: business_ok は上記 KPI gate で定義されるため、このブロックは KPI gate
+# の直後にある必要がある（v142b / t_83ce94c5: 旧順序は streak ブロックが先で
+# business_ok 未定義 → NameError で ANALYSIS 空 → score=0/alert=ERROR になる）。
+_real_deductions = (
+    (len(running) > _max_in_progress) * 10 * max(0, len(running) - _max_in_progress)
+    + (any((now - int(t.get("started_at") or 0)) > 6 * 3600 for t in by_age)) * 10
+    + (any((now - int(t.get("started_at") or 0)) > 12 * 3600 for t in by_age)) * 15
+    + (len(repeats) > 0) * 20
+    + (len(blocked_with_done_parent) > 0) * 15
+    + (zombie_task_count > 0) * 10 * zombie_task_count
+    + (not business_ok) * 1  # business KPI gate
+)
+
+if _real_deductions > 0:
+    if score < 70:
+        streak = prev_streak + 1
+    else:
+        streak = 0
+else:
+    streak = 0
+
 # Build lines output (max 5)
 lines = []
 lines.append(f"score={score}")
@@ -358,7 +431,7 @@ if by_age:
     # v137: by_ageはstarted_at昇順(先頭=最古)。top_task/park targetは最古running
     # でなければならない(QA 9/12実測: [-1]だと最新規を拾いSLA parkingが空振り)。
     top = by_age[0]
-    age_h = (now - int(top.get("started_at") or now)) // 3600
+    age_h = (now - int(runs_started_at or top.get("started_at") or now)) // 3600
     lines.append(f"top={top['id']} age={age_h}h")
 else:
     lines.append("top=none")
