@@ -10,12 +10,18 @@ python3 /mnt/d/Project2/kensho/scripts/refresh_wifi_map.py || echo "[warn] wifi 
 
 # ── t_e2b356ce: 同一 tick の PROXY-CHECK 完走を待つ（偽 dead_proxy / 無音凍結の防止）──
 # 本スクリプトは crontab の */15 で kensho-auto-apply.sh と同時刻に起動する。apply tick の
-# [PROXY-CHECK] 行は tick 開始の16〜34秒後に書かれるため、待たずに生成すると gen_status_data.py は
+# [PROXY-CHECK] 行は tick 開始の17〜70秒後に書かれるため、待たずに生成すると gen_status_data.py は
 # 「生成時刻-2分以降」の行を見つけられず status を一切更新しない（1 tick 偽 dead_proxy は防げるが
 # proxy 状態が無音で凍結する）。tick が動いている間だけ、同一 tick の [PROXY-CHECK] 行が現れるまで
-# 最大60秒待つ。tick が20分以上動いていない（パイプライン停止中）ときは即座に諦める。
+# 最大 WAIT_TIMEOUT 秒待つ。tick が20分以上動いていない（パイプライン停止中）ときは即座に諦める。
+#
+# WAIT_TIMEOUT: 実測した PROXY-CHECK 所要時間の最大は 69.5s（2026-09-24）、9/25は 57.2s だった。
+# 旧値60sは 57.2s 実測に対して余裕が5sしかなく（ポーリング間隔5s）、tick が少し遅い日は
+# 完走行を取り逃して status が無音凍結する。120s に拡張して余裕を確保する（ループは行が現れ次第
+# 即抜けるため、通常 tick の追加コストはゼロ）。
+WAIT_TIMEOUT=120  # scripts/verify_status_proxy_same_tick.py が読む（検証とのドリフト防止）
 LOG_FILE="$PROJECT_DIR/logs/auto_$(date +%Y%m%d).log"
-_wait_until=$(( $(date +%s) + 60 ))
+_wait_until=$(( $(date +%s) + WAIT_TIMEOUT ))
 while [ "$(date +%s)" -lt "$_wait_until" ]; do
   _tick_line=$(grep -nE '^\[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\]' "$LOG_FILE" 2>/dev/null | tail -1 | cut -d: -f1 || true)
   if [ -z "${_tick_line:-}" ]; then break; fi
