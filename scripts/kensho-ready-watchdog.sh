@@ -21,6 +21,22 @@
 
 set -euo pipefail
 
+# ── hermes CLI resolution (cf. loop_health.sh v141 / t_5af1b5d8) ──────────────────────────────
+HERMES_VENV_BIN="${HERMES_VENV_BIN:-/home/atushi/.hermes/hermes-agent/venv/bin}"
+[ -d "$HERMES_VENV_BIN" ] && PATH="$HERMES_VENV_BIN:$PATH"
+if [ -z "${HERMES_BIN:-}" ] || [ ! -x "${HERMES_BIN:-}" ]; then
+  if command -v hermes >/dev/null 2>&1; then
+    HERMES_BIN="$(command -v hermes)"
+  else
+    HERMES_BIN=""
+  fi
+fi
+if [ -z "${HERMES_BIN:-}" ]; then
+  echo "kensho-ready-watchdog: ERROR: hermes CLI not found (PATH=${PATH}, HERMES_VENV_BIN=${HERMES_VENV_BIN})" >&2
+  exit 127
+fi
+# ───────────────────────────────────────────────────────────────────────────────────────
+
 BOARD="kensho-ai-team"
 HOURS_WARN=24
 HOURS_ESCALATE=72
@@ -47,7 +63,7 @@ TMPFILE=$(mktemp /tmp/ready-watchdog.XXXXXX.json)
 trap 'rm -f "$TMPFILE"' EXIT
 
 # Kanbanからready一覧をjsonで一括取得(180s→2.5s高速化)
-if ! hermes kanban --board "$BOARD" list --status ready --json >"$TMPFILE" 2>/dev/null; then
+if ! "$HERMES_BIN" kanban --board "$BOARD" list --status ready --json >"$TMPFILE" 2>/dev/null; then
     echo "ERROR: hermes kanban list failed" >&2
     exit 1
 fi
@@ -147,7 +163,7 @@ fi
 # 実実行: warn/escalateはコメント、deleteはarchive(可逆)
 FAILED=0
 for tid in "${WARN_TGT[@]}"; do
-    if hermes kanban --board "$BOARD" comment "$tid" "[warn] ready ${HOURS_WARN}h 経過。worker着手を要請" >/dev/null 2>&1; then
+    if "$HERMES_BIN" kanban --board "$BOARD" comment "$tid" "[warn] ready ${HOURS_WARN}h 経過。worker着手を要請" >/dev/null 2>&1; then
         echo "  ✓ warned $tid"
     else
         echo "  ✗ warn failed: $tid" >&2
@@ -156,7 +172,7 @@ for tid in "${WARN_TGT[@]}"; do
 done
 
 for tid in "${ESC_TGT[@]}"; do
-    if hermes kanban --board "$BOARD" comment "$tid" "[escalate] ready ${HOURS_ESCALATE}h 経過。critic再投入または要ユーザー対応" >/dev/null 2>&1; then
+    if "$HERMES_BIN" kanban --board "$BOARD" comment "$tid" "[escalate] ready ${HOURS_ESCALATE}h 経過。critic再投入または要ユーザー対応" >/dev/null 2>&1; then
         echo "  ✓ escalated $tid"
     else
         echo "  ✗ escalate failed: $tid" >&2
@@ -166,7 +182,7 @@ done
 
 for tid in "${DEL_TGT[@]}"; do
     # archiveを優先(deleteより可逆性高)
-    if hermes kanban --board "$BOARD" archive "$tid" >/dev/null 2>&1; then
+    if "$HERMES_BIN" kanban --board "$BOARD" archive "$tid" >/dev/null 2>&1; then
         echo "  ✓ archived $tid (delete閾値 ${HOURS_DELETE}h超)"
     else
         echo "  ✗ archive failed: $tid" >&2
