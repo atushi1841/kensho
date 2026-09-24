@@ -402,11 +402,23 @@ def main(argv: Iterable[str] | None = None) -> int:
             comment_instead_of_create(existing, args.title, author=args.author, note=f"共通トークン: {shared[:8]}")
         return 1
 
-    # assigneeチェックが完了し、かつ重複テーマが見つからなかった場合は成功
-    if args.assignee and assignee_reality_check(args.assignee):
-        sys.stderr.write(f"[hunter-guard] OK unique theme and real assignee: '{args.title[:60]}' key={key_out}\n")
-    elif args.assignee:
-        sys.stderr.write(f"[hunter-guard] OK unique theme but ghost assignee: '{args.title[:60]}' key={key_out}\n")
+    # assigneeチェックが完了し、かつ重複テーマが見つからなかった場合
+    # ここに到達した =
+    #   - 重複テーマなし（dup判定済）
+    #   - assigneeが指定されている場合は実在性チェック済（幽霊なら上記return 1で済）
+    #   - ただし --assignee 未经 check_assignee_realness 直接通過した場合の安全策:
+    #     assignee_reality_check で false なら exit 2（幽霊assignee = 起票中止）
+    if args.assignee and not assignee_reality_check(args.assignee):
+        sys.stderr.write(
+            f"[hunter-guard] BLOCKED ghost assignee: '{args.assignee}' not in real profiles list\n"
+        )
+        print(f"ghost assignee: {args.assignee}")
+        return 2
+
+    if args.assignee:
+        sys.stderr.write(
+            f"[hunter-guard] OK unique theme and real assignee: '{args.title[:60]}' key={key_out}\n"
+        )
     else:
         sys.stderr.write(f"[hunter-guard] OK unique theme: '{args.title[:60]}' key={key_out}\n")
     print(key_out)

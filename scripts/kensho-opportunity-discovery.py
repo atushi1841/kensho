@@ -149,23 +149,26 @@ def main():
     lines.append("   - 【必須・critic v162】起票前に必ず重複ガードを通す（同一テーマの二重登録防止）:")
     lines.append(
         "     `python3 /mnt/d/Project2/kensho/scripts/kensho_hunter_guard.py check"
-        " --title '<タスク名>' --body '<本文要旨>'`"
+        " --title '<タスク名>' --body '<本文要旨>' --assignee <assignee>`"
+    )
+    lines.append("     - exit 0 (stdoutに決定的キー hunter-YYYYMMDD-<hash8>) = 起票可 → それを流用:")
+    lines.append(
+        "       `hermes kanban create '<タスク名>' --assignee <assignee> --ready"
+        " --idempotency-key '<checkが出力したキー>'`"
     )
     lines.append("     - exit 1 (dup出力) = open状態に同一テーマあり → 起票中止。既存カードIDへ")
     lines.append(
         "       `hermes kanban comment <既存ID> '収益機会自動発見(YYYY-MM-DD): 再確認、本カードで追跡'`"
-        " で代替（新規を作らない）"
     )
-    lines.append("     - exit 2 = 幽霊assignee（実在しないassignee）→ 起票中止")
-    lines.append("       `hermes kanban create ... --assignee <assignee>` は --assignee の後に")
-    lines.append("       kensho_hunter_guard.py check --assignee <assignee> を自動的に実行")
-    lines.append("       ことが要件")
-    lines.append("   - exit 0 = stdout に決定的キー hunter-YYYYMMDD-<hash8> が出力される → それを流用:")
+    lines.append("       で代替（新規を作らない）")
     lines.append(
-        "   - hermes kanban create '<タスク名>' --assignee kensho-worker --ready"
-        " --idempotency-key '<checkが出力したhunter-YYYYMMDD-...キー>'"
+        "     - exit 2 = 幽霊assignee（実在しないassignee）→ 起票中止。assigneeは"
     )
-    lines.append("   - キーなしでの kanban create は禁止（成功指標: worker発券の idempotency_key NULL = 0件）")
+    lines.append(
+        "       `references/board-assignees.md`（唯一の実在assigneeリスト）から"
+    )
+    lines.append("       実在するものを選ぶこと。役割名（critic/worker/orchestrator等）を発明しない")
+    lines.append("     - キーなしでの kanban create は禁止（成功指標: worker発券の idempotency_key NULL = 0件）")
     lines.append("   - タスク内コメントに「収益機会自動発見(YYYY-MM-DD)」と評価結果を記録")
     lines.append("4. 評価が通らなかった機会は却下理由を簡潔に記録（再利用のため）")
     lines.append("")
