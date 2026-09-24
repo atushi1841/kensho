@@ -144,11 +144,21 @@ def sort_items(items: list[dict[str, Any]], now: datetime | None = None) -> tupl
         wc: int = item.get("winner_count", 0)
         wc_score: float = min(wc / 100, 10) if wc > 0 else 0
 
-        # ── 「その場で当たる」系ボーナス（2026-08-25追加）:
+        # ── 「その場で当たる」系ボーナス（2026-08-25追加、2026-09-24拡張）:
         #   アカウントスコア（フォロワー数・インプレッション）に左右されず抽選ツールで当選するため、
         #   フォロワーが少ないKenshoアカウントに最適。締切が同程度なら優先的に応募する。
+        #   判定キーワード: その場 / 今すぐ / 即時 / その場で当たる / なくなり次第 / 先着
+        #   （実測 data/collected.json 997件: その場40+今すぐ17+即時1=56件検出。先着/なくなり次第は
+        #    現収集データに0件だが、今後の収集源で出る可能性があるため残す）
         _text: str = item.get("tweet_text", "") or ""
-        _instant_bonus: float = 20.0 if "その場" in _text else 0.0
+        _INSTANT_KW: tuple[str, ...] = (
+            "その場",
+            "今すぐ",
+            "即時",
+            "なくなり次第",
+            "先着",
+        )
+        _instant_bonus: float = 20.0 if any(kw in _text for kw in _INSTANT_KW) else 0.0
 
         # ── 優先度スコア + ランダムジッター（±5点）──
         # 同じ優先度帯ならランダム順になり、アカウント間で処理する投稿が分散する
