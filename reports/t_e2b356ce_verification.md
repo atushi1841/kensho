@@ -58,6 +58,35 @@
 - 待ちループは「crontab を触らずに順序問題を解く」案。より決定的なのは crontab のステータス生成を `1-59/15 * * * *`（apply tick の1分後）へずらす案で、併用も可能（待ちループは即抜けになるだけ）。
 - `posix_spawn` 等の make 系並行作業が `data/status/*.json` を巻き戻す事故が 05:23 に観測された（内容 `updated=04:30:03` のまま mtime だけ 05:23:56）。共有リポジトリでの `git checkout -- <file>` / `git restore` は禁止（兄弟タスクの成果を消す）。
 
+## 6. 追記（2026-09-25 06:45〜07:01・kensho-revenue-worker cron 5e8ec4984bba / commit 6fd250f）
+
+### 6-1. t_e2b356ce: 待ちループ上限 60s → 120s（余裕不足の是正）
+
+- 実測（9/20〜9/25 の6日分）: PROXY-CHECK 所要の最大は **69.5s**（9/24）、9/25 は 57.2s。旧60sは余裕5sしか無く、ポーリング間隔5sと合わせて完走行を取り逃す（＝t_e2b356ce が消したかった「無音凍結」への逆戻り）リスクがあった。
+- `scripts/generate-status.sh` に `WAIT_TIMEOUT=120` を定数化（検証ヘルパーが同値を読む＝ドリフト防止）。ループは行が現れ次第即抜けるため、通常 tick の追加コストはゼロ。
+
+### 6-2. t_e2b356ce: 検証ヘルパーの忠実化
+
+- `scripts/verify_status_proxy_same_tick.py`: 生成時刻を「tick+40s 固定」から**待ちループ模擬**（完走+最大5s、WAIT_TIMEOUT で打ち切り）へ変更。WAIT_TIMEOUT は `generate-status.sh` から読む。
+- 旧ヘルパーは 03:15 tick（所要57.2s）を「不一致」と誤判定していた（生成=tick+40s では完走前のため）。忠実化後は **28 tick 中 28 一致・不一致0**。
+
+### 6-3. t_e2b356ce: 回帰テストの本番書き込み副作用を除去（実測で発覚）
+
+- `tests/test_gen_status_proxy_time_filter.py` は `from scripts.gen_status_data import _filter_proxy_check_rows` していたため、**テスト実行が生成パイプライン本体を走らせ**、本番 `/tmp/kensho_status_data.json` を書き換えていた（実測 06:49: `proxy.ts` が空に上書き）。回帰テストが本番データを壊す構造は t_e2b356ce の趣旨（偽 status を書かない）と正面から矛盾する。
+- 副作用の無い AST 取り出し（`load_filter()`）へ変更。修正後は pytest 前後でパネルの mtime が**不変**（下記エビデンス）。
+
+### 6-4. t_e2b356ce: ライブ検証（07:00 tick・本番cron経路・新スクリプト）
+
+- 07:00 tick の PROXY-CHECK は 16.6s で完走 → 新しい待ちループが同一 tick 行を検出し 07:00:35 に書き込み。
+- `proxy.ts=2026-09-25 07:00:06`（tick 開始と一致・前tick 06:45 ではない）、`checked=True`、alive/dead は実測どおり、`data/status/*.json` の updated も 07:00:35 → **不一致0**。
+
+### 6-5. t_e2b356ce 作業中に観測した重大な環境事故（要対応・別カード案件）
+
+- 並行実行中の兄弟 worker（kensho-worker / t_20f49e54）が**共有ワークツリーで `git commit` → `git reset --hard HEAD~1` を繰り返し**、06:46〜06:58 に7回観測（reflog）。t_e2b356ce の成果物 commit 6fd250f も **06:56:08 に HEAD~1 リセットでローカルから消された**（origin には push 済みのため `git fetch && git merge --ff-only origin/main` で復旧）。
+- 06:53:59/06:54:07 の連続リセットでは既存コミット ea78e29 も枝から落ち、`scripts/verify_status_proxy_same_tick.py` が作業ツリーから消えた（本カードの作業が消えた回数: 3回）。
+- 影響: 兄弟タスクの**未コミット成果とコミットが無予告で消える**。t_e2b356ce の検証は3回やり直しになった。
+- 推奨対策: done_guard の検証のように commit/reset を伴う作業は**専用 worktree（`git worktree add`）または scratch clone** で行い、共有ワークツリーでは `reset --hard` / `checkout -- <file>` / `stash` を禁止（t_9db50654 の「stash退避禁止」と同じクラス。恒久ゲート化を推奨）。
+
 ## verification_evidence
 
 ```
@@ -101,4 +130,39 @@ RESULT: PASS
 $ python3 -c "import json; p=json.load(open('/tmp/kensho_status_data.json'))['proxy']; print(p['ts'], p['checked'], p['alive'], p['dead'])"
 2026-09-25 06:15:04 True ['TankanNotes', 'atushi16', 'kudou'] [['zin20120731', 1084]]
 （tick開始時刻と一致＝前tick 06:00:04 ではなく同一 tick の行を採用した直接証拠）
+
+--- 2026-09-25 06:45〜07:01 追記（t_e2b356ce / commit 6fd250f）---
+
+$ python3 scripts/verify_status_proxy_same_tick.py
+1) 再現: 28 tick 中 28 一致 / 0 不一致（WAIT_TIMEOUT=120s・打ち切り=0 tick）
+2) ログ最終 tick: 2026-09-25 07:00:06 alive=[1081, 1082, 1085] dead=[1084]
+   proxy.ts=2026-09-25 07:00:06 → 最終tickと一致
+   TankanNotes port=1085 status=alive 一致 / atushi16 port=1081 status=alive 一致 / kudou port=1082 status=alive 一致 / toushiwatch port=1087 status=unchecked 一致 / zin20120731 port=1084 status=dead_proxy 一致
+RESULT: PASS
+
+$ python3 -m pytest tests/test_gen_status_proxy_time_filter.py -q -p no:cacheprovider --no-cov
+7 passed in 2.42s
+
+$ B=$(stat -c '%Y' /tmp/kensho_status_data.json); pytest 実行; A=$(stat -c '%Y' /tmp/kensho_status_data.json); echo "$B $A"
+1790287235 1790287235   （mtime 不変＝テストが本番パネルを書き換えなくなった直接証拠）
+
+$ bash -n scripts/generate-status.sh && echo "bash -n OK"
+bash -n OK
+
+$ grep -c "^WAIT_TIMEOUT=120" scripts/generate-status.sh
+1
+
+$ grep -nE "PROXY-CHECK" logs/auto_20260925.log | tail -1
+2778:[PROXY-CHECK] alive=[1081, 1082, 1085] dead=[1084] restored=0 (16.6s)
+
+$ stat -c '%y %n' /tmp/kensho_status_data.json data/status/atushi16.json
+2026-09-25 07:00:35.878562959 +0900 /tmp/kensho_status_data.json
+2026-09-25 07:00:35.731889900 +0900 data/status/atushi16.json
+（07:00 tick・本番 cron 経路の generate-status.sh が新スクリプトで書き込み＝tick開始 07:00:06 の同一tick行を採用）
+
+$ git log --oneline -1
+6fd250f t_e2b356ce: 同一tick待ちを120sへ拡張 + 検証ヘルパー/回帰テストの副作用除去
+
+$ git push origin main
+   352d569..6fd250f  main -> main
 ```

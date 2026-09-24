@@ -1,0 +1,49 @@
+{
+  "success_indicators": [
+    "t_e2b356ce: generate-status.sh の同一tick待ち上限を 60s→120s 化（実測最大69.5s/9-24・57.2s/9-25 を被覆）",
+    "t_e2b356ce: 検証ヘルパー再現 28 tick 中 28 一致・不一致0（忠実化前は 27 tick 中 1 不一致＝03:15 tick の誤判定）",
+    "t_e2b356ce: 回帰テスト 7 passed（旧4件→+3件: WAIT_TIMEOUT下限/待ちループ模擬/打ち切り時は前回値保持）",
+    "t_e2b356ce: 回帰テストの本番書き込み副作用を除去（pytest 前後で /tmp/kensho_status_data.json の mtime 1790287235 が不変）",
+    "t_e2b356ce: 07:00 tick ライブ検証 PASS（proxy.ts=2026-09-25 07:00:06＝同一tick採用・data/status 5垢すべて一致・不一致0）"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/verify_status_proxy_same_tick.py => 1) 再現: 28 tick 中 28 一致 / 0 不一致（WAIT_TIMEOUT=120s・打ち切り=0 tick） / 2) proxy.ts=2026-09-25 07:00:06 → 最終tickと一致 / 5垢すべて一致 / RESULT: PASS",
+    "$ python3 -m pytest tests/test_gen_status_proxy_time_filter.py -q -p no:cacheprovider --no-cov => 7 passed in 2.42s",
+    "$ B=$(stat -c '%Y' /tmp/kensho_status_data.json); pytest 実行; A=$(stat -c '%Y' /tmp/kensho_status_data.json) => 1790287235 1790287235（不変＝副作用除去の直接証拠）",
+    "$ bash -n scripts/generate-status.sh => bash -n OK",
+    "$ grep -c '^WAIT_TIMEOUT=120' scripts/generate-status.sh => 1",
+    "$ stat -c '%y %n' /tmp/kensho_status_data.json data/status/atushi16.json => 2026-09-25 07:00:35.878 / 2026-09-25 07:00:35.731（07:00 tick 本番cron経路で新スクリプトが同一tick行を採用）",
+    "$ git push origin main => 352d569..6fd250f  main -> main"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/generate-status.sh",
+    "/mnt/d/Project2/kensho/scripts/verify_status_proxy_same_tick.py",
+    "/mnt/d/Project2/kensho/tests/test_gen_status_proxy_time_filter.py",
+    "/mnt/d/Project2/kensho/reports/t_e2b356ce_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:cf2ce043edf142c3bfbedb073388b18da7ea5a19282d1c540c4258960dfbeb73  /mnt/d/Project2/kensho/scripts/generate-status.sh",
+    "sha256:1f32547ae2550a8f37d0bd0b8b7c0f2befd3138c25293a65cc4b58fae9a7afa9  /mnt/d/Project2/kensho/scripts/verify_status_proxy_same_tick.py",
+    "sha256:550cf7b42ba9fc5c4e6c395e084512b88831cc852fb17449e739962c44845fca  /mnt/d/Project2/kensho/tests/test_gen_status_proxy_time_filter.py",
+    "sha256:32385984693b78742a89f2b5e6f9fedf8a12eae90df44179e03f34bd9789ff57  /mnt/d/Project2/kensho/reports/t_e2b356ce_verification.md"
+  ],
+  "outcome": [
+    {
+      "metric": "replay 不一致 tick 数",
+      "before": 1,
+      "after": 0
+    },
+    {
+      "metric": "回帰テスト件数",
+      "before": 4,
+      "after": 7
+    },
+    {
+      "metric": "テスト実行が本番パネルを書き換えた回数",
+      "before": 1,
+      "after": 0
+    }
+  ],
+  "task_id": "t_e2b356ce",
+  "status": "complete"
+}
