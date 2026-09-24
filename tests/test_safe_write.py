@@ -20,6 +20,8 @@ class TestSafeWriter:
         self.writer = None
         self.test_file = Path(self.tmp) / "test.txt"
         self.test_file.write_text("hello world")
+        self.data_dir = Path(self.tmp) / "data"
+        self.data_dir.mkdir()
 
     def teardown_method(self, method):
         import shutil
