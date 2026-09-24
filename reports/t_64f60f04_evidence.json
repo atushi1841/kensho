@@ -1,0 +1,26 @@
+{
+  "task_id": "t_64f60f04",
+  "commit": "1d2a644",
+  "files_modified": [
+    "kensho/application/applier.py",
+    "tests/test_applier.py"
+  ],
+  "tests": {
+    "command": "python3 -m pytest tests/test_applier.py tests/test_knshow_cloudflare.py -q",
+    "passed": 116,
+    "failed": 0
+  },
+  "new_test": "tests/test_applier.py::TestMultiResponse::test_callable_log_does_not_crash",
+  "repro_before": "AttributeError: 'function' object has no attribute 'write' (100% 再現)",
+  "repro_after": "0",
+  "grep_caller_out_pattern": 0,
+  "grep_has_no_attribute_write_logs_2026_09_25": 0,
+  "mypy_strict": "0 error",
+  "scope_excluded": [
+    "scripts/kensho_revenue_collect.py",
+    "tests/test_revenue_collect.py",
+    "scripts/gen_status_data.py",
+    "scripts/loop_health.sh",
+    "scripts/audit_bot_safety.py"
+  ]
+}
