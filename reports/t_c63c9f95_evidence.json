@@ -1,9 +1,25 @@
 {
+  "task_id": "t_c63c9f95",
+  "status": "completed",
   "success_indicators": [
     "watchdog最小PATHで無音欠火検出復旧: シェルスクリプト絶対パス修正",
     "kensho-research-agent出力長制約追記: 2KB以内に収め、詳細はreports/へ書き出す旨をプロンプトに追記",
     "変更ファイル数: 0 → 2"
   ],
+  "verification_commands": [
+    "bash -n /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-cron-watchdog.sh; echo $?",
+    "env -i HOME=/home/atushi PATH=/usr/bin:/bin bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-cron-watchdog.sh",
+    "grep -n '2KB以内' /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-research-agent.py"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_c63c9f95_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_c63c9f95_evidence.json"
+  ],
+  "evidence_hashes": {
+    "watchdog_fix": "hermes→/home/atushi/.local/bin/hermes (lines 6,7)",
+    "prompt_fix": "2KB出力制約追記 (line 398)",
+    "guard_exit": "0"
+  },
   "outcome": [
     {
       "metric": "changed_files",
