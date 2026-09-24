@@ -266,24 +266,6 @@ try:
 except Exception:
     pass
 
-# v137b+ (t_83ce94c5): tasks.started_at = 初回 dispatch 時刻で更新されない。
-# 実活動時刻を task_runs.status='running' の最新 started_at から取得。
-# 各タスクごとに effective_started_at を構築し、ソート・減点・top_task
-# の年齢計算に使う。DB 不可・未取得時は tasks.started_at にフォールバック。
-effective_started_at = {}
-try:
-    _dbp = os.environ.get("_LH_DB", "")
-    if _dbp and os.path.exists(_dbp):
-        with sqlite3.connect("file:%s?mode=ro" % _dbp, uri=True) as _c:
-            _c.row_factory = sqlite3.Row
-            _running_rows = _c.execute(
-                "SELECT task_id, MAX(started_at) AS max_started "
-                "FROM task_runs WHERE status='running' GROUP BY task_id"
-            ).fetchall()
-            for _r in _running_rows:
-                effective_started_at[_r["task_id"]] = int(_r["max_started"])
-except Exception:
-    pass
 
 # ソートと age 減点に使う effective_started_at（DB 取得あれば上書き）
 by_age = sorted(
