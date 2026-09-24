@@ -1,1 +1,25 @@
-{"task_id": "t_e1407687", "status": "completed", "output_file": "/mnt/d/Project2/kensho/reports/t_e1407687_verification.md", "conditions": {"a:verification_evidence_section": true, "b:command_citations>=3": true, "c:no_uncommitted_code": true, "d:result_nonempty": true, "e:pushed_and_hashes_ancestor": true, "f:no_dep_drift": true, "g:evidence_durable": true, "h:result_nonempty": true, "i:cron_config_md5_matches": true, "j:evidence_json_valid": true}, "detail": {"citations": ["python3 /mnt/d/Project2/kensho/scripts/kensho_hunter_guard.py assignee_check --assignee kensho-worker => exit 0 (real assignee)", "python3 /mnt/d/Project2/kensho/scripts/kensho_hunter_guard.py assignee_check --assignee critic-a => exit 1 (ghost assignee)", "bash -n /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-kanban-sync.sh => exit 0 (syntax OK)"]}}
+{
+  "task_id": "t_e1407687",
+  "status": "complete",
+  "success_indicators": [
+    "幽霊assignee 'critic-a' → exit 2 BLOCK（rc=2）",
+    "実在assignee 'kensho-worker' → rc=0 通過（false positive 0）",
+    "board assignees の ' no ' マーカー 0 件（全 assignee 実在）",
+    "HEAD == origin/main（4e58ecf）、対象実装 dac0265 は main 含まれ push 済み",
+    "early_complete: commit dac0265 pre-existing — 親 t_81b20406 で実装済みのため再作業せず完了"
+  ],
+  "verification_commands": [
+    "$ git log --oneline -1 dac0265 => dac0265 t_81b20406: 幽幽幽幽霊assignee検出ガード強化（exit 2 明文化）+ board-assignees.md 作成",
+    "$ git show --stat dac0265 => references/board-assignees.md 48 / scripts/kensho-opportunity-discovery.py 23 / scripts/kensho_hunter_guard.py 22 / 3 files changed, 78 insertions(+), 15 deletions(-)",
+    "$ python3 scripts/kensho_hunter_guard.py check --title test --body test --assignee critic-a => [hunter-guard] BLOCKED ghost assignee: 'critic-a' not in real profiles list / ghost assignee: critic-a / rc=2",
+    "$ python3 scripts/kensho_hunter_guard.py assignee_check --assignee kensho-worker => assignee kensho-worker is real / rc=0",
+    "$ hermes kanban --board kensho-ai-team assignees | grep -c ' no ' => 0",
+    "$ git rev-parse HEAD origin/main => 4e58ecfb488f480fd2b262941493113d022c2964 / 4e58ecfb488f480fd2b262941493113d022c2964 (両者一致)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_e1407687_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:bc8162f526a6beaaa8e90678a3f7288ea59715ae2cdc01ed8646f2c1a36a60f9 reports/t_e1407687_verification.md"
+  ]
+}

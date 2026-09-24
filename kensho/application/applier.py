@@ -1857,6 +1857,16 @@ def _apply_impl(
                     elif _fsm.is_blocked(screen_name):
                         skip_follow = True
                         out(f"  [SKIP] フォロー: 主催者{screen_name}は当日ブロック済み（無駄な失敗防止・提案87）")
+                    # ★ t_33113bb7 (C): 同一垢の「再試行しても無駄な失敗」連続→垢単位サーキットブレーカ。
+                    #   提案87の owner ブロックでは捕捉できない（kudou は複数主催者で no_follow_button
+                    #   が連続: korehamiro×3/削除済み垢・Rakuten_Wallet×4/zin・steakgusto029×2/zin）。
+                    #   同一エラー種別が threshold 回連続 → 当該垢のフォロー試行を 2h 停止。
+                    elif _fsm.account_follow_blocked()[0]:
+                        skip_follow = True
+                        out(
+                            "  [SKIP] フォロー: 当該垢のサーキットブレーカ作動中（再試行しても無駄な失敗連続）"
+                            " → フォロー試行停止（提案C・t_33113bb7）"
+                        )
                 # ★ 2026-08-26: セッション内フォロー重複防止
                 if not skip_follow and screen_name and screen_name in followed_owners_session:
                     skip_follow = True
@@ -2454,6 +2464,14 @@ def _apply_impl(
                                         screen_name, _follow_error_code
                                     )
                                     out(f"  [BLOCK] 主催者{screen_name}を当日ブロック（提案87）")
+                                # ★ t_33113bb7 (C): 垢単位サーキットブレーカ記録（提案87と併用）。
+                                #   同一エラー種別が連続 threshold 回で当該垢のフォロー試行を一時停止。
+                                _cb_fsm = FollowStateManager(account_key)
+                                if _cb_fsm.record_account_follow_failure(_follow_error_code):
+                                    out(
+                                        f"  [CB] 垢{account_key} サーキットブレーカ作動: "
+                                        f"{_follow_error_code} が連続閾値到達 → フォロー試行を一時停止（提案C・t_33113bb7）"
+                                    )
                             else:
                                 _short_def_until: dt.datetime = datetime.now() + timedelta(
                                     minutes=cfg.get("applier", {}).get("retry_defer_minutes", 30)

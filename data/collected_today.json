@@ -477,8 +477,8 @@
       "priority": 1.0
     },
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T04:59:15Z",
+      "kudou": "DEFER:2026-09-24T22:35:27.837515",
       "zin20120731": null,
       "TankanNotes": null,
       "inobase1-4": null,
@@ -535,10 +535,10 @@
       "priority": 1.0
     },
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "DEFER:2026-09-24T18:40:50.122780",
+      "kudou": "2026-09-24T01:17:34Z",
       "zin20120731": null,
-      "TankanNotes": null,
+      "TankanNotes": "DEFER:2026-09-24T18:33:17.906825",
       "inobase1-4": null,
       "atushi1840": "2026-08-02T22:39:52.566326",
       "toushiwatch": null,
@@ -1062,9 +1062,9 @@
     },
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "2026-09-24T06:06:20Z",
       "zin20120731": null,
-      "TankanNotes": null,
+      "TankanNotes": "2026-09-24T04:01:24Z",
       "inobase1-4": null,
       "toushiwatch": null
     },
@@ -1091,9 +1091,9 @@
     },
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "2026-09-24T04:22:40Z",
       "zin20120731": null,
-      "TankanNotes": null,
+      "TankanNotes": "2026-09-24T08:45:44Z",
       "inobase1-4": null,
       "toushiwatch": null
     },
@@ -1154,7 +1154,7 @@
     "keyword_flag": false,
     "tweet_id": "2066327155307618567",
     "prize_rank": 0,
-    "tweet_text": "／\n10周年＆クロワッサン100万袋突破記念🎁\n感謝のプレゼントキャンペーン開催！\n＼\n\nPicard人気TOP3＋10周年限定のオリジナル保冷バッグが【10名様】に当たる✨\n\n【応募方法】\n① @picardjapon をフォロー\n② この投稿をリポスト\n\n【応募期間】\n2026/8/31(月) 〜 2026/9/13(日) https://t.co/Xh61bTypGp",
+    "tweet_text": "⋱ シルバーウィークにいかが？✨⋰\n\n🍁秋のごちそう🍁\n#黒毛和牛サーロインフェア\nフォロー＆リポストキャンペーン🎉\n\n10,000円分お食事券が抽選で5名様に当たる✨\n\n1️⃣@bigboyjapan_jpをフォロー\n2️⃣この投稿をリポスト\n3️⃣当選者には後日チャット(旧DM)でご連絡\n\n応募〆9/23(水)23:59\n\n#ビッグボーイ https://t.co/BY0FJFzqws",
     "simple_rt_ok": "FLAG",
     "導線": "X"
   },
@@ -1178,7 +1178,7 @@
     "keyword_flag": false,
     "tweet_id": "2064624839651102963",
     "prize_rank": 0,
-    "tweet_text": "／\n#ナウルほど\n🇳🇷ピンバッジ🇳🇷100名様にプレゼント✨\n＼\n\n#ナウルほど\nを投稿すると当選確率UP⤴️ \n\n応募方法👇 \n①@nauru_japan をフォロー\n②この投稿をリポスト👍\n\n〆切👉2026年9月30日中 https://t.co/KGmEZQGDXE",
+    "tweet_text": "／\nVポイント3000ptが10名様に当たる\n秋のワクワクを見つけよう！　！ #シルバーウィーク\nキャンペーン実施中！\n＼\n\n【応募方法】\n1️⃣@mami_plus_xをフォロー\n2️⃣この投稿をリポスト\n以上で応募完了！\n\n詳しくは👇\n\nhttps://t.co/BKz2GC1z2o\n\n⏰応募締切：9月23日まで⏰\n皆さんの　#シルバーウィーク https://t.co/6zyCBxhwn4",
     "simple_rt_ok": "FLAG",
     "導線": "X"
   },
@@ -2862,27 +2862,6 @@
     "導線": "X"
   },
   {
-    "detail_url": "/twscrape/tweet/2097882765936976117",
-    "x_url": "https://x.com/and_company_ltd/status/2097882765936976117",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 7,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-10T23:30:41Z",
-      "kudou": "2026-09-11T06:06:46Z",
-      "zin20120731": "2026-09-11T08:55:51Z",
-      "TankanNotes": "DEFER:2026-09-11T15:48:19.047287"
-    },
-    "keyword_flag": false,
-    "tweet_text": "＼キャンペーン終了まであと1️⃣日／\n\nフォロー&amp;リポストで合計7名様に当たる‼️\n#プレゼントキャンペーン 🎁\n\n📌応募方法\n1️⃣@and_company_ltdをフォロー☑️\n2️⃣引用元の投稿をリポスト🔁\n3️⃣引用元の投稿に希望商品をコメント\n\n#懸賞 #プレゼントキャンペーン開催",
-    "tweet_id": "2097882765936976117",
-    "prize_rank": 0,
-    "simple_rt_ok": "FLAG",
-    "導線": "X"
-  },
-  {
     "detail_url": "/twscrape/tweet/2097874474196750690",
     "x_url": "https://x.com/CGCOS_PR/status/2097874474196750690",
     "source": "twscrape",
@@ -2899,27 +2878,6 @@
     "keyword_flag": false,
     "tweet_text": "【CGCOS ハロウィンCOS応援セール開催！🎃】\n期間：9.10～9.30\n\n💮NO1.店内全品15％OFF！\n👉https://t.co/eATubpC3iK\n\n💝NO2.3月抽選企画\n@CGCOS_PR\n\nフォロー &amp;RTして頂いた方より抽選で6名様に、#叢雲カゲツ コス衣装、15%OFF割引券をプレゼント!🎁\n🥈割引券-5名様\n🥇衣装-1名様\n\n抽選日：9月30日 https://t.co/Hy5j7hOsZm",
     "tweet_id": "2097874474196750690",
-    "prize_rank": 0,
-    "simple_rt_ok": "UNKNOWN",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097882825240281409",
-    "x_url": "https://x.com/oyatsupanda/status/2097882825240281409",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-08-30T07:45:30Z",
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": "2026-08-30T02:15:48Z"
-    },
-    "keyword_flag": false,
-    "tweet_text": "新発売！ #サポートミートつまむタンパク質キャンペーン 4日目🐼\n毎日10名様に当たる🎁\n\nおやつカルパスのヤガイから！\nつまむタンパク質。 #サポートミート が新発売 ✨\n\n【応募方法】\n①@oyatsupandaをフォロー\n②本投稿をリポスト\n③当選者にDM✉ https://t.co/wpmhorjrUk",
-    "tweet_id": "2097882825240281409",
     "prize_rank": 0,
     "simple_rt_ok": "UNKNOWN",
     "導線": "X"
@@ -3029,48 +2987,6 @@
     "導線": "X"
   },
   {
-    "detail_url": "/twscrape/tweet/2097875363414360521",
-    "x_url": "https://x.com/milk_f_c/status/2097875363414360521",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 100,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_text": "【速報】\n\n／\n『M!LK ARENA TOUR 2026-2027』開催記念🎫\nチケットプレゼントキャンペーン開催！\n＼\n\n抽選で100名様にチケットをプレゼント🎁\n\n① \n@milk_f_c\nをフォロー\n② 本投稿に❤️いいね\n③ 🔁リポスト\n\n当選者にはDMでご連絡いたします📩\nたくさんのご応募お待ちしております！✨\n\n#MILK https://t.co/eNumGzgHMv",
-    "tweet_id": "2097875363414360521",
-    "prize_rank": 0,
-    "simple_rt_ok": "FLAG",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097892561126064340",
-    "x_url": "https://x.com/hawks_pc_/status/2097892561126064340",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_text": "≪ゲーミングPCをプレゼント≫\n\nゲーミングPC\n抽選で10名様にプレゼント‼️\n\nGALLERIA\n🟦Windows 11 Home\n🟦Ryzen7 9800X3D\n🟦GeForce RTX 5080\n\n応募方法 \nフォロー&amp;RT &amp;いいね\n\n皆様のご参加をお待ちしております\n#ゲーミングPC\n#プレゼント企画 https://t.co/Z05PGplTVc",
-    "tweet_id": "2097892561126064340",
-    "prize_rank": 0,
-    "simple_rt_ok": "UNKNOWN",
-    "導線": "X"
-  },
-  {
     "detail_url": "/twscrape/tweet/2097903014963261827",
     "x_url": "https://x.com/rocket0802/status/2097903014963261827",
     "source": "twscrape",
@@ -3175,68 +3091,6 @@
     "導線": "X"
   },
   {
-    "detail_url": "/twscrape/tweet/2097944230161428881",
-    "x_url": "https://x.com/3R_japan3/status/2097944230161428881",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_text": "／\n抽選で10名様に🎁プリンセス ドレス\n＼\n\n▼ 応募方法                                                \n①本アカウント\n@3R_japan3\nをフォロー\n②この投稿をRT＆いいね\n③ 商品をコメントし、当選確率UP!\n\n当選者にはDM\n\n#モニター募集 #プレゼントキャンペーン https://t.co/sBwnqstPYq",
-    "tweet_id": "2097944230161428881",
-    "prize_rank": 0,
-    "simple_rt_ok": "FLAG",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097933865927237827",
-    "x_url": "https://x.com/omumu_sheepple/status/2097933865927237827",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 0,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_text": "【ミニキャラアート募集⋆⑅...✍️】\n\n1人か2人にプレゼント🎁\n無償でミニキャラはあまり描かないので\n抽選ではなく、むむが描きたいなと思うリクエストしてくれた方に描きます、ご了承ください🙇🏻‍♀️՞\n\n🐶参加条件🐶\nフォローとRT必須⚠️\n\n男の子or女の子\n髪型、髪色、持たせたい物などなど。\n\n#無償企画 https://t.co/kPPbQ7IRL6",
-    "tweet_id": "2097933865927237827",
-    "prize_rank": 0,
-    "simple_rt_ok": "FLAG",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097940835736420751",
-    "x_url": "https://x.com/and_habit/status/2097940835736420751",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 0,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": true,
-    "tweet_text": "応募条件を再喝させていただきます🙌\n\n①本アカウント@and_habit をフォロー\n②👇このキャンペーン投稿にいいね\n③👇キャンペーン投稿を引用リポストしていただくと\n当選確率がアップします🩵\n\nたくさんの応募お待ちしております🫶",
-    "tweet_id": "2097940835736420751",
-    "prize_rank": 0,
-    "導線": "X"
-  },
-  {
     "detail_url": "/twscrape/tweet/2097928057780580449",
     "x_url": "https://x.com/and_habit/status/2097928057780580449",
     "source": "twscrape",
@@ -3259,48 +3113,6 @@
     "keyword_flag": false,
     "tweet_text": "いつもありがとうございます✨\nand Habitはまもなく10周年🤍\n\nより快適にお買い物いただけるよう、\n公式オンラインストアをリニューアルしました🎵\n\n日頃の感謝の気持ちをたっぷり込めて...\n豪華プレゼントが合計100名様に当たる\n特別キャンペーンを開催します🎁👇\n\nフォロー&リポストしてお待ちいただくと\nお得なクーポンもGETできる👀",
     "tweet_id": "2097928057780580449",
-    "prize_rank": 0,
-    "simple_rt_ok": "OK",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097960044155560305",
-    "x_url": "https://x.com/morimoto2025/status/2097960044155560305",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 0,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_text": "#プレゼントキャンペーン開催中\n／\n抽選で【長袖tシャツ レディース】を 🔟名様に\n＼\n\n▼ 応募方法\n①@morimotoをフォロー\n②この投稿をRT＆いいね\n③ コメントで当選確率UP!\n\n当選者にはDMをお送りいたします♪\n\n#モニター募集 https://t.co/nNJrYwtmcH",
-    "tweet_id": "2097960044155560305",
-    "prize_rank": 0,
-    "simple_rt_ok": "FLAG",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097948241484718255",
-    "x_url": "https://x.com/ene_ene_ee/status/2097948241484718255",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 5,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": "2026-09-18T07:25:24Z",
-      "zin20120731": "2026-09-18T03:26:58Z",
-      "TankanNotes": "2026-09-18T05:29:22Z"
-    },
-    "keyword_flag": false,
-    "tweet_text": "✦━✦━✦━✦━✦━✦━✦━✦━✦━✦\n 🎀Ene Collection 新作 RTキャンペーン🎀\n✦━✦━✦━✦━✦━✦━✦━✦━✦━✦\n\n新作『Lily’s Whisper』が本日17:00より発売となります❤\n\nフォロー＆RTしてくださった方の中から、\n抽選で【5名様】に『Lily’s Whisper』FULL SETをプレゼント🎁\nさらに、BOOTHの「スキ！❤」が【200件増えるごとに当選者＋1名】！\n\n応募期間 \n～ 2026.09.12 23:59\n\n✦━✦━✦━✦━✦━✦━✦━✦━✦━✦\n\n🎉🎉 新作発売記念 SALE 🎉🎉\n\n単品　　　1,600円 → 【1,300円】\nFULL SET　3,700円 → 【2,750円】\n\n🕒 SALE期間\n2026.09.10 17:00 ～ 2026.10.10 23:59\n\n『Lily’s Whisper』という名前のように、一輪の百合の花を纏うような衣装をぜひVRChatでお楽しみください！✨✨\n\nぜひご参加ください🤍\n\n#Ene_Collection",
-    "tweet_id": "2097948241484718255",
     "prize_rank": 0,
     "simple_rt_ok": "OK",
     "導線": "X"
@@ -3347,153 +3159,6 @@
     "導線": "X"
   },
   {
-    "detail_url": "/twscrape/tweet/2097952077981061139",
-    "x_url": "https://x.com/KenzaiNavi/status/2097952077981061139",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 1,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_text": "\\\\テスコムさんのキャンペーンが13日まで//\nテスコムさんのプレゼンCP🎁を応援‼️\n1台6役！パワフル&amp;多機能！\n👩‍🍳ハンドブレンダー TBL50A\nが1名様に当たる🎁\n\nご応募は\n@TESCOM_JP\nをフォローの上、元ポストをリポスト🔁\n更に当選率🆙情報も！\n\nご参加&amp;詳細は元ポスからお早めに👇☺️",
-    "tweet_id": "2097952077981061139",
-    "prize_rank": 0,
-    "simple_rt_ok": "OK",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097973768882708801",
-    "x_url": "https://x.com/storefgg/status/2097973768882708801",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_text": "🚨🎮 GALLERIA ゲーミングPCプレゼント！🔥\n\n10名様に豪華GALLERIA PCが当たる！💻✨\n\n✅ フォロー\n❤️ いいね\n🔁 リポスト\n👥 友達2人をタグ付け\n\n🎁 今すぐ参加して、最高のゲーミングPCをGET！\n\n#GALLERIA #ゲーミングPC #プレゼント #懸賞 #ゲーム好き https://t.co/bQbAuDY1JM",
-    "tweet_id": "2097973768882708801",
-    "prize_rank": 0,
-    "simple_rt_ok": "FLAG",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097971432135245877",
-    "x_url": "https://x.com/PCSTORET/status/2097971432135245877",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_text": "🚨🎮 GALLERIA ゲーミングPCプレゼント！🔥\n\n10名様に豪華GALLERIA PCが当たる！💻✨\n\n✅ フォロー\n❤️ いいね\n🔁 リポスト\n👥 友達2人をタグ付け\n\n🎁 今すぐ参加して、最高のゲーミングPCをGET！\n\n#GALLERIA #ゲーミングPC #プレゼント #懸賞 #ゲーム好き https://t.co/AH9zWnSyUl",
-    "tweet_id": "2097971432135245877",
-    "prize_rank": 0,
-    "simple_rt_ok": "FLAG",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097973370671272265",
-    "x_url": "https://x.com/kiwamibati_/status/2097973370671272265",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 1,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_text": "／\n🏆Amazonランキング１位獲得✨\n大人気\" #極スタンダード ”マイバチをプレゼント‼️✨\n＼\n\n抽選で1名様にお好きなマイバチ1点をプレゼント🎁\n\n《応募方法》\n❶@Kiwami0724 をフォロー\n❷本ツイートをRT\n❸ #極バチ で感想やコメントを投稿すると当選確率🆙\n\n■締切：本日23時59分59秒まで⏰‼️\n\n●公式ストア：https://t.co/UBsVTuCZow\n●公式LINE：https://t.co/LvI8Ah4G3g",
-    "tweet_id": "2097973370671272265",
-    "prize_rank": 0,
-    "simple_rt_ok": "OK",
-    "導線": "LINE"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097972081254334631",
-    "x_url": "https://x.com/dreamcapsuleCEO/status/2097972081254334631",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 2,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-20T23:11:36Z",
-      "kudou": "DEFER:2026-09-21T21:13:18.858237",
-      "zin20120731": null,
-      "TankanNotes": "DEFER:2026-09-21T19:47:33.099730"
-    },
-    "keyword_flag": false,
-    "tweet_text": "🌟新入荷ガチャ商品プレゼントCP🌟\n\n麻辣湯とトッピングのお得な2個セット🥢\n「麻辣湯アピるチャーム」\n\nフォロー&amp;RP(RT)していただいた方の中から抽選で2名様に全5種セットをプレゼント🎁\n\nドリカプへの入荷日とキャンペーン詳細は↓\n\n#ドリームカプセル #ガチャ専門店 https://t.co/79yRrPD7a2",
-    "tweet_id": "2097972081254334631",
-    "prize_rank": 0,
-    "simple_rt_ok": "OK",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097970961463357769",
-    "x_url": "https://x.com/dreamcapsuleCEO/status/2097970961463357769",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 2,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-20T23:11:36Z",
-      "kudou": "DEFER:2026-09-21T18:26:56.667281",
-      "zin20120731": null,
-      "TankanNotes": "DEFER:2026-09-21T19:34:15.301192"
-    },
-    "keyword_flag": false,
-    "tweet_text": "🌟新入荷ガチャ商品プレゼントCP🌟\n\nランダムのおみくじ付き❣️\n「ゆるみくじ -こいぬ-」\n\nフォロー&amp;RP(RT)していただいた方の中から抽選で2名様に全6種セットをプレゼント🎁\n\nドリカプへの入荷日とキャンペーン詳細は↓\n\n#ドリームカプセル #ガチャ専門店 https://t.co/WbuhxZaWtc",
-    "tweet_id": "2097970961463357769",
-    "prize_rank": 0,
-    "simple_rt_ok": "OK",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097973366585950256",
-    "x_url": "https://x.com/s_manga_net/status/2097973366585950256",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 0,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": "2026-08-31T02:53:27Z"
-    },
-    "keyword_flag": false,
-    "tweet_text": "／\n#集英社創業100周年 記念\n#DEAIBOOKS プレゼントキャンペーン🎁\n＼\n\n図書カードネットギフト1,000円分を当てよう✨\n本投稿リポストで当選確率UP！\n\n▼応募方法\n①@s_manga_netをフォロー\n②下記動画をタップしてオススメされたマンガをシェア👆ˎˊ˗\n\n〆2026.9.30（水）23:59",
-    "tweet_id": "2097973366585950256",
-    "prize_rank": 0,
-    "simple_rt_ok": "FLAG",
-    "導線": "X"
-  },
-  {
     "detail_url": "/twscrape/tweet/2097973359807955343",
     "x_url": "https://x.com/feliz_jp/status/2097973359807955343",
     "source": "twscrape",
@@ -3534,47 +3199,6 @@
     "tweet_id": "2097973359653113919",
     "prize_rank": 0,
     "simple_rt_ok": "OK",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097966491681599701",
-    "x_url": "https://x.com/and_habit/status/2097966491681599701",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 0,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": true,
-    "tweet_text": "応募条件を再度掲載させていただきます🫶\n\n①本アカウント@and_habitをフォロー \n②👇こちらのキャンペーン投稿にいいね \n③👇キャンペーン投稿を引用リポストしていただくと \n当選確率がアップします🩵  \n\nたくさんの応募お待ちしております🫶",
-    "tweet_id": "2097966491681599701",
-    "prize_rank": 0,
-    "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097973631783698680",
-    "x_url": "https://x.com/jfafa364686/status/2097973631783698680",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_text": "✿新商品登場　キャンペーン✿ \n10名様に　#抽選　\nで当たる  \n✿応募方法\n①をフォロー  \n②リツイート＆いいね  \n③興味ある商品番号をコメント   \n\n#モニター企画 #懸賞企画 #プレゼント企画 #モニター募集 #レビュー募集 #試供品 #懸賞 #拡散希望ＲPご協力お願い致します https://t.co/eLKrLGNqWc",
-    "tweet_id": "2097973631783698680",
-    "prize_rank": 0,
-    "simple_rt_ok": "FLAG",
     "導線": "X"
   },
   {
@@ -3636,26 +3260,6 @@
     "tweet_id": "2097983659970273361",
     "prize_rank": 0,
     "導線": "X"
-  },
-  {
-    "detail_url": "/twscrape/tweet/2097977128172069310",
-    "x_url": "https://x.com/itm_nlab/status/2097977128172069310",
-    "source": "twscrape",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 0,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": true,
-    "tweet_text": "※本キャンペーンへの応募には、「ねとらぼメンバーシップ」（無料）への会員登録と、ログイン後に表示される「応募する」ボタンのクリックが必要です。\n※記事内の応募条件をよく読んで、奮ってご応募ください。\n\n【当選確率アップに関する注意事項】\n・当選確率アップを希望する場合は、ねとらぼメンバーシップにログイン後、表示される応募フォームのフリーテキストスペースに、フォローしたご自身のXアカウント名を記載のうえ、ご応募ください。\n\n・引用リポストをした場合は、ご自身の引用リポストのURLを必ず記載してください。URLの記載がない場合、実際に引用リポストしていても当選確率アップの対象外となります。\n\n・フォローと引用リポストの両方の条件を満たした場合は、フォローしたご自身のXアカウント名と、引用リポストのURLの両方を記載してください。\n\n・必ず本キャンペーンの告知ポストを引用リポストしてください。それ以外のポストを引用リポストした場合は、当選確率アップの対象外となります。\n\n・引用リポストのURLに誤りがないようご注意ください。URLが誤っている場合は、当選確率アップの対象外となります。\n\n・非公開アカウントなど、記載いただいたURLから引用リポストを確認できない場合や、引用リポストの内容が条件を満たしていない場合は、当選確率アップの対象外となります。\n\n▼応募はこちらから\nhttps://t.co/ApBKVRQGjA",
-    "tweet_id": "2097977128172069310",
-    "prize_rank": 0,
-    "導線": "会員ID"
   },
   {
     "detail_url": "/cpmeikan/xcp/10/98",
@@ -4140,7 +3744,7 @@
       "atushi16": "2026-08-29T23:20:40Z",
       "kudou": "2026-08-30T12:04:58Z",
       "zin20120731": null,
-      "TankanNotes": null,
+      "TankanNotes": "2026-09-24T06:16:23Z",
       "inobase1-4": "2026-07-25T11:06:35Z"
     },
     "keyword_flag": false,
@@ -4368,10 +3972,10 @@
     "winner_count": 10,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T02:26:24Z",
+      "kudou": "2026-09-24T08:53:02Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T18:19:37.028528"
     },
     "keyword_flag": false,
     "tweet_text": "『Memory of Memorie : A Chill Story』🪄\nアップデート記念SNSキャンペーン‼️\n\nフォロー&リポストで、抽選で10名様に\n【Steam版ダウンロードコード】をプレゼント🎁✨\n\n▼応募方法\n1️⃣ @bexide をフォロー\n2️⃣ このポストをリポスト（RT）\n\n🌏世界中どこからでも応募OK！\n応募は9/24(木)まで！\n\n👇詳細はこちら\nhttps://t.co/7YobFhaudH\n\n#MemoryofMemorie",
@@ -6836,9 +6440,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "2026-09-24T04:20:39Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T04:12:54Z"
     },
     "keyword_flag": false,
     "tweet_id": "2093141520664973493",
@@ -6948,10 +6552,10 @@
     "winner_count": 2,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T05:30:23Z",
+      "kudou": "2026-09-24T03:54:30Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T05:20:24Z"
     },
     "keyword_flag": false,
     "tweet_text": "TILTA #新発売記念キャンペーン🎉\nInsta 360 Luna Ultra用フィルター📸\n\n🎁＜2名様＞\nNDフィルターキット（ND1.2 / ND1.5 / ND1.8 / ND2.1）＋収納ケース\n🎁＜1名様＞\nVNDフィルター＋Starフィルター＋Skin Softeningフィルター＋CPLフィルター＋収納ケース\n\n✨応募方法 \n①フォロー&リポスト\n②コメントで当選確率アップ！  \n\n🗓️当選発表：9/24（木）\n#tiltajapan #lunaultra #プレゼントキャンペーン #プレゼント企画 #懸賞好き",
@@ -9744,10 +9348,10 @@
     "winner_count": 6,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T00:47:36Z",
+      "kudou": "2026-09-24T01:10:20Z",
       "zin20120731": null,
-      "TankanNotes": null,
+      "TankanNotes": "DEFER:2026-09-24T19:47:33.252038",
       "inobase1-4": null
     },
     "keyword_flag": false,
@@ -10670,7 +10274,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "2026-09-24T08:23:58Z",
       "zin20120731": null,
       "TankanNotes": null
     },
@@ -11049,10 +10653,10 @@
     "winner_count": 0,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T00:54:48Z",
+      "kudou": "DEFER:2026-09-24T18:44:58.759226",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T20:11:06.992161"
     },
     "keyword_flag": false,
     "tweet_text": "／\n秋のバンバン祭！来週からスタートッ🤟㊗️\n＼\n\n9月24日(木)より全店一斉ワンコインキャンペーンを開催🎉✨\nアプリ予約も受付中📱✨\n\n当選すればキャンペーン室料が代表者だけでなく家族も友達もみーーんな無料！！\nフォロー&リポストキャンペーンも第2弾実施中！🤟\n※景品詳細は応募規約をご確認ください。\n\n【応募方法】\n①@karaokebanbanをフォロー\n②この投稿をリポストする\n③https://t.co/cueJhutVWgでX連携して結果をチェック！\n\n▼キャンペーン詳細は下記URLをご確認ください\nhttps://t.co/ciTwtKpoqd",
@@ -11116,7 +10720,7 @@
       "atushi16": "DEFER:2026-09-24T14:34:34.456969",
       "kudou": "2026-09-23T23:25:09Z",
       "zin20120731": null,
-      "TankanNotes": "DEFER:2026-09-24T14:18:14.403463"
+      "TankanNotes": "2026-09-24T07:16:12Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100420199216492994",
@@ -11137,7 +10741,7 @@
       "atushi16": null,
       "kudou": "2026-09-15T00:36:05Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T07:35:42Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100148963798360090",
@@ -12272,10 +11876,10 @@
     "winner_count": 5,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T03:16:44Z",
+      "kudou": "DEFER:2026-09-24T21:40:56.731619",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T00:57:36Z"
     },
     "keyword_flag": false,
     "tweet_id": "2088098994337857548",
@@ -13421,9 +13025,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "DEFER:2026-09-25T01:36:59.667872",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T07:26:59Z"
     },
     "keyword_flag": false,
     "tweet_text": "／\n『BEEEEM vol.3』出版記念🎊\nチェキプレゼント企画開催‼️\n＼\n\nRain Tree(@RainTree_RT)から\n綾瀬ことり様(@ayase_kotori_)\nの直筆サイン入りチェキを抽選で1名様にプレゼント🎁\n\n✅応募方法\n1.BEEEEM公式X(@BEEEEM_NEWS)をフォロー\n2.この投稿をいいね＆リポスト\n⭐️.ご自身が撮影した雑誌の表紙を投稿していただいた方は、当選確率がアップ!!\n\n🗓️応募期間\n9/25 23:59 まで\n\n🔗セブンネット:https://t.co/EnGals8yi2\n🔗アマゾン：https://t.co/YR3nXvHnAX\n\n#RainTree #綾瀬ことり #BEEEEM",
@@ -13859,7 +13463,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "2026-09-24T08:01:38Z",
       "zin20120731": null,
       "TankanNotes": null
     },
@@ -13968,9 +13572,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-24T11:24:38.187599",
-      "kudou": null,
+      "kudou": "2026-09-24T01:23:00Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T18:36:52.700555"
     },
     "keyword_flag": false,
     "tweet_text": "🎁🔥【プレゼント企画開催】🔥🎁\n\n日頃の感謝を込めて…✨\n\n＼ 抽選で1名様に ／\n\n💰【10,000円分】プレゼント💰\n\n🎁 PayPay 10,000円分\n🎁 Amazonギフトカード 10,000円分\n\nどちらか好きな方を選べます‼️🔥\n\n【応募方法】\n✅ このアカウントをフォロー\n✅ この投稿をリポスト\n\n☑️ これだけで応募完了‼️\n\n⏰ 応募期間：9月24日\n\n競艇好きも、そうじゃない人も大歓迎🏆\nたくさんのご参加お待ちしてます🔥\n\n#プレゼント企画 #懸賞 #PayPay  #Amazonギフト券 #競艇\n#競艇予想",
@@ -14465,10 +14069,10 @@
     "winner_count": 5,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "DEFER:2026-09-24T20:13:03.693667",
+      "kudou": "DEFER:2026-09-24T18:33:58.044390",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T02:00:56Z"
     },
     "keyword_flag": false,
     "tweet_text": "「NOCTIS REGALIA」を抽選で5名様にギフトプレゼント🎁✨\n幻想的なゴシック王冠で、アバターを華やかに👑\n応募方法\n① @KORUMIN_STUDIO をフォロー\n② この投稿をリポスト（RT）\n⏰ 締切 9月24日 0:59\nNOCTIS REGALIA | KORUMIN STUDIO https://t.co/4ueJape34N\n#VRChat",
@@ -14887,10 +14491,10 @@
     "winner_count": 0,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "DEFER:2026-09-24T21:23:21.091186",
+      "kudou": "DEFER:2026-09-24T18:56:16.892684",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T01:07:36Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100464772525269164",
@@ -15518,10 +15122,10 @@
     "winner_count": 5,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T01:59:45Z",
+      "kudou": "DEFER:2026-09-24T17:14:33.612284",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T18:34:32.892648"
     },
     "keyword_flag": false,
     "tweet_id": "2097490269985980779",
@@ -15936,8 +15540,8 @@
     "winner_count": 0,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T05:41:58Z",
+      "kudou": "DEFER:2026-09-25T01:18:15.524806",
       "zin20120731": null,
       "TankanNotes": null
     },
@@ -16352,8 +15956,8 @@
     "winner_count": 5,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T05:26:03Z",
+      "kudou": "DEFER:2026-09-25T02:27:42.605281",
       "zin20120731": null,
       "TankanNotes": null
     },
@@ -16574,7 +16178,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "2026-09-24T06:11:37Z",
       "zin20120731": null,
       "TankanNotes": null
     },
@@ -16595,7 +16199,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "2026-09-24T06:10:32Z",
       "zin20120731": null,
       "TankanNotes": null
     },
@@ -16762,10 +16366,10 @@
     "winner_count": 3,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T04:44:49Z",
+      "kudou": "2026-09-24T05:08:24Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T06:03:32Z"
     },
     "keyword_flag": false,
     "tweet_text": "🍐旬の味覚プレゼントキャンペーン🎉\n\n日本の梨を抽選で3名様にプレゼント！\n\n参加方法👇\n①フォロー\n②リポスト\n③いいね♡\n\n⏰締切：9月24日23:59\n\nみずみずしくて甘い旬の梨をぜひ🍐✨\n\n#梨 #和梨 #プレゼント企画 #懸賞 #キャンペーン #旬の果物 https://t.co/zcLIwOoAeJ",
@@ -16783,10 +16387,10 @@
     "winner_count": 5,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T01:52:13Z",
+      "kudou": "DEFER:2026-09-24T19:49:17.005978",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T18:04:51.025085"
     },
     "keyword_flag": false,
     "tweet_text": "🍅兵庫県産トマト好き必見企画🍅\n\n『兵庫県産🍅トマト（7,000円相当）』\n\n抽選で5名様にプレゼント✨\n\n【応募方法はこちら⬇️】\n・本アカウントをフォロー\n・リポスト🔁＆いいね❤️\n\n応募締切：9/24 23:59\n\n#懸賞 #プレゼント企画 #キャンペーン #懸賞好きさんと繋がりたい #プレゼント #兵庫県産トマト https://t.co/1ZB4x6Q488",
@@ -17078,10 +16682,10 @@
     "winner_count": 3,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T02:31:23Z",
+      "kudou": "DEFER:2026-09-24T19:51:32.440766",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T18:05:19.245999"
     },
     "keyword_flag": false,
     "tweet_text": "🎁発売前記念プレゼント企画🎁\n🔗https://t.co/JUR6QUWCxB\n\n9/24日13:01販売\n【GIGA+TEC [陸]】\n\nこの投稿をRT+フォロー抽選3名様に\n【GIGA+TEC [陸]】セットをプレゼント\n\nBOOTHの「スキ」が+200増えるごとに\n当選者が+1されます\n応募期限:9/23まで\n\n初日SALE実施予定\n#三原色工房 #VRChat  \n\n【企画詳細】\n①Boothのスキ数が200増えるごとに当選者が1名増加\nhttps://t.co/JUR6QUWCxB\n②鍵アカ、懸賞用アカは無効となります。\n③当選者の発表は締め切後にツイートにて連絡させていただきます。\n④BOOTHのギフト機能でDMにてお送りします。\n（当選者はDMが送れるよう設定をお願いします）",
@@ -17393,10 +16997,10 @@
     "winner_count": 100,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T04:51:00Z",
+      "kudou": "2026-09-24T05:10:17Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T03:51:48Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100057085006217485",
@@ -17457,9 +17061,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-24T08:06:29.134019",
-      "kudou": "DEFER:2026-09-24T13:03:04.540393",
+      "kudou": "DEFER:2026-09-24T20:53:51.298881",
       "zin20120731": null,
-      "TankanNotes": "DEFER:2026-09-24T14:13:00.158289"
+      "TankanNotes": "2026-09-24T14:18:42.973079"
     },
     "keyword_flag": false,
     "tweet_id": "2097882774745022515",
@@ -17478,9 +17082,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-21T01:12:50Z",
-      "kudou": null,
+      "kudou": "DEFER:2026-09-24T17:11:13.457095",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T01:12:09Z"
     },
     "keyword_flag": false,
     "tweet_id": "2097127782811652551",
@@ -17498,10 +17102,10 @@
     "winner_count": 100,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "DEFER:2026-09-24T19:58:32.228167",
+      "kudou": "DEFER:2026-09-24T16:59:38.128351",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T00:55:55Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100766870488150299",
@@ -17539,10 +17143,10 @@
     "winner_count": 3,
     "days_remaining": "",
     "applied": {
-      "atushi16": "DEFER:2026-09-23T17:54:39.696975",
+      "atushi16": "2026-09-24T03:23:31Z",
       "kudou": "2026-09-23T05:30:39Z",
       "zin20120731": "DEFER:2026-09-23T23:38:59.012138",
-      "TankanNotes": "DEFER:2026-09-23T17:05:07.030390"
+      "TankanNotes": "2026-09-24T01:03:04Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100751668111692080",
@@ -17560,10 +17164,10 @@
     "winner_count": 10,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T12:05:48.909041",
+      "kudou": "DEFER:2026-09-24T17:54:32.588809",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T20:10:07.131642"
     },
     "keyword_flag": false,
     "tweet_id": "2100721466916442406",
@@ -17602,10 +17206,10 @@
     "winner_count": 10,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T05:35:45Z",
+      "kudou": "2026-09-24T16:14:46.366282",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T23:15:26.738250"
     },
     "keyword_flag": false,
     "tweet_id": "2100751662298157411",
@@ -17623,10 +17227,10 @@
     "winner_count": 10,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T00:43:13Z",
+      "kudou": "DEFER:2026-09-24T18:25:19.509268",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T01:01:07Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100857363938877744",
@@ -17644,10 +17248,10 @@
     "winner_count": 50,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T05:23:10Z",
+      "kudou": "2026-09-24T05:55:08Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T06:25:31Z"
     },
     "keyword_flag": false,
     "tweet_id": "2099770383897710616",
@@ -17709,10 +17313,10 @@
     "winner_count": 2,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T02:36:04Z",
+      "kudou": "DEFER:2026-09-24T19:05:10.183834",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T16:54:02.066076"
     },
     "keyword_flag": false,
     "tweet_id": "2100781887287595060",
@@ -17795,10 +17399,10 @@
     "winner_count": 10,
     "days_remaining": "",
     "applied": {
-      "atushi16": "DEFER:2026-09-23T19:22:02.556638",
-      "kudou": "DEFER:2026-09-24T00:21:06.854936",
+      "atushi16": "DEFER:2026-09-24T19:06:10.959437",
+      "kudou": "DEFER:2026-09-24T21:45:59.773970",
       "zin20120731": "2026-09-23T05:30:39Z",
-      "TankanNotes": "DEFER:2026-09-23T16:10:01.911399"
+      "TankanNotes": "2026-09-24T02:36:18Z"
     },
     "keyword_flag": false,
     "tweet_id": "2098320649647263850",
@@ -17839,10 +17443,10 @@
     "winner_count": 10,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T01:41:32Z",
+      "kudou": "2026-09-24T01:12:18Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T20:28:29.819735"
     },
     "keyword_flag": false,
     "tweet_id": "2099767423431770576",
@@ -17882,9 +17486,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "2026-09-24T07:27:50Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T04:46:16Z"
     },
     "keyword_flag": false,
     "tweet_id": "2099329113664422364",
@@ -17902,10 +17506,10 @@
     "winner_count": 3,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T03:07:02Z",
+      "kudou": "2026-09-24T01:30:14Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T20:25:57.114970"
     },
     "keyword_flag": false,
     "tweet_id": "2100057108989587562",
@@ -17924,7 +17528,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "2026-09-24T04:03:35Z",
       "zin20120731": null,
       "TankanNotes": "2026-09-17T03:19:47Z"
     },
@@ -17964,10 +17568,10 @@
     "winner_count": 10,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "DEFER:2026-09-24T22:10:28.115878",
+      "kudou": "2026-09-24T03:45:00Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T13:42:16.711279"
     },
     "keyword_flag": false,
     "tweet_id": "2100389275787550974",
@@ -17986,9 +17590,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-17T02:24:19Z",
-      "kudou": "DEFER:2026-09-23T20:58:09.342840",
+      "kudou": "DEFER:2026-09-24T23:41:16.649611",
       "zin20120731": "2026-09-23T05:30:39Z",
-      "TankanNotes": "DEFER:2026-09-23T16:48:50.038576"
+      "TankanNotes": "2026-09-24T06:34:39Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100932852871213060",
@@ -18009,7 +17613,7 @@
       "atushi16": "2026-09-23T05:30:39Z",
       "kudou": "2026-09-23T05:30:39Z",
       "zin20120731": "DEFER:2026-09-24T02:39:44.422154",
-      "TankanNotes": "DEFER:2026-09-23T16:34:25.259890"
+      "TankanNotes": "2026-09-24T02:47:32Z"
     },
     "keyword_flag": false,
     "tweet_id": "2102216321455014168",
@@ -18028,7 +17632,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-23T05:30:39Z",
-      "kudou": "DEFER:2026-09-23T20:23:02.242548",
+      "kudou": "2026-09-24T07:52:29Z",
       "zin20120731": "2026-09-23T05:30:39Z",
       "TankanNotes": "2026-09-23T05:30:39Z"
     },
@@ -18048,10 +17652,10 @@
     "winner_count": 2,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T00:38:32Z",
+      "kudou": "DEFER:2026-09-24T18:00:09.655786",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T17:25:10.412191"
     },
     "keyword_flag": false,
     "tweet_id": "2092149308779110640",
@@ -18090,10 +17694,10 @@
     "winner_count": 10,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T01:43:28Z",
+      "kudou": "DEFER:2026-09-24T20:05:57.363093",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T18:27:46.267271"
     },
     "keyword_flag": false,
     "tweet_id": "2100774376899752358",
@@ -18111,10 +17715,10 @@
     "winner_count": 10,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "DEFER:2026-09-24T19:01:20.136056",
+      "kudou": "DEFER:2026-09-24T19:45:32.307086",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T02:07:22Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100057100257030357",
@@ -18153,10 +17757,10 @@
     "winner_count": 20,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "DEFER:2026-09-24T20:47:18.863862",
+      "kudou": "DEFER:2026-09-24T20:35:07.120041",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T02:54:56Z"
     },
     "keyword_flag": false,
     "tweet_id": "2097867660319240667",
@@ -18175,7 +17779,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-23T23:12:50Z",
-      "kudou": "DEFER:2026-09-24T14:22:18.980702",
+      "kudou": "2026-09-24T05:40:22Z",
       "zin20120731": "2026-09-17T01:48:21Z",
       "TankanNotes": "2026-09-17T02:07:58Z"
     },
@@ -18215,10 +17819,10 @@
     "winner_count": 5,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T00:36:34Z",
+      "kudou": "2026-09-24T08:56:50Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T18:31:27.531870"
     },
     "keyword_flag": false,
     "tweet_id": "2100781865275924719",
@@ -18279,9 +17883,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "DEFER:2026-09-23T21:28:00.783299",
-      "kudou": "DEFER:2026-09-23T21:18:18.078816",
+      "kudou": "2026-09-24T04:25:54Z",
       "zin20120731": "2026-09-23T05:30:39Z",
-      "TankanNotes": "DEFER:2026-09-23T18:30:25.324919"
+      "TankanNotes": "2026-09-24T03:55:28Z"
     },
     "keyword_flag": false,
     "tweet_id": "2096765400566366514",
@@ -18320,10 +17924,10 @@
     "winner_count": 10,
     "days_remaining": "",
     "applied": {
-      "atushi16": "DEFER:2026-09-23T19:05:45.839063",
-      "kudou": "DEFER:2026-09-23T21:07:42.231717",
+      "atushi16": "2026-09-24T03:14:23Z",
+      "kudou": "2026-09-24T01:15:25Z",
       "zin20120731": "2026-09-23T05:30:39Z",
-      "TankanNotes": "DEFER:2026-09-23T22:50:50.388008"
+      "TankanNotes": "DEFER:2026-09-24T20:18:15.783625"
     },
     "keyword_flag": false,
     "tweet_id": "2100525167281893833",
@@ -18342,7 +17946,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-23T23:13:22Z",
-      "kudou": "DEFER:2026-09-24T14:31:02.279013",
+      "kudou": "2026-09-24T05:40:22Z",
       "zin20120731": "2026-09-17T01:48:21Z",
       "TankanNotes": "2026-09-17T02:07:58Z"
     },
@@ -18447,7 +18051,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "2026-09-24T06:19:26Z",
       "zin20120731": null,
       "TankanNotes": null
     },
@@ -18550,10 +18154,10 @@
     "winner_count": 3,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T02:00:16Z",
+      "kudou": "DEFER:2026-09-24T17:28:45.359525",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T17:19:05.518472"
     },
     "keyword_flag": false,
     "tweet_id": "2093209637764124707",
@@ -18572,7 +18176,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "2026-09-24T03:48:02Z",
       "zin20120731": null,
       "TankanNotes": null
     },
@@ -18613,9 +18217,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": null,
-      "kudou": null,
+      "kudou": "2026-09-24T09:04:29Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T05:23:04Z"
     },
     "keyword_flag": false,
     "tweet_id": "2098264591088447564",
@@ -18657,7 +18261,7 @@
       "atushi16": "2026-09-23T05:30:39Z",
       "kudou": "2026-09-23T05:30:39Z",
       "zin20120731": "2026-09-23T05:30:39Z",
-      "TankanNotes": "DEFER:2026-09-23T19:47:33.070214"
+      "TankanNotes": "2026-09-24T04:08:09Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100428278133563659",
@@ -18718,9 +18322,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-23T05:30:39Z",
-      "kudou": "DEFER:2026-09-23T19:36:35.530936",
+      "kudou": "2026-09-24T04:30:45Z",
       "zin20120731": "DEFER:2026-09-24T01:42:21.605946",
-      "TankanNotes": "DEFER:2026-09-23T21:50:16.646133"
+      "TankanNotes": "2026-09-24T05:28:48Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100464771883815140",
@@ -18739,7 +18343,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-24T10:38:44.862663",
-      "kudou": null,
+      "kudou": "DEFER:2026-09-24T18:59:51.448707",
       "zin20120731": null,
       "TankanNotes": "DEFER:2026-09-24T17:52:13.530594"
     },
@@ -18760,9 +18364,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-23T05:30:39Z",
-      "kudou": "DEFER:2026-09-23T22:38:41.091140",
+      "kudou": "DEFER:2026-09-24T17:39:05.585401",
       "zin20120731": "DEFER:2026-09-24T02:40:44.843723",
-      "TankanNotes": "DEFER:2026-09-23T19:40:04.426918"
+      "TankanNotes": "2026-09-24T02:42:55Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100736565513216134",
@@ -18781,9 +18385,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-23T05:30:39Z",
-      "kudou": "DEFER:2026-09-23T20:06:18.202857",
+      "kudou": "2026-09-24T07:16:13Z",
       "zin20120731": "2026-09-23T05:30:39Z",
-      "TankanNotes": "DEFER:2026-09-23T16:06:34.301657"
+      "TankanNotes": "2026-09-24T07:21:40Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100751665850880046",
@@ -18821,10 +18425,10 @@
     "winner_count": 6,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T03:09:52Z",
+      "kudou": "DEFER:2026-09-24T20:24:07.703035",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T18:38:00.430793"
     },
     "keyword_flag": false,
     "tweet_id": "2094348982600503516",
@@ -18864,7 +18468,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-17T00:15:31Z",
-      "kudou": null,
+      "kudou": "2026-09-24T03:42:48Z",
       "zin20120731": "2026-09-17T08:24:14Z",
       "TankanNotes": null
     },
@@ -18885,9 +18489,9 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-23T05:30:39Z",
-      "kudou": "DEFER:2026-09-23T19:09:51.577253",
+      "kudou": "2026-09-24T05:52:23Z",
       "zin20120731": "DEFER:2026-09-23T20:28:53.867564",
-      "TankanNotes": "DEFER:2026-09-23T21:28:54.294543"
+      "TankanNotes": "2026-09-24T05:38:40Z"
     },
     "keyword_flag": false,
     "tweet_id": "2100770947347468685",
@@ -18906,7 +18510,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-23T05:30:39Z",
-      "kudou": "DEFER:2026-09-23T20:39:58.473613",
+      "kudou": "2026-09-24T04:40:35Z",
       "zin20120731": "2026-09-23T05:30:39Z",
       "TankanNotes": "2026-09-23T05:30:39Z"
     },
@@ -18947,10 +18551,10 @@
     "winner_count": 4,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T03:17:12Z",
+      "kudou": "DEFER:2026-09-24T20:04:13.261250",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T00:58:40Z"
     },
     "keyword_flag": false,
     "tweet_id": "2093223158413471877",
@@ -19033,7 +18637,7 @@
       "atushi16": "2026-09-23T05:30:39Z",
       "kudou": "2026-09-23T05:30:39Z",
       "zin20120731": "2026-09-23T05:30:39Z",
-      "TankanNotes": "DEFER:2026-09-23T21:31:36.200051"
+      "TankanNotes": "2026-09-24T02:39:13Z"
     },
     "keyword_flag": false,
     "tweet_id": "2101952572030361666",
@@ -19054,7 +18658,7 @@
       "atushi16": "2026-09-23T05:30:39Z",
       "kudou": "2026-09-23T05:30:39Z",
       "zin20120731": "2026-09-23T05:30:39Z",
-      "TankanNotes": "DEFER:2026-09-23T19:45:25.904257",
+      "TankanNotes": "2026-09-24T03:57:24Z",
       "inobase1-4": "2026-09-23T05:30:39Z",
       "royalkensho": "2026-09-23T05:30:39Z"
     },
@@ -19074,10 +18678,10 @@
     "winner_count": 3,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T04:40:58Z",
+      "kudou": "2026-09-24T05:44:01Z",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T06:06:24Z"
     },
     "keyword_flag": false,
     "tweet_id": "2098335759824748609",
@@ -19117,10 +18721,10 @@
     "winner_count": 3,
     "days_remaining": "",
     "applied": {
-      "atushi16": "DEFER:2026-09-23T18:13:08.129405",
-      "kudou": "DEFER:2026-09-23T20:04:28.193367",
+      "atushi16": "2026-09-24T03:14:23Z",
+      "kudou": "2026-09-24T01:14:24Z",
       "zin20120731": "2026-09-23T05:30:39Z",
-      "TankanNotes": "DEFER:2026-09-23T19:59:38.416550"
+      "TankanNotes": "DEFER:2026-09-25T00:59:50.493435"
     },
     "keyword_flag": false,
     "tweet_id": "2100835593471037552",
@@ -19952,10 +19556,10 @@
     "winner_count": 3,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T04:37:18Z",
+      "kudou": "DEFER:2026-09-25T00:35:19.773813",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "2026-09-24T13:44:34.528486"
     },
     "keyword_flag": false,
     "tweet_text": "🎁新作衣装リリース記念！RPキャンペーン🎁\n\n#あねもね製作所　新作3D衣装 \n『夜明けの葬花 -緋華-』\n\n📅9/25 18:00～販売予定\n\n新作衣装のリリースを記念して、\n抽選で3名さまにプレゼントいたします！\n\nさらにBOOTHページの♡スキ!が\n100増えるごとに当選者+1名🙌\n\n----------------------------------------\n🏮参加方法🏮\n① このアカウントをフォロー \n② この投稿をRP（リポスト）  \n\n⛩️締め切り⛩️\n9月24日 23:59\n---------------------------------------- \n\nたくさんのご参加お待ちしてます‼️\n\n#VRChat #VRChat衣装",
@@ -20015,10 +19619,10 @@
     "winner_count": 5,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
-      "kudou": null,
+      "atushi16": "2026-09-24T02:43:25Z",
+      "kudou": "DEFER:2026-09-24T18:33:52.780794",
       "zin20120731": null,
-      "TankanNotes": null
+      "TankanNotes": "DEFER:2026-09-24T18:19:49.235262"
     },
     "keyword_flag": false,
     "tweet_text": "／#プレゼントキャンペーン🎁🎁\n📣\n＼お菓子福袋🛍️\n🙌5名様に #プレゼント 🎁🎁\n\n⏬応募方法 ⏬\n✅@Robebe_Campaignをフォロー \n\n✅本投稿をリポスト \n\n⏰9月25日 23:59まで 当選者はDM \n#拡散希望 \n#キャンペーン \n#フォローRTキャンペーン https://t.co/kf2WPLv0nN",
@@ -20205,27 +19809,6 @@
     "導線": "X"
   },
   {
-    "detail_url": "/cpmeikan/xcp/2/12",
-    "x_url": "https://x.com/i/web/status/2099814919181152362",
-    "source": "cpmeikan",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 0,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2099814919181152362",
-    "prize_rank": 0,
-    "tweet_text": "#JA阿蘇 から #利平栗🌰5kgを10名様に #プレゼント🎁\n9/22(火)締切\n応募方法\n✅@radio2ji6jiをフォロー\n✅このXをリポスト\n当選者にはDMにてご連絡します。\n応募はハガキ・メール・FaxでもOK。\n発送はJA阿蘇からとなります\n\n生産者へ応援📣メッセージも🙇‍♀️\nご応募お待ちしております🤗 https://t.co/cGx90uHVlz",
-    "simple_rt_ok": "UNKNOWN",
-    "導線": "X"
-  },
-  {
     "detail_url": "/cpmeikan/xcp/3/20",
     "x_url": "https://x.com/i/web/status/2100744109669654874",
     "source": "cpmeikan",
@@ -20242,28 +19825,7 @@
     "keyword_flag": false,
     "tweet_id": "2100744109669654874",
     "prize_rank": 0,
-    "tweet_text": "【お月見味ぽんキャンペーン withヨード卵・光＆かねふく】\n3アカウント同時開催！お月見シーズンをとことん楽しみましょう！\n❶ @ajipon_mizkan @yodoran1976 @Mentai_Kanefuku をフォロー\n❷ 画像記載のハッシュタグをつけてこの投稿を引用リポスト（味ぽん×卵のレシピをつけてくれると嬉しいです）",
-    "simple_rt_ok": "UNKNOWN",
-    "導線": "X"
-  },
-  {
-    "detail_url": "/cpmeikan/xcp/3/22",
-    "x_url": "https://x.com/i/web/status/2100963058478731315",
-    "source": "cpmeikan",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 0,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100963058478731315",
-    "prize_rank": 0,
-    "tweet_text": "／\n第2弾\nグルメジャックポット #キャンペーン\n＼\n本日からスタート📢\n\nフォロー＆RPで\n　3名様に「バニラホットケーキ（10セット）」が当たるチャンス🎁\n\n▼応募方法\n\n①@apita_piago_uny\n をフォロー\n②この投稿をRP\n※当選者にのみDM送付\n\n▼応募規約は画像をタップ▼",
+    "tweet_text": "◤　#TGS2026 出展記念\n　　STORMゲーミングPC\n　プレゼントキャンペーン  ◢\n\n抽選で1名様に\n「STORM ゲーミングPC 影界」をプレゼント\n\n■応募方法\n①@sofmap_gaming &amp; @storm_btopc をフォロー\n②このポストを #ソフマップTGS2026出展記念 をつけて引用リポスト\n③アンケートを回答⇩ https://t.co/yPPsgWz2R9",
     "simple_rt_ok": "UNKNOWN",
     "導線": "X"
   },
@@ -20329,27 +19891,6 @@
     "tweet_text": "#ATイベント\n\nファンデーションをそのままクッションに！\n新商品 #スキンレイヤーフィットクッションMINI を\n抽選で5名様にプレゼント！✨\n\n✅参加方法\n1. @about___tone_jp フォロー&amp;いいね\n2. この投稿をいいね&amp;リツイート\n💫引用リツイートで当選率UP\n\n✅プレゼント https://t.co/XoRpk2RqKZ",
     "simple_rt_ok": "UNKNOWN",
     "導線": "X"
-  },
-  {
-    "detail_url": "/cpmeikan/xcp/4/38",
-    "x_url": "https://x.com/i/web/status/2100857356246757681",
-    "source": "cpmeikan",
-    "time": 0.0,
-    "deadline": "",
-    "winner_count": 0,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100857356246757681",
-    "prize_rank": 0,
-    "導線": "未判定",
-    "tweet_text": "˚⊹⁺‧┈┈┈┈┈┈┈┈┈┈┈┈‧⁺ ⊹˚.\n　　　　🌸さくらみこ🌸\n  Stationheadフォローキャンペーン\n˚⊹⁺‧┈┈┈┈┈┈┈┈┈┈┈┈‧⁺ ⊹˚.\n\n抽選で10名様にオリジナルのジャケットステッカーセットをプレゼント❕ https://t.co/jTtPSogaIM",
-    "simple_rt_ok": "UNKNOWN"
   },
   {
     "detail_url": "/cpmeikan/xcp/5/40",
@@ -20449,6 +19990,1844 @@
     "導線": "X"
   },
   {
+    "detail_url": "/kenshouclub/archives/953068",
+    "x_url": "https://x.com/BLUENOVA_JP/status/2102594078638752086",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-30",
+    "winner_count": 2000,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": "2026-09-21T06:33:29Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2102594078638752086",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "🌙#ルナの初通信回線テスト ！\n＼ Wチャンスキャンペーン ／\n\n応募方法\n①公式Xアカウント（@BLUENOVA_JP)をフォロー\n②本ポストをリポスト\n③専用ページで抽選結果確認！\n\nWチャンスでもう1回抽選が！\n詳しくは👇\nhttps://t.co/wBGWEtel89 https://t.co/xW1FQh9EaE",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/953016",
+    "x_url": "https://x.com/urawa_keiba/status/2100781880127672584",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 100,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100781880127672584",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "🍂シルバーウィークは浦和競馬で締めくくり！キャンペーン🏇💫\n\n🌟9/23(祝水)は #オーバルスプリント(JpnIII)🌟\n\n抽選で100名様にQUOカードPay【2,000円分】をプレゼント🎁\n\nキャンペーンに参加して､秋の浦和競馬を楽しもう👀🍁\n\n1⃣@urawa_keibaをフォロー\n2⃣この投稿をリポスト\n\n詳細は⏬ https://t.co/HCRPMnYlaf",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/953028",
+    "x_url": "https://x.com/coop_kyosai/status/2099324756558278967",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099324756558278967",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "／\nお誕生前申し込み 申込者5万人🎊\nありがとうキャンペーン第3弾✨\n＼\nフォロー&amp;選んで投稿！\n抽選で5名様にヤーマン リフトドライヤー スマートが当たる🎁\n\n📌応募方法 9/25 〆切\n①@coop_kyosai をフォロー\n②お誕生前申し込みが可能な《たすけあい》J1000円コースの気になる特長を選んで投稿！",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/953046",
+    "x_url": "https://x.com/aohata_official/status/2100783145461387476",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 25,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": "2026-09-14T00:53:30Z",
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": true,
+    "tweet_id": "2100783145461387476",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "祝 フォロワー20万人🎉\n日頃の感謝を込めてプレゼントキャンペーン🍓✨\n\nこの1年、特に人気のレシピを振り返りながら、皆さんにもぜひこの余韻に浸っていただきたく…\n抽選で【55ジャム全9種】をお届け🎁\n\n▼応募方法▼\n①＠aohata_official をフォロー\n②食べたいレシピを書いてこの投稿を引用ポスト https://t.co/2765pam9Yk"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/953040",
+    "x_url": "https://x.com/niccolino_offl/status/2098335745274703929",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 50,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098335745274703929",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "🥳フォロワー10万人ありがとうキャンペーン開催🥳\n\n抽選で50名様に\n🌵「おおきなサボテンのぬいぐるみ」をプレゼント！\n\n🗳️応募方法\n① このアカウント(@niccolino_offl)をフォロー\n② この投稿をリポスト\n\nたくさんのご応募をお待ちしております✨\n\n#にっこりーノ #キャンペーン https://t.co/aFFqymilQx",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/953034",
+    "x_url": "https://x.com/ZIPAIRTokyo/status/2097882811462213720",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2097882811462213720",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "＼ 搭乗者数500万人達成記念！キャンペーン第1弾！ ／\n\n皆さまとともに歩んできた感謝を込めて、スペシャルキャンペーン第1弾を開始いたします✈️💚\n\n記念すべき第1弾は…\nホノルル線往復相当分のZIPAIRポイントを5名さまにプレゼント🎁🌺\n\nフォロー＆リポストでぜひご応募ください！ https://t.co/jiBqQToHtZ",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/953025",
+    "x_url": "https://x.com/dreamplaza3360/status/2100751714618081737",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100751714618081737",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "＼🍺フォロー＆リポストで当たる🍺／\n5組10名様に【#ビールナイトクルーズ】ペアチケットをプレゼント🎁✨\n\n乗船日は4日間から選べます👇\n10月3日(土)・9日(金)・16日(金)・24日(土)\n\n【応募方法】\n① @dreamplaza3360と@cruise_event_ をフォロー\n②この投稿をリポスト\n③当選者へDM https://t.co/4tIG5q9Kpj",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952929",
+    "x_url": "https://x.com/yowapeda_ism/status/2101129146730467535",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 50,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T04:30:18Z",
+      "kudou": "2026-09-24T04:30:18Z",
+      "zin20120731": "2026-09-24T04:30:18Z",
+      "TankanNotes": "DEFER:2026-09-24T22:27:40.484012",
+      "inobase1-4": "2026-09-24T04:30:18Z",
+      "royalkensho": "2026-09-24T04:30:18Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101129146730467535",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "◤￣￣￣￣￣￣￣￣￣￣￣\n　シルバーウィークは #ペダイズ だ！\n　　プレゼントキャンペーン🍁🎉\n　　　＿＿＿＿＿＿＿＿＿＿＿＿＿◢\n\n✨ゲームオリジナルBIG缶バッジ(全15種各1名様)✨\n＆Amazonギフトカード(最大10,000円分)が\n抽選で合計50名様に当たる🎁\n\n▼参加方法\n1⃣本アカウントをフォロー https://t.co/QNYp32aU3s",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952983",
+    "x_url": "https://x.com/sweet_twjp/status/2098350250826301454",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 15,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T04:30:18Z",
+      "kudou": "2026-09-24T04:30:18Z",
+      "zin20120731": "2026-09-24T04:30:18Z",
+      "TankanNotes": "DEFER:2026-09-24T22:49:13.826934"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098350250826301454",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "🎁#sweetプレキャン🎁\n美容好きが「使うたび荒れにくい！」と絶賛🫶\n#アベンヌ のCICAリップを抽選で【15名様】にプレゼント\n\nこれからの秋の乾燥対策に🍁\n塗るだけでぷるつや唇になれるお守りリップをGETしてね🥺✨\n\n応募方法\n① @sweet_twjp をフォロー\n② この投稿をリポスト\n\n締切:9/25(金) 23:59 https://t.co/iH1AmqW2Al",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952902",
+    "x_url": "https://x.com/yodobashi_kawa/status/2101241366147952728",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 1,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T04:30:18Z",
+      "kudou": "2026-09-24T04:30:18Z",
+      "zin20120731": null,
+      "TankanNotes": "2026-09-24T04:30:18Z",
+      "inobase1-4": "2026-09-24T04:30:18Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101241366147952728",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "9/26（土）・27（日）11時～18時🕙\n#ヨドバシ川崎 B1F家電売場にて\nShark新製品実演イベントを開催❗️\n\n9/25新発売の空気清浄機\n【Shark BreatheClear ブラック】を\n抽選で1⃣名様にプレゼント🎁\nhttps://t.co/BB52MQAY8z\n\n応募方法⬇️\n✅フォロー＆RP\n✅この商品を使いたい場所をリプライ✍️\n✅9/25まで https://t.co/NaTEFIk8RW",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952950",
+    "x_url": "https://x.com/Ume_bsfuji/status/2100781944766341192",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 50,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": true,
+    "tweet_id": "2100781944766341192",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "/／\n本日公開 映画🎬\n『踊る大捜査線 N.E.W. 』を記念して\n💓「踊るフムフムン めじるしチャーム」を\n抽選で50名様にプレゼント🎁\n\\＼\n \n① @Ume_bsfuji をフォロー\n② @fumfumun をフォロー\n③ この投稿を「#踊るフムフムン」を付けて引用ポスト\n▶締切：9/25(金) 11:59\nhttps://t.co/zlJ1OuB4fH https://t.co/svJip1QF6I"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952938",
+    "x_url": "https://x.com/GRANDSUMMONERS/status/2100872719969739043",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": "2026-09-23T07:12:42Z",
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100872719969739043",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "グラサマ×ガチアクタコラボ記念\nアクリルスタンド&amp;アクリルキーホルダーセットが10名様に当たる！🎁\n1⃣@GRANDSUMMONERS\nをフォロー\n\n2⃣このポストに\n「ルド」か「エンジン」ほしい方の名前をリプライ\n応募は9/25 23:59まで！\n\nガチアクタコラボ開催中！\n#グラサマ #ガチアクタ #GACHIAKUTA https://t.co/XiSda9c06Q",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952935",
+    "x_url": "https://x.com/LoNLy__official/status/2101102873316852118",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101102873316852118",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "📢#RTイベント\n＼ 抽選で 5名様 にプレゼント🎁 ／\n\n🎀 応募方法 ① @LoNLy__official をフォロー  ② この投稿を RT ③ 欲しいカラー/ハイライトセラムの【カラー番号】を1つずつコメント📝\n\n📅 応募期間：9/19（土）〜 9/25（金）\n📩 当選者発表：9/29（火） 当選者の方のみDM にてご連絡。 https://t.co/csNdQYiEEL",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952890",
+    "x_url": "https://x.com/kadokawa_eve/status/2102352207178035414",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 1,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-21T23:06:44Z",
+      "kudou": "DEFER:2026-09-24T20:16:13.927712",
+      "zin20120731": "2026-09-24T04:30:18Z",
+      "TankanNotes": "2026-09-24T04:30:18Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2102352207178035414",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "/／\nアニメ好きの方へ\n秋のスペシャルキャンペーン🍁\n\\＼\n\nXiaomi Pad 8 パイングリーン\n（8GB + 128GB）\nが抽選で【1名様】に当たる✨\n\n🎯応募方法\n1️⃣本アカウントをフォロー\n2️⃣この投稿をリポスト（RP）\n📆締切：9/25(金) 23:59まで\n\n📝応募規約はこちら\nhttps://t.co/AaO64xNHun https://t.co/DPPqiF1hkp",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952932",
+    "x_url": "https://x.com/yodo_dailyitems/status/2101125552384176415",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101125552384176415",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "／\nムシューダ 4週連続プレゼント🎁第2弾\n＼\n\n衣替えのシーズン到来🍂\n準備はOK？\n\n✅ムシューダ2種\n引き出し・衣装ケース用 32個入 \nクローゼット用 3個入\n✅非売品：ムッシュ熊雄ぷっくりシール\n5名様に🎁\n➡https://t.co/41Sz3najSk\n\n👉フォロー＆RP\n✍️衣替え、もう始めましたか？\n🗓️9/25まで https://t.co/DtrRRQIqel",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952962",
+    "x_url": "https://x.com/RakutenPointcpn/status/2100751712386703524",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 50,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T09:30:54Z",
+      "kudou": "2026-09-24T09:30:54Z",
+      "zin20120731": "2026-09-24T09:30:54Z",
+      "TankanNotes": "DEFER:2026-09-24T20:32:53.527431"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100751712386703524",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "／\n#初秋も楽天ポイント キャンペーン\nフォロー＆リポストで最大20,000ポイントが当たる🎁\n＼\n\n🎯応募方法\n1️⃣ @RakutenPointcpn をフォロー\n2️⃣ この投稿を9/25 23:59までにリポスト\n\nみなさん、この秋にやりたいことはありますか？🍁\n中の人はグランピングに行きたいです🏕️\n\n🎁当選ポイント内訳 https://t.co/mpZ886CNDF",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/953043",
+    "x_url": "https://x.com/etvos_jp/status/2093247222037229891",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": true,
+    "tweet_id": "2093247222037229891",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "＼ドラッグストア導入記念／\nエンリッチラッシュセラム\nレビュー投稿キャンペーン🎁\n\n美容液成分*97%配合！敏感肌用まつ毛美容液🫧\nレビュー投稿で、抽選で10名さまにAW限定アイシャドーをプレゼント！\n\n▼応募方法\n1.@etvos_jp をフォロー\n2.指定ハッシュタグをつけて投稿"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/953007",
+    "x_url": "https://x.com/kiwami_ringbell/status/2090734427005468745",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2090734427005468745",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "＼ あなたの声を聞かせて 🙇／\n抽選で毎月10名様に、「選べる日本の極み（4,180円コース）」が当たる🎁アンケート開催中！\n\n【応募方法✨】\n1️⃣ @ringbell_kiwami をフォロー\n2️⃣ この投稿をリポスト\n3️⃣ 下のアンケートに回答\n\nhttps://t.co/k3hudNKlPB\n\n#リンベル #日本の極み #お取り寄せ https://t.co/kbdyL3699H",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952926",
+    "x_url": "https://x.com/On_Yasai/status/2101140470953038197",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101140470953038197",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "＼あなたはどっち派？／\n毎年好評の鴨しゃぶ販売を記念して、プレゼントキャンペーン開催！\nフォロー＆リポストで🎁お食事券5,000円分を5名様にプレゼント\n\n① @onyasai_official をフォロー\n② この投稿をリポスト\n\n🦆「鴨しゃぶ」で秋定番のおいしさを楽しむ？\nそれとも、 https://t.co/bZEgtjDiyR",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952977",
+    "x_url": "https://x.com/JA_JAtown/status/2098683043947164069",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 3,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098683043947164069",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "#じぇー太 からプレゼント🎁\n／\n全農直営飲食店舗8店舗で「国産ぶどうフェア」\n開催記念プレゼント企画だじぇ〜🍇❣️\n＼\n\nフォロー＆リポストで #国産ぶどう 1箱が抽選で3名に当たる🎁\n1️⃣@JA_JAtownをフォロー \n2️⃣この投稿をリポスト\n〆切2026/9/25 14:59\n\nhttps://t.co/OXnTUG8QyG https://t.co/cbFes9aXoz",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/953022",
+    "x_url": "https://x.com/malonyofficial/status/2099332313226281273",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099332313226281273",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "／\nマロニーちゃんぬいぐるみストラップ\nプレゼントキャンペーン！🎁\n＼\n \nXで「欲しい！」の声をたくさんいただき、ありがとうございます🥹✨\n感謝の気持ちを込めて、マロニーちゃんぬいぐるみストラップを\n抽選で10名様にプレゼント！\n \n【応募方法】\n① @malonyofficial をフォロー https://t.co/SjjIwZLQDd",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952923",
+    "x_url": "https://x.com/yodobashi_sappo/status/2101144092487127395",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 1,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101144092487127395",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "＼シルバーウィーク特別企画／\n\nパナソニック\nシェーバー体験イベントを記念して\n手のひらサイズの6枚刃シェーバー\nラムダッシュ「ES-P690U-S」を\n1⃣名様にプレゼント🎁\nhttps://t.co/vwCNRMZQRN\n\n👉フォロー＆リポスト\n💬どんなシチュエーションで\n　この商品を使いたいかををリプライ✍️\n🗓️9/25まで https://t.co/7AcQvj6FIB",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952944",
+    "x_url": "https://x.com/yukiwa_panko_cp/status/2100857358767542304",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 8,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100857358767542304",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "⋱ 🍁 #シルバーウィークキャンペーン 開催⋰\n商品詰め合わせ＆エコバッグを合計8名様にプレゼント🎁\n\n1️⃣@yukiwa_panko_cpをフォロー\n2️⃣この投稿をRP\n\n当選者様に当アカウントよりDMをお送りします！\n\n📢9/25(金)23:59まで\nプロフィール応募規約をご一読ください https://t.co/gRJTaGTDXT",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952905",
+    "x_url": "https://x.com/FragariaCoW_JP/status/2101234845724614823",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101234845724614823",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "◤🍓PV公開記念キャンペーン🍓◢\n\n抽選で10名様に！オリジナルデザインの\n「QUOカードPay 5,000円分」をプレゼント🎁✨\n\n✦ 参加方法\n①公式アカウント(@FragariaCoW_JP)をフォロー\n②この投稿をリポスト\n\n✦ 応募期間\n～9/25(金)23:59\n\n#フラガリアゲーム #フラメモ https://t.co/jCoh3FGOIb",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952920",
+    "x_url": "https://x.com/CRKingdomJP/status/2101144246455541824",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101144246455541824",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "シルバーウィーク記念🎊\nクッキーランのグッズを抽選で10名様にプレゼント！\n\n■参加方法​\n1.@CRKingdomJPをフォロー​\n2.このポストをリポスト\n\n⏰9/25〆\n💌当選発表：9/30(水)\n⚠️抽選対象：日本国内在住の方のみ\n\n#クッキーラン #クッキーランキングダム\n#シルバーウィーク2026 #キャンペーン https://t.co/WeXwPrBS4l",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952998",
+    "x_url": "https://x.com/sangokushi_kt/status/2097862622368661553",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 14,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2097862622368661553",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "／\n\n#三國志14CE 発売記念 \nフォロー＆リプライキャンペーン開催！！\n＼\n\nオリジナルハンドタオルを14名様にプレゼント🎁\n参加方法： \n\n①本アカウントをフォロー\n②このポストをリポスト\n\n〆9/25(金)23:59\n\n▼ご購入はこちら\nhttps://t.co/tJKDiPAYGB\n\n#三國志 #三国志 #三國志14 https://t.co/E8OgLZ0Z6Q",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952917",
+    "x_url": "https://x.com/iVoCE/status/2101144350256402669",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 20,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T09:30:54Z",
+      "kudou": "2026-09-18T08:00:47Z",
+      "zin20120731": "2026-09-24T09:30:54Z",
+      "TankanNotes": "2026-09-17T00:53:07Z",
+      "inobase1-4": "2026-09-24T09:30:54Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101144350256402669",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "＼フォロー&amp;リポストでプレゼント／\nファンケル マイルドクレンジング オイル\n20名様にプレゼント🎁\n\n応募は簡単✨\n① @iVoCEをフォロー\n② この投稿をリポスト\n9/25〆切 https://t.co/r7gwVB9vn7",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952914",
+    "x_url": "https://x.com/Yodo_Gadget/status/2101153456979664899",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 3,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-17T02:09:00Z",
+      "kudou": "2026-09-24T09:30:54Z",
+      "zin20120731": "2026-09-24T09:30:54Z",
+      "TankanNotes": "2026-09-24T09:30:54Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101153456979664899",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "／\n昔懐かしいレトロテレビデザイン🎵\n＼\n\n2.8インチカラー液晶搭載✨\n乾電池を使えばお外での使用も👌\n\nウィンテック TVR-RT1 各色を1名様ずつに🎁\n➡https://t.co/Wm2UufP5OT\n\n🔁フォロー＆リポスト\n💬希望のカラーを✍️\n9/25まで！ https://t.co/jJXQoiMWWj",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952899",
+    "x_url": "https://x.com/Yodo_Gadget/status/2101242770459594977",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 2,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-17T02:09:00Z",
+      "kudou": "2026-09-24T09:30:54Z",
+      "zin20120731": "2026-09-24T09:30:54Z",
+      "TankanNotes": "2026-09-24T09:30:54Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101242770459594977",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "／\n多様な機器を接続できる\nドッキングステーション🎵\n＼\n\nHDMI（R）・USB-A・USB Type-C（TM）ポートを搭載し、\nさまざまな機能を拡張可能✨\n\nエレコム DST-S060BPSV を2名様に🎁\n➡https://t.co/dnkMHIwPN2\n\n🔁フォロー＆リポスト\n💬PCの端子、増やせるなら何を増やしたいか✍️\n9/25まで！ https://t.co/e1F094saPc",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952992",
+    "x_url": "https://x.com/KenkoTokina_JP/status/2098230129919193480",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098230129919193480",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "EXAPRO スマホ用レンズフードセットを5名様にプレゼント🎁\n\nガラス越しの撮影時に写り込む窓の反射をカットし、クリアな映像を撮影できます💡\nフードは折り畳めるため、持ち運びにも便利🙆🏻‍♀️\n\n▼応募方法\n①@KenkoTokina_JP をフォロー\n②この投稿をリポスト\n\n🗓️応募期間：9/11(金)～9/25(金) https://t.co/EqQ3erozdH",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952845",
+    "x_url": "https://x.com/kyoritsu_pr/status/2100766770479104087",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 2,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T09:30:54Z",
+      "kudou": "2026-09-24T09:30:54Z",
+      "zin20120731": "2026-09-24T09:30:54Z",
+      "TankanNotes": "2026-09-24T09:30:54Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100766770479104087",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "＼フォロー不要！リポスト＆コメントで当たる🌸／\n【京都・花伝抄シリーズ 3館合同 俳句キャンペーン開催🎁】\n\n京都にある共立リゾート「嵐山温泉 花伝抄・梅小路 花伝抄・御室  花伝抄」のペア宿泊券をプレゼント！（各施設1組2名様） https://t.co/Z2HdtiHD2q",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952887",
+    "x_url": "https://x.com/k_komatsushima/status/2102367322404954387",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 27,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2102367322404954387",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "フォロー＆リポストキャンペーンを実施中🌟\n\n【応募方法】\n① @k_komatsushima をフォロー\n②このポストをリポスト\n\n【応募〆切】\n9/25(金)17:00 まで\n\n当選はDMにて連絡いたします。 https://t.co/Q4haA1ii1a",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952908",
+    "x_url": "https://x.com/rxr_jp/status/2101219751892865222",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101219751892865222",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "【✨サイン色紙プレゼントキャンペーン✨】\nステラ役 #植田佳奈 様のサイン色紙や、えらべるPay1000円分があたるキャンペーンを開催ฅ^&gt;ω&lt;^ฅ\n\n◆参加方法◆\n① @rxr_jp をフォロー\n②このポストをRP\n〆 9/25 23:59\n\n#リバxリバ #リバースブルーxリバースエンド https://t.co/thCT8omLbJ",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952854",
+    "x_url": "https://x.com/KIKUSUI_PR/status/2100389405823574314",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100389405823574314",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "⋰\n里山ぶなしめじで乾杯！秋の晩酌キャンペーン🍄🍶\n⋱\n菊水酒造「純米吟醸ひやおろし」とミスズライフ「そのまま使える里山ぶなしめじ」を抽選で【10名様】にプレゼント🎁\n\n1⃣@KIKUSUI_PR と@Misuzu_Life_をフォロー\n2⃣本投稿をリポスト！\n\n⏰9月25日(金) 23時59分まで⏰\n※お酒は20歳になってから https://t.co/yKfx0N6nto",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952851",
+    "x_url": "https://x.com/DollyWink_koji/status/2100495068817989671",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": true,
+    "tweet_id": "2100495068817989671",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "𝗗𝗢𝗟𝗟𝗬 𝗪𝗜𝗡𝗞 プレゼントキャンペーン🎁💎\n新商品SALON EYE LASH 3種セット＋自分の診断結果の商品1つを10名様にプレゼント🤍\n\n自分のつけまつげ診断結果をコメントして参加！\n\n▼応募方法▼\n① @DollyWink_koji をフォロー\n② 本投稿コメント&amp;リポスト🔁\n【応募締め切り：9月25日(金)23:59】 https://t.co/fRWJ2CpdX7"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952947",
+    "x_url": "https://x.com/sanwainfo/status/2100782373579415745",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T09:30:54Z",
+      "kudou": "DEFER:2026-09-24T23:44:36.405822",
+      "zin20120731": null,
+      "TankanNotes": "2026-09-24T09:30:54Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100782373579415745",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "9/25（金）全国公開『藁にもすがる獣たち』と\nサンワサプライのコラボCPスタート🐺✨\n\n映画オリジナルTシャツ（Lサイズ）、岡山デニムのビジネスバッグ、メッシュケースを抽選で5名様にプレゼント🎁\n\n【応募方法】\n1⃣＠sanwainfo と @warakemo_movie をフォロー\n2⃣この投稿をリポスト https://t.co/GrB5e2sMAi",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952986",
+    "x_url": "https://x.com/fm_akita/status/2098335750966460534",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 2,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-19T04:31:39Z",
+      "kudou": "2026-09-20T05:31:46Z",
+      "zin20120731": null,
+      "TankanNotes": "2026-09-20T07:27:41Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098335750966460534",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "＼＼フォロー＆リポストキャンペーン🎁／／      \n\nいなにわ手綯うどん本舗【寛文五年堂】より \n新ブランドとして誕生した発酵スイーツ『1665』の\n「味噌チーズケーキ」を2名にプレゼント！\n\n【応募方法】   \n①@fm_akita をフォロー\n②本投稿をリポスト \n締切：9/25(金)23：59 まで https://t.co/vkE8kgXfvS",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952863",
+    "x_url": "https://x.com/TABETARA_umios/status/2099422385615360344",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": "2026-09-18T08:50:20Z",
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099422385615360344",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "🎁藻の味噌汁スピルリナ  プレゼント企画 🎁\n\n「藻の味噌汁スピルリナ 」＋「スクイーズ」1個を\n抽選で10名様にプレゼント🐠\n\n【応募方法】\n✅ @TABETARA_umiosをフォロー\n✅ この投稿をリポスト\n\n当選者にはDMでご連絡📩\n📅 締切：9月25日（金）23:59\n#Umios #藻の味噌汁 #スピルリナ #プレゼント企画 https://t.co/qsLDCzLbat",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952953",
+    "x_url": "https://x.com/biscuit0228_/status/2100781872431403150",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100781872431403150",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "／\n🎉X限定🎉\n オータムキャンペーン🍁\n 食欲の秋に🍪嬉しい！\n＼\n 会員企業さんのお菓子セット(2,200円相当)🍪を抽選で5名様にプレゼント🫶🎁\n【応募方法】\n期間：2026年9/18(金)～2026年9/25(金) 正午(12：00)まで\n@biscuit0228_をフォロー&amp;この投稿をリポスト\nみなさまのご参加お待ちしてます🙌❤️ https://t.co/CbSBHCb7M5",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952959",
+    "x_url": "https://x.com/FINE_Co/status/2100766874640490871",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 3,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100766874640490871",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "★プレゼントキャンペーンのお知らせ★\n／\nファイン🐿×イカリ消毒\nその場で当たる！\n秋の夜じたくコラボキャンペーン🌙\n＼\n・虫よけハッカ油 2個セット\n・グリシンゼリー 2個セット\nを抽選で3名様にプレゼント🎁‼\n\n応募方法：\n1⃣\n@FINE_Co\nと\n@sakulifesuishin\nをWフォロー\n2⃣この投稿をリポスト！ https://t.co/7Q4sqb3HhI",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952956",
+    "x_url": "https://x.com/maxell_izumi/status/2100780599451557910",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 2,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "DEFER:2026-09-24T14:43:21.149085",
+      "kudou": "2026-09-24T09:30:54Z",
+      "zin20120731": null,
+      "TankanNotes": "DEFER:2026-09-24T20:30:40.997852"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100780599451557910",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "9/25 🎬映画『#藁にもすがる獣たち』 公開記念タイアップ プレゼント\n1⃣@warakemo_movieと@maxell_izumiをフォロー\n2⃣このポストをリポスト\n\n📢わらけもTシャツ\n📢ストッキングやタイツも使えるUSB毛玉とるとる\n\nをセット、抽選で２名様にプレゼント\n#わらけも\n締切:2026/9/25 23:59\n発表:当選者にDM https://t.co/FDPHYLgvPp",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952884",
+    "x_url": "https://x.com/maquia_magazine/status/2102586290810327256",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 3,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T09:30:54Z",
+      "kudou": "DEFER:2026-09-24T22:49:16.728752",
+      "zin20120731": null,
+      "TankanNotes": "DEFER:2026-09-24T21:42:51.781868"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2102586290810327256",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "【フォロー＆リポストで当たる】\nボタニスト「ボタニカルボディースクラブ」をセットで３名様にプレゼント🌿\n\n💎応募方法\n①@maquia_magazine をフォロー\n②この投稿を9/25までにリポスト\n\n💎詳細はこちら\nhttps://t.co/pxt9sp1mkI\n\n#プレゼント #ボタニスト https://t.co/FtOE4U9DxD",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/953013",
+    "x_url": "https://x.com/quoli_official/status/2099664509896110545",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 12,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099664509896110545",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "╭━━━━━━━━━━━━╮​\n\n　-`📢⋆プレゼントCP開催🎁​\n\n╰━━━━━ｖ━━━━━━╯​\n\n　　 　　　🐶🐱🐾​\n\nフォロー&amp;いいねで、合計12名様にQuoli/クオリをプレゼント🎁ˊˎ˗​\n\n【応募期間】​\n2026年9月15日(火)〜25日(金) 23:59​\n\n【応募方法】​\n① @quoli_officialをフォロー​\n② https://t.co/OAID3zoltH",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952833",
+    "x_url": "https://x.com/dengekionline/status/2100886296185225654",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 3,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100886296185225654",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "電撃オンライン：プレゼントキャンペーン🎁\n9月も気が付けば後半、秋を感じられる日も出てきました。\n\nそこで読者キャンペーンとして、Amazonギフトコード3,000円分を3名様に抽選でプレゼント！\n \n応募要項を確認のうえ、電撃オンライン公式Xをフォロー＆本ポストをリポストでご応募ください。 https://t.co/H9XgBWjFPQ",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952896",
+    "x_url": "https://x.com/modelpress/status/2101257559902769283",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": true,
+    "tweet_id": "2101257559902769283",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "＼5,000円分SHEINギフトカードが当たる🎁／\nプレゼントキャンペーン✨\n\nSHEINで買える【秋コスメ】3カラー🍂💄\n気になるカラーをリプで投稿すると応募完了！💌\n\n9/25（金）〆切\n1️⃣ @modelpress &amp; @SHEIN_Japan をフォロー\n2️⃣ #SHEINTrends をつけて、気になるカラーの番号をリプライで投稿\n\n[PR] https://t.co/JscX3mhL04"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952739",
+    "x_url": "https://x.com/yamayoshiseika/status/2099770204712538587",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T18:30:59Z",
+      "kudou": "2026-09-24T18:30:59Z",
+      "zin20120731": "2026-09-24T18:30:59Z",
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099770204712538587",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "／\n山芳製菓史上最も売れた「バター味」がファン待望の復活🐮！19年間愛されたポテトチップス\n✨「北海道リッチバター味」新発売記念✨\nフォロー＆リポストキャンペーン\n＼\n\nわさビーフと食べ比べセットが当たる！？\n「わさビーフ」１箱(12袋入)\n「北海道リッチバター味」１箱(12袋入) https://t.co/P9eMuFdG4p",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952830",
+    "x_url": "https://x.com/miyoca_kantele/status/2100902655661068301",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 6,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": true,
+    "tweet_id": "2100902655661068301",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "🎬映画チケットプレゼント🎁\n\n#土屋太鳳 さん × #佐久間大介 さん出演\n#内田英治 監督最新作\n9月25日（金）全国公開\n映画『マッチング TRUE LOVE』のペアチケットを\n抽選で【3組6名様】にプレゼント‼️\n\n📝応募方法\n① @miyoca_kantele をフォロー\n② この投稿をリポストまたは引用リポスト\n⏰応募締切 https://t.co/ylFuNsZfuM"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952881",
+    "x_url": "https://x.com/vtcosmetics_jp/status/2102593810207256734",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T18:30:59Z",
+      "kudou": "2026-09-24T18:30:59Z",
+      "zin20120731": "2026-09-24T18:30:59Z",
+      "TankanNotes": "2026-09-24T18:30:59Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2102593810207256734",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "💫#EVENT💫\n\nハリ・毛穴・小じわケアが簡単にできちゃう\n\n💛レチナールペプチド ２STEPマスク\n💛レチナールペプチド セラム\n\n忙しい時にも貼って塗るだけ！\nチエイジングケアは「今」が一番早い✨\n\n抽選で5名様に紹介した2アイテムを🎁\n\n💫参加方法\n① フォロー・いいね・リポスト\n②",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952836",
+    "x_url": "https://x.com/MapDesign_G/status/2100876464786944236",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100876464786944236",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "＼空港・飛行機好きの方、必見／\n9月20日空の日をお祝いして、羽田空港デザインの2連アクリルキーホルダーを5名様にプレゼント🎁9月25日まで✈️\n\n応募方法 ① @MapDesign_G をフォロー\n②この投稿をリポストのみ\n\n地図×空港・飛行機デザインをお楽しみください🌃 https://t.co/2YkfpW1eR1",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952742",
+    "x_url": "https://x.com/Futaba_product/status/2098335963298791481",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 6,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098335963298791481",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "日菜乃さん(@TrmrKrkr_hinano)描き下ろし\n「花咲くスイーツステーショナリー」\n発売記念プレゼントキャンペーン🎁✨\n\n＼あなたはどっち派？🧡or🩵／\n\n【応募方法】\n①この投稿をリポスト\n②希望のセットを「🧡or🩵」でコメント\n\n抽選で各セット3名様にプレゼント🎁\n#プレゼントキャンペーン https://t.co/0YwM9Hg4yR",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952980",
+    "x_url": "https://x.com/JOSF_SALES/status/2098359084697395371",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 3,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098359084697395371",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "✨プレゼントのお知らせです✨\n\n／\n【なべやき屋キンレイ 新商品  \nお水がいらない大盛り 豚ラーメン 】を含む4食セット🍜\n＼\n\nフォロー&amp;リポストして頂いた方の中から\n抽選で3名様にプレゼント🎁\n\n9/25(金)12:00〆切\n当選者にはDMでご連絡します\n\n#TOKAIRADIO #東海ラジオ #キンレイ \n#プレゼント #PR https://t.co/6Q9nrI58rf",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952989",
+    "x_url": "https://x.com/comic_fire_hj/status/2098252709493395803",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": "2026-09-14T23:41:24Z",
+      "zin20120731": "2026-09-14T23:51:09Z",
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098252709493395803",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "📕#コミックファイア 新連載📕\n\n『世界最強の炎魔法使い』\n今なら最新話まで無料で公開中！\n▼さっそく読む\n📝https://t.co/8ZSMpKO61f\n(0/3)\n\n🎁フォロー＆このポストをRPで\n抽選で5名様に1000円分の\n#Amazonギフト券 をプレゼント！\n締切：2026/9/25 https://t.co/VbuopX4Jj5",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952824",
+    "x_url": "https://x.com/attacksharkjp/status/2101159345484616154",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 1,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T18:30:59Z",
+      "kudou": "2026-09-24T18:30:59Z",
+      "zin20120731": "2026-09-24T18:30:59Z",
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101159345484616154",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "🎁RS6 ULTRA 期間限定20％OFFクーポン実施中～\nセール記念GIVEAWAY開催いたします！\n抽選で1名様にRS6磁気脱着式バッテリーゲーミングマウス！\n\n製品情報：https://t.co/hYzFvtnuvL\n参加方法：フォロー・いいね・リポート\n参加期間：9月19日-9月25日 https://t.co/ekzG4Kc1Py",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952815",
+    "x_url": "https://x.com/Radio_Kansai_PR/status/2102196197947764769",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 3,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-17T01:39:14Z",
+      "kudou": "2026-09-24T18:30:59Z",
+      "zin20120731": "2026-09-24T18:30:59Z",
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2102196197947764769",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "10月2日(金)全国公開の映画🎥『ママがもうこの世界にいなくても　私の命の日記』オリジナルハンカチ（非売品）を３人の方にプレゼント🎁\n\n✍️応募方法 \n① @Radio_Kansai_PR をフォロー\n②この投稿をリポスト\n⚠️〆9月25日(金)\n\n当選者にはDMをお送りします✉️\n\n配給：東映 https://t.co/qFFV7l0dH8",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952860",
+    "x_url": "https://x.com/OVL_GARDO/status/2099800390824796272",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 3,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": "2026-09-18T05:08:27Z",
+      "zin20120731": "2026-09-18T06:34:37Z",
+      "TankanNotes": "2026-09-18T01:12:18Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099800390824796272",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "／\n『暁の魔女レイシーは自由に生きたい　\n～魔王討伐を終えたので、のんびりお店を開きます～』\n第4巻発売記念図書カードプレゼントキャンペーン‼\n＼\n\nコミックス最新4巻の発売を記念して、\nオリジナル図書カードを3名様にプレゼント🎁\n\n＜参加方法＞\n①@OVL_GARDO\nをフォロー\n②この投稿をRP https://t.co/u99c58K0UJ",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952869",
+    "x_url": "https://x.com/numan_pr/status/2098252695278923785",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 2,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098252695278923785",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "カプセルトイ（11）の日プレゼントキャンペーン🎁\n「ぬい用パーティーメガネ」全6種コンプリートセットを2名様にプレゼント✨\n\n❶当アカウント＆ターリンカプセルコレクション（@tarlin_cc）をフォロー\n❷この投稿をリポスト＆いいね  \nで応募完了！\n\n応募は9月25日（金）まで\nhttps://t.co/aC0kyBpVNl https://t.co/NuhjRAqbBd",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952911",
+    "x_url": "https://x.com/saturdaystrut/status/2101166535830290860",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101166535830290860",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "oasis 【「オアシス：ドント・ルック・バック・イン・アンガー」公開記念・B2ポスター】を5名の方にプレゼント📃\n\n🎸応募方法🎸\n① @saturdaystrut をフォロー\n②この投稿をリポスト\n③フォームから応募\nhttps://t.co/ncWgyymxkU\n\n⚠️締切は9/25(金) 12:00まで！！\n#oasis #baystrut #BAYFM https://t.co/IxjxSezXEf",
+    "simple_rt_ok": "FLAG"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952818",
+    "x_url": "https://x.com/BX_URAWAREDS/status/2101273532554748215",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101273532554748215",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "９月19日vs東京V戦\nプレゼント企画やります！\n／\n2026年西川選手ポスターを\"5名様\"にプレゼントします‼️\n＼\n●フォロー\n●リポスト\nで応募完了です🙌\n応募〆切は\"9月25日\"までです！\n#浦和レッズ　#西川周作　#文化シヤッター https://t.co/mRZb1kqT3k",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952941",
+    "x_url": "https://x.com/hulu_japan/status/2100857360910848009",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 2,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T18:30:59Z",
+      "kudou": "DEFER:2026-09-25T01:02:37.587925",
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100857360910848009",
+    "prize_rank": 0,
+    "導線": "未判定",
+    "tweet_text": "╲⋱Huluレンタル配信記念 ⋰／\n\n🌋—————————🦖\n  映画『#パウ・パトロール\n   ザ・ダイノ・ムービー』\n🐕—————————🐾\n\n⋆͛📢⋆抽選で𝟮名様に\nオリジナルグッズをプレゼント🎁\n\n🚨応募方法\n①  をフォロー\n②この投稿をリポスト\n🗓️9/25(金)〆 https://t.co/rUE6IPAHg1",
+    "simple_rt_ok": "OK"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/950352",
+    "x_url": "https://x.com/edion_PR/status/2100785702254653716",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-30",
+    "winner_count": 1,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100785702254653716",
+    "prize_rank": 0,
+    "tweet_text": "＼新時代を体験！フォロー＆リポスト🎁／\n\n89言語リアルタイム翻訳やハンズフリー撮影\nができる最新AIスマートグラス「Rokid」\nを抽選でプレゼント✨\n\nかけたら世界が変わりそう…！\n一番使ってみたい機能はどれですか？\nぜひリプライで教えてください👓\n\n1️⃣@edion_PR をフォロー\n2️⃣この投稿をリポスト https://t.co/nJ94EqBER4",
+    "simple_rt_ok": "FLAG",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/2/10",
+    "x_url": "https://x.com/i/web/status/2099513545088290919",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099513545088290919",
+    "prize_rank": 0,
+    "tweet_text": "♡⌒♡⌒♡⌒♡⌒♡⌒♡⌒♡⌒♡\n　　ドンペン🐧ドンコから\n秋分の日プレゼントキャンペーン\n♡⌒♡⌒♡⌒♡⌒♡⌒♡⌒♡⌒♡\n\n✨🎮PlayStation®5 デジタル・エディション\n日本語専用 Console Language：Japanese Only (CFI-2200B01)が抽選で3名様に当たる🎁✨\n\n▼応募方法\n①@donki_donki をフォロー https://t.co/wW1MbX2MXZ",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/2/15",
+    "x_url": "https://x.com/i/web/status/2100411302153974165",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100411302153974165",
+    "prize_rank": 0,
+    "tweet_text": "◤本日リリース！◢\n\n9月17日(木)より『Lumi Master』がサービス開始しました🎉\nるぅみを見つけて、るぅみをキャッチしよう！\n\nるぅみ(63)CP開催中！\nAmazonギフト券最大63,000円分を63名さまに🎁\nフォロー＆RPで参加しましょう🙆\n\n▼ 今すぐDL ！▼",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/3/20",
+    "x_url": "https://x.com/i/web/status/2100862455316640172",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100862455316640172",
+    "prize_rank": 0,
+    "tweet_text": "◤　#TGS2026 出展記念\n　　STORMゲーミングPC\n　プレゼントキャンペーン  ◢\n\n抽選で1名様に\n「STORM ゲーミングPC 影界」をプレゼント\n\n■応募方法\n①@sofmap_gaming &amp; @storm_btopc をフォロー\n②このポストを #ソフマップTGS2026出展記念 をつけて引用リポスト\n③アンケートを回答⇩ https://t.co/yPPsgWz2R9",
+    "simple_rt_ok": "FLAG",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/3/21",
+    "x_url": "https://x.com/i/web/status/2100159522568642923",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100159522568642923",
+    "prize_rank": 0,
+    "tweet_text": "今年も、#ブックサンタ の季節が到来！🎅📚\nブックサンタにも使える＼図書カード5,000円分を20名様に🎁／\n【第1弾】フォロー＆RPキャンペーン📖本日スタート❣\n\n9月23日（水・祝）の「ブックサンタ2026」開始に向けて、フォロー＆リポストキャンペーンを実施します！ https://t.co/grDIExGwLT",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/3/25",
+    "x_url": "https://x.com/i/web/status/2100068448323940373",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100068448323940373",
+    "prize_rank": 0,
+    "tweet_text": "【フォロー＆リポストキャンペーン開催！】\n\n抽選で合計40名様にプレゼント！\n\n Steam ￥5,000ギフトカード × 10名様\n 特製スポーツタオル × 30名様\n\n▼応募方法\n① @PlayDarkMachine\n をフォロー\n② この投稿を引用リポスト\n\nぜひご参加ください！\n#DARKMACHINE ＃DARKMACHINEキャンペーン https://t.co/MHJ0nBoWL3",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/3/26",
+    "x_url": "https://x.com/i/web/status/2098335992918819166",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098335992918819166",
+    "prize_rank": 0,
+    "tweet_text": "／ \n#転生したら剣でした × #おっさん剣聖 \n⚔コラボビジュアル公開記念⚔ \n#プレゼントキャンペーン 開催✨ \n＼ \n\n✅@tenken_official と@ossan_kenseiをそれぞれフォロー \n✅リプライ元☝️の投稿をリポスト🔁\n\n抽選で50名様に \nコラボビジュアルを使用した \n特別なポストカードを #プレゼント 🎁 https://t.co/3t9Hog9ou7",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/3/27",
+    "x_url": "https://x.com/i/web/status/2100053359860609234",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100053359860609234",
+    "prize_rank": 0,
+    "tweet_text": "✨🟤くまのがっこうコラボ🟤✨\n冷凍生餃子付き オリジナル保冷ランチバッグ 販売中🛍️✨\nフォロー&amp;リポストキャンペーン開催❗️\n🟤✨🟤✨🟤✨🟤✨🟤✨🟤✨\n\n店頭にて販売中♪\nくまのがっこう×丸源ラーメンのいまだけの限定デザイン😘✨\n\nフォロー&amp;リポストをすると抽選で25名様に https://t.co/dLjelNklop",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/4/31",
+    "x_url": "https://x.com/i/web/status/2099302200841552052",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099302200841552052",
+    "prize_rank": 0,
+    "tweet_text": "◥◣ U-NEXT ◢◤\n映画『スーパーガール』配信記念🚀\n━━━━━━━━━━━━━━\n\n抽選で計12名様にオリジナルグッズが当たる🌟\n\n【応募方法】9/23(水・祝)〆\n💥@kaori_saisonをフォロー\n💥本投稿をリポスト\n\nその他 話題の作品も“U-NEXT”で📺 https://t.co/56cdAYygev",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/4/33",
+    "x_url": "https://x.com/i/web/status/2099333023208706312",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099333023208706312",
+    "prize_rank": 0,
+    "tweet_text": "／\n　🍠秋の新商品試食会🥮\n＼\n\n9月から発売の新商品を食べられるチャンス✨\n当選後に好きな商品を1つ選んで、レビューを投稿してくれる方を大募集📝🔥\n\n【応募方法】\n① @mdhdg2215 をフォロー\n② この投稿をリポスト\n好きなお菓子をリプライで当選確率🆙\n\n【応募規約】\nhttps://t.co/TmcLsj5Rak https://t.co/JUYK9zXakP",
+    "simple_rt_ok": "FLAG",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/4/39",
+    "x_url": "https://x.com/i/web/status/2100148420296179966",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100148420296179966",
+    "prize_rank": 0,
+    "tweet_text": "＼スイートポテト味発売記念！フォロー&amp;リポストキャンペーン実施中！／\n\nとよすこだわりの「comemari スイートポテト味」を抽選で10名様にプレゼント🎁\n\n▼応募方法\n① @Toyosu_Arare をフォロー\n② この投稿をリポスト\n\n秋にぴったりのほっこり甘い限定フレーバー！ https://t.co/BwK3mT1H2V",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/6/51",
+    "x_url": "https://x.com/i/web/status/2098011101078139346",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098011101078139346",
+    "prize_rank": 0,
+    "tweet_text": "◤￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣◥\n   　 　　カスタムマッチ実装記念！！　\n　 リポストでギフトコードを手に入れよう！\n◣＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿◢\n9/10(木)メンテナンス後より新しく「カスタムマッチ」が実装されました！！ https://t.co/m995tALX7r",
+    "simple_rt_ok": "OK",
+    "導線": "要確認"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/6/53",
+    "x_url": "https://x.com/i/web/status/2100359125523894508",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100359125523894508",
+    "prize_rank": 0,
+    "tweet_text": "🌙秋の夜長のすや睡眠キャンペーン🌙\n\n夜が長くなる秋。\nいつもより少しだけ、睡眠を大切にしてみませんか？🍂\n\nほっと一息つきたい日はアーモンドミルク風味の粉末タイプ、さっぱりしたい日はラベンダーピーチ風味のドリンクタイプがオススメです♪\n\n応募方法\n① @tokiwayakuhin_k をフォロー\n② https://t.co/nN8ZdRFyma",
+    "simple_rt_ok": "FLAG",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/6/54",
+    "x_url": "https://x.com/i/web/status/2100381761377370522",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100381761377370522",
+    "prize_rank": 0,
+    "tweet_text": "／\nキャンペーン第1弾！ホームズくんに教えて～っ🧐\nAmazonギフトカード最大10,000円分が当たるっ🎁\n＼\n\n▼応募〆9/23(水)23:59\n① @HOMES_kun をフォロー\n②  「通勤・通学時間にしていること」を書いて、本投稿を引用リポスト\n\nリプライで当選率UPっ✨ https://t.co/d2sIDiH8Jp",
+    "simple_rt_ok": "FLAG",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/6/58",
+    "x_url": "https://x.com/i/web/status/2100359080938197415",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100359080938197415",
+    "prize_rank": 0,
+    "tweet_text": "˗ˏˋ🍺オリオンビール🍺ˎˊ˗\n🌺販売記念キャンペーン🌺\n\nAmazonギフト券 2000円×10名\n激レア非売品コラボTシャツ×10名\n抽選でプレゼント🎉\n\n▼応募方法\n①@CPKagetsuArashi をフォロー\n②本投稿をリポスト！\n\n沖縄県の全店舗で販売開始のオリオンビール🍺\nリポストで「カンパイ🍻」すると当選確率🆙 https://t.co/u3rpNmwa0H",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/7/60",
+    "x_url": "https://x.com/i/web/status/2098245150686445939",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098245150686445939",
+    "prize_rank": 0,
+    "tweet_text": "⋰\nℍ𝕒𝕦𝕥𝕖 ℂ𝕠𝕦𝕥𝕦𝕣𝕖\n𝟚周年記念プレゼントキャンペーン\n⋱\n\n𝟚周年にちなみ、フォロー&amp;RPで\n\n*¨*••*¨*••*¨*••*¨*••*¨*••*¨*\n𝐀𝐦𝐚𝐳𝐨𝐧ギフトカード¥𝟐,𝟐𝟐𝟐\n　　　　　　が\n　　　𝟓名様に当たる.ᐟ \n*¨*••*¨*••*¨*••*¨*••*¨*••*¨*\n\n【応募方法】 https://t.co/N1EO2gE3nM",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/7/61",
+    "x_url": "https://x.com/i/web/status/2100419486683627950",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100419486683627950",
+    "prize_rank": 0,
+    "tweet_text": "#どこきみ SNSフォロワー限定試写会開催\n⠀⠀⠀⠀⠀⠀⠀60名様をご招待𓂃𓈒𓏸\n┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n▦概要\n日時┊10/2(金) 18:00上映開始\n場所┊都内某所\n⠀\n▦応募方法\n①@dokokimi_movie をフォロー\n②本投稿をRP で応募完了\n9/23(水)23:59〆\n⠀\n▼その他詳細はこちら https://t.co/L1hsptdikc",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/7/65",
+    "x_url": "https://x.com/i/web/status/2100690771418702281",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100690771418702281",
+    "prize_rank": 0,
+    "tweet_text": "acala annex silver weekキャンペーン！\n\nお店はマイクロバブルケアmarbbを全メニュー標準装備。お家ケアはkinujoで！KINUJO\nSilk Premium Dryer を1名にプレゼント 🎁\n\nhttps://t.co/j9wkPkgxUM\n\n【参加条件】\n①@AcalaKichijoji をフォローする\n②こちらの投稿をリポストする\n2026/9/23(水)23:59締切 https://t.co/XMQA9KwGYz",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/7/66",
+    "x_url": "https://x.com/i/web/status/2100428980482605516",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100428980482605516",
+    "prize_rank": 0,
+    "tweet_text": "｜新発売記念キャンペーン｜\n北海道雪どけハイドロキノンクリームが当たる🎁\n\n／\n　フォロー&amp;投稿リポストで\n　北海道雪どけハイドロキノンクリーム\n　合計10名様にプレゼント💝\n＼\n\n【応募方法】\n1.@idio_cosmeをフォロー\n2.この投稿をリポスト https://t.co/fdjCugDVN1",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/7/67",
+    "x_url": "https://x.com/i/web/status/2101129246148321570",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101129246148321570",
+    "prize_rank": 0,
+    "tweet_text": "♬月見バーガーフェア第二弾 販売記念♬\n\n＼⢇✩フォロー&amp;リポストキャンペーン✩⡱／\n\n今日はどの月見にする❓\n\n【お食事券1,000円分】が\n抽選で『50名様』に当たる\n\n①@zetteria_burgerをフォロー\n②この投稿をリポスト\n\n9/23(水)23:59迄 https://t.co/6MGlcxGo6B",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/7/68",
+    "x_url": "https://x.com/i/web/status/2101491596525289518",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-08-03T09:49:49.000990",
+      "kudou": "2026-08-03T17:40:18.364377",
+      "zin20120731": null,
+      "TankanNotes": null,
+      "inobase1-4": "2026-08-03T13:22:03.584869",
+      "atushi1840": "2026-08-02T22:40:47.166217",
+      "inobase1-1": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101491596525289518",
+    "prize_rank": 0,
+    "tweet_text": "⋱ シルバーウィークにいかが？✨⋰\n\n🍁秋のごちそう🍁\n#黒毛和牛サーロインフェア\nフォロー＆リポストキャンペーン🎉\n\n10,000円分お食事券が抽選で5名様に当たる✨\n\n1️⃣@bigboyjapan_jpをフォロー\n2️⃣この投稿をリポスト\n3️⃣当選者には後日チャット(旧DM)でご連絡\n\n応募〆9/23(水)23:59\n\n#ビッグボーイ https://t.co/BY0FJFzqws",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/kema/open/0",
+    "x_url": "https://x.com/elixir_TW/status/2102947655366184980",
+    "source": "kema",
+    "time": 0.0,
+    "deadline": "2026-10-01",
+    "winner_count": 3000,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-08-26T04:09:22Z",
+      "kudou": "2026-08-03T18:41:43.678194",
+      "atushi1840": "2026-07-30T05:01:43Z",
+      "zin20120731": "2026-09-02T08:52:56Z",
+      "TankanNotes": "2026-07-26T05:32:15Z",
+      "inobase1-4": "2026-08-03T09:20:59.865024",
+      "toushiwatch": "DEFER:2026-08-31T17:06:50.880522",
+      "royalkensho": "2026-09-15T16:37:01Z",
+      "inobase1-1": null,
+      "chugakujuken": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2102947655366184980",
+    "prize_rank": 0,
+    "tweet_text": "／\n新・Vクリーム発売記念キャンペーン\n抽選で3,000名さまに約2週間分*の特製サイズを🎁\n＼\n\n当選された方には、現品が当たるWチャンスも✨\n\n▼応募方法\n①：@elixir_TWをフォロー\n②：気になるポイントを選んでタップ＆投稿\n③：ツリー投稿の応募フォームに入力\n\n*使用方法にそった使い方での目安",
+    "simple_rt_ok": "FLAG",
+    "導線": "外部フォーム"
+  },
+  {
+    "detail_url": "/kema/open/2",
+    "x_url": "https://x.com/mos_burger/status/2102900862725345720",
+    "source": "kema",
+    "time": 0.0,
+    "deadline": "2026-09-26",
+    "winner_count": 300,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-07-26T03:51:34Z",
+      "kudou": "2026-07-27T06:41:03Z",
+      "zin20120731": "2026-09-02T00:10:00Z",
+      "TankanNotes": "2026-09-01T05:11:21Z",
+      "atushi1840": "2026-07-30T00:52:32Z",
+      "inobase1-1": null,
+      "inobase1-4": null,
+      "toushiwatch": null,
+      "chugakujuken": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2102900862725345720",
+    "prize_rank": 0,
+    "tweet_text": "🍠🍠🍠🍠🍠🍠🍠🍠🍠🍠🍠🍠\n／\n📢本日から！！\n#モス子の秋のお気に入り\n熱々おさつボール～紫いも～5個入りを\n抽選で300名さまにプレゼント🎁\n＼\n🍠🍠🍠🍠🍠🍠🍠🍠🍠🍠🍠🍠\n\n📍応募方法\n【9/26(土) 23:59まで】\n@mos_burger をフォロー＆本投稿をリポスト🔁\n\n📝応募規約\nhttps://t.co/WwfxcGXB6J",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/present/detail/719268/",
+    "x_url": "https://x.com/nipponluna/status/2098592436087927127",
+    "source": "chancecom",
+    "time": 0.0,
+    "deadline": "2026-09-30",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098592436087927127",
+    "prize_rank": 0,
+    "tweet_text": "／\nザクザク食感TOPCUP！\nあなたはどっち派？キャンペーン\n＼\n\n抽選で10名様に\n選べるTOPCUP1ケース（6個）\nをプレゼント✨\n\n▼応募方法▼\n①@nipponlunaをフォロー\n② この投稿をリポスト🔁\n締切：9月30日(水)23：59\n\nアサイーとチョコ、あなたはどっち派？\nリプライ💬で教えて✨ https://t.co/UwvRP1fl7S",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/present/detail/719275/",
+    "x_url": "https://x.com/SBI_ALApromo/status/2097520382337044763",
+    "source": "chancecom",
+    "time": 0.0,
+    "deadline": "2026-09-24",
+    "winner_count": 110,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-23T23:05:59Z",
+      "kudou": "DEFER:2026-09-25T00:39:43.562092",
+      "zin20120731": null,
+      "TankanNotes": "2026-09-24T08:39:56Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2097520382337044763",
+    "prize_rank": 0,
+    "tweet_text": "＼総計110名様に当たる／\nアラプラス ロンジェビティ 発売記念🎉 プレゼントキャンペーン開催✨\nA賞: えらべるデジタルギフト 1万円分 (10名様)\nB賞: アラプラス ロンジェビティ (100名様)\n【応募方法】\n１．( @SBI_ALApromo) をフォロー\n２．この投稿をリポスト(RT)\n🔥 ＼当選確率UPチャンス／🔥\n【 https://t.co/jtk6qIynCU",
+    "simple_rt_ok": "OK",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/kensho-everyday/archives/287498",
+    "x_url": "https://x.com/TWININGS_jp/status/2102956195510387127",
+    "source": "kensho-everyday",
+    "time": 0.0,
+    "deadline": "2026-09-30",
+    "winner_count": 200,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2102956195510387127",
+    "prize_rank": 0,
+    "tweet_text": "＼どちらでチャレンジする？／\nトワイニング THE BETTER モニター募集✨\n\n朝と夜のセルフケアを、合計200名様に！🎁\n🩵良質な睡眠をサポート\n🧡お腹の調子を整える\n\n【応募方法】\n①@TWININGS_jp をフォロー\n②本投稿をリポスト\n③試してみたい商品の絵文字🩵🧡をコメント\n📅9/30(水)23:59〆 https://t.co/wSOjmN753x",
+    "simple_rt_ok": "FLAG",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/kensho-everyday/archives/287495",
+    "x_url": "https://x.com/morinaga_angel/status/2102201260523061265",
+    "source": "kensho-everyday",
+    "time": 0.0,
+    "deadline": "2026-10-05",
+    "winner_count": 4,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T18:30:59Z",
+      "kudou": "2026-09-24T18:30:59Z",
+      "zin20120731": "2026-09-24T18:30:59Z",
+      "TankanNotes": null
+    },
+    "keyword_flag": true,
+    "tweet_id": "2102201260523061265",
+    "prize_rank": 0,
+    "tweet_text": "＼クイズに答えてフランス旅行を当てよう✈／\n\nフランスの焼き菓子、ザ・ガレットのフレーバー名は【〇〇と〇〇】\n正解者から抽選で2組4名様に4泊6日のフランス旅をプレゼント🎁\n\n① @morinaga_angel をフォロー\n② #ザガレット と答え【〇〇と〇〇】を書いて引用ポスト\n\n応募締切：2026年10月5日23:59 https://t.co/FYkAv6m5UI",
+    "導線": "X"
+  },
+  {
+    "detail_url": "/kensho-everyday/archives/222624",
+    "x_url": "https://x.com/AUTOWAY_TIRE/status/2102668491765735718",
+    "source": "kensho-everyday",
+    "time": 0.0,
+    "deadline": "2026-09-30",
+    "winner_count": 3,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2102668491765735718",
+    "prize_rank": 0,
+    "tweet_text": "抽選で #DAVANTI ワイヤレス充電器 を3名様に #プレゼント\n\n【応募方法】\n① @AUTOWAY_TIRE をフォロー✨\n② この投稿をリポスト＆いいねする👍\n③ https://t.co/dX3ZbCwTsc でX連携して結果をチェック！\n\n【応募期間】\n9月30日 23:59まで #懸賞 #キャンペーン #AUTOWAY #ダヴァンティ #オートウェイ https://t.co/nOSZbdzquQ",
+    "simple_rt_ok": "FLAG",
+    "導線": "X"
+  },
+  {
     "detail_url": "/kenshouclub/archives/952279",
     "x_url": "https://x.com/kiss_cosmetics/status/2098268673568108757",
     "source": "kenshouclub",
@@ -20488,82 +21867,6 @@
     "導線": "未判定"
   },
   {
-    "detail_url": "/kenshouclub/archives/953068",
-    "x_url": "https://x.com/BLUENOVA_JP/status/2102594078638752086",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-30",
-    "winner_count": 2000,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": "2026-09-21T06:33:29Z"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2102594078638752086",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/953016",
-    "x_url": "https://x.com/urawa_keiba/status/2100781880127672584",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 100,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100781880127672584",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/953028",
-    "x_url": "https://x.com/coop_kyosai/status/2099324756558278967",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 5,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2099324756558278967",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/953046",
-    "x_url": "https://x.com/aohata_official/status/2100783145461387476",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 25,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": "2026-09-14T00:53:30Z",
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": true,
-    "tweet_id": "2100783145461387476",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
     "detail_url": "/kenshouclub/archives/952808",
     "x_url": "https://x.com/DeltaForceG_JP/status/2102593816393859219",
     "source": "kenshouclub",
@@ -20579,44 +21882,6 @@
     },
     "keyword_flag": true,
     "tweet_id": "2102593816393859219",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/953040",
-    "x_url": "https://x.com/niccolino_offl/status/2098335745274703929",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 50,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2098335745274703929",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/953034",
-    "x_url": "https://x.com/ZIPAIRTokyo/status/2097882811462213720",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 5,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2097882811462213720",
     "prize_rank": 0,
     "導線": "未判定"
   },
@@ -20659,46 +21924,6 @@
     "導線": "未判定"
   },
   {
-    "detail_url": "/kenshouclub/archives/953025",
-    "x_url": "https://x.com/dreamplaza3360/status/2100751714618081737",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100751714618081737",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952929",
-    "x_url": "https://x.com/yowapeda_ism/status/2101129146730467535",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 50,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-24T04:30:18Z",
-      "kudou": "2026-09-24T04:30:18Z",
-      "zin20120731": "2026-09-24T04:30:18Z",
-      "TankanNotes": "DEFER:2026-09-24T14:22:55.073964",
-      "inobase1-4": "2026-09-24T04:30:18Z",
-      "royalkensho": "2026-09-24T04:30:18Z"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2101129146730467535",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
     "detail_url": "/kenshouclub/archives/953052",
     "x_url": "https://x.com/maquillage_jp/status/2099770200048755090",
     "source": "kenshouclub",
@@ -20714,64 +21939,6 @@
     },
     "keyword_flag": true,
     "tweet_id": "2099770200048755090",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952983",
-    "x_url": "https://x.com/sweet_twjp/status/2098350250826301454",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 15,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-24T04:30:18Z",
-      "kudou": "2026-09-24T04:30:18Z",
-      "zin20120731": "2026-09-24T04:30:18Z",
-      "TankanNotes": "DEFER:2026-09-24T15:42:04.493585"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2098350250826301454",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952902",
-    "x_url": "https://x.com/yodobashi_kawa/status/2101241366147952728",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 1,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-24T04:30:18Z",
-      "kudou": "2026-09-24T04:30:18Z",
-      "zin20120731": null,
-      "TankanNotes": "2026-09-24T04:30:18Z",
-      "inobase1-4": "2026-09-24T04:30:18Z"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2101241366147952728",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952950",
-    "x_url": "https://x.com/Ume_bsfuji/status/2100781944766341192",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 50,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": true,
-    "tweet_id": "2100781944766341192",
     "prize_rank": 0,
     "導線": "未判定"
   },
@@ -20795,177 +21962,6 @@
     "導線": "未判定"
   },
   {
-    "detail_url": "/kenshouclub/archives/952938",
-    "x_url": "https://x.com/GRANDSUMMONERS/status/2100872719969739043",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": "2026-09-23T07:12:42Z",
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100872719969739043",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952935",
-    "x_url": "https://x.com/LoNLy__official/status/2101102873316852118",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 5,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2101102873316852118",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952890",
-    "x_url": "https://x.com/kadokawa_eve/status/2102352207178035414",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 1,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-21T23:06:44Z",
-      "kudou": "DEFER:2026-09-24T14:09:00.268479",
-      "zin20120731": "2026-09-24T04:30:18Z",
-      "TankanNotes": "2026-09-24T04:30:18Z"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2102352207178035414",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952932",
-    "x_url": "https://x.com/yodo_dailyitems/status/2101125552384176415",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 5,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2101125552384176415",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952962",
-    "x_url": "https://x.com/RakutenPointcpn/status/2100751712386703524",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 50,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-24T09:30:54Z",
-      "kudou": "2026-09-24T09:30:54Z",
-      "zin20120731": "2026-09-24T09:30:54Z",
-      "TankanNotes": "DEFER:2026-09-24T15:17:21.732465"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100751712386703524",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/953043",
-    "x_url": "https://x.com/etvos_jp/status/2093247222037229891",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": true,
-    "tweet_id": "2093247222037229891",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/953007",
-    "x_url": "https://x.com/kiwami_ringbell/status/2090734427005468745",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2090734427005468745",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952926",
-    "x_url": "https://x.com/On_Yasai/status/2101140470953038197",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 5,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2101140470953038197",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952977",
-    "x_url": "https://x.com/JA_JAtown/status/2098683043947164069",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 3,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2098683043947164069",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
     "detail_url": "/kenshouclub/archives/953031",
     "x_url": "https://x.com/doshisha_marche/status/2100529383916400898",
     "source": "kenshouclub",
@@ -20981,235 +21977,6 @@
     },
     "keyword_flag": false,
     "tweet_id": "2100529383916400898",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/953022",
-    "x_url": "https://x.com/malonyofficial/status/2099332313226281273",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2099332313226281273",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952923",
-    "x_url": "https://x.com/yodobashi_sappo/status/2101144092487127395",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 1,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2101144092487127395",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952944",
-    "x_url": "https://x.com/yukiwa_panko_cp/status/2100857358767542304",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 8,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100857358767542304",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952905",
-    "x_url": "https://x.com/FragariaCoW_JP/status/2101234845724614823",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2101234845724614823",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952920",
-    "x_url": "https://x.com/CRKingdomJP/status/2101144246455541824",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2101144246455541824",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952998",
-    "x_url": "https://x.com/sangokushi_kt/status/2097862622368661553",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 14,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2097862622368661553",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952917",
-    "x_url": "https://x.com/iVoCE/status/2101144350256402669",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 20,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-24T09:30:54Z",
-      "kudou": "2026-09-18T08:00:47Z",
-      "zin20120731": "2026-09-24T09:30:54Z",
-      "TankanNotes": "2026-09-17T00:53:07Z",
-      "inobase1-4": "2026-09-24T09:30:54Z"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2101144350256402669",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952914",
-    "x_url": "https://x.com/Yodo_Gadget/status/2101153456979664899",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 3,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-17T02:09:00Z",
-      "kudou": "2026-09-24T09:30:54Z",
-      "zin20120731": "2026-09-24T09:30:54Z",
-      "TankanNotes": "2026-09-24T09:30:54Z"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2101153456979664899",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952899",
-    "x_url": "https://x.com/Yodo_Gadget/status/2101242770459594977",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 2,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-17T02:09:00Z",
-      "kudou": "2026-09-24T09:30:54Z",
-      "zin20120731": "2026-09-24T09:30:54Z",
-      "TankanNotes": "2026-09-24T09:30:54Z"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2101242770459594977",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952992",
-    "x_url": "https://x.com/KenkoTokina_JP/status/2098230129919193480",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 5,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2098230129919193480",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952845",
-    "x_url": "https://x.com/kyoritsu_pr/status/2100766770479104087",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 2,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-24T09:30:54Z",
-      "kudou": "2026-09-24T09:30:54Z",
-      "zin20120731": "2026-09-24T09:30:54Z",
-      "TankanNotes": "2026-09-24T09:30:54Z"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100766770479104087",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952887",
-    "x_url": "https://x.com/k_komatsushima/status/2102367322404954387",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 27,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2102367322404954387",
     "prize_rank": 0,
     "導線": "未判定"
   },
@@ -21233,44 +22000,6 @@
     "導線": "未判定"
   },
   {
-    "detail_url": "/kenshouclub/archives/952908",
-    "x_url": "https://x.com/rxr_jp/status/2101219751892865222",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2101219751892865222",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952854",
-    "x_url": "https://x.com/KIKUSUI_PR/status/2100389405823574314",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100389405823574314",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
     "detail_url": "/kenshouclub/archives/952974",
     "x_url": "https://x.com/LOWBAL_official/status/2099773236594487393",
     "source": "kenshouclub",
@@ -21280,31 +22009,12 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-09-24T09:30:54Z",
-      "kudou": "DEFER:2026-09-24T17:39:59.163191",
+      "kudou": "DEFER:2026-09-25T00:08:21.609231",
       "zin20120731": "2026-09-24T09:30:54Z",
       "TankanNotes": "2026-09-24T09:30:54Z"
     },
     "keyword_flag": false,
     "tweet_id": "2099773236594487393",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952851",
-    "x_url": "https://x.com/DollyWink_koji/status/2100495068817989671",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": true,
-    "tweet_id": "2100495068817989671",
     "prize_rank": 0,
     "導線": "未判定"
   },
@@ -21328,63 +22038,6 @@
     "導線": "未判定"
   },
   {
-    "detail_url": "/kenshouclub/archives/952947",
-    "x_url": "https://x.com/sanwainfo/status/2100782373579415745",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 5,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-24T09:30:54Z",
-      "kudou": "DEFER:2026-09-24T15:41:53.032688",
-      "zin20120731": null,
-      "TankanNotes": "2026-09-24T09:30:54Z"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100782373579415745",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952986",
-    "x_url": "https://x.com/fm_akita/status/2098335750966460534",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 2,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "2026-09-19T04:31:39Z",
-      "kudou": "2026-09-20T05:31:46Z",
-      "zin20120731": null,
-      "TankanNotes": "2026-09-20T07:27:41Z"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2098335750966460534",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952863",
-    "x_url": "https://x.com/TABETARA_umios/status/2099422385615360344",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 10,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": "2026-09-18T08:50:20Z",
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2099422385615360344",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
     "detail_url": "/kenshouclub/archives/952842",
     "x_url": "https://x.com/TODAYWith_JAPAN/status/2100857368955252945",
     "source": "kenshouclub",
@@ -21400,63 +22053,6 @@
     },
     "keyword_flag": false,
     "tweet_id": "2100857368955252945",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952953",
-    "x_url": "https://x.com/biscuit0228_/status/2100781872431403150",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 5,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100781872431403150",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952959",
-    "x_url": "https://x.com/FINE_Co/status/2100766874640490871",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 3,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": null,
-      "kudou": null,
-      "zin20120731": null,
-      "TankanNotes": null
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100766874640490871",
-    "prize_rank": 0,
-    "導線": "未判定"
-  },
-  {
-    "detail_url": "/kenshouclub/archives/952956",
-    "x_url": "https://x.com/maxell_izumi/status/2100780599451557910",
-    "source": "kenshouclub",
-    "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 2,
-    "days_remaining": "",
-    "applied": {
-      "atushi16": "DEFER:2026-09-24T14:43:21.149085",
-      "kudou": "2026-09-24T09:30:54Z",
-      "zin20120731": null,
-      "TankanNotes": "DEFER:2026-09-24T15:59:22.598704"
-    },
-    "keyword_flag": false,
-    "tweet_id": "2100780599451557910",
     "prize_rank": 0,
     "導線": "未判定"
   },
@@ -21499,31 +22095,126 @@
     "導線": "未判定"
   },
   {
-    "detail_url": "/kenshouclub/archives/952884",
-    "x_url": "https://x.com/maquia_magazine/status/2102586290810327256",
+    "detail_url": "/kenshouclub/archives/952827",
+    "x_url": "https://x.com/houchishoujo/status/2101144249228030097",
     "source": "kenshouclub",
     "time": 0.0,
     "deadline": "2026-09-25",
-    "winner_count": 3,
+    "winner_count": 11,
     "days_remaining": "",
     "applied": {
-      "atushi16": "2026-09-24T09:30:54Z",
-      "kudou": "DEFER:2026-09-24T14:47:37.229460",
-      "zin20120731": null,
-      "TankanNotes": "DEFER:2026-09-24T15:20:16.482946"
+      "atushi16": "2026-09-24T18:30:59Z",
+      "kudou": "2026-09-24T18:30:59Z",
+      "zin20120731": "2026-09-24T18:30:59Z",
+      "TankanNotes": "2026-09-24T18:30:59Z"
     },
     "keyword_flag": false,
-    "tweet_id": "2102586290810327256",
+    "tweet_id": "2101144249228030097",
     "prize_rank": 0,
     "導線": "未判定"
   },
   {
-    "detail_url": "/kenshouclub/archives/953013",
-    "x_url": "https://x.com/quoli_official/status/2099664509896110545",
+    "detail_url": "/kenshouclub/archives/952812",
+    "x_url": "https://x.com/koyokasei/status/2100149403411730652",
     "source": "kenshouclub",
     "time": 0.0,
     "deadline": "2026-09-25",
-    "winner_count": 12,
+    "winner_count": 6,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100149403411730652",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952848",
+    "x_url": "https://x.com/suzuyo_official/status/2100751671194505578",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100751671194505578",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952821",
+    "x_url": "https://x.com/BK23412315/status/2101249952710287668",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-25",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": "2026-09-14T09:54:09Z",
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101249952710287668",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952594",
+    "x_url": "https://x.com/VDLcosmetics_jp/status/2100781864315465779",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-24",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100781864315465779",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952509",
+    "x_url": "https://x.com/P5X_Official_JP/status/2099709838335037751",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-24",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T18:30:59Z",
+      "kudou": "DEFER:2026-09-25T01:50:29.106893",
+      "zin20120731": "2026-09-24T18:30:59Z",
+      "TankanNotes": "2026-09-24T18:30:59Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099709838335037751",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952618",
+    "x_url": "https://x.com/ezo_mmorpg/status/2100842844487553491",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-24",
+    "winner_count": 20,
     "days_remaining": "",
     "applied": {
       "atushi16": null,
@@ -21532,17 +22223,17 @@
       "TankanNotes": null
     },
     "keyword_flag": true,
-    "tweet_id": "2099664509896110545",
+    "tweet_id": "2100842844487553491",
     "prize_rank": 0,
     "導線": "未判定"
   },
   {
-    "detail_url": "/kenshouclub/archives/952833",
-    "x_url": "https://x.com/dengekionline/status/2100886296185225654",
+    "detail_url": "/kenshouclub/archives/952417",
+    "x_url": "https://x.com/ahamo_official/status/2100857357848740073",
     "source": "kenshouclub",
     "time": 0.0,
-    "deadline": "2026-09-25",
-    "winner_count": 3,
+    "deadline": "2026-09-24",
+    "winner_count": 30,
     "days_remaining": "",
     "applied": {
       "atushi16": null,
@@ -21551,7 +22242,775 @@
       "TankanNotes": null
     },
     "keyword_flag": false,
-    "tweet_id": "2100886296185225654",
+    "tweet_id": "2100857357848740073",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952338",
+    "x_url": "https://x.com/ainztulpe/status/2100768884278415459",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-24",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100768884278415459",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952561",
+    "x_url": "https://x.com/agriNP_KinPoku/status/2094611111064875096",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-24",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2094611111064875096",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/952387",
+    "x_url": "https://x.com/itomen_official/status/2101813607919194602",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-24",
+    "winner_count": 3,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-09-24T18:30:59Z",
+      "kudou": "2026-09-24T18:30:59Z",
+      "zin20120731": "2026-09-24T18:30:59Z",
+      "TankanNotes": "2026-09-24T18:30:59Z"
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101813607919194602",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kenshouclub/archives/950480",
+    "x_url": "https://x.com/ruskcafe/status/2095079013068980493",
+    "source": "kenshouclub",
+    "time": 0.0,
+    "deadline": "2026-09-30",
+    "winner_count": 11,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2095079013068980493",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/1/7",
+    "x_url": "https://x.com/i/web/status/2098335756641087829",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098335756641087829",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/1/9",
+    "x_url": "https://x.com/i/web/status/2100026991336735061",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100026991336735061",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/2/11",
+    "x_url": "https://x.com/i/web/status/2100559797406093319",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100559797406093319",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/2/12",
+    "x_url": "https://x.com/i/web/status/2099332321396560160",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099332321396560160",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/2/13",
+    "x_url": "https://x.com/i/web/status/2100410055506207009",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100410055506207009",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/2/17",
+    "x_url": "https://x.com/i/web/status/2100450510709100938",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100450510709100938",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/3/22",
+    "x_url": "https://x.com/i/web/status/2100449834616713501",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100449834616713501",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/3/24",
+    "x_url": "https://x.com/i/web/status/2100419469961306265",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100419469961306265",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/3/29",
+    "x_url": "https://x.com/i/web/status/2099256818518147330",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099256818518147330",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/4/35",
+    "x_url": "https://x.com/i/web/status/2099680872874291449",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099680872874291449",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/4/36",
+    "x_url": "https://x.com/i/web/status/2100113989175017725",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100113989175017725",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/4/38",
+    "x_url": "https://x.com/i/web/status/2100133335083425879",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100133335083425879",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/5/41",
+    "x_url": "https://x.com/i/web/status/2100139890784469063",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100139890784469063",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/5/46",
+    "x_url": "https://x.com/i/web/status/2098245225995190648",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2098245225995190648",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/5/49",
+    "x_url": "https://x.com/i/web/status/2099694699841728652",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099694699841728652",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/6/50",
+    "x_url": "https://x.com/i/web/status/2100155229895585865",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100155229895585865",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/6/52",
+    "x_url": "https://x.com/i/web/status/2100177882475847838",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100177882475847838",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/6/55",
+    "x_url": "https://x.com/i/web/status/2100872815578886526",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100872815578886526",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/6/56",
+    "x_url": "https://x.com/i/web/status/2100419480971268354",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100419480971268354",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/6/57",
+    "x_url": "https://x.com/i/web/status/2099287073794781233",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099287073794781233",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/6/59",
+    "x_url": "https://x.com/i/web/status/2100419479624901020",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100419479624901020",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/7/62",
+    "x_url": "https://x.com/i/web/status/2101097688964186284",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101097688964186284",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/7/63",
+    "x_url": "https://x.com/i/web/status/2100424709854933215",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100424709854933215",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/7/64",
+    "x_url": "https://x.com/i/web/status/2100425761496940842",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100425761496940842",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/7/69",
+    "x_url": "https://x.com/i/web/status/2100824862197702841",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-08-03T09:49:49.000990",
+      "kudou": "2026-08-03T17:40:18.364377",
+      "atushi1840": "2026-08-02T22:40:47.166217",
+      "zin20120731": null,
+      "TankanNotes": null,
+      "inobase1-4": "2026-08-03T13:22:03.584869",
+      "inobase1-1": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100824862197702841",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/8/70",
+    "x_url": "https://x.com/i/web/status/2100482104819892238",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100482104819892238",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/8/72",
+    "x_url": "https://x.com/i/web/status/2100494971703001127",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100494971703001127",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/cpmeikan/xcp/8/73",
+    "x_url": "https://x.com/i/web/status/2100510074540277794",
+    "source": "cpmeikan",
+    "time": 0.0,
+    "deadline": "",
+    "winner_count": 0,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2100510074540277794",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kema/open/1",
+    "x_url": "https://x.com/edion_PR/status/2102953705285038365",
+    "source": "kema",
+    "time": 0.0,
+    "deadline": "2026-10-02",
+    "winner_count": 10,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": "2026-07-26T03:51:34Z",
+      "kudou": "2026-07-27T06:41:03Z",
+      "zin20120731": "2026-09-02T00:10:00Z",
+      "TankanNotes": "2026-09-01T05:11:21Z",
+      "atushi1840": "2026-07-30T00:52:32Z",
+      "inobase1-1": null,
+      "inobase1-4": null,
+      "toushiwatch": null,
+      "chugakujuken": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2102953705285038365",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kema/open/9",
+    "x_url": "https://x.com/ainztulpe/status/2101808860529099008",
+    "source": "kema",
+    "time": 0.0,
+    "deadline": "2026-09-30",
+    "winner_count": 5,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2101808860529099008",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kema/open/18",
+    "x_url": "https://x.com/USJ_Official/status/2100419519793734056",
+    "source": "kema",
+    "time": 0.0,
+    "deadline": "2026-09-30",
+    "winner_count": 4,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": true,
+    "tweet_id": "2100419519793734056",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kema/open/30",
+    "x_url": "https://x.com/CHOYAofficial/status/2094700344681074775",
+    "source": "kema",
+    "time": 0.0,
+    "deadline": "2026-09-30",
+    "winner_count": 30,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2094700344681074775",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kema/open/35",
+    "x_url": "https://x.com/zespri_jp/status/2094168286187413602",
+    "source": "kema",
+    "time": 0.0,
+    "deadline": "2026-09-30",
+    "winner_count": 200,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2094168286187413602",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/kema/open/37",
+    "x_url": "https://x.com/SECOM_jp/status/2093136627879276706",
+    "source": "kema",
+    "time": 0.0,
+    "deadline": "2026-09-30",
+    "winner_count": 100,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2093136627879276706",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/present/detail/719500/",
+    "x_url": "https://x.com/welcia_jp/status/2099770193543368760",
+    "source": "chancecom",
+    "time": 0.0,
+    "deadline": "2026-09-28",
+    "winner_count": 20,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2099770193543368760",
+    "prize_rank": 0,
+    "導線": "未判定"
+  },
+  {
+    "detail_url": "/present/detail/719494/",
+    "x_url": "https://x.com/nicogame_PR/status/2094621265529340239",
+    "source": "chancecom",
+    "time": 0.0,
+    "deadline": "2026-09-30",
+    "winner_count": 1,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2094621265529340239",
     "prize_rank": 0,
     "導線": "未判定"
   }

@@ -141,3 +141,73 @@ def test_prior_history_treated_as_already_followed(tmp_path: Path) -> None:
     # applierの新チェックは get_total_follows >= 1 で再フォローをスキップする（要件充足）。
     assert m.should_follow("ownerPrev") is True
     assert m.get_total_follows("ownerPrev") >= 1
+
+
+# ── t_33113bb7 (C): 垢単位サーキットブレーカ ──
+
+
+def test_cb_threshold_not_reached(tmp_path: Path) -> None:
+    """同一エラー種別が閾値(3)未満ならロックされない。"""
+    m = _make_manager(tmp_path)
+    for _ in range(2):
+        assert m.record_account_follow_failure("no_follow_button") is False
+    assert m.account_follow_blocked() == (False, None)
+
+
+def test_cb_threshold_reached_locks(tmp_path: Path) -> None:
+    """同一エラー種別が閾値(3)到達でロックが発動する。"""
+    m = _make_manager(tmp_path)
+    for i in range(3):
+        became = m.record_account_follow_failure("no_follow_button")
+        if i < 2:
+            assert became is False
+        else:
+            assert became is True
+    blocked, code = m.account_follow_blocked()
+    assert blocked is True
+    assert code == "no_follow_button"
+
+
+def test_cb_other_error_not_affected(tmp_path: Path) -> None:
+    """対象外のエラー種別（http_0等）はカウントされない。"""
+    m = _make_manager(tmp_path)
+    assert m.record_account_follow_failure("http_0") is False
+    assert m.record_account_follow_failure(None) is False
+    assert m.account_follow_blocked() == (False, None)
+
+
+def test_cb_lock_does_not_increment_during_lock(tmp_path: Path) -> None:
+    """ロック中はカウント増やさず（連続実行で閾値超を増幅しない）。"""
+    m = _make_manager(tmp_path)
+    for _ in range(3):
+        m.record_account_follow_failure("no_follow_button")
+    assert m.account_follow_blocked()[0] is True
+    # ロック中でも record は False を返し、カウントは3のまま
+    assert m.record_account_follow_failure("no_follow_button") is False
+    blocked, code = m.account_follow_blocked()
+    assert blocked is True and code == "no_follow_button"
+    # count は3のまま（4には增至えていない）
+    assert m._cb_state()["no_follow_button"]["count"] == 3
+
+
+def test_cb_persists_across_instances(tmp_path: Path) -> None:
+    """ロック状態はファイルに永続化され、別インスタンスからも読める。"""
+    path = tmp_path / "follow_state.json"
+    m1 = FollowStateManager("acct_cb", state_path=path)
+    for _ in range(3):
+        m1.record_account_follow_failure("no_follow_button")
+    m2 = FollowStateManager("acct_cb", state_path=path)
+    blocked, code = m2.account_follow_blocked()
+    assert blocked is True and code == "no_follow_button"
+
+
+def test_cb_clear(tmp_path: Path) -> None:
+    """clear_account_follow_block で解除できる。"""
+    m = _make_manager(tmp_path)
+    for _ in range(3):
+        m.record_account_follow_failure("no_follow_button")
+    assert m.account_follow_blocked()[0] is True
+    m.clear_account_follow_block("no_follow_button")
+    assert m.account_follow_blocked() == (False, None)
+    m.record_account_follow_failure("no_follow_button")  # 再カウント可能
+    assert m.account_follow_blocked() == (False, None)

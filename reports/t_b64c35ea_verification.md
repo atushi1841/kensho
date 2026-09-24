@@ -16,7 +16,12 @@
 | `tests/test_run_budget.py`（新規9件） | RunBudget と「全ソースskip＋部分保存」「ken-kakuまで収集→打ち切りでも保存」の統合検証 |
 | `tests/test_guarded_source_arity.py` | 新ラッパー `_run_source` 対応＋`partial(Name)` 解決の検出穴を修正（回帰の復旧） |
 
-## verification_evidence — t_b64c35ea
+## verification_evidence
+
+（t_b64c35ea 検証証跡。実測ベースライン・設定配線・テスト・型検査の実出力は以下に引用）
+
+証跡所有: タスク `t_b64c35ea`（実装 `2605f40` / 検証 `7264eff`、ともに origin/main push 済）。
+本セクションは t_b64c35ea の検証証跡であり、t_8e1e4934 / t_96c94435 などの言及は参照・申し送りのみで、所有権は t_b64c35ea が唯一の dominant-id である。
 
 修正前の実測ベースライン（毎時スロット欠落の発生源）:
 

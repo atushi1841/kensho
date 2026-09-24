@@ -4,9 +4,9 @@
 
 ### 事後効果測定（Outcome Review / 過去7日 done）
 - KPI方向性ルール: 各 before→after の末尾に `(方向: up/down/equal)` を明記する。 この語は数値の上下のみを表し、良悪は指標の意味に依存する（例: 失敗回数・試行回数・所要秒数の down は改善 / 未pushコミット残数の up は悪化）。
-- 対象: done=130件（2026-09-17以降）/ 数値KPIあり=26件
-- 実測確認: あり=18件 / 未実測=8件 / KPI非該当=104件
-- 実測確認率: 69.2%（目標>50%） → 達成
+- 対象: done=132件（2026-09-17以降）/ 数値KPIあり=27件
+- 実測確認: あり=19件 / 未実測=8件 / KPI非該当=105件
+- 実測確認率: 70.4%（目標>50%） → 達成
 - ⚠️ after<before（悪化疑い）: 10件
 - 未実測タスク（before/after の数値を追記してクローズすること）:
   - `t_8e1e4934` QA: t_d5ac9f32 done_guard 準拠検証（DeepSeek鍵ローテーション）（kensho-qa）
@@ -18,6 +18,7 @@
   - `t_8da22532` Apify Store SEO改善・未完了3項目（Custom icon/Categories複数選択/version更（kensho-revenue-worker）
   - `t_8bc5e2b4` 公開事業者リスト受託・初期提案セット作成(サンプル100件+3テンプレ)（kensho-revenue-worker）
 - 実測済みタスク:
+  - `t_62e7242b` outcome-review レポート内の `方向:` 行数 0→33 (方向: up), 方向ラベル付き KPI エントリ数 0→58 (方向: up), tests/test_outcome_review_check.py passed 12→13 (方向: up)
   - `t_1a366e78` goto failed attempt (窓08:00-12:48) 81→0 (方向: down), goto failed ページ失敗グループ (窓08:00-12:48) 27→0 (方向: down), login試行 Xにログイン確認中 (窓08:00-12:48) 41→11 (方向: down)
   - `t_02a5afc4` stop_nudge_fired_after_done_guard_blocked_kanban_complete 0→2 (方向: up)
   - `t_8946706e` self_heal attempts per session-invalid apply failure 3→1 (方向: down), apply_for_account -> _apply_impl invocations per failure 3→1 (方向: down), failure ceiling blocked after 3 consecutive hourly failures (1=yes,0=no) 0→1 (方向: up), accounts sharing one failure-ceiling counter 4→1 (方向: down), apply attempts for status=dead_proxy account 3→0 (方向: down), [SELF-HEAL] structured log lines emitted per recovery event 0→1 (方向: up), config.yaml self_healing.max_attempts 3→3 (方向: equal), tests/test_self_heal.py passing tests 18→30 (方向: up)
@@ -27,7 +28,6 @@
   - `t_adc65737` cron comment送信失敗数 (comment failed) 54→0 (方向: down)
   - `t_5dff275b` cron相当envでの自走push成功回数(/実行) 0→2 (方向: up), index.lock 競合時の commit 失敗率 100→0 (方向: down), 未pushコミット残数 1→0 (方向: down), push失敗の理由記録率 0→100 (方向: up), github_sync 回帰テスト数 0→32 (方向: up)
   - `t_3609e866` self_heal 発動件数 (apply+collection, 7日窓) 0→36 (方向: up), HANG 検知時の自動復帰率 0→100 (方向: up), docs/daily_reports 連続 push 日数 0→2 (方向: up), github_sync 自走 push 成功率 0→0 (方向: equal), complete_watchdog リマインド送信成功率 0→0 (方向: equal), complete_watchdog 誤検知件数 54→0 (方向: down), Telegram エラー通知 送出経路の有無 0→0 (方向: equal)
-  - `t_4ec92f06` agent_span 自動emit由来の spans_valid（2026-09-24） 0→4 (方向: up), pytest passed 963→988 (方向: up), kensho-kanban-sync.sh への emit 配線箇所 0→3 (方向: up)
 - 悪化疑いの詳細:
   - `t_1a366e78` goto failed attempt (窓08:00-12:48) 81→0 (方向: down)
   - `t_1a366e78` goto failed ページ失敗グループ (窓08:00-12:48) 27→0 (方向: down)
