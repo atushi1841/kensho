@@ -240,6 +240,13 @@ for t in tasks:
 
 repeats = {r: ids for r, ids in results.items() if len(ids) >= 2}
 
+# Detect blocked tasks whose parent is done (wasteful block)
+blocked_with_done_parent = []
+for t in blocked:
+    res = t.get("result") or ""
+    if "already completed" in res.lower() or "no action needed" in res.lower():
+        blocked_with_done_parent.append(t["id"])
+
 # v137b+ (t_83ce94c5): tasks.started_at = 初回 dispatch 時刻で更新されない。
 # 実活動時刻を task_runs.status='running' の最新 started_at から取得。
 # 各タスクごとに effective_started_at を構築し、ソート・減点・top_task
