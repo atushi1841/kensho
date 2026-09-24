@@ -5,12 +5,14 @@
     "script_runs": ["dry-run", "apply-dry-run", "minimal-path-dry-run"],
     "hermes_resolution": "all calls use HERMES_BIN",
     "error_handling": "exits 127 when CLI missing",
-    "rollback_available": "git revert f01ce21"
+    "rollback_available": "git revert bf56e2f"
   },
   "verification_commands": [
     "bash scripts/kensho-ready-watchdog.sh --dry-run",
     "bash scripts/kensho-ready-watchdog.sh --apply --dry-run",
-    "env -i HOME=/home/atushi PATH=/usr/bin:/bin bash scripts/kensho-ready-watchdog.sh --dry-run"
+    "env -i HOME=/home/atushi PATH=/usr/bin:/bin bash scripts/kensho-ready-watchdog.sh --dry-run",
+    "grep -n HERMES_BIN scripts/kensho-ready-watchdog.sh",
+    "git diff HEAD scripts/kensho-ready-watchdog.sh"
   ],
   "artifact_paths": [
     "/mnt/d/Project2/kensho/scripts/kensho-ready-watchdog.sh",

@@ -1,48 +1,48 @@
 {
   "task_id": "t_8946706e",
   "status": "complete",
-  "outcome": {
-    "session_failure_attempts": {
+  "outcome": [
+    {
       "metric": "self_heal attempts per session-invalid apply failure",
       "before": 3,
       "after": 1
     },
-    "apply_operation_calls_per_failure": {
+    {
       "metric": "apply_for_account -> _apply_impl invocations per failure",
       "before": 3,
       "after": 1
     },
-    "hourly_ceiling_blocked": {
-      "metric": "failure ceiling blocked after 3 consecutive hourly failures (1=yes, 0=no)",
+    {
+      "metric": "failure ceiling blocked after 3 consecutive hourly failures (1=yes,0=no)",
       "before": 0,
       "after": 1
     },
-    "ceiling_key_granularity": {
-      "metric": "accounts sharing one ceiling counter",
+    {
+      "metric": "accounts sharing one failure-ceiling counter",
       "before": 4,
       "after": 1
     },
-    "dead_proxy_apply_attempts": {
+    {
       "metric": "apply attempts for status=dead_proxy account",
       "before": 3,
       "after": 0
     },
-    "recovery_log_lines": {
-      "metric": "[SELF-HEAL] structured log lines per recovery event",
+    {
+      "metric": "[SELF-HEAL] structured log lines emitted per recovery event",
       "before": 0,
       "after": 1
     },
-    "max_attempts": {
+    {
       "metric": "config.yaml self_healing.max_attempts",
       "before": 3,
       "after": 3
     },
-    "self_heal_tests": {
+    {
       "metric": "tests/test_self_heal.py passing tests",
       "before": 18,
       "after": 30
     }
-  },
+  ],
   "success_indicators": [
     "F1: 回復イベントが '[SELF-HEAL] pipeline=... key=... attempt=... error_kind=... action=...' の構造化1行として logger に残る（実測: stop_fatal / final の2行）",
     "P0/F3: セッション失効（no_auth_session / goto_failed）は attempts=1 / operation_calls=1 で停止（修正前: attempts=3 / calls=3）",
