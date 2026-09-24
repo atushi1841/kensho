@@ -515,7 +515,7 @@ def test_safety_blocks_dead_proxy_status(tmp_path):
     (p / "data" / "status").mkdir()
     (p / "data" / "status" / "zin20120731.json").write_text(
         json.dumps({"status": "dead_proxy", "port": 1084, "stop_reason": "プロキシ死骸（TCP疎通 or 出口IP確認失敗）",
-                    "updated": "2026-09-24T05:15:02"}), encoding="utf-8")
+                    "updated": datetime.now().isoformat(timespec="seconds")}), encoding="utf-8")
     cfg = {"general": {"project_dir": str(p), "project_dir_abs": str(p)},
            "accounts": [{"key": "zin20120731"}, {"key": "atushi16"}],
            "safety": {"ip_separation_check": True}}
