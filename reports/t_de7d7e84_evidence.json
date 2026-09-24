@@ -21,10 +21,15 @@
     "/mnt/d/Project2/kensho/scripts/loop_health.sh"
   ],
   "evidence_hashes": [
-    "reports/t_de7d7e84_verification.md sha256=b588e65435baa9c32ebb0d71e7b36145127ebb2bbedae49e3ec33a0b75417277",
+    "reports/t_de7d7e84_verification.md sha256=907f9c7bdd584c5eb498f2442eb4c8d307fa7113d9bcc9f95dac253c114750a2",
     "scripts/loop_health.sh sha256=018afbc277d8ca1b2a1213065a9e521b138bbf3c95b54ee0b74792ec6e070310",
-    "git_commit=17e9fdf (pushed to origin/main d254f60..17e9fdf)"
+    "git_commit=2ed0374 以降を origin/main へ push"
   ],
+  "outcome": {
+    "metric": "loop_health.sh 有効JSON率 / monitor parse_error / pytest pass",
+    "before": "0/3 有効JSON・parse_error=1・pytest 3 failed",
+    "after": "3/3 有効JSON(score=100)・parse_error=0・pytest 3 passed"
+  },
   "task_id": "t_de7d7e84",
   "status": "complete"
 }

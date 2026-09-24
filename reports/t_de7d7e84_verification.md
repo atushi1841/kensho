@@ -83,3 +83,14 @@ kanban_done_guard task=t_de7d7e84 -> BLOCK (1 not met: command_citations>=3)   �
 - 改善点: 前回runはレポートに `$ cmd` だけを書き出力を書かず、count=0 で2回ループした。
   次回からは最初から `$ cmd` + 直後の出力行で書く。
 - リスク: t_47a5b3fe が loop_health.sh を編集中のため、本ファイルへの追記は行っていない（安全側）。
+
+## アウトカム測定: before → after（t_de7d7e84 / Outcome Review）
+
+| 指標 | before（破損時・カード本文のQA実測 04:11〜05:40） | after（本run 07:48〜07:52 実測） |
+|------|-----------------------------------------------|--------------------------------|
+| loop_health.sh の有効JSON率 | 0/3（NameError が repeats→by_age→score→blocked_with_done_parent と移動 / score=0 alert=ERROR） | 3/3（score=100 int・alert=OK・exit=0） |
+| monitor の parse_error | 1（`parse_error|dirty=Y`） | 0（`score=100|...|dirty=N`） |
+| tests/test_loop_health.py | 3 failed in 32.02s | 3 passed in 33.26s |
+| loop_health.sh md5 安定性 | 10分で5回変化（04:11〜04:23 md5 1b515859→8fd674ba） | 65秒不変（1b0fe2ef…→1b0fe2ef…） |
+
+metric=loop_health 有効JSON率 / before=0/3 / after=3/3。カード所有は t_de7d7e84 のまま。
