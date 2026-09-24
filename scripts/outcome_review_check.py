@@ -298,6 +298,9 @@ def render_markdown(summary: dict[str, Any]) -> str:
     rate_txt = "n/a" if rate is None else f"{rate:.1f}%"
     lines = [
         f"### 事後効果測定（Outcome Review / 過去{summary['days']}日 done）",
+        "- KPI方向性ルール: 各 before→after の末尾に `(方向: up/down/equal)` を明記する。"
+        " この語は数値の上下のみを表し、良悪は指標の意味に依存する"
+        "（例: 失敗回数・試行回数・所要秒数の down は改善 / 未pushコミット残数の up は悪化）。",
         f"- 対象: done={c['done']}件（{summary['since']}以降）/ 数値KPIあり={c['numeric_kpi_tasks']}件",
         f"- 実測確認: あり={c['measured']}件 / 未実測={c['missing']}件 / KPI非該当={c['na']}件",
         f"- 実測確認率: {rate_txt}（目標>{summary['target_rate']:.0f}%）"
@@ -360,6 +363,8 @@ def main(argv: list[str] | None = None) -> int:
             f"対象: 過去{args.days}日間（{since_date}以降）に done になったタスク",
             "",
             render_markdown(summary),
+            "",
+            f"- 検証コマンド: `grep -c \"方向:\" reports/{out.name}`（≥5 で KPI方向性ルールの適用を確認）",
             "",
         ]
         out.write_text("\n".join(body), encoding="utf-8")

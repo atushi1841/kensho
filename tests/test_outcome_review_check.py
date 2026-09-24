@@ -128,6 +128,29 @@ def test_render_markdown_adds_direction_to_every_outcome_entry() -> None:
     assert regression_line == "  - `t_ok` latency 10→5 (方向: down)"
 
 
+def test_render_markdown_states_direction_rule() -> None:
+    """方向ラベルの意味（上下のみ・良悪は指標依存）がレポート本文に明文化されていること。"""
+    summary = {
+        "days": 7,
+        "since": "2026-09-17",
+        "counts": {"done": 0, "measured": 0, "missing": 0, "na": 0, "numeric_kpi_tasks": 0, "regressed": 0},
+        "measured_rate": None,
+        "target_rate": 50.0,
+        "target_met": False,
+        "measured": [],
+        "missing": [],
+        "regressions": [],
+        "tasks": [],
+    }
+
+    md = mod.render_markdown(summary)
+    rule_line = next(line for line in md.splitlines() if "KPI方向性ルール" in line)
+
+    assert "方向: up/down/equal" in rule_line
+    assert "数値の上下のみ" in rule_line
+    assert "良悪" in rule_line
+
+
 # --- audit / summarize / render --------------------------------------------
 
 
