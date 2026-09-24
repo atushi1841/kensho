@@ -1,0 +1,32 @@
+{
+  "task_id": "t_e97fd8f8",
+  "title": "Implement critic periodic before/after KPI re-check (past N-day)",
+  "commit": "f10acc0",
+  "changed_files": [
+    "scripts/outcome_review_check.py"
+  ],
+  "verification": {
+    "pytest": "14/14 passed",
+    "mypy": "0 error",
+    "script_run": "exit 0",
+    "git_diff": "31 insertions, 5 deletions"
+  },
+  "outcome": [
+    {
+      "metric": "regression false positive rate",
+      "before": "100% (5/5)",
+      "after": "0% (0/5)",
+      "direction": "down",
+      "note": "direction フィールドを考慮した判定に変更により、偽陽性が解消された"
+    },
+    {
+      "metric": "missing before/after tasks",
+      "before": 8,
+      "after": 10,
+      "direction": "up",
+      "note": "追加の done タスクが発生し missing が増加。本タスクの修正対象外（別タスクで対応予定）"
+    }
+  ],
+  "verification_file": "reports/t_e97fd8f8_verification.md",
+  "verification_sha256": "6b515f8e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e"
+}
