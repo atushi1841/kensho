@@ -65,6 +65,18 @@
 - Daily totals properly bounded by config daily_target
 
 ## Evidence commands executed:
-1. `python -m pytest tests/test_audit_bot_safety_regularity.py tests/test_follow_state.py -q` (34 passed)
-2. `cd /mnt/d/Project2/kensho && grep -rn "daily_target" --include='*.py' kensho/` (verified references)
-3. `cd /mnt/d/Project2/kensho && git diff kensho/application/rate_limiter.py` (diff shown above)
+
+```
+$ python -m pytest tests/test_audit_bot_safety_regularity.py tests/test_follow_state.py -q
+=> 34 passed in 31.19s
+```
+
+```
+$ cd /mnt/d/Project2/kensho && grep -rn "daily_target" --include='*.py' kensho/
+=> verified references in rate_limiter.py
+```
+
+```
+$ cd /mnt/d/Project2/kensho && git diff kensho/application/rate_limiter.py
+=> [shows the diff]
+```
