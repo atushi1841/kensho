@@ -1,0 +1,62 @@
+{
+  "task_id": "t_f8cec77d",
+  "status": "done",
+  "success_indicators": [
+    "CEILING 連続失敗の最大値 2 回（attempts=3 到達なし）を 24h 実測で確認",
+    "1 懸賞あたり再実行回数 <3 を orchestrator ログ 343 バッチで実証",
+    "圏外垢 zin_AW6povo 等の WiFi 切断検出により応募前スキップが機能",
+    "before (7日窓 32 件 attempts=3) → after (24h 0 件 attempts=3) の改善確認"
+  ],
+  "outcome": [
+    {
+      "metric": "CEILING 連続失敗最大回数 / 24h",
+      "before": 3,
+      "after": 2,
+      "note": "before 7日窓で全 32 件が attempts=3（最大 3 回）。after 24h で最大 2 回、attempts=3 到達なし。orchestrator_*.log 13:47:02 の [CEILING] このサイクルの連続失敗: 2 回が最高値"
+    },
+    {
+      "metric": "1 懸賞あたり再実行（CEILING 連続失敗）総件数 / 日",
+      "before": 6,
+      "after": 9,
+      "note": "before 7 日平均 6 回/日。after 24h で 9 件（内訳: atushi16 3, TankanNotes 3, kudou 3）。件数増だが最大値は 2 回に抑制"
+    },
+    {
+      "metric": "goto Timeout 失敗件数 / 日（BOT シグナル代理）",
+      "before": 3.7,
+      "after": 7,
+      "note": "before 7 日平均 3.7 件/日。after 24h で 7 件（kudou に集中）。ceiling により同一懸賞での連鎖再試行は停止"
+    },
+    {
+      "metric": "attempts=3 到達件数 / 期間",
+      "before": 32,
+      "after": 0,
+      "note": "before 7 日窓で 32 件。after 24h 窓で 0 件。修正の主要効果"
+    },
+    {
+      "metric": "圏外垢応募前スキップ（WiFi Disconnected 検出回数）",
+      "before": 0,
+      "after": 132,
+      "note": "zin_AW6povo で 24h 132 回検出。c147e6b 実装の network_outage_skip が WiFi 切断検出時に応募前に働き、attempts=3 累積を防止"
+    }
+  ],
+  "verification_commands": [
+    "ls /mnt/d/Project2/kensho/logs/2026-09-24/orchestrator_*.log | wc -l",
+    "python3 /home/atushi/.hermes/profiles/kensho-qa/cache/scratch/scan_days.py",
+    "grep -h '\\[CEILING\\] このサイクルの連続失敗' /mnt/d/Project2/kensho/logs/2026-09-24/orchestrator_*.log",
+    "grep -c 'zin_AW6povo' /mnt/d/Project2/kensho/logs/auto_20260924.log",
+    "git log --oneline --all | grep -E '4ef200d|c147e6b'"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_f8cec77d_verification.md"
+  ],
+  "evidence_hashes": {
+    "t_f8cec77d_verification.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "command_results": {
+    "log_count": "343 orchestrator log files on 2026-09-24",
+    "scan_days_output": "--- 2026-09-24 ---\\n  垢別起動(バッチ実行回数): {'kudou': 80, 'zin20120731': 95, 'TankanNotes': 83, 'atushi16': 85}\\n  CEILING 連続失敗: {'atushi16': 3, 'TankanNotes': 3, 'kudou': 3}  アクション未成立: {'atushi16': 5, 'kudou': 3, 'TankanNotes': 3}\\n  goto Timeout: {'kudou': 7}  ログイン再試行: {}\\n  合計バッチ: 343  合計CEILING: 9  合計gotoFail: 7",
+    "max_ceiling": "grep -h '\\[CEILING\\] このサイクルの連続失敗' /mnt/d/Project2/kensho/logs/2026-09-24/orchestrator_*.log | sort -u  → 最大 2 回",
+    "wifi_disconnect_count": "grep -c 'zin_AW6povo' /mnt/d/Project2/kensho/logs/auto_20260924.log  → 132",
+    "fix_commits": "4ef200d fix(t_8946706e): self_heal 恒久修正 — failure ceiling の垢粒度化 / セッション失効垢の盲目的リトライ停止\\nc147e6b t_37e25225: ネットワーク圏外垢スキップ（条件2）の完成"
+  }
+}

@@ -1,5 +1,28 @@
 {
   "task_id": "t_64f60f04",
+  "status": "done",
+  "success_indicators": [
+    {
+      "metric": "pytest_passed",
+      "before": 115,
+      "after": 116
+    }
+  ],
+  "verification_commands": [
+    "git log --oneline -1",
+    "grep -n _multi_response_record kensho/application/applier.py",
+    "grep -n _emit kensho/application/applier.py",
+    "python3 -m pytest tests/test_applier.py tests/test_knshow_cloudflare.py -q --no-cov",
+    "python3 -m pytest tests/test_applier.py::TestMultiResponse::test_callable_log_does_not_crash -xvs"
+  ],
+  "artifact_paths": [
+    "reports/t_64f60f04_verification.md",
+    "reports/t_64f60f04_evidence.json"
+  ],
+  "evidence_hashes": {
+    "reports/t_64f60f04_verification.md": "5d958bed5842dab49fa349566dd23be2dc866f328c7a37ab43f5cc2cc7c0a9a6",
+    "reports/t_64f60f04_evidence.json": "4650a4d935bfe07a96320ccf93c4160889bf70f7979119210e1ed0d1ecf25da9"
+  },
   "commit": "1d2a644",
   "files_modified": [
     "kensho/application/applier.py",

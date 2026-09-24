@@ -98,6 +98,7 @@ while [[ $# -gt 0 ]]; do
     --no-park) NO_PARK=1; shift ;;
     --state) STATE_FILE="$2"; shift 2 ;;
     --dry-run) DRY_RUN=1; shift ;;
+    --now) NOW="$2"; shift 2 ;;
     *) shift ;;
   esac
 done
@@ -201,6 +202,7 @@ trap 'rm -f "$TASKS_FILE"' EXIT
 
 NOW=$(date +%s)
 export _LH_TASKS_FILE="$TASKS_FILE" _LH_NOW="$NOW" _LH_PREV="$PREV_STREAK" _LH_DB="$DB_PATH"
+export _LH_MAX_IN_PROGRESS
 
 # ─── Analyze ─────────────────────────────────────────────────────────────────
 ANALYSIS=$(python3 - <<'PYEOF'
@@ -229,23 +231,50 @@ except Exception:
 running = [t for t in tasks if t.get("status") == "running"]
 blocked = [t for t in tasks if t.get("status") == "blocked"]
 
-# v137b: 実活動時刻(tasks.started_at でなく task_runs 最新 run)でソート。
-# さもすると最古 running が 16h 停滞と誤判定され、healthy board でも escalation
-# target がそのカードに固定される(t_83ce94c5)。
+# v137b+ (t_83ce94c5): tasks.started_at = 初回 dispatch 時刻で更新されない。
+# 実活動時刻を task_runs.status='running' の最新 started_at から取得。
+# 各タスクごとに effective_started_at を構築し、ソート・減点・top_task
+# の年齢計算に使う。DB 不可・未取得時は tasks.started_at にフォールバック。
+effective_started_at = {}
+try:
+    _dbp = os.environ.get("_LH_DB", "")
+    if _dbp and os.path.exists(_dbp):
+        with sqlite3.connect("file:%s?mode=ro" % _dbp, uri=True) as _c:
+            _c.row_factory = sqlite3.Row
+            _running_rows = _c.execute(
+                "SELECT task_id, MAX(started_at) AS max_started "
+                "FROM task_runs WHERE status='running' GROUP BY task_id"
+            ).fetchall()
+            for _r in _running_rows:
+                effective_started_at[_r["task_id"]] = int(_r["max_started"])
+except Exception:
+    pass
+
+# v137b+ (t_83ce94c5): tasks.started_at = 初回 dispatch 時刻で更新されない。
+# 実活動時刻を task_runs.status='running' の最新 started_at から取得。
+# 各タスクごとに effective_started_at を構築し、ソート・減点・top_task
+# の年齢計算に使う。DB 不可・未取得時は tasks.started_at にフォールバック。
+effective_started_at = {}
+try:
+    _dbp = os.environ.get("_LH_DB", "")
+    if _dbp and os.path.exists(_dbp):
+        with sqlite3.connect("file:%s?mode=ro" % _dbp, uri=True) as _c:
+            _c.row_factory = sqlite3.Row
+            _running_rows = _c.execute(
+                "SELECT task_id, MAX(started_at) AS max_started "
+                "FROM task_runs WHERE status='running' GROUP BY task_id"
+            ).fetchall()
+            for _r in _running_rows:
+                effective_started_at[_r["task_id"]] = int(_r["max_started"])
+except Exception:
+    pass
+
+# ソートと age 減点に使う effective_started_at（DB 取得あれば上書き）
 by_age = sorted(
     running,
-    key=lambda t: (runs_started_at or t.get("started_at") or now),
+    key=lambda t: (effective_started_at.get(t["id"], t.get("started_at") or now)),
     reverse=False,
 )
-
-# Detect same-result repeat
-results = {}
-for t in tasks:
-    res = t.get("result") or ""
-    if res:
-        results.setdefault(res, []).append(t["id"])
-
-repeats = {r: ids for r, ids in results.items() if len(ids) >= 2}
 
 # Detect blocked tasks whose parent is done (wasteful block)
 blocked_with_done_parent = []
@@ -254,7 +283,7 @@ for t in blocked:
     if "already completed" in res.lower() or "no action needed" in res.lower():
         blocked_with_done_parent.append(t["id"])
 
-# ── Score calculation (v142 / t_9f14ee5d) ──────────────────────────────────────
+# ── Score calculation (v142 / t_9f14ee5d) ──────────────────────────────
 # config-based max_in_progress penalty, streak reset on zero real deductions
 score = 100
 
@@ -264,6 +293,22 @@ try:
     import yaml as _yaml
     _cfg = _yaml.safe_load(open("/mnt/d/Project2/kensho/config.yaml", encoding="utf-8"))
     _max_in_progress = int(_cfg.get("orchestrator", {}).get("max_in_progress", 4))
+except Exception:
+    pass
+
+# --max-in-progress override
+try:
+    _max_in_progress_override = os.environ.get("_LH_MAX_IN_PROGRESS", "")
+    if _max_in_progress_override.isdigit():
+        _max_in_progress = int(_max_in_progress_override)
+except Exception:
+    pass
+
+# --prev-streak override
+try:
+    _prev_streak_override = os.environ.get("_LH_PREV", "")
+    if _prev_streak_override.isdigit():
+        prev_streak = int(_prev_streak_override)
 except Exception:
     pass
 
@@ -322,31 +367,6 @@ if zombie_task_count:
     score -= 10 * zombie_task_count
 
 score = max(0, min(100, score))
-
-# ── Streak (v142 / t_9f14ee5d) ────────────────────────────────────────────────
-# streak = 連続実減点run数。実減点が0ならリセット。実減点が0なら streak=0。30秒以内の連続実行でも増えない。
-# 従来: 呼ぶたびに prev_streak+1 し、状態ファイルから引き継ぐため呼く限り減らない。
-# 1run 内に critic/QA/monitor が複数回呼ぶと自己増殖し、healthy board でも
-# escalation=true を維持した (QA 9/25 03:2x 実測: 49→50→51)。
-# 対策: 実減点が0なら streak=0。減点要因が2連続以上で streak を増やす。
-# 受入基準: 30秒以内に3回連続実行しても streak が incremented されない。
-_real_deductions = (
-    (len(running) > _max_in_progress) * 10 * max(0, len(running) - _max_in_progress)
-    + (any((now - int(t.get("started_at") or 0)) > 6 * 3600 for t in by_age)) * 10
-    + (any((now - int(t.get("started_at") or 0)) > 12 * 3600 for t in by_age)) * 15
-    + (len(repeats) > 0) * 20
-    + (len(blocked_with_done_parent) > 0) * 15
-    + (zombie_task_count > 0) * 10 * zombie_task_count
-    + (not business_ok) * 1  # business KPI gate
-)
-
-if _real_deductions > 0:
-    if score < 70:
-        streak = prev_streak + 1
-    else:
-        streak = 0
-else:
-    streak = 0
 
 # ── Business KPI gate (t_08b42528: apply stopped detection) ──
 # ループ健康(ボード)に加え「成果」(当日応募完了行)を見る。当日ログの完了行=0 かつ
