@@ -16,9 +16,14 @@ nightly-critic（cron 4baf143523e0 / kensho-revenue-report.sh）から毎時呼�
 判定規則は done ガード（kanban_done_guard.py 条件(k)）の outcome_review_state() と同一:
   pass    : evidence.json の outcome={metric,before,after} または検証セクションの
             before→after 数値比較が存在
-  missing : 数値KPIありなのに before/after 実測値が無い（要フォロー）
-  na      : 成功指標に数値KPIが無い（対象外・縛らない）
-加えて after < before のエントリを regression（悪化疑い）として明示する。
+  missing : 数値KPIありだが before/after 実測値が無く（要フォロー）
+  na      : 成功指標に数値KPIが無く（対象外・縛らない）
+加えて regression（悪化疑い）として明示する。
+
+  regression 判定は outcome エントリの `direction` フィールドで方向宣言がなされた場合、
+  その指標に応じて「改善」と「悪化」を判別する（例: `direction: "down"` = lower is better
+  → after > before が悪化）。方向未宣言のエントリは after < before のみを「警告」として返し、
+  方向宣言を促す（偽陽性を防ぐため、未宣言の場合は従来の after<before 判定を維持）。
 
 使い方:
   python3 scripts/outcome_review_check.py                       # markdown を stdout
@@ -143,11 +148,32 @@ def classify(evidence_text: str, evidence_data: dict[str, Any] | None) -> dict[s
 
 
 def regressions(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """after < before のエントリ（悪化疑い）を返す。"""
+    """after < before のエントリ（悪化疑い）を返す。
+
+    direction フィールドが宣言されている場合はその方向に従って判定する。
+    - direction="down" : lower is better → after > before が「悪化」
+    - direction="up"   : higher is better → after < before が「悪化」
+    - direction="equal" / 未宣言 : after < before のみを「警告（方向未宣言）」として返す
+      （偽陽性を防ぐため、未宣言の場合は従来の after<before 判定を維持）。
+    """
     out: list[dict[str, Any]] = []
     for e in entries:
         b, a = e.get("before"), e.get("after")
-        if isinstance(b, (int, float)) and isinstance(a, (int, float)) and not isinstance(b, bool):
+        if not isinstance(b, (int, float)) or isinstance(b, bool):
+            continue
+        if not isinstance(a, (int, float)) or isinstance(a, bool):
+            continue
+        direction = e.get("direction")
+        if direction == "down":
+            if a > b:
+                out.append(e)
+        elif direction == "up":
+            if a < b:
+                out.append(e)
+        elif direction == "equal":
+            continue
+        else:
+            # 方向未宣言: after < before のみ警告として返す（従来判定）
             if a < b:
                 out.append(e)
     return out
