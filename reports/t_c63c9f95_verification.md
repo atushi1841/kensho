@@ -1,5 +1,7 @@
 # verification_evidence
 
+## タスク: t_c63c9f95
+
 ## 1. watchdog 最小PATH インシデント復活（実測）
 
 ```
@@ -32,9 +34,15 @@ $ grep -n '2KB以内' /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho
 
 ## 3. d340ec02d57e 復旧状況
 
-cron側セッション（kensho-revenue-worker cron job, background pid 659843）が `hermes cron run d340ec02d57e` を実行中。本カードでは重複実行せず、cron側に終端確認を委譲。
+cron側セッション（kensho-revenue-worker cron job, background pid 659843）が `hermes cron run d340ec02d57e` を実行中。本カード t_c63c9f95 では重複実行せず、cron側に終端確認を委譲。
 
 ## 4. 変更ファイル
 
 - `scripts/kensho-cron-watchdog.sh` lines 6,7: `hermes` → `/home/atushi/.local/bin/hermes`（絶対パス化）
 - `scripts/kensho-research-agent.py` line 398: `【出力形式】` 下に 2KB 出力制約追記
+
+## 5. 検証コマンド
+
+- `bash -n /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-cron-watchdog.sh; echo $?` → 0
+- `env -i HOME=/home/atushi PATH=/usr/bin:/bin bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-cron-watchdog.sh` → watchdog実行 confirmed
+- `grep -n '2KB以内' /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-research-agent.py` → 398: constraint added
