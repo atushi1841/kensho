@@ -29,12 +29,12 @@ price reference.
 
 ## Dataset stats (last build)
 
-- Unique items:            128
-- Total observations:      720
-- Items with used price:   73
-- Items in stock:          73
+- Unique items:            138
+- Total observations:      840
+- Items with used price:   79
+- Items in stock:          79
 - Keywords:                ポケモンカードゲーム イーブイ, ポケモンカードゲーム ピカチュウ, ポケモンカードゲーム ポケモンカード151, ポケモンカードゲーム ミュウツー, ポケモンカードゲーム リザードン
-- Collection window:       2026-09-21T23:13:01Z → 2026-09-23T22:32:18Z
+- Collection window:       2026-09-21T23:13:01Z → 2026-09-24T22:30:17Z
 - Used-price movers seen:  2
 
 ## Use cases
@@ -42,7 +42,7 @@ price reference.
 - **Export / reseller arbitrage**: find Japanese retail prices below your overseas exit price
 - **Price monitoring**: track a card's used-price trend over time (see history CSV)
 - **Market research**: reference Japan-market demand for a set/card before buying
-- **AI training data**: labelled 128-row snapshot of JP secondary-market prices
+- **AI training data**: labelled 138-row snapshot of JP secondary-market prices
 
 ## Data notes & license
 
