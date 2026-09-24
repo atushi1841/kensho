@@ -87,3 +87,18 @@ kanban_done_guard task=t_de7d7e84 -> PASS (all conditions satisfied)
 ```
 
 証跡: 本ファイル（`reports/qa-observe-2026-09-25-run6.md`）。notepad 更新・Kanbanコメント・unblock 実施。
+
+## 7. 追記（08:20 実測）— t_572b88de の偽ブロック
+```
+$ python3 (task_events kind=blocked, 08:20) t_572b88de
+reason: kanban_done_guard BLOCKED done for task 20260925_080417_e7a629. kanban_done_guard task=20260925_080417_e7a629 -> BLOCK (4 not met: verification_evidence_section, comman...
+$ bash kanban_done_guard.py t_572b88de --workdir /mnt/d/Project2/kensho
+kanban_done_guard task=t_572b88de -> PASS (all conditions satisfied)
+  worker_output_file : /mnt/d/Project2/kensho/reports/verification_evidence_t_572b88de.md
+  own_file            : True  (owner_task_id=t_572b88de)
+$ git show --stat --oneline 1ac99af
+1ac99af feat(t_572b88de): add commit salvage and rewind detector scripts, git discipline docs
+```
+- 真因: guard の第1引数に**セッションUUID**（20260925_080417_e7a629）を渡したため、`reports/<task_id>_verification.md` を解決できず4条件 unmet → 完了済みの作業が blocked 化。
+- 対処: 正しい引数で PASS を確認し unblock＋コメント（修正手順: 第1引数=t_572b88de → PASS確認 → `kanban complete --summary --result`）。
+- 教訓: guard/証跡の task id は**必ず kanban の `t_xxxxxxxx`**。セッションUUID命名は ownership binding で必ず弾かれる。
