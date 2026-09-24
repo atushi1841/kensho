@@ -1,0 +1,30 @@
+{
+  "success_indicators": [
+    "loop_health.sh 3回連続で有効JSON（score=100 int / alert=OK / exit=0、3/3回）",
+    "pytest -q tests/test_loop_health.py => 3 passed in 33.26s",
+    "board_state_monitor_qa.sh 出力の parse_error 出現回数 = 0",
+    "loop_health.sh md5 が 65秒間不変（1b0fe2ef5968e2cd5ace683fd614055d）",
+    "必須定義5つ全て存在: score=100(L279)/repeats=L241/by_age=L271/business_ok=L406/blocked_with_done_parent=5件",
+    "uncommitted code 0件・origin/main と 0/0（push済み）"
+  ],
+  "verification_commands": [
+    "$ bash scripts/loop_health.sh  (x3) => score=100 alert=OK streak=0 esc=False running=4 blocked=4 (exit=0)",
+    "$ python3 -m pytest -q tests/test_loop_health.py => 3 passed in 33.26s",
+    "$ bash ~/.hermes/profiles/kensho-sweeps/scripts/board_state_monitor_qa.sh => score=100|ready=1|blocked=4|prio=normal|streak=0|esc=False|skip=False|dirty=N|bulk=N",
+    "$ md5sum scripts/loop_health.sh => 1b0fe2ef5968e2cd5ace683fd614055d (07:49:41 と 07:51:17 で同一)",
+    "$ grep -n '^score = 100' scripts/loop_health.sh => 279:score = 100",
+    "$ bash -n scripts/loop_health.sh => SYNTAX_OK (exit=0)",
+    "$ git push origin main => d254f60..17e9fdf main -> main"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_de7d7e84_verification.md",
+    "/mnt/d/Project2/kensho/scripts/loop_health.sh"
+  ],
+  "evidence_hashes": [
+    "reports/t_de7d7e84_verification.md sha256=b588e65435baa9c32ebb0d71e7b36145127ebb2bbedae49e3ec33a0b75417277",
+    "scripts/loop_health.sh sha256=018afbc277d8ca1b2a1213065a9e521b138bbf3c95b54ee0b74792ec6e070310",
+    "git_commit=17e9fdf (pushed to origin/main d254f60..17e9fdf)"
+  ],
+  "task_id": "t_de7d7e84",
+  "status": "complete"
+}
