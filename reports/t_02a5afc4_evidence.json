@@ -1,0 +1,35 @@
+{
+  "success_indicators": [
+    "done_guard BLOCK 後の stop nudge 発火（実トランスクリプト3件）: before=0 → after=2（残り1件は既に成功した終端呼出しを含むため nudge 不要が正しい）",
+    "unit tests: 9 passed (tests/agent/test_kanban_stop.py)",
+    "kanban stop guard は失敗した kanban_complete / kanban_block を終端状態として数えない（_terminal_result_failed）",
+    "protocol violation run/日: 09-23=32 → 09-24=13（目標<=10は修正landing後の run で継続観測）"
+  ],
+  "verification_commands": [
+    "$ git -C /home/atushi/.hermes/hermes-agent diff --stat HEAD~1 HEAD => agent/kanban_stop.py | 55 ++++, tests/agent/test_kanban_stop.py | 111 ++++, 2 files changed, 138 insertions(+), 28 deletions(-)",
+    "$ cd /home/atushi/.hermes/hermes-agent && python -m pytest tests/agent/test_kanban_stop.py -v => 9 passed in 1.90s",
+    "$ /home/atushi/.hermes/hermes-agent/venv/bin/python replay_stop_guard.py => stop_nudge_fired_after_blocked_complete before=0 after=2 over 3 real transcripts",
+    "$ /home/atushi/.hermes/hermes-agent/venv/bin/python kpi_protocol_violation_24h.py => 09-23 baseline 32, 09-24 13, all time 340"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_02a5afc4_verification.md",
+    "/home/atushi/.hermes/hermes-agent/agent/kanban_stop.py",
+    "/home/atushi/.hermes/hermes-agent/tests/agent/test_kanban_stop.py",
+    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_02a5afc4/replay_stop_guard.py"
+  ],
+  "evidence_hashes": [
+    "sha256:f037ebd7cb8eca1707a552bf262368f0f3ecdb96777afedd71f5acc76a6670d0  reports/t_02a5afc4_verification.md",
+    "sha256:0ce4470e048a19a7227c34d9e97d506746050109f40a8ce4697f34cb3beaba41  agent/kanban_stop.py",
+    "sha256:1bc6c0cf56f9671be109f08760b6e02ccb182440205a18fe4b34e15214f6a50f  tests/agent/test_kanban_stop.py",
+    "sha256:6f70ed0ca2a533489237489e906036a9893eccdf2e1cb63e27e92467adfffb75  replay_stop_guard.py"
+  ],
+  "outcome": [
+    {
+      "metric": "stop_nudge_fired_after_done_guard_blocked_kanban_complete",
+      "before": 0,
+      "after": 2
+    }
+  ],
+  "status": "complete",
+  "task_id": "t_02a5afc4"
+}
