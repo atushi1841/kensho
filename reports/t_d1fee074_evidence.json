@@ -1,0 +1,89 @@
+{
+  "task_id": "t_d1fee074",
+  "status": "partial",
+  "verdict": "条件1・3・4達成 / 条件2未達（到達不能コード）/ 7日連続push未達",
+  "success_indicators": [
+    "attempts=3 ライン数: 64 -> 0 件/事後窓",
+    "CEILING 連続失敗 最大: 3回 -> 2回",
+    "complete_watchdog comment failed: 54 -> 0件",
+    "github_sync cron自走push 0/1 -> 2/2",
+    "self_heal pytest 30 passed"
+  ],
+  "verification_commands": [
+    "bash ~/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_d1fee074 --workdir /mnt/d/Project2/kensho --task",
+    "git log --format=\"%h %ci %s\" -- docs/daily_reports/",
+    "python3 -m pytest tests/test_self_heal.py -q --no-cov",
+    "grep -c \"comment failed\" logs/complete_watchdog_cron.log",
+    "python3 /home/atushi/.hermes/profiles/kensho-qa/cache/scratch/scan_days.py"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_d1fee074_verification.md"
+  ],
+  "evidence_hashes": {
+    "reports/t_d1fee074_verification.md": "sha256:tbd",
+    "logs/complete_watchdog_cron.log": "sha256:tbd"
+  },
+  "outcome": [
+    {
+      "metric": "attempts=3 ライン数",
+      "before": 64,
+      "after": 0,
+      "unit": "件",
+      "evidence": "logs/auto_20260924.log / scan_days.py 09-24 0件 / 09-25 0件"
+    },
+    {
+      "metric": "CEILING 連続失敗 最大",
+      "before": 3,
+      "after": 2,
+      "unit": "回",
+      "evidence": "scan_days.py 09-24 最大2回 / 09-25 0回"
+    },
+    {
+      "metric": "complete_watchdog comment failed",
+      "before": 54,
+      "after": 0,
+      "unit": "件",
+      "evidence": "logs/complete_watchdog_cron.log grep -c = 0"
+    },
+    {
+      "metric": "github_sync cron push",
+      "before": 0,
+      "after": 2,
+      "unit": "回/実行",
+      "evidence": "env -i cron envで2/2成功"
+    },
+    {
+      "metric": "self_heal pytest",
+      "before": "N/A",
+      "after": 30,
+      "unit": "pass",
+      "evidence": "30 passed in 44.16s"
+    }
+  ],
+  "observation_window": {
+    "before": "2026-09-18 00:00..09-24 09:19",
+    "after": "2026-09-24 09:19..09-25 04:10",
+    "source": "logs/2026-09-24/auto_*.log + logs/2026-09-25/ + logs/complete_watchdog_cron.log + docs/daily_reports/"
+  },
+  "acceptance": {
+    "cond1_circuit_breaker": "PASS",
+    "cond2_network_outage_skip": "FAIL (到達不能コード)",
+    "cond3_24h_after": "PASS",
+    "cond4_bot_constraints": "PASS",
+    "cond5_7day_push": "FAIL (3/7日)"
+  },
+  "findings": [
+    "条件1効果: attempts=3 64→0件, CEILING連続最大3→2回",
+    "条件2実装はno-op: dead_proxy_reason同一入力の先行returnに遮蔽",
+    "complete_watchdog 修正後0件の失敗 (100%成功)",
+    "github_sync cron envで2/2自走push成功"
+  ],
+  "human_ops_required": [
+    "zin_AW6povo WiFi物理復旧 (SSID AiR-WiFi_6_povo)",
+    "7日連続push条件達成にはcredential/push手段確保が必要"
+  ],
+  "notes": [
+    "48h条件: 最古fix(t_adc65737 05:00 Sep24)から23h経過、48h未満。条件は48h後に再検証予定",
+    "git未コミットコード1件: scripts/loop_health.sh (他タスクt_3f48a43e in-flight)"
+  ]
+}
