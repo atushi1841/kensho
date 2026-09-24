@@ -6,9 +6,11 @@
 3. 同一ツイート(tweet_id)への複数種アクション → 同一ツイート多重アクション禁止の確認
 4. 同一主催者(screen_name)へのフォロー過多 → 単一hostへの集中フォロー監視
 5. 同一垢の1時間あたりアクション数   → hourly上限(max_actions_per_hour)確認
-6. 日跨ぎ規則性(直近7日)             → 初動時刻stdev・日次件数CVの正規性シグナル監視
+6. 日跨ぎ規則性(直近7日)             → 同一分(HH:MM)の反復日数・日次件数CVの正規性シグナル監視
    (critic v143 / research-20260913.md 提案B。X検出は「量より規則性」。
    読み取り専用監査であり、応募ロジックや config.yaml の batch_jitter_minutes は本監査の対象外)
+   閾値の根拠（cron */15 グリッド + stagger 0〜9分の設計エンベロープからの導出）は
+   下部 REGULARITY_* の定数コメントを参照（t_3f48a43e で再校正）。
 
 使い方:
     python3 scripts/audit_bot_safety.py [date] [--today] [--state]
@@ -27,6 +29,7 @@ from __future__ import annotations
 import collections
 import datetime
 import json
+import re
 import statistics
 import sys
 from datetime import timedelta, timezone
@@ -57,19 +60,51 @@ def _load_night_hours() -> set[int]:
     return set(range(0, 8))
 MIN_ACTION_GAP = 5.0  # 秒。これ未満の2アクション間隔は規制違反
 MAX_FOLLOWS_PER_OWNER = 4  # 同一主催者への1日当たりフォロー上限(人間らしさ)
-MAX_ACTIONS_PER_HOUR: int = 25  # 時間あたり上限(config rate_limits.max_actions_per_hour=25)
+# ★ t_33113bb7 (B): MAX_ACTIONS_PER_HOUR の hardcoded 25 を廃止。
+#   config.yaml rate_limits.max_actions_per_hour を参照する。設定読込失敗時のフォールバックは25。
+def _load_max_actions_per_hour() -> int:
+    """config.yaml の rate_limits.max_actions_per_hour を読み込む（フォールバック25）。"""
+    try:
+        import yaml  # noqa: PLC0415
+
+        cfg = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8")) or {}
+        v = cfg.get("rate_limits", {}).get("max_actions_per_hour")
+        if v is not None:
+            return int(v)
+    except Exception:
+        pass
+    return 25
 
 # critic v143: 検査6 日跨ぎ規則性（research-20260913.md 提案B、直近7日、読み取り専用監査）
+#
+# ── 閾値の根拠（設計エンベロープからの導出 / t_3f48a43e 再校正 2026-09-24） ──
+# 設計エンベロープ: 応募セッションは cron `*/15`（:00/:15/:30/:45 分のグリッド）で起動し、
+#   実行開始の stagger は 0〜9分（kensho-auto-apply.sh: STAGGER_MOD=${KENSO_STAGGER_MOD:-10}）。
+#   よって「同一バッチ枠」の日次初動分は [B, B+9] の10値に収まり、その一様乱数の母集団
+#   stdevは 9/√12 ≒ 2.6分。つまり stdev<2.5分 は「設計上到達可能」（旧コメントの『到達不能』
+#   は誤り）。単一枠モデルのシミュレーション（2026-09-24, 20万試行）では 7日窓の 41%/垢/週 が
+#   stdev<2.5 に入る。→ 生stdevは設計外の指紋にならないため発火条件から外し診断表示のみに降格。
+# 発火条件は次の2つのみ（いずれも「設計エンベロープ外の指紋」）:
+#   (1) REGULARITY_REPEAT_DAYS_MIN=4: 7日窓で同一分(HH:MM)が4日以上。staggerが乱数である限り
+#       単一枠仮定でも発生率 2.7%/垢/週（2枠混在で 0.4%）。実データ12窓（2026-09-13〜24）の
+#       垢別最大反復は2日、直近7日窓（終端09-24）でも atushi16/kudou/TankanNotes すべて2日
+#       → 余裕2倍。7日すべて同一分（機械的正確さを注入したfixture）は当然 >=4 で発火する。
+#   (2) REGULARITY_COUNT_CV=0.01: 日次件数がほぼ完全に同数（量の完全固定）。実測CVは
+#       0.144〜0.285（同窓）→ 余裕14倍。旧値0.15は「日次件数が固定設計」のため恒常的に
+#       下回り偽陽性100%だった（atushi16 CV0.07 / TankanNotes CV0.03 実測）。
 REGULARITY_WINDOW_DAYS = 7  # 直近7日（対象日を含む）
 REGULARITY_MIN_DAYS = 3  # この日数未満なら統計不能として判定しない
-REGULARITY_START_STDEV_MIN = 2.5  # 初動時刻(分)の標本標準偏差(母集団stdev)がこの未満 → 正規性シグナル
-REGULARITY_COUNT_CV = 0.01  # 日次件数のCVがこの未満 → 正規性シグナル
-def _regularity_signals(date_s: str) -> list[str]:
-    """検査6: 直近7日のアカウント別『初動時刻の反復パターン』『日次件数のCV』を計算し、
-    BOTが疑われる機械的パターンを検出する（人為的に機械的正確さを注入したfixtureでの発火が期待される）。
+REGULARITY_REPEAT_DAYS_MIN = 4  # 同一分(HH:MM)がこの日数以上出現 → 正規性シグナル
+REGULARITY_COUNT_CV = 0.01  # 日次件数のCVがこれ未満 → 正規性シグナル（ほぼ完全固定のみ）
 
-    本カードは監査スクリプト側のみを変更：(A) 重複キーを `account + JST日 + round(stdev,1)` 
-    （meanを含めない）に固定、(B) exit code 0での報告のみ許可、(C) config.yaml の改修は別カードで実行。
+
+def _regularity_signals(date_s: str) -> list[str]:
+    """検査6: 直近7日の垢別『初動時刻の反復パターン』『日次件数のCV』から、設計エンベロープ
+    （cron */15 グリッド + stagger 0〜9分）から外れた機械的パターンを検出する。
+
+    発火条件: (1) 同一分(HH:MM)が REGULARITY_REPEAT_DAYS_MIN 日以上＝stagger乱数が実質無効、
+    (2) 日次件数CV < REGULARITY_COUNT_CV＝量が完全固定。初動stdevは診断値であり発火条件では
+    ない（根拠は上部の閾値コメント）。読み取り専用: 応募ロジック・config.yaml には触れない。
     """
     try:
         end = datetime.date.fromisoformat(date_s)
@@ -109,51 +144,59 @@ def _regularity_signals(date_s: str) -> list[str]:
 
     signals: list[str] = []
     for acct in ACCOUNTS:
-        # 初動時刻を分で取得
+        # 初動 = 当該日の全監査行（status不問）の最小時刻(JST, 分)。件数 = 同全行数。
         starts = [first_min[acct][d] for d in sorted(first_min[acct])]
         days_n = len(starts)
         if days_n < REGULARITY_MIN_DAYS:
-            continue
+            continue  # データ不足（新垢・稼働停止期間など）は判定しない
 
         cs = [counts[acct][d] for d in sorted(counts[acct])]
 
-        # --- 検出ロジック改訂 ---
-        # (A) 反復分検出: 同一分が複数日（>=3日）出現する場合、機械的パターンと判定
-        from collections import Counter
-        minute_counts = Counter(starts)
-        repeated_minutes = {m: c for m, c in minute_counts.items() if c >= 3}
-
-        # (B) 日次件数CV: 従来の閾値0.15は件数固定設計では必ず下回る
+        # (1) 同一分(HH:MM)の反復日数 — 設計外の指紋（stagger乱数が実質無効化されている）
+        repeated = {m: c for m, c in collections.Counter(starts).items()
+                    if c >= REGULARITY_REPEAT_DAYS_MIN}
+        # (2) 日次件数CV — 量がほぼ完全固定されている
         cv_s = (statistics.pstdev(cs) / statistics.mean(cs)) if cs and statistics.mean(cs) > 0 else float("inf")
-
-        # (C) stdev閾値: 到達可能な最小値（theoretical minimum）を利用
-        #   バッチ時刻は各日ちょうど固定（例: 08:02）で、stagger最大9分のジッタのみ。
-        #   JST日次1件の場合、ランダムなstaggerの最小母集団stdevは約8.3/sqrt(12) ≈ 2.4分。
-        #   7日連続で同じ分に出現するパターンは本システム設計では絶対発生不可能 → 検出可能な最下限。
+        # 診断値（発火条件ではない）: 初動stdev・件数mean
         stdev_s = statistics.pstdev(starts) if days_n >= 2 else float("inf")
 
-        # 反復分検出以外にTrueになるのは、日次件数CVが0.01未満（実際の自動化システムでは稀）
-        #   またはstdevが2.5分未満（実現不可能な同一分連続）。
+        if not repeated and cv_s >= REGULARITY_COUNT_CV:
+            continue
 
-        if repeated_minutes or cv_s < 0.01 or stdev_s < 2.5:
-            # 機械的パターンの説明を構築
-            reasons = []
-            if repeated_minutes:
-                for minute, cnt in sorted(repeated_minutes.items()):
-                    h = minute // 60
-                    m = minute % 60
-                    reasons.append(f"分{h:02d}:{m:02d} {cnt}日連続出現（機械的パターン）")
-            if cv_s < 0.01:
-                reasons.append(f"件数CV{cv_s:.3f}(<0.01) - 日次件数がほぼ固定")
-            if stdev_s < 2.5:
-                reasons.append(f"初動stdev{stdev_s:.1f}分(<2.5) - 実現不可能な同一分連続")
-
-            signals.append(
-                f"[正規性] {date_s} {acct} "
-                + "・".join(reasons)
-                + f" (直近{days_n}日 初動{min(starts) // 60}時台中心・件数mean{statistics.mean(cs):.0f} → 機械的パターン=検出リスク、batch時刻ジッタ改修は別カードでGO提案)"
+        reasons: list[str] = []
+        for minute, cnt in sorted(repeated.items()):
+            reasons.append(
+                f"初動{minute // 60:02d}:{minute % 60:02d}が{days_n}日中{cnt}日一致"
+                f"（stagger 0〜9分では設計上起こらない機械的パターン）"
             )
+        if cv_s < REGULARITY_COUNT_CV:
+            reasons.append(f"件数CV{cv_s:.3f}(<{REGULARITY_COUNT_CV}) - 日次件数がほぼ完全固定")
+        signals.append(
+            f"[正規性] {date_s} {acct} "
+            + "・".join(reasons)
+            + f" (診断: 初動stdev{stdev_s:.1f}分・件数mean{statistics.mean(cs):.0f}"
+            + " → batch時刻ジッタ改修は別カードでGO提案)"
+        )
     return signals
+
+
+def _dedupe_key(problem: str) -> str:
+    """--state（時間毎監視）の既報抑制キーを作る。
+
+    旧実装は問題文全体をキーにしていたため、診断値（件数mean など）が run ごとに微動する
+    だけで同一パターンが別シグナル扱いされ、state に重複追記＋毎時再通知されていた
+    （実測: 09-23 kudou は stdev9.9固定のまま mean 違いで4件記録）。
+    検査6(正規性)のキーは「対象日 + 垢 + 検出種別 + 該当分」に正規化し、可変の診断値
+    （stdev/CV/mean/一致日数）を除去する。検査1〜5の行は同一性が明確なため原文をキーにする。
+    """
+    if not problem.startswith("[正規性]"):
+        return problem
+    key = problem.split(" (診断:", 1)[0]
+    key = re.sub(r"\d+日一致", "N日一致", key)
+    key = re.sub(r"件数CV[\d.]+\(<[\d.]+\)", "件数CV", key)
+    return key
+
+
 def _load_target_date() -> str:
     """対象日付を決定する。--todayがあれば今日、なければ昨日（後方互換）。"""
     use_today = "--today" in sys.argv
@@ -177,11 +220,8 @@ def _load_state() -> dict[str, list[str]]:
 def _save_state(state: dict[str, list[str]]) -> None:
     """stateファイルを書き込む。古い日付は掃除。
 
-    Duplicate detection prevention: Use a deterministic key that excludes variable
-    mean values which cause identical signals to be re-recorded as different.
-    Key: account + JST日 + round(stdev,1) (mean excluded from key).
-    This prevents the same regularity signal from being logged multiple times
-    when the underlying account pattern hasn't changed.
+    格納するのは `_dedupe_key()` で正規化したキー（可変の診断値を含まない）。
+    これにより同一パターンが run ごとに別シグナルとして再追記・再通知されない。
     """
     try:
         today = datetime.date.today()
@@ -287,24 +327,32 @@ def main() -> int:
             problems.append(f"[過フォロー] {date_s} {acct} → {owner} フォロー{c}回 (上限{MAX_FOLLOWS_PER_OWNER})")
 
     # 5) 1時間あたりアクション数
+    # ★ t_33113bb7 (B): 閾値は config.yaml rate_limits.max_actions_per_hour から動的読込。
+    #   従来はモジュール定数 MAX_ACTIONS_PER_HOUR=25 の hardcoded で、
+    #   config 側が 15 に下げても監査は旧閾値25のまま（実測で15→25の乖離が検出できず）。
+    _max_per_hour: int = _load_max_actions_per_hour()
     hourly = collections.Counter()
     for ts, jst, acct, at, tgt, status in rows:
         if status == "success":
             hourly[(acct, jst.strftime("%H"))] += 1
     for (acct, hh), c in hourly.items():
-        if c > MAX_ACTIONS_PER_HOUR:
-            problems.append(f"[過集中] {date_s} {acct} {hh}時台に{c}アクション (上限{MAX_ACTIONS_PER_HOUR}/時)")
+        if c > _max_per_hour:
+            problems.append(f"[過集中] {date_s} {acct} {hh}時台に{c}アクション (上限{_max_per_hour}/時)")
 
     # 6) 日跨ぎ規則性（critic v143 提案B・直近7日、読み取り専用）
     problems.extend(_regularity_signals(date_s))
 
     # ★ 2026-08-27: --state 時は既報シグナルを抑制し、NEW分のみ報告（時間毎監視用）
+    #   ★ 2026-09-24 (t_3f48a43e): キーを _dedupe_key() による正規化キーへ変更。
+    #     旧実装は問題文全体（件数mean等の可変診断値を含む）をキーにしていたため、
+    #     同一パターンが run ごとに別物として再追記・毎時再通知されていた（鳴り続け）。
     if "--state" in sys.argv:
         state = _load_state()
         known = set(state.get(date_s, []))
-        new_problems = [p for p in problems if p not in known]
+        keys = [_dedupe_key(p) for p in problems]
+        new_problems = [p for p, k in zip(problems, keys) if k not in known]
         if problems:
-            state[date_s] = sorted(set(known) | set(problems))
+            state[date_s] = sorted(set(known) | set(keys))
             _save_state(state)
         problems = new_problems
 

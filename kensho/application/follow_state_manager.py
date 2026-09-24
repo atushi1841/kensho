@@ -19,6 +19,7 @@ from __future__ import annotations
 import datetime
 import json
 from pathlib import Path
+from typing import Any
 
 # 同一主催者への1日フォロー上限（これを超えたらスキップ）
 MAX_FOLLOWS_PER_OWNER_PER_DAY = 2
@@ -86,6 +87,83 @@ class FollowStateManager:
     #   （実測: zinがmonteur_mr_shuuに14回）とBOTシグナルになる。一度無駄な失敗した主催者は
     #   当日中ブロックし、同一主催者への再試行を完全防止する。
     _WASTE_FAILURE_CODES: set[str] = {"no_follow_button", "follow_confirm_missing", "policy_denied"}
+    # ★ t_33113bb7 (C): 同一垢の「再試行しても無駄な失敗」連続→垢垢単位サーキットブレーカ。
+    #   提案87は主催者(owner)単位のブロックだが、kudou の実測では同一主催者ではなく
+    #   複数主催者（korehamiro×3/削除済み垢・Rakuten_Wallet×4/zin・steakgusto029×2/zin）で
+    #   no_follow_button が連続。 owner ブロックでは捕捉できないため、垢単位で連続回数を数える。
+    #   同一エラー種別が threshold 回連続 → 当該垢のフォロー試行を lock_hours 停止。
+    #   ロック中はカウント増やさず（連続実行で閾値超を増幅しない）、期限自動解除で再試行。
+    _CB_THRESHOLD: int = 3  # 連続でこの回数到達でロック
+    _CB_LOCK_HOURS: float = 2.0  # ロック時間
+    _CB_KEY: str = "_circuit_breaker"  # state 内のキー
+
+    def _cb_state(self) -> dict[str, Any]:
+        return self._state.setdefault(self._account_key, {}).setdefault(self._CB_KEY, {})
+
+    def record_account_follow_failure(self, error_code: str | None = None) -> bool:
+        """同一垢の「再試行しても無駄な失敗」を連続記録。閾値到達で当該垢のフォロー試行を一時停止。
+
+        Returns:
+            True = 今回でロックが新規発動した（スキップ処理が必要）
+            False = まだカウント段階 or 既にロック中 or 対象外のエラー
+        """
+        if error_code not in self._WASTE_FAILURE_CODES:
+            return False
+        now = datetime.datetime.now(JST)
+        cb = self._cb_state()
+        entry: Any = cb.get(error_code)
+        count: int = 0
+        locked_until: str | None = None
+        if isinstance(entry, dict):
+            count = int(entry.get("count", 0))
+            lu = entry.get("locked_until")
+            if lu:
+                try:
+                    if datetime.datetime.fromisoformat(lu) > now:
+                        locked_until = lu  # 既にロック中
+                except (ValueError, TypeError):
+                    pass
+        if locked_until:
+            # ロック中はカウント増やさず（連続実行で閾値超を増幅しない）
+            return False
+        count += 1
+        became_locked = count >= self._CB_THRESHOLD
+        new_entry: dict[str, Any] = {"count": count, "locked_until": None}
+        if became_locked:
+            new_entry["locked_until"] = (now + datetime.timedelta(hours=self._CB_LOCK_HOURS)).isoformat()
+            new_entry["first_locked_at"] = now.isoformat()
+        cb[error_code] = new_entry
+        self._save()
+        return became_locked
+
+    def account_follow_blocked(self) -> tuple[bool, str | None]:
+        """当該垢のフォロー試行がサーキットブレーカで停止中か。
+
+        Returns:
+            (blocked, reason_code): blocked=True なら reason_code に当該エラー種別。
+        """
+        cb = self._cb_state()
+        now = datetime.datetime.now(JST)
+        for code, entry in cb.items():
+            if not isinstance(entry, dict):
+                continue
+            lu = entry.get("locked_until")
+            if lu:
+                try:
+                    if datetime.datetime.fromisoformat(lu) > now:
+                        return True, code
+                except (ValueError, TypeError):
+                    pass
+        return False, None
+
+    def clear_account_follow_block(self, error_code: str | None = None) -> None:
+        """フォロー成功時の自動解除（任意）。指定なしなら全解除。"""
+        cb = self._cb_state()
+        if error_code is None:
+            cb.clear()
+        else:
+            cb.pop(error_code, None)
+        self._save()
 
     def record_follow_failure(self, screen_name: str, error_code: str | None = None) -> None:
         """無駄な失敗（再試行しても無駄なエラー）でフォローを当日ブロック。

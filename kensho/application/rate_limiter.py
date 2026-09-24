@@ -74,6 +74,34 @@ def save_daily_counts(counts: dict[str, Any]) -> None:
     safe_save_json(DAILY_COUNTS_FILE, {"date": today, "counts": counts}, "daily_counts.json")
 
 
+def _get_account_daily_target(account_key: str, cfg: dict[str, Any]) -> int:
+    """accounts[].daily_target を取得（0/未設定=無効）。
+    ★ t_33113bb7 (A): config に daily_target が定義されている場合、
+      これは文書スペック（atushi16:75 / kudou:50 / TankanNotes:50）であり、
+      実装が参照していなかった。ここから参照して実効化する。
+    """
+    for a in cfg.get("accounts", []):
+        if a.get("key") == account_key:
+            v = a.get("daily_target", 0)
+            try:
+                return int(v)
+            except (TypeError, ValueError):
+                return 0
+    return 0
+
+
+def _account_daily_total(account_key: str) -> int:
+    """当日の総アクション数（follow+rt+like+reply）を返す。"""
+    counts: dict[str, Any] = load_daily_counts()
+    acct: dict[str, Any] = counts.get(account_key, {})
+    return (
+        int(acct.get("follow", 0))
+        + int(acct.get("rt", 0))
+        + int(acct.get("like", 0))
+        + int(acct.get("reply", 0))
+    )
+
+
 def check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
     """
     日次上限＋時間あたり上限に達してないかチェック。
@@ -100,6 +128,31 @@ def check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
     lk: int = acct.get("like", 0)
     rep: int = acct.get("reply", 0)
 
+    # ★ t_33113bb7 (A): accounts[].daily_target を日次上限として参照（実効化）。
+    #   従来は max_total_actions_per_day=100 のみが拘束で、全垢ほぼ100件/日で走っていた。
+    #   daily_target（atushi16:75/kudou:50/TankanNotes:50）が smaller ならそっちを優先し、
+    #   両方 smaller なら min（文書スペックと rate_limits の両方を満たす）。
+    #   max_total=0（無効）の場合は daily_target のみ。daily_target も 0 なら max_total に従う。
+    _dt: int = _get_account_daily_target(account_key, cfg)
+    _effective_total: int = max_total
+    if _dt > 0:
+        if _effective_total <= 0 or _dt < _effective_total:
+            _effective_total = _dt
+            print(
+                f"[LIMIT] {account_key}: daily_target({_dt}) を日次上限として適用"
+                f"（max_total_actions_per_day={max_total} は無効化）",
+                flush=True,
+            )
+    if _effective_total > 0:
+        total: int = f + r + lk + rep
+        if total >= _effective_total:
+            print(
+                f"[LIMIT] {account_key}: 日次総量上限到達 ({total}/{_effective_total})"
+                f"（daily_target 実効化・提案A）",
+                flush=True,
+            )
+            return True
+
     if f >= max_follow:
         print(f"[LIMIT] {account_key}: フォロー上限到達 ({f}/{max_follow})")
         return True
@@ -114,8 +167,9 @@ def check_rate_limit(account_key: str, cfg: dict[str, Any]) -> bool:
         return True
 
     # ★ 2026-08-31提案98: 日次総アクション上限（follow+rt+like+reply の合計）
-    if max_total > 0:
-        total: int = f + r + lk + rep
+    #   （daily_target 実効化后的上位互換：_effective_total が daily_target で上書き済み）
+    if max_total > 0 and _dt <= 0:
+        total = f + r + lk + rep
         if total >= max_total:
             print(f"[LIMIT] {account_key}: 日次総量上限到達 ({total}/{max_total})")
             return True
@@ -135,13 +189,19 @@ def daily_total_limit_reached(account_key: str, cfg: dict[str, Any]) -> bool:
     """日次総量上限に達したかチェック（totalのみ・アクション単位で使う）。
 
     hourly_limit_reached と同様、action_queueループ内で各アクション実行前に
-    呼ばれる。日次総量（follow+rt+like+reply）が max_total_actions_per_day 以上
-    なら True を返し、残りアクションをスキップさせる。
+    呼ばれる。日次総量（follow+rt+like+reply）が上限以上なら True を返し、
+    残りアクションをスキップさせる。
     （2026-08-31提案100: prop98のitem単位チェックでは1item内の複数アクション
     F+R+Lでtotalが100→108まで跳ねる。アクション単位で厳格チェックする。）
+    ★ t_33113bb7 (A): daily_target（atushi16:75/kudou:50/TankanNotes:50）を
+      日次上限として参照。daily_target が smaller ならそっちを優先（min）。
     """
     limits: dict[str, Any] = cfg.get("rate_limits", {})
     max_total: int = limits.get("max_total_actions_per_day", 0)  # 0=無効（旧config互換）
+    _dt: int = _get_account_daily_target(account_key, cfg)
+    if _dt > 0:
+        if max_total <= 0 or _dt < max_total:
+            max_total = _dt
     if max_total <= 0:
         return False
     counts: dict[str, Any] = load_daily_counts()
