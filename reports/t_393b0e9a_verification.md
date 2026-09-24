@@ -13,7 +13,7 @@ t_1a366e78 の申し送りにより、`tests/test_self_heal.py::test_safety_bloc
 ## verification_evidence
 
 $ git log --oneline -5
-→ 763e431 fix test_self_heal: 恒久赤 — fixture updated を now に置換（時刻経過で発火する期限式フレーク解消）
+→ 763e431 fix test_self_heal: 恒久赤 — fixture updated を now に置換（時刻（時刻経過で発火する期限式フレーク解消）
 → bc252c7 更新 BOT対策強化の検証証跡 t_33113bb7: verification.md のコマンド引用をフェンス形式に修正
 → 37390ff 更新 BOT対策強化の検証証跡 t_33113bb7: evidence.json に実hash・実コMAND引用を追加
 → 1a56884 更新 BOT対策強化の検証証跡 t_33113bb7
