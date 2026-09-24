@@ -2,7 +2,11 @@
   "task_id": "t_53838249",
   "status": "abandoned",
   "success_indicators": ["duplicate task detection", "redundancy resolution", "resource conservation"],
-  "verification_commands": ["hermes kanban show t_53838249", "hermes kanban complete t_53838249 --summary \"重複済みバグのため放棄\" --result \"duplicate work already completed\"", "git log --oneline -5 | grep t_5af1b5d8"],
+  "verification_commands": [
+    "$ hermes kanban show t_53838249",
+    "$ git log --oneline -5 | grep t_5af1b5d8",
+    "$ hermes kanban --board kensho-ai-team list --status ready --json | jq 'length'"
+  ],
   "artifact_paths": [],
   "evidence_hashes": {}
 }
