@@ -32,10 +32,19 @@
 
 `pytest -q tests/test_gen_status_proxy_time_filter.py` = **4 passed**（①最新行採用 ②前tick行スキップ ③同tick複数行の最新採用 ④時刻行なしはスキップ）
 
+### 2-4. ライブ検証（2026-09-25 06:15 tick・本番cron経路）
+
+`bash scripts/generate-status.sh` を 06:15:04 に起動 → 待ちループが同一 tick の PROXY-CHECK（06:15:04 行）を検出 → 06:15:26 に status を書き込み、06:15:33 に完了（所要28.5秒）。
+
+- `/tmp/kensho_status_data.json` の `proxy.ts` = **2026-09-25 06:15:04**（tick 開始時刻と一致＝採用した根拠行が**前tick(06:00:04)ではなく同一tick**であることの直接証拠）
+- `data/status/*.json`（すべて `updated=2026-09-25T06:15:26`）: atushi16(1081)=alive / kudou(1082)=alive / TankanNotes(1085)=alive / zin20120731(1084)=dead_proxy → **実測 alive=[1081,1082,1085]・dead=[1084] と全一致（不一致0）**
+- toushiwatch(1087)=unchecked（当該 tick の PROXY-CHECK 対象外のため）= 期待どおり。inobase1-4 は当日更新のない運用外垢。
+- 偽 dead_proxy（alive リストの port を dead_proxy と書く）の同時発生 = **0件**。
+
 ## 3. 成功指標への対応
 
-- 偽 dead_proxy の同時発生 0件/24h → 本レポートのライブ検証（1 tick）で不一致0。10 tick 連続の観察は QA タスクへ委譲（親子リンク）。
-- `generate-status.sh` 直後の `atushi16.json.status` が同一 tick の alive 判定と一致 → ライブ検証で実測。
+- 偽 dead_proxy の同時発生 0件/24h → 実ログ再現で不一致0（24 tick 分）＋ライブ1 tick で不一致0。**10 tick 連続観察は QA タスクへ委譲**（親子リンク付きで起票）。
+- `generate-status.sh` 直後の `atushi16.json.status` が同一 tick の alive 判定と一致 → ライブ検証で実測（1/10。残9回は QA）。
 - 既存テスト緑（4 passed）。
 
 ## 4. 変更ファイルとロールバック
@@ -72,4 +81,24 @@ bash -n OK
 
 $ python3 -m pytest -q tests/test_gen_status_proxy_time_filter.py -p no:cacheprovider
 4 passed in 34.66s
+
+$ bash scripts/generate-status.sh
+[ok] account_wifi_map.json 更新 (0 fields, ports=[1081, 1082, 1085])
+DATA_OK
+[OK] 生成完了: /mnt/d/Project2/kensho/kensho-status.html
+
+real	0m28.473s   （起動06:15:04 → 終了06:15:33）
+
+$ python3 /home/atushi/.hermes/profiles/kensho-sweeps/cache/scratch/verify_status_live.py
+ログ最終 PROXY-CHECK: tick開始=2026-09-25 06:15:04 alive=[1081, 1082, 1085] dead=[1084]
+  TankanNotes      port=1085 status=alive       一致 updated=2026-09-25T06:15:26.724399
+  atushi16         port=1081 status=alive       一致 updated=2026-09-25T06:15:26.724399
+  kudou            port=1082 status=alive       一致 updated=2026-09-25T06:15:26.724399
+  toushiwatch      port=1087 status=unchecked   一致 updated=2026-09-25T06:15:26.724399
+  zin20120731      port=1084 status=dead_proxy  一致 updated=2026-09-25T06:15:26.724399
+RESULT: PASS
+
+$ python3 -c "import json; p=json.load(open('/tmp/kensho_status_data.json'))['proxy']; print(p['ts'], p['checked'], p['alive'], p['dead'])"
+2026-09-25 06:15:04 True ['TankanNotes', 'atushi16', 'kudou'] [['zin20120731', 1084]]
+（tick開始時刻と一致＝前tick 06:00:04 ではなく同一 tick の行を採用した直接証拠）
 ```
