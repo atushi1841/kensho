@@ -28,6 +28,21 @@ class TestSafeWriter:
         shutil.rmtree(self.tmp, ignore_errors=True)
 
     def _run_safe_write(self, args):
+        # Inject --data-dir if not already present
+        if '--data-dir' not in args:
+            # Find and replace or add after --write etc.
+            new_args = []
+            added = False
+            for i, arg in enumerate(args):
+                new_args.append(arg)
+                if not added and arg in ('--write', '--claim', '--release', '--claims') and i + 1 < len(args):
+                    # Insert --data-dir after this arg
+                    new_args.extend(['--data-dir', str(self.data_dir)])
+                    added = True
+            if not added:
+                # Add at end
+                new_args.extend(['--data-dir', str(self.data_dir)])
+            args = new_args
         cmd = [sys.executable, SAFE_WRITE_PATH] + args
         result = subprocess.run(cmd, capture_output=True, text=True)
         return result.returncode, result.stdout.strip(), result.stderr.strip()
