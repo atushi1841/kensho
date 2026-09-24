@@ -1,0 +1,63 @@
+### 1. [CEILING] このサイクルの連続失敗: N回 の値分布（= 垢単位の連続リトライ回数）
+--- 2026-09-18 (orchestrator 307 files) ---
+         4 このサイクルの連続失敗: 1回
+--- 2026-09-19 (orchestrator 321 files) ---
+         3 このサイクルの連続失敗: 1回
+         1 このサイクルの連続失敗: 2回
+         1 このサイクルの連続失敗: 3回
+--- 2026-09-20 (orchestrator 317 files) ---
+         4 このサイクルの連続失敗: 1回
+--- 2026-09-21 (orchestrator 312 files) ---
+         9 このサイクルの連続失敗: 1回
+--- 2026-09-22 (orchestrator 301 files) ---
+         5 このサイクルの連続失敗: 1回
+--- 2026-09-23 (orchestrator 304 files) ---
+         6 このサイクルの連続失敗: 1回
+--- 2026-09-24 (orchestrator 319 files) ---
+         8 このサイクルの連続失敗: 1回
+         1 このサイクルの連続失敗: 2回
+--- 2026-09-25 (orchestrator 51 files) ---
+### 2. attempts=3（self_heal が最大3回まで再実行した最終失敗）ライン数
+   2026-09-18 attempts=3 lines: 0
+   2026-09-19 attempts=3 lines: 0
+   2026-09-20 attempts=3 lines: 0
+   2026-09-21 attempts=3 lines: 0
+   2026-09-22 attempts=3 lines: 14
+   2026-09-23 attempts=3 lines: 50
+   2026-09-24 attempts=3 lines: 0
+   2026-09-25 attempts=3 lines: 0
+   --- 代表行 (2026-09-23) ---
+     RuntimeError: self_heal failed: apply 0 success 1 errors (attempts=3)
+     [08:20:07]   [NG] applyエラー: self_heal failed: apply 0 success 1 errors (attempts=3)
+     [08:41:27]   [NG] applyエラー: self_heal failed: apply 0 success 1 errors (attempts=3)
+### 3. 圏外垢スキップ（条件2）の実発動ログ
+   'ネットワーク圏外/電源OFF/バックOFF' 件数 (logs/2026-09-24,2026-09-25, auto_20260924/0925.log): 0
+   'プロキシ死骸（' 件数 (logs/2026-09-24,2026-09-25, auto_20260924/0925.log): 0
+### 4. 圏外垢 zin20120731 の応募経路（orchestrator のバッチ判定）
+   auto_20260925.log の '垢別起動: zin20120731' 回数: 14
+   --- 垢別起動直後の行（先頭1件・最大8行） ---
+     2026-09-25 00:04:18.583 | INFO     | kensho.core.logger:write:48 -   垢別起動: zin20120731
+     2026-09-25 00:04:18.631 | INFO     | kensho.core.logger:write:48 -   処理待ちのバッチなし
+     2026-09-25 00:04:18.638 | INFO     | kensho.core.logger:write:48 -   日次サマリー: /mnt/d/Project2/kensho/logs/summary/2026-09-25.md
+     2026-09-25 00:04:18.767 | INFO     | kensho.core.logger:write:48 - 
+     --- Step 6: Summary ---
+     2026-09-25 00:04:18.798 | INFO     | kensho.core.logger:write:48 - 
+     === 正常終了: 00:04:18 ===
+     2026-09-25 00:04:18.929 | INFO     | kensho.core.logger:write:48 -   日次サマリー: /mnt/d/Project2/kensho/logs/summary/2026-09-25.md
+### 5. 条件2 実装の到達可能性（同一入力の先行 return に遮蔽されていないか）
+   applier.py:59  : from kensho.utils.safety import dead_proxy_reason as _dead_proxy_reason
+   applier.py:860 :     _dead = _dead_proxy_reason(cfg, account_key)
+   applier.py:861 :     if _dead:
+   applier.py:892 :         skip_reason = dead_proxy_reason(cfg, account_key)
+   applier.py:893 :         if skip_reason:
+   --- wifi_watchdog の判定入力が applier から参照されているか ---
+     kensho/ 配下で account_wifi_map を参照するファイル数: 0
+### 6. BOT制約（rate_limits / max_attempts）が緩められていないか
+   264:  max_total_actions_per_day: 100   # 2026-08-31提案98: 日次総アクション上限（KPI 100件/日整合）。follow+rt+like+reply の合計が100超で打ち止め。8/30実績でkudou 126等が超過（種別上限のみだと理論上430件/日まで可能→過剰エンゲージメント=deboost/摘発リスク）
+   265:  max_actions_per_hour: 15         # 25→15（2026-08-30提案86: 1時間15件超過のBOTリスク対策。8/29実測でTankanNotes 12時20件・chugakujuken 13時17件・inobase1-4 12時19件+19時16件が超過。speed_guard(15件/180s)と併用）
+   266:  active_hours_start: "08:00"
+   267:  active_hours_end: "23:00"
+   268:  min_delay_between_actions: 15   # 20→15（基本間隔を微縮小。実測で一度もrate制限に引っかかっていないため）
+   269:  max_delay_between_actions: 60   # 45→60
+   315:  max_attempts: 3
+DONE
