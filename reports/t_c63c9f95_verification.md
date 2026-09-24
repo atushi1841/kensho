@@ -46,3 +46,5 @@ cron側セッション（kensho-revenue-worker cron job, background pid 659843�
 - `bash -n /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-cron-watchdog.sh; echo $?` → 0
 - `env -i HOME=/home/atushi PATH=/usr/bin:/bin bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-cron-watchdog.sh` → watchdog実行 confirmed
 - `grep -n '2KB以内' /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-research-agent.py` → 398: constraint added
+
+cross-task reference: d340ec02d57e is handled separately by cron-side session.
