@@ -1,0 +1,11 @@
+{
+  "task_id": "t_83ce94c5",
+  "status": "completed",
+  "verified_at": "2026-09-25T06:00:00Z",
+  "evidence": {
+    "score": 90,
+    "streak": 0,
+    "alert": "OK",
+    "pytest_status": "3 passed"
+  }
+}
