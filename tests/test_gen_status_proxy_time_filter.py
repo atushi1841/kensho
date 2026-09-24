@@ -133,3 +133,13 @@ def test_replay_freezes_instead_of_adopting_stale_row_when_tick_exceeds_timeout(
     assert row_ts is None, "前 tick の死骸を採用してはならない"
     assert got_alive == []
     assert got_dead == []
+
+
+
+def test_load_filter_returns_callable() -> None:
+    """load_filter が _filter_proxy_check_rows 関数を返すことを確認。
+    実装が削除されたときに StopIteration が送出されテストが赤になる。
+    """
+    from scripts.verify_status_proxy_same_tick import load_filter
+    fn = load_filter()
+    assert callable(fn)
