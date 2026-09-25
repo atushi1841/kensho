@@ -68,8 +68,36 @@ $ git log --oneline -1
 - 他日への影響: 24 entry のうち変更は 2026-09-25 の1件のみ（過去日entryは日付不一致で対象外・テストで固定）。
 - 冪等性: 一致時は書き込みゼロ（バイト同一）をテストで固定。
 
+## 完了ゲート(f)の偽drift解消（チーム全体の停止解除・同日追加）
+
+done guard の条件(f) `no_dep_drift` が **repo全カードで赤**（RED）になっていたため（2026-09-25 18:32 の
+外部エージェント commit 4b34477 が導入した逆方向検査の不具合）、本カードの done がブロックされた。
+t_3dbc1fbe の作業とは独立した回帰だが、放置すると全workerの完了が止まるため、原因を実測で特定して修正した。
+
+- 偽drift 20件の内訳（実測）: ① uv.lock を requirements 行として解析 → 宣言済み7パッケージが全件
+  "MISSING: package name not found in uv.lock"（uv.lock 自体には存在。`grep -c 'name = "playwright"' uv.lock` = 4）
+  ② requirements-lock.txt の exact pin と pyproject の範囲を文字列一致比較 → 「範囲 vs pin」の偽 mismatch
+  ③ pyproject 宣言8件が requirements.txt に未反映（これは実在の宣言漏れ → 追記で解消）
+- 修正: `load_uv_lock_pkgs()`（tomllib で [[package]] name を収集）、spec 比較を
+  「同一 or より厳しい範囲 pin を許容」する `spec_is_compatible()` に変更、pyproject 宣言8件を
+  requirements.txt へ追記（`beautifulsoup4>=4.12` / `keyring>=24.0` / `loguru>=0.7` / `lxml>=5.0` /
+  `pydantic>=2.0` / `pydantic-settings>=2.0` / `requests>=2.31` / `twscrape>=0.20.1`）
+
+$ python3 scripts/check_dep_drift.py
+{"ok": true, "drift": [], "pip_check": "No broken requirements found.", "venv_python": "/home/atushi/kensho-venv/bin/python", ...}
+（rc=0・drift 20件 → 0件）
+
+$ python3 scripts/check_dep_drift.py --selftest
+SELFTEST OK: drift injection detected -> exit 1 (per card regression guard)
+
+$ python3 -m pytest tests/test_dep_declaration.py tests/test_script_drift_watch.py -q
+9 passed in 40.20s
+
+$ git log --oneline -1
+95015c2 fix(deps): t_3dbc1fbe done guard(f) 偽drift解消 — uv.lock を TOML 解析に修正＋宣言ミラー spec を「同一 or より厳しい範囲」で判定＋pyproject 宣言8件を requirements.txt へ反映
+
 ## 自己レビュー（Reflexion）
 
 ```json
-{"self_review":{"what_was_done":"t_3dbc1fbe の受入基準未達だった点（カード記載の検証コマンド `--check` が unrecognized arguments で exit 2）を是正し、`--check` を既定動作の明示エイリアスとして実装（--apply との同時指定は usage error=exit 2）。CLI契約テストを --check／--checkなし／--check+--apply／修復後--check の4経路に拡張。実データで `--check`=OK exit 0、3ファイル pytest 78 passed、mypy 新規エラー0 を実測。","what_went_well":["カード本文の検証コマンドを実際に叩いて未達を検出（--check が exit 2）し、実装側を契約に合わせた","既定動作と--checkの等価性を同一 exit code・同一マーカーで機械的に固定した","実データの修復が git 追跡下（revenue-daily.json は df91ceb 収録）にあり、証跡とデータが一致していることを確認した"],"what_could_improve":["前runでカード本文の検証コマンドを実行検証せずに完了報告しようとした（フラグ名の実在確認を最初にやるべきだった）","コミットに兄弟タスクが既に stage していた reports/daily-improvement-2026-09-25.md が1件混入した（git add は明示パスだが、事前stagedの確認を怠った）"],"mistakes_or_risks":["残リスク: 乖離検知はレポート生成時にしか走らない（自動修復はしない設計）","回避策: 修復はライブstateのコピーのみ・過去日不可触・冪等をテストで固定"],"learned":"カード本文に書かれた検証コマンドは『実行して初めて契約になる』。実装完了の判定前に、カード記載コマンドを1回は実際に叩いて exit code を確認する。","confidence":9,"verification_evidence":"pytest 3ファイル78 passed / --check 実データ=revenue-reconcile OK exit 0 / --check+--apply=usage error exit 2 / 当日entry gumroad_reconciled.changed_keys=8・login_ok_before=false→after=true・warning1件除去・collectors.gumroad_ok=True・warnings=[] / mypy 新規0（既存2件は156・321行） / unpushed 0-0"}}
+{"self_review":{"what_was_done":"t_3dbc1fbe の受入基準未達だった点（カード記載の検証コマンド `--check` が unrecognized arguments で exit 2）を是正し、加えて done guard 条件(f) を repo 全体で赤にしていた偽drift（uv.lock を requirements 行として解析・lock pin と pyproject 範囲の文字列一致比較・宣言漏れ8件）を実測で特定して修正（commit 95015c2 / drift 20→0 / selftest OK / 9 passed）。`--check` を既定動作の明示エイリアスとして実装（--apply との同時指定は usage error=exit 2）。CLI契約テストを --check／--checkなし／--check+--apply／修復後--check の4経路に拡張。実データで `--check`=OK exit 0、3ファイル pytest 78 passed、mypy 新規エラー0 を実測。","what_went_well":["カード本文の検証コマンドを実際に叩いて未達を検出（--check が exit 2）し、実装側を契約に合わせた","既定動作と--checkの等価性を同一 exit code・同一マーカーで機械的に固定した","実データの修復が git 追跡下（revenue-daily.json は df91ceb 収録）にあり、証跡とデータが一致していることを確認した"],"what_could_improve":["前runでカード本文の検証コマンドを実行検証せずに完了報告しようとした（フラグ名の実在確認を最初にやるべきだった）","コミットに兄弟タスクが既に stage していた reports/daily-improvement-2026-09-25.md が1件混入した（git add は明示パスだが、事前stagedの確認を怠った）"],"mistakes_or_risks":["残リスク: 乖離検知はレポート生成時にしか走らない（自動修復はしない設計）","回避策: 修復はライブstateのコピーのみ・過去日不可触・冪等をテストで固定"],"learned":"カード本文に書かれた検証コマンドは『実行して初めて契約になる』。実装完了の判定前に、カード記載コマンドを1回は実際に叩いて exit code を確認する。","confidence":9,"verification_evidence":"pytest 3ファイル78 passed / --check 実データ=revenue-reconcile OK exit 0 / --check+--apply=usage error exit 2 / 当日entry gumroad_reconciled.changed_keys=8・login_ok_before=false→after=true・warning1件除去・collectors.gumroad_ok=True・warnings=[] / mypy 新規0（既存2件は156・321行） / unpushed 0-0"}}
 ```
