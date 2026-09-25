@@ -235,7 +235,7 @@ def _spec_satisfied(spec: str, installed: str) -> bool | None:
 # ---- メインの検査 ----------------------------------------------------------------
 
 
-def check(venv_python: Path, pyproject: Path) -> dict[str, Any]:
+def check(venv_python: Path, pyproject: Path, skip_reverse_check: bool = False) -> dict[str, Any]:
     """drift 検査本体。{"ok", "drift", "pip_check", ...} を返す (exit 判定は main)。"""
     result: dict[str, Any] = {
         "ok": False,
@@ -259,9 +259,40 @@ def check(venv_python: Path, pyproject: Path) -> dict[str, Any]:
         result["error"] = str(e)
         return result
 
-    # Load requirements files and uv.lock for additional checks
-    req_pkgs = set(load_req_files([ROOT / "requirements.txt", ROOT / "requirements-lock.txt"]).keys())
-    uv_lock_pkgs = set(load_req_files([ROOT / "uv.lock"]).keys())
+    if not skip_reverse_check:
+        # Load requirements files and uv.lock for additional checks
+        req_pkgs = set(load_req_files([ROOT / "requirements.txt", ROOT / "requirements-lock.txt"]).keys())
+        uv_lock_pkgs = set(load_req_files([ROOT / "uv.lock"]).keys())
+        
+        # 逆方向検査: pyproject の各宣言が requirements/uv.lock に存在するか確認
+        for name in sorted(declared):
+            # pyproject にあるが requirements 系に無い → drift
+            if name not in req_pkgs:
+                result["drift"].append({
+                    "name": name,
+                    "declared": declared[name] or "(none)",
+                    "installed": "-",
+                    "reason": f"MISSING: declared in pyproject but not in requirements.txt/requirements-lock.txt",
+                })
+                continue
+            # spec 整合性確認: requirements に存在するが spec が異なる
+            req_spec = load_req_files([ROOT / "requirements.txt", ROOT / "requirements-lock.txt"]).get(name)
+            if req_spec is not None and req_spec != (declared[name] or ""):
+                result["drift"].append({
+                    "name": name,
+                    "declared": declared[name] or "(none)",
+                    "installed": "-",
+                    "reason": f"spec mismatch: requirements file has {req_spec}, pyproject has {declared[name]}",
+                })
+            # uv.lock に存在するか確認（name のみ）
+            if name not in uv_lock_pkgs:
+                result["drift"].append({
+                    "name": name,
+                    "declared": declared[name] or "(none)",
+                    "installed": "-",
+                    "reason": f"MISSING: package name not found in uv.lock",
+                })
+
     for name in sorted(declared):
         spec = declared[name]
         inst = installed.get(name)
@@ -327,7 +358,7 @@ def selftest(venv_python: Path, pyproject: Path) -> int:
             f'[project]\nname = "t"\nversion = "0"\ndependencies = ["twscrape=={tws}", "httpx>=0.27"]\n',
             encoding="utf-8",
         )
-        r1 = check(venv_python, ok_proj)
+        r1 = check(venv_python, ok_proj, skip_reverse_check=True)
 
         # (2) カード本文の回帰ガード: twscrape != 実インストール版 → drift 検出
         bad_proj = tmp / "bad.toml"
@@ -335,7 +366,7 @@ def selftest(venv_python: Path, pyproject: Path) -> int:
             f'[project]\nname = "t"\nversion = "0"\ndependencies = ["twscrape!={tws}"]\n',
             encoding="utf-8",
         )
-        r2 = check(venv_python, bad_proj)
+        r2 = check(venv_python, bad_proj, skip_reverse_check=True)
 
         # (3) 存在しないパッケージ → MISSING 検出
         miss_proj = tmp / "miss.toml"
@@ -343,16 +374,25 @@ def selftest(venv_python: Path, pyproject: Path) -> int:
             '[project]\nname = "t"\nversion = "0"\ndependencies = ["kensho-no-such-pkg-9x7q>=1.0"]\n',
             encoding="utf-8",
         )
-        r3 = check(venv_python, miss_proj)
+        r3 = check(venv_python, miss_proj, skip_reverse_check=True)
 
+        # (4) lock欠落を注入 → drift 検出 (reverse checking)
+        lock_miss_proj = tmp / "lockmiss.toml"
+        lock_miss_proj.write_text(
+            '[project]\nname = "t"\nversion = "0"\ndependencies = ["kensho-lock-miss-pkg-xyz>=1.0"]\n',
+            encoding="utf-8",
+        )
+        r4 = check(venv_python, lock_miss_proj, skip_reverse_check=False)
     ok_path = r1["ok"] and not r1["drift"]
     detect = (not r2["ok"]) and any(d.get("name") == "twscrape" for d in r2["drift"])
     missing = (not r3["ok"]) and any("MISSING" in str(d.get("reason", "")) for d in r3["drift"])
+    lock_missing = (not r4["ok"]) and any("MISSING" in str(d.get("reason", "")) and ("requirements.txt" in str(d.get("reason", "")) or "uv.lock" in str(d.get("reason", ""))) for d in r4["drift"])
 
     print(f"selftest dep_drift: healthy_ok={ok_path} (twscrape=={tws}, checked={len(r1.get('checked', {}))})")
     print(f"selftest dep_drift: injected_!=_drift_detected={detect} (drift={[d['name'] for d in r2['drift']]})")
     print(f"selftest dep_drift: missing_pkg_detected={missing}")
-    if ok_path and detect and missing:
+    print(f"selftest dep_drift: lock_missing_detected={lock_missing} (drift={[d['name'] for d in r4['drift']]})")
+    if ok_path and detect and missing and lock_missing:
         print("SELFTEST OK: drift injection detected -> exit 1 (per card regression guard)")
         return 1
     print("SELFTEST FAILED: check_dep_drift did not behave as designed")
