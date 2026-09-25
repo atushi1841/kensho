@@ -58,6 +58,20 @@ cd /mnt/d/Project2/kensho && python3 -m pytest tests/test_orphan_run_reaper.py -
   - Running without PID detection
 
 ## Verification Evidence
+
+$ python3 scripts/orphan_run_reaper.py --json
+→ {"orphan_runs": 1, "stale_heartbeat_runs": 1, "running_without_pid": 0, "details": [{"run_id": 1474, "task_id": "t_5dd7ba12", "status": "running", "worker_pid": 65553}]}
+
+$ bash scripts/loop_health.sh
+→ score 57
+→ alert WARN
+→ orphan_runs 1
+
+$ python3 scripts/test_orphan_run_reaper.py
+→ test_orphan_run PASS
+→ test_stale_heartbeat PASS
+→ test_normal_no_orphan PASS
+
 - Script executes successfully within 20-second timeout (previously timed out at 420 seconds)
 - JSON output is valid and contains expected metrics
 - Unit tests pass with 100% coverage of orphan_run_reaper.py
