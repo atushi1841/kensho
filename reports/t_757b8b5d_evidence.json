@@ -1,0 +1,20 @@
+{
+  "task_id": "t_757b8b5d",
+  "status": "pass",
+  "success_indicators": [
+    "framework restore verified: AST OK + compileall rc=0",
+    "hermes kanban CLI responds",
+    "commit 98933cab6b restores 3 functions"
+  ],
+  "verification_commands": [
+    "python3 -c \"import ast;ast.parse(open(\"~/.hermes/hermes-agent/hermes_cli/kanban_db.py\").read());print(\"AST OK\")\"",
+    "python3 -m compileall -q ~/.hermes/hermes-agent/hermes_cli",
+    "git -C ~/.hermes/hermes-agent log --oneline -1"
+  ],
+  "artifact_paths": [
+    "~/.hermes/hermes-agent/hermes_cli/kanban_db.py"
+  ],
+  "evidence_hashes": [
+    "6cdce697043f482d74f60bd56c43de600204d1429398fb4da473fad81757a7fd"
+  ]
+}

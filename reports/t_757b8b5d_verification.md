@@ -1,24 +1,23 @@
-# verification report for t_ebbfe4a7
+# verification report for t_757b8b5d
 
-generated: 2026-09-25T18:56:11  (by kanban_done_guard.py --write-report)
+generated: 2026-09-25T17:22:54  (by kanban_done_guard.py --write-report)
 workdir: /mnt/d/Project2/kensho
 
 ## verification_evidence
 
 本レポートは kanban_done_guard.py --write-report で機械生成されたものである。
-タスクID: t_ebbfe4a7（dominant-id 条件・所有束縛 t_23c079c5 v47 満足）
+タスクID: t_757b8b5d（dominant-id 条件・所有束縛 t_23c079c5 v47 満足）
 
 # レポジトリの最新コミット一覧（done 時の HEAD 確認用）
 $ git log --oneline -5
-4b34477 fix: add requirements-lock check to drift detection
-2bde89b docs(evidence): QA nightly-qa run15 — guard --selftest 回帰の親コミット比較確定(ff2a357=0/e079f50=2)・blocked 2→6 内訳・OWNED誤帰属の実測 (2026-09-25)
-e90782e docs(revenue): 2026-09-25 v4 — criticレポートの収益可視化復元＋Gumroad鮮度・失効追加 (t_61d0db99 受入基準3)
-d0cf8b1 [DONE] Implement git_commit_locked.sh with commit serialization and stale lock recovery
-08ec29e docs(evidence): QA nightly-qa run14 — guard --selftest 回帰(g_durability/h_result)と条件(j)不在skip乖離の実測 (2026-09-25)
+de78051 docs(evidence): t_efe1736c --write-report 実測検証レポート
+f024885 docs(revenue): v3 に full suite 1172 passed を反映
+d10d521 docs(revenue): 2026-09-25 v3 worker記録 — import time 欠落修正(9aad51c)+t_e07dab2a 較正ミス判定
+3ac611a docs(evidence): t_28e11c70 --write-report 実測検証レポート（t_efe1736c 実装後 round-trip 検証）
+9aad51c fix(tests): add missing 'import time' for loop_health retry path (latent NameError on JSON parse failure)
 
 # 作業ツリーの未コミット変更（条件(d) と同一規則）
 $ git status --porcelain -uall
- M config.yaml
  M data/account_wifi_map.json
  M data/agent_spans/2026-09-25.jsonl
  M data/camera_monitor/7d_repro_audit.csv
@@ -34,30 +33,23 @@ $ git status --porcelain -uall
  M data/status/zin20120731.json
  M reports/non_x_manual_20260925.md
  M reports/outcome-review-2026-09-25.md
- M reports/t_031f04b9_verification.md
-A  reports/t_ebbfe4a7_verification.md
  M revenue-status.html
- M scripts/check_dep_drift.py
- M scripts/kensho_revenue_collect.py
- M scripts/loop_health.sh
- M tests/test_loop_health.py
 ?? data/camera_monitor/matched_pairs_20260925.csv
 ?? data/camera_monitor/model_price_diff_20260925.csv
 ?? data/camera_monitor/run_summary_20260925.json
 ?? data/camera_monitor/sourcing_candidates_20260925.csv
 ?? data/camera_monitor/sourcing_candidates_20260925.json
+?? reports/qa-nightly-run14-20260925.md
 ?? reports/research-20260925.md
 ?? reports/t_28e11c70_evidence.json
 ?? reports/t_6f45dab0_verification.md
 ?? reports/t_757b8b5d_evidence.json
 ?? reports/t_757b8b5d_verification.md
-?? reports/t_a38b99bc_verification.md
 ?? reports/t_e07dab2a_verification.md
 ?? reports/t_fe629b9e_verification.md
 ?? scripts/check_dep_drift.py.backup
 ?? scripts/check_dep_drift.py.backup2
 ?? scripts/check_dep_drift.py.backup_before_selftest
-?? scripts/revenue_record_reconcile.py
 
 # pytest 実行結果（条件(a)(b) 証跡）
 $ python3 -m pytest -q 2>&1 | tail -5

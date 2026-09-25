@@ -506,19 +506,19 @@
    "state_exists": false
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 1\u672c: Japan OffMall Used Goods Price Stats API (Chinese)",
-   "Apify\u9ad8\u4f7f\u7528\u91cf\u30a2\u30af\u30bf\u30fc: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 1本: Japan OffMall Used Goods Price Stats API (Chinese)",
+   "Apify高使用量アクター: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
   ],
   "warnings": [
-   "Gumroad\u58f2\u4e0a\u30c7\u30fc\u30bf\u672a\u53d6\u5f97\uff08\u30d6\u30e9\u30a6\u30b6\u81ea\u52d5\u5316\u304c\u5fc5\u8981\uff09"
+   "Gumroad売上データ未取得（ブラウザ自動化が必要）"
   ],
   "revenue_estimate": {
    "apify_monthly": 0,
    "rapidapi_monthly": 0,
    "gumroad_monthly": 0,
    "total_monthly": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6/\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件/無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   }
  },
  {
@@ -995,25 +995,25 @@
    "collected_at": "2026-09-03T09:08:03.977"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 2\u672c: Japan OffMall Used Goods Price Stats API (Chinese), Japan Used Camera Price Stats API",
-   "Apify\u9ad8\u4f7f\u7528\u91cf\u30a2\u30af\u30bf\u30fc: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 2本: Japan OffMall Used Goods Price Stats API (Chinese), Japan Used Camera Price Stats API",
+   "Apify高使用量アクター: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
   ],
   "warnings": [
-   "Gumroad\u58f2\u4e0a\u30bc\u30ed\u7d99\u7d9a\uff08\u8ca9\u4fc3\u65bd\u7b56\u306e\u5b9f\u884c\u5019\u88dc\uff09"
+   "Gumroad売上ゼロ継続（販促施策の実行候補）"
   ],
   "revenue_estimate": {
    "apify_monthly": 0,
    "rapidapi_monthly": 0,
    "gumroad_monthly": 0,
    "total_monthly": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6/\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件/無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   }
  },
  {
   "date": "2026-09-04",
   "recovered": true,
-  "recovery_note": "9/7\u5fa9\u5143: cron\u51fa\u529b\u30ed\u30b0\u304b\u3089\u518d\u69cb\u7bc9\uff08\u672c\u4f53\u30c7\u30fc\u30bf\u306f\u5dfb\u304d\u623b\u308a\u3067\u6b20\u843d\uff09",
+  "recovery_note": "9/7復元: cron出力ログから再構築（本体データは巻き戻りで欠落）",
   "apify": {
    "actors_ppe": 25,
    "actors_free": 0,
@@ -1032,7 +1032,7 @@
    "rapidapi_monthly": 0,
    "gumroad_monthly": 0,
    "total_monthly": 0,
-   "note": "\u5fa9\u5143\u30a8\u30f3\u30c8\u30ea: Apify PPE\u8ab2\u91d1 25\u4ef6\u3001RapidAPI\u975e\u516c\u958b2\u672c\u3001Gumroad\u58f2\u4e0a\u306a\u3057"
+   "note": "復元エントリ: Apify PPE課金 25件、RapidAPI非公開2本、Gumroad売上なし"
   },
   "opportunities": [],
   "warnings": [
@@ -1042,7 +1042,7 @@
  {
   "date": "2026-09-05",
   "recovered": true,
-  "recovery_note": "9/7\u5fa9\u5143: cron\u51fa\u529b\u30ed\u30b0\u304b\u3089\u518d\u69cb\u7bc9\uff08\u672c\u4f53\u30c7\u30fc\u30bf\u306f\u5dfb\u304d\u623b\u308a\u3067\u6b20\u843d\uff09",
+  "recovery_note": "9/7復元: cron出力ログから再構築（本体データは巻き戻りで欠落）",
   "apify": {
    "actors_ppe": 25,
    "actors_free": 0,
@@ -1061,7 +1061,7 @@
    "rapidapi_monthly": 0,
    "gumroad_monthly": 0,
    "total_monthly": 0,
-   "note": "\u5fa9\u5143\u30a8\u30f3\u30c8\u30ea: Apify PPE\u8ab2\u91d1 25\u4ef6\u3001RapidAPI\u975e\u516c\u958b3\u672c\u3001Gumroad\u58f2\u4e0a\u306a\u3057"
+   "note": "復元エントリ: Apify PPE課金 25件、RapidAPI非公開3本、Gumroad売上なし"
   },
   "opportunities": [],
   "warnings": [
@@ -1700,12 +1700,12 @@
    "collected_at": "2026-09-06T23:49:01.607"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 2\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)",
-   "Apify\u9ad8\u4f7f\u7528\u91cf\u30a2\u30af\u30bf\u30fc: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 2本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)",
+   "Apify高使用量アクター: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
   ],
   "warnings": [
-   "Gumroad\u58f2\u4e0a\u30bc\u30ed\u7d99\u7d9a\uff08\u8ca9\u4fc3\u65bd\u7b56\u306e\u5b9f\u884c\u5019\u88dc\uff09"
+   "Gumroad売上ゼロ継続（販促施策の実行候補）"
   ],
   "revenue_estimate": {
    "apify_monthly": 0,
@@ -1713,7 +1713,7 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
@@ -1729,7 +1729,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -1746,7 +1746,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -1763,7 +1763,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -1780,7 +1780,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -1797,7 +1797,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -1814,7 +1814,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -1831,7 +1831,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -1848,7 +1848,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -2492,12 +2492,12 @@
    "collected_at": "2026-09-07T01:15:54.549"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 2\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)",
-   "Apify\u9ad8\u4f7f\u7528\u91cf\u30a2\u30af\u30bf\u30fc: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 2本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)",
+   "Apify高使用量アクター: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
   ],
   "warnings": [
-   "Gumroad\u58f2\u4e0a\u30bc\u30ed\u7d99\u7d9a\uff08\u8ca9\u4fc3\u65bd\u7b56\u306e\u5b9f\u884c\u5019\u88dc\uff09"
+   "Gumroad売上ゼロ継続（販促施策の実行候補）"
   ],
   "revenue_estimate": {
    "apify_monthly": 0,
@@ -2505,14 +2505,14 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "apify_ppe_external_views_keys": {
    "point": "72h",
    "point_date": "2026-09-07",
    "baseline": "2026-09-04",
    "measured_at": "2026-09-07T01:13:44",
-   "proxy_note": "external_views = \u5916\u90e8(owner\u4ee5\u5916)\u30e6\u30fc\u30b6\u30fc\u7d2f\u7a4drun (Apify\u516c\u958bAPI\u3067\u552f\u4e00\u53d6\u5f97\u53ef\u80fd\u306a\u5916\u90e8\u30a8\u30f3\u30b2\u30fc\u30b8\u30e1\u30f3\u30c8\u4fe1\u53f7)",
+   "proxy_note": "external_views = 外部(owner以外)ユーザー累積run (Apify公開APIで唯一取得可能な外部エンゲージメント信号)",
    "actors": {
     "japan-camera-market": {
      "actual_name": "japan-used-camera-market-scraper",
@@ -2560,7 +2560,7 @@
    "point": "measured",
    "point_date": "2026-09-07",
    "measured_at": "2026-09-06T09:12:06.921466+09:00",
-   "note": "\u5f53\u65e5point\u672a\u53d6\u5f97\u30fb\u76f4\u8fd1\u5024\u3067\u4ee3\u7528",
+   "note": "当日point未取得・直近値で代用",
    "apis": {
     "japan-used-car": {
      "visibility": "PUBLIC",
@@ -2570,7 +2570,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -2587,7 +2587,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -2604,7 +2604,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -2621,7 +2621,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -2638,7 +2638,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -2655,7 +2655,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -2672,7 +2672,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -2689,7 +2689,7 @@
       "free": 0
      },
      "warnings": [
-      "BASIC: \u7121\u6599\u30aa\u30fc\u30d5\u30a1\u30f3\u7248\u306b\u65e2\u5b58\u8cfc\u8aad\u8005 1\u4eba\uff08\u4e2d\u9014\u89e3\u7d04\u81ea\u7531\uff09"
+      "BASIC: 無料オーファン版に既存購読者 1人（中途解約自由）"
      ],
      "paid_plan_active": true,
      "tier_effective_prices": {
@@ -3334,12 +3334,12 @@
    "last_success_at": "2026-09-08T19:46:25"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 2\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)",
-   "Apify\u9ad8\u4f7f\u7528\u91cf\u30a2\u30af\u30bf\u30fc: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 2本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)",
+   "Apify高使用量アクター: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
   ],
   "warnings": [
-   "Gumroad\u58f2\u4e0a\u30bc\u30ed\u7d99\u7d9a\uff08\u8ca9\u4fc3\u65bd\u7b56\u306e\u5b9f\u884c\u5019\u88dc\uff09"
+   "Gumroad売上ゼロ継続（販促施策の実行候補）"
   ],
   "revenue_estimate": {
    "apify_monthly": 0,
@@ -3347,7 +3347,7 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
@@ -4111,12 +4111,12 @@
    "last_success_at": "2026-09-09T07:08:09"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 2\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)",
-   "Apify\u9ad8\u4f7f\u7528\u91cf\u30a2\u30af\u30bf\u30fc: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 2本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)",
+   "Apify高使用量アクター: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
   ],
   "warnings": [
-   "Gumroad\u58f2\u4e0a\u30bc\u30ed\u7d99\u7d9a\uff08\u8ca9\u4fc3\u65bd\u7b56\u306e\u5b9f\u884c\u5019\u88dc\uff09"
+   "Gumroad売上ゼロ継続（販促施策の実行候補）"
   ],
   "revenue_estimate": {
    "apify_monthly": 0,
@@ -4124,7 +4124,7 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
@@ -4780,19 +4780,19 @@
    "collected_at": "2026-09-10T22:21:52.594"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 2\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)",
-   "Apify\u9ad8\u4f7f\u7528\u91cf\u30a2\u30af\u30bf\u30fc: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 2本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)",
+   "Apify高使用量アクター: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
   ],
   "warnings": [
-   "Gumroad\u58f2\u4e0a\u30bc\u30ed\u7d99\u7d9a\uff08\u8ca9\u4fc3\u65bd\u7b56\u306e\u5b9f\u884c\u5019\u88dc\uff09"
+   "Gumroad売上ゼロ継続（販促施策の実行候補）"
   ],
   "revenue_estimate": {
    "apify_monthly": 0,
    "rapidapi_monthly": 0,
    "gumroad_monthly": 0,
    "total_monthly": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6/\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件/無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   }
  },
  {
@@ -5480,12 +5480,12 @@
    "last_success_at": "2026-09-11T07:07:47.693"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 2\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)",
-   "Apify\u9ad8\u4f7f\u7528\u91cf\u30a2\u30af\u30bf\u30fc: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 2本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)",
+   "Apify高使用量アクター: japan-camera-market(u30d=1), japan-watch-market(u30d=1), japan-luxury-market(u30d=1), japan-instrument-market(u30d=1), japan-offmall-market(u30d=1)"
   ],
   "warnings": [
-   "Gumroad\u58f2\u4e0a\u30bc\u30ed\u7d99\u7d9a\uff08\u8ca9\u4fc3\u65bd\u7b56\u306e\u5b9f\u884c\u5019\u88dc\uff09"
+   "Gumroad売上ゼロ継続（販促施策の実行候補）"
   ],
   "revenue_estimate": {
    "apify_monthly": 0,
@@ -5493,14 +5493,14 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "apify_ppe_external_views_keys": {
    "point": "168h",
    "point_date": "2026-09-11",
    "baseline": "2026-09-04",
    "measured_at": "2026-09-11T00:02:04",
-   "proxy_note": "external_views = \u5916\u90e8(owner\u4ee5\u5916)\u30e6\u30fc\u30b6\u30fc\u7d2f\u7a4drun (Apify\u516c\u958bAPI\u3067\u552f\u4e00\u53d6\u5f97\u53ef\u80fd\u306a\u5916\u90e8\u30a8\u30f3\u30b2\u30fc\u30b8\u30e1\u30f3\u30c8\u4fe1\u53f7)",
+   "proxy_note": "external_views = 外部(owner以外)ユーザー累積run (Apify公開APIで唯一取得可能な外部エンゲージメント信号)",
    "actors": {
     "japan-camera-market": {
      "actual_name": "japan-used-camera-market-scraper",
@@ -6358,11 +6358,11 @@
    "last_success_at": "2026-09-12T07:10:12.901"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 2\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 2本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean)"
   ],
   "warnings": [
-   "Gumroad\u58f2\u4e0a\u30bc\u30ed\u7d99\u7d9a\uff08\u8ca9\u4fc3\u65bd\u7b56\u306e\u5b9f\u884c\u5019\u88dc\uff09"
+   "Gumroad売上ゼロ継続（販促施策の実行候補）"
   ],
   "revenue_estimate": {
    "apify_monthly": 0,
@@ -6370,7 +6370,7 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
@@ -7182,11 +7182,11 @@
    "last_success_at": "2026-09-13T07:14:29.490"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 3\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 3本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese)"
   ],
   "warnings": [
-   "Gumroad\u58f2\u4e0a\u30bc\u30ed\u7d99\u7d9a\uff08\u8ca9\u4fc3\u65bd\u7b56\u306e\u5b9f\u884c\u5019\u88dc\uff09"
+   "Gumroad売上ゼロ継続（販促施策の実行候補）"
   ],
   "collectors": {
    "apify_ok": true,
@@ -7199,7 +7199,7 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
@@ -8023,11 +8023,11 @@
    "last_success_at": "2026-09-14T18:02:41"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 3\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 3本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese)"
   ],
   "warnings": [
-   "Gumroad\u30ed\u30b0\u30a4\u30f3\u30bb\u30c3\u30b7\u30e7\u30f3\u5931\u52b9\uff08Cookie\u518d\u30a8\u30af\u30b9\u30dd\u30fc\u30c8\u304c\u5fc5\u8981\uff09"
+   "Gumroadログインセッション失効（Cookie再エクスポートが必要）"
   ],
   "revenue_estimate": {
    "apify_monthly": 0,
@@ -8035,13 +8035,13 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
    "point_date": "2026-09-14",
    "measured_at": "2026-09-13T07:07:39.255153+09:00",
-   "note": "\u5f53\u65e5point\u672a\u53d6\u5f97\u30fb\u76f4\u8fd1\u5024\u3067\u4ee3\u7528",
+   "note": "当日point未取得・直近値で代用",
    "apis": {
     "japan-used-car": {
      "visibility": "PUBLIC",
@@ -8859,11 +8859,11 @@
    "last_success_at": "2026-09-15T07:11:46.698"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 3\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 3本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese)"
   ],
   "warnings": [
-   "Gumroad\u30ed\u30b0\u30a4\u30f3\u30bb\u30c3\u30b7\u30e7\u30f3\u5931\u52b9\uff08Cookie\u518d\u30a8\u30af\u30b9\u30dd\u30fc\u30c8\u304c\u5fc5\u8981\uff09"
+   "Gumroadログインセッション失効（Cookie再エクスポートが必要）"
   ],
   "collectors": {
    "apify_ok": true,
@@ -8876,13 +8876,13 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
    "point_date": "2026-09-15",
    "measured_at": "2026-09-13T07:07:39.255153+09:00",
-   "note": "\u5f53\u65e5point\u672a\u53d6\u5f97\u30fb\u76f4\u8fd1\u5024\u3067\u4ee3\u7528",
+   "note": "当日point未取得・直近値で代用",
    "apis": {
     "japan-used-car": {
      "visibility": "PUBLIC",
@@ -9696,11 +9696,11 @@
    "last_success_at": "2026-09-16T07:14:07.170"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 24\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 4\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
+   "Apify PPE課金アクター 24件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 4本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
   ],
   "warnings": [
-   "Gumroad\u30ed\u30b0\u30a4\u30f3\u30bb\u30c3\u30b7\u30e7\u30f3\u5931\u52b9\uff08Cookie\u518d\u30a8\u30af\u30b9\u30dd\u30fc\u30c8\u304c\u5fc5\u8981\uff09"
+   "Gumroadログインセッション失効（Cookie再エクスポートが必要）"
   ],
   "collectors": {
    "apify_ok": true,
@@ -9713,13 +9713,13 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 24\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 1\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 24件（外部run 0件→実収益 $0.0000）、無料 1件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
    "point_date": "2026-09-16",
    "measured_at": "2026-09-13T07:07:39.255153+09:00",
-   "note": "\u5f53\u65e5point\u672a\u53d6\u5f97\u30fb\u76f4\u8fd1\u5024\u3067\u4ee3\u7528",
+   "note": "当日point未取得・直近値で代用",
    "apis": {
     "japan-used-car": {
      "visibility": "PUBLIC",
@@ -10545,11 +10545,11 @@
    "last_success_at": "2026-09-17T07:11:17.487"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 4\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 4本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
   ],
   "warnings": [
-   "Gumroad\u30ed\u30b0\u30a4\u30f3\u30bb\u30c3\u30b7\u30e7\u30f3\u5931\u52b9\uff08Cookie\u518d\u30a8\u30af\u30b9\u30dd\u30fc\u30c8\u304c\u5fc5\u8981\uff09"
+   "Gumroadログインセッション失効（Cookie再エクスポートが必要）"
   ],
   "collectors": {
    "apify_ok": true,
@@ -10562,13 +10562,13 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
    "point_date": "2026-09-17",
    "measured_at": "2026-09-13T07:07:39.255153+09:00",
-   "note": "\u5f53\u65e5point\u672a\u53d6\u5f97\u30fb\u76f4\u8fd1\u5024\u3067\u4ee3\u7528",
+   "note": "当日point未取得・直近値で代用",
    "apis": {
     "japan-used-car": {
      "visibility": "PUBLIC",
@@ -11015,7 +11015,7 @@
     "charged_items": 0,
     "revenue_usd": 0.0,
     "per_actor": {},
-    "error": "owner id \u53d6\u5f97\u5931\u6557"
+    "error": "owner id 取得失敗"
    }
   },
   "rapidapi": {
@@ -11244,11 +11244,11 @@
    "last_success_at": "2026-09-18T07:07:09.233"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 4\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 4本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
   ],
   "warnings": [
-   "Gumroad\u30ed\u30b0\u30a4\u30f3\u30bb\u30c3\u30b7\u30e7\u30f3\u5931\u52b9\uff08Cookie\u518d\u30a8\u30af\u30b9\u30dd\u30fc\u30c8\u304c\u5fc5\u8981\uff09"
+   "Gumroadログインセッション失効（Cookie再エクスポートが必要）"
   ],
   "collectors": {
    "apify_ok": true,
@@ -11261,7 +11261,7 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
@@ -11714,7 +11714,7 @@
     "charged_items": 0,
     "revenue_usd": 0.0,
     "per_actor": {},
-    "error": "owner id \u53d6\u5f97\u5931\u6557"
+    "error": "owner id 取得失敗"
    }
   },
   "rapidapi": {
@@ -11943,11 +11943,11 @@
    "last_success_at": "2026-09-19T07:07:46.155"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 5\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 4\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
+   "Apify PPE課金アクター 5件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 4本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
   ],
   "warnings": [
-   "Gumroad\u30ed\u30b0\u30a4\u30f3\u30bb\u30c3\u30b7\u30e7\u30f3\u5931\u52b9\uff08Cookie\u518d\u30a8\u30af\u30b9\u30dd\u30fc\u30c8\u304c\u5fc5\u8981\uff09"
+   "Gumroadログインセッション失効（Cookie再エクスポートが必要）"
   ],
   "collectors": {
    "apify_ok": true,
@@ -11960,7 +11960,7 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 5\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 20\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 5件（外部run 0件→実収益 $0.0000）、無料 20件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
@@ -12792,11 +12792,11 @@
    "last_success_at": "2026-09-20T07:08:57.979"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 4\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 4本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
   ],
   "warnings": [
-   "Gumroad\u30ed\u30b0\u30a4\u30f3\u30bb\u30c3\u30b7\u30e7\u30f3\u5931\u52b9\uff08Cookie\u518d\u30a8\u30af\u30b9\u30dd\u30fc\u30c8\u304c\u5fc5\u8981\uff09"
+   "Gumroadログインセッション失効（Cookie再エクスポートが必要）"
   ],
   "collectors": {
    "apify_ok": true,
@@ -12809,13 +12809,13 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
    "point_date": "2026-09-20",
    "measured_at": "2026-09-19T07:06:52.832047+09:00",
-   "note": "\u5f53\u65e5point\u672a\u53d6\u5f97\u30fb\u76f4\u8fd1\u5024\u3067\u4ee3\u7528",
+   "note": "当日point未取得・直近値で代用",
    "apis": {
     "japan-used-car": {
      "visibility": "PUBLIC",
@@ -13641,11 +13641,11 @@
    "last_success_at": "2026-09-21T07:12:06.942"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 4\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 4本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
   ],
   "warnings": [
-   "Gumroad\u30ed\u30b0\u30a4\u30f3\u30bb\u30c3\u30b7\u30e7\u30f3\u5931\u52b9\uff08Cookie\u518d\u30a8\u30af\u30b9\u30dd\u30fc\u30c8\u304c\u5fc5\u8981\uff09"
+   "Gumroadログインセッション失効（Cookie再エクスポートが必要）"
   ],
   "collectors": {
    "apify_ok": true,
@@ -13658,7 +13658,7 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
@@ -14484,11 +14484,11 @@
    "last_success_at": "2026-09-22T07:11:52.377"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 4\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 4本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
   ],
   "warnings": [
-   "Gumroad\u30ed\u30b0\u30a4\u30f3\u30bb\u30c3\u30b7\u30e7\u30f3\u5931\u52b9\uff08Cookie\u518d\u30a8\u30af\u30b9\u30dd\u30fc\u30c8\u304c\u5fc5\u8981\uff09"
+   "Gumroadログインセッション失効（Cookie再エクスポートが必要）"
   ],
   "collectors": {
    "apify_ok": true,
@@ -14501,13 +14501,13 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
    "point_date": "2026-09-22",
    "measured_at": "2026-09-21T07:07:32.567379+09:00",
-   "note": "\u5f53\u65e5point\u672a\u53d6\u5f97\u30fb\u76f4\u8fd1\u5024\u3067\u4ee3\u7528",
+   "note": "当日point未取得・直近値で代用",
    "apis": {
     "japan-used-car": {
      "visibility": "PUBLIC",
@@ -15333,11 +15333,11 @@
    "last_success_at": "2026-09-23T07:12:58.471"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 4\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 4本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
   ],
   "warnings": [
-   "Gumroad\u30ed\u30b0\u30a4\u30f3\u30bb\u30c3\u30b7\u30e7\u30f3\u5931\u52b9\uff08Cookie\u518d\u30a8\u30af\u30b9\u30dd\u30fc\u30c8\u304c\u5fc5\u8981\uff09"
+   "Gumroadログインセッション失効（Cookie再エクスポートが必要）"
   ],
   "collectors": {
    "apify_ok": true,
@@ -15353,13 +15353,13 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
    "point_date": "2026-09-23",
    "measured_at": "2026-09-21T07:07:32.567379+09:00",
-   "note": "\u5f53\u65e5point\u672a\u53d6\u5f97\u30fb\u76f4\u8fd1\u5024\u3067\u4ee3\u7528",
+   "note": "当日point未取得・直近値で代用",
    "apis": {
     "japan-used-car": {
      "visibility": "PUBLIC",
@@ -16173,11 +16173,11 @@
    "last_success_at": "2026-09-24T07:12:54.397"
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 24\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 4\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
+   "Apify PPE課金アクター 24件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 4本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
   ],
   "warnings": [
-   "Gumroad\u30ed\u30b0\u30a4\u30f3\u30bb\u30c3\u30b7\u30e7\u30f3\u5931\u52b9\uff08Cookie\u518d\u30a8\u30af\u30b9\u30dd\u30fc\u30c8\u304c\u5fc5\u8981\uff09"
+   "Gumroadログインセッション失効（Cookie再エクスポートが必要）"
   ],
   "collectors": {
    "apify_ok": true,
@@ -16194,7 +16194,7 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 24\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 1\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 24件（外部run 0件→実収益 $0.0000）、無料 1件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
@@ -17017,21 +17017,20 @@
    "revenue": 0,
    "total_sales": 0,
    "total_revenue": 0,
-   "balance_usd": null,
-   "last_7_days_usd": null,
-   "last_28_days_usd": null,
-   "total_earnings_usd": null,
-   "login_ok": false,
-   "collected_at": "2026-09-25T07:07:35.390",
-   "last_success_at": "2026-09-25T07:07:35.390"
+   "balance_usd": 0,
+   "last_7_days_usd": 0,
+   "last_28_days_usd": 0,
+   "total_earnings_usd": 0,
+   "login_ok": true,
+   "collected_at": "2026-09-25T13:19:36.063",
+   "last_success_at": "2026-09-25T13:19:41",
+   "sales_page_ok": true
   },
   "opportunities": [
-   "Apify PPE\u8ab2\u91d1\u30a2\u30af\u30bf\u30fc 25\u4ef6: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
-   "RapidAPI\u975e\u516c\u958bAPI 4\u672c: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
+   "Apify PPE課金アクター 25件: japan-camera-market, japan-watch-market, japan-luxury-market, japan-instrument-market, japan-offmall-market",
+   "RapidAPI非公開API 4本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)"
   ],
-  "warnings": [
-   "Gumroad\u30ed\u30b0\u30a4\u30f3\u30bb\u30c3\u30b7\u30e7\u30f3\u5931\u52b9\uff08Cookie\u518d\u30a8\u30af\u30b9\u30dd\u30fc\u30c8\u304c\u5fc5\u8981\uff09"
-  ],
+  "warnings": [],
   "collectors": {
    "apify_ok": true,
    "rapidapi_ok": true,
@@ -17039,7 +17038,8 @@
    "collected_today": 476,
    "collected_total": 996,
    "collected_today_source": "logs/collect_20260925_*.log",
-   "collected_today_runs": 1
+   "collected_today_runs": 1,
+   "gumroad_login_ok": true
   },
   "revenue_estimate": {
    "apify_monthly": 0,
@@ -17047,7 +17047,7 @@
    "gumroad_monthly": 0,
    "total_monthly": 0,
    "apify_ppe_external_runs": 0,
-   "note": "\u73fe\u72b6: Apify PPE\u8ab2\u91d1 25\u4ef6\uff08\u5916\u90e8run 0\u4ef6\u2192\u5b9f\u53ce\u76ca $0.0000\uff09\u3001\u7121\u6599 0\u4ef6\u3001RapidAPI\u5168FREEMIUM\u3001Gumroad\u58f2\u4e0a\u306a\u3057\u3002\u8ab2\u91d1\u8a2d\u5b9a\u3067\u67081-3\u4e07\u5186\u306e\u30dd\u30c6\u30f3\u30b7\u30e3\u30eb"
+   "note": "現状: Apify PPE課金 25件（外部run 0件→実収益 $0.0000）、無料 0件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
   },
   "rapidapi_paid_effect": {
    "point": "measured",
@@ -17176,6 +17176,28 @@
      }
     }
    }
+  },
+  "gumroad_reconciled": {
+   "at": "2026-09-25T18:59:10",
+   "source": "gumroad_state.json",
+   "state_collected_at": "2026-09-25T13:19:36.063",
+   "record_collected_at_before": "2026-09-25T07:07:35.390",
+   "changed_keys": [
+    "balance_usd",
+    "last_7_days_usd",
+    "last_28_days_usd",
+    "total_earnings_usd",
+    "login_ok",
+    "collected_at",
+    "last_success_at",
+    "sales_page_ok"
+   ],
+   "login_ok_before": false,
+   "login_ok_after": true,
+   "removed_stale_warnings": [
+    "Gumroadログインセッション失効（Cookie再エクスポートが必要）"
+   ],
+   "note": "日次7:05収集後にライブstateが更新されたため当日entryを再導出（scripts/revenue_record_reconcile.py）"
   }
  }
 ]

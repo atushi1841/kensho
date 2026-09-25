@@ -394,6 +394,7 @@ for t in by_age:
 
 # aux auth errors from last 30m (kanon_decomposer|background_review|triage_specifier) in errors.log
 aux_auth_errors = 0
+    echo "DEBUG: aux_log_path=$_aux_log_path" >&2
 try:
     _aux_log_path = os.environ.get("LOOPHEALTH_AUX_LOG_PATH") or os.path.expanduser("~/.hermes/logs/errors.log")
     with open(_aux_log_path, "r") as logf:
@@ -405,6 +406,7 @@ try:
                 continue
             log_ts_str = ts_match.group(1)
             if re.search(r"Auxiliary (kanban_decomposer|background_review|triage_specifier):", line) and ("401" in line or "auth" in line.lower()):
+    echo "DEBUG: checking line: $line" >&2
                 try:
                     log_dt = _dt.datetime.strptime(log_ts_str, "%Y-%m-%d %H:%M:%S")
                     log_ts = time.mktime(log_dt.timetuple())
@@ -414,6 +416,7 @@ try:
                     pass
 except Exception:
     aux_auth_errors = 0
+    echo "DEBUG: aux_log_path=$_aux_log_path" >&2
 
 if aux_auth_errors:
     score -= 10 * aux_auth_errors

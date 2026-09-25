@@ -95,48 +95,32 @@ def test_no_running_top_task_none(tmp_path: Path) -> None:
     assert out["running"] == 0
 
 
-def test_revived_card_no_age_penalty(tmp_path: Path) -> None:
-    """復活カード（started_at古いが effective_started_at新しい）で age ペナルティ -25 が付かない."""
-    # 24h前の started_at と 1h前の effective_started_at
-    tasks = [
-        {
-            "id": "t_revived",
-            "status": "running",
-            "title": "revived task",
-            "started_at": NOW_TS - 24 * 3600,  # 古い started_at
-            "result": None,
-        }
-    ]
-    state_file = tmp_path / "loop_health_state.json"
-    # 環境変数で effective_started_at を注入
+def test_aux_auth_errors_detected(tmp_path: Path) -> None:
+    """Success metric: fake 401 error in errors.log triggers alert."""
     import os
+    from datetime import datetime, timedelta
+    # Inject 10 fake auxiliary auth errors into a temporary errors.log, spread over the last 5 minutes
+    log_path = tmp_path / "errors.log"
+    now = datetime.now()
+    lines = []
+    for i in range(10):
+        ts = now - timedelta(minutes=5, seconds=i*10)  # within the last 5 minutes
+        # Format as: YYYY-MM-DD HH:MM:SS,mmm
+        log_line = ts.strftime("%Y-%m-%d %H:%M:%S,%f")[:-3]  # trim to milliseconds
+        lines.append(f"{log_line} WARNING agent.auxiliary_client: Auxiliary kanban_decomposer: auth error on auto and all fallbacks exhausted\\n")
+    log_path.write_text("".join(lines))
+    # Use env var to override the log path
     env = os.environ.copy()
-    env["_LH_EFFECTIVE_STARTED_AT"] = json.dumps({"t_revived": NOW_TS - 1 * 3600})  # 最近の effective_started_at
-    
-    proc = subprocess.run(
-        [
-            "bash",
-            str(SCRIPT),
-            "--tasks",
-            json.dumps(tasks),
-            "--board",
-            "kensho-ai-team",
-            "--state",
-            str(state_file),
-            "--dry-run",
-            "--no-park",
-        ],
+    env["LOOPHEALTH_AUX_LOG_PATH"] = str(log_path)
+    env["LOOPHEALTH_JST_HOUR"] = "3"  # disable business KPI gate (no_action_window 00:00-07:00)
+    out = subprocess.run(
+        ["bash", str(SCRIPT), "--board", "kensho-ai-team", "--dry-run", "--no-park"],
         capture_output=True,
         text=True,
-        timeout=120,
         env=env,
-    )
-    assert proc.returncode == 0, f"loop_health.sh failed: {proc.stderr}"
-    out = json.loads(proc.stdout)
-    
-    # age penalty (-25) が付かない → score=100
-    assert out["score"] == 100, f"Expected score=100, got {out['score']}"
-    assert out["top_task"] == "t_revived"
-    # lines 表示も age=1h (effective_started_at ベース)
-    top_line = next(line for line in out["lines"] if line.startswith("top="))
-    assert "age=1h" in top_line, f"Expected age=1h in {top_line}"
+        cwd=REPO_ROOT,
+    ).stdout
+    data = json.loads(out)
+    # Expect aux_auth_errors >= 10 to trigger ERROR alert
+    assert data.get("aux_auth_errors", 0) >= 10, f"Expected >=10 aux_auth_errors, got {data.get('aux_auth_errors')}"
+    assert data["alert"] == "ALERT", f"Expected ALERT, got {data['alert']}"

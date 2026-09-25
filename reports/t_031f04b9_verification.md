@@ -1,62 +1,61 @@
-# t_031f04b9 — kanban_done_guard.py 要約証跡
+# verification report for t_031f04b9
 
-## 調査対象
-`/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py`
-- 2694 行 / 136,156 bytes
-- sha256: `dd76bd97efa97030255012d19efa28b6666a1d9a654b764d0172b720fdd72cfb`
-- polyglot header (sh/python): `bash script.py` / `python3 script.py` / `./script.py` すべて動作
+generated: 2026-09-25T17:23:43  (by kanban_done_guard.py --write-report)
+workdir: /mnt/d/Project2/kensho
 
-## 役割
-`kanban complete` 発行前に実行し、done 条件を 13 条件検査して exit 1 で BLOCK するガード。
-虚偽 done（実測エビデンスなし・未コミットコード残し・result 空など）の恒久対策。
+## verification_evidence
 
-## 判定条件（13 条件）
+本レポートは kanban_done_guard.py --write-report で機械生成されたものである。
+タスクID: t_031f04b9（dominant-id 条件・所有束縛 t_23c079c5 v47 満足）
 
-| 条件 | 内容 | hard 化日 |
-|------|------|-----------|
-| a | worker 出力に `verification_evidence`（or 検証/実測/エビデンス）見出しセクション存在 | 常時 |
-| b | 同セクション内にコマンド出力引用が 3 件以上（`$ cmd` 行 / フェンス内行 / `→` 行） | 常時 |
-| c | summary に虚偽 done マーカー（虚偽/done→blocked/書き換え 等）が無事 | 常時 |
-| d | git working tree に未コミットコード（*.py/*.yaml/*.sh/*.js）が無事。v79 でタスク所有ファイル限定に可変 | 常時 |
-| e | 受け入れコミットが push 済み（origin/main..HEAD==0）+ 引用ハッシュ ancestry | E_HARD_AFTER |
-| f | declared deps vs venv drift（check_dep_drift.py） | F_HARD_AFTER |
-| g | 証跡レポートの git 追跡（永続化）。v91 で repo 外証跡の自動コピー追加 | G_HARD_AFTER |
-| h | tasks.result 非空（pre_tool_call hook では proposed ペイロードで判定） | H_HARD_AFTER |
-| i | cron 配置 md5 一致（enabled DRIFT/MISSING 検出時 cp 同期強制） | I_HARD_AFTER（投入即日 hard） |
-| j | 機械可読 evidence.json 整合性（必須フィールド欠落0 / 成果物実在 / hash 形式） | J_HARD_AFTER |
-| k | Outcome Review: before/after 数値 KPI 比較 | K_HARD_AFTER |
-| bind | 証跡 artifact_paths × 自タスク diff の結線（t_07945937） | BIND_HARD_AFTER |
+# レポジトリの最新コミット一覧（done 時の HEAD 確認用）
+$ git log --oneline -5
+de78051 docs(evidence): t_efe1736c --write-report 実測検証レポート
+f024885 docs(revenue): v3 に full suite 1172 passed を反映
+d10d521 docs(revenue): 2026-09-25 v3 worker記録 — import time 欠落修正(9aad51c)+t_e07dab2a 較正ミス判定
+3ac611a docs(evidence): t_28e11c70 --write-report 実測検証レポート（t_efe1736c 実装後 round-trip 検証）
+9aad51c fix(tests): add missing 'import time' for loop_health retry path (latent NameError on JSON parse failure)
 
-soft/hard 移行期間: soft 期内は fail でも警告のみで pass 判定に影響しない。期限过了以降 exit 1 で BLOCK。
+# 作業ツリーの未コミット変更（条件(d) と同一規則）
+$ git status --porcelain -uall
+ M data/account_wifi_map.json
+ M data/agent_spans/2026-09-25.jsonl
+ M data/camera_monitor/7d_repro_audit.csv
+ M data/collected_today.json
+ M data/multi_response.json
+ M data/openrouter_usage.json
+ M data/self_heal_state.json
+ M data/source_health.json
+ M data/status/TankanNotes.json
+ M data/status/atushi16.json
+ M data/status/kudou.json
+ M data/status/toushiwatch.json
+ M data/status/zin20120731.json
+ M reports/non_x_manual_20260925.md
+ M reports/outcome-review-2026-09-25.md
+ M revenue-status.html
+?? data/camera_monitor/matched_pairs_20260925.csv
+?? data/camera_monitor/model_price_diff_20260925.csv
+?? data/camera_monitor/run_summary_20260925.json
+?? data/camera_monitor/sourcing_candidates_20260925.csv
+?? data/camera_monitor/sourcing_candidates_20260925.json
+?? reports/qa-nightly-run14-20260925.md
+?? reports/research-20260925.md
+?? reports/t_28e11c70_evidence.json
+?? reports/t_6f45dab0_verification.md
+?? reports/t_757b8b5d_evidence.json
+?? reports/t_757b8b5d_verification.md
+?? reports/t_e07dab2a_verification.md
+?? reports/t_fe629b9e_verification.md
+?? scripts/check_dep_drift.py.backup
+?? scripts/check_dep_drift.py.backup2
+?? scripts/check_dep_drift.py.backup_before_selftest
 
-## 主要 API
+# pytest 実行結果（条件(a)(b) 証跡）
+$ python3 -m pytest -q 2>&1 | tail -5
+(exec failed: Command 'python3 -m pytest -q 2>&1 | tail -5' timed out after 60 seconds)
 
-### `evaluate(task_id, output_dirs, db_path, workdir, allow_unpushed, task_scoped_d, proposed) -> dict`
-全条件を評価し `{task_id, output_file, conditions{...}, detail{...}, pass}` を返す。
-`pass = all(conditions.values())`
+# mypy strict チェック（0 error 確認）
+$ python3 -m mypy scripts/kanban_done_guard.py 2>&1 | tail -5
+mypy: can't read file 'scripts/kanban_done_guard.py': No such file or directory
 
-### `write_evidence(task_id, workdir, payload) -> (int, str)`
-条件(j) の生成側 API。`reports/<task_id>_evidence.json` を書く。
-payload は `success_indicators / verification_commands / artifact_paths / evidence_hashes` の 4 リストが非空必須。
-成果物パス実在を事前確認し、書直後で `evidence_json_state` 再検証して整合性保証。
-
-### `evidence_json_state(workdir, task_id, search_dirs) -> dict`
-- pass: 存在・有効JSON・必須フィールド欠落0・成果物パス全て実在
-- fail: JSON 不正 / 欠落>0 / 実在不成立 / hash 形式不正 / プレースホルダ語
-- skip: ファイル未検出（markdown 証跡経路維持・additive）
-
-必須フィールド: `task_id, status, success_indicators, verification_commands, artifact_paths, evidence_hashes`
-
-## CLI フラグ
-`task_id` (positional or `$HERMES_KANBAN_TASK`) + `--soft` `--json` `--db` `--output-dirs` `--workdir` `--allow-unpushed` `--task` `--completion-payload` `--selftest` `--selfcheck` `--write-evidence` `--payload` `--payload-file`
-
-## 詳細実装参照
-- `_verification_section_start`: 末尾に近い `verification_evidence`/検証/実測/エビデンス見出し行の開始 index
-- `count_command_citations`: v57 でフェンス散文ブラッド_spot 閉鎖。`$ cmd` 単独は実出力ゼロで不計上
-- `owns_file`: 見出し存在 + dominant-id 規則 + evidence binding（cross-task bleed 除去 v47）
-- `body_path_tokens`: タスク body から所有パス候補抽出。変更禁止系マーカー行のトークンは除外（t_f8a8b8d3 事故対策）
-- `task_owned_paths`: git log --grep=<task_id> + body パスから所有パス集合を算出。判定不能は None（repo-wide fail-safe）
-
-## 証跡生成
-`--write-evidence` 実行済み: `/mnt/d/Project2/kensho/reports/t_031f04b9_evidence.json`
-sha256: `1c0468f3778ba69034bdf3f9e3f70462beee113e8f5c6cda2ca42b46a0749ee9`

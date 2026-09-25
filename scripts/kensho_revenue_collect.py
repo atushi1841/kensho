@@ -73,6 +73,52 @@ GUMROAD_NODE = "/mnt/c/Program Files/nodejs/node.exe"
 GUMROAD_SALES_LOG = os.path.join(DATA_DIR, "gumroad_sales.log")
 MAX_ENTRIES = 90  # 直近90日保持
 
+# ── gumroad_state.json → revenue entry のミラー定義（単一ソース） ──
+#   本番収集（collect_gumroad）と、当日entryの再導出（scripts/revenue_record_reconcile.py）が
+#   同じキー集合・同じ collectors.gumroad_ok 規則を共有するための唯一の定義。
+#   片方だけ増やすと「記録とライブ状態の乖離」が再発する（2026-09-25 / t_3dbc1fbe）。
+GUMROAD_STATE_MIRROR_KEYS: tuple[str, ...] = (
+    "sales",
+    "revenue",
+    "total_sales",
+    "total_revenue",
+    "balance_usd",
+    "last_7_days_usd",
+    "last_28_days_usd",
+    "total_earnings_usd",
+    "login_ok",
+    "collected_at",
+    "last_success_at",
+    "last_attempt_at",
+    "sales_page_ok",
+)
+
+
+def gumroad_state_fields(state: dict[str, Any]) -> dict[str, Any]:
+    """gumroad_state.json から revenue entry へ写すフィールドのみ抽出する（単一ソース）。"""
+    return {k: state[k] for k in GUMROAD_STATE_MIRROR_KEYS if k in state}
+
+
+def gumroad_ok_flag(gumroad: dict[str, Any]) -> bool:
+    """collectors.gumroad_ok の判定規則（state_exists かつ login_ok が False でない）。
+
+    login_ok が「失効(false)」のときだけ False。未取得(None)は従来どおり True 側
+    （state ファイルが無い場合は state_exists=False で False になる）。
+    """
+    return bool(gumroad.get("state_exists")) and gumroad.get("login_ok") is not False
+
+
+def gumroad_collector_flags(gumroad: dict[str, Any]) -> dict[str, Any]:
+    """entry['collectors'] / ログ行に載る Gumroad 健全性フラグ（単一ソース）。
+
+    `gumroad` は collect_gumroad() の戻り値でも、gumroad_state.json をそのまま
+    読んだ dict でもよい（どちらも state_exists / login_ok を持つ）。
+    """
+    return {
+        "gumroad_ok": gumroad_ok_flag(gumroad),
+        "gumroad_login_ok": gumroad.get("login_ok"),
+    }
+
 # Gumroad CDP収集の恒久対策（t_cfe11a7c / critic v60）:
 # 根因は「深夜早朝にWindows Chrome/CDPが未起動」+「固定プロファイル起動が既存Chromeに
 # ハンドオフされCDPが立たず、nodeの起動待ちが90秒を超えてTimeoutExpired → 前回値凍結」。
@@ -872,8 +918,7 @@ def record_gumroad_sales(
     collectors = {
         "apify_ok": True,
         "rapidapi_ok": True,
-        "gumroad_ok": bool(state.get("state_exists")) and state.get("login_ok") is not False,
-        "gumroad_login_ok": state.get("login_ok"),
+        **gumroad_collector_flags(state),
     }
     # failure-mark: login失効 or sales_page抽出失敗
     markers = []
@@ -1005,25 +1050,9 @@ def collect_gumroad() -> dict[str, Any]:
         try:
             with open(GUMROAD_STATE, encoding="utf-8") as f:
                 state = json.load(f)
-            # 売上情報があれば取得
+            # 売上情報があれば取得（キー集合は GUMROAD_STATE_MIRROR_KEYS が単一ソース）
             if isinstance(state, dict):
-                for k in [
-                    "sales",
-                    "revenue",
-                    "total_sales",
-                    "total_revenue",
-                    "balance_usd",
-                    "last_7_days_usd",
-                    "last_28_days_usd",
-                    "total_earnings_usd",
-                    "login_ok",
-                    "collected_at",
-                    "last_success_at",
-                    "last_attempt_at",
-                    "sales_page_ok",
-                ]:
-                    if k in state:
-                        result[k] = state[k]
+                result.update(gumroad_state_fields(state))
         except Exception:
             pass
     return result
@@ -1099,8 +1128,7 @@ def build_revenue_summary(
     collectors: dict[str, Any] = {
         "apify_ok": "error" not in apify,
         "rapidapi_ok": "error" not in rapidapi,
-        "gumroad_ok": bool(gumroad.get("state_exists")) and gumroad.get("login_ok") is not False,
-        "gumroad_login_ok": gumroad.get("login_ok"),
+        **gumroad_collector_flags(gumroad),
     }
     # 2026-09-23 (t_5e16a983申し送り): 収集ボリュームを実データから自動計上。
     #   従来は revenue-status.html のカードと collectors.collected_today を手書きしており、

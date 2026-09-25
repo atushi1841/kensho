@@ -400,7 +400,7 @@ try:
         log_lines = logf.readlines()
         cutoff_time = time.time() - (30 * 60)
         for line in log_lines:
-            ts_match = re.match(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", line)
+            ts_match = re.match(r"(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})", line)
             if not ts_match:
                 continue
             log_ts_str = ts_match.group(1)
@@ -417,12 +417,6 @@ except Exception:
 
 if aux_auth_errors:
     score -= 10 * aux_auth_errors
-    if score < 55:
-        alert = "WARN: aux auth errors"
-    elif score < 70:
-        alert = "ALERT"
-    else:
-        alert = "OK"
 
 # same result >=2: -20
 if repeats:
