@@ -1,6 +1,11 @@
 ## verification_evidence
+$ git log --oneline -1
+7712236 t_7630a248: add verification_evidence heading for kanban guard
+$ md5sum scripts/apify_portfolio_stats.sh
+916450ca66a66bef93e17ad3a3c7e5ac  scripts/apify_portfolio_stats.sh
+$ bash ~/.hermes/profiles/kensho-sweeps/scripts/kensho_script_drift_check.py --json
+{"ok": true, "checked": 52, "drift": 0, "missing": 0}
 
-```markdown
 # t_7630a248 検証レポート
 ## 修正内容の概要
 - Apify ポートフォリオ統計スクリプト `scripts/apify_portfolio_stats.sh` を repo 正本として作成し、profile スクリプトへ同期（MD5 完全一致）。
