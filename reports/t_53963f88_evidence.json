@@ -1,0 +1,37 @@
+{
+  "success_indicators": [
+    "tests/test_gumroad_cookies_guard.py 11 passed（復元/無操作/退避/復元不能/値非出力を固定）",
+    "本番Cookieファイルは無操作で不変（sha256 c1855d1d… / size 15787 / mtime 1790309070 が前後で同一）",
+    "一時fixtureで 不在→RESTORED(exit0) / 2回目OK(冪等) / 両方なしMISSING(exit3) を実測",
+    "日次チェーン配線: cookies-mark OK → collector の順に実行されることをスタブ写しで実測（exit 0）",
+    "mypy --strict 0 error"
+  ],
+  "verification_commands": [
+    "$ python3 -m pytest tests/test_gumroad_cookies_guard.py -q -p no:cacheprovider --no-cov => 11 passed in 16.08s",
+    "$ python3 scripts/gumroad_cookies_guard.py => cookies-mark OK: 一次ファイル有効（42件） / exit=0",
+    "$ python3 scripts/gumroad_cookies_guard.py --cookies tmp/gumroad_cookies.json --backup tmp/gumroad_cookies_backup.json => 1回目 cookies-mark RESTORED: バックアップから復元（7件 / 元の状態: ファイルなし） exit=0",
+    "$ python3 scripts/gumroad_cookies_guard.py（2回目・冪等） => cookies-mark OK: 一次ファイル有効（7件） count=7 exit=0",
+    "$ python3 scripts/gumroad_cookies_guard.py --cookies tmp/none.json --backup tmp/none_backup.json => cookies-mark MISSING: ... Cookie再エクスポートが必要 exit=3",
+    "$ bash -n ~/.hermes/profiles/kensho-sweeps/scripts/kensho_revenue_collect_daily.sh => bash -n OK",
+    "$ bash daily_wiring_test.sh（COLLECT=stub） => cookies-mark OK（42件） → [stub] collector called → exit=0",
+    "$ python3 -m mypy scripts/gumroad_cookies_guard.py --strict --ignore-missing-imports => Success: no issues found in 1 source file"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/gumroad_cookies_guard.py",
+    "/mnt/d/Project2/kensho/tests/test_gumroad_cookies_guard.py",
+    "/mnt/d/Project2/kensho/reports/t_53963f88_verification.md",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho_revenue_collect_daily.sh"
+  ],
+  "evidence_hashes": [
+    "6ce17cc80466d59ff808ca7515b1c2d81fd428c7dedd9ed0e734a81fcfd55473",
+    "2d47aeabaa1e868777842b920f440dc76d80e57ae028cf8e71f2c8d3069901cd",
+    "e9b9874078bb632d7078cfa73020239d90189e5f008cb2b2c0c2db5661ab53f6"
+  ],
+  "outcome": {
+    "metric": "Gumroad Cookieファイル消失時に自動復元できるか（実測ケース数）",
+    "before": 0,
+    "after": 1
+  },
+  "task_id": "t_53963f88",
+  "status": "complete"
+}
