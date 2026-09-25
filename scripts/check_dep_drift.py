@@ -260,23 +260,26 @@ def check(venv_python: Path, pyproject: Path, skip_reverse_check: bool = False) 
         return result
 
     if not skip_reverse_check:
-        # Load requirements files and uv.lock for additional checks
-        req_pkgs = set(load_req_files([ROOT / "requirements.txt", ROOT / "requirements-lock.txt"]).keys())
+        # Load requirements files and uv.lock for additional checks.
+        # requirements.txt is the canonical declaration mirror; requirements-lock.txt
+        # is a partial lock snapshot (subset of deps). A package is "missing" only when
+        # absent from BOTH files. uv.lock existence is checked separately (name only).
+        req_pkgs = load_req_files([ROOT / "requirements.txt", ROOT / "requirements-lock.txt"])
+        req_pkgs_set = set(req_pkgs.keys())
         uv_lock_pkgs = set(load_req_files([ROOT / "uv.lock"]).keys())
-        
-        # 逆方向検査: pyproject の各宣言が requirements/uv.lock に存在するか確認
+
         for name in sorted(declared):
-            # pyproject にあるが requirements 系に無い → drift
-            if name not in req_pkgs:
+            # pyproject にあるが requirements 系に両方無い → drift
+            if name not in req_pkgs_set:
                 result["drift"].append({
                     "name": name,
                     "declared": declared[name] or "(none)",
                     "installed": "-",
-                    "reason": f"MISSING: declared in pyproject but not in requirements.txt/requirements-lock.txt",
+                    "reason": "MISSING: declared in pyproject but not in requirements.txt/requirements-lock.txt",
                 })
                 continue
-            # spec 整合性確認: requirements に存在するが spec が異なる
-            req_spec = load_req_files([ROOT / "requirements.txt", ROOT / "requirements-lock.txt"]).get(name)
+            # spec 整合性確認: requirements.txt の spec と pyproject の spec が異なる
+            req_spec = req_pkgs.get(name)
             if req_spec is not None and req_spec != (declared[name] or ""):
                 result["drift"].append({
                     "name": name,
@@ -290,7 +293,7 @@ def check(venv_python: Path, pyproject: Path, skip_reverse_check: bool = False) 
                     "name": name,
                     "declared": declared[name] or "(none)",
                     "installed": "-",
-                    "reason": f"MISSING: package name not found in uv.lock",
+                    "reason": "MISSING: package name not found in uv.lock",
                 })
 
     for name in sorted(declared):
