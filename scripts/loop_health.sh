@@ -208,8 +208,18 @@ if [[ -z "$TASKS_JSON" ]]; then
 fi
 
 if [[ -z "$TASKS_JSON" && -z "$TASKS_FILE" ]]; then
-  # DB fallback
-  TASKS_JSON=$(sqlite3 -json "$DB_PATH" "SELECT id, status, title, result, started_at FROM tasks WHERE status IN ('running','blocked') ORDER BY started_at ASC LIMIT 100" 2>/dev/null)
+  # DB fallback — use python3 (stdlib sqlite3) because sqlite3 CLI may be absent
+  TASKS_JSON=$(python3 -c "
+import sqlite3, json, sys
+db = '$DB_PATH'
+try:
+    conn = sqlite3.connect('file:' + db + '?mode=ro', uri=True)
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute(\"SELECT id, status, title, result, started_at FROM tasks WHERE status IN ('running','blocked') ORDER BY started_at ASC LIMIT 100\").fetchall()
+    print(json.dumps([dict(r) for r in rows]))
+except Exception:
+    print('[]')
+" 2>/dev/null)
 fi
 
 if [[ -z "$TASKS_FILE" ]]; then
@@ -225,7 +235,7 @@ export _LH_MAX_IN_PROGRESS
 
 # ─── Analyze ─────────────────────────────────────────────────────────────────
 ANALYSIS=$(python3 - <<'PYEOF'
-import json, os, re, sqlite3, time
+import json, os, re, sqlite3, time, sys
 
 tasks = json.loads(open(os.environ.get("_LH_TASKS_FILE", "/dev/null")).read() or "[]")
 now = int(os.environ.get("_LH_NOW", str(int(time.time()))))
@@ -331,6 +341,34 @@ try:
             score -= deadlock_penalty
 except Exception:
     # On any failure, don't apply penalty (fail-safe)
+    pass
+
+# ── Orphan run penalty (t_9ea4b148) ───────────────────────────────────────
+# When orphan runs exist (card deleted but run persists), apply penalty to drop score < 80.
+orphan_penalty = 0
+try:
+    # Use --db flag for consistent DB resolution (matches deadlock guard approach)
+    _dbp = os.environ.get("_LH_DB", "")
+    _orphan_result = subprocess.run(
+        [sys.executable, "/mnt/d/Project2/kensho/scripts/orphan_run_reaper.py",
+         "--db", _dbp, "--json"],
+        capture_output=True, text=True, timeout=10
+    )
+    if _orphan_result.returncode == 0:
+        _orphan_data = json.loads(_orphan_result.stdout)
+        orphan_runs = _orphan_data.get("orphan_runs", 0)
+        stale_heartbeat_runs = _orphan_data.get("stale_heartbeat_runs", 0)
+        running_without_pid = _orphan_data.get("running_without_pid", 0)
+        if orphan_runs > 0:
+            # Apply penalty: ensure score < 80 (WARN threshold per t_5dd7ba12)
+            # Each orphan run: -20 points minimum
+            orphan_penalty = max(20, 20 * orphan_runs, 101 - score)
+            score -= orphan_penalty
+except Exception:
+    # On any failure, don't apply penalty (fail-safe)
+    orphan_runs = 0
+    stale_heartbeat_runs = 0
+    running_without_pid = 0
     pass
 
 # config-based max_in_progress (v143 / t_6f45dab0): dispatcher と同一の解決経路。
@@ -559,6 +597,7 @@ _real_deductions = (
     + (len(blocked_with_done_parent) > 0) * 15
     + (zombie_task_count > 0) * 10 * zombie_task_count
     + (not business_ok) * 1  # business KPI gate
+    + (orphan_runs > 0) * 20  # orphan run penalty (t_9ea4b148)
 )
 
 if _real_deductions > 0:
@@ -614,6 +653,9 @@ print(json.dumps({
     "cap_profile": cap_profile,
     "cap_dispatcher": cap_dispatcher,
     "cap_mismatch": bool(cap_mismatch),
+    "orphan_runs": orphan_runs,
+    "stale_heartbeat_runs": stale_heartbeat_runs,
+    "running_without_pid": running_without_pid,
     "lines": lines[:5]
 }))
 PYEOF
@@ -864,6 +906,9 @@ echo "$ANALYSIS" | jq \
     escalation_age_h: $esc_age_h,
     park_after_h: ($park_after_h | tonumber),
     park_action: $park_action,
+    orphan_runs: .orphan_runs,
+    stale_heartbeat_runs: .stale_heartbeat_runs,
+    running_without_pid: .running_without_pid,
     action: null
   }
   # v140 (t_ef9e899f): role別 curated injection。full JSON をトップレベルに温存したまま
