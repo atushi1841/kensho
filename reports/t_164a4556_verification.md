@@ -12,3 +12,8 @@ $ python3 -m pytest tests/test_gen_status_proxy_time_filter.py -q --no-cov
 $ grep -c "def _filter" tests/test_gen_status_proxy_time_filter.py
 0
 ```
+
+```bash
+$ git log --oneline -1 -- tests/test_gen_status_proxy_time_filter.py
+92ba1bd t_164a4556: implemented test counterproof and guard compliance
+```
