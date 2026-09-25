@@ -135,6 +135,39 @@ def installed_versions(venv_python: Path) -> dict[str, str]:
     return out
 
 
+def load_req_files(req_paths):
+    """Return dict of canonical_name -> spec_str (with spaces removed) for each requirement in the given files."""
+    result = {}
+    for req_path in req_paths:
+        if not req_path.is_file():
+            continue
+        for line in req_path.read_text(encoding='utf-8').splitlines():
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            m = _REQUIREMENT_RE.match(line)
+            if m:
+                name = _canon(m.group('name'))
+                spec = (m.group('spec') or "").replace(" ", "")
+                result[name] = spec
+            else:
+                # fallback: split by first separator
+                found = False
+                for sep in ('==', '>=', '<=', '>', '<', '~=', '!=', '@'):
+                    if sep in line:
+                        name, spec = line.split(sep, 1)
+                        name = _canon(name.strip())
+                        spec = sep + spec.strip()
+                        spec = spec.replace(" ", "")
+                        result[name] = spec
+                        found = True
+                        break
+                if not found:
+                    # just a package name
+                    name = _canon(line)
+                    result[name] = ""
+    return result
+
 def run_pip_check(venv_python: Path) -> tuple[int, str]:
     """venv の `pip check` を実行し (rc, 出力) を返す。pip 不在も rc!=0 として扱う。"""
     try:
@@ -226,6 +259,9 @@ def check(venv_python: Path, pyproject: Path) -> dict[str, Any]:
         result["error"] = str(e)
         return result
 
+    # Load requirements files and uv.lock for additional checks
+    req_pkgs = set(load_req_files([ROOT / "requirements.txt", ROOT / "requirements-lock.txt"]).keys())
+    uv_lock_pkgs = set(load_req_files([ROOT / "uv.lock"]).keys())
     for name in sorted(declared):
         spec = declared[name]
         inst = installed.get(name)

@@ -310,7 +310,7 @@ score = 100
 # 旧: resolve_max_in_progress(None) → NameError → score=0/alert=ERROR で監視死亡。
 # 本実装: profile config の kanban.max_in_progress → 無い場合は derive_default (8)。
 # loop_health は dispatcher と同一の cap を参照し、cap 不一致による偽ALERTを排除する。
-def resolve_max_in_progress(_cfg_path=None):
+def get_profile_cap(_cfg_path=None):
     import os as _os
     _p = _os.environ.get("HERMES_PROFILE_CONFIG", "")
     _val = 8
@@ -335,15 +335,35 @@ def resolve_max_in_progress(_cfg_path=None):
         pass
     return _val
 
-_max_in_progress = resolve_max_in_progress(None)
+def get_dispatcher_cap(_cfg_path=None):
+    import os as _os
+    _val = 8
+    try:
+        import yaml as _y
+        _home = _os.path.expanduser("~")
+        _cand = f"{_home}/.hermes/config.yaml"
+        if _os.path.exists(_cand):
+            _d = _y.safe_load(open(_cand, encoding="utf-8"))
+            _v = (_d.get("kanban") or {}).get("max_in_progress")
+            if _v is not None:
+                _val = int(_v)
+    except Exception:
+        pass
+    return _val
+
+cap_profile = get_profile_cap(None)
+cap_dispatcher = get_dispatcher_cap(None)
+cap_mismatch = (cap_profile != cap_dispatcher)
 
 # --max-in-progress override
 try:
     _max_in_progress_override = os.environ.get("_LH_MAX_IN_PROGRESS", "")
     if _max_in_progress_override.isdigit():
         _max_in_progress = int(_max_in_progress_override)
+    else:
+        _max_in_progress = cap_dispatcher
 except Exception:
-    pass
+    _max_in_progress = cap_dispatcher
 
 # --prev-streak override
 try:
@@ -528,6 +548,9 @@ print(json.dumps({
     "business_done": _done_count,
     "business_hour": _jst_hour,
     "business_log": _kpi_log,
+    "cap_profile": cap_profile,
+    "cap_dispatcher": cap_dispatcher,
+    "cap_mismatch": bool(cap_mismatch),
     "lines": lines[:5]
 }))
 PYEOF
