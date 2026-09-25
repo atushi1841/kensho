@@ -349,7 +349,7 @@ _excess = len(running) - _max_in_progress
 if _excess > 0:
     score -= 10 * _excess
 
-# oldest >6h: -10
+# oldest >6h: -10 (use effective_started_at to match streak calculation)
 for t in by_age:
     st = effective_started_at.get(t["id"], t.get("started_at"))
     if st and (now - int(st)) > 6 * 3600:
