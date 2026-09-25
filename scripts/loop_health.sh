@@ -279,7 +279,7 @@ by_age = sorted(
 score = 100
 
 # config-based max_in_progress (v142): read from config.yaml, fallback 4
-_max_in_progress = 4
+_max_in_progress = resolve_max_in_progress(None)
 try:
     import yaml as _yaml
     _cfg = _yaml.safe_load(open("/mnt/d/Project2/kensho/config.yaml", encoding="utf-8"))
