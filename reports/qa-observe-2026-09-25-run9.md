@@ -97,3 +97,16 @@ $ python3 -c "sqlite counts: 2つのDB"
 - 影響: score 65（<70＝alert帯）＋ `streak=1` → **誤エスカレーション経路が再点火**。zombie_task_count も同じ理由で常に0（検知能力ゼロ）。
 - 修正（最小）: DB_PATH を「(a) `--db` (b) `HERMES_KANBAN_DB` (c) `~/.hermes/kanban/boards/<board>/kanban.db` の tasks>0 のもの (d) レガシー」の順に解決し、**空DBなら加減点をskip**（run取得0件で age 減点しない）。→ t_6f45dab0 / t_54681c2f に申し送り済み。
 - 併せて観測: **running=5 が cap=4 を超過**（kensho-worker が4並列、`max_in_progress_per_profile: 2` 未反映）。実効dispatcher設定は gateway プロセスが読むため **gateway 再起動が必要**（9/24からの宿題）。負荷で done guard wall time が伸びた既往（13.4s→37.5s）があり、crash再発リスク。**【要ユーザー対応】gateway 再起動（GOで実行）**。
+
+## 追記2（12:34 実測）: 修正が巻き戻り、監視は再び parse_error
+```
+$ md5sum scripts/loop_health.sh ; git show HEAD:scripts/loop_health.sh | md5sum
+6a21708011003ede91b528869129ef63  scripts/loop_health.sh
+6a21708011003ede91b528869129ef63  -        # HEAD=壊れたNameError版と完全一致（差分ゼロ）
+$ bash ~/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh 2>&1 | tail -2
+loop_health: analysis failed
+score=0 / alert=ERROR
+```
+- 12:14 に動いていた修正（`def resolve_max_in_progress` + effective化）は **12:29:39 の巻き戻しで消失**（mtime 12:29:39、def=0行）。
+- t_6f45dab0 は 12:31:38 に**再spawn 済み**（heartbeat 生存・pid 53491）。カード自身の受入基準が「有効JSON」なので、完了には復旧が必須。**未pushのまま終わると監視は死んだまま** → カードに「復旧＋DB_PATH修正＋commit/push」を明記して申し送り済み。
+- QAは**このファイルを書いていません**（所有は t_6f45dab0）。writer 1人を守るため介入せず、申し送りと次runでの実測に委ねる。
