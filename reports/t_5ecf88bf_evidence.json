@@ -1,0 +1,39 @@
+{
+  "success_indicators": [
+    "t_5ecf88bf: 盤面側crash-loop遮断器が実装され、24h crashed>=3 の ready カードを hermes kanban schedule で park できる",
+    "旧 scripts/kanban_crash_stats.sh の無音失敗（sqlite3 CLI 不在 + 存在しない DB パス + 末尾 rm の exit 0）を修正し、1行JSONが実際に数値を返す",
+    "実盤面DBのコピーで 49 crashes/24h のカードを park 対象として検出し、CLI 引数形まで実測",
+    "テスト14件 passed / mypy no issues / 実DB sha256 前後一致（read-only）",
+    "no_agent cron 3a5e52333ee5 を登録し hermes cron run で last_status=ok を実測"
+  ],
+  "verification_commands": [
+    "$ bash scripts/kanban_crash_stats.sh => {\"window_h\": 24, \"crashed_total\": 250, \"max_crashes_per_task\": 64, \"waste_ratio_pct\": 43.4, \"ready_zero_run\": 0} STATS_EXIT=0",
+    "$ KANBAN_DB=$PROBE HERMES_BIN=$FAKE bash scripts/kanban_crash_circuit_breaker.sh => {\"candidates\": 1, \"parked\": 1, \"parked_ids\": [\"t_26812b2a\"], \"skipped_live_claim\": [\"t_5ecf88bf\", \"t_9db50654\"]} rc=0",
+    "$ cat hermes-calls.log => kanban --board kensho-ai-team schedule t_26812b2a crash-loop breaker: 49 crashes/24h (threshold=3)",
+    "$ sha256sum /home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db => 7a743d3376d6bf3db997660445c95717ae2c0f53a02445c23c3f64a7d3855c6c (実行前後で一致)",
+    "$ python3 -m pytest tests/test_kanban_crash_breaker.py -q --no-cov => 14 passed in 1.97s",
+    "$ python3 -m mypy scripts/kanban_crash_breaker.py tests/test_kanban_crash_breaker.py => Success: no issues found in 2 source files",
+    "$ hermes cron run 3a5e52333ee5 => Ran now: succeeded. / hermes cron list => Last run: 2026-09-25T09:53:28.975918+09:00 ok"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/kanban_crash_breaker.py",
+    "/mnt/d/Project2/kensho/scripts/kanban_crash_stats.sh",
+    "/mnt/d/Project2/kensho/scripts/kanban_crash_circuit_breaker.sh",
+    "/mnt/d/Project2/kensho/tests/test_kanban_crash_breaker.py",
+    "/mnt/d/Project2/kensho/reports/t_5ecf88bf_verification.md"
+  ],
+  "evidence_hashes": [
+    "/mnt/d/Project2/kensho/scripts/kanban_crash_breaker.py: sha256=131a22f7b1bc7a296032d190f0645f0840e8cc4f2d9329dca00ff5e1b6c603b9",
+    "/mnt/d/Project2/kensho/scripts/kanban_crash_stats.sh: sha256=e54c1a6f44aae772bcc39a4cd8c98ebd406abaa6882047c1790bef22d2d54cd7",
+    "/mnt/d/Project2/kensho/scripts/kanban_crash_circuit_breaker.sh: sha256=77c6d147c454a2c9691c79bdd668c7299726eaad070d1e70dba49cbf7ee2a443",
+    "/mnt/d/Project2/kensho/tests/test_kanban_crash_breaker.py: sha256=2c5af460d8b72c4000471a05e700763c0ee3e3197b47d08fa195f88531226e44",
+    "/mnt/d/Project2/kensho/reports/t_5ecf88bf_verification.md: sha256=a9446508adc93aea9409fd8b3e74f286414d0116184bc45b135ad673662c85af"
+  ],
+  "outcome": {
+    "metric": "crash-loopカードをparkできる検出率（閾値超過カードに対するpark実行）",
+    "before": 0,
+    "after": 1
+  },
+  "task_id": "t_5ecf88bf",
+  "status": "complete"
+}
