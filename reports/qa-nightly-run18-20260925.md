@@ -115,7 +115,9 @@ $ bash /home/atushi/.hermes/profiles/kensho-sweeps/cache/scratch/lh_debug.sh --d
 100
 $ python3 scripts/audit_bot_safety.py 2026-09-25
 [audit_bot_safety] 2026-09-25: BOTシグナルなし (深夜ゼロ・連続なし・単独アクション)
-$ git show HEAD:config.yaml | grep -c "(APIキー値は非記載)"
+$ git show HEAD:config.yaml | grep -c "^providers:"
+0
+$ git log --all --oneline -S"freellmapi-cbf9bd97" -- config.yaml | wc -l
 0
 ```
 ── QA run18 / 2026-09-25 23:2x JST
