@@ -1,3 +1,6 @@
+## verification_evidence
+
+```markdown
 # t_7630a248 検証レポート
 ## 修正内容の概要
 - Apify ポートフォリオ統計スクリプト `scripts/apify_portfolio_stats.sh` を repo 正本として作成し、profile スクリプトへ同期（MD5 完全一致）。
