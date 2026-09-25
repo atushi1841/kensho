@@ -1,19 +1,19 @@
 // Gumroad売上データ収集スクリプト（本番版）
 // CDP経由でGumroadダッシュボードの売上データを取得し、gumroad_state.jsonに保存する。
 // Chrome自動起動対応（cron等からの一発実行用）。
-// Cookie: D:\Project2\gumroad-automation\gumroad_cookies.json（約1ヶ月で再エクスポート必要）
-// 出力: D:\Project2\kensho\data\gumroad_state.json
+// Cookie: D:\\Project2\\gumroad-automation\\gumroad_cookies.json（約1ヶ月で再エクスポート必要）
+// 出力: D:\\Project2\\kensho\\data\\gumroad_state.json
 const http = require('http');
 const fs = require('fs');
 const { execFile } = require('child_process');
 
 const CDP_PORT = parseInt(process.env.GUMROAD_CDP_PORT || '9333', 10);
-const COOKIE_FILE = 'D:\\Project2\\gumroad-automation\\gumroad_cookies.json';
-const STATE_FILE = 'D:\\Project2\\kensho\\data\\gumroad_state.json';
-const CHROME_EXE = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+const COOKIE_FILE = 'D:\\\\Project2\\\\gumroad-automation\\\\gumroad_cookies.json';
+const STATE_FILE = 'D:\\\\Project2\\\\kensho\\\\data\\\\gumroad_state.json';
+const CHROME_EXE = 'C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe';
 // ユニークプロファイルで起動する（固定プロファイルは既存Chromeにハンドオフされて
 // CDP:9333が立たず、node側の起動待ちが90秒を超えてタイムアウトする根因の回避）
-const CHROME_PROFILE = `C:\\temp\\gumroad-cdp-${CDP_PORT}-${process.pid}`;
+const CHROME_PROFILE = `C:\\\\temp\\\\gumroad-cdp-${CDP_PORT}-${process.pid}`;
 const NAVIGATION_TIMEOUT = 15000;
 const LAUNCH_TIMEOUT_MS = 45000; // ① 自動起動後の起動待ち上限（Python側の合計時限240sに収まる）
 const CDP_HOSTS = ['127.0.0.1', '[::1]']; // ChromeはIPv4/IPv6どちらにbindしても接続できるよう両対応
@@ -142,7 +142,7 @@ async function main() {
   const bodyText = await evalJs('document.body ? document.body.innerText : ""');
   let rev = {};
   if (typeof bodyText === 'string') {
-    const moneyRe = /\$(\d+(?:\.\d{2})?)/g;
+    const moneyRe = /\\$(\\d+(?:\\.\\d{2})?)/g;
     const balanceIdx = bodyText.indexOf('Balance');
     const totalIdx = bodyText.indexOf('Total earnings');
     rev = {
@@ -203,7 +203,7 @@ async function main() {
     // 日本時間（JST, UTC+9）のISO 8601表記で保存（他スクリプトのcollected_atと表記統一）
     collected_at: collectedAt,
     last_attempt_at: collectedAt,
-    last_success_at: (rev.has_login !== false) ? collectedAt : existingLastSuccessAt,
+    last_success_at: (rev.has_login === true && sales_page_ok === true) ? collectedAt : existingLastSuccessAt,
     dashboard_url: url,
     login_ok: rev.has_login !== false,
     sales_page_ok: salesText !== null && salesText.includes('Total'),
@@ -216,7 +216,7 @@ async function main() {
   // NOTE (t_ee5ca962): 旧実装は ws.close() → await send('Browser.close') の順で、
   // ①WSを閉じてから応答を待つため await が永久に解決しない ②起動Chrome(detached・unref無し)が
   // イベントループを生かし続ける、の二重で node が自力終了せず毎回240sで打ち切られていた
-  // （日次レポートに虚偽の timeout-mark、C:\temp\gumroad-cdp-* も後始末されず蓄積）。
+  // （日次レポートに虚偽の timeout-mark、C:\\temp\\gumroad-cdp-* も後始末されず蓄積）。
   // → Browser.close は「送信のみ」(応答待ちなし) とし、後始末後に process.exit(0) で明示終了する。
   try { ws.send(JSON.stringify({ id: ++id, method: 'Browser.close', params: {} })); } catch(e) {}
   try { ws.close(); } catch(e) {}
