@@ -73,3 +73,27 @@ $ grep -c ERROR logs/auto_20260925.log
 
 ## 【要ユーザー対応】
 - **t_26812b2a**: goal judge のプロバイダ明示と連続失敗時の打ち切りは **hermes core（リポジトリ外）**の変更が必要。推奨: ①goals 節に judge 用 provider/model を明示（設定1行＋read-back）②judge が N回連続失敗で goal ループを blocked＋通知に倒す（core側 50行程度）。**おすすめですすめます（GOで実行します）**。
+
+## 追記（12:40–12:45 実測）: 復旧したが偽alarmを再発 — 真因は「影武者DB」を掴む DB_PATH 解決
+
+```
+$ bash ~/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh | python3 -c "import json,sys;d=json.load(sys.stdin);print(d['score'],d['lines'],'streak',d['streak'])"
+65 ['score=65', 'top=t_757b8b5d age=14h', 'running=5', 'blocked=1', 'streak=1'] streak 1
+```
+
+```
+$ python3 -c "sqlite task_runs: t_757b8b5d の現行run"
+t_757b8b5d running 09-25 12:25:46      # 実age 0.3h
+tasks.started_at = 09-24 22:25          # 初回dispatch値（stale）
+```
+
+```
+$ python3 -c "sqlite counts: 2つのDB"
+/home/atushi/.hermes/kanban.db                        tasks 0    runs 0      # ← 空（9/24 21:18）
+/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db tasks 779 runs 1406 / t_757b8b5d runs 4
+```
+
+- 真因: `loop_health.sh:80` `DB_PATH="${HERMES_KANBAN_DB:-$HOME/.hermes/kanban.db}"` が**存在するだけの空レガシーDB**を指し、`:131` のボードDB自動検出は「`$DB_PATH` が存在しない時だけ」走る → `effective_started_at`（task_runs由来）が常に空 → `tasks.started_at` へフォールバックし、復活カードに **-25（>6h -10 + >12h -15）の偽減点**。
+- 影響: score 65（<70＝alert帯）＋ `streak=1` → **誤エスカレーション経路が再点火**。zombie_task_count も同じ理由で常に0（検知能力ゼロ）。
+- 修正（最小）: DB_PATH を「(a) `--db` (b) `HERMES_KANBAN_DB` (c) `~/.hermes/kanban/boards/<board>/kanban.db` の tasks>0 のもの (d) レガシー」の順に解決し、**空DBなら加減点をskip**（run取得0件で age 減点しない）。→ t_6f45dab0 / t_54681c2f に申し送り済み。
+- 併せて観測: **running=5 が cap=4 を超過**（kensho-worker が4並列、`max_in_progress_per_profile: 2` 未反映）。実効dispatcher設定は gateway プロセスが読むため **gateway 再起動が必要**（9/24からの宿題）。負荷で done guard wall time が伸びた既往（13.4s→37.5s）があり、crash再発リスク。**【要ユーザー対応】gateway 再起動（GOで実行）**。
