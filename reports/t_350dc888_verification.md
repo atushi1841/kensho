@@ -54,8 +54,11 @@ exit=0
 
 (4) 変更ファイルの差分（1ファイルのみ・テスト側の仕様書き写しを撤去）:
 
-$ cd /mnt/d/Project2/kensho && git show --stat --oneline HEAD
-（本コミット。tests/test_loop_health_json_contract.py のみ変更 → 詳細はコミット後の `git show --stat` 出力を参照）
+$ cd /mnt/d/Project2/kensho && git show --stat --oneline 204d8a7
+204d8a7 t_350dc888: loop_health JSON契約テストを正本(agent_eval_harness.LOOP_HEALTH_FIELDS)へ単一化 + 実測証跡
+ reports/t_350dc888_verification.md      | 68 +++++++++++++++++++++++++++++++++
+ tests/test_loop_health_json_contract.py | 30 ++++++++++++++-
+ 2 files changed, 96 insertions(+), 2 deletions(-)
 
 ## 自己レビュー（Reflexion）
 
