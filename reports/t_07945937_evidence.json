@@ -1,0 +1,43 @@
+{
+  "success_indicators": [
+    "偽done経路の再現ケースで旧ガード exit=0/pass=True → 条件(bind) hard で exit=1/failing=[bind]（検出 0/1 → 1/1）",
+    "新規テスト tests/test_done_guard_evidence_binding.py が 11 passed",
+    "既存条件は不変（11 → 12 conditions / changed existing = 0 / pass 判定同一）",
+    "mypy strict: Success: no issues found in 2 source files",
+    "origin/main と 0/0（push済・unpushed code 0件）"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/done_guard_evidence_binding.py --selftest => [selftest] pass/fail/skip + ghost source_commit すべて期待どおり / ALL OK (exit=0)",
+    "$ timeout 900 python3 -m pytest tests/test_done_guard_evidence_binding.py -q --no-cov => 11 passed in 7.49s",
+    "$ timeout 900 python3 scripts/repro_done_guard_fake_route.py <scratch>/fake_done_repro_final => before_soft: exit=0 pass=True bind=ABSENT / after_soft: exit=0 pass=True bind(fail detected)+WARNING / after_hard: exit=1 pass=False failing=['bind:artifact_paths_bound_to_task_diff']",
+    "$ python3 scripts/done_guard_evidence_binding.py --validate <一時repo>/reports/t_facade02_evidence.json --task-id t_facade02 --workdir <一時repo> => bind: pass — code_artifacts=1 bound=1 (exit=0)",
+    "$ python3 kanban_done_guard.py.bak-20260925 t_572b88de --workdir /mnt/d/Project2/kensho --json と 新ガードの同コマンド比較 => before conds=11 / after conds=12 / changed existing conds=[]",
+    "$ timeout 600 python3 -m mypy scripts/done_guard_evidence_binding.py tests/test_done_guard_evidence_binding.py => Success: no issues found in 2 source files",
+    "$ git push origin main => 274e9e7..ad08fd0  main -> main / $ git rev-list --left-right --count origin/main...main => 0\t0"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/done_guard_evidence_binding.py",
+    "/mnt/d/Project2/kensho/tests/test_done_guard_evidence_binding.py",
+    "/mnt/d/Project2/kensho/scripts/repro_done_guard_fake_route.py",
+    "/mnt/d/Project2/kensho/reports/t_07945937_verification.md",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py"
+  ],
+  "evidence_hashes": [
+    "sha256:d60cdd43307d7da3f28d788904ea9809e19c4582068d193902037685009db76e",
+    "sha256:d45e771465fc6bfed3d036b60df8c549dcb950609bf9e76422fd0c1f72e0e271",
+    "sha256:39f431877f5f672a472cf74a6e56636511328acdf3d00f40937e7b5f66719bce",
+    "sha256:22978a593fee564a12c56155200a8970f03b5e80a0a5e0049d9b9e1c058da84b",
+    "sha256:3d057cb89efe90bacff27e031cb74111ecf5469500179e641d2decb2414fe33d"
+  ],
+  "source_commits": [
+    "274e9e7fa5537cab149c1405fc72046aebe231ce",
+    "ad08fd0ca2e80c0fd5bb7f3fdb58422806576302"
+  ],
+  "outcome": {
+    "metric": "偽done再現ケース（artifact_paths が自タスクdiffに無い evidence.json）のガード検出件数",
+    "before": 0,
+    "after": 1
+  },
+  "task_id": "t_07945937",
+  "status": "complete"
+}
