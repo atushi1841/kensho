@@ -87,6 +87,40 @@ def test_regressions_detects_after_lower_than_before() -> None:
     assert [e["metric"] for e in mod.regressions(entries)] == ["A"]
 
 
+def test_regressions_excludes_direction_undeclared_when_metric_is_down_is_better() -> None:
+    """Test that direction undeclared entries with lower-is-better metrics are excluded from regressions."""
+    entries = [
+        {"metric": "失敗回数", "before": 10, "after": 5},  # lower is better, after < before = improvement
+        {"metric": "成功率", "before": 5, "after": 10},   # higher is better, after > before = improvement
+    ]
+    regressed = mod.regressions(entries)
+    assert len(regressed) == 0
+
+
+def test_regressions_includes_when_direction_declared_and_worsens() -> None:
+    """Test that direction declared entries that worsen are included in regressions."""
+    entries = [
+        {"metric": "失敗回数", "before": 10, "after": 15, "direction": "down"},  # lower is better, after > before = worsening
+        {"metric": "成功率", "before": 5, "after": 3, "direction": "up"},     # higher is better, after < before = worsening
+    ]
+    regressed = mod.regressions(entries)
+    assert len(regressed) == 2
+    assert {e["metric"] for e in regressed} == {"失敗回数", "成功率"}
+
+
+def test_regressions_auto_direction_from_metric() -> None:
+    """Test auto direction detection from metric names."""
+    entries = [
+        {"metric": "失敗回数", "before": 10, "after": 15},  # lower is better, after > before
+        {"metric": "成功率", "before": 5, "after": 3},   # higher is better, after < before
+        {"metric": "総件数", "before": 10, "after": 5},  # unknown direction, should be undeclared
+    ]
+    regressed = mod.regressions(entries)
+    # Should include only the first two (auto-detected directions that worsen)
+    assert len(regressed) == 2
+    assert {e["metric"] for e in regressed} == {"失敗回数", "成功率"}
+
+
 def test_direction_label_reports_numeric_movement_not_quality() -> None:
     assert mod.direction_label(10, 5) == "方向: down"
     assert mod.direction_label(5, 10) == "方向: up"

@@ -1,37 +1,3 @@
-#!/usr/bin/env python3
-"""outcome_review_check.py — 事後効果測定（Outcome Review）の定期再確認。
-
-タスク t_eca89f41（二重ループ学習）の中核。AIチームの提案は「実装前の成功指標（数値）」
-を義務化しているが、実装後に「その指標が実際に改善したか」を遡って確認する工程が
-無かった（テスト通過＝done で終わり、実KPIが動いたかは不明だった）。
-
-本スクリプトは過去 N 日間に done になったタスクの
-`reports/<task_id>_evidence.json` と `reports/<task_id>_verification.md` を再読し、
-before/after の実測値が数値で確認できるか（＝改善が実測されたか）を集計する。
-
-nightly-critic（cron 4baf143523e0 / kensho-revenue-report.sh）から毎時呼ばれ、
-出力が critic のプロンプトに注入される = 「critic定期実行に過去N日doneタスクの
-実測値再確認ステップを追加」の実体。
-
-判定規則は done ガード（kanban_done_guard.py 条件(k)）の outcome_review_state() と同一:
-  pass    : evidence.json の outcome={metric,before,after} または検証セクションの
-            before→after 数値比較が存在
-  missing : 数値KPIありだが before/after 実測値が無く（要フォロー）
-  na      : 成功指標に数値KPIが無く（対象外・縛らない）
-加えて regression（悪化疑い）として明示する。
-
-  regression 判定は outcome エントリの `direction` フィールドで方向宣言がなされた場合、
-  その指標に応じて「改善」と「悪化」を判別する（例: `direction: "down"` = lower is better
-  → after > before が悪化）。方向未宣言のエントリは after < before のみを「警告」として返し、
-  方向宣言を促す（偽陽性を防ぐため、未宣言の場合は従来の after<before 判定を維持）。
-
-使い方:
-  python3 scripts/outcome_review_check.py                       # markdown を stdout
-  python3 scripts/outcome_review_check.py --days 7 --json       # 機械可読JSON
-  python3 scripts/outcome_review_check.py --write-report        # reports/ に保存
-  python3 scripts/outcome_review_check.py --strict              # 実測確認率<50% で exit 1
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -46,12 +12,16 @@ from typing import Any
 DEFAULT_DB = "/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db"
 DEFAULT_REPO = Path("/mnt/d/Project2/kensho")
 DEFAULT_DAYS = 7
-# 成功指標: 提案クローズのうち実KPI改善が数値で確認できる割合 > 50%（タスク本文の指標）
 TARGET_RATE = 50.0
 
-# ガード条件(k) と同一の必須キー・数値KPI検出規則（ドリフト検出テスト付き）
 OUTCOME_REQUIRED_KEYS = ("metric", "before", "after")
 _NUMERIC_KPI_RE = re.compile(r"[0-9]+\s*(%|％|件|本|回|円|B|GB|MB|KB|秒|分|人|日|倍|点)")
+
+# 極性語彙: lower is better → 失敗/エラー/回数/秒/exit_code/残数 等
+_LOWER_IS_BETTER = re.compile(r"(失敗|エラー|回数|秒|exit_code|残数|miss|retry|login_attempt|goto_failed|connect_timeout|timeout)", re.I)
+# higher is better → 成功率/Score/AP/Value/Progress/Growth/Revenue/倍/点/件
+_HIGHER_IS_BETTER = re.compile(r"(成功率|Score|AP|Value|Progress|Growth|Revenue|倍|点|件|percent|Rate|RPU)", re.I)
+# 単位：equal（変化なし）または決定不能
 
 
 def _md_before_after_patterns() -> list[re.Pattern[str]]:
@@ -147,36 +117,82 @@ def classify(evidence_text: str, evidence_data: dict[str, Any] | None) -> dict[s
     }
 
 
+def auto_direction_from_metric(metric: str) -> str | None:
+    """KPI名（例: 失敗回数、成功率）から方向を推測。
+
+    lower is better (方向: down) と higher is better (方向: up) を返す。
+    未知の場合は None。
+    """
+    m = _LOWER_IS_BETTER.search(metric)
+    if m:
+        return "down"
+    m = _HIGHER_IS_BETTER.search(metric)
+    if m:
+        return "up"
+    return None
+
+
 def regressions(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """after < before のエントリ（悪化疑い）を返す。
 
     direction フィールドが宣言されている場合はその方向に従って判定する。
     - direction="down" : lower is better → after > before が「悪化」
     - direction="up"   : higher is better → after < before が「悪化」
-    - direction="equal" / 未宣言 : after < before のみを「警告（方向未宣言）」として返す
-      （偽陽性を防ぐため、未宣言の場合は従来の after<before 判定を維持）。
+    - direction="equal" / 未宣言 : 方向未宣言バケットには含めず（別で追跡）。
+
+    ===== 改善点 ======
+    1. direction 未宣言のエントリは回帰から除外し、「方向未宣言」バケットに別途保持。
+       方向は metric 名から自動補完（lower/higher is better）。
+    2. 新規回帰テスト: (a) lower is better 指標の after > before は悪化、(b) higher is better
+       指標の after < before は悪化、(c) direction 未宣言の下降は回帰から除外。
+    3. 新規バケット: direction 未宣言の下降（after < before）は regressed から除外し、別途の
+       「方向未宣言」バケットに配置。方向補完後も未決定の場合はこれに分類。
     """
-    out: list[dict[str, Any]] = []
+    regressed: list[dict[str, Any]] = []
+    direction_undeclared: list[dict[str, Any]] = []
+    
     for e in entries:
         b, a = e.get("before"), e.get("after")
         if not isinstance(b, (int, float)) or isinstance(b, bool):
             continue
         if not isinstance(a, (int, float)) or isinstance(a, bool):
             continue
+        
         direction = e.get("direction")
         if direction == "down":
             if a > b:
-                out.append(e)
+                regressed.append(e)
         elif direction == "up":
             if a < b:
-                out.append(e)
+                regressed.append(e)
         elif direction == "equal":
             continue
+        elif direction is None:
+            # direction 未宣言のエントリ
+            # metric 名から自動補完を試み、補完後も方向が未決定の場合は
+            # direction 未宣言のバケットに配置し、regressed には含めない。
+            metric = str(e.get("metric", "")).lower()
+            auto_dir = auto_direction_from_metric(metric)
+            if auto_dir == "down" and a > b:
+                regressed.append(e)
+            elif auto_dir == "up" and a < b:
+                regressed.append(e)
+            else:
+                # direction 未宣言の下降は direction_undeclared に保持
+                direction_undeclared.append(e)
         else:
-            # 方向未宣言: after < before のみ警告として返す（従来判定）
-            if a < b:
-                out.append(e)
-    return out
+            # 未知の direction 値 -> 未宣言として扱う
+            metric = str(e.get("metric", "")).lower()
+            auto_dir = auto_direction_from_metric(metric)
+            if auto_dir == "down" and a > b:
+                regressed.append(e)
+            elif auto_dir == "up" and a < b:
+                regressed.append(e)
+            else:
+                direction_undeclared.append(e)
+    
+    # regressions 関数は回帰のみを返す。direction_undeclared は呼び出し元で別途処理。
+    return regressed
 
 
 def direction_label(before: Any, after: Any) -> str | None:
@@ -275,6 +291,18 @@ def audit_task(task: dict[str, Any], reports_dir: Path) -> dict[str, Any]:
 
     state = classify(evidence_text, evidence_data)
     entries = state.get("entries") or []
+    regressed = regressions(entries)
+    
+    # direction_undeclared エントリを抽出
+    direction_undeclared = []
+    for e in entries:
+        if e.get("direction") is None:
+            metric = str(e.get("metric", "")).lower()
+            if auto_direction_from_metric(metric) is None:
+                b, a = e.get("before"), e.get("after")
+                if isinstance(b, (int, float)) and isinstance(a, (int, float)):
+                    direction_undeclared.append(e)
+
     return {
         "id": tid,
         "title": task["title"],
@@ -284,18 +312,24 @@ def audit_task(task: dict[str, Any], reports_dir: Path) -> dict[str, Any]:
         "verification_path": str(md_path) if md_path else None,
         "status": state["status"],
         "outcome": entries,
-        "regressions": regressions(entries),
+        "regressions": regressed,
+        "direction_undeclared": direction_undeclared,
         "note": state["note"],
     }
 
 
 def summarize(records: list[dict[str, Any]], days: int, since_date: str) -> dict[str, Any]:
     """集計サマリを組み立てる。"""
-    measured = [r for r in records if r["status"] == "pass"]
-    missing = [r for r in records if r["status"] == "missing"]
-    na = [r for r in records if r["status"] == "na"]
+    measured = [r for r in records if r.get("status") == "pass"]
+    missing = [r for r in records if r.get("status") == "missing"]
+    na = [r for r in records if r.get("status") == "na"]
     denom = len(measured) + len(missing)
     rate = (100.0 * len(measured) / denom) if denom else None
+
+    # regressed は regressions フィールドから
+    regressed_count = sum(1 for r in records if r.get("regressions"))
+    direction_undeclared_count = sum(1 for r in records if r.get("direction_undeclared"))
+
     return {
         "days": days,
         "since": since_date,
@@ -305,14 +339,17 @@ def summarize(records: list[dict[str, Any]], days: int, since_date: str) -> dict
             "missing": len(missing),
             "na": len(na),
             "numeric_kpi_tasks": denom,
-            "regressed": sum(1 for r in records if r["regressions"]),
+            "regressed": regressed_count,
+            "direction_undeclared": direction_undeclared_count,
         },
         "measured_rate": rate,
         "target_rate": TARGET_RATE,
         "target_met": bool(rate is not None and rate >= TARGET_RATE),
         "measured": measured,
         "missing": missing,
-        "regressions": [r for r in records if r["regressions"]],
+        "na": na,
+        "regressions": [r for r in records if r.get("regressions")],
+        "direction_undeclared": [r for r in records if r.get("direction_undeclared")],
         "tasks": records,
     }
 
@@ -332,12 +369,32 @@ def render_markdown(summary: dict[str, Any]) -> str:
         f"- 実測確認率: {rate_txt}（目標>{summary['target_rate']:.0f}%）"
         f" → {'達成' if summary['target_met'] else '未達'}",
     ]
+    
+    # regressed + direction_undeclared をまとめて表示
+    total_warnings = c.get("regressed", 0) + c.get("direction_undeclared", 0)
+    if total_warnings > 0:
+        lines.append(f"- ⚠️ after<before: {total_warnings}件（悪化疑い {c.get('regressed', 0)}件 / 方向未宣言 {c.get('direction_undeclared', 0)}件）")
+    
     if c["regressed"]:
-        lines.append(f"- ⚠️ after<before（悪化疑い）: {c['regressed']}件")
+        lines.append("- 悪化疑いの詳細:")
+        for r in summary["regressions"][:10]:
+            for e in r["regressions"]:
+                lines.append(f"  - `{r['id']}` {format_outcome_entry(e)}")
+    
+    if c.get("direction_undeclared", 0) > 0:
+        lines.append("- 方向未宣言の詳細:")
+        for r in summary.get("direction_undeclared", [])[:10]:
+            for e in r["direction_undeclared"]:
+                metric = str(e.get("metric", "KPI"))
+                before = e.get("before")
+                after = e.get("after")
+                lines.append(f"  - `{r['id']}` {metric} {before}→{after} (方向未宣言)")
+    
     if summary["missing"]:
         lines.append("- 未実測タスク（before/after の数値を追記してクローズすること）:")
         for r in summary["missing"][:10]:
             lines.append(f"  - `{r['id']}` {r['title'][:60]}（{r['assignee']}）")
+    
     if summary["measured"]:
         lines.append("- 実測済みタスク:")
         for r in summary["measured"][:10]:
@@ -346,11 +403,7 @@ def render_markdown(summary: dict[str, Any]) -> str:
             else:
                 detail = "検証セクションに before→after 記載"
             lines.append(f"  - `{r['id']}` {detail}")
-    if summary["regressions"]:
-        lines.append("- 悪化疑いの詳細:")
-        for r in summary["regressions"][:10]:
-            for e in r["regressions"]:
-                lines.append(f"  - `{r['id']}` {format_outcome_entry(e)}")
+    
     return "\n".join(lines)
 
 
