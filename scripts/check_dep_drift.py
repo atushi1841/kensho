@@ -70,7 +70,6 @@ def _canon(name: str) -> str:
     """PEP 503 正規化: -/_/. を同一視し小文字化 (PyYAML → pyyaml)。"""
     return re.sub(r"[-_.]+", "-", name).lower()
 
-
 # ---- 宣言側 (pyproject.toml) -------------------------------------------------
 
 
@@ -87,7 +86,6 @@ def parse_pyproject_deps(path: Path) -> dict[str, str]:
             continue
         declared[_canon(m.group("name"))] = (m.group("spec") or "").replace(" ", "")
     return declared
-
 
 # ---- 実際の venv ---------------------------------------------------------------
 
@@ -150,7 +148,6 @@ def run_pip_check(venv_python: Path) -> tuple[int, str]:
     except (OSError, subprocess.SubprocessError) as e:
         return 127, f"pip check exec failed: {e}"
 
-
 # ---- バージョン比較 (PEP 440 の実用サブセット) ----------------------------------
 
 
@@ -201,7 +198,6 @@ def _spec_satisfied(spec: str, installed: str) -> bool | None:
             if not (ik >= wk and installed.split(".")[0] == want.split(".")[0]):
                 return False
     return True
-
 
 # ---- メインの検査 ----------------------------------------------------------------
 
@@ -265,7 +261,6 @@ def check(venv_python: Path, pyproject: Path) -> dict[str, Any]:
         })
     result["ok"] = not result["drift"]
     return result
-
 
 # ---- 自己テスト ------------------------------------------------------------------
 
