@@ -446,7 +446,7 @@ class TestGumroadCdpResilience:
         import kensho_revenue_collect as _krc
 
         p = tmp_path / "gumroad_state.json"
-        p.write_text(json.dumps({"state_exists": True}), encoding="utf-8")
+        p.write_text(json.dumps({"state_exists": True, "login_ok": True}), encoding="utf-8")
         _krc.GUMROAD_STATE = str(p)
         _krc._persist_last_success_at()
         with open(p, encoding="utf-8") as f:
@@ -458,6 +458,25 @@ class TestGumroadCdpResilience:
 
         _krc.GUMROAD_STATE = str(tmp_path / "nonexistent.json")
         _krc._persist_last_success_at()  # 例外を出さず素通り
+
+    def test_persist_last_success_at_skips_on_login_fail(self, tmp_path: Any) -> None:
+        """login_ok=False のとき last_success_at を更新しない（JS側の無条件書込を防御）。"""
+        import kensho_revenue_collect as _krc
+
+        p = tmp_path / "gumroad_state.json"
+        p.write_text(
+            json.dumps({
+                "state_exists": True,
+                "login_ok": False,
+                "last_success_at": "2026-09-08T09:00:00",
+            }),
+            encoding="utf-8",
+        )
+        _krc.GUMROAD_STATE = str(p)
+        _krc._persist_last_success_at()
+        with open(p, encoding="utf-8") as f:
+            st = json.load(f)
+        assert st["last_success_at"] == "2026-09-08T09:00:00"  # 前回値を保持
 
     def test_update_runs_node_with_total_timeout(self) -> None:
         """cdp収集は1回のnode実行・タイムアウトは GUMROAD_TOTAL_TIMEOUT。成功時のみpersist。"""

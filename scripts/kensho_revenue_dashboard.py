@@ -97,20 +97,25 @@ def render(entries: list[dict[str, Any]]) -> str:
     gum_login = gumroad.get("login_ok")
     gum_collected = gumroad.get("collected_at", "?")
     gum_success = gumroad.get("last_success_at") or gum_collected
+    gum_last_attempt = gumroad.get("last_attempt_at") or gum_collected
     gum_age_h: float | None = None
     try:
         gc = datetime.fromisoformat(str(gum_success))
         gum_age_h = (datetime.now() - gc).total_seconds() / 3600
     except (ValueError, TypeError):
         gum_age_h = None
-    if gum_age_h is not None:
+    if gum_login is False:
+        gum_fresh = "⚠️ Gumroadセッション失効（鮮度不明）"
+        gum_fresh_color = "#f85149"
+    elif gum_age_h is not None:
         gum_fresh = f"売上データ更新: {gum_age_h:.0f}時間前"
+        gum_fresh_color = "#3fb950"
+        if gum_age_h > 24:
+            gum_fresh_color = "#f85149"
+            gum_fresh = f"⚠️ {gum_fresh}（24h超・前回値）"
     else:
         gum_fresh = "売上データ更新時刻: 不明"
-    gum_fresh_color = "#3fb950"
-    if gum_age_h is not None and gum_age_h > 24:
-        gum_fresh_color = "#f85149"
-        gum_fresh = f"⚠️ {gum_fresh}（24h超・前回値）"
+        gum_fresh_color = "#d29922"
     gum_state_color = "#3fb950" if gum_state_exists else "#d29922"
     gum_state_label = "✓ 取得済み" if gum_state_exists else "✗ 未取得"
     gum_login_label = "✓ ログインOK" if gum_login is True else "✗ セッション失効" if gum_login is False else "— 不明"

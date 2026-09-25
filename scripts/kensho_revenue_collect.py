@@ -816,6 +816,10 @@ def _persist_last_success_at() -> None:
         # Only update last_success_at if login was successful
         if state.get("login_ok", False):
             state["last_success_at"] = datetime.now().isoformat(timespec="seconds")
+        else:
+            # ログイン失敗時は last_attempt_at を更新し、login-mark を出力
+            state["last_attempt_at"] = datetime.now().isoformat(timespec="seconds")
+            print(f"  🔐 login-mark ⚠️ Gumroadログインセッション失効（Cookie再エクスポートが必要）")
         with open(GUMROAD_STATE, "w", encoding="utf-8") as f:
             json.dump(state, f, ensure_ascii=False, indent=2)
     except Exception as e:
@@ -845,7 +849,7 @@ def record_gumroad_sales(
     total_earnings_usd>0）を示した場合のみ1行追記する。既に記録済みの
     collected_at は重複追記しない（収集runごとに最大1行）。
 
-    返り値: 売上行を書き込んだ場合は True、売上ゼロまたは追記不要なら False。
+    返り値: 売上行を書き込まれた場合は True、売上ゼロまたは追記不要なら False。
     """
     sf = state_file or GUMROAD_STATE
     lf = log_file or GUMROAD_SALES_LOG
@@ -864,10 +868,35 @@ def record_gumroad_sales(
     if not has_sale:
         return False
 
+    # collectors: 健全性サマリ（受入基準2: login_ok反映）
+    collectors = {
+        "apify_ok": True,
+        "rapidapi_ok": True,
+        "gumroad_ok": bool(state.get("state_exists")) and state.get("login_ok") is not False,
+        "gumroad_login_ok": state.get("login_ok"),
+    }
+    # failure-mark: login失効 or sales_page抽出失敗
+    markers = []
+    if state.get("login_ok") is False:
+        markers.append({
+            "type": "failure-mark",
+            "ts": fields["collected_at"],
+            "msg": "⚠️ Gumroadログインセッション失効（Cookie再エクスポートが必要）",
+        })
+    if state.get("sales_page_ok") is False:
+        markers.append({
+            "type": "failure-mark",
+            "ts": fields["collected_at"],
+            "msg": "⚠️ Gumroad販売ページ抽出失敗",
+        })
+
     line = (
         f"{fields['collected_at']} total_sales={fields['total_sales']}"
         f" earnings_usd={fields['total_earnings_usd']}"
-        f" balance_usd={fields['balance_usd']} login_ok={fields['login_ok']}\n"
+        f" balance_usd={fields['balance_usd']} login_ok={fields['login_ok']}"
+        f" collectors={json.dumps(collectors, ensure_ascii=False)}"
+        + (f" markers={json.dumps(markers, ensure_ascii=False)}" if markers else "")
+        + "\n"
     )
 
     # 重複防止: 同一 collected_at の行が既にある場合は追記しない
@@ -990,6 +1019,8 @@ def collect_gumroad() -> dict[str, Any]:
                     "login_ok",
                     "collected_at",
                     "last_success_at",
+                    "last_attempt_at",
+                    "sales_page_ok",
                 ]:
                     if k in state:
                         result[k] = state[k]
@@ -1068,7 +1099,8 @@ def build_revenue_summary(
     collectors: dict[str, Any] = {
         "apify_ok": "error" not in apify,
         "rapidapi_ok": "error" not in rapidapi,
-        "gumroad_ok": bool(gumroad.get("state_exists")),
+        "gumroad_ok": bool(gumroad.get("state_exists")) and gumroad.get("login_ok") is not False,
+        "gumroad_login_ok": gumroad.get("login_ok"),
     }
     # 2026-09-23 (t_5e16a983申し送り): 収集ボリュームを実データから自動計上。
     #   従来は revenue-status.html のカードと collectors.collected_today を手書きしており、

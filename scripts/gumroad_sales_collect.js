@@ -179,6 +179,16 @@ async function main() {
 
   // 7. gumroad_state.json に保存
   const collectedAt = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().replace('Z', '');
+  // Read existing state to preserve last_success_at on login failure
+  let existingLastSuccessAt = null;
+  try {
+    if (fs.existsSync(STATE_FILE)) {
+      const existing = JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'));
+      existingLastSuccessAt = existing.last_success_at || null;
+    }
+  } catch (e) {
+    // ignore read errors
+  }
   const state = {
     state_exists: true,
     sales: 0,
@@ -192,7 +202,8 @@ async function main() {
     currency: 'USD',
     // 日本時間（JST, UTC+9）のISO 8601表記で保存（他スクリプトのcollected_atと表記統一）
     collected_at: collectedAt,
-    last_success_at: collectedAt,
+    last_attempt_at: collectedAt,
+    last_success_at: (rev.has_login !== false) ? collectedAt : existingLastSuccessAt,
     dashboard_url: url,
     login_ok: rev.has_login !== false,
     sales_page_ok: salesText !== null && salesText.includes('Total'),
