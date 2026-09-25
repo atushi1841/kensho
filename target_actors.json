@@ -1,0 +1,135 @@
+[
+  {
+    "id": "pWhvh8aWz4i6OM1ST",
+    "name": "japan-egov-laws",
+    "isPublic": true,
+    "pricingModel": null,
+    "pricingInfos": [],
+    "hasPPE": false
+  },
+  {
+    "id": "rIZ3NSg5Ul34PgpYx",
+    "name": "japan-corporate-numbers",
+    "isPublic": true,
+    "pricingModel": null,
+    "pricingInfos": [],
+    "hasPPE": false
+  },
+  {
+    "id": "u2qsG1UfVHWsgl8Dg",
+    "name": "world-bank-indicators",
+    "isPublic": true,
+    "pricingModel": null,
+    "pricingInfos": [],
+    "hasPPE": false
+  },
+  {
+    "id": "pAxQ0lRyArudhK9Wx",
+    "name": "eurostat-indicators",
+    "isPublic": true,
+    "pricingModel": null,
+    "pricingInfos": [],
+    "hasPPE": false
+  },
+  {
+    "id": "xJI4WaPBfQiDJfcnp",
+    "name": "japan-jma-weather",
+    "isPublic": true,
+    "pricingModel": null,
+    "pricingInfos": [
+      {
+        "pricingModel": "PAY_PER_EVENT",
+        "pricingPerEvent": {
+          "actorChargeEvents": {
+            "apify-actor-start": {
+              "eventTitle": "Actor Start",
+              "eventDescription": "Charged when the Actor starts running. Number of events charged depends on Actor memory (one event per GB, minimum one event).",
+              "eventPriceUsd": 5e-05,
+              "isOneTimeEvent": true
+            },
+            "apify-default-dataset-item": {
+              "eventTitle": "result",
+              "eventDescription": "Single price statistics result.",
+              "eventPriceUsd": 0.002,
+              "isOneTimeEvent": false,
+              "isPrimaryEvent": true
+            }
+          }
+        },
+        "apifyMarginPercentage": 0.2,
+        "createdAt": "2026-09-02T22:12:13.669Z",
+        "startedAt": "2026-09-02T22:12:13.669Z",
+        "notifiedAboutChangeAt": "2026-09-02T22:35:44.631Z"
+      }
+    ],
+    "hasPPE": true
+  },
+  {
+    "id": "BxstMzzxh8jq6UtfS",
+    "name": "japan-jepx-mcp",
+    "isPublic": true,
+    "pricingModel": null,
+    "pricingInfos": [],
+    "hasPPE": false
+  },
+  {
+    "id": "6Z7tJ3plfUmAgGmbk",
+    "name": "ai-model-price-api",
+    "isPublic": true,
+    "pricingModel": null,
+    "pricingInfos": [
+      {
+        "minimalMaxTotalChargeUsd": null,
+        "pricingModel": "PAY_PER_EVENT",
+        "isPriceChangeNotificationSuppressed": false,
+        "pricingPerEvent": {
+          "actorChargeEvents": {
+            "apify-actor-start": {
+              "eventTitle": "Actor Start",
+              "eventDescription": "Charged when the Actor starts running. Number of events charged depends on Actor memory (one event per GB, minimum one event).",
+              "isOneTimeEvent": true,
+              "eventPriceUsd": 5e-05
+            },
+            "apify-default-dataset-item": {
+              "eventTitle": "result",
+              "eventDescription": "Single result in the default dataset.",
+              "isOneTimeEvent": false,
+              "eventPriceUsd": 0.001,
+              "isPrimaryEvent": true
+            }
+          }
+        },
+        "startedAt": "2026-07-30T11:49:59.180Z",
+        "createdAt": "2026-07-30T11:49:59.557Z",
+        "apifyMarginPercentage": 0.2
+      },
+      {
+        "minimalMaxTotalChargeUsd": null,
+        "pricingModel": "PAY_PER_EVENT",
+        "isPriceChangeNotificationSuppressed": false,
+        "pricingPerEvent": {
+          "actorChargeEvents": {
+            "apify-default-dataset-item": {
+              "eventTitle": "result",
+              "eventDescription": "Single result in the default dataset.",
+              "isOneTimeEvent": false,
+              "eventPriceUsd": 0.005,
+              "isPrimaryEvent": true
+            },
+            "apify-actor-start": {
+              "eventTitle": "Actor Start",
+              "eventDescription": "Charged when the Actor starts running. Number of events charged depends on Actor memory (one event per GB, minimum one event).",
+              "isOneTimeEvent": true,
+              "eventPriceUsd": 5e-05
+            }
+          }
+        },
+        "startedAt": "2026-07-30T12:46:33.632Z",
+        "createdAt": "2026-07-30T12:46:34.009Z",
+        "apifyMarginPercentage": 0.2,
+        "notifiedAboutChangeAt": "2026-08-05T15:06:11.270Z"
+      }
+    ],
+    "hasPPE": true
+  }
+]

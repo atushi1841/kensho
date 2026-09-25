@@ -113,3 +113,29 @@ $ git rev-list --left-right --count origin/main...main
   checkpoint 未打刻 2件、notepad lessons 8 bullets > 5）。いずれも kanban DB / notepad 側の別件で、
   本変更（ガード条件の追加）とは無関係。
 - 未コミットの作業ツリーには他ワーカー（実行中4件）の成果が残っている。共有repoのため触っていない。
+
+## done guard（実測コピー）
+
+$ timeout 600 python3 ~/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_07945937 --workdir /mnt/d/Project2/kensho
+kanban_done_guard task=t_07945937 -> PASS (all conditions satisfied)
+  worker_output_file : /mnt/d/Project2/kensho/reports/t_07945937_verification.md
+  own_file            : True  (owner_task_id=t_07945937)
+  a verification_evidence : True
+  b command cites >=3     : True  (count=9)
+  c no false-done marker  : True
+  d no uncommitted code   : True  (scope=task)
+  e pushed + hash ancestry: True  (ok)  0 unpushed commits | hashes: 1 hash(es) cited, 0 invalid
+  f no dep drift (pyproject vs venv)     : True  (skip drift=0)  cached (758s ago): No broken requirements found.
+  g evidence durable (git   tracked)   : True  (pass)  evidence tracked: reports/t_07945937_verification.md (durability: in-repo)
+  h result nonempty (--result at complete)  : True  (skip)  completion payload unknown — result check deferred to post-done audit
+  j evidence.json machine-readable : True  (pass)  /mnt/d/Project2/kensho/reports/t_07945937_evidence.json  machine-readable evidence.json valid (fields 0 missing)
+  k outcome review   (before/after) : True  (pass)  before/after comparable metric present
+  bind artifacts×task diff (t_07945937) : True  (pass)  code_artifacts=4 bound=3 unbound=/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py | code artifact bound to task commits/diff
+
+$ KANBAN_GUARD_BIND_HARD=1 timeout 600 python3 ~/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_07945937 --workdir /mnt/d/Project2/kensho
+kanban_done_guard task=t_07945937 -> PASS (all conditions satisfied)
+  bind artifacts×task diff (t_07945937) : True  (pass)  code_artifacts=4 bound=3 unbound=/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py | code artifact bound to task commits/diff
+
+→ hard（`KANBAN_GUARD_BIND_HARD=1` = 10/01以降と同条件）でも正規カードは PASS（誤BLOCKゼロ）。
+  unbound の1件は profile 側 `kanban_done_guard.py`（repo外＝diffに現れない）で、最低1件の結線要件は
+  他3件の repo 内コード成果物で満たしている。

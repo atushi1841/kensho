@@ -1,0 +1,21 @@
+{
+  "success_indicators": [
+    "t_9f14ee5d: 並列度ペナルティを config の max_in_progress 基準に変更（before: score=25/streak=36 の恒久ALERT → after: score=100/streak=0/alert=OK）",
+    "t_9f14ee5d: streak の自己増殖を停止（実質減点0の run で streak=0 を実測）",
+    "t_9f14ee5d: 既存 loop_health 回帰テスト 3 passed（退行なし）"
+  ],
+  "verification_commands": [
+    "$ bash ~/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh | python3 -c \"import json,sys;d=json.load(sys.stdin);print('score',d['score'],'streak',d['streak'],'running',d['running'],'alert',d['alert'])\" => score 100 streak 0 running 3 alert OK",
+    "$ git show HEAD:scripts/loop_health.sh | grep -n \"max_in_progress\" | head -6 => 300:_max_in_progress = 4 / 304: int(_cfg.get(\"orchestrator\", {}).get(\"max_in_progress\", 4)) / 439: penalty",
+    "$ python3 -m pytest tests/test_loop_health.py -q => 3 passed in 23.02s",
+    "$ bash scripts/loop_health.sh | python3 -c \"import json,sys;d=json.load(sys.stdin);print(d['zombie_task_count'],d['done_blocked'],d['business_ok'])\" => 0 [] True"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_9f14ee5d_verification.md",
+    "/mnt/d/Project2/kensho/scripts/loop_health.sh"
+  ],
+  "evidence_hashes": [
+    "sha256:60be7410834a4698293cadfc0708e636fcb70d64cf42f895eef9335cefc2b749",
+    "sha256:62af69da6c2f7c55fa10007460152858d2287e0b07b4d21cd5db325445d75f04"
+  ]
+}

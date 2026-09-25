@@ -7,3 +7,8 @@ Tests passed; real-log replication confirmed correct status generation. No uncom
 $ python3 -m pytest tests/test_gen_status_proxy_time_filter.py -q --no-cov
 8 passed
 ```
+
+```bash
+$ grep -c "def _filter" tests/test_gen_status_proxy_time_filter.py
+0
+```
