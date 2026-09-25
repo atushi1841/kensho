@@ -1,6 +1,6 @@
 # verification report for t_a38b99bc
 
-generated: 2026-09-25T17:26:44  (by kanban_done_guard.py --write-report)
+generated: 2026-09-25T19:32:15  (by kanban_done_guard.py --write-report)
 workdir: /mnt/d/Project2/kensho
 
 ## verification_evidence
@@ -10,46 +10,21 @@ workdir: /mnt/d/Project2/kensho
 
 # レポジトリの最新コミット一覧（done 時の HEAD 確認用）
 $ git log --oneline -5
-08ec29e docs(evidence): QA nightly-qa run14 — guard --selftest 回帰(g_durability/h_result)と条件(j)不在skip乖離の実測 (2026-09-25)
-de78051 docs(evidence): t_efe1736c --write-report 実測検証レポート
-f024885 docs(revenue): v3 に full suite 1172 passed を反映
-d10d521 docs(revenue): 2026-09-25 v3 worker記録 — import time 欠落修正(9aad51c)+t_e07dab2a 較正ミス判定
-3ac611a docs(evidence): t_28e11c70 --write-report 実測検証レポート（t_efe1736c 実装後 round-trip 検証）
+eefb439 docs(evidence): QA run16 追記 — t_28e11c70 の巻き込みcommit(df91ceb)と running=5>cap4 の実測 (2026-09-25)
+df91ceb Finalize all changes for t_28e11c70
+de498d7 Add evidence.json for t_28e11c70 verification
+19b3eea Add verification report for t_28e11c70
+2c5a6a4 Fix: Add kanban.max_in_progress to config.yaml and commit check_dep_drift.py
 
 # 作業ツリーの未コミット変更（条件(d) と同一規則）
 $ git status --porcelain -uall
  M data/account_wifi_map.json
- M data/agent_spans/2026-09-25.jsonl
- M data/camera_monitor/7d_repro_audit.csv
- M data/collected_today.json
- M data/multi_response.json
- M data/openrouter_usage.json
- M data/self_heal_state.json
- M data/source_health.json
  M data/status/TankanNotes.json
  M data/status/atushi16.json
  M data/status/kudou.json
  M data/status/toushiwatch.json
  M data/status/zin20120731.json
- M reports/non_x_manual_20260925.md
- M reports/outcome-review-2026-09-25.md
- M reports/t_031f04b9_verification.md
- M revenue-status.html
-?? data/camera_monitor/matched_pairs_20260925.csv
-?? data/camera_monitor/model_price_diff_20260925.csv
-?? data/camera_monitor/run_summary_20260925.json
-?? data/camera_monitor/sourcing_candidates_20260925.csv
-?? data/camera_monitor/sourcing_candidates_20260925.json
-?? reports/research-20260925.md
-?? reports/t_28e11c70_evidence.json
-?? reports/t_6f45dab0_verification.md
-?? reports/t_757b8b5d_evidence.json
-?? reports/t_757b8b5d_verification.md
-?? reports/t_e07dab2a_verification.md
-?? reports/t_fe629b9e_verification.md
-?? scripts/check_dep_drift.py.backup
-?? scripts/check_dep_drift.py.backup2
-?? scripts/check_dep_drift.py.backup_before_selftest
+?? reports/t_41df6e84_verification.md
 
 # pytest 実行結果（条件(a)(b) 証跡）
 $ python3 -m pytest -q 2>&1 | tail -5
