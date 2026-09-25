@@ -8,3 +8,5 @@ seleniumbase>=4.54,<4.55
 httpx>=0.27,<0.29
 pyyaml>=6.0,<7.0
 psutil>=5.9,<6.0
+# PEP 508 direct reference (git commit)
+invisible-playwright @ git+https://github.com/feder-cr/invisible_playwright.git@2184f6f3c296e5bedcf1539914b3a7d307ce9fe0
