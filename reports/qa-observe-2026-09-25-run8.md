@@ -85,3 +85,8 @@ $ for k in 1081 1082 1085; do curl -s --socks5-hostname 172.26.80.1:$k https://a
 - `reports/t_7d406997_*.{md,json}` と `reports/t_20c33418_evidence.json` は未追跡のまま（所有側で `git add`）。
 - **【要ユーザー対応】t_26812b2a**: goal judge のプロバイダ明示と連続失敗時の打ち切りは hermes core（リポジトリ外）の変更が必要。推奨アクション: (1) goals 節に judge 用 provider/model を明示（設定1行+read-back）、(2) judge が N回連続失敗で goal ループを blocked+通知に倒す（core 側 50行程度）。おすすめですすめます（GOで実行します）。
 - 計測メモ: pytest は `/home/atushi/.hermes/hermes-agent/venv/bin/python3` 絶対パス必須（最小PATHの python3 は pytest 無し）。guard 単体実行は 37.5s（高負荷時は更に伸びるため 330s でも余裕が薄い場合は guard 側の高速化を次段で検討）。
+
+## 7. 追記（11:35 実測・4-1の訂正）
+- `scripts/agent_span_emit_role.py` は 11:28:12 に**所有worker（t_d0ba031d）が修復済**。`py_compile` OK、`pytest tests/test_agent_span_emit_role.py -q --no-cov` → **27 passed**（run7時点は同スイート13 failed）。未コミットWIPのため帰属は所有側のまま（触らない）。
+- 盤面は 11:35 時点で ready 0 / running 6 / blocked 2 / triage 1。QAのunblock 3件＋新規2件を dispatcher が同時spawnした結果で、`max_in_progress=4` に対し6は一時的な過剰（score -20要因）。config.yaml の `orchestrator.max_in_progress` 未設定は critic 起票の既知課題。
+- 検証コマンド: `git log --oneline -1` → `b26b0f7`（本レポート）/ `unpushed=0`、`hermes -p kensho-worker config get plugins.hook_callback_timeout` → `330`。
