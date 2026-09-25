@@ -304,7 +304,7 @@ score = 100
 def resolve_max_in_progress(_cfg_path=None):
     import os as _os
     _p = _os.environ.get("HERMES_PROFILE_CONFIG", "")
-    _val = 4
+    _val = 8
     try:
         import yaml as _y
         _cand = _p if _p and _os.path.exists(_p) else None
@@ -327,12 +327,6 @@ def resolve_max_in_progress(_cfg_path=None):
     return _val
 
 _max_in_progress = resolve_max_in_progress(None)
-try:
-    import yaml as _yaml
-    _cfg = _yaml.safe_load(open("/mnt/d/Project2/kensho/config.yaml", encoding="utf-8"))
-    _max_in_progress = int(_cfg.get("orchestrator", {}).get("max_in_progress", 4))
-except Exception:
-    pass
 
 # --max-in-progress override
 try:
