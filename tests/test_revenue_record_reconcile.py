@@ -198,12 +198,28 @@ def test_cli_exit_codes(tmp_path: Path) -> None:
     daily, state_path = _write(tmp_path, _expired_entry(), _state(True, f"{DATE}T13:19:41"))
     script = Path(__file__).parent.parent / "scripts" / "revenue_record_reconcile.py"
     chk = subprocess.run(
-        [sys.executable, str(script), "--daily", str(daily), "--state", str(state_path)],
+        [sys.executable, str(script), "--check", "--daily", str(daily), "--state", str(state_path)],
         capture_output=True, text=True,
     )
     assert chk.returncode == 1, chk.stdout + chk.stderr
     assert rrr.MARK_DIVERGED in chk.stdout
     assert "login_ok" in chk.stdout
+
+    # --check は既定動作の明示エイリアス（--check 無しと同一の exit code・マーカー）
+    bare = subprocess.run(
+        [sys.executable, str(script), "--daily", str(daily), "--state", str(state_path)],
+        capture_output=True, text=True,
+    )
+    assert bare.returncode == chk.returncode
+    assert rrr.MARK_DIVERGED in bare.stdout
+
+    # --check と --apply の同時指定は明示エラー（exit 2・usage error）
+    bad = subprocess.run(
+        [sys.executable, str(script), "--check", "--apply", "--daily", str(daily), "--state", str(state_path)],
+        capture_output=True, text=True,
+    )
+    assert bad.returncode == 2, bad.stdout + bad.stderr
+    assert "--check と --apply は同時に指定できない" in bad.stderr
 
     app = subprocess.run(
         [sys.executable, str(script), "--daily", str(daily), "--state", str(state_path), "--apply"],
@@ -211,6 +227,14 @@ def test_cli_exit_codes(tmp_path: Path) -> None:
     )
     assert app.returncode == 0, app.stdout + app.stderr
     assert rrr.MARK_APPLIED in app.stdout
+
+    # 修復後は --check も exit 0（受入基準: 修復後 exit 0）
+    ok = subprocess.run(
+        [sys.executable, str(script), "--check", "--daily", str(daily), "--state", str(state_path)],
+        capture_output=True, text=True,
+    )
+    assert ok.returncode == 0, ok.stdout + ok.stderr
+    assert rrr.MARK_OK in ok.stdout
 
     again = subprocess.run(
         [sys.executable, str(script), "--daily", str(daily), "--state", str(state_path), "--json"],

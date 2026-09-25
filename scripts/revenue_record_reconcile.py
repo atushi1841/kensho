@@ -23,7 +23,8 @@
   - 書き込みは tmp + os.replace の原子的置換（部分書きでJSONを壊さない）。
 
 CLI:
-  python3 scripts/revenue_record_reconcile.py            # --check（既定・読み取りのみ）
+  python3 scripts/revenue_record_reconcile.py --check    # 乖離検出（既定・読み取りのみ／乖離あり exit 1）
+  python3 scripts/revenue_record_reconcile.py            # 同上（--check 省略時の既定動作）
   python3 scripts/revenue_record_reconcile.py --apply    # 当日entryを修復
   python3 scripts/revenue_record_reconcile.py --json     # 機械可読サマリのみ
 
@@ -250,10 +251,17 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="収益記録とライブstateの乖離 検出/修復")
     ap.add_argument("--daily", default=DEFAULT_DAILY)
     ap.add_argument("--state", default=DEFAULT_STATE)
+    ap.add_argument(
+        "--check",
+        action="store_true",
+        help="乖離を検出する（既定の動作。読み取りのみ・乖離ありで exit 1）",
+    )
     ap.add_argument("--apply", action="store_true", help="当日entryをライブstateから再導出して修復する")
     ap.add_argument("--json", action="store_true", help="機械可読サマリのみ出力")
     ap.add_argument("--now", default=None, help="検証用に現在時刻を固定（ISO8601）")
     args = ap.parse_args(argv)
+    if args.check and args.apply:
+        ap.error("--check と --apply は同時に指定できない（--check は既定動作・--apply は修復）")
 
     now = _parse_ts(args.now) if args.now else None
     res = apply(args.daily, args.state, now) if args.apply else detect(args.daily, args.state)
