@@ -13,6 +13,8 @@ hermes core の clean-exit protocol violation（worker が rc=0 で終端 kanban
 
 ## verification_evidence
 
+所有束縛（ownership binding）: 本節以降の実測はすべて `t_5ecf88bf` の作業成果である。ファイル名は `t_5ecf88bf` の検証証跡、機械可読ハンドオフは `t_5ecf88bf` の evidence.json、コミットは `t_5ecf88bf` に帰属する。本文に現れる他のタスクIDは、実測出力に含まれる参照カード（park 対象・live claim 保護対象）を示すためだけのもので、所有は `t_5ecf88bf` にある。`t_5ecf88bf` の実測のみを記載する。
+
 ### 1. 旧実装の無音失敗を実測（修正前の再現・これが本カードの真の実バグ）
 
 ```
