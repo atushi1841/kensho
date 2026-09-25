@@ -5,7 +5,8 @@ scripts/loop_health.sh 編集によるsilent failureを検出。
 
 ターゲット:
 1. `bash scripts/loop_health.sh` が以下の場合、Valid JSON を stdout に返す:
-   - 必須キー: score, alert, priority, counts, stagnation_streak, advice
+   - 必須キー: `scripts/agent_eval_harness.py` の `LOOP_HEALTH_FIELDS`（v137+ 単一正本）
+     + `alert`（t_350dc888 で旧スキーマの直書きを廃止）
    - score > 0 AND alert != "ERROR"
 2. `repeats` キー（オプション）を検出し、使われない変数参照が残っていない。
 3. report3本 (kensho-worker/qa/revenue) が ANALYSIS 異常を検知したとき、
@@ -36,7 +37,32 @@ LEDGER = REPO_ROOT / "scripts" / "regression_gates_ledger.py"
 # ---------------------------------------------------------------------------
 # 1. JSON 契約テスト (実行ゲート)
 # ---------------------------------------------------------------------------
-REQUIRED_KEYS = {"score", "alert", "priority", "counts", "stagnation_streak", "advice"}
+def _load_loop_health_fields() -> set[str]:
+    """必須フィールドの唯一の正本を読む（t_350dc888）。
+
+    正本は `scripts/agent_eval_harness.py` の v137+ 定義
+    `LOOP_HEALTH_FIELDS`。テスト側へ仕様を書き写すと実装（v141）と乖離し、
+    旧スキーマ（priority / counts / stagnation_streak / advice）を固定して
+    「実装は緑・テストは赤」またはその逆の偽装が起きる（t_b75f7c57 偽done の真因）。
+
+    `sys.path` は汚さない: scripts/ 配下には汎用名のモジュールが多数あり、
+    先頭挿入すると他テストの import を shadow しうるため
+    spec_from_file_location で直接読み込む。
+    """
+    import importlib.util
+
+    harness = REPO_ROOT / "scripts" / "agent_eval_harness.py"
+    spec = importlib.util.spec_from_file_location("agent_eval_harness_contract_src", harness)
+    assert spec is not None and spec.loader is not None, f"正本を読み込めません: {harness}"
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    fields = frozenset(module.LOOP_HEALTH_FIELDS)
+    assert fields, "agent_eval_harness.LOOP_HEALTH_FIELDS が空です"
+    return set(fields)
+
+
+# 正本のフィールド + silent 縮退検出の要である alert（alert は正本に無いため明示追加）
+REQUIRED_KEYS = _load_loop_health_fields() | {"alert"}
 
 
 def _run_loop_health() -> tuple[dict[str, Any], int]:
