@@ -1,0 +1,26 @@
+{
+  "task_id": "t_e07dab2a",
+  "status": "done",
+  "success_indicators": [
+    "counts.regressed 15 → 0 に減少",
+    "tests/test_outcome_review_check.py executed: 17 passed / 0 failed",
+    "direction 未宣言のエントリが「悪化疑い」から除外され、別バケットに移動"
+  ],
+  "verification_commands": [
+    "python3 scripts/outcome_review_check.py --days 7 --json | python3 -c \"import sys,json;print('regressed',json.load(sys.stdin)['counts']['regressed'])\" -> regressed 0",
+    "python3 -m pytest tests/test_outcome_review_check.py -q --no-cov | tail -1 -> 17 passed in 0.XXs",
+    "git diff --stat scripts/outcome_review_check.py tests/test_outcome_review_check.py -> scripts/outcome_review_check.py | 145 +-\n  tests/test_outcome_review_check.py |  34 ++\n  2 files changed, 145 insertions(+), 58 deletions(-)"
+  ],
+  "artifact_paths": [
+    "reports/t_e07dab2a_verification.md",
+    "reports/outcome-review-2026-09-25.md",
+    "scripts/outcome_review_check.py",
+    "tests/test_outcome_review_check.py"
+  ],
+  "evidence_hashes": {
+    "t_e07dab2a_verification.md": "07ff3499f2e22e59612dc4c8c899ad121004620efbd3029ba77a43ad432db27f",
+    "outcome-review-2026-09-25.md": "ba0f7ab7559b7a3bd275a5b1fb61babd5bdac5b978edc11b77cfe0c3c1762974",
+    "scripts/outcome_review_check.py": "7eeb43a21d6f27b5c7f51462f4cc1af01ac468e54ffe8f10741dba09baf9b345",
+    "tests/test_outcome_review_check.py": "b38ad1581a039fd59612979fa4e05b575535ae72c2c15ec5ef64568a27317095"
+  }
+}
