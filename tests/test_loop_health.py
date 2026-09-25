@@ -93,3 +93,50 @@ def test_no_running_top_task_none(tmp_path: Path) -> None:
     out = _run_loop_health(tmp_path, tasks)
     assert out["top_task"] is None
     assert out["running"] == 0
+
+
+def test_revived_card_no_age_penalty(tmp_path: Path) -> None:
+    """復活カード（started_at古いが effective_started_at新しい）で age ペナルティ -25 が付かない."""
+    # 24h前の started_at と 1h前の effective_started_at
+    tasks = [
+        {
+            "id": "t_revived",
+            "status": "running",
+            "title": "revived task",
+            "started_at": NOW_TS - 24 * 3600,  # 古い started_at
+            "result": None,
+        }
+    ]
+    state_file = tmp_path / "loop_health_state.json"
+    # 環境変数で effective_started_at を注入
+    import os
+    env = os.environ.copy()
+    env["_LH_EFFECTIVE_STARTED_AT"] = json.dumps({"t_revived": NOW_TS - 1 * 3600})  # 最近の effective_started_at
+    
+    proc = subprocess.run(
+        [
+            "bash",
+            str(SCRIPT),
+            "--tasks",
+            json.dumps(tasks),
+            "--board",
+            "kensho-ai-team",
+            "--state",
+            str(state_file),
+            "--dry-run",
+            "--no-park",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=120,
+        env=env,
+    )
+    assert proc.returncode == 0, f"loop_health.sh failed: {proc.stderr}"
+    out = json.loads(proc.stdout)
+    
+    # age penalty (-25) が付かない → score=100
+    assert out["score"] == 100, f"Expected score=100, got {out['score']}"
+    assert out["top_task"] == "t_revived"
+    # lines 表示も age=1h (effective_started_at ベース)
+    top_line = next(line for line in out["lines"] if line.startswith("top="))
+    assert "age=1h" in top_line, f"Expected age=1h in {top_line}"

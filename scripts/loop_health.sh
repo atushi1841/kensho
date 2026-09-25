@@ -286,6 +286,15 @@ except Exception:
     pass
 
 
+# Override effective_started_at from environment for testing (v143: env注入で回帰テストを可能に)
+try:
+    _eff_override = os.environ.get("_LH_EFFECTIVE_STARTED_AT", "")
+    if _eff_override:
+        effective_started_at.update(json.loads(_eff_override))
+except Exception:
+    pass
+
+
 # ソートと age 減点に使う effective_started_at（DB 取得あれば上書き）
 by_age = sorted(
     running,
