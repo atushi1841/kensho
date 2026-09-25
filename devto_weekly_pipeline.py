@@ -1,8 +1,21 @@
 #!/usr/bin/env python3
-"""
-dev.to Weekly Auto-Posting Pipeline
-Phase 1: Publish 2 existing draft articles for exposure test
-Phase 2: Shift to weekly new article generation (contest/giveaway topics)
+"""dev.to Weekly Auto-Posting Pipeline
+
+Phase 1: 既存ドラフト記事を公開して露出テスト（最大2件/回）
+Phase 2: 週1で新規記事生成（懸賞/データネタ）へ移行
+
+2026-09-25 (t_d5e647a1) 修正 — 「偽の成功」で外部導線が無言死していた真因:
+  1. 認証: 従来はマスク済み文字列（key[:4] + "...[REDACTED]" + key[-4:]）を Api-Key ヘッダに
+     送っていたため常に 401。生キーは認証のみ、表示は mask_key() のみ。
+  2. 検証: HTTP ステータスを見ず response.get("id", 0) を [SUCCESS] と表示していた
+     （401 の本文でも「Published article ID=0」）。curl -w '%{http_code}' で検査し、
+     非2xx / id 不在 / 非JSON は [FAIL]。
+  3. 公開後の確認: 旧実装は存在しない status_code キーを期待しており機能していなかった。
+     HTTP 200 かつ id 一致のときだけ [VERIFY]。
+  4. 重複防止: blog/.published.json に公開済みファイルを記録し、記録済みはスキップ
+     （キー復旧時に同一記事を二重投稿しない）。
+  5. 終了コード: 0=1件以上公開成功 / 1=候補ありで公開失敗 / 2=キー未設定・プレースホルダ /
+     3=未公開候補0件。偽の成功は全面禁止。
 
 Uses DEVTO_API_KEY from /mnt/d/Project2/kensho/.env
 Never exposes API key values in logs or output — always [REDACTED]
@@ -10,42 +23,120 @@ Never exposes API key values in logs or output — always [REDACTED]
 
 import json
 import os
+import re
 import subprocess
+import sys
+import tempfile
 from datetime import datetime
 
 # ── Configuration ──────────────────────────────────────────────────────
-ENV_FILE = "/mnt/d/Project2/kensho/.env"
-BLOG_DIR = "/mnt/d/Project2/apify-sales-funnel/blog"
+DEFAULT_ENV_FILE = "/mnt/d/Project2/kensho/.env"
+DEFAULT_BLOG_DIR = "/mnt/d/Project2/apify-sales-funnel/blog"
 API_URL = "https://dev.to/api/articles"
+KEY_NAME = "DEVTO_API_KEY"
+STATE_FILENAME = ".published.json"
+
+# 終了コード契約（cron の last_status で異常が見えるようにする）
+EXIT_OK = 0                 # 1件以上公開成功
+EXIT_PUBLISH_FAILED = 1     # 候補はあったが公開できなかった
+EXIT_KEY_INVALID = 2        # キー未設定/プレースホルダ（要ユーザー対応）
+EXIT_NO_CANDIDATES = 3      # 未公開候補が0件（新規記事待ち）
+
+# dev.to の API キーは 24 文字前後の英数字。プレースホルダ（*** 等）を弾く。
+MIN_KEY_LEN = 12
+KEY_CHARSET = re.compile(r"[A-Za-z0-9_-]+")
 
 
-def load_api_key():
-    """Load API key from env file — returns REDACTED-safe string."""
-    # Source the env file to get DEVTO_API_KEY in environment
-    env_result = subprocess.run(
-        f"export $(grep DEVTO {ENV_FILE} | xargs) && echo $DEVTO_API_KEY", shell=True, capture_output=True, text=True
-    )
-    key = env_result.stdout.strip() or env_result.stderr.strip()
-    # Mask the key for any logging — show only first 4 and last 4 chars, or [REDACTED]
-    if len(key) <= 8:
-        return "[REDACTED]" if key else key
-    return key[:4] + "...[REDACTED]" + key[-4:] if key else "[REDACTED]"
+def env_file():
+    return os.environ.get("DEVTO_ENV_FILE", DEFAULT_ENV_FILE)
 
 
-DEVTO_API_KEY = load_api_key()
-print(f"[PIPELINE] Using dev.to API key: {DEVTO_API_KEY}")
+def blog_dir():
+    return os.environ.get("DEVTO_BLOG_DIR", DEFAULT_BLOG_DIR)
+
+
+def _snippet(text, limit=200):
+    return " ".join(str(text).split())[:limit]
+
+
+# ── API key handling ───────────────────────────────────────────────────
+def load_api_key(path=None):
+    """.env（無ければ環境変数）から生キーを返す。
+
+    戻り値をそのままログへ出さないこと。表示は mask_key() を通す。
+    """
+    key = ""
+    target = path or env_file()
+    try:
+        with open(target, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                name, value = line.split("=", 1)
+                if name.strip() == KEY_NAME:
+                    key = value.strip().strip('"').strip("'")
+                    break
+    except (FileNotFoundError, PermissionError, OSError):
+        key = ""
+    if not key:
+        key = os.environ.get(KEY_NAME, "").strip()
+    return key
+
+
+def mask_key(key):
+    """表示専用のマスク（値をそのまま出さない）。"""
+    if not key or len(key) <= 8:
+        return "[REDACTED]"
+    return key[:4] + "...[REDACTED]" + key[-4:]
+
+
+def is_valid_key(key):
+    """実キーらしい形式か（空・プレースホルダを弾く）。"""
+    if not key or len(key) < MIN_KEY_LEN:
+        return False
+    return bool(KEY_CHARSET.fullmatch(key))
+
+
+# ── curl wrapper ───────────────────────────────────────────────────────
+def _curl_json(args, timeout):
+    """curl を実行し (http_code, body) を返す（本文だけを見て成功判定しない）。"""
+    cmd = ["curl", "-s", "-w", "\n%{http_code}"] + list(args)
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        return 0, ""
+    out = proc.stdout or ""
+    body, sep, code = out.rpartition("\n")
+    if not sep:
+        body, code = out, ""
+    try:
+        http_code = int(code.strip())
+    except ValueError:
+        http_code = 0
+    return http_code, body
+
+
+def _parse_json(body):
+    if not (body or "").strip():
+        return None
+    try:
+        return json.loads(body)
+    except json.JSONDecodeError:
+        return None
 
 
 # ── Step 1: Discover unpublished draft articles from blog directory ────
-def discover_draft_articles():
+def discover_draft_articles(bdir=None):
     """Find markdown files in blog directory that can be published."""
-    if not os.path.isdir(BLOG_DIR):
-        print(f"[ERROR] Blog directory not found: {BLOG_DIR}")
+    target = bdir or blog_dir()
+    if not os.path.isdir(target):
+        print(f"[ERROR] Blog directory not found: {target}")
         return []
 
     candidates = []
-    for fname in sorted(os.listdir(BLOG_DIR)):
-        fpath = os.path.join(BLOG_DIR, fname)
+    for fname in sorted(os.listdir(target)):
+        fpath = os.path.join(target, fname)
         if not os.path.isfile(fpath):
             continue
 
@@ -78,134 +169,223 @@ def discover_draft_articles():
     return candidates
 
 
-# ── Step 2: Publish article to dev.to ───────────────────────────────────
-def publish_article(article, status_callback=print):
+# ── Published state (重複投稿防止) ──────────────────────────────────────
+def state_path(bdir=None):
+    return os.path.join(bdir or blog_dir(), STATE_FILENAME)
+
+
+def load_published_state(path=None):
+    """公開済み記録 {filename: {id, url, published_at}} を読む。"""
+    target = path or state_path()
+    try:
+        with open(target, encoding="utf-8") as fh:
+            data = json.load(fh)
+    except (FileNotFoundError, PermissionError, OSError, json.JSONDecodeError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def save_published_state(state, path=None):
+    """tmp + os.replace の原子的書換（部分書きを残さない）。"""
+    target = path or state_path()
+    directory = os.path.dirname(target) or "."
+    os.makedirs(directory, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=directory, prefix=".published-", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            json.dump(state, fh, ensure_ascii=False, indent=1, sort_keys=True)
+        os.replace(tmp, target)
+    finally:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+
+
+# ── Step 2: Publish article to dev.to ──────────────────────────────────
+def publish_article(article, status_callback=print, api_key=None, published_state=None):
     """Publish a single article to dev.to.
 
-    Returns: {'id': int, 'title': str, 'url': str, 'published': bool} or None on failure
+    Returns: {'id': int, 'title': str, 'url': str, 'published': bool, 'verified': bool}
+             失敗時 None（偽の成功を返さない）
     """
     title = article["title"]
     tags = article["tags"]
     content = article["content"]
+    key = api_key if api_key is not None else load_api_key()
 
-    # Build the API payload - simplified: use the markdown content directly
-    # dev.to API expects: title, body_markdown, publish_status, tags
+    if not is_valid_key(key):
+        status_callback(
+            f"[FAIL] {KEY_NAME} が未設定またはプレースホルダです（dev.to ダッシュボードで再発行し .env へ）"
+        )
+        return None
+
+    # dev.to API のリクエスト本文は {"article": {...}} で包む（docs: POST /api/articles）
     payload = json.dumps({
-        "title": title,
-        "body_markdown": content,
-        "published": True,  # Always publish immediately
-        "tags": tags,
+        "article": {
+            "title": title,
+            "body_markdown": content,
+            "published": True,
+            "tags": tags,
+        }
     })
 
-    try:
-        result = subprocess.run(
-            [
-                "curl",
-                "-s",
-                "-X",
-                "POST",
-                "-H",
-                f"Api-Key: {DEVTO_API_KEY}",
-                "-H",
-                "Content-Type: application/json",
-                "-H",
-                "Accept: application/vnd.forem.api-v1+json",
-                "-d",
-                payload,
-                API_URL,
-            ],
-            capture_output=True,
-            text=True,
-            timeout=120,
+    http_code, body = _curl_json(
+        [
+            "-X", "POST",
+            "-H", f"Api-Key: {key}",
+            "-H", "Content-Type: application/json",
+            "-H", "Accept: application/vnd.forem.api-v1+json",
+            "-d", payload,
+            API_URL,
+        ],
+        timeout=120,
+    )
+
+    if http_code in (401, 403):
+        status_callback(
+            f"[FAIL] dev.to API 認証エラー HTTP {http_code}（{KEY_NAME} が無効/失効）: {title}"
         )
-
-        response = json.loads(result.stdout) if result.stdout else {}
-
-        if isinstance(response, dict) and "errors" in response:
-            status_callback(f"[WARN] dev.to API error for '{title}': {response['errors']}")
-            return None
-
-        article_id = response.get("id", 0)
-        article_url = response.get("url", f"https://dev.to/{os.environ.get('USER', 'atu')}/{response.get('slug', '')}")
-
-        status_callback(f"[SUCCESS] Published article ID={article_id}: {title}")
-        status_callback(f"       URL: {article_url}")
-
-        # Verify publication with GET request
-        verify = subprocess.run(
-            [
-                "curl",
-                "-s",
-                "-H",
-                f"Api-Key: {DEVTO_API_KEY}",
-                "-H",
-                "Accept: application/vnd.forem.api-v1+json",
-                f"https://dev.to/api/articles/{article_id}",
-            ],
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
-
-        if verify.stdout:
-            verify_data = json.loads(verify.stdout)
-            if verify_data.get("status_code") == 200:
-                status_callback("[VERIFY] Article confirmed live with HTTP 200")
-
-        return {
-            "id": article_id,
-            "title": title,
-            "url": article_url,
-            "published": True,
-            "filename": article["filename"],
-        }
-
-    except Exception as e:
-        status_callback(f"[ERROR] Failed to publish '{title}': {str(e)[:200]}")
         return None
+    if not (200 <= http_code < 300):
+        status_callback(
+            f"[FAIL] dev.to API HTTP {http_code} のため公開できません: {title} / {_snippet(body)}"
+        )
+        return None
+
+    response = _parse_json(body)
+    if response is None:
+        status_callback(
+            f"[FAIL] dev.to API 応答が JSON として解釈できません（HTTP {http_code}）: {_snippet(body)}"
+        )
+        return None
+    if isinstance(response, dict) and ("error" in response or "errors" in response):
+        status_callback(
+            f"[FAIL] dev.to API error for '{title}': "
+            f"{_snippet(response.get('errors') or response.get('error'))}"
+        )
+        return None
+
+    article_id = response.get("id") if isinstance(response, dict) else None
+    if not isinstance(article_id, int) or article_id <= 0:
+        status_callback(
+            f"[FAIL] dev.to API 応答に有効な id がありません（HTTP {http_code}）: {_snippet(body)}"
+        )
+        return None
+
+    # 作成できた時点で URL は API 応答のみを使う（捏造しない）
+    article_url = ""
+    if isinstance(response, dict):
+        article_url = response.get("url") or response.get("canonical_url") or ""
+
+    status_callback(f"[SUCCESS] Published article ID={article_id}: {title}")
+
+    # 公開確認（HTTP 200 かつ id 一致のときだけ VERIFY）
+    verify_code, verify_body = _curl_json(
+        [
+            "-H", f"Api-Key: {key}",
+            "-H", "Accept: application/vnd.forem.api-v1+json",
+            f"{API_URL}/{article_id}",
+        ],
+        timeout=30,
+    )
+    verified = False
+    if verify_code == 200:
+        verify_data = _parse_json(verify_body)
+        if isinstance(verify_data, dict) and verify_data.get("id") == article_id:
+            verified = True
+            article_url = (
+                verify_data.get("url") or verify_data.get("canonical_url") or article_url
+            )
+    if verified:
+        status_callback(f"[VERIFY] Article confirmed live (HTTP 200, id={article_id})")
+    else:
+        status_callback(
+            f"[WARN] 公開確認GETが HTTP {verify_code} / id不一致。id={article_id} は作成済みだが要確認"
+        )
+
+    if not article_url:
+        article_url = "(URL未取得)"
+    status_callback(f"       URL: {article_url}")
+
+    result = {
+        "id": article_id,
+        "title": title,
+        "url": article_url,
+        "published": True,
+        "verified": verified,
+        "filename": article["filename"],
+    }
+    if published_state is not None:
+        published_state[article["filename"]] = {
+            "id": article_id,
+            "url": article_url,
+            "published_at": datetime.now().isoformat(timespec="seconds"),
+        }
+    return result
 
 
 # ── Step 3: Main pipeline execution ────────────────────────────────────
-def run_pipeline():
-    """Execute the full dev.to posting pipeline."""
+def run_pipeline(bdir=None, state_file=None):
+    """Execute the full dev.to posting pipeline. 戻り値は終了コード（上記契約）。"""
+    target_dir = bdir or blog_dir()
+    state_file = state_file or state_path(target_dir)
+    key = load_api_key()
+    state = load_published_state(state_file)
+
     print("=" * 60)
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] dev.to Auto-Posting Pipeline START")
     print("=" * 60)
+    print(f"[PIPELINE] {KEY_NAME}: {mask_key(key)} (valid_format={is_valid_key(key)})")
+    print(f"[PIPELINE] Blog: {target_dir}")
+    print(f"[PIPELINE] Published state: {state_file} ({len(state)} record(s))")
 
-    # Phase 1: Discover and publish 2 draft articles for exposure test
+    # Phase 1: 未公開候補の抽出
     print("\n--- Phase 1: Discovering draft articles ---")
-    candidates = discover_draft_articles()
-    print(f"Found {len(candidates)} markdown candidate(s) in blog directory")
+    candidates = discover_draft_articles(target_dir)
+    pending = []
+    for article in candidates:
+        if article["filename"] in state:
+            print(
+                f"[SKIP] already published: {article['filename']} "
+                f"(id={state[article['filename']].get('id')})"
+            )
+        else:
+            pending.append(article)
+    print(f"Found {len(candidates)} markdown candidate(s) / 未公開 {len(pending)}")
 
-    if not candidates:
-        print("[WARN] No markdown files found in blog directory. Creating summary.")
+    if not pending:
+        print("[INFO] 未公開候補はありません（新規記事の追加待ち）")
+        return EXIT_NO_CANDIDATES
 
-    # Publish exactly 2 articles (or as many as available)
-    num_to_publish = min(2, len(candidates))
+    if not is_valid_key(key):
+        print(f"[FAIL] {KEY_NAME} が未設定またはプレースホルダのため公開を中止（要ユーザー対応）")
+        return EXIT_KEY_INVALID
+
     published_articles = []
-
+    num_to_publish = min(2, len(pending))
     for i in range(num_to_publish):
-        article = candidates[i]
+        article = pending[i]
         print(f"\n=== Publishing article {i + 1}/{num_to_publish}: {article['title']} ===")
-        result = publish_article(article, status_callback=print)
+        result = publish_article(
+            article, status_callback=print, api_key=key, published_state=state
+        )
         if result:
             published_articles.append(result)
         else:
             print(f"[SKIP] Failed to publish: {article['title']}")
 
-    # If fewer than 2 available, note it
-    if len(published_articles) < 2:
-        print(f"\n[INFO] Published {len(published_articles)}/2 articles (only {len(candidates)} available)")
+    if published_articles:
+        try:
+            save_published_state(state, state_file)
+            print(f"[STATE] 公開済み記録を更新: {state_file}")
+        except OSError as exc:
+            print(f"[WARN] 公開済み記録の保存に失敗: {exc}")
 
-    # Phase 2: Schedule note for weekly shift to new content
+    # Phase 2: 週次運用の案内
     print("\n--- Phase 2: Pipeline configuration ---")
     print("Next run: Weekly (every 1 week)")
-    print("Strategy: After initial 2-draft exposure test, shift to generating new")
-    print("          articles (contest/giveaway topics from kensho data)")
-    print(f"API Key: {DEVTO_API_KEY}")
-    print(f"Blog source: {BLOG_DIR}")
+    print("Strategy: 2ドラフトの露出テスト後は新規記事生成（懸賞/データネタ）へ移行")
+    print(f"Blog source: {target_dir}")
 
-    # Summary
     print("\n" + "=" * 60)
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Pipeline COMPLETE")
     print(f"Published: {len(published_articles)} article(s)")
@@ -213,9 +393,9 @@ def run_pipeline():
         print(f"  - {a['title']} ({a['url']})")
     print("=" * 60)
 
-    return published_articles
+    return EXIT_OK if published_articles else EXIT_PUBLISH_FAILED
 
 
 # ── Entry point ────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    run_pipeline()
+    sys.exit(run_pipeline())
