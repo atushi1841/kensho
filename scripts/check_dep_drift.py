@@ -168,6 +168,60 @@ def load_req_files(req_paths):
                     result[name] = ""
     return result
 
+def load_uv_lock_pkgs(path: "Path") -> set[str]:
+    """uv.lock (TOML) から [[package]] name を canonical 名で集める。
+
+    uv.lock は requirements 行ではないため _REQUIREMENT_RE では 1 件も取れない。
+    実測 (2026-09-25 / t_3dbc1fbe): uv.lock を load_req_files に通していたため、
+    pyproject で宣言済みの 7 パッケージが全件
+    "MISSING: package name not found in uv.lock" の偽 drift になっていた
+    （uv.lock には実際に存在する。grep 'name = "playwright"' = 4 件）。
+    """
+    if not path.is_file():
+        return set()
+    try:
+        data = tomllib.loads(path.read_text(encoding="utf-8"))
+    except (OSError, tomllib.TOMLDecodeError):
+        return set()
+    pkgs: set[str] = set()
+    for pkg in data.get("package") or []:
+        if isinstance(pkg, dict) and pkg.get("name"):
+            pkgs.add(_canon(str(pkg["name"])))
+    return pkgs
+
+
+def _spec_clauses(spec: str) -> set[str]:
+    """`>=1.0,<2.0` 形式の spec を正規化した clause 集合にする。"""
+    out: set[str] = set()
+    for part in (spec or "").split(","):
+        part = part.strip().replace(" ", "")
+        if part:
+            out.add(part)
+    return out
+
+
+def spec_is_compatible(mirror_spec: str, declared_spec: str) -> bool:
+    """宣言ミラーの spec が pyproject の宣言を満たすか（同一 or より厳しい pin を許容）。
+
+    実測 (2026-09-25 / t_3dbc1fbe): 旧実装は文字列完全一致で比較していたため
+    requirements.txt の `pyyaml>=6.0,<7.0` / `httpx>=0.27,<0.29` / `psutil>=5.9,<6.0` が
+    pyproject の `>=6.0` / `>=0.27` / `>=5.9` と「不一致」判定されていた（範囲を狭めた
+    安全側 pin は本来 ok）。
+    """
+    if not declared_spec:
+        return True
+    decl = _spec_clauses(declared_spec)
+    mirr = _spec_clauses(mirror_spec)
+    if decl <= mirr:
+        return True
+    # exact pin (==X) は、その X が宣言範囲を満たすなら互換とみなす
+    if len(mirr) == 1:
+        only = next(iter(mirr))
+        if only.startswith("==") and not only.startswith("==="):
+            return _spec_satisfied(declared_spec, only[2:]) is not False
+    return False
+
+
 def run_pip_check(venv_python: Path) -> tuple[int, str]:
     """venv の `pip check` を実行し (rc, 出力) を返す。pip 不在も rc!=0 として扱う。"""
     try:
@@ -261,12 +315,15 @@ def check(venv_python: Path, pyproject: Path, skip_reverse_check: bool = False) 
 
     if not skip_reverse_check:
         # Load requirements files and uv.lock for additional checks.
-        # requirements.txt is the canonical declaration mirror; requirements-lock.txt
-        # is a partial lock snapshot (subset of deps). A package is "missing" only when
-        # absent from BOTH files. uv.lock existence is checked separately (name only).
-        req_pkgs = load_req_files([ROOT / "requirements.txt", ROOT / "requirements-lock.txt"])
-        req_pkgs_set = set(req_pkgs.keys())
-        uv_lock_pkgs = set(load_req_files([ROOT / "uv.lock"]).keys())
+        # requirements.txt is the canonical declaration mirror（spec 比較の対象）;
+        # requirements-lock.txt は exact pin の部分スナップショット（被覆確認のみ・
+        # spec 比較には使わない。範囲 vs pin の偽 mismatch を防ぐ）。
+        # A package is "missing" only when absent from BOTH files.
+        # uv.lock は TOML なので load_uv_lock_pkgs（tomllib）で [[package]] name を集める。
+        req_txt = load_req_files([ROOT / "requirements.txt"])
+        req_lock = load_req_files([ROOT / "requirements-lock.txt"])
+        req_pkgs_set = set(req_txt.keys()) | set(req_lock.keys())
+        uv_lock_pkgs = load_uv_lock_pkgs(ROOT / "uv.lock")
 
         for name in sorted(declared):
             # pyproject にあるが requirements 系に両方無い → drift
@@ -278,14 +335,15 @@ def check(venv_python: Path, pyproject: Path, skip_reverse_check: bool = False) 
                     "reason": "MISSING: declared in pyproject but not in requirements.txt/requirements-lock.txt",
                 })
                 continue
-            # spec 整合性確認: requirements.txt の spec と pyproject の spec が異なる
-            req_spec = req_pkgs.get(name)
-            if req_spec is not None and req_spec != (declared[name] or ""):
+            # spec 整合性確認: requirements.txt（宣言ミラー）が pyproject の宣言を満たすか
+            # （同一 or より厳しい範囲 pin は許容）
+            req_spec = req_txt.get(name)
+            if req_spec is not None and not spec_is_compatible(req_spec, declared[name] or ""):
                 result["drift"].append({
                     "name": name,
                     "declared": declared[name] or "(none)",
                     "installed": "-",
-                    "reason": f"spec mismatch: requirements file has {req_spec}, pyproject has {declared[name]}",
+                    "reason": f"spec mismatch: requirements.txt has {req_spec}, pyproject has {declared[name]}",
                 })
             # uv.lock に存在するか確認（name のみ）
             if name not in uv_lock_pkgs:

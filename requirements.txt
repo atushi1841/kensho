@@ -10,3 +10,12 @@ pyyaml>=6.0,<7.0
 psutil>=5.9,<6.0
 # PEP 508 direct reference (git commit)
 invisible-playwright @ git+https://github.com/feder-cr/invisible_playwright.git@2184f6f3c296e5bedcf1539914b3a7d307ce9fe0
+# pyproject [project.dependencies] との宣言ミラー整合 (drift gate 逆方向検査)
+beautifulsoup4>=4.12
+keyring>=24.0
+loguru>=0.7
+lxml>=5.0
+pydantic>=2.0
+pydantic-settings>=2.0
+requests>=2.31
+twscrape>=0.20.1
