@@ -1,0 +1,29 @@
+{
+  "status": "complete",
+  "success_indicators": [
+    "契約テスト tests/test_loop_health_json_contract.py: failed 1 -> 0（4 passed 維持）",
+    "REQUIRED_KEYS は scripts/agent_eval_harness.py の LOOP_HEALTH_FIELDS からのみ導出（テスト側の直書き撤去、alert のみ明示追加）",
+    "pytest tests/test_loop_health_json_contract.py tests/test_agent_eval_harness.py -q = 32 passed / 0 failed",
+    "コミット 204d8a7 / 3fb6f9f を origin/main へ push 済み（67ed0b3..3fb6f9f）"
+  ],
+  "verification_commands": [
+    "$ cd /mnt/d/Project2/kensho && /home/atushi/.hermes/hermes-agent/venv/bin/python3 -m pytest tests/test_loop_health_json_contract.py tests/test_agent_eval_harness.py -q --no-cov -p no:cacheprovider => collected 32 items / 32 passed in 386.95s (0:06:26)",
+    "$ cd /mnt/d/Project2/kensho && bash scripts/loop_health.sh => exit=0 / JSON keys に score,streak,running,blocked,top_task,lines,alert が存在（score=55 alert=ALERT）",
+    "$ /home/atushi/.hermes/hermes-agent/venv/bin/python3 -c \"...旧キー集合と実JSONの差分...\" => HEAD(旧)REQUIRED_KEYS の不足キー = ['advice','priority','stagnation_streak'] / 現行 REQUIRED_KEYS の不足キー = []",
+    "$ cd /mnt/d/Project2/kensho && git show --stat --oneline 204d8a7 => reports/t_350dc888_verification.md | 68 +++ / tests/test_loop_health_json_contract.py | 30 ++- / 2 files changed, 96 insertions(+), 2 deletions(-)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/tests/test_loop_health_json_contract.py",
+    "/mnt/d/Project2/kensho/reports/t_350dc888_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:253f44075803b87590f756cf6896f7ca3441b790f3e7f65c35aec0df3c114ed2",
+    "sha256:b7e15a40e20765dfbf95d6e48110e661ba6064394d79726af72bcb1b87c97ca7"
+  ],
+  "outcome": {
+    "metric": "契約テスト tests/test_loop_health_json_contract.py の failed 件数",
+    "before": 1,
+    "after": 0
+  },
+  "task_id": "t_350dc888"
+}
