@@ -127,17 +127,36 @@ if [ -z "${HERMES_BIN:-}" ]; then
   fi
 fi
 
-# ─── Auto-detect DB if not found ─────────────────────────────────────────────
-if [[ ! -f "$DB_PATH" ]]; then
+# ─── Auto-detect DB if not found / empty ──────────────────────────────────────
+# v143 (t_6f45dab0): 空レガシー DB (~/.hermes/kanban.db, tasks 0) を grasp する
+# と effective_started_at が空 → tasks.started_at(初回dispatchのstale値)に
+# フォールバックし、age が 12h と偽判定される(伪age -25)。existence チェックではなく
+# tasks>0 を条件に board DB を優先する。run が取れれば age penalty を skip する。
+_db_has_tasks() {
+  local _p="$1"
+  [[ -f "$_p" ]] || return 1
+  local _n
+  # sqlite3 CLI が無い環境（cron最小PATH等）でも動くよう python3(stdlib sqlite3) を優先。
+  # CLI がなければ python3 にフォールバック。両方不可なら false（空DBと同様に扱う）。
+  if command -v sqlite3 >/dev/null 2>&1; then
+    _n=$(sqlite3 "$_p" "SELECT count(*) FROM tasks;" 2>/dev/null)
+  else
+    _n=$(python3 -c "import sqlite3,sys;print(sqlite3.connect('file:%s?mode=ro'%sys.argv[1],uri=True).execute('SELECT count(*) FROM tasks').fetchone()[0])" "$_p" 2>/dev/null)
+  fi
+  [[ "$_n" =~ ^[0-9]+$ ]] && [ "$_n" -gt 0 ]
+}
+if ! _db_has_tasks "$DB_PATH"; then
   for board in kensho-ai-team default; do
     cand="$HOME/.hermes/kanban/boards/$board/kanban.db"
-    if [[ -f "$cand" ]]; then
+    if _db_has_tasks "$cand"; then
       DB_PATH="$cand"
       BOARD="$board"
       break
     fi
   done
 fi
+# 見つからずとも DB_PATH は存在するファイル（空レガシー）のまま——effective_started_at
+# 取得は try/exit で無害。tasks.started_at フォールバックは最終手段。
 
 mkdir -p "$(dirname "$STATE_FILE")" 2>/dev/null
 
@@ -278,7 +297,35 @@ by_age = sorted(
 # config-based max_in_progress penalty, streak reset on zero real deductions
 score = 100
 
-# config-based max_in_progress (v142): read from config.yaml, fallback 4
+# config-based max_in_progress (v143 / t_6f45dab0): dispatcher と同一の解決経路。
+# 旧: resolve_max_in_progress(None) → NameError → score=0/alert=ERROR で監視死亡。
+# 本実装: profile config の kanban.max_in_progress → 無い場合は derive_default (8)。
+# loop_health は dispatcher と同一の cap を参照し、cap 不一致による偽ALERTを排除する。
+def resolve_max_in_progress(_cfg_path=None):
+    import os as _os
+    _p = _os.environ.get("HERMES_PROFILE_CONFIG", "")
+    _val = 4
+    try:
+        import yaml as _y
+        _cand = _p if _p and _os.path.exists(_p) else None
+        if _cand is None:
+            _home = _os.path.expanduser("~")
+            for _c in (
+                f"{_home}/.hermes/profiles/kensho-sweeps/config.yaml",
+                f"{_home}/.hermes/profiles/kensho-worker/config.yaml",
+            ):
+                if _os.path.exists(_c):
+                    _cand = _c
+                    break
+        if _cand:
+            _d = _y.safe_load(open(_cand, encoding="utf-8"))
+            _v = (_d.get("kanban") or {}).get("max_in_progress")
+            if _v is not None:
+                _val = int(_v)
+    except Exception:
+        pass
+    return _val
+
 _max_in_progress = resolve_max_in_progress(None)
 try:
     import yaml as _yaml
@@ -407,20 +454,22 @@ business_ok = (not _business_detect)
 if _business_detect:
     score = max(0, min(score, 60))
 
-# ── Streak (v142 / t_9f14ee5d) ────────────────────────────────────────────────
-# streak = 連続実減点run数。実減点が0ならリセット。実減点が0なら streak=0。30秒以内の連続実行でも増えない。
-# 従来: 呼ぶたびに prev_streak+1 し、状態ファイルから引き継ぐため呼く限り減らない。
-# 1run 内に critic/QA/monitor が複数回呼ぶと自己増殖し、healthy board でも
-# escalation=true を維持した (QA 9/25 03:2x 実測: 49→50→51)。
-# 対策: 実減点が0なら streak=0。減点要因が2連続以上で streak を増やす。
-# 受入基準: 30秒以内に3回連続実行しても streak が incremented されない。
-# NOTE: business_ok は上記 KPI gate で定義されるため、このブロックは KPI gate
-# の直後にある必要がある（v142b / t_83ce94c5: 旧順序は streak ブロックが先で
-# business_ok 未定義 → NameError で ANALYSIS 空 → score=0/alert=ERROR になる）。
+# ── Streak (v143 / t_6f45dab0) ────────────────────────────────────────────────
+# v143: age 減点・表示の参照元を effective_started_at に統一。
+# 旧: _real_deductions は t.get("started_at")(初回dispatchのstale値)を直参照 →
+#     実活動(task_runs)経過と別ソースで streak 判定が分かれ、score は healthy でも
+#     streak が increment される不一致。また age 表示は runs_started_at(全runningのMAX)
+#     を最古タスクの年齢に使う誤り。
+# 対策: _eff(t) = effective_started_at.get(id)。未取得(None)なら age penalty を
+#     skip（tasks.started_at のstale値にはフォールバックしない）。
+#     DB 解決(v143)により実 running run が取れれば age=0h になる。
+def _eff(t):
+    return effective_started_at.get(t["id"])
+
 _real_deductions = (
     (len(running) > _max_in_progress) * 10 * max(0, len(running) - _max_in_progress)
-    + (any((now - int(t.get("started_at") or 0)) > 6 * 3600 for t in by_age)) * 10
-    + (any((now - int(t.get("started_at") or 0)) > 12 * 3600 for t in by_age)) * 15
+    + (any(_eff(t) and (now - int(_eff(t))) > 6 * 3600 for t in by_age)) * 10
+    + (any(_eff(t) and (now - int(_eff(t))) > 12 * 3600 for t in by_age)) * 15
     + (len(repeats) > 0) * 20
     + (len(blocked_with_done_parent) > 0) * 15
     + (zombie_task_count > 0) * 10 * zombie_task_count
@@ -442,7 +491,12 @@ if by_age:
     # v137: by_ageはstarted_at昇順(先頭=最古)。top_task/park targetは最古running
     # でなければならない(QA 9/12実測: [-1]だと最新規を拾いSLA parkingが空振り)。
     top = by_age[0]
-    age_h = (now - int(runs_started_at or effective_started_at.get(top['id'], top.get('started_at') or now))) // 3600
+    _top_eff = effective_started_at.get(top['id'])
+    if _top_eff:
+        age_h = (now - int(_top_eff)) // 3600
+    else:
+        # DB 解決済みで実 run が取れない場合は age penalty を skip（stale tasks.started_at にはフォールバックしない）
+        age_h = 0
     lines.append(f"top={top['id']} age={age_h}h")
 else:
     lines.append("top=none")
