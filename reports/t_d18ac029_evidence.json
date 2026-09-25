@@ -1,0 +1,39 @@
+{
+  "success_indicators": [
+    "invisible-playwright 宣言系統数: 4系統中4 (before=0 -> after=4, 100%)",
+    "grep -c invisible-playwright = pyproject 1 / requirements 1 / requirements-lock 1 (合計3, カード成功指標=3)",
+    "check_dep_drift: ok=true drift=0件 (宣言追加後もゲート緑)",
+    "pytest tests/test_dep_declaration.py: 2 passed / failed 0",
+    "uv.lock の source が git+commit 2184f6f3 (PyPI 0.25.5 ではないことを実測)"
+  ],
+  "verification_commands": [
+    "$ grep -c \"invisible-playwright\" pyproject.toml requirements.txt requirements-lock.txt => pyproject.toml:1 / requirements.txt:1 / requirements-lock.txt:1",
+    "$ grep -n \"invisible-playwright\" uv.lock => 753: { name = \"invisible-playwright\", git = \"https://github.com/feder-cr/invisible_playwright.git?rev=2184f6f3c296e5bedcf1539914b3a7d307ce9fe0\" }",
+    "$ /home/atushi/kensho-venv/bin/python -m pytest tests/test_dep_declaration.py -q => 2 passed in 27.78s",
+    "$ python3 scripts/check_dep_drift.py => {\"ok\": true, \"drift\": [], \"pip_check\": \"No broken requirements found.\"}",
+    "$ /home/atushi/kensho-venv/bin/python -c \"import importlib.metadata as m;print(m.version('invisible_playwright'))\" => 0.2.0",
+    "$ git status --porcelain -uall | grep -E '\\.(py|sh|js|yaml)$' => (該当なし / 未コミットコード0件)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/pyproject.toml",
+    "/mnt/d/Project2/kensho/requirements.txt",
+    "/mnt/d/Project2/kensho/requirements-lock.txt",
+    "/mnt/d/Project2/kensho/uv.lock",
+    "/mnt/d/Project2/kensho/tests/test_dep_declaration.py",
+    "/mnt/d/Project2/kensho/reports/t_d18ac029_verification.md"
+  ],
+  "evidence_hashes": [
+    "d753bad72bda323c5728f280d8ebbf560593d74b38a5e07aa77dc66e091ba27e",
+    "45877481f01462cb3e3c937e55777ae21813586de6b2a671fd530cd7d91b436e",
+    "8577f1b54fda30d2a679d09d8a3d72cc831beca399f76d55b8ae07a20066b92d",
+    "55869af39fba52b37dbc2203c914a107b151a11e7f4079d6b14633b48218f8e5",
+    "c0bdeb8001ad7d19bd27d62076585e7e1c58ef90918c4c5f37316f5236079db7"
+  ],
+  "outcome": {
+    "metric": "invisible-playwright宣言系統数",
+    "before": 0,
+    "after": 4
+  },
+  "task_id": "t_d18ac029",
+  "status": "complete"
+}
