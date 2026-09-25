@@ -93,3 +93,26 @@ kanban_done_guard task=t_5490697f -> BLOCK (2 not met: verification_evidence_sec
 
 1. **【中】kensho repo `config.yaml` に帰属不明の未コミット設定 +20行**（`prize_scoring:` 配下に `default: provider: freellmapi` / `providers:` が2スペースで誤ネスト、`api_base: http://localhost:8000/v1` は実 freellmapi の `127.0.0.1:3101` と不一致、`api_key: "dummy"`）。ボード上に該当カードなし＝所有者不明。LLM設定として使う意図なら **トップレベルの `llm:` へ移し port を 3101 に修正**、意図がないなら revert。**おすすめですすめます（GOで実行します）**。
 2. t_26812b2a（goal_mode judge の provider 明示）は前回から変更なし・blocked維持。
+
+## 8. 追記（19:28–19:35 実測）— t_28e11c70 による「巻き込みcommit」
+
+```
+$ git show --stat --oneline df91ceb | grep -E '\.py |\.sh |\.yaml |test_loop'
+ config.yaml                            |    20 +
+ scripts/kensho_revenue_collect.py      |    72 +-   ← t_3dbc1fbe の実行中WIP
+ scripts/loop_health.sh                 |    41 +-   ← t_41df6e84 の実行中WIP
+ scripts/loop_health_debug.sh           |   875 +    ← 新規
+ scripts/revenue_record_reconcile.py    |   286 +    ← 新規
+ tests/test_loop_health.py              |    64 +-   ← t_41df6e84 の実行中WIP
+ tests/test_revenue_record_reconcile.py |   221 +    ← 新規
+
+$ git log --oneline -1 -- reports/qa-nightly-run16-20260925.md
+df91ceb Finalize all changes for t_28e11c70     ← 本QAレポートも巻き込まれた
+
+$ git status --porcelain | grep -cE '^\s*M.*\.(py|sh|yaml|js)$'
+0        （working tree は clean・push 済み）
+```
+
+- 実行中カード（t_41df6e84 / t_3dbc1fbe）の未コミットWIPと本QAレポートが、**t_28e11c70 の完了commit に一括で巻き込まれた**（`git add -A` 相当）。§6-3 の「終端前に必ず commit」を満たすために他カードの境界を壊した形で、t_0e402d67 が導入した commit 直列化（`git_commit_locked.sh`）が本ケースでは使われていない。
+- また unblock 2件の同時spawnで **running=5 > cap_profile 4**。cap 強制は同一tickの同時spawnには効かない。
+- QA自身の申し送り: **unblock は1件ずつ**（cap を跨がない）。本runは2件同時unblockで over-WIP を作った（次runから1件ずつ）。
