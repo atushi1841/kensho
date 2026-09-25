@@ -1,15 +1,15 @@
 # 非X応募導線（手動・要確認）レポート 20260925
 
-- 対象収集件数: 995
-- 非X判定（自動応募対象外）: 76
+- 対象収集件数: 1028
+- 非X判定（自動応募対象外）: 114
 - 導入ラベル付与率: 100.0%（100% = 全件にラベル付与）
 
 ## 導入ラベル別件数
 
 | ラベル | 件数 | 内容 |
 |---|---|---|
-| X | 919 | X上で完結（自動応募対象） |
-| 未判定 | 62 | 本文取得不能（要確認扱い） |
+| X | 914 | X上で完結（自動応募対象） |
+| 未判定 | 100 | 本文取得不能（要確認扱い） |
 | 要確認 | 7 | 導線判別不能（要ユーザー対応） |
 | LINE | 3 | LINE友だち追加・LINE応募 |
 | 会員ID | 2 | 会員登録・会員IDが必要 |
@@ -95,5 +95,43 @@
 | 未判定 | https://x.com/welcia_jp/status/2099770193543368760 | 2026-09-28 | 🍊フォロー＆リポスト🫧 『#リンレイ ウルトラハードクリーナー バス用 ウルトラオレンジクリーナー』 本体2点セットを2⃣0⃣名様に🎁  ①@welcia_jp |
 | 未判定 | https://x.com/nicogame_PR/status/2094621265529340239 | 2026-09-30 | ＼🍁9月のプレゼントキャンペーン🎯／  『Anker Power Bank (25000mAh, Built-In &amp; 巻取り式USB-Cケーブル)』を |
 | 要確認 | https://x.com/TABIOSPORTS/status/2100781872053948606 | 2026-09-27 | ＼✨コラボプレゼントキャンペーン✨／ ベネクス( @venex_jp ) × TABIO SPORTS ( @TABIOSPORTS )  日々のコンディショニ |
+| 未判定 | https://x.com/marusanai_jp/status/2102925989281955996 | 2026-10-30 |  |
+| 未判定 | https://x.com/jis_cheers/status/2099332312408207760 | 2026-09-27 |  |
+| 未判定 | https://x.com/emme_jp/status/2097925029652558265 | 2026-09-27 |  |
+| 未判定 | https://x.com/DeltaForceG_JP/status/2102593816393859219 | 2026-09-25 |  |
+| 未判定 | https://x.com/J_League/status/2099332324873662896 | 2026-09-27 |  |
+| 未判定 | https://x.com/wmg2027kansai/status/2100026885300175299 | 2026-09-27 |  |
+| 未判定 | https://x.com/PUBGMOBILE_JP/status/2097543112239280565 | 2026-09-27 |  |
+| 未判定 | https://x.com/pizzala_jp/status/2098230047010345153 | 2026-09-27 |  |
+| 未判定 | https://x.com/ASSETONLINE_AL/status/2099407810681242027 | 2026-09-27 |  |
+| 未判定 | https://x.com/MimiBeauty__/status/2102956193731739984 | 2026-09-27 |  |
+| 未判定 | https://x.com/PUBGMOBILE_JP/status/2097530083871514700 | 2026-09-27 |  |
+| 未判定 | https://x.com/bandai_ridertoy/status/2096395524429742534 | 2026-09-27 |  |
+| 未判定 | https://x.com/houkaistarrail/status/2101642530680877385 | 2026-09-27 |  |
+| 未判定 | https://x.com/exgv_official/status/2101295250711232934 | 2026-09-27 |  |
+| 未判定 | https://x.com/MimiBeauty__/status/2102956200006398330 | 2026-09-27 |  |
+| 未判定 | https://x.com/MimiBeauty__/status/2102956199209574824 | 2026-09-27 |  |
+| 未判定 | https://x.com/AMPHI_press/status/2093141520517845372 | 2026-09-27 |  |
+| 未判定 | https://x.com/ever_greentweet/status/2101869949937729629 | 2026-09-27 |  |
+| 未判定 | https://x.com/TAITO/status/2096780538380234937 | 2026-09-27 |  |
+| 未判定 | https://x.com/ODID_japan/status/2101853922419949862 | 2026-09-27 |  |
+| 未判定 | https://x.com/TSUGAI_GANGAN/status/2101329215065104584 | 2026-09-27 |  |
+| 未判定 | https://x.com/tw_asukafoods/status/2099426825642635546 | 2026-09-27 |  |
+| 未判定 | https://x.com/milktouch_jp/status/2102322008453509484 | 2026-09-27 |  |
+| 未判定 | https://x.com/kyuspo/status/2100879474921455791 | 2026-09-27 |  |
+| 未判定 | https://x.com/BK23412315/status/2100887568438927652 | 2026-09-27 |  |
+| 未判定 | https://x.com/maquillage_jp/status/2099770200048755090 | 2026-09-25 |  |
+| 未判定 | https://x.com/Veimia_Japan/status/2101997372590981465 | 2026-09-25 |  |
+| 未判定 | https://x.com/doshisha_marche/status/2100529383916400898 | 2026-09-25 |  |
+| 未判定 | https://x.com/LOWBAL_official/status/2099773236594487393 | 2026-09-25 |  |
+| 未判定 | https://x.com/ugreenjapan/status/2098332676348654063 | 2026-09-25 |  |
+| 未判定 | https://x.com/TODAYWith_JAPAN/status/2100857368955252945 | 2026-09-25 |  |
+| 未判定 | https://x.com/century_pc/status/2099739998140399981 | 2026-09-25 |  |
+| 未判定 | https://x.com/TateyamaShuzou/status/2099430457427329138 | 2026-09-25 |  |
+| 未判定 | https://x.com/houchishoujo/status/2101144249228030097 | 2026-09-25 |  |
+| 未判定 | https://x.com/koyokasei/status/2100149403411730652 | 2026-09-25 |  |
+| 未判定 | https://x.com/suzuyo_official/status/2100751671194505578 | 2026-09-25 |  |
+| 未判定 | https://x.com/BK23412315/status/2101249952710287668 | 2026-09-25 |  |
+| 未判定 | https://x.com/ruskcafe/status/2095079013068980493 | 2026-09-30 |  |
 
 ※ 非X導線は自動操作せずX手動チェック・要ユーザー対応対象。

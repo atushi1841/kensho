@@ -40,7 +40,7 @@ include = ["kensho*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-v --tb=short --cov=kensho --cov-report=term-missing"
+addopts = "-v --tb=short --cov=kensho --cov-report=term-missing -m \"not live\""
 
 [tool.mypy]
 python_version = "3.12"

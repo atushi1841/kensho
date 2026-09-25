@@ -310,14 +310,14 @@ if _excess > 0:
 
 # oldest >6h: -10
 for t in by_age:
-    st = t.get("started_at")
+    st = effective_started_at.get(t["id"], t.get("started_at"))
     if st and (now - int(st)) > 6 * 3600:
         score -= 10
         break
 
 # oldest >12h: -15 (extra penalty)
 for t in by_age:
-    st = t.get("started_at")
+    st = effective_started_at.get(t["id"], t.get("started_at"))
     if st and (now - int(st)) > 12 * 3600:
         score -= 15
         break
@@ -442,7 +442,7 @@ if by_age:
     # v137: by_ageはstarted_at昇順(先頭=最古)。top_task/park targetは最古running
     # でなければならない(QA 9/12実測: [-1]だと最新規を拾いSLA parkingが空振り)。
     top = by_age[0]
-    age_h = (now - int(runs_started_at or top.get("started_at") or now)) // 3600
+    age_h = (now - int(runs_started_at or effective_started_at.get(top['id'], top.get('started_at') or now))) // 3600
     lines.append(f"top={top['id']} age={age_h}h")
 else:
     lines.append("top=none")

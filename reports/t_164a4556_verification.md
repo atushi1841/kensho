@@ -15,5 +15,5 @@ $ grep -c "def _filter" tests/test_gen_status_proxy_time_filter.py
 
 ```bash
 $ git log --oneline -1 -- tests/test_gen_status_proxy_time_filter.py
-92ba1bd t_164a4556: implemented test counterproof and guard compliance
+aba1d73 t_164a4556: update verification evidence with commit hash citation
 ```

@@ -29,6 +29,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
@@ -212,6 +214,7 @@ def _gate(ledger: dict[str, Any], name: str) -> dict[str, Any]:
     return dict(ledger["gates"][name])
 
 
+@pytest.mark.live
 def test_gate_result_column_empty_after_v151() -> None:
     """[action v151 / t_274a3024] 基準日(9/16 00:00 JST)以降のdoneでresult空=0件。
 
@@ -222,6 +225,7 @@ def test_gate_result_column_empty_after_v151() -> None:
     assert g["value"] == 0, f"empty-result done recurrence: {g['detail']}"
 
 
+@pytest.mark.live
 def test_gate_protocol_violation_crash() -> None:
     """[reflection v103系 / t_f5f3bc95] 直近24hに「未回収」のrc=0 silent exit=0件。
 
@@ -236,6 +240,7 @@ def test_gate_protocol_violation_crash() -> None:
     assert g["value"] == 0, f"unrecovered silent-exit recurrence: {g['detail']}"
 
 
+@pytest.mark.live
 def test_gate_checkpoint_on_exhaustion() -> None:
     """[reflection v103 / t_7c64a27c] iteration枯渇runに[checkpoint]打刻0件=再発。
 

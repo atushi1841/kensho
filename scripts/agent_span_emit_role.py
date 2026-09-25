@@ -19,15 +19,15 @@ JSONL が増えない」= 本番フローに未配線だった（2026-09-24 QA �
    （APIキー・トークンは読まない。`agent_span_emit` 側の契約をそのまま継承）
 
 解決順（左が優先）:
-  role        : --agent/--role > $KENSHO_AGENT_ROLE > $KENSHO_PROFILE > $HERMES_PROFILE
-  model       : --model > $KENSHO_MODEL > $HERMES_MODEL > <profile>/config.yaml の model.default > unknown
+ role        : --agent/--role > $KENSHO_AGENT_ROLE > $KENSHO_PROFILE > $HERMES_PROFILE
+ model       : --model > $KENSHO_MODEL > $HERMES_MODEL > <profile>/config.yaml の model.default > unknown
                 （役割名だけ渡された場合は kensho-revenue-<role> → kensho-<role> → kensho-sweeps の順に探索）
                 ※ cron ジョブは jobs.json で model を固定していることがある。実測名を残したい
                   呼び出し側は `KENSHO_MODEL=<jobs.json の model>` を渡すこと（既定は prof config）。
-  conversation: --task-id > --conversation-id > $KENSHO_TASK_ID > $KENSHO_CONVERSATION_ID
+ conversation: --task-id > --conversation-id > $KENSHO_TASK_ID > $KENSHO_CONVERSATION_ID
                 > $HERMES_KANBAN_TASK > <profile 名>
-  duration    : --duration-ms > $KENSHO_DURATION_MS > 0
-  error-type  : --error-type > $KENSHO_ERROR_TYPE > （成功時は省略）
+ duration    : --duration-ms > $KENSHO_DURATION_MS > 0
+ error-type  : --error-type > $KENSHO_ERROR_TYPE > （成功時は省略）
 
 使用法:
   python3 scripts/agent_span_emit_role.py --agent worker --task-id t_xxx --duration-ms 1234
@@ -181,7 +181,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     except ValueError as exc:
         _warn(f"{exc}。span を書きません")
         return 2 if args.strict else 0
-
     model = (args.model or first_env(MODEL_ENV_VARS) or model_for_agent(agent) or UNKNOWN_MODEL)
     conversation_id = (
         args.task_id
@@ -214,9 +213,22 @@ def main(argv: Sequence[str] | None = None) -> int:
     if provider:
         kwargs["provider"] = provider
 
+    # Handle date argument
+    if args.date is not None:
+        kwargs["day"] = emit.parse_day(args.date)
+
     if args.dry_run:
         try:
-            span = emit.build_span(**kwargs)
+            span = emit.build_span(
+                agent=agent,
+                model=model,
+                conversation_id=conversation_id,
+                tokens_in=max(0, int(args.tokens_in)),
+                tokens_out=max(0, int(args.tokens_out)),
+                duration_ms=duration_ms,
+                error_type=error_type,
+                provider=provider or emit.DEFAULT_PROVIDER,
+            )
         except ValueError as exc:
             _warn(f"span を組み立てられません: {exc}")
             return 2 if args.strict else 0
@@ -225,7 +237,8 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.out_dir:
         kwargs["span_dir"] = args.out_dir
-
+    else:
+        kwargs["span_dir"] = default_span_dir()
     # 安全版: 例外を投げず None を返す（計測失敗で本番を止めない）
     written = emit.try_emit_span(**kwargs)
     if written is None:

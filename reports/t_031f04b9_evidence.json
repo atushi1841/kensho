@@ -1,0 +1,31 @@
+{
+  "success_indicators": [
+    "kanban_done_guard.py fully read and documented (2694 lines, 136156 bytes)",
+    "13 evaluation conditions (a-k + bind) identified and described",
+    "write_evidence API documented: generates reports/<task_id>_evidence.json",
+    "evidence_json_state validation logic documented: required fields, artifact existence, hash format",
+    "CLI flags documented: --soft, --json, --db, --output-dirs, --workdir, --allow-unpushed, --task, --completion-payload, --selftest, --selfcheck, --write-evidence, --payload, --payload-file"
+  ],
+  "verification_commands": [
+    "python3 -c \"import kanban_done_guard as kdg; print(kdg.DEFAULT_WORKDIR)\" => /mnt/d/Project2/kensho",
+    "python3 -c \"import kanban_done_guard as kdg; print(kdg.default_db_path())\" => /home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db",
+    "python3 -c \"import kanban_done_guard as kdg; print(kdg._default_search_dirs())\" => 5 directories listed",
+    "python3 -c \"import kanban_done_guard as kdg; import inspect; print(inspect.getsource(kdg.write_evidence))\" => 68-line function source retrieved",
+    "python3 -c \"import kanban_done_guard as kdg; import inspect; print(inspect.getsource(kdg.evidence_json_state))\" => 97-line function source retrieved",
+    "python3 -c \"import kanban_done_guard as kdg; import inspect; print(inspect.getsource(kdg.count_command_citations))\" => 67-line function source retrieved",
+    "python3 -c \"import kanban_done_guard as kdg; import inspect; print(inspect.getsource(kdg.owns_file))\" => 24-line function source retrieved",
+    "python3 -c \"import kanban_done_guard as kdg; import inspect; print(inspect.getsource(kdg._verification_section))\" => 7-line function source retrieved",
+    "sha256sum kanban_done_guard.py => dd76bd97efa97030255012d19efa28b6666a1d9a654b764d0172b720fdd72cfb"
+  ],
+  "artifact_paths": [
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py.bak.1790274941",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py.backup2",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py.backup"
+  ],
+  "evidence_hashes": [
+    "dd76bd97efa97030255012d19efa28b6666a1d9a654b764d0172b720fdd72cfb"
+  ],
+  "status": "complete",
+  "task_id": "t_031f04b9"
+}
