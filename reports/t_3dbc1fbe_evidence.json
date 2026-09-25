@@ -1,0 +1,33 @@
+{
+  "success_indicators": [
+    "受入基準1: --check が実動（5bee7d7 で明示フラグ化。既定動作のエイリアス・--check+--apply は exit 2）",
+    "受入基準3: tests/test_revenue_record_reconcile.py 8 passed（3ファイル合計 78 passed）",
+    "受入基準4: 当日entryの乖離キー before=8 → after=0（gumroad_reconciled 監査記録を commit df91ceb に収録）",
+    "失効warning before=1件 → after=0件（復旧時のみ除去・失効継続時は温存）",
+    "unpushed commit 0件（origin/main...HEAD = 0 0）"
+  ],
+  "verification_commands": [
+    "$ python3 -m pytest tests/test_revenue_record_reconcile.py tests/test_revenue_collect.py tests/test_collection_volume.py -q => 78 passed in 43.17s",
+    "$ python3 scripts/revenue_record_reconcile.py --check => revenue-reconcile OK entry_date=2026-09-25 state_date=2026-09-25 — 記録とライブstateは一致 (exit=0)",
+    "$ python3 scripts/revenue_record_reconcile.py --check --apply => revenue_record_reconcile.py: error: --check と --apply は同時に指定できない (exit=2)",
+    "$ python3 -m mypy scripts/revenue_record_reconcile.py => Found 2 errors in 1 file (既存2件: 156行 requests stubs / 321行 unused-ignore・本diff外)",
+    "$ git rev-list --left-right --count origin/main...HEAD => 0\t0"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/revenue_record_reconcile.py",
+    "/mnt/d/Project2/kensho/tests/test_revenue_record_reconcile.py",
+    "/mnt/d/Project2/kensho/reports/t_3dbc1fbe_verification.md"
+  ],
+  "evidence_hashes": [
+    "7bb587104688431639f1e765ea69d7a29453fb99edf172d2907c890b112bcab3",
+    "98567fa1b165955fc5fe91542adc914467a153ee9c19ef57354d7fd55c0cbed1",
+    "c1a3f3a676506290f6214d52f961bb341fea4cd74bbe54651a5724bbe7eb6042"
+  ],
+  "outcome": {
+    "metric": "当日entryとライブgumroad_stateの乖離キー数",
+    "before": 8,
+    "after": 0
+  },
+  "task_id": "t_3dbc1fbe",
+  "status": "complete"
+}
