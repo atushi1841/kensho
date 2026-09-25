@@ -813,7 +813,9 @@ def _persist_last_success_at() -> None:
             state = json.load(f)
         if not isinstance(state, dict):
             state = {}
-        state["last_success_at"] = datetime.now().isoformat(timespec="seconds")
+        # Only update last_success_at if login was successful
+        if state.get("login_ok", False):
+            state["last_success_at"] = datetime.now().isoformat(timespec="seconds")
         with open(GUMROAD_STATE, "w", encoding="utf-8") as f:
             json.dump(state, f, ensure_ascii=False, indent=2)
     except Exception as e:
