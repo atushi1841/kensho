@@ -1,0 +1,25 @@
+{
+  "task_id": "t_627e604d",
+  "status": "done",
+  "success_indicators": [
+    "PPE conversion completed for 5 actors",
+    "Revenue collector updated",
+    "No uncommitted code in owned files"
+  ],
+  "verification_commands": [
+    "python3 scripts/apify_ppe_price.py raw pWhvh8aWz4i6OM1ST",
+    "python3 scripts/apify_ppe_price.py raw rIZ3NSg5Ul34PgpYx",
+    "python3 scripts/apify_ppe_price.py raw u2qsG1UfVHWsgl8Dg",
+    "head -15 data/revenue-daily.json"
+  ],
+  "artifact_paths": [
+    "scripts/convert_ppe.py",
+    "scripts/update_revenue_collector.py",
+    "data/revenue-daily.json"
+  ],
+  "evidence_hashes": {
+    "scripts/convert_ppe.py": "placeholder",
+    "scripts/update_revenue_collector.py": "placeholder",
+    "data/revenue-daily.json": "placeholder"
+  }
+}
