@@ -346,6 +346,9 @@ except Exception:
 # ── Orphan run penalty (t_9ea4b148) ───────────────────────────────────────
 # When orphan runs exist (card deleted but run persists), apply penalty to drop score < 80.
 orphan_penalty = 0
+orphan_runs = 0
+stale_heartbeat_runs = 0
+running_without_pid = 0
 try:
     # Use --db flag for consistent DB resolution (matches deadlock guard approach)
     _dbp = os.environ.get("_LH_DB", "")
