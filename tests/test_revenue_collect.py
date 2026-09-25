@@ -793,6 +793,8 @@ class TestV94UnknownBilling:
     def _isolate(self, tmp_path: Any, monkeypatch: Any) -> None:
         monkeypatch.setattr(krc, "APIFY_PPE_CANDIDATES", [str(tmp_path / "absent.json")])
         monkeypatch.setattr(krc, "APIFY_PPE", str(tmp_path / "absent.json"))
+        # PRICING_CACHE も隔離（実キャッシュが混入すると unknown が 0 件になる）
+        monkeypatch.setattr(krc, "PRICING_CACHE", str(tmp_path / "apify_pricing_cache.json"))
 
     def test_collect_apify_marks_unknown(self, tmp_path: Any, monkeypatch: Any) -> None:
         stats = tmp_path / "stats.json"
