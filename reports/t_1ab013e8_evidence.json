@@ -1,0 +1,27 @@
+{
+  "success_indicators": [
+    "tests/test_revenue_collect.py の TestV94UnknownBilling 系が全緑（実測 13 passed / 51 deselected）",
+    "PRICING_CACHE の隔離が恒久化（実キャッシュ混入による actors_unknown=0 の恒常赤が消滅）",
+    "受入基準の actors_unknown==1 アサーション（line 811）が緑で維持",
+    "証跡レポート reports/t_1ab013e8_verification.md と evidence.json が git 追跡済み"
+  ],
+  "verification_commands": [
+    "$ /home/atushi/kensho-venv/bin/python -m pytest tests/test_revenue_collect.py -q -k 'V94 or UnknownBilling' => 13 passed, 51 deselected in 31.92s",
+    "$ git log -1 --format='%h %ad %s' --date=format:'%m-%d %H:%M' -- tests/test_revenue_collect.py => 8b5ab93 09-25 14:59 fix: TestV94UnknownBillingにPRICING_CACHE隔離追加（実キャッシュ混入でunknownが0件になる恒常赤テスト）",
+    "$ grep -n 'PRICING_CACHE' tests/test_revenue_collect.py | tail -2 => 796: # PRICING_CACHE も隔離（実キャッシュが混入すると unknown が 0 件になる） / 797: monkeypatch.setattr(krc, \"PRICING_CACHE\", str(tmp_path / \"apify_pricing_cache.json\"))",
+    "$ sha256sum tests/test_revenue_collect.py => bfa973912bb72c17d5775f7630f0cfeef322a8017bb4515008cefe42665c1637  tests/test_revenue_collect.py"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/tests/test_revenue_collect.py"
+  ],
+  "evidence_hashes": [
+    "bfa973912bb72c17d5775f7630f0cfeef322a8017bb4515008cefe42665c1637"
+  ],
+  "outcome": {
+    "metric": "tests/test_revenue_collect.py の V94/UnknownBilling 系の失敗数",
+    "before": 1,
+    "after": 0
+  },
+  "task_id": "t_1ab013e8",
+  "status": "complete"
+}
