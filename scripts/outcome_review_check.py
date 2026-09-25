@@ -19,8 +19,10 @@ _NUMERIC_KPI_RE = re.compile(r"[0-9]+\s*(%|％|件|本|回|円|B|GB|MB|KB|秒|�
 
 # 極性語彙: lower is better → 失敗/エラー/回数/秒/exit_code/残数 等
 _LOWER_IS_BETTER = re.compile(r"(失敗|エラー|回数|秒|exit_code|残数|miss|retry|login_attempt|goto_failed|connect_timeout|timeout)", re.I)
-# higher is better → 成功率/Score/AP/Value/Progress/Growth/Revenue/倍/点/件
-_HIGHER_IS_BETTER = re.compile(r"(成功率|Score|AP|Value|Progress|Growth|Revenue|倍|点|件|percent|Rate|RPU)", re.I)
+# higher is better → 成功率/Score/AP/Value/Progress/Growth/Revenue/倍/点
+_HIGHER_IS_BETTER = re.compile(r"(成功率|Score|AP|Value|Progress|Growth|Revenue|倍|点|percent|Rate|RPU)", re.I)
+# ※「件」は入れない: 「総件数」のように up=良 と言えない指標に誤爆し、偽の「悪化疑い」を作る
+#   （2026-09-25 t_e07dab2a のテスト実測: 総件数 10→5 が unknown であること）。
 # 単位：equal（変化なし）または決定不能
 
 
@@ -132,67 +134,53 @@ def auto_direction_from_metric(metric: str) -> str | None:
     return None
 
 
-def regressions(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """after < before のエントリ（悪化疑い）を返す。
+def partition_outcomes(
+    entries: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """数値KPIエントリを「悪化疑い」と「方向未宣言」に**単一規則**で振り分ける。
 
-    direction フィールドが宣言されている場合はその方向に従って判定する。
-    - direction="down" : lower is better → after > before が「悪化」
-    - direction="up"   : higher is better → after < before が「悪化」
-    - direction="equal" / 未宣言 : 方向未宣言バケットには含めず（別で追跡）。
+    audit_task / regressions / 表示側が別々に規則を持つと乖離するため、判定はここに一元化する
+    （t_e07dab2a 仕様・2026-09-25）。
 
-    ===== 改善点 ======
-    1. direction 未宣言のエントリは回帰から除外し、「方向未宣言」バケットに別途保持。
-       方向は metric 名から自動補完（lower/higher is better）。
-    2. 新規回帰テスト: (a) lower is better 指標の after > before は悪化、(b) higher is better
-       指標の after < before は悪化、(c) direction 未宣言の下降は回帰から除外。
-    3. 新規バケット: direction 未宣言の下降（after < before）は regressed から除外し、別途の
-       「方向未宣言」バケットに配置。方向補完後も未決定の場合はこれに分類。
+    - direction="down"（lower is better）: after > before が悪化
+    - direction="up"  （higher is better）: after < before が悪化
+    - direction="equal": どちらにも入れない（数値の上下なし）
+    - direction 未宣言: metric 名の極性語彙で自動補完し、補完できた場合のみ悪化判定。
+      補完できない（未知の指標）は「方向未宣言」へ ＝ after<before でも悪化として数えない
+      （偽陽性 28/28 の根因だった「未宣言の下降を悪化扱い」をしない）。
     """
     regressed: list[dict[str, Any]] = []
-    direction_undeclared: list[dict[str, Any]] = []
-    
+    undeclared: list[dict[str, Any]] = []
+
     for e in entries:
         b, a = e.get("before"), e.get("after")
         if not isinstance(b, (int, float)) or isinstance(b, bool):
             continue
         if not isinstance(a, (int, float)) or isinstance(a, bool):
             continue
-        
+
         direction = e.get("direction")
+        if direction == "equal":
+            continue
+        if direction not in ("up", "down"):
+            # 未宣言 or 未知の direction 値 → metric 名から自動補完
+            direction = auto_direction_from_metric(str(e.get("metric", "")).lower())
+
         if direction == "down":
             if a > b:
                 regressed.append(e)
         elif direction == "up":
             if a < b:
                 regressed.append(e)
-        elif direction == "equal":
-            continue
-        elif direction is None:
-            # direction 未宣言のエントリ
-            # metric 名から自動補完を試み、補完後も方向が未決定の場合は
-            # direction 未宣言のバケットに配置し、regressed には含めない。
-            metric = str(e.get("metric", "")).lower()
-            auto_dir = auto_direction_from_metric(metric)
-            if auto_dir == "down" and a > b:
-                regressed.append(e)
-            elif auto_dir == "up" and a < b:
-                regressed.append(e)
-            else:
-                # direction 未宣言の下降は direction_undeclared に保持
-                direction_undeclared.append(e)
         else:
-            # 未知の direction 値 -> 未宣言として扱う
-            metric = str(e.get("metric", "")).lower()
-            auto_dir = auto_direction_from_metric(metric)
-            if auto_dir == "down" and a > b:
-                regressed.append(e)
-            elif auto_dir == "up" and a < b:
-                regressed.append(e)
-            else:
-                direction_undeclared.append(e)
-    
-    # regressions 関数は回帰のみを返す。direction_undeclared は呼び出し元で別途処理。
-    return regressed
+            undeclared.append(e)
+
+    return regressed, undeclared
+
+
+def regressions(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """「悪化疑い」のみを返す（partition_outcomes の後方互換ラッパ）。"""
+    return partition_outcomes(entries)[0]
 
 
 def direction_label(before: Any, after: Any) -> str | None:
@@ -291,17 +279,8 @@ def audit_task(task: dict[str, Any], reports_dir: Path) -> dict[str, Any]:
 
     state = classify(evidence_text, evidence_data)
     entries = state.get("entries") or []
-    regressed = regressions(entries)
-    
-    # direction_undeclared エントリを抽出
-    direction_undeclared = []
-    for e in entries:
-        if e.get("direction") is None:
-            metric = str(e.get("metric", "")).lower()
-            if auto_direction_from_metric(metric) is None:
-                b, a = e.get("before"), e.get("after")
-                if isinstance(b, (int, float)) and isinstance(a, (int, float)):
-                    direction_undeclared.append(e)
+    # 判定は partition_outcomes に一元化（悪化疑いと方向未宣言が別規則で乖離しないように）
+    regressed, direction_undeclared = partition_outcomes(entries)
 
     return {
         "id": tid,
@@ -369,7 +348,18 @@ def render_markdown(summary: dict[str, Any]) -> str:
         f"- 実測確認率: {rate_txt}（目標>{summary['target_rate']:.0f}%）"
         f" → {'達成' if summary['target_met'] else '未達'}",
     ]
-    
+
+    # 実測済みタスク（主内容）を警告より先に置く。各エントリに (方向: up/down/equal) を付ける。
+    # 表示順は 実測済み → 警告 → 未実測。順序に依存するテスト（方向付与の全件検査）がこの前提。
+    if summary["measured"]:
+        lines.append("- 実測済みタスク:")
+        for r in summary["measured"][:10]:
+            if r["outcome"]:
+                detail = ", ".join(format_outcome_entry(e) for e in r["outcome"])
+            else:
+                detail = "検証セクションに before→after 記載"
+            lines.append(f"  - `{r['id']}` {detail}")
+
     # regressed + direction_undeclared をまとめて表示
     total_warnings = c.get("regressed", 0) + c.get("direction_undeclared", 0)
     if total_warnings > 0:
@@ -394,15 +384,6 @@ def render_markdown(summary: dict[str, Any]) -> str:
         lines.append("- 未実測タスク（before/after の数値を追記してクローズすること）:")
         for r in summary["missing"][:10]:
             lines.append(f"  - `{r['id']}` {r['title'][:60]}（{r['assignee']}）")
-    
-    if summary["measured"]:
-        lines.append("- 実測済みタスク:")
-        for r in summary["measured"][:10]:
-            if r["outcome"]:
-                detail = ", ".join(format_outcome_entry(e) for e in r["outcome"])
-            else:
-                detail = "検証セクションに before→after 記載"
-            lines.append(f"  - `{r['id']}` {detail}")
     
     return "\n".join(lines)
 

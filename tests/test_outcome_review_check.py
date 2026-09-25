@@ -79,12 +79,20 @@ def test_classify_incomplete_outcome_is_missing() -> None:
     assert st["status"] == "missing"
 
 
-def test_regressions_detects_after_lower_than_before() -> None:
+def test_regressions_excludes_unknown_direction_even_when_after_is_lower() -> None:
+    """方向が判定できない指標（A/B）は after<before でも「悪化疑い」に含めない。
+
+    t_e07dab2a 仕様: direction 未宣言かつ極性語彙で自動補完できない指標は
+    「方向未宣言」バケットへ分離する（偽陽性 28/28 の根因を残さない）。
+    """
     entries = [
         {"metric": "A", "before": 10, "after": 5},
         {"metric": "B", "before": 5, "after": 10},
     ]
-    assert [e["metric"] for e in mod.regressions(entries)] == ["A"]
+    assert mod.regressions(entries) == []
+    # 方向未宣言バケットには入る（捨てない）
+    _, undeclared = mod.partition_outcomes(entries)
+    assert {e["metric"] for e in undeclared} == {"A", "B"}
 
 
 def test_regressions_excludes_direction_undeclared_when_metric_is_down_is_better() -> None:

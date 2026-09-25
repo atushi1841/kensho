@@ -71,21 +71,38 @@ def _run_loop_health() -> tuple[dict[str, Any], int]:
     編集途中の parser error で exit 1 になる場合でも、stdout を JSON として
     解釈しようとします（ValidationError になるかもしれません）。これは report
     で検出される silent failure をカバーするためのガードレールです。
+
+    共有ファイル注意（2026-09-25 実測）: loop_health.sh は他カード（t_54681c2f 等）が
+    同時編集しうるため、書き込み途中のファイルを bash が読むと stdout が非 JSON になる。
+    偽の赤を避けるため、パース失敗時は 1 回だけ再実行する（恒久破損なら 2 回目も失敗する）。
     """
-    result = subprocess.run(
-        ["bash", str(LOOP_HEALTH)],
-        capture_output=True,
-        text=True,
-        timeout=180,
+    last_error = ""
+    last_rc = 1
+    last_stdout = ""
+    last_stderr = ""
+    for attempt in range(2):
+        result = subprocess.run(
+            ["bash", str(LOOP_HEALTH)],
+            capture_output=True,
+            text=True,
+            timeout=180,
+        )
+        try:
+            return json.loads(result.stdout), result.returncode
+        except json.JSONDecodeError as e:
+            last_error = str(e)
+            last_rc = result.returncode
+            last_stdout = result.stdout
+            last_stderr = result.stderr
+            if attempt == 0:
+                time.sleep(3)
+    # 期待：report3本で parse_error を検知できる状態です。
+    # ここで 0 ではなくエラーを発生させるのは、full.json ゲートによる
+    # 静的検証をすり抜けて silent になるのを防ぐためです。
+    raise AssertionError(
+        f"loop_health JSON パース失敗 (exit {last_rc}): {last_error}"
+        f" / stdout先頭={last_stdout[:200]!r} / stderr先頭={last_stderr[:200]!r}"
     )
-    # 正常 JSON は stdout に出力されます（分析失敗の break-out でも構いません）。
-    try:
-        return json.loads(result.stdout), result.returncode
-    except json.JSONDecodeError:
-        # 期待：report3本で parse_error を検知できる状態です。
-        # ここで 0 ではなくエラーを発生させるのは、full.json ゲートによる
-        # 静的検証をすり抜けて silent になるのを防ぐためです。
-        raise AssertionError(f"loop_health JSON パース失敗 (exit {result.returncode}) - report での {analysis_failed} を確認してください")
 
 
 def test_loop_health_json_contract() -> None:
@@ -295,6 +312,7 @@ def test_reports_health_degraded_transform() -> None:
                         tf.write(content)
                         tf_path = tf.name
 
+                    tmp_script_dir: Path | None = None  # finally での cwd 復帰/削除に備えて事前初期化
                     try:
                         # 変数を export し、tmp バージョンを隣接する tmp_loop_health.sh にコピーします。
                         import os
@@ -389,7 +407,20 @@ def test_reports_health_degraded_transform() -> None:
                             del os.environ["REPORT_PATH"]
                         import shutil
 
-                        shutil.rmtree(tmp_script_dir, ignore_errors=True)
+                        # cwd が削除対象ディレクトリのままだと、以降のテストが os.getcwd() や
+                        # 相対パス解決で FileNotFoundError になる（2026-09-25 実測: 本テストの後に
+                        # 走る test_safe_write::test_write_with_stdin と
+                        # test_self_heal::test_state_file_is_anchored_to_project_dir が連鎖赤）。
+                        # rmtree の前に必ずリポジトリ直下へ戻す。
+                        try:
+                            os.chdir(REPO_ROOT)
+                        except OSError:
+                            pass
+                        try:
+                            if tmp_script_dir is not None:
+                                shutil.rmtree(tmp_script_dir, ignore_errors=True)
+                        except NameError:  # mkdtemp 前に例外が起きた場合
+                            pass
         except Exception as e:
             # report が期待通りに失敗した場合 -> エラーを発生させません。
             # ただし、おそらく transform check を完了できない場合は出力をログします。
