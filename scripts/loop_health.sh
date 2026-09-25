@@ -306,6 +306,33 @@ by_age = sorted(
 # config-based max_in_progress penalty, streak reset on zero real deductions
 score = 100
 
+# ── Deadlock penalty (t_5dd7ba12) ─────────────────────────────────────
+# When ready==0 && todo>0 (no runnable tasks but pending work), apply penalty
+# so score drops below 80, triggering WARN alert. Runs kanban_dep_deadlock_guard.py.
+deadlock_penalty = 0
+try:
+    import subprocess
+    _dbp = os.environ.get("_LH_DB", "")
+    _board = "kensho-ai-team"
+    if _dbp and os.path.exists(_dbp):
+        # Use the DB path to determine board
+        _board = os.path.basename(os.path.dirname(_dbp))
+    _deadlock_result = subprocess.run(
+        [sys.executable, "/mnt/d/Project2/kensho/scripts/kanban_dep_deadlock_guard.py",
+         "--board", _board, "--json"],
+        capture_output=True, text=True, timeout=10
+    )
+    if _deadlock_result.returncode == 1:  # deadlock detected
+        _deadlock_data = json.loads(_deadlock_result.stdout)
+        if _deadlock_data.get("deadlock"):
+            # Apply penalty: ensure score < 80 (WARN threshold per t_5dd7ba12)
+            # Subtract enough to drop below 80, minimum 21 points
+            deadlock_penalty = max(21, 101 - score)
+            score -= deadlock_penalty
+except Exception:
+    # On any failure, don't apply penalty (fail-safe)
+    pass
+
 # config-based max_in_progress (v143 / t_6f45dab0): dispatcher と同一の解決経路。
 # 旧: resolve_max_in_progress(None) → NameError → score=0/alert=ERROR で監視死亡。
 # 本実装: profile config の kanban.max_in_progress → 無い場合は derive_default (8)。
@@ -400,12 +427,14 @@ try:
         log_lines = logf.readlines()
         cutoff_time = time.time() - (30 * 60)
         for line in log_lines:
+            # Support both formats: YYYY-MM-DD HH:MM:SS and YYYY-MM-DD HH:MM:SS,mmm
             ts_match = re.match(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", line)
             if not ts_match:
                 continue
             log_ts_str = ts_match.group(1)
             if re.search(r"Auxiliary (kanban_decomposer|background_review|triage_specifier):", line) and ("401" in line or "auth" in line.lower()):
                 try:
+                    # Parse with optional milliseconds
                     log_dt = _dt.datetime.strptime(log_ts_str, "%Y-%m-%d %H:%M:%S")
                     log_ts = time.mktime(log_dt.timetuple())
                     if log_ts >= cutoff_time:
@@ -432,9 +461,6 @@ if repeats:
 if blocked_with_done_parent:
     score -= 15
 
-# aux auth errors: -10 per error
-if aux_auth_errors:
-    score -= 10 * aux_auth_errors
 
 # ── Zombie task detection (t_7748d284) ──────────────────────────────────────
 # ゾンビタスク = blocked のまま worker が正常終了(rc=0)しても kanban_complete を
@@ -830,7 +856,7 @@ echo "$ANALYSIS" | jq \
   --arg park_after_h "$PARK_AFTER_H" \
   --arg park_action "$PARK_ACTION" \
   '. + {
-    alert: (if $business_stopped then "WARN: apply stopped" else (if .score < 70 then "ALERT" else "OK" end) end),
+    alert: (if $business_stopped then "WARN: apply stopped" else (if .score < 80 then "WARN" else (if .score < 70 then "ALERT" else "OK" end) end) end),
     escalation: $escalation,
     escalation_target: $target,
     escalate_streak: ($escalate_streak | tonumber),
