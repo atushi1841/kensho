@@ -19,5 +19,9 @@
   "artifact_paths": [
     "/mnt/d/Project2/kensho/tests/test_gen_status_proxy_time_filter.py"
   ],
-  "evidence_hashes": []
+  "evidence_hashes": [
+    "b09a24d3cdcd19d0eb2776dd4831eee2030d81f598e9e1e32891a781bcf2a5cb",
+    "908fb8a3cdf82be8ba14272d8424b93aeb32510daa63a3b94bb1b33918dc216d",
+    "1a3f5e2e38801f67739a3f2f261daf86f723904842c5e05ccd56946f3eb8a989"
+  ]
 }
