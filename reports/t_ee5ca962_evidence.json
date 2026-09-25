@@ -1,0 +1,31 @@
+{
+  "task_id": "t_ee5ca962",
+  "success_indicators": [
+    "node gumroad_sales_collect.js: elapsed=40s / exit=0（修正前は240s打ち切り）",
+    "Python wrapper update_gumroad_state_via_cdp() が True（修正前 False / timeout-mark）",
+    "data/gumroad_state.json: login_ok=true / sales_page_ok=true / collected_at=2026-09-25T13:14:25.869",
+    "本番collector(kensho_revenue_collect.py) exit=0 / timeout-mark 0件（修正前 07:11・13:05 の2件）",
+    "C:\\temp\\gumroad-cdp-* の残留なし（profiles_before=30 → profiles_after=30）"
+  ],
+  "verification_commands": [
+    "$ \"/mnt/c/Program Files/nodejs/node.exe\" \"D:\\Project2\\kensho\\scripts\\gumroad_sales_collect.js\" => elapsed=40s exit=0 profiles_before=30 profiles_after=30",
+    "$ python3 -c \"import sys,time;sys.path.insert(0,'scripts');import kensho_revenue_collect as k;t=time.time();ok=k.update_gumroad_state_via_cdp();print(ok,'%.1fs'%(time.time()-t))\" => True 42.0s",
+    "$ python3 scripts/kensho_revenue_collect.py => collector exit=0 elapsed=178s / timeout-mark count: 0 / Cookie注入: 42/42"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/gumroad_sales_collect.js",
+    "/mnt/d/Project2/kensho/data/gumroad_state.json",
+    "/mnt/d/Project2/kensho/reports/t_ee5ca962_verification.md",
+    "/mnt/d/Project2/kensho/revenue-status.html"
+  ],
+  "evidence_hashes": [
+    "740d9f35eb17f9f1cf32746d7d431aa5b7794417297db6a004c04410ac288995",
+    "a206b42037a0894db7641e65db28ee4f3255064a9ee56ed0c024b77b7efdea55"
+  ],
+  "outcome": {
+    "metric": "gumroad_leg_seconds",
+    "before": 240,
+    "after": 42
+  },
+  "status": "complete"
+}

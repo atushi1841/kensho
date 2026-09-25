@@ -62,7 +62,10 @@ async function ensureChrome() {
       '--disable-gpu',
       '--window-size=1280,900',
       'about:blank',
-    ], { windowsHide: true, detached: true }, () => {});
+    // stdio:'ignore' — Chrome に親の stdout/stderr パイプを継承させない。
+    // 継承すると node 終了後も Python の subprocess(capture_output=True) が EOF を待ち、
+    // 240s timeout に化ける（実測 2026-09-25 / t_ee5ca962）。
+    ], { windowsHide: true, detached: true, stdio: 'ignore' }, () => {});
   } catch(e) {
     console.log('Chrome起動失敗: ' + e.message);
   }
@@ -198,13 +201,24 @@ async function main() {
   console.log('保存:', STATE_FILE);
   console.log(JSON.stringify(state, null, 2));
 
-  ws.close();
-  console.log('完了');
   // 起動したChromeを閉じ、ユニークプロファイルを後始末（ベストエフォート）
-  try { await send('Browser.close'); } catch(e) {}
-  setTimeout(() => {
+  // NOTE (t_ee5ca962): 旧実装は ws.close() → await send('Browser.close') の順で、
+  // ①WSを閉じてから応答を待つため await が永久に解決しない ②起動Chrome(detached・unref無し)が
+  // イベントループを生かし続ける、の二重で node が自力終了せず毎回240sで打ち切られていた
+  // （日次レポートに虚偽の timeout-mark、C:\temp\gumroad-cdp-* も後始末されず蓄積）。
+  // → Browser.close は「送信のみ」(応答待ちなし) とし、後始末後に process.exit(0) で明示終了する。
+  try { ws.send(JSON.stringify({ id: ++id, method: 'Browser.close', params: {} })); } catch(e) {}
+  try { ws.close(); } catch(e) {}
+  // プロファイル後始末: WindowsはChromeのファイルハンドル解放に数秒かかる。
+  // force:true 1回では EBUSY で消え残る（実測 2026-09-25: 13:11 run が dir を残留/累積30件）ため
+  // 最大5秒までリトライし、消えた時点で抜ける（本体の時限240sには十分収まる）。
+  for (let i = 0; i < 10; i++) {
     try { fs.rmSync(CHROME_PROFILE, { recursive: true, force: true }); } catch(e) {}
-  }, 2000);
+    if (!fs.existsSync(CHROME_PROFILE)) break;
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  console.log('完了');
+  process.exit(0);
 }
 
 main().catch((e) => { console.error('FATAL:', e.message); process.exit(1); });
