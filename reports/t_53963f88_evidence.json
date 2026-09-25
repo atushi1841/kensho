@@ -7,6 +7,7 @@
     "mypy --strict 0 error"
   ],
   "verification_commands": [
+    "$ git log --oneline -2 => 9525485 t_53963f88: 機械可読エビデンス / 978c92e t_53963f88: Gumroad Cookieファイル消失の起動前自動復旧ガード",
     "$ python3 -m pytest tests/test_gumroad_cookies_guard.py -q -p no:cacheprovider --no-cov => 11 passed in 16.08s",
     "$ python3 scripts/gumroad_cookies_guard.py => cookies-mark OK: 一次ファイル有効（42件） / exit=0",
     "$ python3 scripts/gumroad_cookies_guard.py --cookies tmp/gumroad_cookies.json --backup tmp/gumroad_cookies_backup.json => 1回目 cookies-mark RESTORED: バックアップから復元（7件 / 元の状態: ファイルなし） exit=0",
@@ -25,7 +26,7 @@
   "evidence_hashes": [
     "6ce17cc80466d59ff808ca7515b1c2d81fd428c7dedd9ed0e734a81fcfd55473",
     "2d47aeabaa1e868777842b920f440dc76d80e57ae028cf8e71f2c8d3069901cd",
-    "e9b9874078bb632d7078cfa73020239d90189e5f008cb2b2c0c2db5661ab53f6"
+    "972baba32fd12c8d3673dc202aa79c734a853f41c4a6ec7df18888d4d9624bfa"
   ],
   "outcome": {
     "metric": "Gumroad Cookieファイル消失時に自動復元できるか（実測ケース数）",

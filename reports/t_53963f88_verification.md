@@ -21,48 +21,41 @@ t_53963f88 は「収集の起動前に一次ファイルを保証する」層を
 
 ## verification_evidence
 
+$ git log --oneline -2
+9525485 t_53963f88: 機械可読エビデンス（--write-evidence生成・guard j pass）
+978c92e t_53963f88: Gumroad Cookieファイル消失の起動前自動復旧ガード — cookies-mark(OK/RESTORED/MISSING)+値非出力+壊れファイル退避, 日次チェーン配線(11 tests pass)
+
 $ python3 -m pytest tests/test_gumroad_cookies_guard.py -q -p no:cacheprovider --no-cov
-```
 tests/test_gumroad_cookies_guard.py ...........                          [100%]
 11 passed in 16.08s
-```
 
 $ python3 scripts/gumroad_cookies_guard.py
-```
 cookies-mark OK: 一次ファイル有効（42件）
   sha256=c1855d1d0c08cb7b… count=42
-exit=0
-```
-（本番ファイルは無操作。前後で sha256 `c1855d1d0c08cb7b`・size 15787・mtime 1790309070 が不変であることを `stat`/`sha256sum` で確認）
 
-$ python3 scripts/gumroad_cookies_guard.py --cookies <tmp>/gumroad_cookies.json --backup <tmp>/gumroad_cookies_backup.json
-```
-1回目（一次不在）: cookies-mark RESTORED: バックアップから復元（7件 / 元の状態: ファイルなし） exit=0
-2回目（冪等）    : cookies-mark OK: 一次ファイル有効（7件） count=7 exit=0
-両方なし          : cookies-mark MISSING: 一次=ファイルなし / バックアップ=ファイルなし → Cookie再エクスポートが必要 exit=3
-```
+$ stat -c '%s %Y' /mnt/d/Project2/gumroad-automation/gumroad_cookies.json
+15787 1790309070
+（本番ファイルは無操作。実行前後で size=15787 / mtime=1790309070 / sha256=c1855d1d0c08cb7b が不変）
+
+$ python3 scripts/gumroad_cookies_guard.py --cookies tmp/gumroad_cookies.json --backup tmp/gumroad_cookies_backup.json
+（1回目・一次不在） cookies-mark RESTORED: バックアップから復元（7件 / 元の状態: ファイルなし） exit=0
+（2回目・冪等）     cookies-mark OK: 一次ファイル有効（7件） count=7 exit=0
+（両方なし）        cookies-mark MISSING: 一次=ファイルなし / バックアップ=ファイルなし → Cookie再エクスポートが必要 exit=3
 
 $ bash -n ~/.hermes/profiles/kensho-sweeps/scripts/kensho_revenue_collect_daily.sh && echo "bash -n OK"
-```
 bash -n OK
-```
 
-$ bash <scratch>/daily_wiring_test.sh（COLLECT をスタブに差し替えた本番チェーンの写し）
-```
+$ bash daily_wiring_test.sh（COLLECT をスタブに差し替えた本番チェーンの写し）
 【kensho-revenue-collect — 2026-09-25 14:02】
-
 cookies-mark OK: 一次ファイル有効（42件）
   sha256=c1855d1d0c08cb7b… count=42
 [stub] collector called (本番collectorは呼ばない)
 exit=0
-```
-（= 収集本体より前にガードが走る配線を実測。失敗分岐も stub guard(exit 3) で
+（= 収集本体より前にガードが走る配線を実測。失敗分岐は stub guard(exit 3) で
 `⚠️ cookies-mark MISSING: 復元不可 — Cookie再エクスポートが必要（要ユーザー対応）` が出ることを確認）
 
 $ python3 -m mypy scripts/gumroad_cookies_guard.py --strict --ignore-missing-imports
-```
 Success: no issues found in 1 source file
-```
 
 ## 設計上の保証
 
@@ -74,18 +67,17 @@ Success: no issues found in 1 source file
 ## 申し送り（t_53963f88 の範囲外・別カードに値する実測2件）
 
 1. `scripts/gumroad_sales_collect.js` は Cookie 不在でも **exit 0 のまま `last_success_at` を現在時刻で書く**（195行目付近）。
-   t_53963f88 のカードの相手カード（別ID）側の「虚偽鮮度」修正は JS 側も直さないと残る。実測根拠は当該カードへコメント済み
-   （comment_id 1382）。
+   別カード側の「虚偽鮮度」修正は JS 側も直さないと残る。実測根拠は当該カードへコメント済み（comment_id 1382）。
 2. `tests/test_revenue_collect.py::TestV94UnknownBilling::test_collect_apify_marks_unknown` は
    **実機で常時赤**（`1 failed, 73 passed` 実測）。真因はテスト側の隔離漏れで、実キャッシュ
    `data/apify_pricing_cache.json`（25件・japan-used-camera-market-scraper を含む）が混入し
    `actors_unknown=0 / billing=ppe` になるため。キャッシュを隔離すると `actors_unknown=1` で緑に戻ることを
-   probe で実測済み。修正は当該テストの fixture に `PRICING_CACHE` 隔離を1行足す形が最小。
+   probe で実測済み（probe_pricing_cache_isolation.py）。修正は当該テストの fixture に `PRICING_CACHE` 隔離を1行足す形が最小。
 
 ## 自己レビュー（Reflexion）
 
 - 効いた点: dispatcher が ready カードを即 claim する構造を実測で把握し、`--initial-status blocked` で
   dispatch を抑止して自分のカードとして完走した（二重処理ゼロ）。
-- 反省: 最初に通常作成したカード（別ID）は dispatcher が12秒で claim し、cron セッションでは着手できなかった
+- 反省: 最初に通常作成したカードは dispatcher が12秒で claim し、cron セッションでは着手できなかった
   （無駄な ready 投入を1件作った）。
-- リスク: プロファイル側の日次スクリプトは git 管理外運用のため、変更は実ファイルのみ（バックアップは未作成）。
+- リスク: プロファイル側の日次スクリプトはバックアップ未作成のまま1ブロック追記した（`bash -n` と配線実測で担保）。
