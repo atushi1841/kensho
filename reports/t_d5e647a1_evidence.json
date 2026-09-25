@@ -1,0 +1,38 @@
+{
+  "task_id": "t_d5e647a1",
+  "success_indicators": [
+    "401/HTTP失敗時の偽成功報告率 before=100% → after=0%（旧=[SUCCESS] ID=0 / 新=[FAIL]＋rc≠0）",
+    "Api-Key ヘッダに生キーが載る率 before=0%（マスク21文字送信）→ after=100%（生キー24文字）",
+    "公開済み記事の二重投稿ガード before=0件 → after=1件検出（.published.json の [SKIP] 実測）",
+    "終了コード契約 0=公開成功 / 1=公開失敗 / 2=キー無効 / 3=未公開候補0件 を導入（旧=常に0）",
+    "pytest tests/test_devto_weekly_pipeline.py = 16 passed"
+  ],
+  "verification_commands": [
+    "$ python3 -m pytest tests/test_devto_weekly_pipeline.py -q => tests/test_devto_weekly_pipeline.py ................  [100%] / 16 passed in 9.02s",
+    "$ PATH=<stub401plain> python3 devto_weekly_pipeline.py.bak-t_d5e647a1 => [SUCCESS] Published article ID=0: How to Scrape Mercari Japan in 2026 ... / rc=0（旧コードの偽成功を再現）",
+    "$ python3 -c 'old.load_api_key()' => BEFORE old.load_api_key(): len=21 値='abcd...[REDACTED]ef01'（24文字キーでもマスク値を返す）",
+    "$ python3 -c 'new.load_api_key()' => AFTER new.load_api_key(): len=24 valid_format=True（生キー）",
+    "$ DEVTO_ENV_FILE=<24文字> PATH=<stub401> python3 devto_weekly_pipeline.py => [FAIL] dev.to API 認証エラー HTTP 401 / rc=1 / 送信Api-Key長: 24 形式: True",
+    "$ DEVTO_BLOG_DIR=<blog200> PATH=<stub200> python3 devto_weekly_pipeline.py => [SUCCESS] Published article ID=888001 / [VERIFY] Article confirmed live (HTTP 200, id=888001) / rc=0",
+    "$ python3 devto_weekly_pipeline.py (本番相当) => [SKIP] already published: devto-mercari-japan-scraper.md (id=4606013) / rc=3",
+    "$ curl -s -o /dev/null -w '%{http_code}' -H 'Api-Key: <現行値>' https://dev.to/api/articles/me => 401",
+    "$ curl -s -o /dev/null -w '%{http_code}' https://dev.to/api/articles/4606013 => 200",
+    "$ md5sum devto_weekly_pipeline.py ~/.hermes/profiles/kensho-sweeps/scripts/devto_weekly_pipeline.py => e4e866609ffd22beee478dadf7c28f5c（両者一致）"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/devto_weekly_pipeline.py",
+    "/mnt/d/Project2/kensho/tests/test_devto_weekly_pipeline.py",
+    "/mnt/d/Project2/kensho/reports/t_d5e647a1_verification.md"
+  ],
+  "evidence_hashes": [
+    "a3b66590ea105bfac96cc2509d07b808d8c055dab59ba81a12b8d01a21415504",
+    "e50984a4029b0515011c7a39655997aed6153afd8f2c2e4151b3d165e4ec24f6",
+    "937e815a77c5acff74786a807815a89860064e4d56d03cbcd0fda04369b7300f"
+  ],
+  "outcome": {
+    "metric": "401/HTTP失敗時の偽成功報告率(%)",
+    "before": 100,
+    "after": 0
+  },
+  "status": "complete"
+}
