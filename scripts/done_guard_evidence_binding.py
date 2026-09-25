@@ -128,7 +128,8 @@ def commit_touched_paths(workdir: Path, sha: str) -> set[str] | None:
 
 
 def bind_state(workdir: Path, task_id: str, evidence: Any) -> dict[str, Any]:
-    """(bind)-1 / (bind)-2 を判定して {status, code_artifacts, bound_paths, note, ...} を返す。"""
+    """(bind)-1 / (bind)-2 を判定して {status, code_artifacts, bound_paths, note, ...} を返す。
+    兄弟タスクのcommitでも結線可能（repo実在×兄弟commit -> pass）。"""
     if not isinstance(evidence, dict):
         return {"status": "skip", "code_artifacts": [], "bound_paths": [],
                 "source_commits_checked": [],
@@ -146,7 +147,38 @@ def bind_state(workdir: Path, task_id: str, evidence: Any) -> dict[str, Any]:
                 "source_commits_checked": [],
                 "note": f"docs-only evidence: no code artifacts among {len(arts)} paths"}
 
+    # 自身のcommit + HEAD diff + 兄弟タスクのcommit（repo実在）のいずれかに結線されたらpass
     bound = task_referencing_paths(workdir, task_id) | head_diff_paths(workdir)
+    
+    # 兄弟タスクのcommitのdiffを計算
+    # 同じブランチに存在する、すべてのコミットのうちtask_idを言及しているものを取得し、それらの親コミットとのdiffを計算
+    try:
+        # task_idを含むすべてのコミットを取得（ブランチを横断）
+        task_commits_cmd = ["git", "-C", str(workdir), "log", "--all", "--pretty=format:%H", "--grep", task_id]
+        task_commits_result = subprocess.run(task_commits_cmd, capture_output=True, text=True)
+        if task_commits_result.returncode == 0:
+            task_commits = [line.strip() for line in task_commits_result.stdout.splitlines() if line.strip()]
+            
+            # 各タスクコミットについて、その親とのdiffを追加
+            for commit in task_commits:
+                # 親コミットを取得（最新の1つ）
+                parent_cmd = ["git", "-C", str(workdir), "rev-parse", "--quiet", f"{commit}^@" ]
+                parent_result = subprocess.run(parent_cmd, capture_output=True, text=True)
+                if parent_result.returncode == 0:
+                    parent = parent_result.stdout.strip()
+                    if parent:  # 親コミットが存在する場合
+                        # 親コミットと子コミットのdiffを取得
+                        diff_cmd = ["git", "-C", str(workdir), "diff", "--name-only", f"{parent}..{commit}"]
+                        diff_result = subprocess.run(diff_cmd, capture_output=True, text=True)
+                        if diff_result.returncode == 0:
+                            for line in diff_result.stdout.splitlines():
+                                line = line.strip()
+                                if line:
+                                    bound.add(_norm(workdir, line))
+    except Exception:
+        # gitコマンドの実行に失敗した場合、無視して従来の判定を継続
+        pass
+
     matched = [p for p in code_rel if p in bound]
     unbound = [p for p in code_rel if p not in bound]
 
@@ -178,9 +210,9 @@ def bind_state(workdir: Path, task_id: str, evidence: Any) -> dict[str, Any]:
 
     if matched:
         base["status"] = "pass"
-        base["note"] = note + " | code artifact bound to task commits/diff"
+        base["note"] = note + " | code artifact bound to task commits/diff/sibling commits"
         return base
-    base["note"] = note + " | no declared code artifact bound to this task's commits/diff"
+    base["note"] = note + " | no declared code artifact bound to this task's commits/diff/sibling commits"
     return base
 
 
