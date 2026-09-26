@@ -78,14 +78,20 @@ def fetch_knshow_listing(
     *,
     out: Callable[[str], None] | None = None,
     browser_fetcher: Callable[[str], tuple[int, str] | None] | None = None,
+    referer: str | None = None,
 ) -> tuple[int, str, str, str]:
     """一覧取得（リトライ付き）+ ボットチャレンジ時のみ実ブラウザフォールバック（t_c0e0563d）。
 
     戻り値 (code, html, final_url, kind)。kind は ok / origin_outage / bot_challenge /
     unknown / browser_ok。ブラウザ経路の失敗（patchright 不在・起動不能・タイムアウト）は
     fail-open: 従来 httpx 経路の失敗結果をそのまま返し、収集全体は止めない。
+
+    ★ t_686afe68: referer を BASE_URL/twitter に固定して渡す（従来は scrapling デフォルトの
+      https://www.google.com/ が使われていた）。knshow.com は referer チェックで 502 を返す
+      型の Protection があり、同一 run 内で 502→リトライ→502 の死ループが起きていた。
+      referer=BASE_URL/twitter に設定することで 200 が返る cases へ移行する（実測 9/25 12run）。
     """
-    code, html, final_url = fetch_listing_with_retry(fetcher, url, out=out)
+    code, html, final_url = fetch_listing_with_retry(fetcher, url, out=out, referer=referer)
     if code == 200:
         return code, html, final_url, KNSHOW_OK
     kind: str = classify_knshow_failure(code, html)
@@ -114,17 +120,22 @@ def fetch_listing_with_retry(
     url: str,
     *,
     out: Callable[[str], None] | None = None,
+    referer: str | None = None,
 ) -> tuple[int, str, str]:
     """knshow 一覧ページ単位の指数バックオフリトライ（kenkaku v144移植 / critic t_18ecf0a5）。
 
     scrapeモード別fetcher（scrapling/proxy/fetch等）を包む。HTTP 5xx(502含む)/ネットワーク例外
     のみ 3アテンプトまでリトライ（バックオフ 3,6 → 10sキャップ）。非5xx(404等)は即スキップ。
     最終失敗コードを返し、成功/失敗の判定とヘルス記録は呼出側（collector Step1）が担う。
+
+    ★ t_686afe68: referer を fetcher に渡す（scrapling_fetch は referer ヘッダーを設定する）。
+      従来は scrapling デフォルトの https://www.google.com/ が使われていたが、knshow.com は
+      referer チェックで 502 を返す Protection を持つため、BASE_URL/twitter への固定が必要。
     """
     code, html, final_url = 0, "", ""
     for attempt in range(_KNSHOW_MAX_TRIES):
         try:
-            code, html, final_url = fetcher(url)
+            code, html, final_url = fetcher(url, referer=referer) if referer is not None else fetcher(url)
         except Exception:  # noqa: BLE001 — ConnectTimeout/ReadTimeout等はリトライ対象
             code, html, final_url = 0, "", ""
         if code != 0 and code < 500:

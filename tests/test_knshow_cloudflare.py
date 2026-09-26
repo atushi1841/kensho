@@ -217,6 +217,9 @@ class TestCollectorWiring:
         src: str = Path(collector.__file__).read_text(encoding="utf-8")
         # ★ t_4624904b: 完全一致から部分一致へ。実装は browser_fetcher=fetch_via_browser を
         #   追加で受け取るため、呼出先の前方一致で十分（将来のコード引数追加に追従しない硬いガード）。
-        assert "fetch_knshow_listing(_do_fetch, url, out=out" in src
-        assert "note_fetch(\"knshow\", False, _knshow_error_label(code, _kind))" in src
+        # ★ t_686afe68: referer 引数が追加されたため多行呼び出しになった。部分一致で判定。
+        assert "fetch_knshow_listing(" in src
+        assert "fetch_via_browser" in src
+        assert "referer=f\"{BASE_URL}/twitter\"" in src
+        assert 'note_fetch("knshow", False, _knshow_error_label(code, _kind))' in src
         assert "_knshow_cf_hint(_kind)" in src
