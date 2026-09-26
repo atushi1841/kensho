@@ -690,31 +690,38 @@ def _collect_impl(
 
     # ── Step 2f: twscrape 収集 ──
     out("\n[Step 2f twscrape] X直接検索で懸賞を収集...")
-    # ★ t_2be0e7aa: twscrape連続失敗時はAPI呼び出しをスキップ（無駄なBOTシグナル防止）
-    _twscrape_skip_dead = False
-    try:
-        from pathlib import Path as _P
-        import json as _json
-        _dead_path = DATA_DIR / "dead_source_state.json"
-        if _dead_path.exists():
-            _ds = _json.loads(_dead_path.read_text(encoding="utf-8"))
-            _tw_entry = (_ds.get("sources") or {}).get("twscrape", {})
-            _z = int(_tw_entry.get("zero_streak", 0))
-            # 連続3回0件以上でスキップ（既定3回、t_2be0e7aa 要件）
-            if _z >= 3:
-                _twscrape_skip_dead = True
-                out(f"  [TWSCRAPE SKIP] dead-source-state: zero_streak={_z}>=3 → API呼び出しをスキップ（無駄なBOTシグナル削減）")
-    except Exception as _e:
-        out(f"  [WARN] twscrape dead-source check fail (fail-open): {_e}")
     # ★ t_9cc18ba0: research(セッション使用のX検索)をapply時刻と分離 — 同一セッションで
     #   検索と応募を近接実行するとXのBOT相関検出が付きやすいため、apply非稼働時刻に限定。
     #   t_d2242716: 判定基準を壁時計(datetime.now().hour)ではなく収集開始時刻 _collect_start_hour
     #   （cron発火時刻）に変更。収集遅延で Step 2f 到達が数時間を跨いでも実行機会を逃さない。
+    # ★ t_3ecce448: research判定を dead-skip より先に評価する（従来は skip → research の順で、
+    #   research外run が skip発火・zero_streak増分・成功率記録を毎回トリガーし、
+    #   9/27 03:00 の唯一の実行機会まで潰していた）。research外では twscrape を呼ばないため
+    #   以下の dead-skip 判定は評価自体が無意味。
     _research_ok: bool = research_allowed(_collect_start_hour, cfg)
+    # ★ t_2be0e7aa: twscrape連続失敗時はAPI呼び出しをスキップ（無駄なBOTシグナル削減）
+    #   t_3ecce448: 判定・ログは research run のみで行う（research外でskipログを出さない）。
+    _twscrape_skip_dead = False
+    _tw_skip_z: int = 0
+    if _research_ok:
+        try:
+            import json as _json
+            _dead_path = DATA_DIR / "dead_source_state.json"
+            if _dead_path.exists():
+                _ds = _json.loads(_dead_path.read_text(encoding="utf-8"))
+                _tw_entry = (_ds.get("sources") or {}).get("twscrape", {})
+                _z = int(_tw_entry.get("zero_streak", 0))
+                # 連続3回0件以上でスキップ（既定3回、t_2be0e7aa 要件）
+                if _z >= 3:
+                    _twscrape_skip_dead = True
+                    _tw_skip_z = _z
+        except Exception as _e:
+            out(f"  [WARN] twscrape dead-source check fail (fail-open): {_e}")
     twscrape_items: list[dict[str, Any]] = []
+    # ★ t_3ecce448: 「実際に scrape_twscrape を呼んだ run」フラグ。
+    #   sentinel の zero_streak 増分・source_health の成功率はこの run のみ記録対象にする。
+    _twscrape_attempted = False
     if _budget_hit("Step2f twscrape"):
-        twscrape_items = []
-    elif _twscrape_skip_dead:
         twscrape_items = []
     elif not _research_ok:
         _rh = (cfg or {}).get("collection", {}).get("research_hours")
@@ -723,7 +730,14 @@ def _collect_impl(
             "実行対象外 → X検索(twscrape)をスキップ（apply同時刻のセッション相関防止）"
         )
         twscrape_items = []
+    elif _twscrape_skip_dead:
+        out(
+            f"  [TWSCRAPE SKIP] dead-source-state: zero_streak={_tw_skip_z}>=3 "
+            "→ API呼び出しをスキップ（無駄なBOTシグナル削減）"
+        )
+        twscrape_items = []
     else:
+        _twscrape_attempted = True
         session_path: str | None = None
         for a in cfg.get("accounts", []):
             if a.get("schedule", {}).get("collects", False):
@@ -738,11 +752,15 @@ def _collect_impl(
                     break
         twscrape_items = scrape_twscrape(out, processed_set, account_keys, session_path)
     # t_2be0e7aa: source_health に twscrape 成功率を記録
-    try:
-        if hasattr(health, "record_twscrape_run"):
-            health.record_twscrape_run(len(twscrape_items) > 0)
-    except Exception as _e:
-        out(f"  [WARN] twscrape success rate record fail (fail-open): {_e}")
+    # ★ t_3ecce448: 記録は「scrape_twscrape を試行した run」のみ。research外/budget/dead-skip の
+    #   意図的スキップは success/failure いずれにも数えない（= runs にも載せない）ことで
+    #   twscrape_success_rate runs=2/successes=0 のような成功率汚染を解消する。
+    if _twscrape_attempted:
+        try:
+            if hasattr(health, "record_twscrape_run"):
+                health.record_twscrape_run(len(twscrape_items) > 0)
+        except Exception as _e:
+            out(f"  [WARN] twscrape success rate record fail (fail-open): {_e}")
     out(f"  twscrape: {len(twscrape_items)}件")
     collected.extend(twscrape_items)
 
@@ -1051,6 +1069,28 @@ def _collect_impl(
     out(f"  [導線] {len(merged)}件に導入ラベル付与 → 非X(自動応募対象外)={_nx_n}件")
     out(f"         ラベル別: {_label_counts}")
 
+    # ★ t_3ecce448: 診断用ソース別取得数。twscrape は research run でのみキーを持たせる。
+    #   dead_source_sentinel は by_source に無いソースをスキップする（sentinel L172
+    #   `if src not in by_source: continue`）仕組みを利用し、research外run が zero_streak を
+    #   毎回 +1 する誤検知（9/26 実測: 09-12時 run で z=0→4）を止める。
+    #   research run 内の dead-skip/budget では 0 を渡して増分を維持する（skip中も
+    #   z が伸び続け、DEAD_STREAK_THRESHOLD=12 で [DEAD-SOURCE] アラート+kanban投入が
+    #   つく＝「スキップしたまま誰にも気づかれず放置」を防ぐ観測経路として機能させる）。
+    _by_source: dict[str, Any] = {  # 診断用: ソース別新規取得数
+        "knshow": success,
+        "ken-kaku": len(kenkaku_items),
+        "kenshou.club": len(kclub_items),
+        "cp.meikan": len(cpmeikan_items),
+        "ke-ma": len(kema_items),
+        "twscrape": len(twscrape_items),
+        "chance.com": len(chancecom_items),
+        "kensho-everyday": len(kevery_items),
+        "prtimes": len(prtimes_items),
+    }
+    if not _research_ok:
+        # research外 run は twscrape を評価していない（未試行）→ sentinel に渡さない。
+        # collected.json でもキー欠落=「未試行」、0=「試行して0件」の意味差を残す。
+        _by_source.pop("twscrape", None)
     result: dict[str, Any] = {
         "timestamp": datetime.now().isoformat(),
         "total_on_page": len(unique_links),
@@ -1064,17 +1104,7 @@ def _collect_impl(
         "run_budget_seconds": _budget.max_seconds,
         "deadline_exceeded": _budget.expired(),
         "skipped_phases": list(_budget.expired_phases),
-        "new_items_by_source": {  # 診断用: ソース別新規取得数
-            "knshow": success,
-            "ken-kaku": len(kenkaku_items),
-            "kenshou.club": len(kclub_items),
-            "cp.meikan": len(cpmeikan_items),
-            "ke-ma": len(kema_items),
-            "twscrape": len(twscrape_items),
-            "chance.com": len(chancecom_items),
-            "kensho-everyday": len(kevery_items),
-            "prtimes": len(prtimes_items),
-        },
+        "new_items_by_source": _by_source,
     }
     # ★ 2026-09-02 修正: 保存直前にディスクから再読込し、applierが書き込んだ応募日付をマージ。
     #    collectorは全ソース収集に数分かかり、その間にapplierがcollected.jsonのappliedを更新
