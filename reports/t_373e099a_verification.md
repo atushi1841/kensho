@@ -12,15 +12,22 @@ outcome_review_check.py に分母閾値（5件未満）ガードを実装し、�
 ## verification_evidence
 
 ### 実測検証コマンド
-$ cd /mnt/d/Project2/kensho && python3 -m pytest tests/test_outcome_review_check.py -q => 21 passed in 12.41s
+$ cd /mnt/d/Project2/kensho && python3 -m pytest tests/test_outcome_review_check.py -q
+21 passed in 12.41s
 
-$ /home/atushi/.hermes/hermes-agent/venv/bin/mypy --strict scripts/outcome_review_check.py tests/test_outcome_review_check.py => Success: no issues found in 2 source files
+$ /home/atushi/.hermes/hermes-agent/venv/bin/mypy --strict scripts/outcome_review_check.py tests/test_outcome_review_check.py
+Success: no issues found in 2 source files
 
-$ cd /mnt/d/Project2/kensho && python3 -c "import sys;sys.path.insert(0,'scripts');import outcome_review_check as m;e=[{'metric':'失敗回数','before':1,'after':3,'direction':'down','note':'分母3件の操作開始のみ'}];r,u=m.partition_outcomes(e);print('regressed=',r);print('undeclared=',u)" => regressed=[] undeclared=[{'direction':'equal','note':'分母3件の操作開始のみ 統計的意味なし(n/a)'}]
+$ cd /mnt/d/Project2/kensho && python3 -c "import sys;sys.path.insert(0,'scripts');import outcome_review_check as m;e=[{'metric':'失敗回数','before':1,'after':3,'direction':'down','note':'分母3件の操作開始のみ'}];r,u=m.partition_outcomes(e);print('regressed=',r);print('undeclared=',u)"
+regressed=[] undeclared=[{'direction':'equal','note':'分母3件の操作開始のみ 統計的意味なし(n/a)'}]
 
-$ cd /mnt/d/Project2/kensho && python3 -c "import sys;sys.path.insert(0,'scripts');import outcome_review_check as m;e=[{'metric':'失敗回数','before':10,'after':15,'direction':'down','note':'分母10件の操作開始のみ'}];r,u=m.partition_outcomes(e);print('regressed=',[x['metric'] for x in r])" => regressed=['失敗回数']
+$ cd /mnt/d/Project2/kensho && python3 -c "import sys;sys.path.insert(0,'scripts');import outcome_review_check as m;e=[{'metric':'失敗回数','before':10,'after':15,'direction':'down,'note':'分母10件の操作開始のみ'}];r,u=m.partition_outcomes(e);print('regressed=',[x['metric'] for x in r])"
+regressed=['失敗回数']
 
-$ cd /mnt/d/Project2/kensho && git log --oneline -3 => 1e8afd9 t_373e099a: evidence.json (guard j) / 966a401 t_373e099a: 分母閾値(<5)ガードを outcome_review_check に実装 / a8f7fdc fix(seo_rank_watch)...
+$ cd /mnt/d/Project2/kensho && git log --oneline -3
+8158c1d t_373e099a: verification.md (guard a/b)
+1e8afd9 t_373e099a: evidence.json (guard j)
+966a401 t_373e099a: 分母閾値(<5)ガードを outcome_review_check に実装
 
 ## 成果物
 - scripts/outcome_review_check.py (sha256:f05058ca01102d8a5928268b62ce8a3e356dee1969f9a9676d53f790a0944f93)
