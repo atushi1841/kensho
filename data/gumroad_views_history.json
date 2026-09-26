@@ -1,0 +1,22 @@
+{
+  "2026-09-25": {
+    "views": 1,
+    "sales": 0,
+    "total": "0",
+    "referrers": {
+      "Direct, email, IM": 1
+    },
+    "login_ok": true,
+    "collected_at": "2026-09-26T09:33:50.746"
+  },
+  "2026-09-26": {
+    "views": 1,
+    "sales": 0,
+    "total": "0",
+    "referrers": {
+      "Direct, email, IM": 1
+    },
+    "login_ok": true,
+    "collected_at": "2026-09-26T09:34:09.249"
+  }
+}

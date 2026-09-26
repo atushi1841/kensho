@@ -1,0 +1,48 @@
+{
+  "task_id": "t_3848cbde",
+  "status": "complete",
+  "success_indicators": [
+    "Gumroad販売 1件以上/週: API直近7日件数を日次自動計測（本日実測 sales_week=0 → 未達・計測系は稼働）",
+    "商品ページ訪問数 前日比+20%: views日次収集で自動判定（本日実測 1→1 = 0.0% → 未達・計測系は稼働）",
+    "週次X販促投稿: before=0件/週（9/12以降ウィンドウ外で無投稿）→ after=1件/週（2026-W39 実投稿+週次dedup実証）",
+    "views自動計測: before=0日分 → after=2日分（2026-09-25/26 を実取得・履歴保存）"
+  ],
+  "outcome": [
+    {
+      "metric": "週次X販促投稿数（件/週）",
+      "before": 0,
+      "after": 1
+    },
+    {
+      "metric": "商品ページviews自動計測日数（日）",
+      "before": 0,
+      "after": 2
+    }
+  ],
+  "verification_commands": [
+    "$ bash <workspace>/verify_sales.sh => 0 / Sat Sep 26 08:22:32 JST 2026売上確認完了 (rc=0)",
+    "$ .venv/bin/python scripts/gumroad_promo_weekly.py => [OK] 投稿成功 tweet_id=21036455… / 同週再実行 => スキップ: 今週は投稿済み (week=2026-W39)",
+    "$ node.exe D:\\Project2\\kensho\\scripts\\gumroad_views_collect.js 2026-09-25 => VIEWS_JSON:{login_ok:true, views:1, referrers:{Direct, email, IM:1}, history_saved:true}",
+    "$ .venv/bin/python scripts/gumroad_promo_kpi.py => KPI sales_source=api sales_week=0 views=1(prev=1) dod=0.0% views_met=False (rc=0)",
+    "$ .venv/bin/python -m pytest tests/test_gumroad_promo.py -q => 19 passed in 20.26s",
+    "$ crontab -l | grep gumroad_ => 09:05 views収集 / 09:15 KPI評価 / 月08:40 週次投稿 の3エントリ確認",
+    "$ .venv/bin/python scripts/gumroad_x_xanalytics.py => 2026-09-26 | views=1 （新規投稿のimpression追跡連携を実地確認）"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/gumroad_views_collect.js",
+    "/mnt/d/Project2/kensho/scripts/gumroad_promo_weekly.py",
+    "/mnt/d/Project2/kensho/scripts/gumroad_promo_kpi.py",
+    "/mnt/d/Project2/kensho/tests/test_gumroad_promo.py",
+    "/mnt/d/Project2/kensho/reports/t_3848cbde_verification.md",
+    "/home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/gumroad_views_collect.sh",
+    "/home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/gumroad_promo_weekly.sh",
+    "/home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/gumroad_promo_kpi.sh"
+  ],
+  "evidence_hashes": [],
+  "decisions": [
+    "views収集は既存売上収集(gumroad_sales_collect.js port9333)と分離し port9335 の独立CDPスクリプトにした（本番売上パイプライン非干渉）",
+    "失敗時代替案: KPI評価はAPI(/v2/sales)優先、応答なしでは data/gumroad_state.json（既存CDPダッシュボード収集）へフォールバック",
+    "週次dedupはISO週キー、文言は週番号ローテーション、投稿経路は gumroad_x_post.create_tweet 再利用",
+    "投稿tweet_idを gumroad_x_post_state.json へ併記し既存日次xanalyticsでimpressions追跡を自動継続"
+  ]
+}

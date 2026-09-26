@@ -1,0 +1,140 @@
+{
+  "date": "2026-09-26",
+  "collected_at": "2026-09-26T09:34:31",
+  "sales": {
+    "ok": true,
+    "total": 0,
+    "week": 0
+  },
+  "sales_source": "api",
+  "views": {
+    "date": "2026-09-26",
+    "views": 1,
+    "prev_date": "2026-09-25",
+    "prev_views": 1,
+    "pct": 0.0,
+    "meets_target": false,
+    "twitter_views": null
+  },
+  "eval": {
+    "sales_week_count": 0,
+    "sales_meets_target": false,
+    "sales_target": ">=1/week",
+    "views": {
+      "date": "2026-09-26",
+      "views": 1,
+      "prev_date": "2026-09-25",
+      "prev_views": 1,
+      "pct": 0.0,
+      "meets_target": false,
+      "twitter_views": null
+    },
+    "views_meets_target": false,
+    "views_target": "prev-day +20%"
+  },
+  "summary": "sales_source=api sales_week=0 sales_met=False views=1(prev=1) dod=0.0% views_met=False twitter_views=None",
+  "history": [
+    {
+      "date": "2026-09-26",
+      "summary": "sales_source=api sales_week=0 sales_met=False views=None(prev=1) dod=None% views_met=None twitter_views=None",
+      "sales": {
+        "ok": true,
+        "total": 0,
+        "week": 0
+      },
+      "views": {
+        "date": "2026-09-26",
+        "views": null,
+        "prev_date": "2026-09-25",
+        "prev_views": 1,
+        "pct": null,
+        "meets_target": null,
+        "twitter_views": null
+      },
+      "eval": {
+        "sales_week_count": 0,
+        "sales_meets_target": false,
+        "sales_target": ">=1/week",
+        "views": {
+          "date": "2026-09-26",
+          "views": null,
+          "prev_date": "2026-09-25",
+          "prev_views": 1,
+          "pct": null,
+          "meets_target": null,
+          "twitter_views": null
+        },
+        "views_meets_target": null,
+        "views_target": "prev-day +20%"
+      }
+    },
+    {
+      "date": "2026-09-26",
+      "summary": "sales_source=api sales_week=0 sales_met=False views=1(prev=1) dod=0.0% views_met=False twitter_views=None",
+      "sales": {
+        "ok": true,
+        "total": 0,
+        "week": 0
+      },
+      "views": {
+        "date": "2026-09-26",
+        "views": 1,
+        "prev_date": "2026-09-25",
+        "prev_views": 1,
+        "pct": 0.0,
+        "meets_target": false,
+        "twitter_views": null
+      },
+      "eval": {
+        "sales_week_count": 0,
+        "sales_meets_target": false,
+        "sales_target": ">=1/week",
+        "views": {
+          "date": "2026-09-26",
+          "views": 1,
+          "prev_date": "2026-09-25",
+          "prev_views": 1,
+          "pct": 0.0,
+          "meets_target": false,
+          "twitter_views": null
+        },
+        "views_meets_target": false,
+        "views_target": "prev-day +20%"
+      }
+    },
+    {
+      "date": "2026-09-26",
+      "summary": "sales_source=api sales_week=0 sales_met=False views=1(prev=1) dod=0.0% views_met=False twitter_views=None",
+      "sales": {
+        "ok": true,
+        "total": 0,
+        "week": 0
+      },
+      "views": {
+        "date": "2026-09-26",
+        "views": 1,
+        "prev_date": "2026-09-25",
+        "prev_views": 1,
+        "pct": 0.0,
+        "meets_target": false,
+        "twitter_views": null
+      },
+      "eval": {
+        "sales_week_count": 0,
+        "sales_meets_target": false,
+        "sales_target": ">=1/week",
+        "views": {
+          "date": "2026-09-26",
+          "views": 1,
+          "prev_date": "2026-09-25",
+          "prev_views": 1,
+          "pct": 0.0,
+          "meets_target": false,
+          "twitter_views": null
+        },
+        "views_meets_target": false,
+        "views_target": "prev-day +20%"
+      }
+    }
+  ]
+}
