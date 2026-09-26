@@ -17,8 +17,8 @@
     "/mnt/d/Project2/kensho/reports/t_6cb871f1_evidence.json"
   ],
   "evidence_hashes": {
-    "verification_md": "sha256:placeholder_to_be_filled_after_git_commit",
-    "evidence_json": "sha256:placeholder_to_be_filled_after_git_commit"
+    "verification_md": "sha256:520e70632a0f1724de68d111df7ccf63ef334e51468fe073a0d56d1c4e2cd20e",
+    "evidence_json": "sha256:a3f4c49ebf610491f82dfedcdad8d032c3440dd16ca3adfac1db844de2960010"
   },
   "outcome": {
     "before": {
