@@ -88,3 +88,51 @@ def test_merge_accumulated():
     res = {"baseline": "2026-09-04", "point": "2026-09-05", "actors": {}}
     merged = effect.merge_accumulated(acc, res)
     assert "2026-09-04->2026-09-05" in merged["measurements"]
+
+
+def test_latest_snapshot_extracts_ppe_and_external():
+    """--latest モード: 最新エントリから actors_ppe / external_runs を抽出する。"""
+    ppe_details = [{"name": f"a{i}", "billing": "ppe", "external_runs": 0, "runs": 0} for i in range(25)]
+    free_detail = {"name": "b", "billing": "free", "external_runs": 3, "runs": 5}
+    entries = [
+        {
+            "date": "2026-09-24",
+            "apify": {
+                "source": "apify",
+                "actors_ppe": 25,
+                "actors_total": 26,
+                "details": ppe_details + [free_detail],
+            },
+        },
+        {
+            "date": "2026-09-25",
+            "apify": {
+                "source": "apify",
+                "actors_ppe": 25,
+                "actors_total": 25,
+                "total_runs": 0,
+                "total_users_30d": 0,
+                "external_users_total": 0,
+                "details": [{"name": f"a{i}", "billing": "ppe", "external_runs": 0, "runs": 0} for i in range(25)],
+            },
+        },
+    ]
+    snap = effect.latest_snapshot(entries)
+    assert snap["latest_date"] == "2026-09-25"
+    assert snap["actors_ppe"] == 25
+    assert snap["external_runs"] == 0
+    assert snap["actors_total"] == 25
+    assert snap["total_runs"] == 0
+
+
+def test_latest_snapshot_empty_entries():
+    assert effect.latest_snapshot([]) == {}
+
+
+def test_latest_snapshot_missing_apify():
+    """apify キーが無くも details が.top-level にない場合の安全側。"""
+    snap = effect.latest_snapshot([{"date": "2026-09-25"}])
+    assert snap["latest_date"] == "2026-09-25"
+    assert snap["actors_ppe"] == 0
+    assert snap["external_runs"] == 0
+    assert snap["actors_total"] == 0

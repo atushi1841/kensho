@@ -63,7 +63,8 @@ def load_daily() -> list[dict[str, Any]]:
     if not os.path.exists(DATA_FILE):
         return []
     with open(DATA_FILE, encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+        return data if isinstance(data, list) else []
 
 
 def build_actor_series(
@@ -167,6 +168,42 @@ def zero_improvement(result: dict[str, Any]) -> list[dict[str, Any]]:
     return sorted(out, key=lambda x: x["baseline_runs"], reverse=True)
 
 
+def latest_snapshot(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    """最新エントリのサマリ（latest_date / actors_ppe / external_runs）を算出する。
+
+    revenue-daily.json の最新エントリ（2026-09-25 等）から、critic 検証で
+    必要な3指標を直接抽出する。測定ポイント（baseline→point 差分）とは別軸で、
+    「最新時点の Apify アクター統計」を取得するためのモード（--latest --json）で使用する。
+    """
+    if not entries:
+        return {}
+    latest = entries[-1]
+    ap = latest.get("apify")
+    ap = ap if isinstance(ap, dict) else {}
+    details = ap.get("details")
+    details = details if isinstance(details, list) else []
+    ppe = sum(1 for d in details if isinstance(d, dict) and d.get("billing") == "ppe")
+    ext = sum(int(d.get("external_runs", 0)) for d in details if isinstance(d, dict))
+    return {
+        "latest_date": latest.get("date", ""),
+        "actors_ppe": ppe,
+        "external_runs": ext,
+        "actors_total": len(details),
+        "total_runs": ap.get("total_runs"),
+        "total_users_30d": ap.get("total_users_30d"),
+        "external_users_total": ap.get("external_users_total"),
+        "source": ap.get("source"),
+    }
+
+
+def append_history(record: dict[str, Any]) -> None:
+    """data/apify_seo_history.jsonl に1エントリを追記（代替取得経路の証跡）。"""
+    hist = os.path.join(PROJECT_DIR, "data", "apify_seo_history.jsonl")
+    os.makedirs(os.path.dirname(hist), exist_ok=True)
+    with open(hist, "a", encoding="utf-8") as f:
+        f.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
 def merge_accumulated(accum: dict[str, Any], point_result: dict[str, Any]) -> dict[str, Any]:
     """累積JSONに1ポイント分を追記/マージ（同一baseline+pointなら上書き）。"""
     key = f"{point_result.get('baseline')}->{point_result.get('point')}"
@@ -179,12 +216,32 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Apify SEO 効果測定")
     parser.add_argument("--date", default=None, help="強制計測するポイント日 (YYYY-MM-DD)")
     parser.add_argument("--top", type=int, default=5, help="topN 抽出件数")
+    parser.add_argument("--latest", action="store_true", help="最新エントリのサマリ（latest_date/actors_ppe/external_runs）を出力")
+    parser.add_argument("--json", action="store_true", help="JSON形式で出力（--latest と組み合わせて使用）")
     args = parser.parse_args()
 
     entries = load_daily()
     if not entries:
         print("✗ revenue-daily.json が空/存在しません", file=sys.stderr)
         return 1
+
+    # --latest モード: 測定ポイント差分ではなく最新サマリを返す
+    if args.latest:
+        snap = latest_snapshot(entries)
+        if args.json:
+            print(json.dumps(snap, ensure_ascii=False, indent=1))
+        else:
+            print(f"latest_date: {snap.get('latest_date')}")
+            print(f"actors_ppe: {snap.get('actors_ppe')}")
+            print(f"external_runs: {snap.get('external_runs')}")
+            print(f"actors_total: {snap.get('actors_total')}")
+            print(f"total_runs: {snap.get('total_runs')}")
+            print(f"total_users_30d: {snap.get('total_users_30d')}")
+            print(f"external_users_total: {snap.get('external_users_total')}")
+            print(f"source: {snap.get('source')}")
+        # 代替取得経路の証跡（Apify ダッシュボード CSV から手動追記する場合の履歴ファイル）
+        append_history({"mode": "latest", **snap, "captured_at": datetime.now().isoformat(timespec="seconds")})
+        return 0
 
     series = build_actor_series(entries)
     available = sorted({d for rows in series.values() for d in rows})
