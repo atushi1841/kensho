@@ -1,0 +1,22 @@
+{
+  "success_indicators": [
+    "partition_outcomes() で分母<5 の KPI を「悪化疑い」から除外",
+    "direction が equal に書き換えられ、「統計的意味なし(n/a)」が note に残る",
+    "既存極性語彙による自動補完も分母閾値で抑制"
+  ],
+  "verification_commands": [
+    "$ cd /mnt/d/Project2/kensho && python3 -m pytest tests/test_outcome_review_check.py -q => 21 passed in 12.41s",
+    "$ /home/atushi/.hermes/hermes-agent/venv/bin/mypy --strict scripts/outcome_review_check.py tests/test_outcome_review_check.py => Success: no issues found",
+    "$ cd /mnt/d/Project2/kensho && python3 -c \"import sys;sys.path.insert(0, \"scripts\");import outcome_review_check as m;e=[{\"metric\":\"失敗回数\",\"before\":1,\"after\":3,\"direction\":\"down\",\"note\":\"分母3件の操作開始のみ\"}];r,u=m.partition_outcomes(e);print(\"regressed=\",r);print(\"undeclared=\",u)\" => regressed=[] undeclared=[{\"direction\":\"equal\",\"note\":\"分母3件の操作開始のみ 統計的意味なし(n/a)\"}]"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/outcome_review_check.py",
+    "/mnt/d/Project2/kensho/tests/test_outcome_review_check.py"
+  ],
+  "evidence_hashes": [
+    "sha256:f05058ca01102d8a5928268b62ce8a3e356dee1969f9a9676d53f790a0944f93",
+    "sha256:255a6183161684bc67804a27086f0c35954fa38a62a3a87ef043b18804f187a1"
+  ],
+  "task_id": "t_373e099a",
+  "status": "complete"
+}
