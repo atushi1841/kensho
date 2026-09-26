@@ -24,8 +24,8 @@ dependencies = [
     "patchright==1.62.3",  # requirements.txtのpinと一致（chromium-stealth経路）
     "scrapling>=0.4.15",
     "curl_cffi",
-    # PEP 508 direct reference (git commit)
-    "invisible-playwright @ git+https://github.com/feder-cr/invisible_playwright.git@2184f6f3c296e5bedcf1539914b3a7d307ce9fe0",
+    # PyPI release (was git pin 0.8.3)
+    "invisible-playwright==0.25.7",
 ]
 
 [project.optional-dependencies]

@@ -30,10 +30,11 @@ class TestInvisiblePlaywright:
         assert ipw._humanize is True
 
     def test_with_pin(self) -> None:
-        """pin パラメータの受け渡し"""
-        ipw = InvisiblePlaywright(pin={"gpu.vendor": "Intel", "screen.width": 1920})
-        assert ipw._pin["gpu.vendor"] == "Intel"
-        assert ipw._pin["screen.width"] == 1920
+        """pin パラメータの受け渡し (有効な GPU persona を指定)"""
+        # invisible-core 34.31.0 で pin 検証が厳格化: 実在する renderer を指定必須
+        # 利用可能: 'ANGLE (Intel, Intel(R) HD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)' 等
+        ipw = InvisiblePlaywright(pin={"gpu.renderer": "ANGLE (Intel, Intel(R) HD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)"})
+        assert ipw._pin["gpu.renderer"] == "ANGLE (Intel, Intel(R) HD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)"
 
     def test_with_proxy(self) -> None:
         """proxy パラメータ"""

@@ -107,10 +107,36 @@ def resolve_venv_python(cli_arg: str | None = None) -> Path:
 
 
 def installed_versions(venv_python: Path) -> dict[str, str]:
-    """venv の `pip list --format=freeze` を {canonical_name: version} で返す。
+    """venv の `pip list --format=freeze` または `uv pip list` を {canonical_name: version} で返す。
 
     pip 不在/実行失敗時は RuntimeError (呼び出し元が監査基盤エラーとして扱う)。
+    uv 管理の venv (プロジェクトルートに uv.lock 存在) では `uv pip list` を使用。
     """
+    # uv.lock があれば uv 管理の venv とみなし、uv pip list を使う
+    uv_lock = ROOT / "uv.lock"
+    if uv_lock.is_file():
+        try:
+            r = subprocess.run(
+                ["uv", "pip", "list", "--format=freeze"],
+                capture_output=True,
+                text=True,
+                timeout=180,
+            )
+            if r.returncode == 0:
+                out: dict[str, str] = {}
+                for line in (r.stdout or "").splitlines():
+                    line = line.strip()
+                    if "==" not in line:
+                        continue
+                    name, _, ver = line.partition("==")
+                    if name and ver:
+                        out[_canon(name)] = ver.strip()
+                if out:
+                    return out
+        except (OSError, subprocess.SubprocessError):
+            pass  # フォールバック: pip で試す
+    
+    # pip で試す (従来の挙動)
     try:
         r = subprocess.run(
             [str(venv_python), "-m", "pip", "list", "--format=freeze", "--disable-pip-version-check"],
@@ -126,7 +152,7 @@ def installed_versions(venv_python: Path) -> dict[str, str]:
     for line in (r.stdout or "").splitlines():
         line = line.strip()
         if "==" not in line:
-            continue  # warning 行などを無視
+            continue
         name, _, ver = line.partition("==")
         if name and ver:
             out[_canon(name)] = ver.strip()
@@ -223,7 +249,24 @@ def spec_is_compatible(mirror_spec: str, declared_spec: str) -> bool:
 
 
 def run_pip_check(venv_python: Path) -> tuple[int, str]:
-    """venv の `pip check` を実行し (rc, 出力) を返す。pip 不在も rc!=0 として扱う。"""
+    """venv の `pip check` または `uv pip check` を実行し (rc, 出力) を返す。pip/uv 不在も rc!=0 として扱う。"""
+    # uv.lock があれば uv 管理の venv とみなし、uv pip check を使う
+    uv_lock = ROOT / "uv.lock"
+    if uv_lock.is_file():
+        try:
+            r = subprocess.run(
+                ["uv", "pip", "check"],
+                capture_output=True,
+                text=True,
+                timeout=120,
+                cwd=str(ROOT),
+            )
+            if r.returncode == 0 or r.returncode == 1:  # 0=ok, 1=conflicts found
+                return r.returncode, (r.stdout or r.stderr or "").strip()
+        except (OSError, subprocess.SubprocessError):
+            pass  # フォールバック: pip で試す
+    
+    # pip で試す (従来の挙動)
     try:
         r = subprocess.run(
             [str(venv_python), "-m", "pip", "check", "--disable-pip-version-check"],

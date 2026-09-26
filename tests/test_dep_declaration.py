@@ -29,17 +29,14 @@ def test_browser_imports_invisible_playwright():
     )
 
 
-def test_pyproject_declares_invisible_playwright_git():
-    """pyproject.toml must declare invisible-playwright with the exact git commit."""
+def test_pyproject_declares_invisible_playwright_pypi():
+    """pyproject.toml must declare invisible-playwright with the PyPI pin (0.25.7)."""
     content = PYPROJECT_PATH.read_text(encoding="utf-8")
-    # We look for the line that starts with the package and contains the commit.
-    # The line may have leading/trailing spaces and may be inside the dependencies list.
-    # We'll check for the presence of the commit hash.
-    commit_hash = "2184f6f3c296e5bedcf1539914b3a7d307ce9fe0"
-    # Also check for the package name and the git URL pattern.
-    assert "invisible-playwright" in content, "Package name not found in pyproject.toml"
-    assert commit_hash in content, f"Commit hash {commit_hash} not found in pyproject.toml"
-    # Additionally, check that it's a git dependency (optional but good)
-    assert "git+https://github.com/feder-cr/invisible_playwright.git" in content, (
-        "Expected git URL for invisible-playwright not found in pyproject.toml"
+    # Check for the package name and the PyPI version pin.
+    assert "invisible-playwright==0.25.7" in content, (
+        "Expected 'invisible-playwright==0.25.7' in pyproject.toml"
+    )
+    # Also verify playwright version is declared and compatible
+    assert "playwright==1.61.0" in content, (
+        "Expected 'playwright==1.61.0' in pyproject.toml"
     )
