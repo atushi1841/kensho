@@ -138,34 +138,38 @@ def partition_outcomes(
     entries: list[dict[str, Any]],
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """数値KPIエントリを「悪化疑い」と「方向未宣言」に**単一規則**で振り分ける。
-
-    audit_task / regressions / 表示側が別々に規則を持つと乖離するため、判定はここに一元化する
-    （t_e07dab2a 仕様・2026-09-25）。
-
-    - direction="down"（lower is better）: after > before が悪化
-    - direction="up"  （higher is better）: after < before が悪化
-    - direction="equal": どちらにも入れない（数値の上下なし）
-    - direction 未宣言: metric 名の極性語彙で自動補完し、補完できた場合のみ悪化判定。
-      補完できない（未知の指標）は「方向未宣言」へ ＝ after<before でも悪化として数えない
-      （偽陽性 28/28 の根因だった「未宣言の下降を悪化扱い」をしない）。
+    - 分母（操作開始数、収集run数等）が5件未満のKPIは統計的有意性なしとして方向未宣言から除外し、証拠として「統計的意味なし(n/a)」フラグを付けてdirection=equal扱いとする。
+    - 方向未宣言時のみ metric 名の極性語彙で自動補完し、補完できた場合のみ悪化判定。
     """
     regressed: list[dict[str, Any]] = []
     undeclared: list[dict[str, Any]] = []
-
     for e in entries:
         b, a = e.get("before"), e.get("after")
         if not isinstance(b, (int, float)) or isinstance(b, bool):
             continue
         if not isinstance(a, (int, float)) or isinstance(a, bool):
             continue
-
         direction = e.get("direction")
         if direction == "equal":
             continue
         if direction not in ("up", "down"):
             # 未宣言 or 未知の direction 値 → metric 名から自動補完
             direction = auto_direction_from_metric(str(e.get("metric", "")).lower())
-
+        # 分母閾値チェック: evidence.jsonのnoteに「分母N件」の記述があるか、Nが5未満と推定される場合
+        note = str(e.get("note", "") or "")
+        denom_match = (
+            re.search(r"分母(\d+)件", note)
+            or re.search(r"分母は(\d+)操作開始のみ", note)
+            or re.search(r"denominator (\d+) items?", note.lower())
+        )
+        if denom_match:
+            denom = int(denom_match.group(1))
+            if denom < 5:
+                # 統計的有意性なしとして方向未宣言扱い
+                e["direction"] = "equal"
+                e["note"] = f"{note} 統計的意味なし(n/a)"
+                undeclared.append(e)
+                continue
         if direction == "down":
             if a > b:
                 regressed.append(e)
@@ -174,7 +178,6 @@ def partition_outcomes(
                 regressed.append(e)
         else:
             undeclared.append(e)
-
     return regressed, undeclared
 
 
@@ -378,7 +381,9 @@ def render_markdown(summary: dict[str, Any]) -> str:
                 metric = str(e.get("metric", "KPI"))
                 before = e.get("before")
                 after = e.get("after")
-                lines.append(f"  - `{r['id']}` {metric} {before}→{after} (方向未宣言)")
+                note = e.get("note", "")
+                suffix = f" (方向未宣言)" + (f" [{note}]" if "統計的意味なし" in note else "")
+                lines.append(f"  - `{r['id']}` {metric} {before}→{after}{suffix}")
     
     if summary["missing"]:
         lines.append("- 未実測タスク（before/after の数値を追記してクローズすること）:")

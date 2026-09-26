@@ -270,6 +270,54 @@ def test_cli_write_report(tmp_path: Path) -> None:
 # --- ドリフト検出（ガード条件(k) と同一規則であること） ----------------------
 
 
+def test_partition_outcomes_denom_below5_suppresses_regression() -> None:
+    """分母が5件未満のKPIは統計的有意性なしとして「悪化疑い」から除外される（t_373e099a）。
+
+    分母3件で「失敗回数 1→3 (down)」が「33.33%悪化」と誤認されるのを防止する。
+    direction は equal に書き換えられ、方向未宣言バケットに入り「統計的意味なし(n/a)」が残る。
+    """
+    entries = [
+        {"metric": "失敗回数", "before": 1, "after": 3, "direction": "down", "note": "分母3件の操作開始のみ"},
+    ]
+    regressed, undeclared = mod.partition_outcomes(entries)
+    assert regressed == []
+    assert len(undeclared) == 1
+    assert undeclared[0]["direction"] == "equal"
+    assert "統計的意味なし(n/a)" in undeclared[0]["note"]
+
+
+def test_partition_outcomes_denom_below5_suppresses_auto_direction() -> None:
+    """分母未満かつ direction 未宣言でも、極性語彙による自動補完が「悪化疑い」に回らない。"""
+    entries = [
+        {"metric": "失敗回数", "before": 1, "after": 3, "note": "denominator 4 items"},
+    ]
+    regressed, undeclared = mod.partition_outcomes(entries)
+    assert regressed == []
+    assert len(undeclared) == 1
+    assert undeclared[0]["direction"] == "equal"
+
+
+def test_partition_outcomes_denom_ge5_keeps_regression() -> None:
+    """分母が5件以上なら通常の悪化判定が通り、regressed に入りうる。"""
+    entries = [
+        {"metric": "失敗回数", "before": 10, "after": 15, "direction": "down", "note": "分母10件の操作開始のみ"},
+        {"metric": "成功率", "before": 5, "after": 3, "direction": "up", "note": "分母20件"},
+    ]
+    regressed, undeclared = mod.partition_outcomes(entries)
+    assert {e["metric"] for e in regressed} == {"失敗回数", "成功率"}
+    assert undeclared == []
+
+
+def test_partition_outcomes_no_denom_note_keeps_normal_detection() -> None:
+    """分母記述がない場合は分母閾値ガードが適用されず、通常の悪化判定が动く。"""
+    entries = [
+        {"metric": "失敗回数", "before": 10, "after": 15, "direction": "down"},
+    ]
+    regressed, undeclared = mod.partition_outcomes(entries)
+    assert len(regressed) == 1
+    assert undeclared == []
+
+
 @pytest.mark.skipif(not GUARD_PATH.is_file(), reason="doneガード未配置（CI等）")
 def test_no_drift_with_done_guard_condition_k() -> None:
     spec = importlib.util.spec_from_file_location("_done_guard_for_test", GUARD_PATH)
