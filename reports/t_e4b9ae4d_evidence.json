@@ -1,0 +1,22 @@
+{
+  "task_id": "t_e4b9ae4d",
+  "status": "complete",
+  "success_indicators": [
+    "apify_seo_effect.py --latest --json から latest_date=2026-09-25 / actors_ppe=25 / external_runs=0 が返る"
+  ],
+  "verification_commands": [
+    "python3 scripts/apify_seo_effect.py --latest --json | python3 -c \"import json,sys; d=json.load(sys.stdin); print('latest_date:',d.get('latest_date')); print('actors_ppe:',d.get('actors_ppe')); print('external_runs:',d.get('external_runs'))\"",
+    "python3 scripts/apify_seo_audit.py --limit 30 --csv /tmp/audit_now.csv --json /tmp/audit_now.json",
+    "python3 scripts/apify_seo_apply.py --csv /tmp/audit_now.csv --bulk --limit 20"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/apify-seo/apify-seo-apply-2026-09-26.json",
+    "/mnt/d/Project2/kensho/reports/apify-seo/apify-seo-apply-2026-09-26.csv",
+    "/mnt/d/Project2/kensho/reports/apify-seo/apify-seo-effect.json",
+    "/mnt/d/Project2/kensho/reports/apify-seo/apify-seo-effect-2026-09-25.json",
+    "/mnt/d/Project2/kensho/reports/t_e4b9ae4d_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:d814465c212f112106d4bc88db533d9d27702fba0f8dce51304b110d0ad2de1d"
+  ]
+}
