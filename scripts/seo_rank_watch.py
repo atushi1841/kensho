@@ -147,22 +147,44 @@ def google_rank(keyword: str, target_url: str, max_results: int = 20):
 
 # ---------------------------------------------------------------- 選定
 def select_keyword(keywords: list, history: dict) -> dict | None:
-    """計測対象を1件選ぶ: 観察到期を最優先、次に計測回数最少のactive"""
+    """計測対象を1件選ぶ: 観察到期を最優先、次に計測回数最少のactive。
+
+    ⚠ 到期判定は ``<=``（2026-09-26 修正）。旧実装は ``next_review_day == today()``
+    の完全一致で、期限日を1日でも逃すと永久に選ばれなかった。加えて全語が
+    observing（active=0）だったため actives が空になり、9/19〜9/26 の15日間
+    毎日「対象キーワードなし」で no-op = 計測ループが完全停止していた
+    （cron は last_status=ok なので一見正常。silent-pipeline 型の停滞）。
+    """
     logs = history.get("log", [])
     counts: dict[str, int] = {}
     for e in logs:
         if e.get("keyword"):
             counts[e["keyword"]] = counts.get(e["keyword"], 0) + 1
 
-    # 1) observing 到期チェック
-    for kw in keywords:
-        if kw.get("status") == "observing" and kw.get("next_review_day") == today():
-            return kw
+    # 1) observing 到期チェック（期限超過分も拾う。超過=観察判定が遅れている）
+    overdue = [
+        kw for kw in keywords
+        if kw.get("status") == "observing"
+        and kw.get("next_review_day")
+        and kw["next_review_day"] <= today()
+    ]
+    if overdue:
+        # 最も期限が古い語から
+        return sorted(overdue, key=lambda k: k.get("next_review_day") or "")[0]
+
     # 2) active のうち最少計測
     actives = [kw for kw in keywords if kw.get("status") == "active"]
-    if not actives:
-        return None
-    return min(actives, key=lambda k: (counts.get(k["key"], 0), k["key"]))
+    if actives:
+        return min(actives, key=lambda k: (counts.get(k["key"], 0), k["key"]))
+
+    # 3) フォールバック: 未到期の observing を最少計測で選ぶ。
+    #    「対象ゼロで永久停止」を構造的に防ぐ（語が1つでもループは回り続ける）。
+    observing = [kw for kw in keywords if kw.get("status") == "observing"]
+    if observing:
+        return min(observing, key=lambda k: (counts.get(k["key"], 0), k["key"]))
+
+    # 4) どれも無いときだけ None（＝seed 未登録のみ）
+    return keywords[0] if keywords else None
 
 
 # ---------------------------------------------------------------- 改善
