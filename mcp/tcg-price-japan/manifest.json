@@ -1,0 +1,62 @@
+{
+  "manifest_version": "0.4",
+  "name": "tcg-price-japan",
+  "display_name": "Japan TCG Used-Price MCP",
+  "version": "1.0.0",
+  "description": "Read-only Japan TCG (Pokemon/TCG) used-price trend data from suruga-ya.jp. Three tools: current price, price history, and top movers. No account, no API key, no network.",
+  "long_description": "Exposes the accumulated kensho Japan TCG used-price dataset (960 observations from suruga-ya.jp, 2026-09-21 snapshot) as three read-only MCP tools: tcg_current_price (latest used/new/list price in JPY), tcg_price_history (time series), and tcg_top_movers (biggest |delta JPY| movers with optional up/down filter). Pure local data, zero dependencies beyond fastmcp. Ideal for AI agents researching Japanese collectibles market trends.",
+  "author": {
+    "name": "Kensho Project",
+    "email": "atushi1841@gmail.com",
+    "url": "https://github.com/atushi1841"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atushi1841/kensho"
+  },
+  "homepage": "https://github.com/atushi1841/kensho",
+  "documentation": "https://github.com/atushi1841/kensho/tree/main/mcp/tcg-price-japan",
+  "support": "https://github.com/atushi1841/kensho/issues",
+  "icon": "icon.png",
+  "server": {
+    "type": "python",
+    "entry_point": "server/server.py",
+    "mcp_config": {
+      "command": "python",
+      "args": ["${__dirname}/server/server.py"]
+    }
+  },
+  "compatibility": {
+    "platforms": ["darwin", "linux", "win32"],
+    "runtimes": {
+      "python": ">=3.10"
+    }
+  },
+  "tools": [
+    {
+      "name": "tcg_current_price",
+      "description": "Latest used/new/list price snapshot (JPY) for a Pokemon/TCG item in the Japan Suruga-ya dataset."
+    },
+    {
+      "name": "tcg_price_history",
+      "description": "Price time series (oldest first) for an item, up to limit rows."
+    },
+    {
+      "name": "tcg_top_movers",
+      "description": "Biggest |delta JPY| movers in the dataset, with optional up/down direction filter."
+    }
+  ],
+  "tools_generated": false,
+  "keywords": [
+    "japan",
+    "tcg",
+    "pokemon",
+    "price",
+    "suruga-ya",
+    "collectibles",
+    "market-data",
+    "mcp"
+  ],
+  "license": "MIT",
+  "privacy_policies": []
+}
