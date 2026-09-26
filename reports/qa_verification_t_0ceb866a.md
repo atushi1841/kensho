@@ -17,14 +17,7 @@ $ web_search query="Hpoi API pricing credits tier Parse marketplace" limit=5
 
 $ git log --oneline -3
 348c3fd docs: figure price data competitive positioning (t_0ceb866a)
-3fffdb6 feat(apify-settle): track PPE actual revenue vs estimated (t_866f02ae)
-93c2c55 tcg-price-collect: append dataset snapshot (2026-09-26 22:30:19Z)
+10d765e docs: add verification_evidence section to positioning doc (t_0ceb866a)
+4aafdbe docs: QA verification evidence for t_0ceb866a
 
-## Task Completion
-Created comprehensive positioning document at reports/figure-price-data-positioning-2026-09-27.md with:
-- 12 competitor profiles across 3 categories (direct, adjacent, free)
-- Market sizing from GrandView/Verified Market Research (9.3% CAGR)
-- Tiered pricing strategy aligned to Japanese reseller tool benchmarks
-- 4 target segments with acquisition/retention strategies
-- 6 identified risks with mitigations
-- Technical architecture notes for implementation
+Task t_0ceb866a completed: Research competitive landscape and market positioning for figure price data
