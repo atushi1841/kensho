@@ -1,0 +1,28 @@
+{
+  "task_id": "t_7060bd39",
+  "success_indicators": [
+    "pre-commit done-guard hook added (.pre-commit-config.yaml)",
+    "worker completion-before-guard rule added (SOUL.md)",
+    "CI guard selftest step added (.github/workflows/ci.yml)"
+  ],
+  "verification_commands": [
+    "python3 /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py --selftest",
+    "python3 /mnt/d/Project2/kensho/scripts/done_guard_evidence_binding.py --selftest",
+    "python3 /mnt/d/Project2/kensho/scripts/push_guard.py --selftest",
+    "python3 -m pytest tests/test_done_guard_evidence_binding.py tests/test_hunter_guard_v162.py tests/test_gumroad_cookies_guard.py tests/test_crash_guard.py tests/test_guarded_source_arity.py tests/test_url_guard.py"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/.pre-commit-config.yaml",
+    "/mnt/d/Project2/kensho/.github/workflows/ci.yml",
+    "/mnt/d/Project2/kensho/Makefile",
+    "/home/atushi/.hermes/profiles/kensho-revenue-worker/SOUL.md",
+    "/mnt/d/Project2/kensho/reports/t_7060bd39_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:5bfe264fcc96d75a82cebe698e4a9cedf1a4188703122bf2f32c7665d16f8436",
+    "sha256:3852a8229aec7555d03938e026ee160f9244ea1566f3e6d857dbd5986e7f6e58",
+    "sha256:b02f906f0333fe55ef6adbd0828c281d6fa7e9c437793de39e092819c8333071",
+    "sha256:52c7325dbfc55f54e999ef047986053869840e3ed924d67ba03ded7aa7e264d6"
+  ],
+  "status": "complete"
+}
