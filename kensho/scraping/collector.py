@@ -437,7 +437,11 @@ def _collect_impl(
         # critic t_c0e0563d: knshow 一覧は Cloudflare 失敗分類付きで取得。403/503+「Just a moment…」等の
         #   ボットチャレンジのときだけ実ブラウザ（patchright headless）でフォールバックし、502/520-524 の
         #   origin 障害（ブラウザでも通らない）はブラウザを起動せず即 fail-open する。
-        code, html, _final_url, _kind = fetch_knshow_listing(_do_fetch, url, out=out, browser_fetcher=fetch_via_browser)
+        # ★ t_686afe68: referer を BASE_URL/twitter に固定（scrapling デフォルトの https://www.google.com/ だと
+        #   knshow.com が 502 を返す Protection により同一 run 内で 502 死ループが発生するため）
+        code, html, _final_url, _kind = fetch_knshow_listing(
+            _do_fetch, url, out=out, browser_fetcher=fetch_via_browser, referer=f"{BASE_URL}/twitter"
+        )
         if code != 200:
             # ★ t_52a7fec2: knshow 一覧ページ失敗を source_health へ追跡（これまで監視対象外=盲点）。
             #   一覧は Step1 で _do_fetch 直取得のため note_fetch を明示呼び出しして統合。
@@ -686,6 +690,22 @@ def _collect_impl(
 
     # ── Step 2f: twscrape 収集 ──
     out("\n[Step 2f twscrape] X直接検索で懸賞を収集...")
+    # ★ t_2be0e7aa: twscrape連続失敗時はAPI呼び出しをスキップ（無駄なBOTシグナル防止）
+    _twscrape_skip_dead = False
+    try:
+        from pathlib import Path as _P
+        import json as _json
+        _dead_path = DATA_DIR / "dead_source_state.json"
+        if _dead_path.exists():
+            _ds = _json.loads(_dead_path.read_text(encoding="utf-8"))
+            _tw_entry = (_ds.get("sources") or {}).get("twscrape", {})
+            _z = int(_tw_entry.get("zero_streak", 0))
+            # 連続3回0件以上でスキップ（既定3回、t_2be0e7aa 要件）
+            if _z >= 3:
+                _twscrape_skip_dead = True
+                out(f"  [TWSCRAPE SKIP] dead-source-state: zero_streak={_z}>=3 → API呼び出しをスキップ（無駄なBOTシグナル削減）")
+    except Exception as _e:
+        out(f"  [WARN] twscrape dead-source check fail (fail-open): {_e}")
     # ★ t_9cc18ba0: research(セッション使用のX検索)をapply時刻と分離 — 同一セッションで
     #   検索と応募を近接実行するとXのBOT相関検出が付きやすいため、apply非稼働時刻に限定。
     #   t_d2242716: 判定基準を壁時計(datetime.now().hour)ではなく収集開始時刻 _collect_start_hour
@@ -693,6 +713,8 @@ def _collect_impl(
     _research_ok: bool = research_allowed(_collect_start_hour, cfg)
     twscrape_items: list[dict[str, Any]] = []
     if _budget_hit("Step2f twscrape"):
+        twscrape_items = []
+    elif _twscrape_skip_dead:
         twscrape_items = []
     elif not _research_ok:
         _rh = (cfg or {}).get("collection", {}).get("research_hours")
@@ -715,6 +737,12 @@ def _collect_impl(
                     session_path = str(Path(cfg["general"]["project_dir"]) / a["session"])
                     break
         twscrape_items = scrape_twscrape(out, processed_set, account_keys, session_path)
+    # t_2be0e7aa: source_health に twscrape 成功率を記録
+    try:
+        if hasattr(health, "record_twscrape_run"):
+            health.record_twscrape_run(len(twscrape_items) > 0)
+    except Exception as _e:
+        out(f"  [WARN] twscrape success rate record fail (fail-open): {_e}")
     out(f"  twscrape: {len(twscrape_items)}件")
     collected.extend(twscrape_items)
 

@@ -70,6 +70,9 @@ class SourceHealth:
         self._now: Callable[[], datetime] = now_fn or datetime.now
         self._state: dict[str, Any] = self._load()
         self._roll_date()
+        # t_2be0e7aa: twscrape成功率メトリクス初期化
+        if "twscrape_success_rate" not in self._state:
+            self._state["twscrape_success_rate"] = {"runs": 0, "successes": 0, "last": 0.0}
         # 実行単位（collect() 1回）内の結果をフォールバック判定に使う（永続化しない）
         self.run_successes: dict[str, int] = {}
         self.run_failures: dict[str, int] = {}
@@ -108,7 +111,7 @@ class SourceHealth:
         sources = cast(dict[str, dict[str, Any]], self._state.setdefault("sources", {}))
         return sources.setdefault(
             source,
-            {"attempts": 0, "failures": 0, "consecutive_failures": 0, "skipped": 0},
+            {"attempts": 0, "failures": 0, "consecutive_failures": 0, "skipped": 0, "knshow_502_count": 0},
         )
 
     # ── 記録 ──
@@ -125,6 +128,9 @@ class SourceHealth:
         e = self._entry(source)
         e["attempts"] += 1
         e["consecutive_failures"] = 0  # 成功で連続失敗リセット
+        # ★ t_686afe68: 回復時に knshow_502_count をリセット（回復検知のため run 内累計をクリア）
+        if source == "knshow":
+            e["knshow_502_count"] = 0
         self.run_successes[source] = self.run_successes.get(source, 0) + 1
 
     def record_failure(self, source: str, error_type: str = "network") -> None:
@@ -134,12 +140,28 @@ class SourceHealth:
         e["consecutive_failures"] += 1
         e["last_error"] = error_type
         e["last_failure"] = self._now().isoformat(timespec="seconds")
+        # ★ t_686afe68: knshow 502回数を run 単位でカウント（source_health に記録し回復検知を可能に）
+        if source == "knshow" and "502" in error_type:
+            e["knshow_502_count"] = int(e.get("knshow_502_count", 0)) + 1
         self.run_failures[source] = self.run_failures.get(source, 0) + 1
 
     def record_skip(self, source: str) -> None:
         self._entry(source)["skipped"] += 1
         if source not in self.skipped:
             self.skipped.append(source)
+
+    # t_2be0e7aa: twscrape成功率記録
+    def record_twscrape_run(self, succeeded: bool) -> None:
+        """twscrape 収集 run を記録し成功率を更新。succeeded は取得件数>0でTrue。"""
+        meta = self._state.setdefault("twscrape_success_rate", {"runs": 0, "successes": 0, "last": 0.0})
+        meta["runs"] = int(meta.get("runs", 0)) + 1
+        if succeeded:
+            meta["successes"] = int(meta.get("successes", 0)) + 1
+        runs = meta["runs"]
+        successes = meta["successes"]
+        meta["last"] = successes / runs if runs else 0.0
+        # run_failures / run_successes には反映しない（ソース名別集計対象外）
+
 
     # ── フェイルオーバー記録 (t_1cae393c) ──
     def record_failover(self, source: str, recovered: int) -> None:
