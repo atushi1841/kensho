@@ -1,0 +1,38 @@
+{
+  "success_indicators": [
+    "Apify PPE settle_rate 0% -> actual revenue tracked (課金反映待ちを数値KPI化)",
+    "estimated_revenue_usd $0.063 vs actual_revenue_usd $0.000 settle_rate 0% 記録",
+    "30日窓のsettle自動追跡(cron月次)実装"
+  ],
+  "verification_commands": [
+    "cd /mnt/d/Project2/kensho && python3 scripts/apify_revenue_settle_tracker.py --strict",
+    "python3 -c \"import json;d=json.load(open('data/apify_settle_state.json'));l=d['latest'];print('settle_rate=',l['settle_rate_pct'],'before=',l['estimated_revenue_usd'],'after=',l['actual_revenue_usd'])\""
+  ],
+  "artifact_paths": [
+    "scripts/apify_revenue_settle_tracker.py",
+    "data/apify_settle_state.json"
+  ],
+  "evidence_hashes": [
+    "e6fdf482a5382a6eb7262b0d5ea5767f2a370aedd2c3725dff52a55f9d7cd339",
+    "925887bf5c0fc894d274899165c3f6b5afaf51c490013a0ef97d3482e0b0663f"
+  ],
+  "outcome": [
+    {
+      "metric": "apify_settle_rate_pct",
+      "before": 0,
+      "after": 0
+    },
+    {
+      "metric": "estimated_revenue_usd",
+      "before": 0.063,
+      "after": 0.0
+    },
+    {
+      "metric": "actual_revenue_usd",
+      "before": 0.0,
+      "after": 0.0
+    }
+  ],
+  "task_id": "t_866f02ae",
+  "status": "complete"
+}
