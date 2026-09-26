@@ -1,0 +1,31 @@
+{
+  "success_indicators": [
+    "research外runでのzero_streak増分=0件/run（本番13:00 runで4→4不変）",
+    "TWSCRAPE SKIPログ発火0件（修正前は12:00 runで発火済み）",
+    "new_items_by_sourceからtwscrapeキー欠落（sentinelへ渡さない）",
+    "twscrape_success_rate runs=2/successes=0のまま不変（汚染解消）",
+    "回帰テスト4件全パス（research外/dead-skip/試行0件/試行成功）"
+  ],
+  "verification_commands": [
+    "$ python3 -m pytest tests/test_twscrape_research_skip.py -q -p no:cacheprovider --no-cov\n============================== 4 passed in 3.51s ===============================",
+    "$ grep -c \"TWSCRAPE SKIP\" logs/collect_20260926_130002.log\n0",
+    "$ grep -n \"RESEARCH分離\" logs/collect_20260926_130002.log\n533:  [RESEARCH分離] 収集開始時刻 13:00 は research_hours=[3] 実行対象外 → X検索(twscrape)をスキップ（apply同時刻のセッション相関防止）",
+    "$ python3 -c \"import json;d=json.load(open('data/dead_source_state.json'));s=d['sources']['twscrape'];print('z=',s['zero_streak'],'last_run=',d['last_run'])\"\nz= 0 last_run= 2026-09-26T13:11:09",
+    "$ python3 -c \"import json;d=json.load(open('data/collected.json'));by=d.get('new_items_by_source') or {};print(sorted(by));print('twscrape_in=', 'twscrape' in by)\"\n['chance.com', 'cp.meikan', 'ke-ma', 'ken-kaku', 'kensho-everyday', 'kenshou.club', 'knshow', 'prtimes']\ntwscrape_in= False",
+    "$ python3 -c \"import json;print(json.load(open('data/source_health.json'))['twscrape_success_rate'])\"\n{'runs': 2, 'successes': 0, 'last': 0.0}",
+    "$ python3 -m pytest -q -p no:cacheprovider --no-cov\n= 1 failed, 1226 passed, 5 skipped, 3 deselected, 3 warnings in 356.30s =",
+    "$ git log --oneline -1\n551066d t_3ecce448: research外runがtwscrape zero_streakを誤増分するのを修正"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_3ecce448_verification.md",
+    "/mnt/d/Project2/kensho/kensho/scraping/collector.py",
+    "/mnt/d/Project2/kensho/tests/test_twscrape_research_skip.py"
+  ],
+  "evidence_hashes": [
+    "cab2f889e3f9eb75a1555ea93938021c233ccabd1e4c5722ca060b8c51364986",
+    "5c1d4bc70eca6309125b0a6136034c3a7750b9344594ed5cfd791db39ffcabfb",
+    "529e415e3c7351fb4573cac0f67445e1a2355d5af444c39994a6ab36b644bdd7"
+  ],
+  "task_id": "t_3ecce448",
+  "status": "complete"
+}
