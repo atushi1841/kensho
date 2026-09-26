@@ -40,3 +40,9 @@ jobs:
             --ignore=tests/test_invisible_playwright.py \
             -k "not browser and not Browser" \
             -v --tb=short
+
+      - name: Run done-guard selftest (t_7060bd39 CI guard gate)
+        run: |
+          python3 scripts/done_guard_evidence_binding.py --selftest
+          python3 scripts/push_guard.py --selftest
+          python3 /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py --selftest

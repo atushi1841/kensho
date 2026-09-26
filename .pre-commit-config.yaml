@@ -25,6 +25,18 @@ repos:
         pass_filenames: false
         always_run: true
 
+      # t_7060bd39: doneガード遵守率向上。commit前にガード本体の自己検証を実行し、
+      # ガード自体が機能しているか（全条件の検出路が生かっているか）を確定する。
+      # ワーキングツリーのタスク別判定は pre-commit 時点ではコンテキスト無しのため、
+      # ここでは --selftest（隔離一時repoでの回帰検証）で代替。worker の完了前は
+      # kanban_done_guard.py <task_id> --task でタスク別判定を行う（SOUL.md 参照）。
+      - id: done-guard
+        name: "done-guard: 完了前ガード自己検証（commit前必須）"
+        entry: python3 /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py --selftest
+        language: system
+        pass_filenames: false
+        always_run: true
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:

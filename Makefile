@@ -35,5 +35,11 @@ clean:
 	find . -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	find . -name "*.pyc" -delete 2>/dev/null || true
 
+# ── 完了前ガード自己検証（t_7060bd39: pre-commit/CI で guard 通す必須化）──
+guard-selftest:
+	python3 scripts/done_guard_evidence_binding.py --selftest
+	python3 scripts/push_guard.py --selftest
+	python3 /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py --selftest
+
 # ── 全チェック（lint + test + mypy）──
 check: lint mypy test
