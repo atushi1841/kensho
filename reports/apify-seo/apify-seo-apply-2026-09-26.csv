@@ -1,0 +1,17 @@
+actor,actor_id,issue,ok,status_code,fields_changed,error
+iosys-japan-used-smartphone-scraper,vvD9vs8D1AwoQrTTS,discovery_gap,True,200,description,
+jackroad-used-watch-scraper,nWf9BR2ndMTYqKxNB,discovery_gap,True,200,description,
+jackroad-used-watch-scraper,nWf9BR2ndMTYqKxNB,short_description,True,200,description,
+kitamura-japan-used-camera-scraper,DOiD9y1NAJfLBcAjT,discovery_gap,True,200,description,
+surugaya-japan-hobby-prices,F8Hl0a8Cx9bpJBrxR,discovery_gap,True,200,description,
+digimart-japan-used-instrument-scraper,FSuoQiX8OG4KuIQ9c,short_description,True,200,description,
+dlsite-scraper,6Z7tJ3plfUmAgGmbk,short_description,True,200,description,
+dmm-scraper,nUm22B2guMo8vXom6,short_description,True,200,description,
+japan-market-mcp,57SNehd4cHNFyUCj3,short_description,True,200,description,
+japan-rent-market-cn,5EOtT2UpEGEU83nhO,short_description,True,200,description,
+japan-rent-market-scraper,N1o8olAoZyXTJuhnb,short_description,True,200,description,
+japan-watch-market-scraper,gMqdrS2evpcybSZc2,short_description,True,200,description,
+japan-watch-market-scraper-cn,hoqt6EVaVcniMXWbK,short_description,True,200,description,
+japan-watch-market-scraper-kr,kDY2AAouEJzp8kfyj,short_description,True,200,description,
+mandarake-auction-scraper,q2E37PVTg5JcGOTEn,short_description,True,200,description,
+japan-camera-market-cn-scraper,OqO1aPmd1njsKQvaW,(bulk),False,0,,no change proposed (current value already matches suggestion)

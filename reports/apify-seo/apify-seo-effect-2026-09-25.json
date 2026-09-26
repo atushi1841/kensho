@@ -1,0 +1,282 @@
+{
+ "baseline": "2026-09-03",
+ "point": "2026-09-25",
+ "day_span": 22,
+ "actors": {
+  "japan-camera-market": {
+   "baseline_runs": 60,
+   "point_runs": 0,
+   "runs_delta": -60,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -2.727,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-watch-market": {
+   "baseline_runs": 54,
+   "point_runs": 0,
+   "runs_delta": -54,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -2.455,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-luxury-market": {
+   "baseline_runs": 53,
+   "point_runs": 0,
+   "runs_delta": -53,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -2.409,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-instrument-market": {
+   "baseline_runs": 54,
+   "point_runs": 0,
+   "runs_delta": -54,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -2.455,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-offmall-market": {
+   "baseline_runs": 122,
+   "point_runs": 0,
+   "runs_delta": -122,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -5.545,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-market-mcp": {
+   "baseline_runs": 587,
+   "point_runs": 0,
+   "runs_delta": -587,
+   "baseline_u30d": 0,
+   "point_u30d": 0,
+   "u30d_delta": 0,
+   "daily_runs": -26.682,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-rent-market": {
+   "baseline_runs": 27,
+   "point_runs": 0,
+   "runs_delta": -27,
+   "baseline_u30d": 0,
+   "point_u30d": 0,
+   "u30d_delta": 0,
+   "daily_runs": -1.227,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-rent-market-cn": {
+   "baseline_runs": 31,
+   "point_runs": 0,
+   "runs_delta": -31,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -1.409,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-rent-market-kr": {
+   "baseline_runs": 7,
+   "point_runs": 0,
+   "runs_delta": -7,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.318,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-property-market": {
+   "baseline_runs": 29,
+   "point_runs": 0,
+   "runs_delta": -29,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -1.318,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-property-market-cn": {
+   "baseline_runs": 7,
+   "point_runs": 0,
+   "runs_delta": -7,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.318,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-property-market-kr": {
+   "baseline_runs": 6,
+   "point_runs": 0,
+   "runs_delta": -6,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.273,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-kakaku-price-search": {
+   "baseline_runs": 35,
+   "point_runs": 0,
+   "runs_delta": -35,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -1.591,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-kakaku-price-search-cn": {
+   "baseline_runs": 2,
+   "point_runs": 0,
+   "runs_delta": -2,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.091,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "japan-kakaku-price-search-kr": {
+   "baseline_runs": 2,
+   "point_runs": 0,
+   "runs_delta": -2,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.091,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "camera-cn": {
+   "baseline_runs": 3,
+   "point_runs": 0,
+   "runs_delta": -3,
+   "baseline_u30d": 0,
+   "point_u30d": 0,
+   "u30d_delta": 0,
+   "daily_runs": -0.136,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "camera-kr": {
+   "baseline_runs": 3,
+   "point_runs": 0,
+   "runs_delta": -3,
+   "baseline_u30d": 0,
+   "point_u30d": 0,
+   "u30d_delta": 0,
+   "daily_runs": -0.136,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "watch-cn": {
+   "baseline_runs": 15,
+   "point_runs": 0,
+   "runs_delta": -15,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.682,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "watch-kr": {
+   "baseline_runs": 7,
+   "point_runs": 0,
+   "runs_delta": -7,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.318,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "luxury-cn": {
+   "baseline_runs": 17,
+   "point_runs": 0,
+   "runs_delta": -17,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.773,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "luxury-kr": {
+   "baseline_runs": 10,
+   "point_runs": 0,
+   "runs_delta": -10,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.455,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "instrument-cn": {
+   "baseline_runs": 10,
+   "point_runs": 0,
+   "runs_delta": -10,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.455,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "instrument-kr": {
+   "baseline_runs": 9,
+   "point_runs": 0,
+   "runs_delta": -9,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.409,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "offmall-cn": {
+   "baseline_runs": 9,
+   "point_runs": 0,
+   "runs_delta": -9,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.409,
+   "improving": false,
+   "u30d_grew": false
+  },
+  "offmall-kr": {
+   "baseline_runs": 3,
+   "point_runs": 0,
+   "runs_delta": -3,
+   "baseline_u30d": 1,
+   "point_u30d": 0,
+   "u30d_delta": -1,
+   "daily_runs": -0.136,
+   "improving": false,
+   "u30d_grew": false
+  }
+ }
+}

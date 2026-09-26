@@ -1,0 +1,274 @@
+{
+  "generated_at": "2026-09-26T17:33:11",
+  "total": 16,
+  "ok": 15,
+  "ng": 1,
+  "results": [
+    {
+      "actor": "iosys-japan-used-smartphone-scraper",
+      "actor_id": "vvD9vs8D1AwoQrTTS",
+      "issue": "discovery_gap",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes IOSYS data from Japanese used smartphones and tablets sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring Updated for bet"
+      },
+      "after": {
+        "description": "Scrapes IOSYS data from Japanese used smartphones and tablets sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring Updated for bet"
+      }
+    },
+    {
+      "actor": "jackroad-used-watch-scraper",
+      "actor_id": "nWf9BR2ndMTYqKxNB",
+      "issue": "discovery_gap",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring."
+      },
+      "after": {
+        "description": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring Updated for "
+      }
+    },
+    {
+      "actor": "jackroad-used-watch-scraper",
+      "actor_id": "nWf9BR2ndMTYqKxNB",
+      "issue": "short_description",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring."
+      },
+      "after": {
+        "description": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring Updated for "
+      }
+    },
+    {
+      "actor": "kitamura-japan-used-camera-scraper",
+      "actor_id": "DOiD9y1NAJfLBcAjT",
+      "issue": "discovery_gap",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes Kitamura data from Japanese used camera listings sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring."
+      },
+      "after": {
+        "description": "Scrapes Kitamura data from Japanese used camera listings sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring Updated for better d"
+      }
+    },
+    {
+      "actor": "surugaya-japan-hobby-prices",
+      "actor_id": "F8Hl0a8Cx9bpJBrxR",
+      "issue": "discovery_gap",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrape used & new prices from Suruga-ya (駿河屋), Japan's largest second-hand collectibles store. 24 fields: name, used/new/list price, brand, release date, stock, images, condition. Unique list price + brand fields. Japanese keyword search, batch keywords, Playwright fallback."
+      },
+      "after": {
+        "description": "Scrape used & new prices from Suruga-ya (駿河屋), Japan's largest second-hand collectibles store. 24 fields: name, used/new/list price, brand, release date, stock, images, condition. Unique list price + brand fields. Japanese keyword search, batch keywords, Playwright fallback Updated for better discov"
+      }
+    },
+    {
+      "actor": "digimart-japan-used-instrument-scraper",
+      "actor_id": "FSuoQiX8OG4KuIQ9c",
+      "issue": "short_description",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes Digimart data from Japanese used musical instruments sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring."
+      },
+      "after": {
+        "description": "Scrapes Digimart data from Japanese used musical instruments sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring. Updated for bet"
+      }
+    },
+    {
+      "actor": "dlsite-scraper",
+      "actor_id": "6Z7tJ3plfUmAgGmbk",
+      "issue": "short_description",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes DLsite (Japan's largest doujin/digital marketplace) for product listings, prices, discounts and sales rankings. Extracts title, price, genre, circle, rank, review scores. For market research, price monitoring and AI agents."
+      },
+      "after": {
+        "description": "Scrapes DLsite (Japan's largest doujin/digital marketplace) for product listings, prices, discounts and sales rankings. Extracts title, price, genre, circle, rank, review scores. For market research, price monitoring and AI agents. Updated for better discoverability."
+      }
+    },
+    {
+      "actor": "dmm-scraper",
+      "actor_id": "nUm22B2guMo8vXom6",
+      "issue": "short_description",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes DMM.com (Japan's major e-commerce platform) for product listings, prices, rankings and rental availability. Extracts title, price, category, rank, reviews. For market research, price monitoring and AI agents."
+      },
+      "after": {
+        "description": "Scrapes DMM.com (Japan's major e-commerce platform) for product listings, prices, rankings and rental availability. Extracts title, price, category, rank, reviews. For market research, price monitoring and AI agents. Updated for better discoverability."
+      }
+    },
+    {
+      "actor": "japan-market-mcp",
+      "actor_id": "57SNehd4cHNFyUCj3",
+      "issue": "short_description",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes MCP data from Japanese Japan market price comparison sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring."
+      },
+      "after": {
+        "description": "Scrapes MCP data from Japanese Japan market price comparison sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring. Updated for bet"
+      }
+    },
+    {
+      "actor": "japan-rent-market-cn",
+      "actor_id": "5EOtT2UpEGEU83nhO",
+      "issue": "short_description",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes Japanese rental/lease marketplaces for property and item rental listings, prices, deposits and terms. Extracts location, rent, size, fees. For market research, relocation tools and AI agents."
+      },
+      "after": {
+        "description": "Scrapes Japanese rental/lease marketplaces for property and item rental listings, prices, deposits and terms. Extracts location, rent, size, fees. For market research, relocation tools and AI agents. Updated for better discoverability."
+      }
+    },
+    {
+      "actor": "japan-rent-market-scraper",
+      "actor_id": "N1o8olAoZyXTJuhnb",
+      "issue": "short_description",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes Japanese rental/lease marketplaces for property and item rental listings, prices, deposits and terms. Extracts location, rent, size, fees. For market research, relocation tools and AI agents."
+      },
+      "after": {
+        "description": "Scrapes Japanese rental/lease marketplaces for property and item rental listings, prices, deposits and terms. Extracts location, rent, size, fees. For market research, relocation tools and AI agents. Updated for better discoverability."
+      }
+    },
+    {
+      "actor": "japan-watch-market-scraper",
+      "actor_id": "gMqdrS2evpcybSZc2",
+      "issue": "short_description",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring."
+      },
+      "after": {
+        "description": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring. Updated for"
+      }
+    },
+    {
+      "actor": "japan-watch-market-scraper-cn",
+      "actor_id": "hoqt6EVaVcniMXWbK",
+      "issue": "short_description",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring."
+      },
+      "after": {
+        "description": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring. Updated for"
+      }
+    },
+    {
+      "actor": "japan-watch-market-scraper-kr",
+      "actor_id": "kDY2AAouEJzp8kfyj",
+      "issue": "short_description",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring."
+      },
+      "after": {
+        "description": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price monitoring. Updated for"
+      }
+    },
+    {
+      "actor": "mandarake-auction-scraper",
+      "actor_id": "q2E37PVTg5JcGOTEn",
+      "issue": "short_description",
+      "ok": true,
+      "status_code": 200,
+      "error": "",
+      "fields_changed": [
+        "description"
+      ],
+      "before": {
+        "description": "Scrapes Mandarake Auctions (Japan's top secondhand anime/manga collectibles auction site) for listings, current bids, buyout prices and sold data. Extracts title, price, condition, remaining time. For resellers, collectors and AI agents."
+      },
+      "after": {
+        "description": "Scrapes Mandarake Auctions (Japan's top secondhand anime/manga collectibles auction site) for listings, current bids, buyout prices and sold data. Extracts title, price, condition, remaining time. For resellers, collectors and AI agents. Updated for better discoverability."
+      }
+    },
+    {
+      "actor": "japan-camera-market-cn-scraper",
+      "actor_id": "OqO1aPmd1njsKQvaW",
+      "issue": "(bulk)",
+      "ok": false,
+      "status_code": 0,
+      "error": "no change proposed (current value already matches suggestion)",
+      "fields_changed": [],
+      "before": {},
+      "after": {}
+    }
+  ]
+}
