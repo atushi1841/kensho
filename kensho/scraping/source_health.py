@@ -104,7 +104,9 @@ class SourceHealth:
     def _roll_date(self) -> None:
         """日付が変わったら新規ロール（連続失敗/失敗率をリセット）。"""
         if self._state.get("date") != self._date():
-            self._state = {"date": self._date(), "sources": {}, "last_roll": self._state.get("date")}
+            # t_2be0e7aa: twscrape_success_rate は日付ロールでも保持（累積成功率）
+            twscrape_metric = self._state.get("twscrape_success_rate", {"runs": 0, "successes": 0, "last": 0.0})
+            self._state = {"date": self._date(), "sources": {}, "last_roll": self._state.get("date"), "twscrape_success_rate": twscrape_metric}
             self._save()
 
     def _entry(self, source: str) -> dict[str, Any]:
