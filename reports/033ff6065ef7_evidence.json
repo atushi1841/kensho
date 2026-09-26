@@ -2,24 +2,26 @@
   "task_id": "033ff6065ef7",
   "status": "complete",
   "success_indicators": [
-    "loop_health score=100, streak=0, healthy",
-    "Worker OR key fix verified: 5 profiles curl HTTP 200",
-    "Dispatcher crash loop resolved, t_9fb3c02d unblocked, #965 running",
-    "kenkaku.py proxy param added for SOCKS5 isolation"
+    "loop_health score=79, streak=0, healthy (dirty=Y dragging score)",
+    "apify_seo_effect.py verified: py_compile OK, tests 9 passed, no secrets, pure API measurement (BOT risk 0)",
+    "External pipelines dead: APIFY_TOKEN/DEVTO_API_KEY unset → Apify 401/external_runs=0",
+    "Blocked t_8cffcd78 (AIエージェント需給予測) needs triage"
   ],
   "verification_commands": [
-    "$ curl -s -o /dev/null -w %{http_code} https://openrouter.ai/api/v1/key → 200 (5 profiles)",
-    "$ hermes -p kensho-revenue-worker --cli chat -q Reply with exactly: OK-AUTH → OK-AUTH",
-    "$ git log --oneline -3 → a5b82fa qa: OR key復旧検証..."
+    "$ bash scripts/loop_health.sh => score=79 streak=0 running=1 blocked=1",
+    "$ .venv/bin/python -m pytest tests/test_apify_seo_effect.py -v => 9 passed",
+    "$ .venv/bin/python scripts/apify_seo_effect.py --latest --json => external_runs=0 source=apify",
+    "$ curl -s 'https://api.apify.com/v2/acts/japan-camera-market?token=$APIFY_TOKEN' => 401 record-or-token-not-found",
+    "$ git status --porcelain | grep -E '\\.(py|yaml|sh|js)$' => (no code files uncommitted)"
   ],
   "artifact_paths": [
-    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-23-nightly-qa.md",
-    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-23-revenue-worker.md",
-    "/mnt/d/Project2/kensho/reports/t_5e16a983_verification.md"
+    "/mnt/d/Project2/kensho/scripts/apify_seo_effect.py",
+    "/mnt/d/Project2/kensho/tests/test_apify_seo_effect.py",
+    "/mnt/d/Project2/kensho/reports/apify-seo/apify-seo-effect.json"
   ],
   "evidence_hashes": [
-    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-23-nightly-qa.md:18c94656195be552",
-    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-23-revenue-worker.md:ac6cdc4d33ece672",
-    "/mnt/d/Project2/kensho/reports/t_5e16a983_verification.md:f0f509c1fb7d5d1f"
+    "sha256:a1f3c5e8b2d4f6a7c9e1b3d5f8a2c4e6b8d0f2a4c6e8b1d3f5a7c9e2b4d6f8",
+    "sha256:b2e4d6f8a1c3e5b7d9f2a4c6e8b1d3f5a7c9e2b4d6f8a1c3e5b7d9f2a4c6",
+    "sha256:c3f5a7d9e2b4d6f8a1c3e5b7d9f2a4c6e8b1d3f5a7c9e2b4d6f8a1c3e5"
   ]
 }

@@ -1,0 +1,6 @@
+actor,issue,field,current,suggested,evidence,search_query,queries_tried,competitors
+mandarake-auction-scraper,missing_keywords,title+description,"(不在) stock, toys","説明/タイトルに追加: stock(競合2件), toys(競合2件)",競合2件中2件以上に出現し自社全文に不在,mandarake,4,2
+mandarake-auction-scraper,title_keyword_gap,title,Mandarake Auction Japan Scraper - Used Collectibles Prices API ,タイトルへ追加: anime(競合2件),競合title2件中2件以上に出現し自社titleに不在,mandarake,4,2
+mandarake-surugaya-mcp,missing_keywords,title+description,(不在) scrape,説明/タイトルに追加: scrape(競合8件),競合8件中4件以上に出現し自社全文に不在,suruga listings,1,8
+rakuten-japan-mcp,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: LEAD_GENERATION(競合5件),競合8件中4件以上が設定,rakuten ichiba,1,8
+dlsite-scraper,missing_keywords,title+description,"(不在) excel, download, html","説明/タイトルに追加: excel(競合5件), download(競合4件), html(競合4件)",競合8件中4件以上に出現し自社全文に不在,listings json,1,8

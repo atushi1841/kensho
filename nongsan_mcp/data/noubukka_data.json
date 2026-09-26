@@ -1,0 +1,6614 @@
+[
+  {
+    "item_key": "うるち玄米",
+    "category": "米",
+    "name": "うるち玄米",
+    "detail": "",
+    "grade": "１等",
+    "unit": "60kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 14260
+      },
+      {
+        "date": "2020-01",
+        "price": 14680
+      },
+      {
+        "date": "2021",
+        "price": 12180
+      },
+      {
+        "date": "2021-01",
+        "price": 12940
+      },
+      {
+        "date": "2022",
+        "price": 11150
+      },
+      {
+        "date": "2022-01",
+        "price": 10990
+      },
+      {
+        "date": "2023",
+        "price": 12090
+      },
+      {
+        "date": "2023-01",
+        "price": 11870
+      },
+      {
+        "date": "2024",
+        "price": 15380
+      },
+      {
+        "date": "2024-01",
+        "price": 13210
+      },
+      {
+        "date": "2025",
+        "price": 25570
+      },
+      {
+        "date": "2025-01",
+        "price": 22960
+      },
+      {
+        "date": "2026-01",
+        "price": 29350
+      }
+    ],
+    "latest_price": 29350,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "もち玄米",
+    "category": "米",
+    "name": "もち玄米",
+    "detail": "",
+    "grade": "１等",
+    "unit": "60kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 12910
+      },
+      {
+        "date": "2021",
+        "price": 12700
+      },
+      {
+        "date": "2022",
+        "price": 12180
+      },
+      {
+        "date": "2023",
+        "price": 14040
+      },
+      {
+        "date": "2024",
+        "price": 16390
+      },
+      {
+        "date": "2025",
+        "price": 31370
+      }
+    ],
+    "latest_price": 31370,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "小麦",
+    "category": "麦",
+    "name": "小麦",
+    "detail": "",
+    "grade": "１等",
+    "unit": "60kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2492
+      },
+      {
+        "date": "2021",
+        "price": 2703
+      },
+      {
+        "date": "2022",
+        "price": 3065
+      },
+      {
+        "date": "2023",
+        "price": 2792
+      },
+      {
+        "date": "2024",
+        "price": 2611
+      },
+      {
+        "date": "2025",
+        "price": 2322
+      }
+    ],
+    "latest_price": 2322,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "はだか麦",
+    "category": "麦",
+    "name": "はだか麦",
+    "detail": "",
+    "grade": "１等",
+    "unit": "60kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1195
+      },
+      {
+        "date": "2021",
+        "price": 481
+      },
+      {
+        "date": "2022",
+        "price": 389
+      },
+      {
+        "date": "2023",
+        "price": 324
+      },
+      {
+        "date": "2024",
+        "price": 354
+      },
+      {
+        "date": "2025",
+        "price": 552
+      }
+    ],
+    "latest_price": 552,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "六条大麦",
+    "category": "麦",
+    "name": "六条大麦",
+    "detail": "",
+    "grade": "１等",
+    "unit": "50kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1594
+      },
+      {
+        "date": "2021",
+        "price": 1478
+      },
+      {
+        "date": "2022",
+        "price": 1346
+      },
+      {
+        "date": "2023",
+        "price": 1285
+      },
+      {
+        "date": "2024",
+        "price": 1032
+      },
+      {
+        "date": "2025",
+        "price": 1102
+      }
+    ],
+    "latest_price": 1102,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "ビール麦_二条大麦",
+    "category": "麦",
+    "name": "ビール麦（二条大麦）",
+    "detail": "",
+    "grade": "２等",
+    "unit": "50kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 6733
+      },
+      {
+        "date": "2021",
+        "price": 6778
+      },
+      {
+        "date": "2022",
+        "price": 7182
+      },
+      {
+        "date": "2023",
+        "price": 6269
+      },
+      {
+        "date": "2024",
+        "price": 6238
+      },
+      {
+        "date": "2025",
+        "price": 6526
+      }
+    ],
+    "latest_price": 6526,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "そば",
+    "category": "雑穀",
+    "name": "そば",
+    "detail": "",
+    "grade": "玄そば",
+    "unit": "45㎏",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 7576
+      },
+      {
+        "date": "2021",
+        "price": 9540
+      },
+      {
+        "date": "2022",
+        "price": 9798
+      },
+      {
+        "date": "2023",
+        "price": 10850
+      },
+      {
+        "date": "2024",
+        "price": 10730
+      },
+      {
+        "date": "2025",
+        "price": 11300
+      }
+    ],
+    "latest_price": 11300,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "大豆",
+    "category": "豆",
+    "name": "大豆",
+    "detail": "",
+    "grade": "黄色大豆",
+    "unit": "60kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 8851
+      },
+      {
+        "date": "2020-01",
+        "price": 8931
+      },
+      {
+        "date": "2021",
+        "price": 8776
+      },
+      {
+        "date": "2021-01",
+        "price": 8757
+      },
+      {
+        "date": "2022",
+        "price": 9115
+      },
+      {
+        "date": "2022-01",
+        "price": 9222
+      },
+      {
+        "date": "2023",
+        "price": 8906
+      },
+      {
+        "date": "2023-01",
+        "price": 8821
+      },
+      {
+        "date": "2024",
+        "price": 7606
+      },
+      {
+        "date": "2024-01",
+        "price": 7580
+      },
+      {
+        "date": "2025",
+        "price": 7281
+      },
+      {
+        "date": "2025-01",
+        "price": 7344
+      },
+      {
+        "date": "2026-01",
+        "price": 4866
+      }
+    ],
+    "latest_price": 4866,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "小豆",
+    "category": "豆",
+    "name": "小豆",
+    "detail": "",
+    "grade": "普通小豆",
+    "unit": "60kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 21550
+      },
+      {
+        "date": "2020-01",
+        "price": 37270
+      },
+      {
+        "date": "2021",
+        "price": 21220
+      },
+      {
+        "date": "2021-01",
+        "price": 29370
+      },
+      {
+        "date": "2022",
+        "price": 24260
+      },
+      {
+        "date": "2022-01",
+        "price": 29690
+      },
+      {
+        "date": "2023",
+        "price": 25220
+      },
+      {
+        "date": "2023-01",
+        "price": 31770
+      },
+      {
+        "date": "2024",
+        "price": 26190
+      },
+      {
+        "date": "2024-01",
+        "price": 33430
+      },
+      {
+        "date": "2025",
+        "price": 28420
+      },
+      {
+        "date": "2025-01",
+        "price": 36360
+      },
+      {
+        "date": "2026-01",
+        "price": 35680
+      }
+    ],
+    "latest_price": 35680,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "らっかせい",
+    "category": "豆",
+    "name": "らっかせい",
+    "detail": "",
+    "grade": "殻付２等程度",
+    "unit": "60kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 42550
+      },
+      {
+        "date": "2021",
+        "price": 45060
+      },
+      {
+        "date": "2022",
+        "price": 41680
+      },
+      {
+        "date": "2023",
+        "price": 31010
+      },
+      {
+        "date": "2024",
+        "price": 34350
+      },
+      {
+        "date": "2025",
+        "price": 40790
+      }
+    ],
+    "latest_price": 40790,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "いんげんまめ_大手亡",
+    "category": "豆",
+    "name": "いんげんまめ",
+    "detail": "大手亡",
+    "grade": "３等程度",
+    "unit": "60kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 17970
+      },
+      {
+        "date": "2021",
+        "price": 18550
+      },
+      {
+        "date": "2022",
+        "price": 22860
+      },
+      {
+        "date": "2023",
+        "price": 25350
+      },
+      {
+        "date": "2024",
+        "price": 23360
+      },
+      {
+        "date": "2025",
+        "price": 28100
+      }
+    ],
+    "latest_price": 28100,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "いんげんまめ_金時",
+    "category": "豆",
+    "name": "いんげんまめ",
+    "detail": "金時",
+    "grade": "３等程度",
+    "unit": "60kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 23720
+      },
+      {
+        "date": "2021",
+        "price": 25540
+      },
+      {
+        "date": "2022",
+        "price": 27700
+      },
+      {
+        "date": "2023",
+        "price": 26880
+      },
+      {
+        "date": "2024",
+        "price": 27770
+      },
+      {
+        "date": "2025",
+        "price": 28220
+      }
+    ],
+    "latest_price": 28220,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "かんしょ_食用",
+    "category": "いも",
+    "name": "かんしょ（食用）",
+    "detail": "",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2456
+      },
+      {
+        "date": "2020-01",
+        "price": 2100
+      },
+      {
+        "date": "2021",
+        "price": 2697
+      },
+      {
+        "date": "2021-01",
+        "price": 2457
+      },
+      {
+        "date": "2022",
+        "price": 2793
+      },
+      {
+        "date": "2022-01",
+        "price": 2613
+      },
+      {
+        "date": "2023",
+        "price": 2601
+      },
+      {
+        "date": "2023-01",
+        "price": 2573
+      },
+      {
+        "date": "2024",
+        "price": 2570
+      },
+      {
+        "date": "2024-01",
+        "price": 2401
+      },
+      {
+        "date": "2025",
+        "price": 2748
+      },
+      {
+        "date": "2025-01",
+        "price": 2615
+      },
+      {
+        "date": "2026-01",
+        "price": 2672
+      }
+    ],
+    "latest_price": 2672,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "かんしょ_加工用",
+    "category": "いも",
+    "name": "かんしょ（加工用）",
+    "detail": "",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 366
+      },
+      {
+        "date": "2021",
+        "price": 378
+      },
+      {
+        "date": "2022",
+        "price": 378
+      },
+      {
+        "date": "2023",
+        "price": 440
+      },
+      {
+        "date": "2024",
+        "price": 505
+      },
+      {
+        "date": "2025",
+        "price": 513
+      }
+    ],
+    "latest_price": 513,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "ばれいしょ_食用",
+    "category": "いも",
+    "name": "ばれいしょ（食用）",
+    "detail": "",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1339
+      },
+      {
+        "date": "2020-01",
+        "price": 692
+      },
+      {
+        "date": "2021",
+        "price": 1681
+      },
+      {
+        "date": "2021-01",
+        "price": 1625
+      },
+      {
+        "date": "2022",
+        "price": 1336
+      },
+      {
+        "date": "2022-01",
+        "price": 2048
+      },
+      {
+        "date": "2023",
+        "price": 1262
+      },
+      {
+        "date": "2023-01",
+        "price": 1051
+      },
+      {
+        "date": "2024",
+        "price": 1390
+      },
+      {
+        "date": "2024-01",
+        "price": 1057
+      },
+      {
+        "date": "2025",
+        "price": 1761
+      },
+      {
+        "date": "2025-01",
+        "price": 1788
+      },
+      {
+        "date": "2026-01",
+        "price": 2230
+      }
+    ],
+    "latest_price": 2230,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "ばれいしょ_加工用",
+    "category": "いも",
+    "name": "ばれいしょ（加工用）",
+    "detail": "",
+    "grade": "でん粉価18％",
+    "unit": "１t",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 7566
+      },
+      {
+        "date": "2021",
+        "price": 6685
+      },
+      {
+        "date": "2022",
+        "price": 6621
+      },
+      {
+        "date": "2023",
+        "price": 7746
+      },
+      {
+        "date": "2024",
+        "price": 9228
+      },
+      {
+        "date": "2025",
+        "price": 10360
+      }
+    ],
+    "latest_price": 10360,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "ばれいしょ_種子用",
+    "category": "いも",
+    "name": "ばれいしょ（種子用）",
+    "detail": "",
+    "grade": "-",
+    "unit": "20kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2019
+      },
+      {
+        "date": "2021",
+        "price": 2019
+      },
+      {
+        "date": "2022",
+        "price": 2274
+      },
+      {
+        "date": "2023",
+        "price": 2226
+      },
+      {
+        "date": "2024",
+        "price": 2284
+      },
+      {
+        "date": "2025",
+        "price": 2389
+      }
+    ],
+    "latest_price": 2389,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "果菜_きゅうり",
+    "category": "野菜",
+    "name": "果菜",
+    "detail": "きゅうり",
+    "grade": "-",
+    "unit": "５kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1410
+      },
+      {
+        "date": "2020-01",
+        "price": 2179
+      },
+      {
+        "date": "2021",
+        "price": 1167
+      },
+      {
+        "date": "2021-01",
+        "price": 1396
+      },
+      {
+        "date": "2022",
+        "price": 1240
+      },
+      {
+        "date": "2022-01",
+        "price": 1273
+      },
+      {
+        "date": "2023",
+        "price": 1421
+      },
+      {
+        "date": "2023-01",
+        "price": 1667
+      },
+      {
+        "date": "2024",
+        "price": 1841
+      },
+      {
+        "date": "2024-01",
+        "price": 1754
+      },
+      {
+        "date": "2025",
+        "price": 1680
+      },
+      {
+        "date": "2025-01",
+        "price": 1771
+      },
+      {
+        "date": "2026-01",
+        "price": 1924
+      }
+    ],
+    "latest_price": 1924,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "果菜_なす",
+    "category": "野菜",
+    "name": "果菜",
+    "detail": "なす",
+    "grade": "-",
+    "unit": "５kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1693
+      },
+      {
+        "date": "2020-01",
+        "price": 1578
+      },
+      {
+        "date": "2021",
+        "price": 1547
+      },
+      {
+        "date": "2021-01",
+        "price": 1698
+      },
+      {
+        "date": "2022",
+        "price": 1510
+      },
+      {
+        "date": "2022-01",
+        "price": 1556
+      },
+      {
+        "date": "2023",
+        "price": 1705
+      },
+      {
+        "date": "2023-01",
+        "price": 1686
+      },
+      {
+        "date": "2024",
+        "price": 1927
+      },
+      {
+        "date": "2024-01",
+        "price": 1809
+      },
+      {
+        "date": "2025",
+        "price": 1822
+      },
+      {
+        "date": "2025-01",
+        "price": 2206
+      },
+      {
+        "date": "2026-01",
+        "price": 2021
+      }
+    ],
+    "latest_price": 2021,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "果菜_トマト",
+    "category": "野菜",
+    "name": "果菜",
+    "detail": "トマト",
+    "grade": "生食用",
+    "unit": "４kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1161
+      },
+      {
+        "date": "2020-01",
+        "price": 827
+      },
+      {
+        "date": "2021",
+        "price": 1060
+      },
+      {
+        "date": "2021-01",
+        "price": 832
+      },
+      {
+        "date": "2022",
+        "price": 1148
+      },
+      {
+        "date": "2022-01",
+        "price": 863
+      },
+      {
+        "date": "2023",
+        "price": 1297
+      },
+      {
+        "date": "2023-01",
+        "price": 911
+      },
+      {
+        "date": "2024",
+        "price": 1450
+      },
+      {
+        "date": "2024-01",
+        "price": 819
+      },
+      {
+        "date": "2025",
+        "price": 1525
+      },
+      {
+        "date": "2025-01",
+        "price": 1496
+      },
+      {
+        "date": "2026-01",
+        "price": 1357
+      }
+    ],
+    "latest_price": 1357,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "果菜_ミニトマト",
+    "category": "野菜",
+    "name": "果菜",
+    "detail": "ミニトマト",
+    "grade": "-",
+    "unit": "３kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1654
+      },
+      {
+        "date": "2020-01",
+        "price": 1449
+      },
+      {
+        "date": "2021",
+        "price": 1575
+      },
+      {
+        "date": "2021-01",
+        "price": 1422
+      },
+      {
+        "date": "2022",
+        "price": 1707
+      },
+      {
+        "date": "2022-01",
+        "price": 1480
+      },
+      {
+        "date": "2023",
+        "price": 1764
+      },
+      {
+        "date": "2023-01",
+        "price": 1503
+      },
+      {
+        "date": "2024",
+        "price": 1964
+      },
+      {
+        "date": "2024-01",
+        "price": 1332
+      },
+      {
+        "date": "2025",
+        "price": 1970
+      },
+      {
+        "date": "2025-01",
+        "price": 2050
+      },
+      {
+        "date": "2026-01",
+        "price": 1798
+      }
+    ],
+    "latest_price": 1798,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "果菜_かぼちゃ",
+    "category": "野菜",
+    "name": "果菜",
+    "detail": "かぼちゃ",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1875
+      },
+      {
+        "date": "2020-01",
+        "price": 2947
+      },
+      {
+        "date": "2021",
+        "price": 1698
+      },
+      {
+        "date": "2021-01",
+        "price": 2842
+      },
+      {
+        "date": "2022",
+        "price": 1704
+      },
+      {
+        "date": "2022-01",
+        "price": 2774
+      },
+      {
+        "date": "2023",
+        "price": 2141
+      },
+      {
+        "date": "2023-01",
+        "price": 3490
+      },
+      {
+        "date": "2024",
+        "price": 2194
+      },
+      {
+        "date": "2024-01",
+        "price": 3476
+      },
+      {
+        "date": "2025",
+        "price": 2068
+      },
+      {
+        "date": "2025-01",
+        "price": 3346
+      },
+      {
+        "date": "2026-01",
+        "price": 2828
+      }
+    ],
+    "latest_price": 2828,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "果菜_すいか",
+    "category": "野菜",
+    "name": "果菜",
+    "detail": "すいか",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1920
+      },
+      {
+        "date": "2021",
+        "price": 1960
+      },
+      {
+        "date": "2022",
+        "price": 2220
+      },
+      {
+        "date": "2023",
+        "price": 2212
+      },
+      {
+        "date": "2024",
+        "price": 2585
+      },
+      {
+        "date": "2025",
+        "price": 2683
+      }
+    ],
+    "latest_price": 2683,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "果菜_いちご",
+    "category": "野菜",
+    "name": "果菜",
+    "detail": "いちご",
+    "grade": "生食用",
+    "unit": "１kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1238
+      },
+      {
+        "date": "2020-01",
+        "price": 1541
+      },
+      {
+        "date": "2021",
+        "price": 1190
+      },
+      {
+        "date": "2021-01",
+        "price": 1272
+      },
+      {
+        "date": "2022",
+        "price": 1275
+      },
+      {
+        "date": "2022-01",
+        "price": 1641
+      },
+      {
+        "date": "2023",
+        "price": 1364
+      },
+      {
+        "date": "2023-01",
+        "price": 1522
+      },
+      {
+        "date": "2024",
+        "price": 1458
+      },
+      {
+        "date": "2024-01",
+        "price": 1556
+      },
+      {
+        "date": "2025",
+        "price": 1480
+      },
+      {
+        "date": "2025-01",
+        "price": 1888
+      },
+      {
+        "date": "2026-01",
+        "price": 1848
+      }
+    ],
+    "latest_price": 1848,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "果菜_ピーマン",
+    "category": "野菜",
+    "name": "果菜",
+    "detail": "ピーマン",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 4501
+      },
+      {
+        "date": "2020-01",
+        "price": 4799
+      },
+      {
+        "date": "2021",
+        "price": 3460
+      },
+      {
+        "date": "2021-01",
+        "price": 4558
+      },
+      {
+        "date": "2022",
+        "price": 3756
+      },
+      {
+        "date": "2022-01",
+        "price": 3704
+      },
+      {
+        "date": "2023",
+        "price": 4542
+      },
+      {
+        "date": "2023-01",
+        "price": 5714
+      },
+      {
+        "date": "2024",
+        "price": 5250
+      },
+      {
+        "date": "2024-01",
+        "price": 4446
+      },
+      {
+        "date": "2025",
+        "price": 4913
+      },
+      {
+        "date": "2025-01",
+        "price": 5219
+      },
+      {
+        "date": "2026-01",
+        "price": 4991
+      }
+    ],
+    "latest_price": 4991,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "果菜_メロン_アンデスメロン",
+    "category": "野菜",
+    "name": "果菜",
+    "detail": "メロン（アンデスメロン）",
+    "grade": "秀－Ｌ",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3622
+      },
+      {
+        "date": "2021",
+        "price": 3868
+      },
+      {
+        "date": "2022",
+        "price": 4054
+      },
+      {
+        "date": "2023",
+        "price": 4196
+      },
+      {
+        "date": "2024",
+        "price": 4512
+      },
+      {
+        "date": "2025",
+        "price": 5988
+      }
+    ],
+    "latest_price": 5988,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "果菜_メロン_温室メロン",
+    "category": "野菜",
+    "name": "果菜",
+    "detail": "メロン（温室メロン）",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 7275
+      },
+      {
+        "date": "2020-01",
+        "price": 14280
+      },
+      {
+        "date": "2021",
+        "price": 7778
+      },
+      {
+        "date": "2021-01",
+        "price": 9173
+      },
+      {
+        "date": "2022",
+        "price": 8871
+      },
+      {
+        "date": "2022-01",
+        "price": 14020
+      },
+      {
+        "date": "2023",
+        "price": 9004
+      },
+      {
+        "date": "2023-01",
+        "price": 13730
+      },
+      {
+        "date": "2024",
+        "price": 9560
+      },
+      {
+        "date": "2024-01",
+        "price": 13940
+      },
+      {
+        "date": "2025",
+        "price": 9223
+      },
+      {
+        "date": "2025-01",
+        "price": 14240
+      },
+      {
+        "date": "2026-01",
+        "price": 15300
+      }
+    ],
+    "latest_price": 15300,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "果菜_スイートコーン",
+    "category": "野菜",
+    "name": "果菜",
+    "detail": "スイートコーン",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2441
+      },
+      {
+        "date": "2021",
+        "price": 2386
+      },
+      {
+        "date": "2022",
+        "price": 2558
+      },
+      {
+        "date": "2023",
+        "price": 2374
+      },
+      {
+        "date": "2024",
+        "price": 2557
+      },
+      {
+        "date": "2025",
+        "price": 2812
+      }
+    ],
+    "latest_price": 2812,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "果菜_オクラ",
+    "category": "野菜",
+    "name": "果菜",
+    "detail": "オクラ",
+    "grade": "-",
+    "unit": "100ｇ",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 77
+      },
+      {
+        "date": "2021",
+        "price": 64
+      },
+      {
+        "date": "2022",
+        "price": 66
+      },
+      {
+        "date": "2023",
+        "price": 72
+      },
+      {
+        "date": "2024",
+        "price": 74
+      },
+      {
+        "date": "2025",
+        "price": 69
+      }
+    ],
+    "latest_price": 69,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "葉茎菜_はくさい",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "はくさい",
+    "grade": "結球はくさい",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 514
+      },
+      {
+        "date": "2020-01",
+        "price": 416
+      },
+      {
+        "date": "2021",
+        "price": 370
+      },
+      {
+        "date": "2021-01",
+        "price": 324
+      },
+      {
+        "date": "2022",
+        "price": 421
+      },
+      {
+        "date": "2022-01",
+        "price": 249
+      },
+      {
+        "date": "2023",
+        "price": 525
+      },
+      {
+        "date": "2023-01",
+        "price": 360
+      },
+      {
+        "date": "2024",
+        "price": 733
+      },
+      {
+        "date": "2024-01",
+        "price": 363
+      },
+      {
+        "date": "2025",
+        "price": 804
+      },
+      {
+        "date": "2025-01",
+        "price": 1184
+      },
+      {
+        "date": "2026-01",
+        "price": 396
+      }
+    ],
+    "latest_price": 396,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_キャベツ",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "キャベツ",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 716
+      },
+      {
+        "date": "2020-01",
+        "price": 491
+      },
+      {
+        "date": "2021",
+        "price": 523
+      },
+      {
+        "date": "2021-01",
+        "price": 779
+      },
+      {
+        "date": "2022",
+        "price": 634
+      },
+      {
+        "date": "2022-01",
+        "price": 538
+      },
+      {
+        "date": "2023",
+        "price": 773
+      },
+      {
+        "date": "2023-01",
+        "price": 810
+      },
+      {
+        "date": "2024",
+        "price": 1003
+      },
+      {
+        "date": "2024-01",
+        "price": 559
+      },
+      {
+        "date": "2025",
+        "price": 998
+      },
+      {
+        "date": "2025-01",
+        "price": 2487
+      },
+      {
+        "date": "2026-01",
+        "price": 594
+      }
+    ],
+    "latest_price": 594,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_レタス",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "レタス",
+    "grade": "Ｌ",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1178
+      },
+      {
+        "date": "2020-01",
+        "price": 1476
+      },
+      {
+        "date": "2021",
+        "price": 1065
+      },
+      {
+        "date": "2021-01",
+        "price": 1551
+      },
+      {
+        "date": "2022",
+        "price": 1232
+      },
+      {
+        "date": "2022-01",
+        "price": 1826
+      },
+      {
+        "date": "2023",
+        "price": 1282
+      },
+      {
+        "date": "2023-01",
+        "price": 2212
+      },
+      {
+        "date": "2024",
+        "price": 1594
+      },
+      {
+        "date": "2024-01",
+        "price": 1756
+      },
+      {
+        "date": "2025",
+        "price": 1406
+      },
+      {
+        "date": "2025-01",
+        "price": 3046
+      },
+      {
+        "date": "2026-01",
+        "price": 1572
+      }
+    ],
+    "latest_price": 1572,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_ほうれんそう",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "ほうれんそう",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 4626
+      },
+      {
+        "date": "2020-01",
+        "price": 4863
+      },
+      {
+        "date": "2021",
+        "price": 4166
+      },
+      {
+        "date": "2021-01",
+        "price": 5655
+      },
+      {
+        "date": "2022",
+        "price": 4540
+      },
+      {
+        "date": "2022-01",
+        "price": 4887
+      },
+      {
+        "date": "2023",
+        "price": 4799
+      },
+      {
+        "date": "2023-01",
+        "price": 5027
+      },
+      {
+        "date": "2024",
+        "price": 5245
+      },
+      {
+        "date": "2024-01",
+        "price": 4036
+      },
+      {
+        "date": "2025",
+        "price": 5577
+      },
+      {
+        "date": "2025-01",
+        "price": 6482
+      },
+      {
+        "date": "2026-01",
+        "price": 4790
+      }
+    ],
+    "latest_price": 4790,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_ねぎ",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "ねぎ",
+    "grade": "-",
+    "unit": "５kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1502
+      },
+      {
+        "date": "2020-01",
+        "price": 1581
+      },
+      {
+        "date": "2021",
+        "price": 1602
+      },
+      {
+        "date": "2021-01",
+        "price": 2169
+      },
+      {
+        "date": "2022",
+        "price": 1572
+      },
+      {
+        "date": "2022-01",
+        "price": 1544
+      },
+      {
+        "date": "2023",
+        "price": 1744
+      },
+      {
+        "date": "2023-01",
+        "price": 1594
+      },
+      {
+        "date": "2024",
+        "price": 1848
+      },
+      {
+        "date": "2024-01",
+        "price": 1730
+      },
+      {
+        "date": "2025",
+        "price": 2070
+      },
+      {
+        "date": "2025-01",
+        "price": 2624
+      },
+      {
+        "date": "2026-01",
+        "price": 2234
+      }
+    ],
+    "latest_price": 2234,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_ねぎ_白ねぎ",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "ねぎ（白ねぎ）",
+    "grade": "-",
+    "unit": "５kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1519
+      },
+      {
+        "date": "2020-01",
+        "price": 1464
+      },
+      {
+        "date": "2021",
+        "price": 1576
+      },
+      {
+        "date": "2021-01",
+        "price": 2022
+      },
+      {
+        "date": "2022",
+        "price": 1564
+      },
+      {
+        "date": "2022-01",
+        "price": 1503
+      },
+      {
+        "date": "2023",
+        "price": 1713
+      },
+      {
+        "date": "2023-01",
+        "price": 1528
+      },
+      {
+        "date": "2024",
+        "price": 1798
+      },
+      {
+        "date": "2024-01",
+        "price": 1675
+      },
+      {
+        "date": "2025",
+        "price": 2024
+      },
+      {
+        "date": "2025-01",
+        "price": 2609
+      },
+      {
+        "date": "2026-01",
+        "price": 2120
+      }
+    ],
+    "latest_price": 2120,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_ねぎ_青ねぎ",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "ねぎ（青ねぎ）",
+    "grade": "-",
+    "unit": "５kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2324
+      },
+      {
+        "date": "2020-01",
+        "price": 2377
+      },
+      {
+        "date": "2021",
+        "price": 2291
+      },
+      {
+        "date": "2021-01",
+        "price": 2964
+      },
+      {
+        "date": "2022",
+        "price": 2320
+      },
+      {
+        "date": "2022-01",
+        "price": 2361
+      },
+      {
+        "date": "2023",
+        "price": 2716
+      },
+      {
+        "date": "2023-01",
+        "price": 2854
+      },
+      {
+        "date": "2024",
+        "price": 3101
+      },
+      {
+        "date": "2024-01",
+        "price": 2689
+      },
+      {
+        "date": "2025",
+        "price": 3015
+      },
+      {
+        "date": "2025-01",
+        "price": 3790
+      },
+      {
+        "date": "2026-01",
+        "price": 3307
+      }
+    ],
+    "latest_price": 3307,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_たまねぎ",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "たまねぎ",
+    "grade": "Ｌ",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 746
+      },
+      {
+        "date": "2020-01",
+        "price": 714
+      },
+      {
+        "date": "2021",
+        "price": 1092
+      },
+      {
+        "date": "2021-01",
+        "price": 755
+      },
+      {
+        "date": "2022",
+        "price": 1743
+      },
+      {
+        "date": "2022-01",
+        "price": 2043
+      },
+      {
+        "date": "2023",
+        "price": 1364
+      },
+      {
+        "date": "2023-01",
+        "price": 1232
+      },
+      {
+        "date": "2024",
+        "price": 1528
+      },
+      {
+        "date": "2024-01",
+        "price": 2270
+      },
+      {
+        "date": "2025",
+        "price": 1572
+      },
+      {
+        "date": "2025-01",
+        "price": 1410
+      },
+      {
+        "date": "2026-01",
+        "price": 2203
+      }
+    ],
+    "latest_price": 2203,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_にら",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "にら",
+    "grade": "-",
+    "unit": "４kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2319
+      },
+      {
+        "date": "2020-01",
+        "price": 3453
+      },
+      {
+        "date": "2021",
+        "price": 2185
+      },
+      {
+        "date": "2021-01",
+        "price": 3761
+      },
+      {
+        "date": "2022",
+        "price": 2339
+      },
+      {
+        "date": "2022-01",
+        "price": 3256
+      },
+      {
+        "date": "2023",
+        "price": 2432
+      },
+      {
+        "date": "2023-01",
+        "price": 3811
+      },
+      {
+        "date": "2024",
+        "price": 2457
+      },
+      {
+        "date": "2024-01",
+        "price": 2954
+      },
+      {
+        "date": "2025",
+        "price": 2728
+      },
+      {
+        "date": "2025-01",
+        "price": 5158
+      },
+      {
+        "date": "2026-01",
+        "price": 3480
+      }
+    ],
+    "latest_price": 3480,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_しゅんぎく",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "しゅんぎく",
+    "grade": "-",
+    "unit": "４kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2170
+      },
+      {
+        "date": "2020-01",
+        "price": 2880
+      },
+      {
+        "date": "2021",
+        "price": 2066
+      },
+      {
+        "date": "2021-01",
+        "price": 3052
+      },
+      {
+        "date": "2022",
+        "price": 2103
+      },
+      {
+        "date": "2022-01",
+        "price": 2630
+      },
+      {
+        "date": "2023",
+        "price": 2431
+      },
+      {
+        "date": "2023-01",
+        "price": 2653
+      },
+      {
+        "date": "2024",
+        "price": 2833
+      },
+      {
+        "date": "2024-01",
+        "price": 2395
+      },
+      {
+        "date": "2025",
+        "price": 2872
+      },
+      {
+        "date": "2025-01",
+        "price": 3379
+      },
+      {
+        "date": "2026-01",
+        "price": 2914
+      }
+    ],
+    "latest_price": 2914,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_にんにく",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "にんにく",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 14090
+      },
+      {
+        "date": "2020-01",
+        "price": 9619
+      },
+      {
+        "date": "2021",
+        "price": 19750
+      },
+      {
+        "date": "2021-01",
+        "price": 19550
+      },
+      {
+        "date": "2022",
+        "price": 12380
+      },
+      {
+        "date": "2022-01",
+        "price": 14720
+      },
+      {
+        "date": "2023",
+        "price": 10960
+      },
+      {
+        "date": "2023-01",
+        "price": 9072
+      },
+      {
+        "date": "2024",
+        "price": 15550
+      },
+      {
+        "date": "2024-01",
+        "price": 12590
+      },
+      {
+        "date": "2025",
+        "price": 18190
+      },
+      {
+        "date": "2025-01",
+        "price": 17470
+      },
+      {
+        "date": "2026-01",
+        "price": 18690
+      }
+    ],
+    "latest_price": 18690,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_ブロッコリー",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "ブロッコリー",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2805
+      },
+      {
+        "date": "2020-01",
+        "price": 1864
+      },
+      {
+        "date": "2021",
+        "price": 2797
+      },
+      {
+        "date": "2021-01",
+        "price": 3485
+      },
+      {
+        "date": "2022",
+        "price": 2808
+      },
+      {
+        "date": "2022-01",
+        "price": 2640
+      },
+      {
+        "date": "2023",
+        "price": 3211
+      },
+      {
+        "date": "2023-01",
+        "price": 2842
+      },
+      {
+        "date": "2024",
+        "price": 3628
+      },
+      {
+        "date": "2024-01",
+        "price": 2017
+      },
+      {
+        "date": "2025",
+        "price": 3697
+      },
+      {
+        "date": "2025-01",
+        "price": 4947
+      },
+      {
+        "date": "2026-01",
+        "price": 3186
+      }
+    ],
+    "latest_price": 3186,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_アスパラガス",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "アスパラガス",
+    "grade": "グリーン",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 10530
+      },
+      {
+        "date": "2021",
+        "price": 10920
+      },
+      {
+        "date": "2022",
+        "price": 10650
+      },
+      {
+        "date": "2023",
+        "price": 11450
+      },
+      {
+        "date": "2024",
+        "price": 12270
+      },
+      {
+        "date": "2025",
+        "price": 12900
+      }
+    ],
+    "latest_price": 12900,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "葉茎菜_みつば",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "みつば",
+    "grade": "-",
+    "unit": "１kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 450
+      },
+      {
+        "date": "2020-01",
+        "price": 806
+      },
+      {
+        "date": "2021",
+        "price": 456
+      },
+      {
+        "date": "2021-01",
+        "price": 825
+      },
+      {
+        "date": "2022",
+        "price": 598
+      },
+      {
+        "date": "2022-01",
+        "price": 1035
+      },
+      {
+        "date": "2023",
+        "price": 801
+      },
+      {
+        "date": "2023-01",
+        "price": 950
+      },
+      {
+        "date": "2024",
+        "price": 820
+      },
+      {
+        "date": "2024-01",
+        "price": 857
+      },
+      {
+        "date": "2025",
+        "price": 854
+      },
+      {
+        "date": "2025-01",
+        "price": 1009
+      },
+      {
+        "date": "2026-01",
+        "price": 2181
+      }
+    ],
+    "latest_price": 2181,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_こまつな",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "こまつな",
+    "grade": "-",
+    "unit": "１kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 260
+      },
+      {
+        "date": "2020-01",
+        "price": 381
+      },
+      {
+        "date": "2021",
+        "price": 240
+      },
+      {
+        "date": "2021-01",
+        "price": 380
+      },
+      {
+        "date": "2022",
+        "price": 256
+      },
+      {
+        "date": "2022-01",
+        "price": 358
+      },
+      {
+        "date": "2023",
+        "price": 277
+      },
+      {
+        "date": "2023-01",
+        "price": 375
+      },
+      {
+        "date": "2024",
+        "price": 310
+      },
+      {
+        "date": "2024-01",
+        "price": 264
+      },
+      {
+        "date": "2025",
+        "price": 306
+      },
+      {
+        "date": "2025-01",
+        "price": 514
+      },
+      {
+        "date": "2026-01",
+        "price": 333
+      }
+    ],
+    "latest_price": 333,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_チンゲンサイ",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "チンゲンサイ",
+    "grade": "-",
+    "unit": "２kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 428
+      },
+      {
+        "date": "2020-01",
+        "price": 466
+      },
+      {
+        "date": "2021",
+        "price": 369
+      },
+      {
+        "date": "2021-01",
+        "price": 462
+      },
+      {
+        "date": "2022",
+        "price": 430
+      },
+      {
+        "date": "2022-01",
+        "price": 464
+      },
+      {
+        "date": "2023",
+        "price": 499
+      },
+      {
+        "date": "2023-01",
+        "price": 478
+      },
+      {
+        "date": "2024",
+        "price": 519
+      },
+      {
+        "date": "2024-01",
+        "price": 396
+      },
+      {
+        "date": "2025",
+        "price": 581
+      },
+      {
+        "date": "2025-01",
+        "price": 657
+      },
+      {
+        "date": "2026-01",
+        "price": 617
+      }
+    ],
+    "latest_price": 617,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_みずな",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "みずな",
+    "grade": "-",
+    "unit": "200g",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 62
+      },
+      {
+        "date": "2020-01",
+        "price": 83
+      },
+      {
+        "date": "2021",
+        "price": 57
+      },
+      {
+        "date": "2021-01",
+        "price": 85
+      },
+      {
+        "date": "2022",
+        "price": 58
+      },
+      {
+        "date": "2022-01",
+        "price": 78
+      },
+      {
+        "date": "2023",
+        "price": 71
+      },
+      {
+        "date": "2023-01",
+        "price": 107
+      },
+      {
+        "date": "2024",
+        "price": 74
+      },
+      {
+        "date": "2024-01",
+        "price": 87
+      },
+      {
+        "date": "2025",
+        "price": 71
+      },
+      {
+        "date": "2025-01",
+        "price": 109
+      },
+      {
+        "date": "2026-01",
+        "price": 73
+      }
+    ],
+    "latest_price": 73,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_たけのこ",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "たけのこ",
+    "grade": "-",
+    "unit": "１kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 395
+      },
+      {
+        "date": "2021",
+        "price": 493
+      },
+      {
+        "date": "2022",
+        "price": 678
+      },
+      {
+        "date": "2023",
+        "price": 592
+      },
+      {
+        "date": "2024",
+        "price": 500
+      },
+      {
+        "date": "2025",
+        "price": 1016
+      }
+    ],
+    "latest_price": 1016,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "葉茎菜_おおば",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "おおば",
+    "grade": "-",
+    "unit": "100g",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 190
+      },
+      {
+        "date": "2020-01",
+        "price": 220
+      },
+      {
+        "date": "2021",
+        "price": 220
+      },
+      {
+        "date": "2021-01",
+        "price": 192
+      },
+      {
+        "date": "2022",
+        "price": 249
+      },
+      {
+        "date": "2022-01",
+        "price": 226
+      },
+      {
+        "date": "2023",
+        "price": 224
+      },
+      {
+        "date": "2023-01",
+        "price": 231
+      },
+      {
+        "date": "2024",
+        "price": 246
+      },
+      {
+        "date": "2024-01",
+        "price": 175
+      },
+      {
+        "date": "2025",
+        "price": 244
+      },
+      {
+        "date": "2025-01",
+        "price": 210
+      },
+      {
+        "date": "2026-01",
+        "price": 197
+      }
+    ],
+    "latest_price": 197,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "葉茎菜_みょうが",
+    "category": "野菜",
+    "name": "葉茎菜",
+    "detail": "みょうが",
+    "grade": "-",
+    "unit": "２kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2657
+      },
+      {
+        "date": "2021",
+        "price": 2708
+      },
+      {
+        "date": "2022",
+        "price": 2369
+      },
+      {
+        "date": "2023",
+        "price": 2821
+      },
+      {
+        "date": "2024",
+        "price": 3112
+      },
+      {
+        "date": "2025",
+        "price": 2927
+      }
+    ],
+    "latest_price": 2927,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "根菜_だいこん",
+    "category": "野菜",
+    "name": "根菜",
+    "detail": "だいこん",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 661
+      },
+      {
+        "date": "2020-01",
+        "price": 559
+      },
+      {
+        "date": "2021",
+        "price": 648
+      },
+      {
+        "date": "2021-01",
+        "price": 625
+      },
+      {
+        "date": "2022",
+        "price": 861
+      },
+      {
+        "date": "2022-01",
+        "price": 555
+      },
+      {
+        "date": "2023",
+        "price": 905
+      },
+      {
+        "date": "2023-01",
+        "price": 709
+      },
+      {
+        "date": "2024",
+        "price": 983
+      },
+      {
+        "date": "2024-01",
+        "price": 606
+      },
+      {
+        "date": "2025",
+        "price": 996
+      },
+      {
+        "date": "2025-01",
+        "price": 1171
+      },
+      {
+        "date": "2026-01",
+        "price": 801
+      }
+    ],
+    "latest_price": 801,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "根菜_にんじん",
+    "category": "野菜",
+    "name": "根菜",
+    "detail": "にんじん",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1186
+      },
+      {
+        "date": "2020-01",
+        "price": 1128
+      },
+      {
+        "date": "2021",
+        "price": 997
+      },
+      {
+        "date": "2021-01",
+        "price": 1239
+      },
+      {
+        "date": "2022",
+        "price": 1135
+      },
+      {
+        "date": "2022-01",
+        "price": 862
+      },
+      {
+        "date": "2023",
+        "price": 1396
+      },
+      {
+        "date": "2023-01",
+        "price": 1043
+      },
+      {
+        "date": "2024",
+        "price": 1527
+      },
+      {
+        "date": "2024-01",
+        "price": 1157
+      },
+      {
+        "date": "2025",
+        "price": 1670
+      },
+      {
+        "date": "2025-01",
+        "price": 1581
+      },
+      {
+        "date": "2026-01",
+        "price": 1386
+      }
+    ],
+    "latest_price": 1386,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "根菜_ごぼう",
+    "category": "野菜",
+    "name": "根菜",
+    "detail": "ごぼう",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1626
+      },
+      {
+        "date": "2020-01",
+        "price": 694
+      },
+      {
+        "date": "2021",
+        "price": 2310
+      },
+      {
+        "date": "2021-01",
+        "price": 2446
+      },
+      {
+        "date": "2022",
+        "price": 1703
+      },
+      {
+        "date": "2022-01",
+        "price": 1160
+      },
+      {
+        "date": "2023",
+        "price": 1917
+      },
+      {
+        "date": "2023-01",
+        "price": 1579
+      },
+      {
+        "date": "2024",
+        "price": 2219
+      },
+      {
+        "date": "2024-01",
+        "price": 1449
+      },
+      {
+        "date": "2025",
+        "price": 2983
+      },
+      {
+        "date": "2025-01",
+        "price": 2972
+      },
+      {
+        "date": "2026-01",
+        "price": 1643
+      }
+    ],
+    "latest_price": 1643,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "根菜_さといも",
+    "category": "野菜",
+    "name": "根菜",
+    "detail": "さといも",
+    "grade": "こいも",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2988
+      },
+      {
+        "date": "2020-01",
+        "price": 2418
+      },
+      {
+        "date": "2021",
+        "price": 3051
+      },
+      {
+        "date": "2021-01",
+        "price": 3093
+      },
+      {
+        "date": "2022",
+        "price": 3204
+      },
+      {
+        "date": "2022-01",
+        "price": 2784
+      },
+      {
+        "date": "2023",
+        "price": 3362
+      },
+      {
+        "date": "2023-01",
+        "price": 2798
+      },
+      {
+        "date": "2024",
+        "price": 4133
+      },
+      {
+        "date": "2024-01",
+        "price": 3118
+      },
+      {
+        "date": "2025",
+        "price": 4324
+      },
+      {
+        "date": "2025-01",
+        "price": 3763
+      },
+      {
+        "date": "2026-01",
+        "price": 4047
+      }
+    ],
+    "latest_price": 4047,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "根菜_かぶ",
+    "category": "野菜",
+    "name": "根菜",
+    "detail": "かぶ",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1302
+      },
+      {
+        "date": "2020-01",
+        "price": 1591
+      },
+      {
+        "date": "2021",
+        "price": 1196
+      },
+      {
+        "date": "2021-01",
+        "price": 1371
+      },
+      {
+        "date": "2022",
+        "price": 1276
+      },
+      {
+        "date": "2022-01",
+        "price": 1343
+      },
+      {
+        "date": "2023",
+        "price": 1301
+      },
+      {
+        "date": "2023-01",
+        "price": 1430
+      },
+      {
+        "date": "2024",
+        "price": 1404
+      },
+      {
+        "date": "2024-01",
+        "price": 1293
+      },
+      {
+        "date": "2025",
+        "price": 1589
+      },
+      {
+        "date": "2025-01",
+        "price": 1988
+      },
+      {
+        "date": "2026-01",
+        "price": 1708
+      }
+    ],
+    "latest_price": 1708,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "根菜_やまのいも",
+    "category": "野菜",
+    "name": "根菜",
+    "detail": "やまのいも",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2145
+      },
+      {
+        "date": "2020-01",
+        "price": 1785
+      },
+      {
+        "date": "2021",
+        "price": 2006
+      },
+      {
+        "date": "2021-01",
+        "price": 1982
+      },
+      {
+        "date": "2022",
+        "price": 2006
+      },
+      {
+        "date": "2022-01",
+        "price": 1937
+      },
+      {
+        "date": "2023",
+        "price": 3105
+      },
+      {
+        "date": "2023-01",
+        "price": 2528
+      },
+      {
+        "date": "2024",
+        "price": 2824
+      },
+      {
+        "date": "2024-01",
+        "price": 2724
+      },
+      {
+        "date": "2025",
+        "price": 3180
+      },
+      {
+        "date": "2025-01",
+        "price": 3085
+      },
+      {
+        "date": "2026-01",
+        "price": 3010
+      }
+    ],
+    "latest_price": 3010,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "根菜_れんこん",
+    "category": "野菜",
+    "name": "根菜",
+    "detail": "れんこん",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 4433
+      },
+      {
+        "date": "2020-01",
+        "price": 3957
+      },
+      {
+        "date": "2021",
+        "price": 4130
+      },
+      {
+        "date": "2021-01",
+        "price": 4351
+      },
+      {
+        "date": "2022",
+        "price": 4114
+      },
+      {
+        "date": "2022-01",
+        "price": 4732
+      },
+      {
+        "date": "2023",
+        "price": 3345
+      },
+      {
+        "date": "2023-01",
+        "price": 3421
+      },
+      {
+        "date": "2024",
+        "price": 3658
+      },
+      {
+        "date": "2024-01",
+        "price": 3303
+      },
+      {
+        "date": "2025",
+        "price": 3696
+      },
+      {
+        "date": "2025-01",
+        "price": 3167
+      },
+      {
+        "date": "2026-01",
+        "price": 4405
+      }
+    ],
+    "latest_price": 4405,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "根菜_しょうが",
+    "category": "野菜",
+    "name": "根菜",
+    "detail": "しょうが",
+    "grade": "根しょうが",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 5725
+      },
+      {
+        "date": "2020-01",
+        "price": 6298
+      },
+      {
+        "date": "2021",
+        "price": 5488
+      },
+      {
+        "date": "2021-01",
+        "price": 5511
+      },
+      {
+        "date": "2022",
+        "price": 4454
+      },
+      {
+        "date": "2022-01",
+        "price": 5649
+      },
+      {
+        "date": "2023",
+        "price": 4270
+      },
+      {
+        "date": "2023-01",
+        "price": 4166
+      },
+      {
+        "date": "2024",
+        "price": 5008
+      },
+      {
+        "date": "2024-01",
+        "price": 4572
+      },
+      {
+        "date": "2025",
+        "price": 8578
+      },
+      {
+        "date": "2025-01",
+        "price": 8803
+      },
+      {
+        "date": "2026-01",
+        "price": 8626
+      }
+    ],
+    "latest_price": 8626,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "きのこ類_生しいたけ",
+    "category": "野菜",
+    "name": "きのこ類",
+    "detail": "生しいたけ",
+    "grade": "菌床",
+    "unit": "１kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 970
+      },
+      {
+        "date": "2020-01",
+        "price": 1051
+      },
+      {
+        "date": "2021",
+        "price": 928
+      },
+      {
+        "date": "2021-01",
+        "price": 1076
+      },
+      {
+        "date": "2022",
+        "price": 924
+      },
+      {
+        "date": "2022-01",
+        "price": 1014
+      },
+      {
+        "date": "2023",
+        "price": 980
+      },
+      {
+        "date": "2023-01",
+        "price": 1085
+      },
+      {
+        "date": "2024",
+        "price": 1020
+      },
+      {
+        "date": "2024-01",
+        "price": 1118
+      },
+      {
+        "date": "2025",
+        "price": 1027
+      },
+      {
+        "date": "2025-01",
+        "price": 1210
+      },
+      {
+        "date": "2026-01",
+        "price": 1191
+      }
+    ],
+    "latest_price": 1191,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "きのこ類_ぶなしめじ",
+    "category": "野菜",
+    "name": "きのこ類",
+    "detail": "ぶなしめじ",
+    "grade": "-",
+    "unit": "１kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 380
+      },
+      {
+        "date": "2020-01",
+        "price": 447
+      },
+      {
+        "date": "2021",
+        "price": 332
+      },
+      {
+        "date": "2021-01",
+        "price": 423
+      },
+      {
+        "date": "2022",
+        "price": 325
+      },
+      {
+        "date": "2022-01",
+        "price": 389
+      },
+      {
+        "date": "2023",
+        "price": 374
+      },
+      {
+        "date": "2023-01",
+        "price": 409
+      },
+      {
+        "date": "2024",
+        "price": 394
+      },
+      {
+        "date": "2024-01",
+        "price": 448
+      },
+      {
+        "date": "2025",
+        "price": 554
+      },
+      {
+        "date": "2025-01",
+        "price": 659
+      },
+      {
+        "date": "2026-01",
+        "price": 651
+      }
+    ],
+    "latest_price": 651,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "きのこ類_まいたけ",
+    "category": "野菜",
+    "name": "きのこ類",
+    "detail": "まいたけ",
+    "grade": "-",
+    "unit": "１kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 921
+      },
+      {
+        "date": "2020-01",
+        "price": 958
+      },
+      {
+        "date": "2021",
+        "price": 922
+      },
+      {
+        "date": "2021-01",
+        "price": 1056
+      },
+      {
+        "date": "2022",
+        "price": 827
+      },
+      {
+        "date": "2022-01",
+        "price": 961
+      },
+      {
+        "date": "2023",
+        "price": 904
+      },
+      {
+        "date": "2023-01",
+        "price": 924
+      },
+      {
+        "date": "2024",
+        "price": 959
+      },
+      {
+        "date": "2024-01",
+        "price": 963
+      },
+      {
+        "date": "2025",
+        "price": 1068
+      },
+      {
+        "date": "2025-01",
+        "price": 1140
+      },
+      {
+        "date": "2026-01",
+        "price": 1096
+      }
+    ],
+    "latest_price": 1096,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "まめ科野菜_さやえんどう",
+    "category": "野菜",
+    "name": "まめ科野菜",
+    "detail": "さやえんどう",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 10050
+      },
+      {
+        "date": "2020-01",
+        "price": 7991
+      },
+      {
+        "date": "2021",
+        "price": 11570
+      },
+      {
+        "date": "2021-01",
+        "price": 11110
+      },
+      {
+        "date": "2022",
+        "price": 12220
+      },
+      {
+        "date": "2022-01",
+        "price": 8500
+      },
+      {
+        "date": "2023",
+        "price": 14980
+      },
+      {
+        "date": "2023-01",
+        "price": 10930
+      },
+      {
+        "date": "2024",
+        "price": 15380
+      },
+      {
+        "date": "2024-01",
+        "price": 7622
+      },
+      {
+        "date": "2025",
+        "price": 12990
+      },
+      {
+        "date": "2025-01",
+        "price": 11670
+      },
+      {
+        "date": "2026-01",
+        "price": 9779
+      }
+    ],
+    "latest_price": 9779,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "まめ科野菜_さやいんげん",
+    "category": "野菜",
+    "name": "まめ科野菜",
+    "detail": "さやいんげん",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 8406
+      },
+      {
+        "date": "2020-01",
+        "price": 7890
+      },
+      {
+        "date": "2021",
+        "price": 8678
+      },
+      {
+        "date": "2021-01",
+        "price": 10100
+      },
+      {
+        "date": "2022",
+        "price": 8764
+      },
+      {
+        "date": "2022-01",
+        "price": 6723
+      },
+      {
+        "date": "2023",
+        "price": 9471
+      },
+      {
+        "date": "2023-01",
+        "price": 9420
+      },
+      {
+        "date": "2024",
+        "price": 10100
+      },
+      {
+        "date": "2024-01",
+        "price": 8130
+      },
+      {
+        "date": "2025",
+        "price": 10280
+      },
+      {
+        "date": "2025-01",
+        "price": 10110
+      },
+      {
+        "date": "2026-01",
+        "price": 9868
+      }
+    ],
+    "latest_price": 9868,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "まめ科野菜_えだまめ",
+    "category": "野菜",
+    "name": "まめ科野菜",
+    "detail": "えだまめ",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 7039
+      },
+      {
+        "date": "2021",
+        "price": 6767
+      },
+      {
+        "date": "2022",
+        "price": 6872
+      },
+      {
+        "date": "2023",
+        "price": 7593
+      },
+      {
+        "date": "2024",
+        "price": 8361
+      },
+      {
+        "date": "2025",
+        "price": 8294
+      }
+    ],
+    "latest_price": 8294,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "りんご_ふじ",
+    "category": "果実",
+    "name": "りんご",
+    "detail": "ふじ",
+    "grade": "秀32玉",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3239
+      },
+      {
+        "date": "2020-01",
+        "price": 3008
+      },
+      {
+        "date": "2021",
+        "price": 3056
+      },
+      {
+        "date": "2021-01",
+        "price": 2743
+      },
+      {
+        "date": "2022",
+        "price": 3674
+      },
+      {
+        "date": "2022-01",
+        "price": 3801
+      },
+      {
+        "date": "2023",
+        "price": 3490
+      },
+      {
+        "date": "2023-01",
+        "price": 2934
+      },
+      {
+        "date": "2024",
+        "price": 4651
+      },
+      {
+        "date": "2024-01",
+        "price": 4140
+      },
+      {
+        "date": "2025",
+        "price": 4793
+      },
+      {
+        "date": "2025-01",
+        "price": 5133
+      },
+      {
+        "date": "2026-01",
+        "price": 4759
+      }
+    ],
+    "latest_price": 4759,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "りんご_つがる",
+    "category": "果実",
+    "name": "りんご",
+    "detail": "つがる",
+    "grade": "秀32玉",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3078
+      },
+      {
+        "date": "2021",
+        "price": 2975
+      },
+      {
+        "date": "2022",
+        "price": 2784
+      },
+      {
+        "date": "2023",
+        "price": 3517
+      },
+      {
+        "date": "2024",
+        "price": 3019
+      },
+      {
+        "date": "2025",
+        "price": 4122
+      }
+    ],
+    "latest_price": 4122,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "りんご_王林",
+    "category": "果実",
+    "name": "りんご",
+    "detail": "王林",
+    "grade": "秀36玉",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2613
+      },
+      {
+        "date": "2020-01",
+        "price": 2674
+      },
+      {
+        "date": "2021",
+        "price": 2691
+      },
+      {
+        "date": "2021-01",
+        "price": 2710
+      },
+      {
+        "date": "2022",
+        "price": 3112
+      },
+      {
+        "date": "2022-01",
+        "price": 3147
+      },
+      {
+        "date": "2023",
+        "price": 2875
+      },
+      {
+        "date": "2023-01",
+        "price": 2895
+      },
+      {
+        "date": "2024",
+        "price": 3663
+      },
+      {
+        "date": "2024-01",
+        "price": 3559
+      },
+      {
+        "date": "2025",
+        "price": 3962
+      },
+      {
+        "date": "2025-01",
+        "price": 4076
+      },
+      {
+        "date": "2026-01",
+        "price": 3651
+      }
+    ],
+    "latest_price": 3651,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "りんご_ジョナゴールド",
+    "category": "果実",
+    "name": "りんご",
+    "detail": "ジョナゴールド",
+    "grade": "秀32玉",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3468
+      },
+      {
+        "date": "2020-01",
+        "price": 3132
+      },
+      {
+        "date": "2021",
+        "price": 2724
+      },
+      {
+        "date": "2021-01",
+        "price": 2457
+      },
+      {
+        "date": "2022",
+        "price": 3491
+      },
+      {
+        "date": "2022-01",
+        "price": 3645
+      },
+      {
+        "date": "2023",
+        "price": 3503
+      },
+      {
+        "date": "2023-01",
+        "price": 2998
+      },
+      {
+        "date": "2024",
+        "price": 4300
+      },
+      {
+        "date": "2024-01",
+        "price": 3950
+      },
+      {
+        "date": "2025",
+        "price": 4186
+      },
+      {
+        "date": "2025-01",
+        "price": 4577
+      },
+      {
+        "date": "2026-01",
+        "price": 3797
+      }
+    ],
+    "latest_price": 3797,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "みかん_普通温州",
+    "category": "果実",
+    "name": "みかん（普通温州）",
+    "detail": "",
+    "grade": "優－Ｍ",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2628
+      },
+      {
+        "date": "2020-01",
+        "price": 2804
+      },
+      {
+        "date": "2021",
+        "price": 2608
+      },
+      {
+        "date": "2021-01",
+        "price": 2484
+      },
+      {
+        "date": "2022",
+        "price": 2849
+      },
+      {
+        "date": "2022-01",
+        "price": 2780
+      },
+      {
+        "date": "2023",
+        "price": 2964
+      },
+      {
+        "date": "2023-01",
+        "price": 2967
+      },
+      {
+        "date": "2024",
+        "price": 3599
+      },
+      {
+        "date": "2024-01",
+        "price": 3222
+      },
+      {
+        "date": "2025",
+        "price": 4229
+      },
+      {
+        "date": "2025-01",
+        "price": 4797
+      },
+      {
+        "date": "2026-01",
+        "price": 3515
+      }
+    ],
+    "latest_price": 3515,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "みかん_早生温州",
+    "category": "果実",
+    "name": "みかん（早生温州）",
+    "detail": "",
+    "grade": "優－Ｍ",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2167
+      },
+      {
+        "date": "2021",
+        "price": 2128
+      },
+      {
+        "date": "2022",
+        "price": 2207
+      },
+      {
+        "date": "2023",
+        "price": 2350
+      },
+      {
+        "date": "2024",
+        "price": 3018
+      },
+      {
+        "date": "2025",
+        "price": 2724
+      }
+    ],
+    "latest_price": 2724,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "なつみかん_甘なつ",
+    "category": "果実",
+    "name": "なつみかん（甘なつ）",
+    "detail": "",
+    "grade": "優－Ｌ",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1206
+      },
+      {
+        "date": "2021",
+        "price": 1371
+      },
+      {
+        "date": "2022",
+        "price": 1192
+      },
+      {
+        "date": "2023",
+        "price": 1282
+      },
+      {
+        "date": "2024",
+        "price": 1301
+      },
+      {
+        "date": "2025",
+        "price": 1652
+      }
+    ],
+    "latest_price": 1652,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "いよかん",
+    "category": "果実",
+    "name": "いよかん",
+    "detail": "",
+    "grade": "優－Ｌ",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2120
+      },
+      {
+        "date": "2020-01",
+        "price": 2159
+      },
+      {
+        "date": "2021",
+        "price": 2189
+      },
+      {
+        "date": "2021-01",
+        "price": 2319
+      },
+      {
+        "date": "2022",
+        "price": 2255
+      },
+      {
+        "date": "2022-01",
+        "price": 2315
+      },
+      {
+        "date": "2023",
+        "price": 2508
+      },
+      {
+        "date": "2023-01",
+        "price": 2505
+      },
+      {
+        "date": "2024",
+        "price": 2688
+      },
+      {
+        "date": "2024-01",
+        "price": 2714
+      },
+      {
+        "date": "2025",
+        "price": 3675
+      },
+      {
+        "date": "2025-01",
+        "price": 3684
+      },
+      {
+        "date": "2026-01",
+        "price": 2417
+      }
+    ],
+    "latest_price": 2417,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "日本なし_二十世紀",
+    "category": "果実",
+    "name": "日本なし（二十世紀）",
+    "detail": "",
+    "grade": "秀28玉",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 5219
+      },
+      {
+        "date": "2021",
+        "price": 4767
+      },
+      {
+        "date": "2022",
+        "price": 3561
+      },
+      {
+        "date": "2023",
+        "price": 3865
+      },
+      {
+        "date": "2024",
+        "price": 4237
+      },
+      {
+        "date": "2025",
+        "price": 5069
+      }
+    ],
+    "latest_price": 5069,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "日本なし_豊水",
+    "category": "果実",
+    "name": "日本なし（豊水）",
+    "detail": "",
+    "grade": "秀28玉",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 4559
+      },
+      {
+        "date": "2021",
+        "price": 3688
+      },
+      {
+        "date": "2022",
+        "price": 3650
+      },
+      {
+        "date": "2023",
+        "price": 3974
+      },
+      {
+        "date": "2024",
+        "price": 4383
+      },
+      {
+        "date": "2025",
+        "price": 4550
+      }
+    ],
+    "latest_price": 4550,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "日本なし_幸水",
+    "category": "果実",
+    "name": "日本なし（幸水）",
+    "detail": "",
+    "grade": "秀28玉",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 4673
+      },
+      {
+        "date": "2021",
+        "price": 5079
+      },
+      {
+        "date": "2022",
+        "price": 4849
+      },
+      {
+        "date": "2023",
+        "price": 4504
+      },
+      {
+        "date": "2024",
+        "price": 5332
+      },
+      {
+        "date": "2025",
+        "price": 6030
+      }
+    ],
+    "latest_price": 6030,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "西洋なし",
+    "category": "果実",
+    "name": "西洋なし",
+    "detail": "",
+    "grade": "秀18玉",
+    "unit": "５kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1700
+      },
+      {
+        "date": "2021",
+        "price": 1868
+      },
+      {
+        "date": "2022",
+        "price": 2029
+      },
+      {
+        "date": "2023",
+        "price": 2368
+      },
+      {
+        "date": "2024",
+        "price": 2233
+      },
+      {
+        "date": "2025",
+        "price": 2290
+      }
+    ],
+    "latest_price": 2290,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "かき",
+    "category": "果実",
+    "name": "かき",
+    "detail": "",
+    "grade": "秀－Ｍ",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2281
+      },
+      {
+        "date": "2021",
+        "price": 2405
+      },
+      {
+        "date": "2022",
+        "price": 2159
+      },
+      {
+        "date": "2023",
+        "price": 3051
+      },
+      {
+        "date": "2024",
+        "price": 3938
+      },
+      {
+        "date": "2025",
+        "price": 2952
+      }
+    ],
+    "latest_price": 2952,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "ぶどう_デラウェア",
+    "category": "果実",
+    "name": "ぶどう",
+    "detail": "デラウェア",
+    "grade": "秀－Ｌ",
+    "unit": "４kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3500
+      },
+      {
+        "date": "2021",
+        "price": 3334
+      },
+      {
+        "date": "2022",
+        "price": 3706
+      },
+      {
+        "date": "2023",
+        "price": 3669
+      },
+      {
+        "date": "2024",
+        "price": 3996
+      },
+      {
+        "date": "2025",
+        "price": 4201
+      }
+    ],
+    "latest_price": 4201,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "ぶどう_巨峰",
+    "category": "果実",
+    "name": "ぶどう",
+    "detail": "巨峰",
+    "grade": "秀－Ｌ",
+    "unit": "４kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3955
+      },
+      {
+        "date": "2021",
+        "price": 4251
+      },
+      {
+        "date": "2022",
+        "price": 4228
+      },
+      {
+        "date": "2023",
+        "price": 4385
+      },
+      {
+        "date": "2024",
+        "price": 4983
+      },
+      {
+        "date": "2025",
+        "price": 4830
+      }
+    ],
+    "latest_price": 4830,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "ぶどう_ピオーネ",
+    "category": "果実",
+    "name": "ぶどう",
+    "detail": "ピオーネ",
+    "grade": "秀３Ｌ",
+    "unit": "５kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 6726
+      },
+      {
+        "date": "2021",
+        "price": 7141
+      },
+      {
+        "date": "2022",
+        "price": 7467
+      },
+      {
+        "date": "2023",
+        "price": 9039
+      },
+      {
+        "date": "2024",
+        "price": 8309
+      },
+      {
+        "date": "2025",
+        "price": 8052
+      }
+    ],
+    "latest_price": 8052,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "ぶどう_シャインマスカット",
+    "category": "果実",
+    "name": "ぶどう",
+    "detail": "シャインマスカット",
+    "grade": "秀３Ｌ",
+    "unit": "５kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 9192
+      },
+      {
+        "date": "2021",
+        "price": 9518
+      },
+      {
+        "date": "2022",
+        "price": 9030
+      },
+      {
+        "date": "2023",
+        "price": 8748
+      },
+      {
+        "date": "2024",
+        "price": 8350
+      },
+      {
+        "date": "2025",
+        "price": 7911
+      }
+    ],
+    "latest_price": 7911,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "もも",
+    "category": "果実",
+    "name": "もも",
+    "detail": "",
+    "grade": "秀18～20玉",
+    "unit": "５kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3617
+      },
+      {
+        "date": "2021",
+        "price": 3475
+      },
+      {
+        "date": "2022",
+        "price": 3256
+      },
+      {
+        "date": "2023",
+        "price": 3344
+      },
+      {
+        "date": "2024",
+        "price": 3648
+      },
+      {
+        "date": "2025",
+        "price": 3863
+      }
+    ],
+    "latest_price": 3863,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "くり",
+    "category": "果実",
+    "name": "くり",
+    "detail": "",
+    "grade": "秀Ｌ",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 9867
+      },
+      {
+        "date": "2021",
+        "price": 10510
+      },
+      {
+        "date": "2022",
+        "price": 12440
+      },
+      {
+        "date": "2023",
+        "price": 13080
+      },
+      {
+        "date": "2024",
+        "price": 12960
+      },
+      {
+        "date": "2025",
+        "price": 13230
+      }
+    ],
+    "latest_price": 13230,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "うめ",
+    "category": "果実",
+    "name": "うめ",
+    "detail": "",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 5688
+      },
+      {
+        "date": "2021",
+        "price": 4737
+      },
+      {
+        "date": "2022",
+        "price": 4043
+      },
+      {
+        "date": "2023",
+        "price": 2866
+      },
+      {
+        "date": "2024",
+        "price": 7131
+      },
+      {
+        "date": "2025",
+        "price": 7534
+      }
+    ],
+    "latest_price": 7534,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "キウイフルーツ",
+    "category": "果実",
+    "name": "キウイフルーツ",
+    "detail": "",
+    "grade": "-",
+    "unit": "3.6kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1729
+      },
+      {
+        "date": "2020-01",
+        "price": 1679
+      },
+      {
+        "date": "2021",
+        "price": 1768
+      },
+      {
+        "date": "2021-01",
+        "price": 1754
+      },
+      {
+        "date": "2022",
+        "price": 2061
+      },
+      {
+        "date": "2022-01",
+        "price": 1901
+      },
+      {
+        "date": "2023",
+        "price": 1819
+      },
+      {
+        "date": "2023-01",
+        "price": 1813
+      },
+      {
+        "date": "2024",
+        "price": 2057
+      },
+      {
+        "date": "2024-01",
+        "price": 1993
+      },
+      {
+        "date": "2025",
+        "price": 2237
+      },
+      {
+        "date": "2025-01",
+        "price": 2200
+      },
+      {
+        "date": "2026-01",
+        "price": 2160
+      }
+    ],
+    "latest_price": 2160,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "おうとう",
+    "category": "果実",
+    "name": "おうとう",
+    "detail": "",
+    "grade": "秀－Ｌ",
+    "unit": "２kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3930
+      },
+      {
+        "date": "2021",
+        "price": 5670
+      },
+      {
+        "date": "2022",
+        "price": 4081
+      },
+      {
+        "date": "2023",
+        "price": 4788
+      },
+      {
+        "date": "2024",
+        "price": 5726
+      },
+      {
+        "date": "2025",
+        "price": 6102
+      }
+    ],
+    "latest_price": 6102,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "すもも",
+    "category": "果実",
+    "name": "すもも",
+    "detail": "",
+    "grade": "-",
+    "unit": "5.6kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3541
+      },
+      {
+        "date": "2021",
+        "price": 3512
+      },
+      {
+        "date": "2022",
+        "price": 3417
+      },
+      {
+        "date": "2023",
+        "price": 3525
+      },
+      {
+        "date": "2024",
+        "price": 3970
+      },
+      {
+        "date": "2025",
+        "price": 4016
+      }
+    ],
+    "latest_price": 4016,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "しらぬい_デコポン",
+    "category": "果実",
+    "name": "しらぬい（デコポン）",
+    "detail": "",
+    "grade": "-",
+    "unit": "５kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1854
+      },
+      {
+        "date": "2021",
+        "price": 1896
+      },
+      {
+        "date": "2022",
+        "price": 2004
+      },
+      {
+        "date": "2023",
+        "price": 2038
+      },
+      {
+        "date": "2024",
+        "price": 2088
+      },
+      {
+        "date": "2025",
+        "price": 2453
+      }
+    ],
+    "latest_price": 2453,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "パインアップル",
+    "category": "果実",
+    "name": "パインアップル",
+    "detail": "",
+    "grade": "-",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1545
+      },
+      {
+        "date": "2021",
+        "price": 1530
+      },
+      {
+        "date": "2022",
+        "price": 1552
+      },
+      {
+        "date": "2023",
+        "price": 1592
+      },
+      {
+        "date": "2024",
+        "price": 1418
+      },
+      {
+        "date": "2025",
+        "price": 2096
+      }
+    ],
+    "latest_price": 2096,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "マンゴー",
+    "category": "果実",
+    "name": "マンゴー",
+    "detail": "",
+    "grade": "-",
+    "unit": "２kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 5036
+      },
+      {
+        "date": "2021",
+        "price": 6050
+      },
+      {
+        "date": "2022",
+        "price": 7093
+      },
+      {
+        "date": "2023",
+        "price": 6831
+      },
+      {
+        "date": "2024",
+        "price": 7155
+      },
+      {
+        "date": "2025",
+        "price": 8215
+      }
+    ],
+    "latest_price": 8215,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "葉たばこ",
+    "category": "工芸農作物",
+    "name": "葉たばこ",
+    "detail": "",
+    "grade": "中葉、Ａタイプ",
+    "unit": "１kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 2338
+      },
+      {
+        "date": "2020-01",
+        "price": 2119
+      },
+      {
+        "date": "2021",
+        "price": 2349
+      },
+      {
+        "date": "2021-01",
+        "price": 2119
+      },
+      {
+        "date": "2022",
+        "price": 2351
+      },
+      {
+        "date": "2022-01",
+        "price": 2132
+      },
+      {
+        "date": "2023",
+        "price": 2351
+      },
+      {
+        "date": "2023-01",
+        "price": 2132
+      },
+      {
+        "date": "2024",
+        "price": 2353
+      },
+      {
+        "date": "2024-01",
+        "price": 2132
+      },
+      {
+        "date": "2025",
+        "price": 2380
+      },
+      {
+        "date": "2025-01",
+        "price": 2141
+      },
+      {
+        "date": "2026-01",
+        "price": 2167
+      }
+    ],
+    "latest_price": 2167,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "てんさい",
+    "category": "工芸農作物",
+    "name": "てんさい",
+    "detail": "",
+    "grade": "-",
+    "unit": "１ｔ",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 10580
+      },
+      {
+        "date": "2021",
+        "price": 11300
+      },
+      {
+        "date": "2022",
+        "price": 12900
+      },
+      {
+        "date": "2023",
+        "price": 12910
+      },
+      {
+        "date": "2024",
+        "price": 15180
+      },
+      {
+        "date": "2025",
+        "price": 14230
+      }
+    ],
+    "latest_price": 14230,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "さとうきび",
+    "category": "工芸農作物",
+    "name": "さとうきび",
+    "detail": "",
+    "grade": "-",
+    "unit": "１ｔ",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 21640
+      },
+      {
+        "date": "2020-01",
+        "price": 21640
+      },
+      {
+        "date": "2021",
+        "price": 21980
+      },
+      {
+        "date": "2021-01",
+        "price": 22010
+      },
+      {
+        "date": "2022",
+        "price": 22870
+      },
+      {
+        "date": "2022-01",
+        "price": 22850
+      },
+      {
+        "date": "2023",
+        "price": 23480
+      },
+      {
+        "date": "2023-01",
+        "price": 23470
+      },
+      {
+        "date": "2024",
+        "price": 24550
+      },
+      {
+        "date": "2024-01",
+        "price": 24500
+      },
+      {
+        "date": "2025",
+        "price": 23970
+      },
+      {
+        "date": "2025-01",
+        "price": 23780
+      },
+      {
+        "date": "2026-01",
+        "price": 22980
+      }
+    ],
+    "latest_price": 22980,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "茶_生葉",
+    "category": "工芸農作物",
+    "name": "茶（生葉）",
+    "detail": "",
+    "grade": "せん茶用",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1777
+      },
+      {
+        "date": "2021",
+        "price": 2366
+      },
+      {
+        "date": "2022",
+        "price": 2157
+      },
+      {
+        "date": "2023",
+        "price": 2185
+      },
+      {
+        "date": "2024",
+        "price": 1978
+      },
+      {
+        "date": "2025",
+        "price": 2593
+      }
+    ],
+    "latest_price": 2593,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "茶_荒茶",
+    "category": "工芸農作物",
+    "name": "茶（荒茶）",
+    "detail": "",
+    "grade": "せん茶用",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 13190
+      },
+      {
+        "date": "2021",
+        "price": 16420
+      },
+      {
+        "date": "2022",
+        "price": 16200
+      },
+      {
+        "date": "2023",
+        "price": 15520
+      },
+      {
+        "date": "2024",
+        "price": 14880
+      },
+      {
+        "date": "2025",
+        "price": 20540
+      }
+    ],
+    "latest_price": 20540,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "こんにゃくいも",
+    "category": "工芸農作物",
+    "name": "こんにゃくいも",
+    "detail": "",
+    "grade": "生いも",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1215
+      },
+      {
+        "date": "2021",
+        "price": 1383
+      },
+      {
+        "date": "2022",
+        "price": 1407
+      },
+      {
+        "date": "2023",
+        "price": 1012
+      },
+      {
+        "date": "2024",
+        "price": 887
+      },
+      {
+        "date": "2025",
+        "price": 1432
+      }
+    ],
+    "latest_price": 1432,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "い_い草",
+    "category": "工芸農作物",
+    "name": "い（い草）",
+    "detail": "",
+    "grade": "草丈120cm、上",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 7137
+      },
+      {
+        "date": "2020-01",
+        "price": 8700
+      },
+      {
+        "date": "2021",
+        "price": 6552
+      },
+      {
+        "date": "2021-01",
+        "price": 7350
+      },
+      {
+        "date": "2022",
+        "price": 7153
+      },
+      {
+        "date": "2022-01",
+        "price": 7500
+      },
+      {
+        "date": "2023",
+        "price": 8734
+      },
+      {
+        "date": "2023-01",
+        "price": 8200
+      },
+      {
+        "date": "2024",
+        "price": 7282
+      },
+      {
+        "date": "2024-01",
+        "price": 10180
+      },
+      {
+        "date": "2025",
+        "price": 7097
+      },
+      {
+        "date": "2025-01",
+        "price": 6793
+      },
+      {
+        "date": "2026-01",
+        "price": 9108
+      }
+    ],
+    "latest_price": 9108,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "い_い表",
+    "category": "工芸農作物",
+    "name": "い（い表）",
+    "detail": "",
+    "grade": "３種表、綿糸",
+    "unit": "１枚",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1116
+      },
+      {
+        "date": "2020-01",
+        "price": 1192
+      },
+      {
+        "date": "2021",
+        "price": 1167
+      },
+      {
+        "date": "2021-01",
+        "price": 1192
+      },
+      {
+        "date": "2022",
+        "price": 1268
+      },
+      {
+        "date": "2022-01",
+        "price": 1247
+      },
+      {
+        "date": "2023",
+        "price": 1422
+      },
+      {
+        "date": "2023-01",
+        "price": 1414
+      },
+      {
+        "date": "2024",
+        "price": 1355
+      },
+      {
+        "date": "2024-01",
+        "price": 1439
+      },
+      {
+        "date": "2025",
+        "price": 1182
+      },
+      {
+        "date": "2025-01",
+        "price": 1243
+      },
+      {
+        "date": "2026-01",
+        "price": 1461
+      }
+    ],
+    "latest_price": 1461,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "切花_きく",
+    "category": "花き",
+    "name": "切花",
+    "detail": "きく",
+    "grade": "中輪",
+    "unit": "100本",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 6043
+      },
+      {
+        "date": "2020-01",
+        "price": 8062
+      },
+      {
+        "date": "2021",
+        "price": 6064
+      },
+      {
+        "date": "2021-01",
+        "price": 4773
+      },
+      {
+        "date": "2022",
+        "price": 6979
+      },
+      {
+        "date": "2022-01",
+        "price": 6912
+      },
+      {
+        "date": "2023",
+        "price": 7132
+      },
+      {
+        "date": "2023-01",
+        "price": 7715
+      },
+      {
+        "date": "2024",
+        "price": 7490
+      },
+      {
+        "date": "2024-01",
+        "price": 6783
+      },
+      {
+        "date": "2025",
+        "price": 7037
+      },
+      {
+        "date": "2025-01",
+        "price": 9978
+      },
+      {
+        "date": "2026-01",
+        "price": 7856
+      }
+    ],
+    "latest_price": 7856,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "切花_ばら",
+    "category": "花き",
+    "name": "切花",
+    "detail": "ばら",
+    "grade": "赤",
+    "unit": "50本",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3748
+      },
+      {
+        "date": "2020-01",
+        "price": 5687
+      },
+      {
+        "date": "2021",
+        "price": 4288
+      },
+      {
+        "date": "2021-01",
+        "price": 4313
+      },
+      {
+        "date": "2022",
+        "price": 4634
+      },
+      {
+        "date": "2022-01",
+        "price": 6514
+      },
+      {
+        "date": "2023",
+        "price": 4546
+      },
+      {
+        "date": "2023-01",
+        "price": 6011
+      },
+      {
+        "date": "2024",
+        "price": 4989
+      },
+      {
+        "date": "2024-01",
+        "price": 5941
+      },
+      {
+        "date": "2025",
+        "price": 4841
+      },
+      {
+        "date": "2025-01",
+        "price": 6778
+      },
+      {
+        "date": "2026-01",
+        "price": 6485
+      }
+    ],
+    "latest_price": 6485,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "切花_カーネーション",
+    "category": "花き",
+    "name": "切花",
+    "detail": "カーネーション",
+    "grade": "-",
+    "unit": "100本",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 4429
+      },
+      {
+        "date": "2020-01",
+        "price": 5400
+      },
+      {
+        "date": "2021",
+        "price": 4995
+      },
+      {
+        "date": "2021-01",
+        "price": 4804
+      },
+      {
+        "date": "2022",
+        "price": 5456
+      },
+      {
+        "date": "2022-01",
+        "price": 5034
+      },
+      {
+        "date": "2023",
+        "price": 5515
+      },
+      {
+        "date": "2023-01",
+        "price": 6192
+      },
+      {
+        "date": "2024",
+        "price": 6155
+      },
+      {
+        "date": "2024-01",
+        "price": 5504
+      },
+      {
+        "date": "2025",
+        "price": 5263
+      },
+      {
+        "date": "2025-01",
+        "price": 6534
+      },
+      {
+        "date": "2026-01",
+        "price": 5550
+      }
+    ],
+    "latest_price": 5550,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "切花_ゆり",
+    "category": "花き",
+    "name": "切花",
+    "detail": "ゆり",
+    "grade": "-",
+    "unit": "100本",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 17370
+      },
+      {
+        "date": "2020-01",
+        "price": 23160
+      },
+      {
+        "date": "2021",
+        "price": 19320
+      },
+      {
+        "date": "2021-01",
+        "price": 17080
+      },
+      {
+        "date": "2022",
+        "price": 20830
+      },
+      {
+        "date": "2022-01",
+        "price": 21690
+      },
+      {
+        "date": "2023",
+        "price": 22310
+      },
+      {
+        "date": "2023-01",
+        "price": 23570
+      },
+      {
+        "date": "2024",
+        "price": 22420
+      },
+      {
+        "date": "2024-01",
+        "price": 20800
+      },
+      {
+        "date": "2025",
+        "price": 22740
+      },
+      {
+        "date": "2025-01",
+        "price": 31950
+      },
+      {
+        "date": "2026-01",
+        "price": 26180
+      }
+    ],
+    "latest_price": 26180,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "切花_トルコギキョウ",
+    "category": "花き",
+    "name": "切花",
+    "detail": "トルコギキョウ",
+    "grade": "-",
+    "unit": "100本",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 12860
+      },
+      {
+        "date": "2020-01",
+        "price": 17490
+      },
+      {
+        "date": "2021",
+        "price": 14070
+      },
+      {
+        "date": "2021-01",
+        "price": 16400
+      },
+      {
+        "date": "2022",
+        "price": 16180
+      },
+      {
+        "date": "2022-01",
+        "price": 19470
+      },
+      {
+        "date": "2023",
+        "price": 16410
+      },
+      {
+        "date": "2023-01",
+        "price": 19850
+      },
+      {
+        "date": "2024",
+        "price": 17460
+      },
+      {
+        "date": "2024-01",
+        "price": 19390
+      },
+      {
+        "date": "2025",
+        "price": 16320
+      },
+      {
+        "date": "2025-01",
+        "price": 25370
+      },
+      {
+        "date": "2026-01",
+        "price": 20250
+      }
+    ],
+    "latest_price": 20250,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "鉢物_洋らん",
+    "category": "花き",
+    "name": "鉢物",
+    "detail": "洋らん",
+    "grade": "-",
+    "unit": "１鉢",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3676
+      },
+      {
+        "date": "2020-01",
+        "price": 3354
+      },
+      {
+        "date": "2021",
+        "price": 4226
+      },
+      {
+        "date": "2021-01",
+        "price": 3777
+      },
+      {
+        "date": "2022",
+        "price": 4585
+      },
+      {
+        "date": "2022-01",
+        "price": 4394
+      },
+      {
+        "date": "2023",
+        "price": 4543
+      },
+      {
+        "date": "2023-01",
+        "price": 4025
+      },
+      {
+        "date": "2024",
+        "price": 4389
+      },
+      {
+        "date": "2024-01",
+        "price": 4227
+      },
+      {
+        "date": "2025",
+        "price": 4520
+      },
+      {
+        "date": "2025-01",
+        "price": 4296
+      },
+      {
+        "date": "2026-01",
+        "price": 4434
+      }
+    ],
+    "latest_price": 4434,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "鉢物_シクラメン",
+    "category": "花き",
+    "name": "鉢物",
+    "detail": "シクラメン",
+    "grade": "５～６号鉢",
+    "unit": "１鉢",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 797
+      },
+      {
+        "date": "2021",
+        "price": 795
+      },
+      {
+        "date": "2022",
+        "price": 745
+      },
+      {
+        "date": "2023",
+        "price": 788
+      },
+      {
+        "date": "2024",
+        "price": 937
+      },
+      {
+        "date": "2025",
+        "price": 931
+      }
+    ],
+    "latest_price": 931,
+    "latest_date": "2025"
+  },
+  {
+    "item_key": "鶏卵",
+    "category": "畜産物",
+    "name": "鶏卵",
+    "detail": "",
+    "grade": "Ｍ、１級",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1841
+      },
+      {
+        "date": "2020-01",
+        "price": 1784
+      },
+      {
+        "date": "2021",
+        "price": 2318
+      },
+      {
+        "date": "2021-01",
+        "price": 1595
+      },
+      {
+        "date": "2022",
+        "price": 2370
+      },
+      {
+        "date": "2022-01",
+        "price": 1717
+      },
+      {
+        "date": "2023",
+        "price": 3288
+      },
+      {
+        "date": "2023-01",
+        "price": 2984
+      },
+      {
+        "date": "2024",
+        "price": 2571
+      },
+      {
+        "date": "2024-01",
+        "price": 2162
+      },
+      {
+        "date": "2025",
+        "price": 3430
+      },
+      {
+        "date": "2025-01",
+        "price": 2699
+      },
+      {
+        "date": "2026-01",
+        "price": 3341
+      }
+    ],
+    "latest_price": 3341,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "生乳",
+    "category": "畜産物",
+    "name": "生乳",
+    "detail": "",
+    "grade": "総合乳価",
+    "unit": "10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1043
+      },
+      {
+        "date": "2020-01",
+        "price": 1047
+      },
+      {
+        "date": "2021",
+        "price": 1037
+      },
+      {
+        "date": "2021-01",
+        "price": 1040
+      },
+      {
+        "date": "2022",
+        "price": 1042
+      },
+      {
+        "date": "2022-01",
+        "price": 1032
+      },
+      {
+        "date": "2023",
+        "price": 1147
+      },
+      {
+        "date": "2023-01",
+        "price": 1078
+      },
+      {
+        "date": "2024",
+        "price": 1222
+      },
+      {
+        "date": "2024-01",
+        "price": 1209
+      },
+      {
+        "date": "2025",
+        "price": 1252
+      },
+      {
+        "date": "2025-01",
+        "price": 1222
+      },
+      {
+        "date": "2026-01",
+        "price": 1278
+      }
+    ],
+    "latest_price": 1278,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "肉畜_肉用牛_去勢肥育和牛若齢",
+    "category": "畜産物",
+    "name": "肉畜",
+    "detail": "肉用牛（去勢肥育和牛若齢）",
+    "grade": "-",
+    "unit": "生体10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 15240
+      },
+      {
+        "date": "2020-01",
+        "price": 16840
+      },
+      {
+        "date": "2021",
+        "price": 17280
+      },
+      {
+        "date": "2021-01",
+        "price": 17710
+      },
+      {
+        "date": "2022",
+        "price": 16460
+      },
+      {
+        "date": "2022-01",
+        "price": 16970
+      },
+      {
+        "date": "2023",
+        "price": 15980
+      },
+      {
+        "date": "2023-01",
+        "price": 16800
+      },
+      {
+        "date": "2024",
+        "price": 16280
+      },
+      {
+        "date": "2024-01",
+        "price": 16620
+      },
+      {
+        "date": "2025",
+        "price": 16630
+      },
+      {
+        "date": "2025-01",
+        "price": 16940
+      },
+      {
+        "date": "2026-01",
+        "price": 17320
+      }
+    ],
+    "latest_price": 17320,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "肉畜_肉用牛_雌肥育和牛",
+    "category": "畜産物",
+    "name": "肉畜",
+    "detail": "肉用牛（雌肥育和牛）",
+    "grade": "-",
+    "unit": "生体10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 14600
+      },
+      {
+        "date": "2020-01",
+        "price": 15530
+      },
+      {
+        "date": "2021",
+        "price": 16580
+      },
+      {
+        "date": "2021-01",
+        "price": 16300
+      },
+      {
+        "date": "2022",
+        "price": 16090
+      },
+      {
+        "date": "2022-01",
+        "price": 16510
+      },
+      {
+        "date": "2023",
+        "price": 15040
+      },
+      {
+        "date": "2023-01",
+        "price": 15630
+      },
+      {
+        "date": "2024",
+        "price": 14960
+      },
+      {
+        "date": "2024-01",
+        "price": 15350
+      },
+      {
+        "date": "2025",
+        "price": 15710
+      },
+      {
+        "date": "2025-01",
+        "price": 15440
+      },
+      {
+        "date": "2026-01",
+        "price": 16520
+      }
+    ],
+    "latest_price": 16520,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "肉畜_肉用牛_乳雄肥育_ホルスタイン種",
+    "category": "畜産物",
+    "name": "肉畜",
+    "detail": "肉用牛（乳雄肥育（ホルスタイン種））",
+    "grade": "生後17～22か月",
+    "unit": "生体10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 6657
+      },
+      {
+        "date": "2020-01",
+        "price": 6819
+      },
+      {
+        "date": "2021",
+        "price": 6908
+      },
+      {
+        "date": "2021-01",
+        "price": 6890
+      },
+      {
+        "date": "2022",
+        "price": 7144
+      },
+      {
+        "date": "2022-01",
+        "price": 6849
+      },
+      {
+        "date": "2023",
+        "price": 6994
+      },
+      {
+        "date": "2023-01",
+        "price": 7235
+      },
+      {
+        "date": "2024",
+        "price": 6742
+      },
+      {
+        "date": "2024-01",
+        "price": 6758
+      },
+      {
+        "date": "2025",
+        "price": 7231
+      },
+      {
+        "date": "2025-01",
+        "price": 7060
+      },
+      {
+        "date": "2026-01",
+        "price": 7347
+      }
+    ],
+    "latest_price": 7347,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "肉畜_肉用牛_乳用肥育_交雑種",
+    "category": "畜産物",
+    "name": "肉畜",
+    "detail": "肉用牛（乳用肥育（交雑種））",
+    "grade": "生後22～29か月",
+    "unit": "生体10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 9668
+      },
+      {
+        "date": "2020-01",
+        "price": 11080
+      },
+      {
+        "date": "2021",
+        "price": 10520
+      },
+      {
+        "date": "2021-01",
+        "price": 10760
+      },
+      {
+        "date": "2022",
+        "price": 10260
+      },
+      {
+        "date": "2022-01",
+        "price": 10390
+      },
+      {
+        "date": "2023",
+        "price": 9974
+      },
+      {
+        "date": "2023-01",
+        "price": 10410
+      },
+      {
+        "date": "2024",
+        "price": 10500
+      },
+      {
+        "date": "2024-01",
+        "price": 10510
+      },
+      {
+        "date": "2025",
+        "price": 10670
+      },
+      {
+        "date": "2025-01",
+        "price": 10490
+      },
+      {
+        "date": "2026-01",
+        "price": 10800
+      }
+    ],
+    "latest_price": 10800,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "肉畜_肉用牛_乳廃牛",
+    "category": "畜産物",
+    "name": "肉畜",
+    "detail": "肉用牛（乳廃牛）",
+    "grade": "-",
+    "unit": "生体10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3329
+      },
+      {
+        "date": "2020-01",
+        "price": 3517
+      },
+      {
+        "date": "2021",
+        "price": 3447
+      },
+      {
+        "date": "2021-01",
+        "price": 3290
+      },
+      {
+        "date": "2022",
+        "price": 3005
+      },
+      {
+        "date": "2022-01",
+        "price": 3176
+      },
+      {
+        "date": "2023",
+        "price": 3044
+      },
+      {
+        "date": "2023-01",
+        "price": 2571
+      },
+      {
+        "date": "2024",
+        "price": 3511
+      },
+      {
+        "date": "2024-01",
+        "price": 3190
+      },
+      {
+        "date": "2025",
+        "price": 4444
+      },
+      {
+        "date": "2025-01",
+        "price": 3615
+      },
+      {
+        "date": "2026-01",
+        "price": 4933
+      }
+    ],
+    "latest_price": 4933,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "肉畜_肉豚_肥育豚",
+    "category": "畜産物",
+    "name": "肉畜",
+    "detail": "肉豚（肥育豚）",
+    "grade": "-",
+    "unit": "生体10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 3892
+      },
+      {
+        "date": "2020-01",
+        "price": 3459
+      },
+      {
+        "date": "2021",
+        "price": 3797
+      },
+      {
+        "date": "2021-01",
+        "price": 3569
+      },
+      {
+        "date": "2022",
+        "price": 4149
+      },
+      {
+        "date": "2022-01",
+        "price": 3614
+      },
+      {
+        "date": "2023",
+        "price": 4345
+      },
+      {
+        "date": "2023-01",
+        "price": 3843
+      },
+      {
+        "date": "2024",
+        "price": 4612
+      },
+      {
+        "date": "2024-01",
+        "price": 3801
+      },
+      {
+        "date": "2025",
+        "price": 4732
+      },
+      {
+        "date": "2025-01",
+        "price": 4375
+      },
+      {
+        "date": "2026-01",
+        "price": 4102
+      }
+    ],
+    "latest_price": 4102,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "肉畜_肉鶏_ブロイラー",
+    "category": "畜産物",
+    "name": "肉畜",
+    "detail": "肉鶏（ブロイラー）",
+    "grade": "-",
+    "unit": "生体10kg",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 1872
+      },
+      {
+        "date": "2020-01",
+        "price": 1875
+      },
+      {
+        "date": "2021",
+        "price": 1905
+      },
+      {
+        "date": "2021-01",
+        "price": 1936
+      },
+      {
+        "date": "2022",
+        "price": 1943
+      },
+      {
+        "date": "2022-01",
+        "price": 1924
+      },
+      {
+        "date": "2023",
+        "price": 2056
+      },
+      {
+        "date": "2023-01",
+        "price": 2107
+      },
+      {
+        "date": "2024",
+        "price": 2006
+      },
+      {
+        "date": "2024-01",
+        "price": 2021
+      },
+      {
+        "date": "2025",
+        "price": 2144
+      },
+      {
+        "date": "2025-01",
+        "price": 2079
+      },
+      {
+        "date": "2026-01",
+        "price": 2173
+      }
+    ],
+    "latest_price": 2173,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "子畜_乳子牛_ホルスタイン純粋種雌",
+    "category": "畜産物",
+    "name": "子畜",
+    "detail": "乳子牛（ホルスタイン純粋種雌）",
+    "grade": "生後６か月程度",
+    "unit": "１頭",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 378000
+      },
+      {
+        "date": "2020-01",
+        "price": 385700
+      },
+      {
+        "date": "2021",
+        "price": 343300
+      },
+      {
+        "date": "2021-01",
+        "price": 370200
+      },
+      {
+        "date": "2022",
+        "price": 195900
+      },
+      {
+        "date": "2022-01",
+        "price": 273600
+      },
+      {
+        "date": "2023",
+        "price": 197300
+      },
+      {
+        "date": "2023-01",
+        "price": 188000
+      },
+      {
+        "date": "2024",
+        "price": 231600
+      },
+      {
+        "date": "2024-01",
+        "price": 255700
+      },
+      {
+        "date": "2025",
+        "price": 231000
+      },
+      {
+        "date": "2025-01",
+        "price": 357400
+      },
+      {
+        "date": "2026-01",
+        "price": 157800
+      }
+    ],
+    "latest_price": 157800,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "子畜_乳子牛_ホルスタイン種雄",
+    "category": "畜産物",
+    "name": "子畜",
+    "detail": "乳子牛（ホルスタイン種雄）",
+    "grade": "生後７～10日",
+    "unit": "１頭",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 108300
+      },
+      {
+        "date": "2020-01",
+        "price": 98900
+      },
+      {
+        "date": "2021",
+        "price": 106600
+      },
+      {
+        "date": "2021-01",
+        "price": 91220
+      },
+      {
+        "date": "2022",
+        "price": 65940
+      },
+      {
+        "date": "2022-01",
+        "price": 81340
+      },
+      {
+        "date": "2023",
+        "price": 49400
+      },
+      {
+        "date": "2023-01",
+        "price": 18940
+      },
+      {
+        "date": "2024",
+        "price": 44490
+      },
+      {
+        "date": "2024-01",
+        "price": 43030
+      },
+      {
+        "date": "2025",
+        "price": 59400
+      },
+      {
+        "date": "2025-01",
+        "price": 23790
+      },
+      {
+        "date": "2026-01",
+        "price": 60020
+      }
+    ],
+    "latest_price": 60020,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "子畜_乳子牛_交雑種",
+    "category": "畜産物",
+    "name": "子畜",
+    "detail": "乳子牛（交雑種）",
+    "grade": "生後７～10日",
+    "unit": "１頭",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 178700
+      },
+      {
+        "date": "2020-01",
+        "price": 206800
+      },
+      {
+        "date": "2021",
+        "price": 165700
+      },
+      {
+        "date": "2021-01",
+        "price": 131800
+      },
+      {
+        "date": "2022",
+        "price": 125300
+      },
+      {
+        "date": "2022-01",
+        "price": 141700
+      },
+      {
+        "date": "2023",
+        "price": 88040
+      },
+      {
+        "date": "2023-01",
+        "price": 63670
+      },
+      {
+        "date": "2024",
+        "price": 98110
+      },
+      {
+        "date": "2024-01",
+        "price": 60580
+      },
+      {
+        "date": "2025",
+        "price": 158700
+      },
+      {
+        "date": "2025-01",
+        "price": 82480
+      },
+      {
+        "date": "2026-01",
+        "price": 123000
+      }
+    ],
+    "latest_price": 123000,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "子畜_乳子牛_肥育用乳用雄_ホルスタイン種__",
+    "category": "畜産物",
+    "name": "子畜",
+    "detail": "乳子牛（肥育用乳用雄(ホルスタイン種))",
+    "grade": "生後６～７か月程度",
+    "unit": "１頭",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 214000
+      },
+      {
+        "date": "2020-01",
+        "price": 222000
+      },
+      {
+        "date": "2021",
+        "price": 235700
+      },
+      {
+        "date": "2021-01",
+        "price": 224100
+      },
+      {
+        "date": "2022",
+        "price": 200300
+      },
+      {
+        "date": "2022-01",
+        "price": 233400
+      },
+      {
+        "date": "2023",
+        "price": 153600
+      },
+      {
+        "date": "2023-01",
+        "price": 138200
+      },
+      {
+        "date": "2024",
+        "price": 181800
+      },
+      {
+        "date": "2024-01",
+        "price": 168600
+      },
+      {
+        "date": "2025",
+        "price": 194500
+      },
+      {
+        "date": "2025-01",
+        "price": 182700
+      },
+      {
+        "date": "2026-01",
+        "price": 207000
+      }
+    ],
+    "latest_price": 207000,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "子畜_乳子牛_肥育用乳用_交雑種__",
+    "category": "畜産物",
+    "name": "子畜",
+    "detail": "乳子牛（肥育用乳用(交雑種))",
+    "grade": "生後８か月程度",
+    "unit": "１頭",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 429500
+      },
+      {
+        "date": "2020-01",
+        "price": 509700
+      },
+      {
+        "date": "2021",
+        "price": 408800
+      },
+      {
+        "date": "2021-01",
+        "price": 475300
+      },
+      {
+        "date": "2022",
+        "price": 347700
+      },
+      {
+        "date": "2022-01",
+        "price": 367100
+      },
+      {
+        "date": "2023",
+        "price": 329900
+      },
+      {
+        "date": "2023-01",
+        "price": 371200
+      },
+      {
+        "date": "2024",
+        "price": 328700
+      },
+      {
+        "date": "2024-01",
+        "price": 349500
+      },
+      {
+        "date": "2025",
+        "price": 407700
+      },
+      {
+        "date": "2025-01",
+        "price": 385700
+      },
+      {
+        "date": "2026-01",
+        "price": 494000
+      }
+    ],
+    "latest_price": 494000,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "子畜_和子牛_雌_",
+    "category": "畜産物",
+    "name": "子畜",
+    "detail": "和子牛（雌)",
+    "grade": "生後10か月程度",
+    "unit": "１頭",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 604600
+      },
+      {
+        "date": "2020-01",
+        "price": 655900
+      },
+      {
+        "date": "2021",
+        "price": 667000
+      },
+      {
+        "date": "2021-01",
+        "price": 663000
+      },
+      {
+        "date": "2022",
+        "price": 580800
+      },
+      {
+        "date": "2022-01",
+        "price": 637800
+      },
+      {
+        "date": "2023",
+        "price": 480800
+      },
+      {
+        "date": "2023-01",
+        "price": 530800
+      },
+      {
+        "date": "2024",
+        "price": 456400
+      },
+      {
+        "date": "2024-01",
+        "price": 469100
+      },
+      {
+        "date": "2025",
+        "price": 571300
+      },
+      {
+        "date": "2025-01",
+        "price": 471500
+      },
+      {
+        "date": "2026-01",
+        "price": 684100
+      }
+    ],
+    "latest_price": 684100,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "子畜_和子牛_雄_",
+    "category": "畜産物",
+    "name": "子畜",
+    "detail": "和子牛（雄)",
+    "grade": "生後10か月程度",
+    "unit": "１頭",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 696400
+      },
+      {
+        "date": "2020-01",
+        "price": 764100
+      },
+      {
+        "date": "2021",
+        "price": 767500
+      },
+      {
+        "date": "2021-01",
+        "price": 779100
+      },
+      {
+        "date": "2022",
+        "price": 685400
+      },
+      {
+        "date": "2022-01",
+        "price": 754600
+      },
+      {
+        "date": "2023",
+        "price": 594200
+      },
+      {
+        "date": "2023-01",
+        "price": 647800
+      },
+      {
+        "date": "2024",
+        "price": 572800
+      },
+      {
+        "date": "2024-01",
+        "price": 576700
+      },
+      {
+        "date": "2025",
+        "price": 683400
+      },
+      {
+        "date": "2025-01",
+        "price": 588400
+      },
+      {
+        "date": "2026-01",
+        "price": 786200
+      }
+    ],
+    "latest_price": 786200,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "成畜_乳用成牛_ホルスタイン純粋種",
+    "category": "畜産物",
+    "name": "成畜",
+    "detail": "乳用成牛（ホルスタイン純粋種）",
+    "grade": "-",
+    "unit": "１頭",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 654100
+      },
+      {
+        "date": "2020-01",
+        "price": 707600
+      },
+      {
+        "date": "2021",
+        "price": 611400
+      },
+      {
+        "date": "2021-01",
+        "price": 696600
+      },
+      {
+        "date": "2022",
+        "price": 483600
+      },
+      {
+        "date": "2022-01",
+        "price": 535700
+      },
+      {
+        "date": "2023",
+        "price": 438900
+      },
+      {
+        "date": "2023-01",
+        "price": 462800
+      },
+      {
+        "date": "2024",
+        "price": 525100
+      },
+      {
+        "date": "2024-01",
+        "price": 596300
+      },
+      {
+        "date": "2025",
+        "price": 597100
+      },
+      {
+        "date": "2025-01",
+        "price": 581700
+      },
+      {
+        "date": "2026-01",
+        "price": 716200
+      }
+    ],
+    "latest_price": 716200,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "成畜_肉用成牛_繁殖用雌和成牛",
+    "category": "畜産物",
+    "name": "成畜",
+    "detail": "肉用成牛（繁殖用雌和成牛）",
+    "grade": "-",
+    "unit": "１頭",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 705900
+      },
+      {
+        "date": "2020-01",
+        "price": 801300
+      },
+      {
+        "date": "2021",
+        "price": 773300
+      },
+      {
+        "date": "2021-01",
+        "price": 806600
+      },
+      {
+        "date": "2022",
+        "price": 739400
+      },
+      {
+        "date": "2022-01",
+        "price": 809000
+      },
+      {
+        "date": "2023",
+        "price": 605200
+      },
+      {
+        "date": "2023-01",
+        "price": 704100
+      },
+      {
+        "date": "2024",
+        "price": 532000
+      },
+      {
+        "date": "2024-01",
+        "price": 487400
+      },
+      {
+        "date": "2025",
+        "price": 643500
+      },
+      {
+        "date": "2025-01",
+        "price": 502600
+      },
+      {
+        "date": "2026-01",
+        "price": 797500
+      }
+    ],
+    "latest_price": 797500,
+    "latest_date": "2026-01"
+  },
+  {
+    "item_key": "成畜",
+    "category": "畜産物",
+    "name": "成畜",
+    "detail": "",
+    "grade": "",
+    "unit": "",
+    "observations": [
+      {
+        "date": "2020",
+        "price": 13
+      },
+      {
+        "date": "2020-01",
+        "price": 1
+      },
+      {
+        "date": "2021",
+        "price": 26
+      },
+      {
+        "date": "2021-01",
+        "price": 14
+      },
+      {
+        "date": "2022",
+        "price": 39
+      },
+      {
+        "date": "2022-01",
+        "price": 27
+      },
+      {
+        "date": "2023",
+        "price": 52
+      },
+      {
+        "date": "2023-01",
+        "price": 40
+      },
+      {
+        "date": "2024",
+        "price": 65
+      },
+      {
+        "date": "2024-01",
+        "price": 53
+      },
+      {
+        "date": "2025",
+        "price": 78
+      },
+      {
+        "date": "2025-01",
+        "price": 66
+      },
+      {
+        "date": "2026-01",
+        "price": 79
+      }
+    ],
+    "latest_price": 79,
+    "latest_date": "2026-01"
+  }
+]

@@ -50,37 +50,46 @@ _HIGHER_IS_BETTER = re.compile(
 # - 語境界を意識: 「ステップ」は単語として独立している場合のみ up（「step1_elapsed_sec」の
 #   step にはマッチさせない）。投稿数/日数/宣言系統数/ケース数/検証ケース数 等は
 #   具体的複合語として先評価し、裸の「数/件数/回数」は判定しない。
+# - 「Revenue」「Rate」「AP」等の英単語は語境界必須（「revenue_collect」「elapsed」「pricing」に誤爆防止）。
+# - 日本語語境界(\b)は日本語間で効かないため、明示的複合語（発動件数/発動回数 等）で判定する。
+# - 「カウンタ/counter/scripts/diff」等は独立語または明確な複合語のみ（"failure-ceiling counter"、"diff 行数" に誤爆防止）。
+# - 「cache/pricing/coverage/data」は具体的複合語のみ（単体で up とは限らないため）。
+# - 「件数」単体は down だが、データ充実を表す複合語（全件数/pricing 件数/cache 件数/データ件数/カバレッジ件数 等）は up として先評価する。
+# - 「発動/起動/稼働/復旧/復元/復帰/縮退」は明確な複合語（発動件数/発動回数/稼働数 等）のみ。
+# - 「成功/誤検知/誤報告」は件数/回数が減る=改善（up）として先評価する。
 _DIRECTION_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     # --- higher is better: 明確な up 系（率・達成系・明確な改善指標）を最優先 ---
+    # 「方向:` 行数」「方向： 行数」等のバッククォート/全角コロン付きも拾う
+    # ※バッククォートで囲まれた `方向:` も拾う
     (
         re.compile(
-            r"(記録率|確認率|検出率|有効|復帰率|復旧率|達成率|完了率|成功率|当選率|検出件数|方向: 行数)",
+            r"(記録率|確認率|検出率|有効|復帰率|復旧率|達成率|完了率|成功率|当選率|検出件数|`方向:`\s*行数|方向[：:`]\s*行数)",
             re.I,
         ),
         "up",
     ),
-    # 「発動/起動/稼働/復旧/復元/復帰/縮退」等の「数量增多=機能している」指標は up。
-    # 「self_heal 発動件数 0→36」「running 件数(縮退の有無) 0→3」等。
-    # 「1失敗あたり実測試行回数」の「試行」は down パターンで先マッチするため衝突しない。
+    # 「発動/起動/稼働/復旧/復元/復帰/縮退」等の明確な複合語：「機能している」指標は up。
+    # 「self_heal 発動件数 0→36」「システム稼働数 3→5」等。裸の「発動」等では判定しない（「縮退の有無」対策）。
     (
         re.compile(
-            r"(発動|起動|稼働|復旧|復元|復帰|縮退|復活|活性化)",
+            r"(発動件数|発動回数|発動数|起動件数|起動回数|稼働件数|稼働回数|稼働数|復旧件数|復旧回数|復元件数|復元回数|復帰件数|復帰回数|縮退件数|縮退回数|活性化件数|活性化回数)",
             re.I,
         ),
         "up",
     ),
-    # カウンタ/スクリプト/ファイル/カード 系の「数が減る=整理された」指標は up。
+    # カウンタ/スクリプト/ファイル/カード/エントリ/diff/set/check/test 系の「数が減る=整理された」指標は up。
     # 「bare hermes 実行呼出箇所数 6→0」「complete_watchdog 誤検知件数 54→0」等。
-    # 「件数」単体は down だが、具体名（カウンタ/スクリプト/ファイル/カード/エントリ/diff/set/check/test）と
-    # 結合して「整理された」ことを表す場合は up として先評価する。
+    # 「counter/scripts/diff」単体は判定せず、明確な複合語（呼出箇所数/スクリプト数/ファイル数/card数/エントリ数/diff数/set数/check数/test数 等）のみ。
+    # ※「diff 行数」は down（行数が減る=改善）のため除外。
     (
         re.compile(
-            r"(カウンタ|counter|スクリプト|scripts|ファイル|files|カード|cards|エントリ|entries|diff|set|check|test)\b",
+            r"(呼出箇所数|スクリプト数|ファイル数|カード数|エントリ数|diff数|set数|check数|test数|counter数)\b",
             re.I,
         ),
         "up",
     ),
     # 投稿数/日数/宣言系統数/実測ケース数/検証ケース数/endpoints数/回帰テスト数/ステップ数 等
+    # ※「ステップ数」は語境界で独立語のみ（「step1_elapsed_sec」の step にはマッチさせない）
     (
         re.compile(
             r"(投稿数|日数|宣言系統数|ケース数|検証ケース数|実測ケース数|endpoints数|回帰テスト数|ステップ数\b|エントリ数"
@@ -97,13 +106,14 @@ _DIRECTION_PATTERNS: list[tuple[re.Pattern[str], str]] = [
         ),
         "up",
     ),
-    (re.compile(r"(Score|AP\b|Value|Progress|Growth|Revenue|Rate\b|RPU|倍|点|percent)", re.I), "up"),
-    # 「データ/キャッシュ/プライシング/カバレッジ/網羅/完全性」系の「件数/数が増える=データが充実した」指標は up。
-    # 「apify_pricing_cache の pricing 件数 1→25」「回帰テスト数 12→13」等。
-    # 「件数」単体は down だが、データ充実を表す文脈では up として先評価する。
+    (re.compile(r"(Score|AP\b|Value|Progress|Growth|Revenue\b|Rate\b|RPU|倍|点|percent)", re.I), "up"),
+    # 「全件/全エントリ/全ファイル/全カード/カバレッジ/網羅/完全性/pricing/cache/データ」系の「件数/数が増える=データが充実した」指標は up。
+    # 「apify_pricing_cache の pricing 件数 1→25」「全エントリ数 100→120」「cache件数 50→100」等。
+    # 具体的複合語のみ（単体の pricing/cache/data は up とは限らないため除外）。
+    # ※スペース付き「pricing 件数」も拾うため \s* を許容
     (
         re.compile(
-            r"(データ|data|キャッシュ|cache|プライシング|pricing|カバレッジ|coverage|網羅|完全性|全件|全エントリ|全ファイル|全カード)\b",
+            r"(全件数|全エントリ数|全ファイル数|全カード数|カバレッジ件数|網羅件数|完全性件数|pricing\s*件数|cache\s*件数|データ件数|coverage\s*件数)\b",
             re.I,
         ),
         "up",
@@ -130,9 +140,11 @@ _DIRECTION_PATTERNS: list[tuple[re.Pattern[str], str]] = [
         "down",
     ),
     # 誤検知件数/誤報告件数/failed 件数 等の具体的複合語も down（上のパターンで漏れるケース対策）
+    # ※「誤検知件数/誤報告件数」は up パターンで先に拾うためここには来ない
+    # 「counter/scripts」単体も独立語なら down（数が減る=改善: 共有counter数減少、スクリプト数減少等）
     (
         re.compile(
-            r"(誤検知件数|誤報告件数|failed 件数|parse_error 件数|再実行件数|検出回数|到達件数|呼び出し数|呼出箇所数|試行回数|ログイン回数|行数|キー数|総数|箇所数|呼び出し総数)",
+            r"(failed 件数|parse_error 件数|再実行件数|検出回数|到達件数|呼び出し数|呼出箇所数|試行回数|ログイン回数|行数|キー数|総数|箇所数|呼び出し総数|\bcounter\b|\bscripts\b)",
             re.I,
         ),
         "down",

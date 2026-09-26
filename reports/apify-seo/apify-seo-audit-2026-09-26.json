@@ -1,0 +1,89 @@
+{
+  "generated_at": "2026-09-26T17:55:06",
+  "actors_audited": 5,
+  "competitors_per_actor": 8,
+  "summary": {
+    "total_findings": 5,
+    "actors_with_findings": 4,
+    "by_issue": {
+      "missing_keywords": 3,
+      "missing_categories": 1,
+      "title_keyword_gap": 1
+    },
+    "worst_actors": [
+      [
+        "mandarake-auction-scraper",
+        2
+      ],
+      [
+        "dlsite-scraper",
+        1
+      ],
+      [
+        "mandarake-surugaya-mcp",
+        1
+      ],
+      [
+        "rakuten-japan-mcp",
+        1
+      ]
+    ]
+  },
+  "findings": [
+    {
+      "actor": "mandarake-auction-scraper",
+      "issue": "missing_keywords",
+      "field": "title+description",
+      "current": "(不在) stock, toys",
+      "suggested": "説明/タイトルに追加: stock(競合2件), toys(競合2件)",
+      "evidence": "競合2件中2件以上に出現し自社全文に不在",
+      "search_query": "mandarake",
+      "queries_tried": 4,
+      "competitors": 2
+    },
+    {
+      "actor": "mandarake-auction-scraper",
+      "issue": "title_keyword_gap",
+      "field": "title",
+      "current": "Mandarake Auction Japan Scraper - Used Collectibles Prices API ",
+      "suggested": "タイトルへ追加: anime(競合2件)",
+      "evidence": "競合title2件中2件以上に出現し自社titleに不在",
+      "search_query": "mandarake",
+      "queries_tried": 4,
+      "competitors": 2
+    },
+    {
+      "actor": "mandarake-surugaya-mcp",
+      "issue": "missing_keywords",
+      "field": "title+description",
+      "current": "(不在) scrape",
+      "suggested": "説明/タイトルに追加: scrape(競合8件)",
+      "evidence": "競合8件中4件以上に出現し自社全文に不在",
+      "search_query": "suruga listings",
+      "queries_tried": 1,
+      "competitors": 8
+    },
+    {
+      "actor": "rakuten-japan-mcp",
+      "issue": "missing_categories",
+      "field": "categories",
+      "current": "ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",
+      "suggested": "追加候補: LEAD_GENERATION(競合5件)",
+      "evidence": "競合8件中4件以上が設定",
+      "search_query": "rakuten ichiba",
+      "queries_tried": 1,
+      "competitors": 8
+    },
+    {
+      "actor": "dlsite-scraper",
+      "issue": "missing_keywords",
+      "field": "title+description",
+      "current": "(不在) excel, download, html",
+      "suggested": "説明/タイトルに追加: excel(競合5件), download(競合4件), html(競合4件)",
+      "evidence": "競合8件中4件以上に出現し自社全文に不在",
+      "search_query": "listings json",
+      "queries_tried": 1,
+      "competitors": 8
+    }
+  ]
+}

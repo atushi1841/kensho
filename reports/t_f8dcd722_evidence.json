@@ -1,0 +1,19 @@
+{
+  "task_id": "t_f8dcd722",
+  "commit": "ca5c139",
+  "test_results": {
+    "test_dep_declaration": "2 passed",
+    "test_invisible_playwright": "13 passed",
+    "combined": "15 passed"
+  },
+  "git_status": "clean (7 files committed)",
+  "verification_commands": [
+    ".venv/bin/python -m pytest tests/test_dep_declaration.py -q => 2 passed",
+    "git status --porcelain -- pyproject.toml requirements.txt requirements-lock.txt uv.lock scripts/check_dep_drift.py tests/test_invisible_playwright.py tests/test_dep_declaration.py => empty"
+  ],
+  "success_criteria": {
+    "a": "pytest test_dep_declaration: 0 failed (was 1)",
+    "b": "git status clean for 7 dependency files",
+    "c": "no new regressions in pytest full suite (15 targeted tests passed)"
+  }
+}

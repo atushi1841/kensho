@@ -1,0 +1,43 @@
+﻿model,category,keyword,surugaKeyword,yahoo_buynow,suruga_items,matched_pairs,median_diff_pct,max_diff_pct,median_ge20,max_ge30
+Canon EOS R5,camera,EOS R5 ボディ,EOS R5,19,10,0,,,False,False
+Canon EOS R6 Mark II,camera,EOS R6 Mark II ボディ,EOS R6 Mark II,13,0,0,,,False,False
+Canon EOS R6,camera,EOS R6 ボディ,EOS R6,20,2,0,,,False,False
+Canon EOS R7,camera,EOS R7 ボディ,EOS R7,22,0,0,,,False,False
+Canon EOS R8,camera,EOS R8 ボディ,EOS R8,23,1,0,,,False,False
+Canon EOS R10,camera,EOS R10 ボディ,EOS R10,23,5,0,,,False,False
+Canon EOS R50,camera,EOS R50 ボディ,EOS R50,23,2,0,,,False,False
+Sony α7 IV,camera,SONY ILCE-7M4 ボディ,ILCE-7M4,15,1,0,,,False,False
+Sony α7R V,camera,SONY ILCE-7RM5 ボディ,ILCE-7RM5,23,0,0,,,False,False
+Sony α7R IV,camera,SONY ILCE-7RM4 ボディ,ILCE-7RM4,21,1,0,,,False,False
+Sony α7 III,camera,SONY ILCE-7M3 ボディ,ILCE-7M3,20,2,0,,,False,False
+Sony α7C II,camera,SONY ILCE-7CM2 ボディ,ILCE-7CM2,22,3,0,,,False,False
+Sony α7C,camera,SONY ILCE-7C ボディ,ILCE-7C,23,6,0,,,False,False
+Sony α6700,camera,SONY ILCE-6700 ボディ,ILCE-6700,17,1,0,,,False,False
+Sony α6400,camera,SONY ILCE-6400 ボディ,ILCE-6400,23,6,0,,,False,False
+Sony α7S III,camera,SONY ILCE-7SM3 ボディ,ILCE-7SM3,21,0,0,,,False,False
+Nikon Z8,camera,Nikon Z8 ボディ,Z8,22,24,0,,,False,False
+Nikon Z9,camera,Nikon Z9 ボディ,Z9,9,24,5,9.7,16.9,False,False
+Nikon Z7 II,camera,Nikon Z7 II ボディ,Z7 II,17,24,0,,,False,False
+Nikon Z6 II,camera,Nikon Z6 II ボディ,Z6 II,21,24,0,,,False,False
+Nikon Z6 III,camera,Nikon Z6 III ボディ,Z6 III,13,24,0,,,False,False
+Nikon Z5,camera,Nikon Z5 ボディ,Z5,21,24,0,,,False,False
+Nikon Z50 II,camera,Nikon Z50 II ボディ,Z50 II,23,24,0,,,False,False
+Fujifilm X-T5,camera,FUJIFILM X-T5 ボディ,X-T5,18,24,0,,,False,False
+Fujifilm X-T4,camera,FUJIFILM X-T4 ボディ,X-T4,22,24,0,,,False,False
+Fujifilm X-T3,camera,FUJIFILM X-T3 ボディ,X-T3,22,24,0,,,False,False
+Fujifilm X100V,camera,FUJIFILM X100V,X100V,23,0,0,,,False,False
+Fujifilm X-H2,camera,FUJIFILM X-H2 ボディ,X-H2,20,24,0,,,False,False
+Fujifilm X-H2S,camera,FUJIFILM X-H2S ボディ,X-H2S,6,9,0,,,False,False
+Fujifilm X-S20,camera,FUJIFILM X-S20 ボディ,X-S20,9,24,0,,,False,False
+PlayStation 5 デジタル・エディション,appliance,PS5 デジタルエディション 本体,PS5 デジタルエディション,8,24,0,,,False,False
+PlayStation 5 ディスク・エディション,appliance,PS5 ディスクエディション 本体,PS5 ディスクエディション,17,16,0,,,False,False
+Nintendo Switch 有機EL,appliance,Nintendo Switch 有機EL モデル,Nintendo Switch 有機EL,14,24,0,,,False,False
+Nintendo Switch (通常版),appliance,Nintendo Switch 本体,Nintendo Switch,15,24,12,-59.6,-53.6,False,False
+Steam Deck,appliance,Steam Deck 本体,Steam Deck,14,14,5,-4.6,68.0,False,True
+MacBook Pro 14 M3 Pro,appliance,MacBook Pro 14 M3 Pro,MacBook Pro 14 M3 Pro,19,0,0,,,False,False
+MacBook Pro 16 M3 Max,appliance,MacBook Pro 16 M3 Max,MacBook Pro 16 M3 Max,11,0,0,,,False,False
+MacBook Air 15 M2,appliance,MacBook Air 15 M2,MacBook Air 15 M2,20,3,0,,,False,False
+Surface Pro 9,appliance,Surface Pro 9,Surface Pro 9,17,24,0,,,False,False
+Sony WH-1000XM5,appliance,WH-1000XM5 ヘッドホン,WH-1000XM5,14,4,12,-5.7,1539.0,False,True
+Sony WF-1000XM4,appliance,WF-1000XM4 イヤホン,WF-1000XM4,7,5,4,231.1,287.3,True,True
+Apple AirPods Pro (2nd gen),appliance,AirPods Pro 第2世代,AirPods Pro 第2世代,12,24,0,,,False,False

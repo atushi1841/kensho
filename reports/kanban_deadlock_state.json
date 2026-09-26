@@ -1,0 +1,56 @@
+{
+  "ready": 0,
+  "todo": 0,
+  "running": 1,
+  "blocked": 1,
+  "scheduled": 3,
+  "total": 739,
+  "cond1_ready_zero": false,
+  "cond2_todo_lt_80": false,
+  "reverse_edges": [
+    {
+      "child": "t_f86685b6",
+      "parent": "t_40f5f6e7",
+      "grandchild": "t_35c91498",
+      "child_task_title": "kensho-value-feed 実装: 既存kakaku価格データをGitHub README+",
+      "parent_task_title": "攻めの企画: 既存資産を活用した「価値提供型」自動拡散パイプラインの構築"
+    },
+    {
+      "child": "t_2bd258d5",
+      "parent": "t_77713506",
+      "grandchild": "t_37e25225",
+      "child_task_title": "垢単位サーキットブレーカと圏外垢スキップを self_heal.py に実装",
+      "parent_task_title": "self_heal.py のgit前処理と衝突解消・ベースライン確定"
+    },
+    {
+      "child": "t_0ac95415",
+      "parent": "t_2bd258d5",
+      "grandchild": "t_37e25225",
+      "child_task_title": "実装の批評レビュー: BOT制約不変・ログ安全性・エッジケース検証",
+      "parent_task_title": "垢単位サーキットブレーカと圏外垢スキップを self_heal.py に実装"
+    },
+    {
+      "child": "t_f8cec77d",
+      "parent": "t_2bd258d5",
+      "grandchild": "t_37e25225",
+      "child_task_title": "24h実測による before/after 検証と evidence.json 記録",
+      "parent_task_title": "垢単位サーキットブレーカと圏外垢スキップを self_heal.py に実装"
+    },
+    {
+      "child": "t_a38b99bc",
+      "parent": "t_efe1736c",
+      "grandchild": "t_757b8b5d",
+      "child_task_title": "[ループ衛生・高] 偽done新経路の封鎖: guardに条件(l)「カード本文の成果物トークン実在",
+      "parent_task_title": "[ループ衛生・高] t_031f04b9は偽done（--write-report未実装を実測0件で"
+    },
+    {
+      "child": "t_0e82115e",
+      "parent": "t_1e8c6f70",
+      "grandchild": "t_a38b99bc",
+      "child_task_title": "Run test cases",
+      "parent_task_title": "Create test cases"
+    }
+  ],
+  "deadlock": true,
+  "reason": "reverse edges 6"
+}

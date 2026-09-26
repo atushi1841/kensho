@@ -1,0 +1,2 @@
+import invisible_playwright
+print(invisible_playwright.__version__)
