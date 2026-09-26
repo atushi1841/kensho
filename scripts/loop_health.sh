@@ -347,6 +347,23 @@ except Exception:
     # On any failure, don't apply penalty (fail-safe)
     pass
 
+# ── Review skill preflight (t_36410815) ────────────────────────────────
+# review_dispatch force-loads sdlc-review; if unresolvable on any board
+# profile, every review run dies at startup (month-long score=100 blind
+# spot). --fast = filesystem-only, no hermes CLI spawn. -25 → score<80 WARN.
+review_skill_ok = True
+try:
+    _pf = subprocess.run(
+        [sys.executable, "/mnt/d/Project2/kensho/scripts/kanban_skill_preflight.py",
+         "--fast", "--json"],
+        capture_output=True, text=True, timeout=15
+    )
+    if _pf.returncode != 0:
+        review_skill_ok = False
+        score -= 25
+except Exception:
+    pass  # fail-safe: preflight itself broken must not kill loop_health
+
 # ── Orphan run penalty (t_9ea4b148) ───────────────────────────────────────
 # When orphan runs exist (card deleted but run persists), apply penalty to drop score < 80.
 orphan_penalty = 0
@@ -643,6 +660,7 @@ else:
 
 print(json.dumps({
     "score": score,
+    "review_skill_ok": review_skill_ok,
     "streak": streak,
     "running": len(running),
     "blocked": len(blocked),
