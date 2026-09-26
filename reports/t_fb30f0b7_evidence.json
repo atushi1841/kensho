@@ -1,0 +1,26 @@
+{
+  "success_indicators": [
+    "Smithery qualifiedName=atushi1841/tcg-price-japan 登録完了 (API HTTP 200 + ページ HTTP 200)",
+    "MCPB v0.4 bundle pack 成功 (49023 bytes)",
+    "MCP stdio live probe: 3ツール全返却 + tcg_current_price matches=217 + tcg_top_movers count=1"
+  ],
+  "verification_commands": [
+    "$ git show --stat 25dc2aa | head -5 => mcp/tcg-price-japan/ 全7ファイル追加",
+    "$ curl -s https://api.smithery.ai/servers/atushi1841/tcg-price-japan | head -c 120 => {\"qualifiedName\":\"atushi1841/tcg-price-japan\"}",
+    "$ python3 /tmp/mcp_probe.py => initialize {'name':'tcg-price-japan','version':'4.0.10'} / tools: ['tcg_current_price','tcg_price_history','tcg_top_movers'] / current_price matches=217 / top_movers count=1"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_fb30f0b7_verification.md",
+    "/mnt/d/Project2/kensho/mcp/tcg-price-japan/dist/tcg-price-japan.mcpb"
+  ],
+  "evidence_hashes": [
+    "1b5915045f5c3ba928f73d4ca5c6343fe0c2f6f1b0af1bb70ee2c5d4e7f1d63f"
+  ],
+  "outcome": {
+    "metric": "MCP ディレクトリ発見性",
+    "before": 0,
+    "after": 1
+  },
+  "task_id": "t_fb30f0b7",
+  "status": "complete"
+}
