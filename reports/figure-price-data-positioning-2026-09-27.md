@@ -235,8 +235,11 @@ $ web_search query="Hpoi API pricing credits tier Parse marketplace" limit=5
 → Confirmed Hpoi API tiered pricing: Free 200 credits → $30/1k → $100/5k → $300/20k → $1000/100k credits/mo
 
 $ git log --oneline -3
+10d765e docs: add verification_evidence section to positioning doc (t_0ceb866a)
+4aafdbe docs: QA verification evidence for t_0ceb866a
 348c3fd docs: figure price data competitive positioning (t_0ceb866a)
-3fffdb6 feat(apify-settle): track PPE actual revenue vs estimated (t_866f02ae)
-93c2c55 tcg-price-collect: append dataset snapshot (2026-09-26 22:30:19Z)
+0be48ff docs: fix verification format for t_0ceb866a
+
+Task t_0ceb866a completed: Research competitive landscape and market positioning for figure price data
 
 *End of positioning document.*
