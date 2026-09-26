@@ -131,6 +131,9 @@ def fetch_listing_with_retry(
     ★ t_686afe68: referer を fetcher に渡す（scrapling_fetch は referer ヘッダーを設定する）。
       従来は scrapling デフォルトの https://www.google.com/ が使われていたが、knshow.com は
       referer チェックで 502 を返す Protection を持つため、BASE_URL/twitter への固定が必要。
+    # NOTE t_4067980d: scrapling_fetch の referer 引数は実送信時に _headers_job の stealth により
+    #   google referer が上書きされる事例がある。実測で送信 referer は https://www.google.com/ のまま残ることが確認済みのため、
+    #   referer 値の再指定は knshow に対して効果なし。knshow 502は origin 障害が原因であり referer 仮説は破棄。
     """
     code, html, final_url = 0, "", ""
     for attempt in range(_KNSHOW_MAX_TRIES):
@@ -139,6 +142,17 @@ def fetch_listing_with_retry(
         except Exception:  # noqa: BLE001 — ConnectTimeout/ReadTimeout等はリトライ対象
             code, html, final_url = 0, "", ""
         if code != 0 and code < 500:
+            return code, html, final_url
+        # ★ t_4067980d: 5xx のうち origin_outage（502/520-524 等の CF origin 障害）は
+        #   リトライしても解決しない（ブラウザでも通らない origin 側障害）→ 残りリトライを飛ばして
+        #   即 return（3アテンプト → 1アテンプト）。bot_challenge(403/503) と network 例外は
+        #   従来通りリトライを継続（一時的障害の可能性）。
+        if code >= 500 and classify_knshow_failure(code, html) == CF_ORIGIN_OUTAGE:
+            if out:
+                out(
+                    f"  [KNSHOW] 一覧: HTTP {code} [origin_outage] "
+                    "→ origin 障害のためリトライを打ち切り（即返却）"
+                )
             return code, html, final_url
         if attempt < _KNSHOW_MAX_TRIES - 1:
             delay: float = min(_KNSHOW_RETRY_BACKOFF * (2**attempt), _KNSHOW_RETRY_BACKOFF_MAX)
