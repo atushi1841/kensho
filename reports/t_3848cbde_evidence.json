@@ -38,7 +38,16 @@
     "/home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/gumroad_promo_weekly.sh",
     "/home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/gumroad_promo_kpi.sh"
   ],
-  "evidence_hashes": [],
+  "evidence_hashes": [
+    "604852d06cfbc980b764241fe14503b768a36c3faee348b6379a492549bfe450",
+    "dde006c977713a4f53c26309ef5fea211db75b17d08399014b90df2b3e83ad00",
+    "6bd1dcac66c6c330baf5cfaae56cefd02669fec03adbb245e606c7b50c2d0453",
+    "7471982ceb0900a5116a2c3d6df326b2663c56d0576fea168c4b1b54e0cbbd24",
+    "a0c582c41506bb8c59ffed10a685045b1063f6e21ea94f9dacbf770ec37b54fc",
+    "6e0408944a924154336069728a640934af1b3fba573a3cd9bb475f8a542fbb93",
+    "26e7db1283949353dfca806d1293c80c5ca8cd63d46ad573549d34d46fae8a6e",
+    "5c0ee538028016d7ee200b89cfb3a23083f1ed0384c5e6fb10d22df103026c30"
+  ],
   "decisions": [
     "views収集は既存売上収集(gumroad_sales_collect.js port9333)と分離し port9335 の独立CDPスクリプトにした（本番売上パイプライン非干渉）",
     "失敗時代替案: KPI評価はAPI(/v2/sales)優先、応答なしでは data/gumroad_state.json（既存CDPダッシュボード収集）へフォールバック",
