@@ -189,6 +189,15 @@ async function main() {
   } catch (e) {
     // ignore read errors
   }
+  // ⚠️ 参照エラー修正（2026-09-26 実測 t_ee5ca962 継続）:
+  //   旧実装は state オブジェクト内の `sales_page_ok === true`（line 206）を参照していたが、
+  //   その変数は line 209（オブジェクト定義の後）でしか定義されなかった。
+  //   → ReferenceError: sales_page_ok is not defined で node が exit 1 を返し、
+  //     fs.writeFileSync が実行されず gumroad_state.json が旧状態のまま残る。
+  //   Python wrapper は rc=1 を検知して fail-mark を出し、収集は完了するが
+  //   売上データは「前回成功時の $0.00 偽値」が継続して記録される（真の売上ゼロと区別不能）。
+  // → 計算を先に binding し、オブジェクト内では参照のみにする。
+  const sales_page_ok = salesText !== null && salesText.includes('Total');
   const state = {
     state_exists: true,
     sales: 0,
@@ -206,7 +215,7 @@ async function main() {
     last_success_at: (rev.has_login === true && sales_page_ok === true) ? collectedAt : existingLastSuccessAt,
     dashboard_url: url,
     login_ok: rev.has_login !== false,
-    sales_page_ok: salesText !== null && salesText.includes('Total'),
+    sales_page_ok,
   };
   fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2), 'utf-8');
   console.log('保存:', STATE_FILE);

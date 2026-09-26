@@ -17199,5 +17199,1828 @@
    ],
    "note": "日次7:05収集後にライブstateが更新されたため当日entryを再導出（scripts/revenue_record_reconcile.py）"
   }
+ },
+ {
+  "date": "2026-09-27",
+  "collected_at": "2026-09-27T00:05:32.116824",
+  "apify": {
+   "source": "apify",
+   "actors_total": 82,
+   "actors_public": 75,
+   "actors_ppe": 72,
+   "actors_free": 10,
+   "actors_unknown": 0,
+   "total_users_30d": 63,
+   "external_users_total": 0,
+   "total_runs": 4570,
+   "details": [
+    {
+     "name": "surugaya-japan-hobby-prices",
+     "actual_name": "surugaya-japan-hobby-prices",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 96,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": true
+    },
+    {
+     "name": "mandarake-auction-scraper",
+     "actual_name": "mandarake-auction-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 308,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": true
+    },
+    {
+     "name": "mandarake-surugaya-mcp",
+     "actual_name": "mandarake-surugaya-mcp",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 17,
+     "billing": "ppe",
+     "price": 0.001,
+     "is_public": true
+    },
+    {
+     "name": "rakuten-japan-mcp",
+     "actual_name": "rakuten-japan-mcp",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 31,
+     "billing": "ppe",
+     "price": 0.001,
+     "is_public": true
+    },
+    {
+     "name": "dlsite-scraper",
+     "actual_name": "dlsite-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 75,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": true
+    },
+    {
+     "name": "dmm-scraper",
+     "actual_name": "dmm-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 28,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "tackleberry-japan-fishing-tackle-scraper",
+     "actual_name": "tackleberry-japan-fishing-tackle-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 184,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": true
+    },
+    {
+     "name": "kitamura-japan-used-camera-scraper",
+     "actual_name": "kitamura-japan-used-camera-scraper",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 58,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "jackroad-used-watch-scraper",
+     "actual_name": "jackroad-used-watch-scraper",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 50,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "komehyo-japan-brand-scraper",
+     "actual_name": "komehyo-japan-brand-scraper",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 60,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "iosys-japan-used-smartphone-scraper",
+     "actual_name": "iosys-japan-used-smartphone-scraper",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 57,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "digimart-japan-used-instrument-scraper",
+     "actual_name": "digimart-japan-used-instrument-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 47,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-camera-market",
+     "actual_name": "japan-used-camera-market-scraper",
+     "users": 1,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 107,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": true
+    },
+    {
+     "name": "japan-instrument-market",
+     "actual_name": "japan-used-instrument-market-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 99,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": true
+    },
+    {
+     "name": "japan-watch-market",
+     "actual_name": "japan-watch-market-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 99,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": true
+    },
+    {
+     "name": "japan-luxury-market",
+     "actual_name": "japan-luxury-brand-market-scraper",
+     "users": 1,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 98,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": true
+    },
+    {
+     "name": "japan-market-mcp",
+     "actual_name": "japan-market-mcp",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 604,
+     "billing": "ppe",
+     "price": 5e-05,
+     "is_public": true
+    },
+    {
+     "name": "japan-offmall-market",
+     "actual_name": "japan-offmall-market-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 268,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": true
+    },
+    {
+     "name": "camera-cn",
+     "actual_name": "japan-camera-market-cn-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 26,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "camera-kr",
+     "actual_name": "japan-camera-market-kr-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 26,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "watch-cn",
+     "actual_name": "japan-watch-market-scraper-cn",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 58,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "watch-kr",
+     "actual_name": "japan-watch-market-scraper-kr",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 30,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "luxury-cn",
+     "actual_name": "japan-luxury-brand-market-cn",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 60,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "luxury-kr",
+     "actual_name": "japan-luxury-brand-market-kr",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 33,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "instrument-cn",
+     "actual_name": "japan-used-instrument-market-cn",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 33,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "instrument-kr",
+     "actual_name": "japan-used-instrument-market-kr",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 32,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "offmall-cn",
+     "actual_name": "japan-offmall-market-cn",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 32,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "offmall-kr",
+     "actual_name": "japan-offmall-market-kr",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 25,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-rent-market",
+     "actual_name": "japan-rent-market-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 73,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-rent-market-cn",
+     "actual_name": "japan-rent-market-cn",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 77,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-rent-market-kr",
+     "actual_name": "japan-rent-market-kr",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 30,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-property-market",
+     "actual_name": "japan-property-market-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 74,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-property-market-cn",
+     "actual_name": "japan-property-market-cn",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 30,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-property-market-kr",
+     "actual_name": "japan-property-market-kr",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 29,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-kakaku-price-search",
+     "actual_name": "japan-kakaku-price-search",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 105,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-kakaku-price-search-cn",
+     "actual_name": "japan-kakaku-price-search-cn",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 24,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-kakaku-price-search-kr",
+     "actual_name": "japan-kakaku-price-search-kr",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 24,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "kimono-market-scraper",
+     "actual_name": "kimono-market-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 58,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "kimono-market-scraper-cn",
+     "actual_name": "kimono-market-scraper-cn",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 46,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "kimono-market-scraper-kr",
+     "actual_name": "kimono-market-scraper-kr",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 46,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "goo-net-car-scraper",
+     "actual_name": "goo-net-car-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 69,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "biglemon-machinery-scraper",
+     "actual_name": "biglemon-machinery-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 45,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "goo-net-car-scraper-es",
+     "actual_name": "goo-net-car-scraper-es",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 48,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "goo-net-car-scraper-pt",
+     "actual_name": "goo-net-car-scraper-pt",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 47,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "suumo-japan-real-estate-scraper",
+     "actual_name": "suumo-japan-real-estate-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 51,
+     "billing": "ppe",
+     "price": 0.001,
+     "is_public": true
+    },
+    {
+     "name": "suumo-japan-real-estate-scraper-cn",
+     "actual_name": "suumo-japan-real-estate-scraper-cn",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 45,
+     "billing": "ppe",
+     "price": 0.001,
+     "is_public": true
+    },
+    {
+     "name": "suumo-japan-real-estate-scraper-kr",
+     "actual_name": "suumo-japan-real-estate-scraper-kr",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 44,
+     "billing": "ppe",
+     "price": 0.001,
+     "is_public": true
+    },
+    {
+     "name": "suumo-japan-real-estate-scraper-es",
+     "actual_name": "suumo-japan-real-estate-scraper-es",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 44,
+     "billing": "ppe",
+     "price": 0.001,
+     "is_public": true
+    },
+    {
+     "name": "rakuten-market-scraper",
+     "actual_name": "rakuten-market-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 25,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "rakuten-debug-fetch",
+     "actual_name": "rakuten-debug-fetch",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 2,
+     "billing": "free",
+     "price": null,
+     "is_public": false
+    },
+    {
+     "name": "tabelog-debug-fetch",
+     "actual_name": "tabelog-debug-fetch",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 1,
+     "billing": "free",
+     "price": null,
+     "is_public": false
+    },
+    {
+     "name": "goo-net-car-scraper-fr",
+     "actual_name": "goo-net-car-scraper-fr",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 43,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "goo-net-car-scraper-ru",
+     "actual_name": "goo-net-car-scraper-ru",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 43,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "goobike-motorcycle-scraper",
+     "actual_name": "goobike-motorcycle-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 45,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "upgarage-parts-scraper",
+     "actual_name": "upgarage-parts-scraper",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 46,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "golfpartner-used-club-scraper",
+     "actual_name": "golfpartner-used-club-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 44,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "yahoo-auctions-japan-scraper",
+     "actual_name": "yahoo-auctions-japan-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 98,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": true
+    },
+    {
+     "name": "mercari-japan-search-scraper",
+     "actual_name": "mercari-japan-search-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 140,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": true
+    },
+    {
+     "name": "japan-hotpepper-scraper",
+     "actual_name": "japan-hotpepper-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 46,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-hotpepper-cn-scraper",
+     "actual_name": "japan-hotpepper-cn-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 39,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-hotpepper-kr-scraper",
+     "actual_name": "japan-hotpepper-kr-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 39,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-camera-resale-price-stats",
+     "actual_name": "japan-camera-resale-price-stats",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 33,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "mini-actor-test-0903",
+     "actual_name": "mini-actor-test-0903",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 1,
+     "billing": "free",
+     "price": null,
+     "is_public": false
+    },
+    {
+     "name": "japan-figure-plamo-resale-price-stats",
+     "actual_name": "japan-figure-plamo-resale-price-stats",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 22,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "tackleberry-scraper",
+     "actual_name": "tackleberry-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 19,
+     "billing": "ppe",
+     "price": 0.0005,
+     "is_public": true
+    },
+    {
+     "name": "amazon-paapi-jp-actor",
+     "actual_name": "amazon-paapi-jp-actor",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 1,
+     "billing": "ppe",
+     "price": 0.0005,
+     "is_public": true
+    },
+    {
+     "name": "ai-model-price-api",
+     "actual_name": "ai-model-price-api",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 29,
+     "billing": "free",
+     "price": null,
+     "is_public": true
+    },
+    {
+     "name": "japan-egov-laws",
+     "actual_name": "japan-egov-laws",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 31,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "japan-jma-weather",
+     "actual_name": "japan-jma-weather",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 9,
+     "billing": "free",
+     "price": null,
+     "is_public": true
+    },
+    {
+     "name": "japan-mhlw-medical",
+     "actual_name": "japan-mhlw-medical",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 24,
+     "billing": "free",
+     "price": null,
+     "is_public": true
+    },
+    {
+     "name": "japan-corporate-numbers",
+     "actual_name": "japan-corporate-numbers",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 29,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "world-bank-indicators",
+     "actual_name": "world-bank-indicators",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 23,
+     "billing": "ppe",
+     "price": 0.003,
+     "is_public": true
+    },
+    {
+     "name": "eurostat-indicators",
+     "actual_name": "eurostat-indicators",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 23,
+     "billing": "ppe",
+     "price": 0.004,
+     "is_public": true
+    },
+    {
+     "name": "japan-crowdfunding-trend-feed",
+     "actual_name": "japan-crowdfunding-trend-feed",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 20,
+     "billing": "ppe",
+     "price": 0.002,
+     "is_public": true
+    },
+    {
+     "name": "my-actor",
+     "actual_name": "my-actor",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 0,
+     "billing": "free",
+     "price": null,
+     "is_public": false
+    },
+    {
+     "name": "japan-prize-giveaway-scraper",
+     "actual_name": "japan-prize-giveaway-scraper",
+     "users": 2,
+     "u30d": 1,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 19,
+     "billing": "free",
+     "price": null,
+     "is_public": true
+    },
+    {
+     "name": "japan-fuel-price-mcp",
+     "actual_name": "japan-fuel-price-mcp",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 17,
+     "billing": "ppe",
+     "price": 5e-05,
+     "is_public": true
+    },
+    {
+     "name": "kensho-high-value-leads",
+     "actual_name": "kensho-high-value-leads",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 1,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": false
+    },
+    {
+     "name": "test-actor",
+     "actual_name": "test-actor",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 0,
+     "billing": "free",
+     "price": null,
+     "is_public": false
+    },
+    {
+     "name": "japan-minimum-wage-mcp",
+     "actual_name": "japan-minimum-wage-mcp",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 3,
+     "billing": "ppe",
+     "price": 5e-05,
+     "is_public": true
+    },
+    {
+     "name": "japan-property-hazard-mcp",
+     "actual_name": "japan-property-hazard-mcp",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 0,
+     "billing": "free",
+     "price": null,
+     "is_public": false
+    },
+    {
+     "name": "japan-jepx-mcp",
+     "actual_name": "japan-jepx-mcp",
+     "users": 1,
+     "u30d": 0,
+     "external_users": 0,
+     "external_runs": 0,
+     "runs": 5,
+     "billing": "ppe",
+     "price": 0.005,
+     "is_public": true
+    }
+   ],
+   "date": "2026-09-26",
+   "ppe_revenue": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "surugaya-japan-hobby-prices": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "mandarake-surugaya-mcp": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "rakuten-japan-mcp": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "dmm-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "tackleberry-japan-fishing-tackle-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 24
+     },
+     "kitamura-japan-used-camera-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 8
+     },
+     "jackroad-used-watch-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 8
+     },
+     "komehyo-japan-brand-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 8
+     },
+     "iosys-japan-used-smartphone-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 8
+     },
+     "digimart-japan-used-instrument-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 9
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 9
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 9
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 9
+     },
+     "japan-market-mcp": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 3
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 40
+     },
+     "japan-camera-market-cn-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-camera-market-kr-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-watch-market-scraper-cn": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 7
+     },
+     "japan-watch-market-scraper-kr": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-luxury-brand-market-cn": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 7
+     },
+     "japan-luxury-brand-market-kr": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-used-instrument-market-cn": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-used-instrument-market-kr": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-offmall-market-cn": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-offmall-market-kr": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-rent-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 9
+     },
+     "japan-rent-market-cn": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 9
+     },
+     "japan-rent-market-kr": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-property-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 9
+     },
+     "japan-property-market-cn": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-property-market-kr": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-kakaku-price-search": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 17
+     },
+     "japan-kakaku-price-search-cn": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-kakaku-price-search-kr": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "kimono-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "kimono-market-scraper-cn": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "kimono-market-scraper-kr": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "goo-net-car-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "biglemon-machinery-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "goo-net-car-scraper-es": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "goo-net-car-scraper-pt": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "suumo-japan-real-estate-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "suumo-japan-real-estate-scraper-cn": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "suumo-japan-real-estate-scraper-kr": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "suumo-japan-real-estate-scraper-es": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "rakuten-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "goo-net-car-scraper-fr": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "goo-net-car-scraper-ru": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "goobike-motorcycle-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "upgarage-parts-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "golfpartner-used-club-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "yahoo-auctions-japan-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "mercari-japan-search-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-hotpepper-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-hotpepper-cn-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-hotpepper-kr-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-camera-resale-price-stats": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-figure-plamo-resale-price-stats": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "tackleberry-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "amazon-paapi-jp-actor": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-egov-laws": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-corporate-numbers": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "world-bank-indicators": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "eurostat-indicators": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-crowdfunding-trend-feed": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-fuel-price-mcp": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "kensho-high-value-leads": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-minimum-wage-mcp": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 0
+     },
+     "japan-jepx-mcp": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 5
+     }
+    }
+   }
+  },
+  "rapidapi": {
+   "source": "rapidapi",
+   "apis_total": 24,
+   "apis_public": 20,
+   "apis_private": 4,
+   "apis_freemium": 24,
+   "details": [
+    {
+     "id": "api_7d2dcc27-829d-4add-88b9-5c1708447f85",
+     "name": "Japan Camera & Lens Resale Price Research API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_dbf7c702-51b3-436e-9e70-21c6c6c358d8",
+     "name": "Japan Fuel Price API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_45bf102f-6d1b-4fd5-9179-f164de167ffd",
+     "name": "Japan Kakaku Price Stats API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_98e90960-6f1e-4b2c-ae95-d4e7502792b6",
+     "name": "Japan Minimum Wage API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_c1044ee7-1752-4d3e-a688-53f7e791d5ff",
+     "name": "Japan OffMall Used Goods Price Stats API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_3697e05e-3115-47c5-85df-f6edadbdc8ca",
+     "name": "Japan OffMall Used Goods Price Stats API (Chinese)",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_2e8e063d-f2a3-43de-9fe4-50d5eb16659a",
+     "name": "Japan Rent Price Stats API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_e19e373c-049e-462b-bd7c-c5acf9b65770",
+     "name": "Japan Used Camera Price Stats API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_daeb465c-9094-4f76-8918-0b18e7b7915d",
+     "name": "Japan Used Camera Price Stats API (Chinese)",
+     "visibility": "PRIVATE",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_9e1f6683-5736-4fee-a61e-8e248f21a449",
+     "name": "Japan Used Camera Price Stats API (Korean)",
+     "visibility": "PRIVATE",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_e093340e-c784-4cc9-9d70-7cf80404b9ed",
+     "name": "Japan Used Car Price Stats API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_1f0df9f7-b950-42ce-9b01-b4bd101e87b3",
+     "name": "Japan Used Car Price Stats API (Portuguese)",
+     "visibility": "PRIVATE",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_b23adf16-97b5-4b4b-bfc7-c50ece68d74b",
+     "name": "Japan Used Car Price Stats API (Spanish)",
+     "visibility": "PRIVATE",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_7813dffd-a465-4cae-a3c5-12675e95f57c",
+     "name": "Japan Used Kimono Price Stats API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_8941b445-afab-4f21-abbe-a58e96b21325",
+     "name": "Japan Used Luxury Brand Price Stats API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_0161125b-59dc-473c-adf5-be218ac9bc87",
+     "name": "Japan Used Luxury Brand Price Stats API (Chinese)",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_2ef6103e-28f3-4576-ae3a-54f7bbe1c7b3",
+     "name": "Japan Used Luxury Brand Price Stats API (Korean)",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_8ccef00b-e8be-44b2-b4e4-3c96fdaf7481",
+     "name": "Japan Used Musical Instrument Price Stats API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_807997c1-295c-4453-9a2a-c8158cb537dd",
+     "name": "Japan Used Musical Instrument Price Stats API (Chinese)",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_869b5394-5c02-4fde-a362-16ccaadbce4e",
+     "name": "Japan Used Musical Instrument Price Stats API (Korean)",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_cb7a9d01-e8db-4f0d-b91f-031899d5e7cc",
+     "name": "Japan Used Watch Price Stats API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_afa51cca-f231-4b16-8001-2c07dfa3d0eb",
+     "name": "Japan Used Watch Price Stats API (Chinese)",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_f53e6974-1ad4-4e53-960f-4c8b4d771527",
+     "name": "Japan Used Watch Price Stats API (Korean)",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    },
+    {
+     "id": "api_83ff803f-ea25-4e5e-8d67-0a8537f46bc1",
+     "name": "Suumo Japan Real Estate Price Stats API",
+     "visibility": "PUBLIC",
+     "pricing": "FREEMIUM",
+     "version": "1.0.0",
+     "version_status": "active"
+    }
+   ]
+  },
+  "gumroad": {
+   "source": "gumroad",
+   "products": 1,
+   "details": [
+    {
+     "title": "Japanese Hobby & Collectibles Market Price Dataset (Weekly CSV)",
+     "price": "29.99",
+     "zip_exists": true,
+     "zip_size": 486103
+    }
+   ],
+   "state_exists": true,
+   "sales": 0,
+   "revenue": 0,
+   "total_sales": 0,
+   "total_revenue": 0,
+   "balance_usd": null,
+   "last_7_days_usd": null,
+   "last_28_days_usd": null,
+   "total_earnings_usd": null,
+   "login_ok": true,
+   "collected_at": "2026-09-27T00:05:31.348",
+   "last_success_at": "2026-09-27T00:05:32",
+   "last_attempt_at": "2026-09-27T00:05:31.348",
+   "sales_page_ok": true
+  },
+  "opportunities": [
+   "Apify PPE課金アクター 72件: surugaya-japan-hobby-prices, mandarake-auction-scraper, mandarake-surugaya-mcp, rakuten-japan-mcp, dlsite-scraper",
+   "RapidAPI非公開API 4本: Japan Used Camera Price Stats API (Chinese), Japan Used Camera Price Stats API (Korean), Japan Used Car Price Stats API (Portuguese), Japan Used Car Price Stats API (Spanish)",
+   "Apify高使用量アクター: mandarake-auction-scraper(u30d=1), mandarake-surugaya-mcp(u30d=1), rakuten-japan-mcp(u30d=1), dlsite-scraper(u30d=1), dmm-scraper(u30d=1)"
+  ],
+  "warnings": [
+   "Gumroad売上ゼロ継続（販促施策の実行候補）"
+  ],
+  "collectors": {
+   "apify_ok": true,
+   "rapidapi_ok": true,
+   "gumroad_ok": true,
+   "gumroad_login_ok": true,
+   "collected_today": 0,
+   "collected_total": 1118,
+   "collected_today_source": "logs/collect_20260927_*.log",
+   "collected_today_runs": 0
+  },
+  "revenue_estimate": {
+   "apify_monthly": 0,
+   "rapidapi_monthly": 0,
+   "gumroad_monthly": 0,
+   "total_monthly": 0,
+   "apify_ppe_external_runs": 0,
+   "note": "現状: Apify PPE課金 72件（外部run 0件→実収益 $0.0000）、無料 10件、RapidAPI全FREEMIUM、Gumroad売上なし。課金設定で月1-3万円のポテンシャル"
+  },
+  "rapidapi_paid_effect": {
+   "point": "measured",
+   "point_date": "2026-09-27",
+   "measured_at": "2026-09-26T07:05:23.499391+09:00",
+   "note": "当日point未取得・直近値で代用",
+   "apis": {
+    "japan-used-car": {
+     "visibility": "PUBLIC",
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true,
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     }
+    },
+    "japan-offmall-cn": {
+     "visibility": "PUBLIC",
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true,
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     }
+    },
+    "japan-camera": {
+     "visibility": "PUBLIC",
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true,
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     }
+    },
+    "japan-kakaku": {
+     "visibility": "PUBLIC",
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true,
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     }
+    },
+    "japan-rent": {
+     "visibility": "PUBLIC",
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true,
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     }
+    },
+    "japan-watch": {
+     "visibility": "PUBLIC",
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true,
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     }
+    },
+    "japan-luxury": {
+     "visibility": "PUBLIC",
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true,
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     }
+    },
+    "japan-instrument": {
+     "visibility": "PUBLIC",
+     "subscribers": {
+      "total": 0,
+      "paid": 0,
+      "free": 0
+     },
+     "warnings": [],
+     "paid_plan_active": true,
+     "tier_effective_prices": {
+      "BASIC": 0.001,
+      "PRO": 0.005,
+      "ULTRA": 0.01
+     }
+    }
+   }
+  }
  }
 ]
