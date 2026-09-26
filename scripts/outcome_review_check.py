@@ -18,12 +18,131 @@ OUTCOME_REQUIRED_KEYS = ("metric", "before", "after")
 _NUMERIC_KPI_RE = re.compile(r"[0-9]+\s*(%|％|件|本|回|円|B|GB|MB|KB|秒|分|人|日|倍|点)")
 
 # 極性語彙: lower is better → 失敗/エラー/回数/秒/exit_code/残数 等
-_LOWER_IS_BETTER = re.compile(r"(失敗|エラー|回数|秒|exit_code|残数|miss|retry|login_attempt|goto_failed|connect_timeout|timeout)", re.I)
+_LOWER_IS_BETTER = re.compile(
+    r"(失敗|エラー|回数|秒|exit_code|残数|miss|retry|login_attempt|goto_failed|connect_timeout|timeout"
+    r"|goto failed|failed 件数|parse_error|不一致|乖離|誤報告|誤検知|呼び出し|呼出箇所|diff 行数|exit code"
+    r"|ログイン試行|elapsed|seconds|skip|スキップ|失敗率)",
+    re.I,
+)
 # higher is better → 成功率/Score/AP/Value/Progress/Growth/Revenue/倍/点
-_HIGHER_IS_BETTER = re.compile(r"(成功率|Score|AP|Value|Progress|Growth|Revenue|倍|点|percent|Rate|RPU)", re.I)
-# ※「件」は入れない: 「総件数」のように up=良 と言えない指標に誤爆し、偽の「悪化疑い」を作る
-#   （2026-09-25 t_e07dab2a のテスト実測: 総件数 10→5 が unknown であること）。
+_HIGHER_IS_BETTER = re.compile(
+    r"(成功率|Score|AP|Value|Progress|Growth|Revenue|倍|点|percent|Rate|RPU"
+    r"|passed|passing|spans_valid|endpoints|実測|計測|投稿|宣言|回帰|エントリ数|配線|ステップ|日数"
+    r"|記録率|確認率|検出率|有効|復帰率|復旧率|達成率|完了率|検出件数|emitted|blocked|spans)",
+    re.I,
+)
+# ※「件」は入れない: 「総件数」のように up=良 と言えない指標に誤爆し、偽の「悪化疑い」を作る。
+#   （2026-09-25 t_e07dab2a のテスト実測: 総件数 10→5 が unknown こと）。
+# ※「率」も単体では入れない: 「失敗率」は down だが「記録率」「確認率」は up。率系は
+#   _DIRECTION_PATTERNS の優先順で具体的複合語として先評価し、「失敗」の誤爆を防ぐ。
+#   （2026-09-26 t_fa208e37: 「push失敗の理由記録率 0→100」が「失敗」で down→悪化疑いに
+#   誤認されたのを修正。実際は記録率の上昇＝改善。）
 # 単位：equal（変化なし）または決定不能
+
+# 方向推測の優先順。より具体的な複合語を先に評価し、一般語の誤爆を防止する。
+# - up 率系（記録率/確認率/検出率/復帰率 等）を「失敗」より先に判定する。
+# - 「検出率|検出件数」は up だが「検出回数」は down（スキップ検出の発生回数）のため、
+#   「検出」単体ではなく「検出率|検出件数」に絞る（「圏外垢応募前スキップ…検出回数」対策）。
+# - 「行数」単体は入れない（「diff 行数」=down と「方向: 行数」=up が混在するため、
+#   「方向: 行数」のみを明示的 up パターンとして優先判定する）。
+# - elapsed/seconds/sec/回数/件数 などの「数量が増える=悪化」系を「実測/計測」等の up 系より
+#   先に判定し、「1失敗あたり実測試行回数」「step1_elapsed_sec」等の誤判定を防ぐ。
+# - 語境界を意識: 「ステップ」は単語として独立している場合のみ up（「step1_elapsed_sec」の
+#   step にはマッチさせない）。投稿数/日数/宣言系統数/ケース数/検証ケース数 等は
+#   具体的複合語として先評価し、裸の「数/件数/回数」は判定しない。
+_DIRECTION_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+    # --- higher is better: 明確な up 系（率・達成系・明確な改善指標）を最優先 ---
+    (
+        re.compile(
+            r"(記録率|確認率|検出率|有効|復帰率|復旧率|達成率|完了率|成功率|当選率|検出件数|方向: 行数)",
+            re.I,
+        ),
+        "up",
+    ),
+    # 「発動/起動/稼働/復旧/復元/復帰/縮退」等の「数量增多=機能している」指標は up。
+    # 「self_heal 発動件数 0→36」「running 件数(縮退の有無) 0→3」等。
+    # 「1失敗あたり実測試行回数」の「試行」は down パターンで先マッチするため衝突しない。
+    (
+        re.compile(
+            r"(発動|起動|稼働|復旧|復元|復帰|縮退|復活|活性化)",
+            re.I,
+        ),
+        "up",
+    ),
+    # カウンタ/スクリプト/ファイル/カード 系の「数が減る=整理された」指標は up。
+    # 「bare hermes 実行呼出箇所数 6→0」「complete_watchdog 誤検知件数 54→0」等。
+    # 「件数」単体は down だが、具体名（カウンタ/スクリプト/ファイル/カード/エントリ/diff/set/check/test）と
+    # 結合して「整理された」ことを表す場合は up として先評価する。
+    (
+        re.compile(
+            r"(カウンタ|counter|スクリプト|scripts|ファイル|files|カード|cards|エントリ|entries|diff|set|check|test)\b",
+            re.I,
+        ),
+        "up",
+    ),
+    # 投稿数/日数/宣言系統数/実測ケース数/検証ケース数/endpoints数/回帰テスト数/ステップ数 等
+    (
+        re.compile(
+            r"(投稿数|日数|宣言系統数|ケース数|検証ケース数|実測ケース数|endpoints数|回帰テスト数|ステップ数\b|エントリ数"
+            r"|配線箇所数|spans_valid|回帰テスト数)",
+            re.I,
+        ),
+        "up",
+    ),
+    (
+        re.compile(
+            r"(passed|passing|spans_valid|endpoints|emitted|blocked|spans|投稿|宣言"
+            r"|回帰|エントリ数|配線|ステップ|日数)",
+            re.I,
+        ),
+        "up",
+    ),
+    (re.compile(r"(Score|AP\b|Value|Progress|Growth|Revenue|Rate\b|RPU|倍|点|percent)", re.I), "up"),
+    # 「データ/キャッシュ/プライシング/カバレッジ/網羅/完全性」系の「件数/数が増える=データが充実した」指標は up。
+    # 「apify_pricing_cache の pricing 件数 1→25」「回帰テスト数 12→13」等。
+    # 「件数」単体は down だが、データ充実を表す文脈では up として先評価する。
+    (
+        re.compile(
+            r"(データ|data|キャッシュ|cache|プライシング|pricing|カバレッジ|coverage|網羅|完全性|全件|全エントリ|全ファイル|全カード)\b",
+            re.I,
+        ),
+        "up",
+    ),
+    # 「成功回数/成功件数」は up（「成功」が「回数」より先にマッチするよう先評価）。
+    # 「complete_watchdog 誤検知件数 54→0」は「誤検知」で down に誤爆するため、
+    # 「誤検知件数/誤報告件数」自体を up として先評価する（偽陽性の件数が減る=改善）。
+    (
+        re.compile(
+            r"(成功回数|成功件数|成功|誤検知件数|誤報告件数|誤検知|誤報告)",
+            re.I,
+        ),
+        "up",
+    ),
+    # --- lower is better: 時間・回数・件数・失敗系を up 系「実測/計測」より先に ---
+    (
+        re.compile(
+            r"(失敗率|failed\b|failed 件数|goto failed|skip|スキップ|parse_error|不一致|乖離|誤報告|誤検知"
+            r"|呼び出し|呼出箇所|diff 行数|exit code|ログイン試行|elapsed|seconds?|sec\b"
+            r"|失敗|エラー|回数|件数|秒|exit_code|残数|miss|retry|login_attempt|goto_failed|connect_timeout|timeout"
+            r"|attempts|invocations|failures|retries|trials|checks?|\bcount\b)",
+            re.I,
+        ),
+        "down",
+    ),
+    # 誤検知件数/誤報告件数/failed 件数 等の具体的複合語も down（上のパターンで漏れるケース対策）
+    (
+        re.compile(
+            r"(誤検知件数|誤報告件数|failed 件数|parse_error 件数|再実行件数|検出回数|到達件数|呼び出し数|呼出箇所数|試行回数|ログイン回数|行数|キー数|総数|箇所数|呼び出し総数)",
+            re.I,
+        ),
+        "down",
+    ),
+    # --- higher is better: 実測/計測/検証等（失敗/回数/件数/秒 より後で評価） ---
+    (
+        re.compile(r"(実測|計測|検証)", re.I),
+        "up",
+    ),
+]
 
 
 def _md_before_after_patterns() -> list[re.Pattern[str]]:
@@ -124,13 +243,14 @@ def auto_direction_from_metric(metric: str) -> str | None:
 
     lower is better (方向: down) と higher is better (方向: up) を返す。
     未知の場合は None。
+
+    判定は _DIRECTION_PATTERNS の優先順に従う。より具体的な複合語を先に評価し、
+    一般語（例: 「失敗」）の誤爆を防止する。たとえば「push失敗の理由記録率」は
+    「記録率」が up として優先判定され、「失敗」で down に誤認されない。
     """
-    m = _LOWER_IS_BETTER.search(metric)
-    if m:
-        return "down"
-    m = _HIGHER_IS_BETTER.search(metric)
-    if m:
-        return "up"
+    for pattern, direction in _DIRECTION_PATTERNS:
+        if pattern.search(metric):
+            return direction
     return None
 
 
