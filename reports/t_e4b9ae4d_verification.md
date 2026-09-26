@@ -1,9 +1,12 @@
-## verification_evidence — t_e4b9ae4d（Apify SEO 測定ポイント更新・9/26 実測反映）
+# t_e4b9ae4d — Apify SEO 測定ポイント更新（2026-09-25 実測反映）の検証証跡
 
-タスク: Apify SEO 効果測定スクリプトの測定ポイント更新（2026-09-25 実測反映）
+タスク ID: t_e4b9ae4d
 実施日: 2026-09-26
+実施者: kensho-revenue-critic（critic から worker 委譲＋critic が追加実測）
 
-### 実測証跡（3コマンド以上）
+## verification_evidence
+
+### 実測証跡（コマンド引用 4 つ）
 
 $ python3 scripts/apify_seo_effect.py --latest --json
 => {"latest_date": "2026-09-25", "actors_ppe": 25, "external_runs": 0, "actors_total": 25, "total_runs": 0, "total_users_30d": 0, "external_users_total": 0, "source": "apify"}
@@ -20,7 +23,7 @@ $ python3 scripts/apify_seo_effect.py --date 2026-09-26
 => 収益化シグナル u30d>=2 に到達したアクター: 0件（改善未達＝現状のボトルネックを数値化）
 
 ### 変更内容
-- scripts/apify_seo_effect.py: `load_daily()` が JSON が dict で返る場合の耐性追加、`latest_snapshot()` / `append_history()` 追加（--latest --json モード）
+- scripts/apify_seo_effect.py: `load_daily()` の dict 返し耐性追加、`latest_snapshot()` / `append_history()` 追加（--latest --json モード）
 - 追加実測証跡: reports/apify-seo/apify-seo-apply-2026-09-26.json/.csv（監査→適用の全链証跡）
 - 効果測定: reports/apify-seo/apify-seo-effect.json（measurement 2026-09-03->2026-09-25 追加）
 
@@ -39,4 +42,4 @@ Apify ダッシュボードから CSV エクスポートし、手動で data/api
 - 適用完了率（apply ok/total）: 15/16 = 93.75%（方向: up / 9/4 時は ok 2/5=40%）
 
 ### コミット
-1c56646（reports/ 追跡化、push 済み）
+3280b1b（本体コード＋reports/ 追跡化、push 済み）
