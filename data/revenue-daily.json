@@ -17202,7 +17202,7 @@
  },
  {
   "date": "2026-09-27",
-  "collected_at": "2026-09-27T00:05:32.116824",
+  "collected_at": "2026-09-27T01:04:02.134833",
   "apify": {
    "source": "apify",
    "actors_total": 82,
@@ -18216,7 +18216,7 @@
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 0
+      "total_runs_window": 2
      },
      "mandarake-surugaya-mcp": {
       "external_runs": 0,
@@ -18234,25 +18234,25 @@
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 0
+      "total_runs_window": 2
      },
      "dmm-scraper": {
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 0
+      "total_runs_window": 1
      },
      "tackleberry-japan-fishing-tackle-scraper": {
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 24
+      "total_runs_window": 27
      },
      "kitamura-japan-used-camera-scraper": {
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 8
+      "total_runs_window": 9
      },
      "jackroad-used-watch-scraper": {
       "external_runs": 0,
@@ -18264,7 +18264,7 @@
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 8
+      "total_runs_window": 9
      },
      "iosys-japan-used-smartphone-scraper": {
       "external_runs": 0,
@@ -18282,25 +18282,25 @@
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 9
+      "total_runs_window": 14
      },
      "japan-used-instrument-market-scraper": {
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 9
+      "total_runs_window": 13
      },
      "japan-watch-market-scraper": {
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 9
+      "total_runs_window": 13
      },
      "japan-luxury-brand-market-scraper": {
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 9
+      "total_runs_window": 13
      },
      "japan-market-mcp": {
       "external_runs": 0,
@@ -18312,7 +18312,7 @@
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 40
+      "total_runs_window": 44
      },
      "japan-camera-market-cn-scraper": {
       "external_runs": 0,
@@ -18330,7 +18330,7 @@
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 7
+      "total_runs_window": 8
      },
      "japan-watch-market-scraper-kr": {
       "external_runs": 0,
@@ -18342,7 +18342,7 @@
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 7
+      "total_runs_window": 8
      },
      "japan-luxury-brand-market-kr": {
       "external_runs": 0,
@@ -18414,7 +18414,7 @@
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 17
+      "total_runs_window": 18
      },
      "japan-kakaku-price-search-cn": {
       "external_runs": 0,
@@ -18456,7 +18456,7 @@
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 0
+      "total_runs_window": 1
      },
      "goo-net-car-scraper-es": {
       "external_runs": 0,
@@ -18534,7 +18534,7 @@
       "external_runs": 0,
       "charged_items": 0,
       "revenue_usd": 0.0,
-      "total_runs_window": 0
+      "total_runs_window": 1
      },
      "mercari-japan-search-scraper": {
       "external_runs": 0,
@@ -18863,9 +18863,9 @@
    "last_28_days_usd": null,
    "total_earnings_usd": null,
    "login_ok": true,
-   "collected_at": "2026-09-27T00:05:31.348",
-   "last_success_at": "2026-09-27T00:05:32",
-   "last_attempt_at": "2026-09-27T00:05:31.348",
+   "collected_at": "2026-09-27T01:04:01.081",
+   "last_success_at": "2026-09-27T01:04:02",
+   "last_attempt_at": "2026-09-27T01:04:01.081",
    "sales_page_ok": true
   },
   "opportunities": [
@@ -19020,6 +19020,196 @@
       "ULTRA": 0.01
      }
     }
+   }
+  },
+  "apify_ppe_external_runs": {
+   "triggered_at": "2026-09-26T16:11:50+00:00",
+   "actors": [
+    {
+     "actual_name": "japan-used-camera-market-scraper",
+     "actor_id": "mQaZFo6up4YZKepC3",
+     "price_usd": 0.005,
+     "triggered": true,
+     "run_id": "FABGT0c9FEDFPTJZc",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "japan-watch-market-scraper",
+     "actor_id": "gMqdrS2evpcybSZc2",
+     "price_usd": 0.005,
+     "triggered": true,
+     "run_id": "K9mAI92qp4bC6Lb0x",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "japan-luxury-brand-market-scraper",
+     "actor_id": "b0vuqa3ESvy2mOwFB",
+     "price_usd": 0.005,
+     "triggered": true,
+     "run_id": "wVNhvaE3eyGeWZr3p",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "japan-used-instrument-market-scraper",
+     "actor_id": "yN1R26HrV6C2MBKas",
+     "price_usd": 0.005,
+     "triggered": true,
+     "run_id": "G7Gerl3Lp13hCWlKI",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "japan-offmall-market-scraper",
+     "actor_id": "Zh4kqcS4dYPWpFzBd",
+     "price_usd": 0.005,
+     "triggered": true,
+     "run_id": "hN9n1lbb7lRDWUpfP",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "surugaya-japan-hobby-prices",
+     "actor_id": "F8Hl0a8Cx9bpJBrxR",
+     "price_usd": 0.005,
+     "triggered": false,
+     "run_id": null,
+     "status": null,
+     "error": "HTTP 400"
+    },
+    {
+     "actual_name": "mandarake-auction-scraper",
+     "actor_id": "q2E37PVTg5JcGOTEn",
+     "price_usd": 0.005,
+     "triggered": true,
+     "run_id": "g2b2LkVHYTyLFQfgM",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "tackleberry-japan-fishing-tackle-scraper",
+     "actor_id": "wxMskoiHMPeeH2qAJ",
+     "price_usd": 0.005,
+     "triggered": true,
+     "run_id": "djfh1KI8v46zdw2B6",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "yahoo-auctions-japan-scraper",
+     "actor_id": "8WBam4CPB72q9Rvsd",
+     "price_usd": 0.005,
+     "triggered": true,
+     "run_id": "dTTsuAsmF6d0Gh4Si",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "dlsite-scraper",
+     "actor_id": "6Z7tJ3plfUmAgGmbk",
+     "price_usd": 0.005,
+     "triggered": true,
+     "run_id": "jAIgBw0HBIw8ptucy",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "dmm-scraper",
+     "actor_id": "nUm22B2guMo8vXom6",
+     "price_usd": 0.002,
+     "triggered": true,
+     "run_id": "lwmaoFbn3dkC2jan3",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "kitamura-japan-used-camera-scraper",
+     "actor_id": "DOiD9y1NAJfLBcAjT",
+     "price_usd": 0.005,
+     "triggered": true,
+     "run_id": "dUbi1UmgVIQbxOdig",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "jackroad-used-watch-scraper",
+     "actor_id": "nWf9BR2ndMTYqKxNB",
+     "price_usd": 0.005,
+     "triggered": false,
+     "run_id": null,
+     "status": null,
+     "error": "HTTP 400"
+    },
+    {
+     "actual_name": "komehyo-japan-brand-scraper",
+     "actor_id": "Db3iY8FIRxPjPag7N",
+     "price_usd": 0.005,
+     "triggered": true,
+     "run_id": "JYbzvSFMEuKZDOsKJ",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "eurostat-indicators",
+     "actor_id": "pAxQ0lRyArudhK9Wx",
+     "price_usd": 0.004,
+     "triggered": true,
+     "run_id": "vyEQR8TTpIw25qzn3",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "world-bank-indicators",
+     "actor_id": "u2qsG1UfVHWsgl8Dg",
+     "price_usd": 0.003,
+     "triggered": false,
+     "run_id": null,
+     "status": null,
+     "error": "HTTP 402 quota exceeded"
+    },
+    {
+     "actual_name": "goo-net-car-scraper",
+     "actor_id": "bgm5Gxn4BeBmoO7xD",
+     "price_usd": 0.002,
+     "triggered": false,
+     "run_id": null,
+     "status": null,
+     "error": "HTTP 402 quota exceeded"
+    },
+    {
+     "actual_name": "biglemon-machinery-scraper",
+     "actor_id": "W9cXhDckzHd9RZWnQ",
+     "price_usd": 0.002,
+     "triggered": false,
+     "run_id": null,
+     "status": null,
+     "error": "HTTP 402 quota exceeded"
+    },
+    {
+     "actual_name": "digimart-japan-used-instrument-scraper",
+     "actor_id": "FSuoQiX8OG4KuIQ9c",
+     "price_usd": 0.002,
+     "triggered": true,
+     "run_id": "0G0E4896GRaFJLqdE",
+     "status": "ready",
+     "error": null
+    },
+    {
+     "actual_name": "golfpartner-used-club-scraper",
+     "actor_id": "xPSQSSsdVjRwWQAiA",
+     "price_usd": 0.002,
+     "triggered": false,
+     "run_id": null,
+     "status": null,
+     "error": "HTTP 402 quota exceeded"
+    }
+   ],
+   "summary": {
+    "total_triggered": 14,
+    "total_failed": 6,
+    "estimated_revenue_usd": 0.063
    }
   }
  }
