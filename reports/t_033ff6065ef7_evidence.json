@@ -1,0 +1,29 @@
+{
+  "task_id": "t_033ff6065ef7",
+  "status": "complete",
+  "success_indicators": [
+    "loop_health score=100 stagnation_streak=0",
+    "pytest 1227 passed",
+    "t_f8dcd722 t_ea20095f 修正コミット push済み",
+    "evidence.json 生成・git追跡"
+  ],
+  "verification_commands": [
+    "$ bash ~/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh | python3 -c \"import json,sys;d=json.load(sys.stdin);print(d['score'],d['streak'],d['blocked'])\" => 100 0 3",
+    "$ cd /mnt/d/Project2/kensho && .venv/bin/python3 -m pytest -q 2>&1 | tail -1 => 1227 passed, 5 skipped, 3 deselected, 3 warnings in 351.61s",
+    "$ cat /mnt/d/Project2/kensho/data/gumroad_promo_kpi_state.json | python3 -c \"import json,sys;d=json.load(sys.stdin);print('sales_week',d['eval']['sales_week_count'],'twitter_views',d['eval']['views']['twitter_views'])\" => sales_week 0 twitter_views 0",
+    "$ python3 -c \"import os;print('DEVTO_API_KEY len',len(os.environ.get('DEVTO_API_KEY','')));print('APIFY_TOKEN len',len(os.environ.get('APIFY_TOKEN','')))\" => DEVTO_API_KEY len 0 / APIFY_TOKEN len 0"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_033ff6065ef7_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_033ff6065ef7_evidence.json"
+  ],
+  "evidence_hashes": [
+    "sha256:0e865086ed07f1a9494add13a380aec8ddb86ccc4b59ba75bbf223477e71d035",
+    "sha256:abc9d1cfb9899732620ebd57e56beb892592e6b3582f614d175b094280045f4a"
+  ],
+  "outcome": {
+    "metric": "verdict",
+    "before": "unknown",
+    "after": "conditional_pass"
+  }
+}
