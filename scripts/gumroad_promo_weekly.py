@@ -31,6 +31,7 @@ import json
 import sys
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any
 
 REPO = Path(__file__).resolve().parent.parent
 SCRIPTS_DIR = REPO / "scripts"
@@ -40,29 +41,43 @@ WEEKLY_STATE_FILE = DATA_DIR / "gumroad_promo_weekly_state.json"
 # 新規投稿も翌日から views 追跡される。
 XPOST_STATE_FILE = DATA_DIR / "gumroad_x_post_state.json"
 
-# 商品リンク（Gumroad API /v2/products 実測 2026-09-26）
+# 商品リンク（Gumroad API /v2/products 実測 2026-09-26）。base は utm 無し。
 FREE_SAMPLE_URL = "https://atushi5.gumroad.com/l/kutuxe"  # FREE Sample ($0)
 PAID_DATASET_URL = "https://atushi5.gumroad.com/l/agyhq"  # Weekly CSV dataset
 WEEKLY_REPORT_URL = "https://atushi5.gumroad.com/l/qdyyyi"  # 週次レポート ($10)
 
-# 週次ローテーション文言（週番号 % N で選択。raw ≤280 字を維持）
+
+def promo_url(base: str, campaign: str) -> str:
+    """Gumroad 商品URL に utm_source=tw&utm_medium=s を付与（t_b8ec048a）。
+
+    X 販促からの流入を Gumroad referrer 表で区別できるようにする。
+    campaign は短縮キー（例: w2026W39）。文字数制限（280字）を守るため
+    パラメータ名を短縮: utm_source=tw / utm_medium=s / utm_campaign=w...
+    """
+    # campaign キーを短縮: weekly_promo_2026-W39 -> w2026W39
+    short = campaign.replace("weekly_promo_", "w").replace("-", "")
+    return f"{base}?utm_source=tw&utm_medium=s&utm_campaign={short}"
+
+
+# 週次ローテーション文言（週番号 % N で選択）。raw ≤280 字を維持。
+# {free}/{paid}/{report} は pick_text 時に promo_url() で utm 付与置換される。
 WEEKLY_TWEETS: list[str] = [
     "Japanese anime figure & collectibles price data, updated weekly. "
-    "Try the free sample CSV first: " + FREE_SAMPLE_URL + " #animefigures #datasets",
+    "Try the free sample CSV first: {free} #animefigures #datasets",
     "Resellers: track Japanese hobby market prices with a weekly CSV. "
-    "Free sample: " + FREE_SAMPLE_URL + " Full dataset: " + PAID_DATASET_URL + " #reselling",
+    "Free sample: {free} Full dataset: {paid} #reselling",
     "New week, new price data for anime figures & collectibles in Japan. "
-    "Preview: " + FREE_SAMPLE_URL + " #marketdata #collectibles",
+    "Preview: {free} #marketdata #collectibles",
     "Weekly Japan hobby market report is out — what moved, what didn't. "
-    + WEEKLY_REPORT_URL + " Sample CSV: " + FREE_SAMPLE_URL + " #pricedata",
+    + "{report} Sample CSV: {free} #pricedata",
     "Building a price model on Japanese collectibles? Start with the free sample: "
-    + FREE_SAMPLE_URL + " Full weekly dataset: " + PAID_DATASET_URL + " #dataanalytics",
+    + "{free} Full weekly dataset: {paid} #dataanalytics",
     "Sold-comps style price history for anime figures, kits and hobby items — "
-    "weekly CSV. Sample: " + FREE_SAMPLE_URL + " #figures #hobby",
+    "weekly CSV. Sample: {free} #figures #hobby",
     "Free 30-row sample of the Japan hobby & collectibles price dataset: "
-    + FREE_SAMPLE_URL + " Full version updates every week. #anime #datasets",
+    + "{free} Full version updates every week. #anime #datasets",
     "This week's Japanese collectibles price snapshot is live. "
-    "Free sample: " + FREE_SAMPLE_URL + " Deep-dive report: " + WEEKLY_REPORT_URL + " #priceguide",
+    + "Free sample: {free} Deep-dive report: {report} #priceguide",
 ]
 
 
@@ -72,7 +87,7 @@ def week_key(d: date) -> str:
     return f"{iso.year}-W{iso.week:02d}"
 
 
-def _load_json(path: Path) -> dict:
+def _load_json(path: Path) -> dict[str, Any]:
     if path.exists():
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
@@ -82,20 +97,31 @@ def _load_json(path: Path) -> dict:
     return {}
 
 
-def _save_json(path: Path, data: dict) -> None:
+def _save_json(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def pick_text(today: date, state: dict, force: bool = False) -> tuple[str | None, str]:
-    """今日の文言を選ぶ。同週投稿済みなら (None, reason)。"""
+def pick_text(today: date, state: dict[str, Any], force: bool = False) -> tuple[str | None, str]:
+    """今日の文言を選ぶ。同週投稿済みなら (None, reason)。
+
+    {free}/{paid}/{report} プレースホルダーは utm 付与済み URL に展開する
+    （t_b8ec048a: X 販促経由流入を Gumroad referrer 表で区別するため）。
+    """
     key = week_key(today)
     posted = state.get("posted_weeks", {})
     if not force and key in posted:
         prev = posted[key] or {}
         return None, f"今週は投稿済み (week={key}, tweet_id={prev.get('tweet_id', '?')})"
     idx = today.isocalendar().week % len(WEEKLY_TWEETS)
-    return WEEKLY_TWEETS[idx], ""
+    campaign = f"weekly_promo_{key}"
+    raw = WEEKLY_TWEETS[idx]
+    text = raw.format(
+        free=promo_url(FREE_SAMPLE_URL, campaign),
+        paid=promo_url(PAID_DATASET_URL, campaign),
+        report=promo_url(WEEKLY_REPORT_URL, campaign),
+    )
+    return text, ""
 
 
 def record_xpost_state(today: date, tweet_id: str, text: str) -> None:

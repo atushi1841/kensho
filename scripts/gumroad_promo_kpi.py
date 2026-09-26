@@ -120,21 +120,53 @@ def load_views_history() -> dict[str, Any]:
     return {}
 
 
+def _is_twitter_referrer(src: str) -> bool:
+    """Twitter 経由 referrer か的大文字小文字を区別しない柔軟判定（t_b8ec048a）。
+
+    Gumroad referrer 表のキーは X ブラウザ経由で 'twitter.com'/'t.co' 等に
+    正規化されるが、キー破損（例: 'Direct, email, IM' のみ）や表示形式の違いで
+    'Twitter' 自体が存在しない場合がある。その場合は utm_source=tw / utm_source=twitter を
+    探す（X 販促投稿が utm 付与済みなら検出可能）。
+    """
+    s = (src or "").lower()
+    return any(k in s for k in ("twitter", "t.co", "x.com", "utm_source=tw", "utm_source=twitter"))
+
+
+def _utm_twitter_views(referrers: dict[str, Any]) -> int:
+    """utm_source=twitter を含む referrer の合計 views（t_b8ec048a）。
+
+    X 販促投稿が utm 付与済みなら、referrer キーが 'Twitter' でなくても
+    utm_source=twitter を含むキー（例: 'https://t.co/...?utm_source=twitter'）
+    から検出できる。X 販促経由流入を utm 計測経路で独立判定するための別指標。
+    """
+    total = 0
+    for src, v in (referrers or {}).items():
+        if _is_twitter_referrer(src) and isinstance(v, (int, float)):
+            total += int(v)
+    return total
+
+
 def views_dod(history: dict[str, Any], today: date) -> dict[str, Any]:
     """前日比 (dod) を計算。{prev_date, prev_views, date, views, pct, meets_target}。
 
     前日データ欠損時は pct=None（判定不能 = not met ではなく unknown）。
+
+    twitter_views: referrers から Twitter 経由 views を集計。キーが 'Twitter'
+    でなくても t.co/twitter.com/utm_source=twitter を柔軟検出する（t_b8ec048a）。
+    検出不能な場合は None ではなく 0 を返す（X 販促経由流入=0 の明示的記録）。
     """
     cur_key = today.isoformat()
     prev_key = (today - timedelta(days=1)).isoformat()
     cur = history.get(cur_key) or {}
     prev = history.get(prev_key) or {}
     cv, pv = cur.get("views"), prev.get("views")
+    referrers = cur.get("referrers") or {}
     out: dict[str, Any] = {
         "date": cur_key, "views": cv,
         "prev_date": prev_key, "prev_views": pv,
         "pct": None, "meets_target": None,
-        "twitter_views": (cur.get("referrers") or {}).get("Twitter"),
+        "twitter_views": _utm_twitter_views(referrers),
+        "twitter_referrers": [k for k in referrers if _is_twitter_referrer(k)],
     }
     if isinstance(cv, int) and isinstance(pv, int):
         if pv > 0:

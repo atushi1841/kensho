@@ -49,10 +49,11 @@ def test_pick_text_force_bypasses_dedup() -> None:
 
 
 def test_weekly_tweets_rotation_covers_all_entries() -> None:
-    # 全文言が 280 字以内・商品リンクを含む（X の文字数制限・販促リンク必須）
+    # 全文言が 280 字以内・商品リンクのプレースホルダーを含む（X の文字数制限・販促リンク必須）
+    # utm 付与後の展開は pick_text で行われる
     for t in promo.WEEKLY_TWEETS:
         assert len(t) <= 280
-        assert "https://atushi5.gumroad.com/l/" in t
+        assert "{free}" in t or "{paid}" in t or "{report}" in t
 
 
 def test_record_xpost_state_appends_without_clobber(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -111,6 +112,59 @@ def test_views_dod_reads_twitter_referrer() -> None:
     }
     out = kpi.views_dod(hist, date(2026, 9, 26))
     assert out["twitter_views"] == 3
+
+
+def test_views_dod_fuzzy_twitter_referrer_t_co() -> None:
+    # t.co キーでも検出（t_b8ec048a: 柔軟マッチ）
+    hist = {
+        "2026-09-26": {"views": 5, "referrers": {"https://t.co/abc123": 2}},
+        "2026-09-25": {"views": 4},
+    }
+    out = kpi.views_dod(hist, date(2026, 9, 26))
+    assert out["twitter_views"] == 2
+    assert "https://t.co/abc123" in out["twitter_referrers"]
+
+
+def test_views_dod_fuzzy_twitter_referrer_twitter_com() -> None:
+    # twitter.com キーでも検出
+    hist = {
+        "2026-09-26": {"views": 5, "referrers": {"twitter.com": 2}},
+        "2026-09-25": {"views": 4},
+    }
+    out = kpi.views_dod(hist, date(2026, 9, 26))
+    assert out["twitter_views"] == 2
+
+
+def test_views_dod_utm_source_twitter() -> None:
+    # utm_source=twitter を含むキーでも検出（utm 計測経路で独立判定）
+    hist = {
+        "2026-09-26": {"views": 5, "referrers": {"https://t.co/xyz?utm_source=twitter": 3}},
+        "2026-09-25": {"views": 4},
+    }
+    out = kpi.views_dod(hist, date(2026, 9, 26))
+    assert out["twitter_views"] == 3
+
+
+def test_views_dod_missing_twitter_referrer_returns_zero() -> None:
+    # Twitter キーが存在しない（例: Direct, email, IM のみ）場合は 0 を返す（t_b8ec048a）
+    # None ではなく 0 ＝「X 販促経由流入=0」の明示的記録
+    hist = {
+        "2026-09-26": {"views": 1, "referrers": {"Direct, email, IM": 1}},
+        "2026-09-25": {"views": 1},
+    }
+    out = kpi.views_dod(hist, date(2026, 9, 26))
+    assert out["twitter_views"] == 0
+    assert out["twitter_referrers"] == []
+
+
+def test_views_dod_xcom_referrer() -> None:
+    # x.com キーでも検出
+    hist = {
+        "2026-09-26": {"views": 5, "referrers": {"x.com": 2}},
+        "2026-09-25": {"views": 4},
+    }
+    out = kpi.views_dod(hist, date(2026, 9, 26))
+    assert out["twitter_views"] == 2
 
 
 # ── KPI: 売上判定 / フォールバック ─────────────────────────────────────────
