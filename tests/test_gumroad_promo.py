@@ -34,18 +34,42 @@ def test_pick_text_returns_rotation_within_limit() -> None:
     assert promo.PAID_DATASET_URL in text or promo.FREE_SAMPLE_URL in text or promo.WEEKLY_REPORT_URL in text
 
 
-def test_pick_text_skips_when_week_already_posted() -> None:
-    state = {"posted_weeks": {"2026-W39": {"tweet_id": "123"}}}
-    text, reason = promo.pick_text(date(2026, 9, 26), state)
+def test_pick_text_slot_a_and_b_differ_in_same_week() -> None:
+    """週2投稿（t_e6968f4f）: 同週の slot a/b は異なる文言（BOT検知回避）。"""
+    ta, _ = promo.pick_text(date(2026, 9, 28), {}, slot="a")
+    tb, _ = promo.pick_text(date(2026, 9, 28), {}, slot="b")
+    assert ta is not None and tb is not None
+    assert ta != tb
+
+
+def test_pick_text_skips_when_week_slot_already_posted() -> None:
+    state = {"posted_weeks": {"2026-W39": {"a": {"tweet_id": "123"}}}}
+    text, reason = promo.pick_text(date(2026, 9, 26), state, slot="a")
     assert text is None
     assert "投稿済み" in reason
     assert "2026-W39" in reason
 
 
-def test_pick_text_force_bypasses_dedup() -> None:
-    state = {"posted_weeks": {"2026-W39": {"tweet_id": "123"}}}
-    text, _ = promo.pick_text(date(2026, 9, 26), state, force=True)
+def test_pick_text_slot_b_allows_second_post_in_same_week() -> None:
+    """slot a は投稿済みでも slot b は未投稿 → b は投稿可能（週2投稿の根拠）。"""
+    state = {"posted_weeks": {"2026-W39": {"a": {"tweet_id": "123"}}}}
+    text, reason = promo.pick_text(date(2026, 9, 26), state, slot="b")
     assert text is not None
+    assert reason == ""
+
+
+def test_pick_text_force_bypasses_slot_dedup() -> None:
+    state = {"posted_weeks": {"2026-W39": {"a": {"tweet_id": "123"}}}}
+    text, _ = promo.pick_text(date(2026, 9, 26), state, slot="a", force=True)
+    assert text is not None
+
+
+def test_pick_text_legacy_flat_state_is_slot_a_compatible() -> None:
+    """旧 t_3848cbde 平構造（スロットなし）も slot=a として互換。"""
+    state = {"posted_weeks": {"2026-W39": {"tweet_id": "123", "text": "x"}}}
+    text, reason = promo.pick_text(date(2026, 9, 26), state, slot="a")
+    assert text is None
+    assert "投稿済み" in reason
 
 
 def test_weekly_tweets_rotation_covers_all_entries() -> None:
@@ -56,17 +80,36 @@ def test_weekly_tweets_rotation_covers_all_entries() -> None:
         assert "{free}" in t or "{paid}" in t or "{report}" in t
 
 
+def test_weekly_tweets_count_doubled() -> None:
+    """週1→週2拡大（t_e6968f4f）: 16種 = 旧8種 + 新增8種。"""
+    assert len(promo.WEEKLY_TWEETS) == 16
+    assert len(promo.SLOTS) == 2
+    assert set(promo.SLOTS) == {"a", "b"}
+
+
+def test_slot_index_is_deterministic_and_distinct() -> None:
+    """週×スロットで独立文言。同一週の a/b は異なる idx。"""
+    ia = promo._slot_index(40, "a")
+    ib = promo._slot_index(40, "b")
+    assert ia != ib
+    assert 0 <= ia < len(promo.WEEKLY_TWEETS)
+    assert 0 <= ib < len(promo.WEEKLY_TWEETS)
+    # 同スロットは決定論的
+    assert promo._slot_index(40, "a") == ia
+
+
 def test_record_xpost_state_appends_without_clobber(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     xstate = tmp_path / "gumroad_x_post_state.json"
     xstate.write_text(json.dumps({"posted": {"2026-09-11": {"tweet_id": "old"}}}), encoding="utf-8")
     monkeypatch.setattr(promo, "XPOST_STATE_FILE", xstate)
 
-    promo.record_xpost_state(date(2026, 9, 26), "new123", "hello")
+    promo.record_xpost_state(date(2026, 9, 26), "new123", "hello", slot="b")
 
     data = json.loads(xstate.read_text(encoding="utf-8"))
     assert "2026-09-11" in data["posted"], "既存投稿記録は保持される"
     assert data["posted"]["2026-09-26"]["tweet_id"] == "new123"
     assert data["posted"]["2026-09-26"]["source"] == "gumroad_promo_weekly"
+    assert data["posted"]["2026-09-26"]["slot"] == "b"
 
 
 # ── KPI: views 前日比 ───────────────────────────────────────────────────────
