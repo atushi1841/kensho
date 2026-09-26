@@ -1,0 +1,27 @@
+{
+  "task_id": "t_ceb1faef",
+  "status": "complete",
+  "success_indicators": [
+    "QA教訓→プロンプト反映自動化パイプライン完成",
+    "重複適用防止およびロールバックの動作確認"
+  ],
+  "verification_commands": [
+    "pytest /mnt/d/Project2/kensho/tests/test_qa_prompt_sync.py",
+    "python3 /mnt/d/Project2/kensho/scripts/qa_prompt_sync.py --dry-run"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/qa_prompt_sync.py",
+    "/mnt/d/Project2/kensho/tests/test_qa_prompt_sync.py"
+  ],
+  "evidence_hashes": [
+    "fe31de333f3049f2fa129f56e3dc0ae5054d5d0f3cb6dd3249612a4a1bd27e36"
+  ],
+  "outcome": {
+    "metric": "qa_prompt_sync_pass_rate",
+    "before": 0,
+    "after": 100
+  },
+  "lessons": [
+    "QA検証済み教訓のAIチームスキル/プロンプト自動同期パイプライン実装完了"
+  ]
+}
