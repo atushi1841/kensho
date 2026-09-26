@@ -34,7 +34,7 @@ $ python3 /home/atushi/.hermes/profiles/kensho-qa/cache/scratch/probe_7day.py
 - worker: 5/78 runs failed (6.4%) → 3.2/50 換算 → **FAIL**  
 - qa: 6/77 runs failed (7.8%) → 3.9/50 換算 → **FAIL**
 
-> **要因分析:** 主因は `Rate limit exceeded (free-models-per-day-high-balance)` と `Request timed out`、`Scheduler restarted` (不明)。`Response truncated` と `Context compression timed out` は 9/24 以前に集中しており、v104適用後（9/13 commit 3aa6ed5）は **0件**。無料枠制限とネットワーク遅延が残因。
+> **要因分析:** 主因は `Rate limit exceeded (free-models-per-day-high-balance)` と `Request timed out`、`Scheduler restarted` (不明)。`Response truncated` と `Context compression timed out` は 9/24 以前に集中しており、v104適用後（9/13、profileリポジトリ側 rev `3aa6ed5`）は **0件**。無料枠制限とネットワーク遅延が残因。
 
 ---
 
@@ -82,7 +82,7 @@ $ grep -n "cli-pitfalls\|stale-lock\|claim.*ttl" /home/atushi/.hermes/profiles/k
 265: 同じCLI作業では必ず移設先を読むこと。要点: `hermes kanban sync` はサブコマンドとして**存在しない**（`invalid choice` エラー、末尾`|| true`だとサイレント失敗）→同期はskill内蔵 `scripts/kensho-kanban-sync.sh critic|worker|qa` を呼ぶ／
 ```
 
-**判定: PASS** — v104（3aa6ed5）以降、CLI落とし穴（`sync` 存在しない、`claim --ttl 3600` 延長、`cron list` 表+JSON混在、`kanban stats` ready合算、`--json` epoch int）が references/cli-pitfalls-2026-09-06.md および SKILL.md 本文に明記。同一CLI落とし穴での再発は観測されていない。
+**判定: PASS** — v104（profile rev `3aa6ed5`）以降、CLI落とし穴（`sync` 存在しない、`claim --ttl 3600` 延長、`cron list` 表+JSON混在、`kanban stats` ready合算、`--json` epoch int）が references/cli-pitfalls-2026-09-06.md および SKILL.md 本文に明記。同一CLI落とし穴での再発は観測されていない。
 
 ---
 

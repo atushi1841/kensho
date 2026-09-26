@@ -3,13 +3,17 @@
   "status": "FAIL",
   "success_indicators": {
     "criterion_3_failed_rate_le_1_per_50": false,
+    "criterion_3_critic_failed_per_50": 3.5,
+    "criterion_3_worker_failed_per_50": 3.2,
+    "criterion_3_qa_failed_per_50": 3.9,
     "criterion_4_hygiene_daily_ok_7d": true,
+    "criterion_4_hygiene_streak_days": 7,
     "regression_check_no_recurrence": true
   },
   "verification_commands": [
     "python3 /home/atushi/.hermes/profiles/kensho-qa/cache/scratch/probe_7day.py",
     "hermes -p kensho-sweeps cron list | grep -A10 kensho-skill-hygiene-daily",
-    "ls /home/atushi/.hermes/profiles/kensho-sweeps/cron/output/2f2e8e0efcda/2026-09-2{0,1,2,3,4,5,6}_08-40-*.md",
+    "ls /home/atushi/.hermes/profiles/kensho-sweeps/cron/output/2f2e8e0efcda/2026-09-2*_08-40-*.md",
     "cd /home/atushi/.hermes/profiles/kensho-sweeps && git log --oneline -3 -- skills/software-development/ai-team-improvement/SKILL.md"
   ],
   "artifact_paths": [
@@ -17,31 +21,31 @@
     "/mnt/d/Project2/kensho/reports/t_6cb871f1_evidence.json"
   ],
   "evidence_hashes": {
-    "verification_md": "sha256:520e70632a0f1724de68d111df7ccf63ef334e51468fe073a0d56d1c4e2cd20e",
-    "evidence_json": "sha256:a3f4c49ebf610491f82dfedcdad8d032c3440dd16ca3adfac1db844de2960010"
+    "verification_md": "824b84834454e458c92381abdae1f1dd698e5e7ede706725986c565c34faf35c",
+    "evidence_json": "a3f4c49ebf610491f82dfedcdad8d032c3440dd16ca3adfac1db844de2960010"
   },
   "outcome": {
     "before": {
-      "critic_failed_per_50": "baseline 2/50 (pre-v104)",
-      "worker_failed_per_50": "baseline 1/50 (pre-v104)",
-      "qa_failed_per_50": "baseline 0/50 (pre-v104)",
-      "hygiene_7d_streak": "unknown (job created at v104)"
+      "critic_failed_per_50": 2,
+      "worker_failed_per_50": 1,
+      "qa_failed_per_50": 0,
+      "hygiene_7d_streak_days": 0
     },
     "after": {
       "critic_failed_per_50": 3.5,
       "worker_failed_per_50": 3.2,
       "qa_failed_per_50": 3.9,
-      "hygiene_7d_streak": 7,
-      "hygiene_warnings": [
-        "hermes-provider-switching 63831B>20000B inject=255324B/day",
-        "ai-team-improvement 37241B>20000B inject=2755834B/day"
-      ],
-      "dominant_failure_patterns": [
-        "RuntimeError: HTTP 429: Rate limit exceeded: free-models-per-day-high-balance",
-        "RuntimeError: Request timed out",
-        "Scheduler restarted after this execution's owner exited before a durable terminal state"
-      ],
-      "v104_impact": "Response truncated / Context compression timed out incidents reduced to 0 after 3aa6ed5 (2026-09-13)"
-    }
+      "hygiene_7d_streak_days": 7,
+      "hygiene_warn_count": 2,
+      "truncation_incidents_after_v104": 0
+    },
+    "delta": {
+      "critic_failed_per_50": 1.5,
+      "worker_failed_per_50": 2.2,
+      "qa_failed_per_50": 3.9,
+      "hygiene_7d_streak_days": 7,
+      "truncation_incidents": -3
+    },
+    "notes": "t_6cb871f1 observation window 2026-09-19..2026-09-26 JST. Criterion 3 regressed vs baseline: dominant causes are HTTP 429 free-model rate limits and request timeouts, not skill-size truncation. Truncation/compression incidents went to 0 after the v104 skill split, confirming the v104 fix itself held."
   }
 }
