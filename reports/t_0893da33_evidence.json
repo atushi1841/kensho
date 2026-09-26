@@ -1,0 +1,22 @@
+{
+  "success_indicators": [
+    "config.yaml provider=freellmapi 設定完了（t_081a89c0/t_1be2f1cf 共有 done）",
+    "gateway PID 429 継続稼働中・aux_auth_errors=0",
+    "直近20時間に 401/auth_error 一件も検出なし",
+    "gateway 再起動の必要性が実測で否定された"
+  ],
+  "verification_commands": [
+    "$ stat -c '%y %n' /home/atushi/.hermes/config.yaml => 2026-09-26 13:55:05（gateway起動 05:52 より後）",
+    "$ ps -p 429 -o pid,etime,cmd => 429 13:54:29 gateway run（継続中）",
+    "$ bash loop_health.sh | python3 -c '...aux_auth_errors...' => aux_auth_errors= 0",
+    "$ grep -c ERROR gateway.log => 6（最終 2026-09-25 23:35、401/auth_error なし）"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_0893da33_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:0584a961703f0838aedcc4bf530b79991dafb81be7c7eb3c1dd6ae686e5c4ad3"
+  ],
+  "task_id": "t_0893da33",
+  "status": "complete"
+}
