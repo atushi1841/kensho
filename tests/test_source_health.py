@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Any
 
 import httpx
+import json
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -114,6 +115,35 @@ class TestSourceHealth:
         assert "連続失敗1/4" in out
         assert "ReadTimeout" in out
         assert h.status_line("cp.meikan2") == "データなし"
+
+    def test_twscrape_success_rate_recorded_and_persisted(self, tmp_path: Path) -> None:
+        # t_2be0e7aa: twscrape 成功率を source_health に記録し、日付ロールでも保持される。
+        h = SourceHealth(tmp_path, now_fn=_now("2026-09-18"))
+        h.record_twscrape_run(True)
+        h.record_twscrape_run(False)
+        h.record_twscrape_run(True)
+        m = h._state["twscrape_success_rate"]
+        assert m["runs"] == 3
+        assert m["successes"] == 2
+        assert abs(m["last"] - 2 / 3) < 1e-9
+        # save() 後も永続化されている
+        h.save()
+        d = json.loads((tmp_path / "source_health.json").read_text(encoding="utf-8"))
+        assert "twscrape_success_rate" in d
+        assert d["twscrape_success_rate"]["runs"] == 3
+
+    def test_twscrape_success_rate_preserved_on_daily_roll(self, tmp_path: Path) -> None:
+        # t_2be0e7aa: 日付ロールで sources はリセットされるが twscrape_success_rate は累積保持
+        h = SourceHealth(tmp_path, now_fn=_now("2026-09-18"))
+        h.record_twscrape_run(True)
+        h.record_twscrape_run(True)
+        h.save()
+        # 日付変更 → 新 SourceHealth でロール発動
+        h2 = SourceHealth(tmp_path, now_fn=_now("2026-09-19"))
+        assert h2._state["date"] == "2026-09-19"
+        assert h2._state["sources"] == {}
+        m = h2._state["twscrape_success_rate"]
+        assert m["runs"] == 2 and m["successes"] == 2 and m["last"] == 1.0
 
     def test_knshow_is_primary_and_tracks_failures_to_unhealthy(self, tmp_path: Path) -> None:
         # t_52a7fec2: knshow は PRIMARY_SOURCES に含まれ、502連続>=4で異常判定されること。
