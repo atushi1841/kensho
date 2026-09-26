@@ -386,6 +386,37 @@ class TestFetchApifyPricing:
         assert got["price"] == 0.005  # 最後のエントリが有効
         assert got["pricing_model"] == "PAY_PER_EVENT"
 
+    def test_targets_all_list_actors_not_portfolio_constant(self) -> None:
+        """t_a4871fa4: 取得対象は PORTFOLIO_TO_ACTUAL 固定25本ではなく list APIの全件。
+
+        ポートフォリオ成長（25→82本）後も対象が固定配列のままだったため残り57本が
+        課金状態不明（unknown）になっていた。PORTFOLIO_TO_ACTUAL に載らない
+        アクターも pricing 取得されることを回帰テストとして固定する。
+        """
+        list_resp = FakeResponse({
+            "data": {
+                "items": [
+                    {"id": "zh4k", "name": "japan-offmall-market-scraper"},
+                    {"id": "new1", "name": "brand-new-actor"},  # PORTFOLIO_TO_ACTUAL 外
+                ]
+            }
+        })
+        newactor_resp = FakeResponse({
+            "data": {
+                "name": "brand-new-actor",
+                "isPublic": True,
+                "pricingInfos": [self._ppe_entry(0.003, "2026-09-20T00:00:00.000Z")],
+            }
+        })
+        offmall_resp = FakeResponse(self._fake_actor([self._ppe_entry(0.005, "2026-09-04T15:55:14.790Z")]))
+        # targets = sorted(name_to_id): "brand-new-actor" < "japan-offmall-market-scraper"
+        with patch("requests.get", side_effect=[list_resp, newactor_resp, offmall_resp]):
+            result = krc.fetch_apify_pricing()
+        assert "brand-new-actor" in result
+        assert result["brand-new-actor"]["price"] == 0.003
+        assert result["japan-offmall-market-scraper"]["price"] == 0.005
+        assert "_partial" not in result  # 2/2件取得＝部分結果ではない
+
 
 class FakeResponse:
     def __init__(self, json_body: dict[str, Any]) -> None:
@@ -582,10 +613,15 @@ class TestV94PpeFallbackPath:
         assert "/mnt/d/Project2/kensho/data/tmp/pay_per_event.json" in krc.APIFY_PPE_CANDIDATES
 
     def test_load_ppe_actors_reads_data_tmp_entity(self) -> None:
-        """実ファイル（修正後の正パス）から5件のPPE単価が読める（従来は誤パスで{}）"""
+        """実ファイル（修正後の正パス）からPPE単価が読める（従来は誤パスで{}）。
+
+        t_a4871fa4: フォールバックを全ポートフォリオ（PPE 72件）へ再生成したため
+        件数基準を5→70へ繰り上げ。単価は実API最終pricingInfosエントリ準拠
+        （9/4値上げA/Bで camera 0.002→0.005 に更新されたため追随）。
+        """
         actors = krc.load_ppe_actors()
-        assert len(actors) >= 5
-        assert actors["japan-used-camera-market-scraper"] == 0.002
+        assert len(actors) >= 70
+        assert actors["japan-used-camera-market-scraper"] == 0.005
 
     def test_load_ppe_actors_tries_second_candidate(self, tmp_path: Any, monkeypatch: Any) -> None:
         first = tmp_path / "missing.json"

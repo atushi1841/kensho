@@ -271,8 +271,12 @@ def fetch_apify_pricing() -> dict[str, dict[str, Any]]:
         items = data.get("items", [])
         name_to_id = {a.get("name"): a.get("id") for a in items if a.get("id")}
 
-        # 2. ポートフォリオ対象アクターの個別情報を取得（pricingInfosは個別APIでのみ返る）
-        targets = sorted(set(PORTFOLIO_TO_ACTUAL.values()))
+        # 2. list APIが返す全アクターの個別情報を取得（pricingInfosは個別APIでのみ返る）
+        # t_a4871fa4: 従来は PORTFOLIO_TO_ACTUAL の25本固定が対象となり、ポートフォリオが
+        # 82本に成長した後も残り57本が pricing 未取得＝unknown（課金状態不明）のまま
+        # ダッシュボードに「課金状態不明57件」警告が出ていた。list APIの返件数を正とし、
+        # 名前変更・新規追加でも取得漏れが構造的に起きないよう name_to_id 全件を対象にする。
+        targets = sorted(name_to_id)
         for actual_name in targets:
             aid = name_to_id.get(actual_name)
             if not aid:
@@ -316,8 +320,8 @@ def fetch_apify_pricing() -> dict[str, dict[str, Any]]:
         if result:
             # v94項目4: 取得成功時は24hキャッシュへ保存（次回API失敗時の代替）
             _save_pricing_cache(result)
-            if name_to_id and len(result) * 2 < len([v for v in PORTFOLIO_TO_ACTUAL.values() if v in name_to_id]):
-                # 取得件数がポートフォリオ対象の過半数に満たない → 部分結果として明示
+            if name_to_id and len(result) * 2 < len(name_to_id):
+                # 取得件数がlist API上の全アクターの過半数に満たない → 部分結果として明示
                 result["_partial"] = {"fetched": len(result)}  # type: ignore[typeddict-item]
     except Exception as e:
         print(f"  ⚠️ Apify pricing API取得失敗: {e}（キャッシュ→pay_per_event.jsonにフォールバック）")
