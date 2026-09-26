@@ -1,0 +1,47 @@
+{
+  "task_id": "t_6cb871f1",
+  "status": "FAIL",
+  "success_indicators": {
+    "criterion_3_failed_rate_le_1_per_50": false,
+    "criterion_4_hygiene_daily_ok_7d": true,
+    "regression_check_no_recurrence": true
+  },
+  "verification_commands": [
+    "python3 /home/atushi/.hermes/profiles/kensho-qa/cache/scratch/probe_7day.py",
+    "hermes -p kensho-sweeps cron list | grep -A10 kensho-skill-hygiene-daily",
+    "ls /home/atushi/.hermes/profiles/kensho-sweeps/cron/output/2f2e8e0efcda/2026-09-2{0,1,2,3,4,5,6}_08-40-*.md",
+    "cd /home/atushi/.hermes/profiles/kensho-sweeps && git log --oneline -3 -- skills/software-development/ai-team-improvement/SKILL.md"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_6cb871f1_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_6cb871f1_evidence.json"
+  ],
+  "evidence_hashes": {
+    "verification_md": "sha256:placeholder_to_be_filled_after_git_commit",
+    "evidence_json": "sha256:placeholder_to_be_filled_after_git_commit"
+  },
+  "outcome": {
+    "before": {
+      "critic_failed_per_50": "baseline 2/50 (pre-v104)",
+      "worker_failed_per_50": "baseline 1/50 (pre-v104)",
+      "qa_failed_per_50": "baseline 0/50 (pre-v104)",
+      "hygiene_7d_streak": "unknown (job created at v104)"
+    },
+    "after": {
+      "critic_failed_per_50": 3.5,
+      "worker_failed_per_50": 3.2,
+      "qa_failed_per_50": 3.9,
+      "hygiene_7d_streak": 7,
+      "hygiene_warnings": [
+        "hermes-provider-switching 63831B>20000B inject=255324B/day",
+        "ai-team-improvement 37241B>20000B inject=2755834B/day"
+      ],
+      "dominant_failure_patterns": [
+        "RuntimeError: HTTP 429: Rate limit exceeded: free-models-per-day-high-balance",
+        "RuntimeError: Request timed out",
+        "Scheduler restarted after this execution's owner exited before a durable terminal state"
+      ],
+      "v104_impact": "Response truncated / Context compression timed out incidents reduced to 0 after 3aa6ed5 (2026-09-13)"
+    }
+  }
+}
