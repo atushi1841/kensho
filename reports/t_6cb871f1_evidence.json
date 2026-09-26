@@ -21,11 +21,15 @@
     "/mnt/d/Project2/kensho/reports/t_6cb871f1_evidence.json"
   ],
   "evidence_hashes": [
-    "sha256:824b84834454e458c92381abdae1f1dd698e5e7ede706725986c565c34faf35c"
+    "sha256:f5b5027e4aba64baac0f259bf9b636e3e85050a5200ccdfdbe5e58e3c785b894"
   ],
   "evidence_hash_map": {
-    "reports/t_6cb871f1_verification.md": "sha256:824b84834454e458c92381abdae1f1dd698e5e7ede706725986c565c34faf35c"
+    "reports/t_6cb871f1_verification.md": "sha256:f5b5027e4aba64baac0f259bf9b636e3e85050a5200ccdfdbe5e58e3c785b894"
   },
+  "child_cards": [
+    "t_074de409",
+    "t_8cb89630"
+  ],
   "outcome": {
     "before": {
       "critic_failed_per_50": 2,

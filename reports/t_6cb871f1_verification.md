@@ -96,15 +96,33 @@ $ grep -n "cli-pitfalls\|stale-lock\|claim.*ttl" /home/atushi/.hermes/profiles/k
 
 ---
 
-## 申し送り（子カード提案）
+## 申し送り（子カード — 作成済み）
 
-基準3未達のため、以下の是正を別カードとして提案：
+基準3未達および検証中に発見した drift について、以下を子カード化した：
 
-1. **free-model rate limit 対策** — provider/model pinning または有料枠導入で 429 を根絶
-2. **Request timeout 対策** — `auxiliary.timeout` / `auxiliary.connect_timeout` 増設、リトライポリシー見直し
-3. **Scheduler restarted 対策** — cron dispatcher の auto-recovery 閾値調整、watchdog 強化
+- **t_074de409** — AIチーム3ジョブ FAILED率 3.2-3.9/50 → ≤1/50 に是正（429 rate limit / timeout 根絶）／assignee: kensho-worker
+  - free-model rate limit 対策（fallback チェーン / スケジュール分散 / provider pin）
+  - Request timeout 対策（`auxiliary.timeout` ・リトライポリシー）
+  - Scheduler restarted 対策（dispatcher の durable terminal state 前 owner 落ち）
+- **t_8cb89630** — cron配置drift 是正: seo_rank_watch.py の profile/repo md5 不一致を解消／assignee: kensho-worker
 
-これらは v104 スコープ外（skill-hygiene & skillサイズ縮小が完了した段階での運用改善）のため、別タスクとして `kensho-worker` または専門プロファイルに委譲推奨。
+いずれも v104 スコープ外（skill-hygiene ＆ skillサイズ縮小は完了済み）の運用改善。
+
+---
+
+## 検証外の申し送り: cron配置drift 1件（他workstream由来）
+
+```bash
+$ python3 ~/.hermes/profiles/kensho-sweeps/scripts/kensho_script_drift_check.py
+⚠️ script-drift-check: FAIL 1件（drift=1 / missing=0）
+  対策: cp <repo版> <profile scripts dir> で同期（md5一致を確認）→ 次回cronで反映
+  [DRIFT] seo_rank_watch.py job=seo-rank-watch-daily (kensho-sweeps/8dff84d1eb35)
+      profile_md5=e482846211b6bf33db9c943c59a611cb repo_md5=2b3026d58600120ca7fc1d06ccb75ee8
+      repo=/mnt/d/Project2/kensho/scripts/seo_rank_watch.py
+```
+
+本 drift は t_6cb871f1 のスコープ外（SEOワークストリーム由来・repo側 `scripts/seo_rank_watch.py` は未コミット）。
+QA はコードを変更しないルールのため同期は行わず、是正を別カードへ申し送る。
 
 ---
 
