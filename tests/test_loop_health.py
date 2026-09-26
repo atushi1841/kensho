@@ -107,7 +107,7 @@ def test_aux_auth_errors_detected(tmp_path: Path) -> None:
         ts = now - timedelta(minutes=5, seconds=i*10)  # within the last 5 minutes
         # Format as: YYYY-MM-DD HH:MM:SS,mmm
         log_line = ts.strftime("%Y-%m-%d %H:%M:%S,%f")[:-3]  # trim to milliseconds
-        lines.append(f"{log_line} WARNING agent.auxiliary_client: Auxiliary kanban_decomposer: auth error on auto and all fallbacks exhausted\\n")
+        lines.append(f"{log_line} WARNING agent.auxiliary_client: Auxiliary kanban_decomposer: auth error on auto and all fallbacks exhausted\n")
     log_path.write_text("".join(lines))
     # Use env var to override the log path
     env = os.environ.copy()

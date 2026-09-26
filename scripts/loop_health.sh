@@ -235,7 +235,7 @@ export _LH_MAX_IN_PROGRESS
 
 # ─── Analyze ─────────────────────────────────────────────────────────────────
 ANALYSIS=$(python3 - <<'PYEOF'
-import json, os, re, sqlite3, time, sys
+import json, os, re, sqlite3, time, sys, datetime as _dt
 
 tasks = json.loads(open(os.environ.get("_LH_TASKS_FILE", "/dev/null")).read() or "[]")
 now = int(os.environ.get("_LH_NOW", str(int(time.time()))))
@@ -488,7 +488,7 @@ except Exception:
 if aux_auth_errors:
     score -= 10 * aux_auth_errors
     if score < 55:
-        alert = "WARN: aux auth errors"
+        alert = "ALERT"
     elif score < 70:
         alert = "ALERT"
     else:
@@ -901,7 +901,7 @@ echo "$ANALYSIS" | jq \
   --arg park_after_h "$PARK_AFTER_H" \
   --arg park_action "$PARK_ACTION" \
   '. + {
-    alert: (if $business_stopped then "WARN: apply stopped" else (if .score < 80 then "WARN" else (if .score < 70 then "ALERT" else "OK" end) end) end),
+    alert: (if $business_stopped then "WARN: apply stopped" else (if .aux_auth_errors >= 10 then "ALERT" else (if .score < 80 then "WARN" else (if .score < 70 then "ALERT" else "OK" end) end) end) end),
     escalation: $escalation,
     escalation_target: $target,
     escalate_streak: ($escalate_streak | tonumber),
