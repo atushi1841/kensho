@@ -52,14 +52,15 @@ def detect_orphan_runs(db: Path, now: int, stale_threshold: int = 1800) -> Dict[
     2. stale_heartbeat_runs: orphan runs with last_heartbeat_at older than stale_threshold
     3. running_without_pid: orphan runs with status=running and worker_pid IS NULL
     """
-    # Orphan runs: run.task_id not in tasks
+    # Orphan runs: run.task_id not in tasks AND status='running' (active orphans only)
+    # Stale/ended orphan runs are already cleaned up and don't need penalty.
     orphan_rows = run_query(
         db,
         """
         SELECT r.id, r.task_id, r.status, r.worker_pid, r.last_heartbeat_at, r.started_at
         FROM task_runs r
         LEFT JOIN tasks t ON t.id = r.task_id
-        WHERE t.id IS NULL
+        WHERE t.id IS NULL AND r.status = 'running'
         ORDER BY r.started_at ASC
         """
     )

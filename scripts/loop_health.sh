@@ -78,6 +78,7 @@
 #   --dry-run       print only, no side effects on the board
 
 DB_PATH="${HERMES_KANBAN_DB:-$HOME/.hermes/kanban.db}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 THRESHOLD=70
 TASKS_JSON=""
 BOARD="kensho-ai-team"
@@ -141,7 +142,10 @@ _db_has_tasks() {
   if command -v sqlite3 >/dev/null 2>&1; then
     _n=$(sqlite3 "$_p" "SELECT count(*) FROM tasks;" 2>/dev/null || echo 0)
   else
-    _n=$(python3 -c "import sqlite3,sys;try:print(sqlite3.connect('file:%s?mode=ro'%sys.argv[1],uri=True).execute('SELECT count(*) FROM tasks').fetchone()[0]);except:print(0)" "$_p" 2>/dev/null || echo 0)
+    # v144 (t_ea20095f): `python3 -c` は cron最小PATH/単クエリモードでブロックされ、
+    # 1 try/except の構文エラーで board DB を見つける前に空レガシーDBに grav した。
+    # スクリプトファイル経由で同等の count を返す。
+    _n=$(python3 "$SCRIPT_DIR/_db_count.py" "$_p" 2>/dev/null || echo 0)
   fi
   [[ "$_n" =~ ^[0-9]+$ ]] && [ "$_n" -gt 0 ]
 }
