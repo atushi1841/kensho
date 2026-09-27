@@ -24,6 +24,7 @@ Never exposes API key values in logs or output — always [REDACTED]
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -32,6 +33,10 @@ from datetime import datetime
 # ── Configuration ──────────────────────────────────────────────────────
 DEFAULT_ENV_FILE = "/mnt/d/Project2/kensho/.env"
 DEFAULT_BLOG_DIR = "/mnt/d/Project2/apify-sales-funnel/blog"
+# 下書き生成先（kensho_data_journalism.py が outdir=reports/journalism/drafts に書く）
+# このディレクトリの devto-*.md を blog dir へ同期してから公開する（2026-09-27 t_fa77fd1e: 
+# 下書きが blog dir にいなければ EXIT_NO_CANDIDATES で外部導線が無言死していた）
+DEFAULT_DRAFTS_DIR = "/mnt/d/Project2/kensho/reports/journalism/drafts"
 API_URL = "https://dev.to/api/articles"
 KEY_NAME = "DEVTO_API_KEY"
 STATE_FILENAME = ".published.json"
@@ -127,6 +132,41 @@ def _parse_json(body):
 
 
 # ── Step 1: Discover unpublished draft articles from blog directory ────
+def sync_drafts(drafts_dir=None, bdir=None):
+    """reports/journalism/drafts の devto-*.md を blog dir へ同期する。
+
+    2026-09-27 t_fa77fd1e: kensho_data_journalism.py は reports/journalism/drafts/
+    に下書きを書くが、devto_weekly_pipeline.py は blog dir を探索していたため
+    下書きが blog dir に存在せず EXIT_NO_CANDIDATES（無言死）になっていた。
+    ここでは既公開済み（published state に記録済み）のファイルのみスキップする。
+    """
+    src = drafts_dir or DEFAULT_DRAFTS_DIR
+    dst = bdir or DEFAULT_BLOG_DIR
+    if not os.path.isdir(src):
+        print(f"[SYNC] drafts dir not found: {src} — スキップ")
+        return []
+    os.makedirs(dst, exist_ok=True)
+    state = load_published_state(state_path(dst))
+    synced = []
+    for fname in sorted(os.listdir(src)):
+        if not fname.endswith(".md"):
+            continue
+        fpath = os.path.join(src, fname)
+        if not os.path.isfile(fpath):
+            continue
+        if fname in state:
+            print(f"[SYNC] SKIP 已公開: {fname} (id={state[fname].get('id')})")
+            continue
+        dest = os.path.join(dst, fname)
+        try:
+            shutil.copy2(fpath, dest)
+            synced.append(fname)
+            print(f"[SYNC] 同期: {fname} → {dst}")
+        except OSError as exc:
+            print(f"[SYNC] FAIL {fname}: {exc}")
+    return synced
+
+
 def discover_draft_articles(bdir=None):
     """Find markdown files in blog directory that can be published."""
     target = bdir or blog_dir()
@@ -337,6 +377,11 @@ def run_pipeline(bdir=None, state_file=None):
     print(f"[PIPELINE] {KEY_NAME}: {mask_key(key)} (valid_format={is_valid_key(key)})")
     print(f"[PIPELINE] Blog: {target_dir}")
     print(f"[PIPELINE] Published state: {state_file} ({len(state)} record(s))")
+
+    # Phase 0: 下書き同期（reports/journalism/drafts → blog dir）
+    print("\n--- Phase 0: Sync draft articles from journalism/drafts ---")
+    synced = sync_drafts(os.environ.get("DEVTO_DRAFTS_DIR"), target_dir)
+    print(f"[SYNC] {len(synced)} file(s) synced")
 
     # Phase 1: 未公開候補の抽出
     print("\n--- Phase 1: Discovering draft articles ---")

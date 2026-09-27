@@ -1,0 +1,34 @@
+{
+  "task_id": "t_fa77fd1e",
+  "status": "complete",
+  "success_indicators": [
+    "devto_weekly_pipeline.py Phase 0 下書き同期機能実装: reports/journalism/drafts の未公開 .md を blog dir へ copy2 同期",
+    "実測: 同期 2 ファイル（devto-2026W39.md / qiita-2026W39.md）移動成功",
+    "実測: 同期後、pipeline が「未公開 3 件」を発見（従来は 0 件→EXIT_NO_CANDIDATES 無言死）",
+    "実測: DEVTO_API_KEY=*** プレースホルダ検出 → EXIT_KEY_INVALID 正常終了（偽成功なし）",
+    "実測: Gumroad API で商品属性取得成功（sales_count=0 / price=3999 USD / short_url 確認）"
+  ],
+  "verification_commands": [
+    "python3 devto_weekly_pipeline.py 2>&1 | tail -12 => [SYNC] 同期: devto-2026W39.md → ...blog / [SYNC] 同期: qiita-2026W39.md → ...blog / [SYNC] 2 file(s) synced / Found 4 markdown candidate(s) / 未公開 3 / [FAIL] DEVTO_API_KEY が未設定またはプレースホルダのため公開を中止（要ユーザー対応）",
+    "python3 -c \"import re;k=open('/mnt/d/Project2/kensho/.env').read()\" => DEVTO_API_KEY=*** len=3 charset_ok=False",
+    "curl -s https://api.gumroad.com/v2/products/IcBs3CFvhQUBxjsi-igJIw== -H \"Authorization: Bearer $TOKEN\" => sales_count=0 sales_usd_cents=0.0 formatted_price=$39.99",
+    "python3 -m py_compile devto_weekly_pipeline.py => compile ok (IndentationError 0)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/devto_weekly_pipeline.py",
+    "/mnt/d/Project2/kensho/reports/t_fa77fd1e_verification.md",
+    "/mnt/d/Project2/apify-sales-funnel/blog/devto-2026W39.md",
+    "/mnt/d/Project2/apify-sales-funnel/blog/qiita-2026W39.md"
+  ],
+  "evidence_hashes": [
+    "sha256:c6429c143f26ad59196aefead25fd973e3aea9fd1a8aae9e4236a1101a8dcb91",
+    "sha256:5effff28e80298fded86fc1bbdb753d78a9ac3f3d8e1c414bc3059c56fa966e8",
+    "sha256:23b66de6a47cb2f7c35a136e5f7326d9eb1dfe665606c6651a4a30a0502ffd44",
+    "sha256:0e3c2550630b75f475602978d769bcece51ad32066329671efe13811ba8f055a"
+  ],
+  "outcome": {
+    "metric": "dev.to 外部導線の発見率",
+    "before": 0,
+    "after": 3
+  }
+}
