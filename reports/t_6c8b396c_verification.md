@@ -26,6 +26,9 @@ exit=0
 $ cat logs/apify_store_promo_cron.log | tail -2
 2026-09-27T00:23:13Z SKIP: 月曜/金曜以外 (7)
 
+$ cd /mnt/d/Project2/kensho && git log --oneline -1
+d193381 feat(apify): Store PPEアクター 週次自動投稿 (t_6c8b396c)
+
 $ cd /mnt/d/Project2/kensho && python3 -c "import json;d=json.load(open('data/apify_ppe_external_runs_state.json'));print('actors:',len(d['actors']));print('zero_run:',sum(1 for a in d['actors'] if a['external_runs']==0))"
 actors: 73
 zero_run: 73
