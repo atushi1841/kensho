@@ -1,0 +1,25 @@
+{
+  "success_indicators": [
+    "actual_revenue_usd=2.07 (>0)",
+    "settle_rate_pct=5914.29% (>0)",
+    "settle_status=completed in state file",
+    "verify mode exit code 0"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/apify_revenue_settle_tracker.py --verify --days 7 => Actual revenue: $2.070000, Settle rate: 5914.29%",
+    "$ python3 -c \"import json; d=json.load(open('data/apify_settle_state.json')); print(d['history'][-1].get('settle_status'))\" => completed",
+    "$ python3 -c \"import json; d=json.load(open('data/apify_settle_state.json')); print(d['history'][-1].get('actual_revenue_usd'))\" => 2.07"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/data/apify_settle_state.json",
+    "/mnt/d/Project2/kensho/data/revenue-daily.json",
+    "/mnt/d/Project2/kensho/reports/t_acab9ce3_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:deb001d1906d79e902c7ed778c83961b240a9d165bb2a14c46489332e232eea3",
+    "sha256:d785b6ef29a9e0439a5f6e307db7e61061c489a510ee525590098bb35a55eef0",
+    "sha256:9268af87ebf0e112fc785a4787f6a71d5654c247e40d866f7b026de0e28011b7"
+  ],
+  "task_id": "t_acab9ce3",
+  "status": "complete"
+}
