@@ -1,0 +1,30 @@
+{
+  "success_indicators": [
+    "Normalized output file created: data/anime_figure_prices_normalized_v2.jsonl (271 rows)",
+    "Duplicate groups merged: 16 groups (32→16 rows)",
+    "Currency field added: JPY for all 271 records",
+    "Version field extracted: 72 records",
+    "Confidence score computed: 271 records (avg 0.92)",
+    "Git commit a0b2379 pushed to origin/main"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/normalize_figure_data.py => Output rows: 271, Deduped groups: 16, Merged offers: 698",
+    "$ python3 -c \"import json; d=[json.loads(l) for l in open('data/anime_figure_prices_normalized_v2.jsonl')]; print(len(d), len(set(r['figure_id'] for r in d)), sum(1 for r in d if r.get('currency')=='JPY'), sum(1 for r in d if r.get('version')), sum(1 for r in d if 'confidence_score' in r))\" => 271 271 271 72 271",
+    "$ git -C /mnt/d/Project2/kensho commit -m \"feat: t_1cb9ab60...\" => 3 files changed, 719 insertions(+)",
+    "$ git -C /mnt/d/Project2/kensho push => fd6fec4..a0b2379 main -> main"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/data/anime_figure_prices_normalized_v2.jsonl",
+    "/mnt/d/Project2/kensho/scripts/normalize_figure_data.py",
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-27-revenue-worker.md",
+    "/mnt/d/Project2/kensho/reports/t_1cb9ab60_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:296cb0dbfeb1724007293469369d2d53797565fe55dc0e36926de9ede44265c0",
+    "sha256:05be5cb5bfba47cd639b2316d62f731c0ed62b8724b073e96f5d5b9233fe37c9",
+    "sha256:646b26b0a2aadb3404dcdcc73fa85350b26952167d1b648607600cf964761f64",
+    "sha256:fd493366365fbd51896bf56ce09d7a7e77edf06cd92e9c13c6531a5984494984"
+  ],
+  "task_id": "t_1cb9ab60",
+  "status": "complete"
+}
