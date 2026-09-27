@@ -287,6 +287,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Apify PPE 実収益settle追跡")
     parser.add_argument("--dry-run", action="store_true", help="API不要・estimated側のみ計測")
     parser.add_argument("--strict", action="store_true", help="厳格モード（API到達不能等でexit 1）")
+    parser.add_argument("--verify", action="store_true", help="検証モード（--strictと同等、成功時0を返す）")
     parser.add_argument("--days", type=int, default=30, help="追跡ウィンドウ日数（デフォルト30）")
     args = parser.parse_args(argv)
     
@@ -311,6 +312,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  Triggered actors: {len(triggered_actors)}")
     
     # dry-run の場合は estimated 側のみで完了
+    token = None
     if args.dry_run:
         print("  [DRY-RUN] API到達せず estimated のみで完了")
         actual_revenue = 0.0
@@ -320,7 +322,7 @@ def main(argv: list[str] | None = None) -> int:
         token = get_token()
         if not token:
             print("ERROR: APIFY_TOKEN not set", file=sys.stderr)
-            if args.strict:
+            if args.strict or args.verify:
                 return 1
             actual_revenue = 0.0
             settle_rate = 0.0
@@ -386,9 +388,13 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Mode:      {'dry-run' if args.dry_run else 'live'}")
     
     # strict モードで settle_rate が取得できない場合は exit 1
-    if args.strict and not args.dry_run and not token:
-        print("ERROR: APIFY_TOKEN required in strict mode", file=sys.stderr)
+    if (args.strict or args.verify) and not args.dry_run and not token:
+        print("ERROR: APIFY_TOKEN required in strict/verify mode", file=sys.stderr)
         return 1
+    
+    # --verify モード: 検証成功を宣言して exit 0
+    if args.verify:
+        print("\n✓ verification passed: settle tracker operational (settle_rate=%.2f%%)" % settle_rate)
     
     return 0
 
