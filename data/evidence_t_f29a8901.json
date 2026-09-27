@@ -1,0 +1,163 @@
+{
+ "task_id": "t_f29a8901",
+ "verified_at": "2026-09-27T09:38:52.472164+00:00",
+ "claim_1_status_succeeded": {
+  "verified": true,
+  "method": "Apify API GET /v2/actor-runs/{id}",
+  "results": {
+   "MgekeE2LtJvUDqaCQ": {
+    "status": "SUCCEEDED",
+    "exitCode": 0,
+    "userId": "VMz6nlpHoGIjTeSXS",
+    "is_owner": true,
+    "chargedEventCounts": {
+     "apify-actor-start": 1,
+     "apify-default-dataset-item": 100
+    },
+    "startedAt": "2026-09-27T03:41:31.683Z",
+    "finishedAt": "2026-09-27T03:41:45.235Z"
+   },
+   "cNgZV15bYpCczUUal": {
+    "status": "SUCCEEDED",
+    "exitCode": 0,
+    "userId": "VMz6nlpHoGIjTeSXS",
+    "is_owner": true,
+    "chargedEventCounts": {
+     "apify-actor-start": 1,
+     "apify-default-dataset-item": 0
+    },
+    "startedAt": "2026-09-27T03:41:33.112Z",
+    "finishedAt": "2026-09-27T03:41:39.991Z"
+   },
+   "5SzLq38wM7r3Jc5a6": {
+    "status": "SUCCEEDED",
+    "exitCode": 0,
+    "userId": "VMz6nlpHoGIjTeSXS",
+    "is_owner": true,
+    "chargedEventCounts": {
+     "apify-actor-start": 1,
+     "apify-default-dataset-item": 100
+    },
+    "startedAt": "2026-09-27T03:41:34.485Z",
+    "finishedAt": "2026-09-27T03:41:45.047Z"
+   },
+   "gS7SFa6zLQZ4GcYHA": {
+    "status": "SUCCEEDED",
+    "exitCode": 0,
+    "userId": "VMz6nlpHoGIjTeSXS",
+    "is_owner": true,
+    "chargedEventCounts": {
+     "apify-actor-start": 1,
+     "apify-default-dataset-item": 100
+    },
+    "startedAt": "2026-09-27T03:41:35.907Z",
+    "finishedAt": "2026-09-27T03:41:53.823Z"
+   },
+   "LdjKH6A34TTwQ6wrT": {
+    "status": "SUCCEEDED",
+    "exitCode": 0,
+    "userId": "VMz6nlpHoGIjTeSXS",
+    "is_owner": true,
+    "chargedEventCounts": {
+     "apify-actor-start": 1,
+     "apify-default-dataset-item": 60
+    },
+    "startedAt": "2026-09-27T03:41:37.353Z",
+    "finishedAt": "2026-09-27T03:41:47.548Z"
+   },
+   "lsAkzmdbBxNyB9xTq": {
+    "status": "SUCCEEDED",
+    "exitCode": 0,
+    "userId": "VMz6nlpHoGIjTeSXS",
+    "is_owner": true,
+    "chargedEventCounts": {
+     "apify-actor-start": 1,
+     "apify-default-dataset-item": 24,
+     "mandarake-search": 0
+    },
+    "startedAt": "2026-09-27T03:41:40.241Z",
+    "finishedAt": "2026-09-27T03:41:46.055Z"
+   },
+   "o6QPlJVZD0gH8IRrl": {
+    "status": "SUCCEEDED",
+    "exitCode": 0,
+    "userId": "VMz6nlpHoGIjTeSXS",
+    "is_owner": true,
+    "chargedEventCounts": {
+     "apify-default-dataset-item": 30,
+     "apify-actor-start": 2
+    },
+    "startedAt": "2026-09-27T03:41:45.255Z",
+    "finishedAt": "2026-09-27T03:42:29.078Z"
+   }
+  }
+ },
+ "claim_2_actual_revenue": {
+  "verified": false,
+  "measured_usd": 0.0,
+  "reason": "all 7 runs userId==owner (VMz6nlpHoGIjTeSXS); external user runs = 0; chargedEventCounts apify-default-dataset-item only from own runs"
+ },
+ "claim_3_settle_rate_100": {
+  "verified": false,
+  "settle_rate_pct": 0.0,
+  "reason": "estimated $0.035 vs actual $0.000"
+ },
+ "settle_state_latest": {
+  "timestamp": "2026-09-27T09:33:57+00:00",
+  "estimated_revenue_usd": 0.035,
+  "actual_revenue_usd": 0.0,
+  "settle_rate_pct": 0.0,
+  "window_days": 30,
+  "dry_run": false,
+  "actual_data": {
+   "window_days": 30,
+   "external_runs": 0,
+   "charged_items": 0,
+   "revenue_usd": 0.0,
+   "per_actor": {
+    "japan-used-camera-market-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 15
+    },
+    "japan-watch-market-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 14
+    },
+    "japan-luxury-brand-market-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 14
+    },
+    "japan-used-instrument-market-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 14
+    },
+    "japan-offmall-market-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 47
+    },
+    "mandarake-auction-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 4
+    },
+    "dlsite-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 4
+    }
+   }
+  }
+ }
+}
