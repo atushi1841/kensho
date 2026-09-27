@@ -1,0 +1,54 @@
+#!/bin/bash
+# scripts/cron_apify_promo_weekly — Apify Store PPEアクター プロモーション週次自動投稿
+#
+# 週2回（月曜・金曜）に Apify Store の external_runs=0 アクターを
+# X(atushi16) にプロモーション投稿する。
+#
+# 仕様:
+#   - dedup: data/apify_store_promo_state.json の week_key × slot で同週再実行をスキップ
+#   - 月曜 09:00 JST = slot a, 金曜 09:00 JST = slot b
+#   - 投稿経路: scripts/apify_store_promo.py → KenshoCDP (SeleniumBase CDP Mode + SOCKS5)
+#   - 1投稿あたり最大3アクター紹介、文言は週×スロットでローテーション
+#
+# 依存:
+#   - scripts/apify_store_promo.py (本体)
+#   - kensho.application.selenium_cdp (CDP + SOCKS5)
+#   - data/apify_ppe_external_runs_state.json (対象抽出元)
+#   - data/tmp/pay_per_event.json (価格データ)
+#
+# 2026-09-27: 初版。Apify Store 73アクターの external_runs=0 解消を目的とする。
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+PY="${PYTHON:-python3}"
+LOG="${REPO_ROOT}/logs/apify_store_promo_cron.log"
+
+# スロット判定（月曜=slot a, 金曜=slot b、それ以外はスキップ）
+DAY_OF_WEEK=$(date +%u)  # 1=月曜 7=日曜
+case "${DAY_OF_WEEK}" in
+    1) SLOT="a" ;;   # 月曜
+    5) SLOT="b" ;;   # 金曜
+    *)
+        echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) SKIP: 月曜/金曜以外 (${DAY_OF_WEEK})" >> "${LOG}"
+        exit 0
+        ;;
+esac
+
+echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) START: apify_store_promo slot=${SLOT}" >> "${LOG}"
+
+cd "${REPO_ROOT}"
+
+# 1. 週次 dedup チェック
+if "${PY}" scripts/apify_store_promo.py --slot "${SLOT}" --dry-run 2>&1 | grep -q "スキップ:"; then
+    echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) SKIP: 今週${SLOT}スロットは投稿済み" >> "${LOG}"
+    exit 0
+fi
+
+# 2. 投稿実行
+"${PY}" scripts/apify_store_promo.py --slot "${SLOT}" >> "${LOG}" 2>&1
+EXIT_CODE=$?
+
+echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) END: exit=${EXIT_CODE}" >> "${LOG}"
+exit "${EXIT_CODE}"
