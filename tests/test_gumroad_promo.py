@@ -149,65 +149,71 @@ def test_views_dod_missing_prev_is_unknown() -> None:
 
 
 def test_views_dod_reads_twitter_referrer() -> None:
+    # t_d5a90755: twitter_views は X GraphQL 構造的計測不能のため除外（null 固定）。
+    # referrers から Twitter 経由流入を動的集計する経路は削除された。
     hist = {
         "2026-09-26": {"views": 5, "referrers": {"Twitter": 3}},
         "2026-09-25": {"views": 4},
     }
     out = kpi.views_dod(hist, date(2026, 9, 26))
-    assert out["twitter_views"] == 3
+    assert out["twitter_views"] is None
+    assert out["twitter_referrers"] == []
 
 
 def test_views_dod_fuzzy_twitter_referrer_t_co() -> None:
-    # t.co キーでも検出（t_b8ec048a: 柔軟マッチ）
+    # t.co キーでも検出していた旧経路は t_d5a90755 で削除（計測不能のため）。
     hist = {
         "2026-09-26": {"views": 5, "referrers": {"https://t.co/abc123": 2}},
         "2026-09-25": {"views": 4},
     }
     out = kpi.views_dod(hist, date(2026, 9, 26))
-    assert out["twitter_views"] == 2
-    assert "https://t.co/abc123" in out["twitter_referrers"]
+    assert out["twitter_views"] is None
+    assert out["twitter_referrers"] == []
 
 
 def test_views_dod_fuzzy_twitter_referrer_twitter_com() -> None:
-    # twitter.com キーでも検出
+    # twitter.com キーでも検出していた旧経路は t_d5a90755 で削除。
     hist = {
         "2026-09-26": {"views": 5, "referrers": {"twitter.com": 2}},
         "2026-09-25": {"views": 4},
     }
     out = kpi.views_dod(hist, date(2026, 9, 26))
-    assert out["twitter_views"] == 2
+    assert out["twitter_views"] is None
+    assert out["twitter_referrers"] == []
 
 
 def test_views_dod_utm_source_twitter() -> None:
-    # utm_source=twitter を含むキーでも検出（utm 計測経路で独立判定）
+    # utm_source=twitter を含むキーでも検出していた旧経路は t_d5a90755 で削除。
     hist = {
         "2026-09-26": {"views": 5, "referrers": {"https://t.co/xyz?utm_source=twitter": 3}},
         "2026-09-25": {"views": 4},
     }
     out = kpi.views_dod(hist, date(2026, 9, 26))
-    assert out["twitter_views"] == 3
+    assert out["twitter_views"] is None
+    assert out["twitter_referrers"] == []
 
 
 def test_views_dod_missing_twitter_referrer_returns_zero() -> None:
-    # Twitter キーが存在しない（例: Direct, email, IM のみ）場合は 0 を返す（t_b8ec048a）
-    # None ではなく 0 ＝「X 販促経由流入=0」の明示的記録
+    # t_d5a90755: 「計測不能=0」「実流入0」の区別がつかないため、
+    # 0 を返す旧実装（t_b8ec048a）は撤回。構造的計測不能は null で固定する。
     hist = {
         "2026-09-26": {"views": 1, "referrers": {"Direct, email, IM": 1}},
         "2026-09-25": {"views": 1},
     }
     out = kpi.views_dod(hist, date(2026, 9, 26))
-    assert out["twitter_views"] == 0
+    assert out["twitter_views"] is None
     assert out["twitter_referrers"] == []
 
 
 def test_views_dod_xcom_referrer() -> None:
-    # x.com キーでも検出
+    # x.com キーでも検出していた旧経路は t_d5a90755 で削除。
     hist = {
         "2026-09-26": {"views": 5, "referrers": {"x.com": 2}},
         "2026-09-25": {"views": 4},
     }
     out = kpi.views_dod(hist, date(2026, 9, 26))
-    assert out["twitter_views"] == 2
+    assert out["twitter_views"] is None
+    assert out["twitter_referrers"] == []
 
 
 # ── KPI: 売上判定 / フォールバック ─────────────────────────────────────────

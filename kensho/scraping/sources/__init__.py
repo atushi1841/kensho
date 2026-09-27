@@ -44,6 +44,20 @@ from .scrapling_fetch import (
     scrapling_fetch_with_retry,
 )
 from .twscrape import scrape_twscrape
+from .anime_figure_pricing import scrape_anime_figure_pricing
+from .anime_figure_api import (
+    FigurePrice,
+    FigurePriceAggregator,
+    PriceSource,
+    AvailabilityStatus,
+    ShopOffer,
+    MyFigureListClient,
+    HpoiClient,
+    FigureMemoClient,
+    get_figure_price,
+    search_figures,
+    compare_figure_prices,
+)
 
 __all__ = [
     "fetch",
@@ -81,4 +95,16 @@ __all__ = [
     "scrape_twscrape",
     "scrape_chancecom",
     "scrape_prtimes",
+    "scrape_anime_figure_pricing",
+    "FigurePrice",
+    "FigurePriceAggregator",
+    "PriceSource",
+    "AvailabilityStatus",
+    "ShopOffer",
+    "MyFigureListClient",
+    "HpoiClient",
+    "FigureMemoClient",
+    "get_figure_price",
+    "search_figures",
+    "compare_figure_prices",
 ]

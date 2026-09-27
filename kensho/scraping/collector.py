@@ -52,6 +52,7 @@ from kensho.scraping.sources import (
     scrape_kenshofan,  # ★ 新規: kenshofan.com（懸賞ファン）第5収集源
     scrape_prtimes,
     scrape_twscrape,
+    scrape_anime_figure_pricing,
     scrapling_fetch,
     scrapling_fetch_with_retry,
 )
@@ -780,6 +781,14 @@ def _collect_impl(
     out(f"  kensho-everyday.com: {len(kevery_items)}件")
     collected.extend(kevery_items)
 
+    # ── Step 2i: PR TIMES 収集（記念プレゼント・新商品キャンペーン／収集源第5ソース）──
+    out("\n[Step 2i prtimes] PR TIMES プレゼント・新商品キャンペーンを収集...")
+    prtimes_items: list[dict[str, Any]] = _run_source(
+        "prtimes", scrape_prtimes, out, processed_set, account_keys
+    )
+    out(f"  prtimes: {len(prtimes_items)}件")
+    collected.extend(prtimes_items)
+
     # ── Step 2j: kenshofan.com（懸賞ファン）収集 ──
     out("\n[Step 2j kenshofan.com] X懸賞を収集...")
     kenshofan_items: list[dict[str, Any]] = (
@@ -788,13 +797,13 @@ def _collect_impl(
     out(f"  kenshofan: {len(kenshofan_items)}件")
     collected.extend(kenshofan_items)
 
-    # ── Step 2i: PR TIMES 収集（記念プレゼント・新商品キャンペーン／収集源第5ソース）──
-    out("\n[Step 2i prtimes] PR TIMES プレゼント・新商品キャンペーンを収集...")
-    prtimes_items: list[dict[str, Any]] = _run_source(
-        "prtimes", scrape_prtimes, out, processed_set, account_keys
+    # ── Step 2k: アニメフィギュア価格データセット収集──
+    out("\n[Step 2k アニメフィギュア価格価格] Hpoi API + figurememo + MyFigureListからフィギュア価格データを収集...")
+    anime_fig_items: list[dict[str, Any]] = _run_source(
+        "anime-figure-pricing", scrape_anime_figure_pricing, out, processed_set, account_keys
     )
-    out(f"  prtimes: {len(prtimes_items)}件")
-    collected.extend(prtimes_items)
+    out(f"  アニメフィギュア価格: {len(anime_fig_items)}件")
+    collected.extend(anime_fig_items)
 
     # ★ t_442337b4 提案3: 全主要ソース（KENKAKU/KCLUB/CPMK/KEMA）がこのrunで1つも応答成功
     #   → 前日データをキャッシュ(collected.json累積)から提供継続 + アラート。fail-open。
@@ -839,8 +848,8 @@ def _collect_impl(
         f"kenshou.club {len(kclub_items)}件, cp.meikan {len(cpmeikan_items)}件, "
         f"ke-ma {len(kema_items)}件, twscrape {len(twscrape_items)}件, "
         f"chance.com {len(chancecom_items)}件, kensho-everyday {len(kevery_items)}件, "
-        f"prtimes {len(prtimes_items)}件, "
-        f"計{len(collected)}件)"
+        f"prtimes {len(prtimes_items)}件, kenshofan {len(kenshofan_items)}件, "
+        f"anime-figure-pricing {len(anime_fig_items)}件, 計{len(collected)}件)"
     )
 
     existing_collected = load_json(COLLECTED_FILE, {}).get("collected", [])

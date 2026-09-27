@@ -11,12 +11,33 @@ kensho/scraping/collector.py から抽出・独立化した。このモジュー
 
 from __future__ import annotations
 
+import random
 from datetime import datetime
 from typing import Any
 
 # deadline 空アイテムを snowflake 年齢で除去する閾値（日）。critic v67 で決定。
 STALE_TWEET_DAYS: int = 14
 _TWITTER_EPOCH_MS: int = 1288834974657
+
+# Common user agents for rotation
+_USER_AGENTS: list[str] = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15",
+]
+
+HEADERS: dict[str, str] = {
+    "User-Agent": _USER_AGENTS[0],
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "ja,en-US;q=0.9,en;q=0.8",
+}
+
+
+def get_random_user_agent() -> str:
+    """ランダムなUser-Agentを返す"""
+    return random.choice(_USER_AGENTS)
 
 
 def snowflake_ts_ms(tweet_id: Any) -> int | None:

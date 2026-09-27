@@ -41,10 +41,12 @@ WEEKLY_STATE_FILE = DATA_DIR / "gumroad_promo_weekly_state.json"
 # 新規投稿も翌日から views 追跡される。
 XPOST_STATE_FILE = DATA_DIR / "gumroad_x_post_state.json"
 
-# 商品リンク（Gumroad API /v2/products 実測 2026-09-26）。base は utm 無し。
-FREE_SAMPLE_URL = "https://atushi5.gumroad.com/l/kutuxe"  # FREE Sample ($0)
-PAID_DATASET_URL = "https://atushi5.gumroad.com/l/agyhq"  # Weekly CSV dataset
-WEEKLY_REPORT_URL = "https://atushi5.gumroad.com/l/qdyyyi"  # 週次レポート ($10)
+# 商品リンク（Gumroad API /v2/products 実測 2026-09-27）。
+# SNS投稿用は短縮IDを使用（文字数制限対応）。SEO用は custom_permalink が適用済み。
+# 両方アクセス可能（短縮IDは301リダイレクトでSEO URLへ）。
+FREE_SAMPLE_URL = "https://atushi5.gumroad.com/l/kutuxe"  # FREE Sample ($0) - 短縮ID
+PAID_DATASET_URL = "https://atushi5.gumroad.com/l/agyhq"  # Weekly CSV dataset - 短縮ID
+WEEKLY_REPORT_URL = "https://atushi5.gumroad.com/l/qdyyyi"  # 週次レポート ($10) - 短縮ID
 
 
 def promo_url(base: str, campaign: str) -> str:

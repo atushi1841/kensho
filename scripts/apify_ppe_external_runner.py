@@ -291,13 +291,17 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     
     token = get_token()
-    if not token:
-        print("ERROR: APIFY_TOKEN not set", file=sys.stderr)
-        return 1
-    
-    owner = fetch_owner(token)
-    print(f"[{datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}] Apify PPE external runner start — owner={owner}")
-    
+    if not token and not args.dry_run:
+        # トーキン未設定は失敗扱いせずスキップ（=v162 方針: 設定待機状態を壊さない）
+        print("TOKEN_NOT_SET: APIFY_TOKEN 未設定のため外部run起動をスキップします")
+        return 0
+
+    owner = fetch_owner(token) if token else ""
+    if owner:
+        print(f"[{datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}] Apify PPE external runner start — owner={owner}")
+    else:
+        print(f"[{datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}] Apify PPE external runner start — dry-run (no token)")
+
     # 価格情報読み込み
     prices = load_ppe_prices()
     
