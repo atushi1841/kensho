@@ -1,0 +1,24 @@
+{
+  "success_indicators": [
+    "loop_health score=100/streak=0 healthy 継続維持 (前回 same)",
+    "blocked 2→1 減 (t_f97ee44f running化で解消)",
+    "アニメフィギュアAPI 3ソース(MFL/Hpoi/FigureMemo) 実ネットlive検証完了",
+    "settle_tracker --strict liveモード exit=0 安全完了"
+  ],
+  "verification_commands": [
+    "bash ~/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh | python3 -c \"import json,sys; d=json.load(sys.stdin); print('score=',d['score'],'streak=',d['streak'],'blocked=',d['blocked'])\" => score=100 streak=0 blocked=1",
+    "python3 -c \"import sqlite3; db='/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db'; c=sqlite3.connect(db); [print(s, c.execute('select count(*) from tasks where status=?',(s,)).fetchone()[0]) for s in ['ready','blocked','in_progress','done','todo']]\" => ready=0 blocked=1 in_progress=0 done=741 todo=5",
+    "pgrep -af 'work kanban task' => t_f97ee44f / t_6c8b396c / t_dd850be8 の3プロセス生存確認",
+    "python3 -m py_compile kensho/scraping/sources/anime_figure_api.py kensho/scraping/sources/anime_figure_pricing.py scripts/apify_revenue_settle_tracker.py => exit=0",
+    "timeout 90 python3 scripts/apify_revenue_settle_tracker.py --strict => Estimated=$0.000000 Triggered=0 Settle=0.00% exit=0 (APIFY_TOKEN UNSET)",
+    "timeout 90 python3 -c \"import sys,asyncio; sys.path.insert(0,'.'); from kensho.scraping.sources.anime_figure_api import get_figure_price; ...\" => MyFigureList/Hpoi/FigureMemo 全て not found → LIVE=None"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_b2fc9a38_verification.md"
+  ],
+  "evidence_hashes": [
+    "28c12b221c4b001469a17802a2d4abdef81b6eeb41fb57e88fbe3c2d84005e6a"
+  ],
+  "task_id": "t_b2fc9a38",
+  "status": "complete"
+}
