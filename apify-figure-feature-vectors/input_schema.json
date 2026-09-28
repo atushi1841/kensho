@@ -1,0 +1,98 @@
+{
+  "title": "Demand Feature Vector Query",
+  "description": "Filters for the Japan Anime Figure Demand Feature Vectors dataset. All fields are optional; omit to return the top 100 SKUs by demand score.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "figureIds": {
+      "type": "array",
+      "title": "Figure IDs",
+      "description": "Optional list of upstream figure IDs to restrict the result set.",
+      "items": { "type": "string" },
+      "editor": "json"
+    },
+    "series": {
+      "type": "string",
+      "title": "Series",
+      "description": "Filter by series name (partial, case-insensitive match).",
+      "editor": "textfield"
+    },
+    "character": {
+      "type": "string",
+      "title": "Character",
+      "description": "Filter by character name (partial, case-insensitive match).",
+      "editor": "textfield"
+    },
+    "manufacturer": {
+      "type": "string",
+      "title": "Manufacturer",
+      "description": "Filter by manufacturer name (partial, case-insensitive match).",
+      "editor": "textfield"
+    },
+    "categories": {
+      "type": "array",
+      "title": "Categories",
+      "description": "Restrict to specific upstream categories.",
+      "items": { "type": "string", "enum": ["Scale Figure", "Anime Figure"] },
+      "editor": "stringList"
+    },
+    "minDemandScore": {
+      "type": "number",
+      "title": "Minimum Demand Score",
+      "description": "Only return SKUs whose composite demand score is >= this value (0.0-1.0).",
+      "minimum": 0,
+      "maximum": 1,
+      "editor": "number"
+    },
+    "maxDemandScore": {
+      "type": "number",
+      "title": "Maximum Demand Score",
+      "description": "Only return SKUs whose composite demand score is <= this value (0.0-1.0).",
+      "minimum": 0,
+      "maximum": 1,
+      "editor": "number"
+    },
+    "hasPriceOnly": {
+      "type": "boolean",
+      "title": "Has Price Only",
+      "description": "Skip SKUs with no observed price data (522 of 654 rows have no live offers).",
+      "default": false,
+      "editor": "checkbox"
+    },
+    "requireOfferDetail": {
+      "type": "boolean",
+      "title": "Require Offer Detail",
+      "description": "Only return SKUs whose upstream row carries a populated offers[] array. Recommended when you rely on per-shop features (shop_price_cv, distinct_shop_norm, instock_price_premium): 181 upstream rows advertise an aggregate offer count but ship no offer detail, so those features are 0 for them.",
+      "default": false,
+      "editor": "checkbox"
+    },
+    "includeFeatures": {
+      "type": "boolean",
+      "title": "Include Named Features",
+      "description": "Attach the named feature dictionary and feature-name list to each record.",
+      "default": true,
+      "editor": "checkbox"
+    },
+    "includeVector": {
+      "type": "boolean",
+      "title": "Include Ordered Vector",
+      "description": "Attach the canonical ordered 48-dimensional float vector to each record.",
+      "default": true,
+      "editor": "checkbox"
+    },
+    "limit": {
+      "type": "integer",
+      "title": "Limit",
+      "description": "Maximum number of records to return.",
+      "default": 100,
+      "editor": "number"
+    },
+    "offset": {
+      "type": "integer",
+      "title": "Offset",
+      "description": "Pagination offset (records are ordered by descending demand score, then figure ID).",
+      "default": 0,
+      "editor": "number"
+    }
+  }
+}

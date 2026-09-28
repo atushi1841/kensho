@@ -1,0 +1,13 @@
+# Local Actor run artifacts (Apify local-storage mode)
+storage/
+
+# The normalized dataset lives in the repo at ../data/; the deploy script
+# copies it in at build time. Not tracked here to avoid a 2 MB duplicate.
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

@@ -1,0 +1,29 @@
+{
+  "actorSpecification": 1,
+  "name": "japan-anime-figure-demand-features",
+  "title": "Japan Anime Figure Demand Feature Vectors",
+  "version": "0.1",
+  "buildTag": "latest",
+  "description": "Fixed-dimension (48) normalized feature vectors for 650+ Japan anime/figure SKUs, derived from the multi-shop price snapshot of japan-anime-figure-price-data. Purpose-built for AI agents, ML training pipelines and quant research: named features, canonical ordered vector, demand-score proxy and full schema manifest. No scraping at run time.",
+  "main": "main.py",
+  "author": "atushi",
+  "license": "MIT",
+  "usesStandbyMode": true,
+  "dockerfile": "./Dockerfile",
+  "readme": "./README.md",
+  "scripts": {
+    "start": "python main.py"
+  },
+  "env": {
+    "APIFY_TOKEN": {
+      "description": "Apify API token for authentication",
+      "required": true
+    }
+  },
+  "categories": ["DATA", "ECOMMERCE", "JAPAN", "AI"],
+  "input": "input_schema.json",
+  "output": "output_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  }
+}

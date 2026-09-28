@@ -1,0 +1,104 @@
+{
+  "title": "Figure Demand Feature Vectors",
+  "description": "One record per Japan anime/figure SKU: identity, prices, supply, provenance and a 48-dimensional normalized feature vector.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "title": "Schema Version",
+      "description": "Feature-vector schema version (semver). Breaking layout changes bump the major.",
+      "template": "{{schemaVersion}}"
+    },
+    "featureDim": {
+      "type": "integer",
+      "title": "Feature Dimension",
+      "description": "Length of the ordered vector; always matches featureNames length.",
+      "template": "{{featureDim}}"
+    },
+    "figureId": {
+      "type": "string",
+      "title": "Figure ID",
+      "template": "{{figureId}}"
+    },
+    "name": {
+      "type": "string",
+      "title": "Name",
+      "template": "{{name}}"
+    },
+    "series": {
+      "type": "string",
+      "title": "Series",
+      "template": "{{series}}"
+    },
+    "manufacturer": {
+      "type": "string",
+      "title": "Manufacturer",
+      "template": "{{manufacturer}}"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "template": "{{category}}"
+    },
+    "janCode": {
+      "type": "string",
+      "title": "JAN / GTIN Code",
+      "template": "{{janCode}}"
+    },
+    "currency": {
+      "type": "string",
+      "title": "Currency",
+      "template": "{{currency}}"
+    },
+    "demandScore": {
+      "type": "number",
+      "title": "Demand Score",
+      "description": "Composite supply-side demand proxy in [0,1]. Not a back-tested forecast.",
+      "template": "{{demandScore}}"
+    },
+    "history": {
+      "type": "object",
+      "title": "History Provenance",
+      "description": "Number of distinct collection snapshots observed for this SKU and whether velocity features are meaningful.",
+      "properties": {
+        "points": { "type": "integer", "title": "Snapshot Points", "template": "{{points}}" },
+        "firstSeen": { "type": "string", "title": "First Seen", "template": "{{firstSeen}}" },
+        "lastSeen": { "type": "string", "title": "Last Seen", "template": "{{lastSeen}}" },
+        "velocityAvailable": { "type": "boolean", "title": "Velocity Available", "template": "{{velocityAvailable}}" }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "title": "Upstream Coverage",
+      "description": "Which parts of the upstream row actually carried data. Per-shop features are only trustworthy when hasOfferDetail is true.",
+      "properties": {
+        "hasOfferDetail": { "type": "boolean", "title": "Has Offer Detail", "template": "{{hasOfferDetail}}" },
+        "offerDetailRows": { "type": "integer", "title": "Offer Detail Rows", "template": "{{offerDetailRows}}" },
+        "hasAggregatePrice": { "type": "boolean", "title": "Has Aggregate Price", "template": "{{hasAggregatePrice}}" },
+        "hasMsrp": { "type": "boolean", "title": "Has MSRP", "template": "{{hasMsrp}}" },
+        "hasJan": { "type": "boolean", "title": "Has JAN", "template": "{{hasJan}}" }
+      }
+    },
+    "features": {
+      "type": "object",
+      "title": "Named Features",
+      "description": "Feature name -> normalized value. Keys follow the canonical order in featureNames.",
+      "template": "{{features}}"
+    },
+    "featureNames": {
+      "type": "array",
+      "title": "Feature Names",
+      "description": "Canonical ordered feature names; index i corresponds to vector[i].",
+      "items": { "type": "string" }
+    },
+    "vector": {
+      "type": "array",
+      "title": "Ordered Vector",
+      "description": "Fixed-length float vector in featureNames order.",
+      "items": { "type": "number" }
+    }
+  },
+  "actorOutputSchemaVersion": 1,
+  "required": ["figureId", "schemaVersion", "featureDim", "demandScore"]
+}
