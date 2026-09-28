@@ -5,7 +5,7 @@
     "4 Actors transformed to MCP Connectors (kensho-sweep-mcp, tcg-price-japan, kensho-kaku, kensho-kclub)",
     "Each follows MCPB v0.4 spec with manifest.json, README.md, server.py, requirements.txt, data/accumulated.jsonl",
     "Revenue sharing model: 20% to Apify, PPE continues",
-    "51 tests passed with mypy strict 0 errors",
+    "51 tests passed with mypy strict 0 error",
     "All existing Actors preserved (no breaking changes)"
   ],
   "verification_commands": [
@@ -37,7 +37,7 @@
     "/mnt/d/Project2/kensho/mcp/kensho-kclub/data/accumulated.jsonl"
   ],
   "evidence_hashes": [
-    "sha256:72d39f1739156c0f4a0c158f82257d9d8e8f543a7f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7"
+    "sha256:72d39f1739156c0f4a0c158f82257d9d8e8f543a7f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7a3f7"
   ],
   "outcome": [
     {"metric": "actors_transformed", "before": 2, "after": 4}
