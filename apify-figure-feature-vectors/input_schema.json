@@ -32,8 +32,8 @@
     "categories": {
       "type": "array",
       "title": "Categories",
-      "description": "Restrict to specific upstream categories.",
-      "items": { "type": "string", "enum": ["Scale Figure", "Anime Figure"] },
+      "description": "Restrict to specific upstream categories (e.g. Scale Figure, Anime Figure).",
+      "items": { "type": "string" },
       "editor": "stringList"
     },
     "minDemandScore": {
