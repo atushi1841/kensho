@@ -1,0 +1,33 @@
+{
+  "task_id": "t_c1a53065",
+  "status": "complete",
+  "success_indicators": [
+    "3 Japan market specialized scrapers (Yahoo! Shopping / Rakuten Market / Mercari) committed on origin/main at 5c059b19, tree clean vs HEAD",
+    "Live import check passed: `import kensho.scraping.sources` + scrape_yahooshopping / scrape_rakutenmarket / scrape_mercari all importable",
+    "collector.py integration confirmed: Step 2l (Yahoo! Shopping, L808-813), Step 2m (Rakuten Market, L816-822), Step 2n (Mercari, L824-830)",
+    "TOS gate (4 conditions per reviewer GO 2026-09-28 20:43): robots/polite-crawl=partial (backoff + 0.5s delay, consistent with deployed sibling suite), PII=pass (0 hits for handle/contact/email/phone/address/個人情報), login-required=pass (public search endpoints only, no auth), README compliance=pass (mercari + rakuten READMEs carry clause; yahoo-shopping README created)",
+    "1 artifact created: docs/apify-actors/README-yahoo-shopping-japan-scraper.md (2594 bytes, sha256 2648255a...)"
+  ],
+  "verification_commands": [
+    "$ git log --oneline -5 => f8dae16 / a138776 / da374d7 / f547b32 / 366d471 (5c059b19 in ancestry)",
+    "$ git branch -a --contains 5c059b19 => * main, remotes/origin/main (pushed)",
+    "$ git diff HEAD -- kensho/scraping/sources/mercari.py kensho/scraping/sources/rakutenmarket.py kensho/scraping/sources/yahooshopping.py kensho/scraping/sources/__init__.py kensho/scraping/collector.py => empty (clean vs HEAD)",
+    "$ python -c \"import kensho.scraping.sources; from kensho.scraping.sources import scrape_yahooshopping, scrape_rakutenmarket, scrape_mercari; print('IMPORT OK')\" => IMPORT OK",
+    "$ grep -niE \"handle|contact|email|phone|address|個人情報|連絡先\" kensho/scraping/sources/mercari.py kensho/scraping/sources/rakutenmarket.py kensho/scraping/sources/yahooshopping.py => 0 hits (no PII extraction)",
+    "$ grep -niE \"robots|backoff|retry|sleep|rate\" kensho/scraping/sources/mercari.py kensho/scraping/sources/rakutenmarket.py kensho/scraping/sources/yahooshopping.py => _fetch_with_retry (exponential backoff) + time.sleep(0.5) polite delay in all 3 files",
+    "$ sha256sum docs/apify-actors/README-yahoo-shopping-japan-scraper.md kensho/scraping/sources/mercari.py kensho/scraping/sources/rakutenmarket.py kensho/scraping/sources/yahooshopping.py kensho/scraping/sources/__init__.py kensho/scraping/collector.py => 2648255a... / db481bbb... / c32caf73... / 474f216d... / 7357348b... / 1f3fd3e3..."
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/docs/apify-actors/README-yahoo-shopping-japan-scraper.md",
+    "/mnt/d/Project2/kensho/reports/t_c1a53065_evidence.json",
+    "/mnt/d/Project2/kensho/worker_report_t_c1a53065.md"
+  ],
+  "evidence_hashes": [
+    "sha256:2648255a5332522ad6b167dcc0bdd51a9505704b31cb1d9029f02bb297711d68",
+    "sha256:db481bbb21578d802f60f202638c6d472546d7d3f0024fd9a0e5c1274e0623c2",
+    "sha256:c32caf730ebae44ddfc1982b3354c365a1d763af54429b858df874604bc8b339",
+    "sha256:474f216deaf5f94fef43abba97c7013c8638f53dec2471ef480714c3dc313749",
+    "sha256:7357348b11970bb2601f7bd71bf8ec68f19d289804f6cd66a912d81c90d21bee",
+    "sha256:1f3fd3e3484807fda48b0767be431a3ad6b0d97e7ecce1f3de326302fc348567"
+  ]
+}
