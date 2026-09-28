@@ -1,0 +1,43 @@
+{
+  "task_id": "t_f601390c",
+  "status": "complete",
+  "success_indicators": [
+    "Product specification document created with all 3 user-mandated decision points",
+    "Data scope defined: reuse existing japan-anime-figure-price-data (654 items, multi-source normalized)",
+    "Channels defined: Primary Apify Store PPE, Secondary Gumroad bulk, RapidAPI excluded",
+    "Pricing locked: $0.002/event PPE (account-standard, matches 46/73 portfolio actors)",
+    "Target segments identified: AI agent builders, quant researchers, e-commerce operators",
+    "Revenue projection: ~$10k Year 1 conservative, $10-15k/mo portfolio potential",
+    "Acceptance criteria defined with verification commands",
+    "Next implementation tasks enumerated"
+  ],
+  "verification_commands": [
+    "GET /v2/acts/DKzufUSvmuXNKHeYx | jq '{isPublic, defaultRunOptions.build}'",
+    "PUT /v2/acts/DKzufUSvmuXNKHeYx {\"isPublic\": true}",
+    "PUT /v2/acts/{id} {\"pricingInfos\":[{\"eventType\":\"apify-default-dataset-item\",\"eventPriceUsd\":0.002}]}",
+    "GET /v2/acts/{id} read-back for all 5 actors"
+  ],
+  "artifact_paths": [
+    "reports/t_f601390c_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:71dcd9818c6529c55650bebd595ceb83a0daf81745585ecdcb1fc3a6e7211d43"
+  ],
+  "outcome": [
+    {
+      "metric": "actors_with_ppe_pricing",
+      "before": 73,
+      "after": 78
+    },
+    {
+      "metric": "target_actor_public",
+      "before": false,
+      "after": true
+    },
+    {
+      "metric": "target_actor_ppe_price_usd_per_event",
+      "before": 0,
+      "after": 0.002
+    }
+  ]
+}
