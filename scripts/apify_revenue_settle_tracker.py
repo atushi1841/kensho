@@ -318,6 +318,7 @@ def main(argv: list[str] | None = None) -> int:
         actual_revenue = 0.0
         settle_rate = 0.0
         actual_data = {"external_runs": 0, "charged_items": 0, "revenue_usd": 0.0, "per_actor": {}}
+        settle_status = "dry_run"
     else:
         token = get_token()
         if not token:
@@ -327,26 +328,83 @@ def main(argv: list[str] | None = None) -> int:
             actual_revenue = 0.0
             settle_rate = 0.0
             actual_data = {"external_runs": 0, "charged_items": 0, "revenue_usd": 0.0, "per_actor": {}}
+            settle_status = "no_token"
         else:
             owner = fetch_owner(token)
             print(f"  Owner: {owner}")
             
-            # triggered したアクターの実収益を取得
+            # triggered したアクターの実収益を取得（run_id=ready ごとに SUCCEEDED + billed 判定）
             name_to_id = {}
+            run_id_map = {}  # actual_name -> run_id
             for r in triggered_actors:
                 actor_id = resolve_actor_id(r["actual_name"], r["actor_id"], token)
                 name_to_id[r["actual_name"]] = actor_id
+                if r.get("run_id"):
+                    run_id_map[r["actual_name"]] = r["run_id"]
             
             if not name_to_id:
                 print("  No triggered actors to track")
                 actual_revenue = 0.0
                 actual_data = {"external_runs": 0, "charged_items": 0, "revenue_usd": 0.0, "per_actor": {}}
+                settle_status = "no_triggered"
             else:
-                print(f"  Fetching actual revenue for {len(name_to_id)} actors...")
+                print(f"  Fetching actual revenue for {len(name_to_id)} actors (run_id check)...")
                 actual_data = fetch_actual_revenue(token, owner, name_to_id, prices, args.days)
+                # 追加: run_id ごとの SUCCEEDED + billed 判定（外部ユーザーrunのみ課金対象）
+                # 自己run (userId == owner) は PPE 課金対象外のため除外
+                run_verified = {}
+                for name, rid in run_id_map.items():
+                    try:
+                        url = f"https://api.apify.com/v2/acts/{name_to_id[name]}/runs/{rid}?token={token}"
+                        req = urllib.request.Request(url, headers={"Accept": "application/json"})
+                        with urllib.request.urlopen(req, timeout=30) as resp:
+                            d = json.loads(resp.read().decode("utf-8"))
+                        ddata = d.get("data", {})
+                        status = ddata.get("status")
+                        # owner filter: 自分のrunは課金対象外
+                        if ddata.get("userId") == owner:
+                            run_verified[name] = {
+                                "run_id": rid,
+                                "status": status,
+                                "billed": False,
+                                "charged_items": 0,
+                                "verified": False,
+                                "skipped_reason": "owner_run"
+                            }
+                            continue
+                        cec = ddata.get("chargedEventCounts", {}) or {}
+                        charged = int(cec.get("apify-default-dataset-item", 0) or 0)
+                        # billed = charged > 0 (dataset item が課金された)
+                        billed = charged > 0
+                        run_verified[name] = {
+                            "run_id": rid,
+                            "status": status,
+                            "billed": billed,
+                            "charged_items": charged,
+                            "verified": (status == "SUCCEEDED" and billed)
+                        }
+                    except Exception as e:
+                        run_verified[name] = {"run_id": rid, "error": str(e), "verified": False}
+
+                # run_id 検証済みの課金アイテムを集計
+                verified_charged = sum(v.get("charged_items", 0) for v in run_verified.values() if v.get("verified"))
+                verified_revenue = sum(v.get("charged_items", 0) * prices.get(name, 0) for name, v in run_verified.items() if v.get("verified"))
+                
                 rev_val = actual_data.get("revenue_usd")
                 actual_revenue = float(rev_val) if isinstance(rev_val, (int, float)) else 0.0
-                print(f"  Actual revenue: ${actual_revenue:.6f} (external_runs={actual_data['external_runs']}, charged_items={actual_data['charged_items']})")
+                # 実収益 = max(既存ロジック, run_id検証ベース)
+                actual_revenue = max(actual_revenue, round(verified_revenue, 6))
+                actual_data["run_id_verified"] = run_verified
+                actual_data["verified_charged_items"] = verified_charged
+                actual_data["verified_revenue_usd"] = round(verified_revenue, 6)
+                
+                print(f"  Actual revenue: ${actual_revenue:.6f} (external_runs={actual_data['external_runs']}, charged_items={actual_data['charged_items']}, verified_revenue=${round(verified_revenue,6)})")
+                
+                # settle_status 決定
+                if actual_revenue > 0:
+                    settle_status = "completed"
+                else:
+                    settle_status = "zero_settle"
     
     # settle_rate 計算
     if estimated_revenue > 0:
@@ -364,6 +422,7 @@ def main(argv: list[str] | None = None) -> int:
         "estimated_revenue_usd": round(estimated_revenue, 6),
         "actual_revenue_usd": round(actual_revenue, 6),
         "settle_rate_pct": settle_rate,
+        "settle_status": settle_status,
         "window_days": args.days,
         "dry_run": args.dry_run,
         "actual_data": actual_data,
@@ -378,6 +437,38 @@ def main(argv: list[str] | None = None) -> int:
     
     save_settle_state(state)
     print(f"✓ state 保存: {STATE_FILE}")
+    
+    # KPI を revenue-daily.json の最新エントリに書き込み
+    # - apify_ppe_external_runs サブオブジェクト（既存互換）
+    # - トップレベルフィールド（ダッシュボード・criticが読む場所）
+    if not args.dry_run:
+        try:
+            with open(REVENUE_DAILY, encoding="utf-8") as f:
+                rev_entries = json.load(f)
+            if rev_entries and isinstance(rev_entries, list):
+                latest = rev_entries[-1]
+                # サブオブジェクトへの書き込み（既存互換）
+                if "apify_ppe_external_runs" in latest and isinstance(latest["apify_ppe_external_runs"], dict):
+                    latest["apify_ppe_external_runs"]["settle_rate_pct"] = settle_rate
+                    latest["apify_ppe_external_runs"]["actual_revenue_usd"] = round(actual_revenue, 6)
+                    latest["apify_ppe_external_runs"]["settle_status"] = settle_status
+                    latest["apify_ppe_external_runs"]["verified_charged_items"] = actual_data.get("verified_charged_items", 0)
+                    latest["apify_ppe_external_runs"]["verified_revenue_usd"] = actual_data.get("verified_revenue_usd", 0.0)
+                # トップレベルへの書き込み（ダッシュボード・criticが読む）
+                latest["apify_actual_revenue_usd"] = round(actual_revenue, 6)
+                latest["apify_settle_status"] = settle_status
+                latest["apify_settle_rate_pct"] = settle_rate
+                latest["apify_verified_charged_items"] = actual_data.get("verified_charged_items", 0)
+                latest["apify_verified_revenue_usd"] = actual_data.get("verified_revenue_usd", 0.0)
+                # 失敗時の判定情報もトップレベルに記録
+                if settle_status in ("no_token", "no_triggered", "zero_settle"):
+                    latest["apify_settle_failed_reason"] = settle_status
+                with open(REVENUE_DAILY + ".tmp", "w", encoding="utf-8") as f:
+                    json.dump(rev_entries, f, ensure_ascii=False, indent=1)
+                os.replace(REVENUE_DAILY + ".tmp", REVENUE_DAILY)
+                print(f"✓ KPI 書き込み: {REVENUE_DAILY} (sub-object + top-level)")
+        except Exception as e:
+            print(f"WARN: KPI 書き込み失敗: {e}", file=sys.stderr)
     
     # サマリー出力
     print(f"\n=== Apify Revenue Settle Tracker Summary ===")
