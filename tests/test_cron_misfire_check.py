@@ -236,3 +236,12 @@ def test_main_exit_codes(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> 
     assert cmc.main(base + ["--as-of", "2026-09-25T03:50:00+09:00"]) == 1
     assert "無音欠火" in capsys.readouterr().out
     assert cmc.main(base + ["--as-of", "2026-09-23T20:00:00+09:00"]) == 0
+
+
+def test_selftest_option(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """--selftest が 3/3 PASS して exit 0 になる。"""
+    rc = cmc.main(["--selftest"])
+    captured = capsys.readouterr()
+    assert rc == 0
+    assert "[selftest] 3/3 パターン通過" in captured.out
+    assert "[selftest] PASS" in captured.out

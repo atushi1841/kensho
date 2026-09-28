@@ -1,0 +1,47 @@
+{
+  "task_id": "t_0844e57c",
+  "status": "success",
+  "success_indicators": {
+    "pytest_all_pass": true,
+    "selftest_all_pass": true,
+    "smoke_test_pass": true,
+    "exit_codes_valid": true,
+    "bot_signal_increase": false
+  },
+  "verification_commands": [
+    "python3 -m pytest tests/test_cron_misfire_check.py -v",
+    "python3 scripts/cron_misfire_check.py --selftest",
+    "python3 scripts/cron_misfire_check.py --json --as-of 2026-09-28T21:00:00+09:00 --lookback-hours 24 --grace-minutes 120 --profile kensho-sweeps",
+    "git log --oneline -3"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_0844e57c_verification.md",
+    "/mnt/d/Project2/kensho/scripts/cron_misfire_check.py",
+    "/mnt/d/Project2/kensho/tests/test_cron_misfire_check.py"
+  ],
+  "evidence_hashes": {
+    "cron_misfire_check.py": "sha256:pending",
+    "test_cron_misfire_check.py": "sha256:pending",
+    "verification_report": "sha256:pending"
+  },
+  "outcome": {
+    "tests_run": 9,
+    "tests_passed": 9,
+    "tests_failed": 0,
+    "selftest_patterns_passed": 3,
+    "selftest_patterns_failed": 0,
+    "exit_code_0_count": 2,
+    "exit_code_1_count": 1,
+    "exit_code_2_count": 1
+  },
+  "before": {
+    "test_count": 8,
+    "selftest_implemented": false,
+    "input_error_handling": false
+  },
+  "after": {
+    "test_count": 9,
+    "selftest_implemented": true,
+    "input_error_handling": true
+  }
+}

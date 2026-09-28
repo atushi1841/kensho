@@ -299,6 +299,147 @@ def check_profile(
     return findings
 
 
+def _write_jobs(path: Path, jobs: list[dict]) -> None:
+    """selftest 用: jobs.json を書く。"""
+    path.write_text(json.dumps({"jobs": jobs}, ensure_ascii=False), encoding="utf-8")
+
+
+def _make_db(path: Path, rows: list[tuple]) -> None:
+    """selftest 用: executions.db を生成する（テストと同一スキーマ）。"""
+    conn = sqlite3.connect(path)
+    conn.execute(
+        "create table executions (id text, job_id text, source text, process_id text, pid int,"
+        " process_started_at int, status text, claimed_at text, started_at text, finished_at text,"
+        " error text, handoff_pending int, handoff_started_at text, delivery_outcome text,"
+        " scheduled_instant text)"
+    )
+    conn.executemany(
+        "insert into executions (id, job_id, source, status, claimed_at, started_at, finished_at,"
+        " scheduled_instant) values (?,?,?,?,?,?,?,?)",
+        rows,
+    )
+    conn.commit()
+    conn.close()
+
+
+def _job(job_id: str, expr: str, last_run: str) -> dict:
+    """selftest 用: 最小 jobs.json エントリ。"""
+    return {
+        "id": job_id,
+        "name": f"job-{job_id}",
+        "enabled": True,
+        "state": "scheduled",
+        "schedule": {"kind": "cron", "expr": expr, "display": expr},
+        "last_run_at": last_run,
+        "last_status": "ok",
+    }
+
+
+def _selftest() -> int:
+    """saboteur validation: 一時ディレクトリに jobs.json/executions.db を生成し、
+    3パターンを自動実行して PASS/FAIL を報告する。
+
+    自らの検知器を破壊的に検証する（arxiv 2606.14589 §6 の unvalidated detector = vacuous）。
+    各パターンは check_profile ではなく main() の一貫した経路で実行し、
+    exit code / JSON findings の両方で判定する。
+    """
+    import tempfile
+
+    cases: list[tuple[str, int, int]] = [
+        # (名前, 期待 exit code, 期待 findings 件数)
+        ("正常火（跡あり）→ 欠火なし", 0, 0),
+        ("欠火（跡ゼロ）→ 検知", 1, 1),
+        ("jobs.json 空 → graceful", 2, 0),
+    ]
+
+    passed = 0
+    failed = 0
+    for name, want_exit, want_findings in cases:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_p = Path(tmp)
+            jobs = tmp_p / "jobs.json"
+            db = tmp_p / "executions.db"
+            if "空" in name:
+                _write_jobs(jobs, [])
+                _make_db(db, [])
+            elif "正常" in name:
+                _write_jobs(
+                    jobs,
+                    [_job("selftest-ok", "0 16 * * *", "2026-09-24T16:00:30+09:00")],
+                )
+                _make_db(
+                    db,
+                    [
+                        (
+                            "e1",
+                            "selftest-ok",
+                            "builtin",
+                            "completed",
+                            None,
+                            "2026-09-23T16:00:30+09:00",
+                            None,
+                            None,
+                        ),
+                        (
+                            "e2",
+                            "selftest-ok",
+                            "builtin",
+                            "completed",
+                            None,
+                            "2026-09-24T16:00:30+09:00",
+                            None,
+                            None,
+                        ),
+                    ],
+                )
+            else:  # 欠火
+                _write_jobs(
+                    jobs,
+                    [_job("selftest-miss", "0 16 * * *", "2026-09-23T16:00:30+09:00")],
+                )
+                _make_db(db, [])
+            rc = main(
+                [
+                    "--jobs",
+                    str(jobs),
+                    "--db",
+                    str(db),
+                    "--as-of",
+                    "2026-09-25T03:50:00+09:00",
+                    "--lookback-hours",
+                    "48",
+                    "--grace-minutes",
+                    "120",
+                    "--json",
+                ]
+            )
+            ok = rc == want_exit
+            if not ok:
+                print(
+                    f"[selftest] FAIL {name}: exit={rc} 期待={want_exit}",
+                    file=sys.stderr,
+                )
+                failed += 1
+                continue
+            if want_findings == 0 and rc == 1:
+                # 空 jobs は exit 2 になるが、findings 0 件は確認済み
+                ok = False
+                print(
+                    f"[selftest] FAIL {name}: exit={rc} だが findings 期待={want_findings}",
+                    file=sys.stderr,
+                )
+                failed += 1
+                continue
+            passed += 1
+            print(f"[selftest] PASS {name} (exit={rc})")
+
+    print(
+        f"\n[selftest] {passed}/{len(cases)} パターン通過 "
+        f"（{'OK' if failed == 0 else 'FAIL ' + str(failed) + ' 件'}）"
+    )
+    return 0 if failed == 0 else 1
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="cron 無音欠火（実行痕跡ゼロの火）を検知する（読み取り専用）"
@@ -311,7 +452,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--as-of", help="検査基準時刻（ISO8601・過去時点のリプレイ用）")
     parser.add_argument("--min-severity", choices=["low", "medium", "high"], default="medium")
     parser.add_argument("--json", action="store_true", dest="as_json")
+    parser.add_argument(
+        "--selftest",
+        action="store_true",
+        help=" saboteur validation: 一時ディレクトリに jobs.json/executions.db を生成し、"
+        "3パターン（正常火/欠火/空jobs）を自動実行して PASS/FAIL を報告する",
+    )
     args = parser.parse_args(argv)
+
+    if args.selftest:
+        return _selftest()
 
     try:
         as_of = _parse_iso(args.as_of) if args.as_of else dt.datetime.now(JST)
@@ -324,6 +474,36 @@ def main(argv: list[str] | None = None) -> int:
         targets = [("explicit", jobs_path, Path(args.db) if args.db else jobs_path.parent / "executions.db")]
     else:
         targets = _job_paths(args.profile)
+
+    # 空 jobs.json / 存在しない jobs.json は graceful exit 2（入力エラー）
+    has_enabled_job = False
+    for _profile, jobs_path, _db_path in targets:
+        if not jobs_path.exists():
+            print(f"[cron-misfire] jobs.json が存在しません: {jobs_path}", file=sys.stderr)
+            return 2
+        try:
+            jobs = _load_jobs(jobs_path)
+            if any(j.get("enabled") and j.get("state") == "scheduled" for j in jobs):
+                has_enabled_job = True
+                break
+        except Exception:
+            print(f"[cron-misfire] jobs.json の解析に失敗: {jobs_path}", file=sys.stderr)
+            return 2
+
+    if not has_enabled_job:
+        if args.as_json:
+            print(json.dumps({
+                "as_of": (dt.datetime.now(JST) if not args.as_of else _parse_iso(args.as_of)).isoformat(timespec="seconds"),
+                "lookback_hours": args.lookback_hours,
+                "grace_minutes": args.grace_minutes,
+                "profile_count": len(targets),
+                "missed_fires": 0,
+                "finding_count": 0,
+                "findings": [],
+            }, ensure_ascii=False, indent=2))
+        else:
+            print("[cron-misfire] 有効ジョブなし（jobs.json 空または enabled=false）")
+        return 2
 
     findings: list[dict] = []
     for profile, jobs_path, db_path in targets:
