@@ -15,8 +15,8 @@
   "scripts": {
     "start": "python main.py"
   },
-  "input": ".actor/input_schema.json",
-  "output": ".actor/output_schema.json",
+  "input": "./input_schema.json",
+  "output": "./output_schema.json",
   "outputSchema": {
     "actorOutputSchemaVersion": 1,
     "title": "Figure Demand Feature Vectors",

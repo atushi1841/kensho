@@ -35,11 +35,20 @@ REPO_ROOT = Path("/mnt/d/Project2/kensho")
 ACTOR_DIR = REPO_ROOT / "apify-figure-feature-vectors"
 ACTOR_NAME = "japan-anime-figure-demand-features"
 VERSION_NUMBER = "0.1"
+#: Apify requires at least one category before an Actor may be published, rejects
+#: unknown values, and rejects more than three. Candidates are tried in order
+#: ("DATA"/"JAPAN" used to be accepted and are refused by the current enum).
+CATEGORY_CANDIDATES = [
+    ["ECOMMERCE", "DEVELOPER_TOOLS"],
+    ["ECOMMERCE"],
+    ["MCP_SERVERS"],
+]
 
 #: Files pushed into the actor version. ``data/`` is included on purpose: the
 #: container is self-contained and performs no network fetch at run time.
-SKIP_PARTS = {"__pycache__", "tests", ".pytest_cache"}
+SKIP_PARTS = {"__pycache__", "tests", ".pytest_cache", "storage"}
 SKIP_SUFFIXES = {".pyc"}
+SKIP_NAMES = {".coverage"}
 
 
 def resolve_token() -> str:
@@ -81,7 +90,7 @@ def collect_source_files() -> list[dict[str, str]]:
         if not path.is_file():
             continue
         rel = path.relative_to(ACTOR_DIR)
-        if SKIP_PARTS.intersection(rel.parts) or path.suffix in SKIP_SUFFIXES:
+        if SKIP_PARTS.intersection(rel.parts) or path.suffix in SKIP_SUFFIXES or path.name in SKIP_NAMES:
             continue
         files.append(
             {
@@ -128,13 +137,63 @@ def upload_version(actor_id: str) -> dict:
         "sourceFiles": files,
         "buildTag": "latest",
     }
-    version = request(f"/acts/{actor_id}/versions", body=payload, method="POST")["data"]
-    print(f"        version {version.get('versionNumber')} created")
+    try:
+        version = request(f"/acts/{actor_id}/versions", body=payload, method="POST")["data"]
+        print(f"        version {version.get('versionNumber')} created (POST)")
+    except SystemExit:
+        # Version already exists -> overwrite in place so re-runs are idempotent.
+        version = request(
+            f"/acts/{actor_id}/versions/{VERSION_NUMBER}", body=payload, method="PUT"
+        )["data"]
+        print(f"        version {version.get('versionNumber')} updated (PUT)")
     return version
 
 
+def set_categories(actor_id: str) -> list[str] | None:
+    """Apify refuses to publish an Actor that has no categories.
+
+    The allowed enum changes over time (``DATA`` / ``JAPAN`` are refused by the
+    current API), so candidates are tried in order and the first accepted set is
+    kept. Returns the categories now on the Actor record.
+    """
+    current = request(f"/acts/{actor_id}")["data"]
+    if current.get("categories"):
+        return current["categories"]
+    for candidate in CATEGORY_CANDIDATES:
+        try:
+            data = request(f"/acts/{actor_id}", body={"categories": candidate}, method="PUT")["data"]
+        except SystemExit as exc:
+            last = str(exc).strip().splitlines()[-1][:120]
+            print(f"        categories {candidate} rejected: {last}")
+            continue
+        print(f"        categories set to {candidate}")
+        return data.get("categories")
+    print("        WARNING: no category candidate accepted; publish may be refused")
+    return None
+
+
+def patch_actor_schemas(actor_id: str) -> dict:
+    """Best-effort Actor-record patch applied before the build.
+
+    Apify resolves the input/output schemas from the *source files* next to
+    ``.actor/actor.json`` (``.actor/input_schema.json`` /
+    ``.actor/output_schema.json`` plus the inline ``outputSchema`` block) and
+    rejects ``outputSchema`` on the Actor record itself, so the only field worth
+    patching here is ``categories``.
+    """
+    set_categories(actor_id)
+    return request(f"/acts/{actor_id}")["data"]
+
+
 def build_and_wait(actor_id: str) -> dict:
-    build = request(f"/acts/{actor_id}/builds", body={"versionNumber": VERSION_NUMBER, "tag": "latest", "useCache": False}, method="POST")["data"]
+    # Apify's POST /acts/{id}/builds rejects a JSON body for the version
+    # selector ("Property \"version\" must be a string! Received undefined"),
+    # so the version/tag must travel as URL query parameters instead.
+    build = request(
+        f"/acts/{actor_id}/builds?version={VERSION_NUMBER}&tag=latest",
+        body={"useCache": False},
+        method="POST",
+    )["data"]
     build_id = build["id"]
     print(f"[3/6] build {build_id} started (version {build.get('versionNumber')})")
     deadline = time.time() + 1800
@@ -185,12 +244,29 @@ def build_pricing(price_usd: float) -> list[dict]:
 def set_pricing_and_publish(actor_id: str, price_usd: float, publish: bool) -> dict:
     current = request(f"/acts/{actor_id}")["data"]
     existing = current.get("pricingInfos") or []
-    pricing = build_pricing(price_usd)
+    already_priced = any(
+        (
+            ((p.get("pricingPerEvent") or {}).get("actorChargeEvents") or {})
+            .get("apify-default-dataset-item", {})
+            .get("eventPriceUsd")
+        )
+        == price_usd
+        for p in existing
+    )
+    pricing = [] if already_priced else build_pricing(price_usd)
     body: dict = {"pricingInfos": (existing + pricing) if existing else pricing}
     if publish:
         body["isPublic"] = True
+        # Apify refuses to publish an Actor without categories.
+        if not (current.get("categories") or []):
+            accepted = set_categories(actor_id)
+            if accepted:
+                body["categories"] = accepted
     request(f"/acts/{actor_id}", body=body, method="PUT")
-    print(f"[4/6] pricing appended (${price_usd}/item); [5/6] isPublic={'True' if publish else 'unchanged'}")
+    print(
+        f"[4/6] pricing {'already set' if already_priced else 'appended'} (${price_usd}/item); "
+        f"[5/6] isPublic={'True' if publish else 'unchanged'}"
+    )
     return request(f"/acts/{actor_id}")["data"]
 
 
@@ -199,13 +275,18 @@ def read_back(actor_id: str, build: dict) -> dict:
     pis = data.get("pricingInfos") or []
     latest = pis[-1] if pis else {}
     events = ((latest.get("pricingPerEvent") or {}).get("actorChargeEvents")) or {}
+    actor_def = build.get("actorDefinition") or {}
     record = {
         "actorId": actor_id,
         "name": data.get("name"),
         "isPublic": data.get("isPublic"),
+        "categories": data.get("categories"),
         "defaultBuild": (data.get("defaultRunOptions") or {}).get("build"),
         "buildNumber": build.get("buildNumber"),
         "buildStatus": build.get("status"),
+        # The publish gate rejects a default build without an output schema, so
+        # this flag must be True for isPublic to be reachable at all.
+        "buildHasOutputSchema": bool(actor_def.get("output")),
         "pricingModel": latest.get("pricingModel"),
         "datasetItemUsd": (events.get("apify-default-dataset-item") or {}).get("eventPriceUsd"),
         "startEventUsd": (events.get("apify-actor-start") or {}).get("eventPriceUsd"),
@@ -244,6 +325,7 @@ def main() -> None:
     sync_dataset()
     actor_id, _existed = ensure_actor()
     upload_version(actor_id)
+    patch_actor_schemas(actor_id)
     build = build_and_wait(actor_id)
     read_back(actor_id, build)
     set_pricing_and_publish(actor_id, args.price, publish=not args.no_publish)

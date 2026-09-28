@@ -1,0 +1,20 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Figure Demand Feature Vectors",
+  "description": "Per-SKU demand feature vectors (48 normalized dimensions) plus the schema manifest describing feature order and normalization constants.",
+  "type": "object",
+  "properties": {
+    "dataset": {
+      "type": "string",
+      "title": "Feature Vector Dataset",
+      "description": "Default dataset: one record per SKU with a named feature dictionary, canonical ordered vector and demand-score proxy.",
+      "template": "{{{links.apiDefaultDatasetUrl}}}"
+    },
+    "manifest": {
+      "type": "string",
+      "title": "Feature Schema Manifest",
+      "description": "Key-value store record FEATURE_MANIFEST: schemaVersion, featureDim, ordered featureNames, per-dimension documentation and normalization constants.",
+      "template": "{{{links.apiDefaultKeyValueStoreUrl}}}/records/FEATURE_MANIFEST"
+    }
+  }
+}
