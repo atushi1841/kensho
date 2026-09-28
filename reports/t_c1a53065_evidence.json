@@ -20,7 +20,7 @@
   "artifact_paths": [
     "/mnt/d/Project2/kensho/docs/apify-actors/README-yahoo-shopping-japan-scraper.md",
     "/mnt/d/Project2/kensho/reports/t_c1a53065_evidence.json",
-    "/mnt/d/Project2/kensho/worker_report_t_c1a53065.md"
+    "/mnt/d/Project2/kensho/reports/t_c1a53065_verification.md"
   ],
   "evidence_hashes": [
     "sha256:2648255a5332522ad6b167dcc0bdd51a9505704b31cb1d9029f02bb297711d68",
