@@ -70,6 +70,14 @@ Apify は `.actor/` ディレクトリが存在すると **`.actor/actor.json` �
 - `storages.dataset` は現行スキーマ（`views`/`fields` 必須）に適合しないため外した。
   `.actor/dataset_schema.json` はレコード定義のドキュメントとして同梱を維持。
 
+## 変更コミット（t_0b6603ab）
+$ git log --oneline -1
+8a66e14 fix(apify): publish japan-anime-figure-demand-features via .actor schema wiring
+
+実装コミット `8a66e14`（本タスク t_0b6603ab の修正）。変更ファイルは
+`.actor/actor.json`、`actor.json`、`dataset_schema.json`、
+`scripts/deploy_feature_vector_actor.py`、`reports/t_0b6603ab_*`。
+
 ## 納品データ形式（公開後の実測）
 - `vector`: 長さ48・[0,1] 正規化済みの固定順ベクトル
 - `features`: 同名48キーの辞書（`featureNames` の順序と一致）
