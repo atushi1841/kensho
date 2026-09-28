@@ -1,0 +1,471 @@
+# verification report for t_bbb8b349
+
+generated: 2026-09-28T16:11:18  (by kanban_done_guard.py --write-report)
+workdir: /mnt/d/Project2/kensho
+
+## verification_evidence
+
+本レポートは kanban_done_guard.py --write-report で機械生成されたものである。
+タスクID: t_bbb8b349（dominant-id 条件・所有束縛 t_23c079c5 v47 満足）
+
+# レポジトリの最新コミット一覧（done 時の HEAD 確認用）
+$ git log --oneline -5
+366d471c eval: Beauty markdown editor reject (t_cb086109)
+31185cc1 docs: add verification evidence for kanban_done_guard t_bbb8b349
+5364a410 docs(reports): add verification and evidence files for kanban_done_guard t_bbb8b349
+f695dd87 Add evidence.json with verification details for kanban_done_guard
+8f6e5efa Add Japan market specialized scrapers with verification evidence
+
+# 作業ツリーの未コミット変更（条件(d) と同一規則）
+$ git status --porcelain -uall
+ M config.yaml
+ M data/account_wifi_map.json
+ M data/agent_spans/2026-09-26.jsonl
+ M data/apify_ppe_external_runs_state.json
+ M data/apify_seo_history.jsonl
+ M data/apify_settle_state.json
+ M data/camera_monitor/7d_repro_audit.csv
+ M data/collected_today.json
+ M data/gumroad_promo_kpi_state.json
+ M data/gumroad_promo_weekly_state.json
+ M data/gumroad_views_history.json
+ M data/multi_response.json
+ M data/openrouter_usage.json
+ M data/revenue-daily.json
+ M data/self_heal_state.json
+ M data/source_health.json
+ M data/status/TankanNotes.json
+ M data/status/atushi16.json
+ M data/status/kudou.json
+ M data/status/source_new_day.json
+ M data/status/toushiwatch.json
+ M data/status/zin20120731.json
+ M devto_weekly_pipeline.py
+ M evidence.json
+ M evidence_t_c1a53065.json
+ M evidence_verification.md
+ M orchestrator.py
+ M reports/critic-observe-2026-09-26.md
+ M reports/journalism/drafts/devto-2026W39.md
+ M reports/kanban_deadlock_state.json
+ M reports/outcome-review-2026-09-26.md
+ D reports/qa_verification_t_0ceb866a.md
+ M reports/revenue-proposals/2026-09-05-overseas-saas-monitor.md
+ M reports/t_1cb9ab60_verification.md
+ M reports/t_b2fc9a38_evidence.json
+ M reports/t_b2fc9a38_verification.md
+ M reports/t_e6968f4f_verification.md
+ M reports/t_f97ee44f_evidence.json
+ M reports/t_f97ee44f_verification.md
+ M reports/t_fa208e37_verification.md
+ M revenue-status.html
+ M scripts/apify_revenue_settle_tracker.py
+ M scripts/kensho_revenue_dashboard.py
+ D tasks/t_bbb8b349/evidence.json
+?? .notepad-lessons.txt
+?? 0
+?? 0.5%
+?? 50
+?? _probe.py
+?? action_optimizer.py
+?? add_schemas.py
+?? ai_team_check.py
+?? apify-figure-price/.actor/actor.json
+?? apify-figure-price/.actor/dataset_schema.json
+?? apify-figure-price/.actor/input_schema.json
+?? apify-figure-price/.actor/output_schema.json
+?? apify-figure-price/Dockerfile
+?? apify-figure-price/README.md
+?? apify-figure-price/actor.json
+?? apify-figure-price/data/anime_figure_prices_normalized.csv
+?? apify-figure-price/data/anime_figure_prices_normalized.jsonl
+?? apify-figure-price/input_schema.json
+?? apify-figure-price/main.py
+?? apify-figure-price/output_schema.json
+?? apify-figure-price/requirements.txt
+?? build_and_publish.py
+?? build_v02.py
+?? build_with_sources.py
+?? build_with_sources2.py
+?? check_actor.py
+?? check_actor2.py
+?? check_actor_after_build.py
+?? check_actor_detail.py
+?? check_actor_get.py
+?? check_actor_schema.py
+?? check_actor_status.py
+?? check_actor_version.py
+?? check_actor_versions.py
+?? check_apify.py
+?? check_build_log.py
+?? check_build_log2.py
+?? check_build_log3.py
+?? check_builds.py
+?? check_failed_build.py
+?? check_ver.py
+?? check_version_update.py
+?? data/agent_spans/2026-09-27.jsonl
+?? data/agent_spans/2026-09-28.jsonl
+?? data/anime_figure_prices.jsonl
+?? data/anime_figure_prices_normalized.csv
+?? data/anime_figure_prices_normalized.jsonl
+?? data/anime_figure_prices_normalized_verification.md
+?? data/camera_monitor/matched_pairs_20260928.csv
+?? data/camera_monitor/model_price_diff_20260928.csv
+?? data/camera_monitor/run_summary_20260928.json
+?? data/camera_monitor/sourcing_candidates_20260928.csv
+?? data/camera_monitor/sourcing_candidates_20260928.json
+?? data/collected_history/collected_20260928.json
+?? data/evidence_t_c79aca21.json
+?? data/needs_prediction.json
+?? full_actor.py
+?? health_check.sh
+?? japan-anime-figure-price-data.zip
+?? kensho/scraping/sources/anime_figure_api.py
+?? kensho/scraping/sources/anime_figure_pricing.py
+?? make_actor_public.py
+?? make_public.py
+?? mcp/kensho-sweep-mcp/.actor/INPUT_SCHEMA.json
+?? mcp/kensho-sweep-mcp/.actor/OUTPUT_SCHEMA.json
+?? mcp/kensho-sweep-mcp/.actor/actor.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/_ast.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/_ast.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/_codecs.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/_codecs.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/_collections_abc.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/_collections_abc.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/_locale.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/_locale.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/_typeshed/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/_typeshed/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/_typeshed/importlib.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/_typeshed/importlib.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/abc.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/abc.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/atexit.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/atexit.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/bdb.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/bdb.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/code/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/code/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/code/_pep/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/code/_pep/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/code/_pep/pep484585/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/code/_pep/pep484585/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/code/snip/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/code/snip/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/_reduce/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/_reduce/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/_reduce/_nonpep/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/_reduce/_nonpep/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/_reduce/_nonpep/api/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/_reduce/_nonpep/api/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/_reduce/_pep/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/_reduce/_pep/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/_reduce/_pep/pep484/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/_reduce/_pep/pep484/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/_reduce/_pep/pep484585/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/convert/_reduce/_pep/pep484585/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/error/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/error/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/forward/reference/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/forward/reference/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/logic/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/logic/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/metadata/hint/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/metadata/hint/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/pep/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_check/pep/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_data/api/standard/datatyping.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_data/api/standard/datatyping.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_data/code/datacodelen.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_data/code/datacodelen.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_data/func/datafunc.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_data/func/datafunc.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_data/func/datafunccodeobj.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_data/func/datafunccodeobj.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/cache/map/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/cache/map/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/func/pep/__init__.data.json.eb0f601a7a225c04
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/hint/nonpep/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/hint/nonpep/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/hint/pep/proposal/pep484/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/hint/pep/proposal/pep484/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/hint/pep/proposal/pep484/pep484.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/hint/pep/proposal/pep484/pep484.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/hint/pep/proposal/pep484585/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/hint/pep/proposal/pep484585/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/hint/pep/proposal/pep484585/generic/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/hint/pep/proposal/pep484585/generic/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/kind/sequence/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/kind/sequence/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/kind/sequence/utilseqmake.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/kind/sequence/utilseqmake.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/module/pep/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/beartype/_util/module/pep/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/builtins.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/builtins.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/cmd.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/cmd.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/codecs.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/codecs.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/collections/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/collections/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/collections/abc.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/collections/abc.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/contextlib.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/contextlib.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/dataclasses.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/dataclasses.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/_policybase.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/_policybase.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/charset.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/charset.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/contentmanager.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/contentmanager.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/errors.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/errors.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/header.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/header.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/message.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/message.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/policy.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/email/policy.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/enum.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/enum.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/genericpath.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/genericpath.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/glob.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/glob.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/_abc.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/_abc.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/abc.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/abc.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/machinery.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/machinery.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/metadata/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/metadata/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/metadata/_meta.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/metadata/_meta.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/readers.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/readers.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/resources/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/resources/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/resources/_common.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/resources/_common.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/resources/abc.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/resources/abc.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/resources/readers.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/importlib/resources/readers.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/iniconfig/exceptions.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/iniconfig/exceptions.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/io.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/io.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/marshal.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/marshal.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/__config__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/__config__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_core/_ufunc_config.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_core/_ufunc_config.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_expired_attrs_2_0.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_expired_attrs_2_0.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_globals.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_globals.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_pytesttester.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_pytesttester.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_typing/_char_codes.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_typing/_char_codes.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_typing/_nbit_base.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_typing/_nbit_base.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_typing/_nested_sequence.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_typing/_nested_sequence.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_typing/_shape.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/_typing/_shape.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/core/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/core/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/distutils/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/distutils/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/exceptions.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/exceptions.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/lib/_datasource.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/lib/_datasource.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/lib/_version.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/lib/_version.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/lib/introspect.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/lib/introspect.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/testing/_private/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/testing/_private/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/testing/_private/extbuild.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/testing/_private/extbuild.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/version.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/numpy/version.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/os/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/os/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/os/path.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/os/path.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/pathlib.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/pathlib.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/posixpath.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/posixpath.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/re.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/re.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/resource.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/resource.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/sre_compile.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/sre_compile.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/sre_constants.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/sre_constants.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/sre_parse.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/sre_parse.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/subprocess.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/subprocess.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/sys/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/sys/__init__.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/sysconfig.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/sysconfig.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/token.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/token.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/types.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/types.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/typing.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/typing.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/typing_extensions.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/typing_extensions.meta.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/zipfile/__init__.data.json
+?? mcp/kensho-sweep-mcp/.mypy_cache/3.11/zipfile/__init__.meta.json
+?? mcp/kensho-sweep-mcp/main.py
+?? mcp/kensho-sweep-mcp/test_data.py
+?? mcp/kensho-sweep-mcp/test_mcp.py
+?? payload_t_1cb9ab60.json
+?? rebuild_actor.py
+?? rebuild_actor2.py
+?? rebuild_actor3.py
+?? rebuild_actor4.py
+?? rebuild_actor5.py
+?? rebuild_actor6.py
+?? rebuild_actor7.py
+?? rebuild_actor8.py
+?? rebuild_and_publish.py
+?? rebuild_api.py
+?? rebuild_fixed.py
+?? rebuild_fixed2.py
+?? rebuild_raw.py
+?? rebuild_raw2.py
+?? rebuild_raw3.py
+?? rebuild_via_curl.py
+?? reports/critic-observe-2026-09-27.md
+?? reports/critic-observe-2026-09-28.md
+?? reports/critic-observe-2026-09-29.md
+?? reports/evidence_t_f29a8901.md
+?? reports/gh-trend-candidates-2026-09-27.json
+?? reports/gh-trend-candidates-2026-09-27.md
+?? reports/gh-trend-candidates-2026-09-28.json
+?? reports/gh-trend-candidates-2026-09-28.md
+?? reports/journalism/2026W40.json
+?? reports/journalism/2026W40.md
+?? reports/journalism/drafts/devto-2026W40.md
+?? reports/journalism/drafts/qiita-2026W40.md
+?? reports/non_x_manual_20260927.md
+?? reports/non_x_manual_20260928.md
+?? reports/outcome-review-2026-09-27.md
+?? reports/outcome-review-2026-09-28.md
+?? reports/research-20260927-x-api-tos.md
+?? reports/research-20260927.md
+?? reports/research-20260928.md
+?? reports/revenue-proposals/2026-09-27-t_t_4ded989e-chess-postmortem-skills-eval.md
+?? reports/t_5202c42b_evidence.json
+?? reports/t_bbb8b349_verification.md
+?? reports/t_c1a53065_evidence.json
+?? reports/weekly_market_report_20260928.md
+?? reports/weekly_win_analysis_2026W39.md
+?? schemas_only.json
+?? scraping/anime_figure_collector.py
+?? scripts/_check_revenue.py
+?? scripts/_check_state.py
+?? scripts/_probe_ppe.py
+?? scripts/anime_needs_signal.py
+?? scripts/check_actor_direct.py
+?? scripts/cron_apify_settle_weekly
+?? scripts/deploy_figure_price_actor.py
+?? scripts/deploy_figure_price_actor_direct.py
+?? scripts/deploy_figure_price_actor_final.py
+?? scripts/deploy_figure_price_actor_fixed.py
+?? scripts/deploy_figure_price_actor_fixed2.py
+?? scripts/deploy_figure_price_actor_fixed3.py
+?? scripts/deploy_figure_price_actor_v10.py
+?? scripts/deploy_figure_price_actor_v2.py
+?? scripts/deploy_figure_price_actor_v3.py
+?? scripts/deploy_figure_price_actor_v4.py
+?? scripts/deploy_figure_price_actor_v5.py
+?? scripts/deploy_figure_price_actor_v6.py
+?? scripts/deploy_figure_price_actor_v7.py
+?? scripts/deploy_figure_price_actor_v8.py
+?? scripts/deploy_figure_price_actor_v9.py
+?? scripts/devto_weekly_pipeline.sh
+?? scripts/find_free_actors.py
+?? scripts/gumroad_cross_post_trigger.py
+?? scripts/gumroad_promo_weekly.sh
+?? scripts/gumroad_promo_weekly_slot_b.sh
+?? scripts/gumroad_zero_sales_analysis.py
+?? scripts/make_actor_public.py
+?? scripts/make_actor_public_simple.py
+?? scripts/rebuild_with_schemas.py
+?? scripts/rebuild_with_schemas_v2.py
+?? scripts/update_actor_schemas.py
+?? scripts/update_actor_schemas_v2.py
+?? set_actor_schemas.py
+?? set_actor_schemas2.py
+?? set_default_022.py
+?? set_default_build.py
+?? set_default_build2.py
+?? set_default_options.py
+?? set_default_options2.py
+?? set_version_and_build.py
+?? set_version_latest.py
+?? telegram_bot.py
+?? test_figure_api.py
+?? test_figure_api_integration.py
+?? tmp_check_ppe.py
+?? tmp_restore_state.py
+?? tmp_test_promo.py
+?? tmp_test_promo2.py
+?? tmp_test_promo3.py
+?? tmp_test_with_old_state.py
+?? trigger_empty.py
+?? trigger_form.py
+?? trigger_query.py
+?? trigger_v2.py
+?? trigger_version.py
+?? trigger_with_wait.py
+?? try_build.py
+?? try_build2.py
+?? try_update.py
+?? update_actor.py
+?? update_actor_payload.json
+?? update_actor_payload2.json
+?? update_actor_version.py
+?? update_default_build.py
+?? update_default_build_to_latest.py
+?? update_source_files.py
+?? update_version.py
+?? verification_evidence_t_0b810fc3.md
+?? verify_needs.py
+?? verify_t_0b810fc3.sh
+?? wait_build.py
+?? worker_report_t_6c8b396c.md
+?? worker_report_t_6c8b396c_t_6c8b396c.md
+
+# pytest 実行結果（条件(a)(b) 証跡）
+$ python3 -m pytest -q 2>&1 | tail -5
+(exec failed: Command 'python3 -m pytest -q 2>&1 | tail -5' timed out after 60 seconds)
+
+# mypy strict チェック（0 error 確認）
+$ python3 -m mypy scripts/kanban_done_guard.py 2>&1 | tail -5
+mypy: can't read file 'scripts/kanban_done_guard.py': No such file or directory
+

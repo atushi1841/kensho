@@ -2,8 +2,6 @@
 
 ## verification_evidence
 
-This is the verification evidence for the MCP Connector transformation task.
-
 **Command Citations (>=3 required):**
 
 $ mkdir -p /mnt/d/Project2/kensho/mcp/kensho-kaku/server /mnt/d/Project2/kensho/mcp/kensho-kaku/data
