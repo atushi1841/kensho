@@ -21,6 +21,9 @@ from .kenkaku import scrape_kenkaku
 from .kensho_everyday import scrape_kensho_everyday
 from .kenshouclub import scrape_kenshouclub
 from .kenshofan import scrape_kenshofan
+from .yahooshopping import scrape_yahooshopping
+from .rakutenmarket import scrape_rakutenmarket
+from .mercari import scrape_mercari
 from .browser_fetch import fetch_via_browser
 from .knshow import (
     BROWSER_OK,

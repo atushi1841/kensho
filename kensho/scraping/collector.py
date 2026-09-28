@@ -805,12 +805,33 @@ def _collect_impl(
     out(f"  アニメフィギュア価格: {len(anime_fig_items)}件")
     collected.extend(anime_fig_items)
 
+    # ── Step 2l: Yahoo! Shopping 日本市場専門コレクション──
+    out("\n[Step 2l Yahoo! Shopping] 日本市場向け商品・価格・レビュー収集...")
+    yahooshopping_items: list[dict[str, Any]] = _run_source(
+        "yahoo-shopping", scrape_yahooshopping, out, processed_set, account_keys
+    )
+    out(f"  Yahoo! Shopping: {len(yahooshopping_items)}件")
+    collected.extend(yahooshopping_items)
+
+    # ── Step 2m: Rakuten Market 日本市場専門コレクション──
+    out("\n[Step 2m Rakuten Market] 日本市場向け商品・価格・レビュー収集...")
+    rakutenmarket_items: list[dict[str, Any]] = _run_source(
+        "rakuten-market", scrape_rakutenmarket, out, processed_set, account_keys
+    )
+    out(f"  Rakuten Market: {len(rakutenmarket_items)}件")
+    collected.extend(rakutenmarket_items)
+
+    # ── Step 2n: Mercari 日本市場専門コレクション──
+    out("\n[Step 2n Mercari] 日本市場向け商品・価格・レビュー収集...")
+    mercari_items: list[dict[str, Any]] = _run_source(
+        "mercari", scrape_mercari, out, processed_set, account_keys
+    )
+    out(f"  Mercari: {len(mercari_items)}件")
+    collected.extend(mercari_items)
+
     # ★ t_442337b4 提案3: 全主要ソース（KENKAKU/KCLUB/CPMK/KEMA）がこのrunで1つも応答成功
     #   → 前日データをキャッシュ(collected.json累積)から提供継続 + アラート。fail-open。
     if health.all_primary_idle():
-        _unh: list[str] = health.unhealthy_sources()
-        out("\n[FALLBACK] 全主要ソースがこの収集runで応答失敗（全timeout/全異常skip）→ 前日データをキャッシュから提供")
-        out(f"          主要源状態: { {s: health.status_line(s) for s in PRIMARY_SOURCES} }")
         try:
             from kensho.core.notifier import notify_warning
 
@@ -849,7 +870,10 @@ def _collect_impl(
         f"ke-ma {len(kema_items)}件, twscrape {len(twscrape_items)}件, "
         f"chance.com {len(chancecom_items)}件, kensho-everyday {len(kevery_items)}件, "
         f"prtimes {len(prtimes_items)}件, kenshofan {len(kenshofan_items)}件, "
-        f"anime-figure-pricing {len(anime_fig_items)}件, 計{len(collected)}件)"
+        f"anime-figure-pricing {len(anime_fig_items)}件, "
+        f"yahoo-shopping {len(yahooshopping_items)}件, "
+        f"rakuten-market {len(rakutenmarket_items)}件, "
+        f"mercari {len(mercari_items)}件, 計{len(collected)}件)"
     )
 
     existing_collected = load_json(COLLECTED_FILE, {}).get("collected", [])
@@ -1095,6 +1119,11 @@ def _collect_impl(
         "chance.com": len(chancecom_items),
         "kensho-everyday": len(kevery_items),
         "prtimes": len(prtimes_items),
+        "kenshofan": len(kenshofan_items),
+        "anime-figure-pricing": len(anime_fig_items),
+        "yahoo-shopping": 0,
+        "rakuten-market": 0,
+        "mercari": 0,
     }
     if not _research_ok:
         # research外 run は twscrape を評価していない（未試行）→ sentinel に渡さない。

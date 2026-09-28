@@ -1,0 +1,28 @@
+{
+  "manifest_version": "0.4",
+  "name": "kensho-kclub",
+  "display_name": "Kensho Kenshou Club Sweepstakes MCP",
+  "version": "1.0.0",
+  "buildTag": "latest",
+  "description": "Read-only MCP server exposing the kensho Japan X/Twitter sweepstakes dataset from kenshou.club (additional sweepstakes source for Kensho collection). Kenshou.club archives tagged with 'twitterで応募' provides 50-200+ sweepstakes entries per run.",
+  "readme": "./README.md",
+  "input": {
+    "title": "Input schema for kensho-kclub",
+    "description": "kensho-kclub is a read-only MCP server. It requires no input parameters — start it and connect an MCP client to discover its tools. All data is bundled locally; no network, no API key, no account.",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {},
+    "required": []
+  },
+  "output": {
+    "actorOutputSchemaVersion": 1,
+    "title": "Output schema of kensho-kclub",
+    "description": "kensho-kclub exposes a Streamable HTTP MCP server on the Apify standby container. It produces no dataset or key-value store output; its result is the MCP tool interface itself. Connect an MCP client to the standby URL and call sweepstakes tools.",
+    "type": "object",
+    "properties": {}
+  },
+  "usesStandbyMode": false,
+  "defaultMemoryMbytes": 1024,
+  "minMemoryMbytes": 256,
+  "maxMemoryMbytes": 4096
+}
