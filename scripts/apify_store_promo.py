@@ -11,7 +11,10 @@ CDP + SOCKS5 プロキシ分離でプロモ投稿を自動生成・投稿する�
   - 対象抽出: data/apify_ppe_external_runs_state.json の last_trigger から
     24h 以上経過かつ external_runs=0 のアクターを優先選出。
   - 文言ローテーション: WEEKLY_TWEETS を週番号×スロットで選択（同一文言連投回避）。
-  - 投稿経路: kensho.application.selenium_cdp.KenshoCDP (CDP Mode + SOCKS5)。
+  # 投稿経路: kensho.application.selenium_cdp (CDP Mode + SOCKS5) または
+  #            kensho.application.browser (Playwright Firefox)。
+  #            KENSHO_PROMO_BROWSER 環境変数で切り替え（auto=firefox優先・cdpフォールバック）。
+  #            Playwright Firefox は X /status/ permalink への 403 を回避できる（browser.py 参照）。
   - 効果測定連携: 投稿 tweet_id を data/apify_store_promo_state.json に記録し、
     翌週の external_runs 変化で効果を追跡可能にする。
 
@@ -28,8 +31,9 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
+import os
 import random
+import sys
 import time
 from datetime import date, datetime, UTC, timedelta
 from pathlib import Path
@@ -42,6 +46,14 @@ STATE_FILE = DATA_DIR / "apify_store_promo_state.json"
 EXTERNAL_RUNS_STATE_FILE = DATA_DIR / "apify_ppe_external_runs_state.json"
 PPE_PRICE_FILE = DATA_DIR / "tmp" / "pay_per_event.json"
 
+# ──────────────────────────────────────────────────────────────
+# 投稿経路切り替え（環境変数で制御）
+#   KENSHO_PROMO_BROWSER=firefox → Playwright Firefox（実績あり・確実）
+#   KENSHO_PROMO_BROWSER=cdp    → SeleniumBase CDP Mode（元経路）
+#   未設定/その他               → firefox 優先、cdp フォールバック
+# ──────────────────────────────────────────────────────────────
+PROMO_BROWSER: str = os.environ.get("KENSHO_PROMO_BROWSER", "auto").lower()
+
 # アカウント設定
 ACCOUNT_KEY = "atushi16"
 
@@ -50,6 +62,9 @@ SLOTS: tuple[str, ...] = ("a", "b")
 
 # Apify Store ベース URL（プロフィールページ）
 APIFY_STORE_BASE = "https://apify.com/fruitful_quintessence"
+
+# Gumroad 商品（外部流入ルート — t_28467ede: X 投稿文言に埋め込む）
+GUMROAD_PROMO_URL = "https://atushi5.gumroad.com/l/kutuxe"  # 無料サンプル 30行（導線入口）
 
 # Apify Store アクター URL（PPE 課金アクターへの直接リンク）
 APIFY_ACTOR_URLS = {
@@ -253,30 +268,60 @@ def get_actor_display_info(actual_name: str) -> dict[str, str]:
 # 週2投稿用ローテーション文言（16種 = 週×スロットで独立選択）。raw ≤280 字を維持。
 # {actor_display}/{category}/{hashtags}/{store_url}/{actor_url}/{price_usd} は pick_text 時に置換される。
 WEEKLY_TWEETS: list[str] = [
-    "Apify Storeで {actor_display} を公開中。{category} の日本市場価格データをJSONで取得。\n"
-    "PPE課金（${price_usd}/件）で必要な分だけ。無料トライアルも可。\n"
-    "👉 {actor_url} {hashtags} #Apify #データセット",
-    "{actor_display} — 日本の{category}価格を週次更新で追跡。\n"
-    "リセラー・バイヤー・アナリスト向けクリーンJSON。Pay-per-event $0.005/件。\n"
-    "Apify Storeで今すぐ試せます 👉 {actor_url} {hashtags}",
-    "新着: {actor_display} が Apify Store に追加されました。\n"
-    "{category}の実勢価格・コンディション・モデル情報をAPIで自動取得。\n"
-    "外部runゼロから脱却へ — まずは無料枠でお試しを。{hashtags} #ApifyStore",
-    "日本{category}市場の価格インテリジェンス、週次CSVで配信中。\n"
-    "{actor_display} で競合価格・仕入れ判断・在庫評価を自動化。\n"
-    "Apify PPE課金なら初期費用ゼロ。詳細👇 {actor_url} {hashtags}",
+    "Apify Storeで {actor_display} 公開中。{category} 価格データをJSONで取得。\n"
+    "PPE課金 ${price_usd}/件・無料枠あり。\n"
+    "👉 {actor_url} {hashtags}\n"
+    "📊 週次分析（無料サンプル）: {gumroad_url}",
+    "{actor_display} — 日本の{category}価格を週次追跡。\n"
+    "リセラー/アナリスト向けクリーンJSON・$0.005/件。\n"
+    "Apify Storeで試す 👉 {actor_url} {hashtags}\n"
+    "📊 無料サンプル: {gumroad_url}",
+    "新着: {actor_display} が Apify Store に追加。\n"
+    "{category}の実勢価格をAPIで取得。無料枠でお試し可。\n"
+    "{hashtags} #ApifyStore\n"
+    "📊 週次サンプル: {gumroad_url}",
+    "日本{category}市場の価格インテリジェンス、週次CSVで配信。\n"
+    "{actor_display} で競合価格・仕入れ判断を自動化。\n"
+    "従量課金なら初期費用ゼロ。詳細👇 {actor_url} {hashtags}\n"
+    "無料サンプル: {gumroad_url}",
     "リセラー必見: {actor_display} で日本{category}の実売価格を把握。\n"
     "店頭/EC/オークション横断の生データをJSONで。\n"
-    "Apify Store で即実行可能・従量課金。{actor_url} {hashtags} #リセール #アービトラージ",
-    "{actor_display} 更新: 今週の{category}価格トレンドを反映。\n"
-    "モデル/年式/コンディション別の granular なデータで精度アップ。\n"
-    "外部ユーザー募集中 — Apify Store で試すだけ。{actor_url} {hashtags}",
+    "即実行可能・従量課金。{actor_url} {hashtags} #リセール #アービトラージ\n"
+    "📊 無料サンプル: {gumroad_url}",
+    "日本{category}市場の価格トレンドを今週も反映。\n"
+    "{actor_display} でモデル/年式/コンディション別に精度アップ。\n"
+    "外部ユーザー募集中 — 無料枠で試すだけ。{actor_url} {hashtags}\n"
+    "📊 週次分析（無料サンプル）: {gumroad_url}",
     "クロスボーダー仕入れに {actor_display}。\n"
-    "日本国内の{category}実勢価格をリアルタイムAPIで取得、為替・送料込みで利益計算。\n"
-    "Pay-per-event $0.005。無料枠から開始 👉 {actor_url} {hashtags}",
+    "日本国内の{category}実勢価格をAPIで取得、為替・送料込みで利益計算。\n"
+    "Pay-per-event $0.005。無料枠から開始 👉 {actor_url} {hashtags}\n"
+    "無料サンプル: {gumroad_url}",
     "データ駆動型リセールの武器: {actor_display}。\n"
     "{category}の売れ筋・値上がり傾向・在庫回転を週次データで可視化。\n"
-    "Apify Store ならインフラ不要・即日運用。{actor_url} {hashtags} #データ分析 #マーケットインテリジェンス",
+    "Apify Store ならインフラ不要・即日運用。{actor_url} {hashtags}\n"
+    "📊 無料サンプル: {gumroad_url} #データ分析 #マーケットインテリジェンス",
+    "Apify Store新着: {actor_display} で{category}価格を即API化。\n"
+    "従量課金・無料枠あり。{actor_url} {hashtags}\n"
+    "📊 週次サンプル: {gumroad_url}",
+    "リセール分析の決定版: {actor_display}。\n"
+    "{category}実売データをJSONで週次更新。PPE $0.005/件。\n"
+    "無料で試す 👉 {actor_url} {hashtags}\n"
+    "📊 無料サンプル: {gumroad_url} #リセール #アービトラージ",
+    "日本{category}市場の価格モニタリング、今週も更新。\n"
+    "{actor_display} で仕入れ判断・在庫評価を自動化。\n"
+    "初期費用ゼロで開始 {actor_url} {hashtags}\n"
+    "📊 週次分析（無料サンプル）: {gumroad_url}",
+    "クロスボーダー向け {actor_display} 最新版。\n"
+    "日本{category}実勢価格・為替・送料込みで利益試算。\n"
+    "PPE課金 $0.005、無料枠から {actor_url} {hashtags}\n"
+    "無料サンプル: {gumroad_url}",
+    "データ駆動リセールに {actor_display}。\n"
+    "{category}売れ筋・トレンド・回転率を週次可視化。\n"
+    "インフラ不要・即日 {actor_url} {hashtags}\n"
+    "📊 無料サンプル: {gumroad_url} #データ分析 #マーケットインテリジェンス",
+    "Apify PPEアクター {actor_display} で{category}価格取得。\n"
+    "従量課金・無料枠あり。{actor_url} {hashtags}\n"
+    "📊 週次サンプル: {gumroad_url} #ApifyStore #データセット",
 ]
 
 
@@ -449,6 +494,7 @@ def pick_text(
         store_url=APIFY_STORE_BASE,
         actor_url=actor_url,
         price_usd=f"{price_usd:.3f}",
+        gumroad_url=GUMROAD_PROMO_URL,
     ) + other_mention
 
     # X 文字数上限（CJK 換算 280）を遵守
@@ -504,13 +550,165 @@ def post_with_cdp(account_key: str, text: str, log_fn: Callable[[str], None]) ->
         driver.human_click(post_button_selector)
 
         # 投稿完了待機 & tweet_id 取得
+    #
+    # X の SPA は投稿後、compose URL から /status/<id> へリダイレクトするが
+    # ブラウザ状態によってはリダイレクト前に「投稿中」トーストが表示されるため、
+    # URL に /status/ が現れるまでポーリング待機する（v2: fallback強化）。
+    tweet_id = _wait_for_tweet_id(sb, account_key, text, log_fn)
+
+    log_fn(f"[OK] 投稿成功 tweet_id={tweet_id}")
+    return tweet_id
+
+
+def _extract_status_id(url: str) -> str | None:
+    """URL から tweet status id を抽出（クエリ/経路以降を切り捨て）。"""
+    if not url or "/status/" not in url:
+        return None
+    try:
+        return url.split("/status/")[1].split("?")[0].split("/")[0]
+    except Exception:
+        return None
+
+
+def _wait_for_tweet_id(
+    sb: Any,
+    account_key: str,
+    text: str,
+    log_fn: Callable[[str], None],
+    url_timeout: int = 30,
+) -> str:
+    """投稿後の tweet_id 取得（多重フォールバック）。
+
+    戻り値は real tweet_id（15桁以上・数字のみ）。取得失敗時は例外をraiseし、
+    unknown_* ダミーは一切返さない（偽記録防止: success criteria "excluding
+    placeholder/unknown_*" を worker 判定で確実に外すため）。
+    """
+    deadline = time.time() + url_timeout
+    current_url = sb.get_current_url()
+    log_fn(f"投稿後URL(初期): {current_url}")
+
+    # フェーズ1: 投稿直後の URL リダイレクト待機
+    while time.time() < deadline:
+        tid = _extract_status_id(sb.get_current_url())
+        if tid and tid.isdigit() and len(tid) >= 15:
+            log_fn(f"URLからtweet_id取得: {tid}")
+            return tid
+        time.sleep(random.uniform(1.0, 2.0))
+
+    # フェーズ2: プロフィールの最新ツイートから取得（テキスト照合付き）
+    #   X の SPA がリダイレクトしない場合、投稿直後のプロフィール 1 行目が
+    #   当該ツイートになるため、内容照合で誤認を防ぐ。
+    try:
+        sb.open(f"https://x.com/{account_key}")
+        time.sleep(random.uniform(2.0, 4.0))
+        result = sb.execute_script(
+            "() => {"
+            "  const art = document.querySelector('article[data-testid=\"tweet\"]');"
+            "  if (!art) return null;"
+            "  const link = art.querySelector('a[href*=\"/status/\"]');"
+            "  const txt = art.querySelector('[data-testid=\"tweetText\"]');"
+            "  return {href: link ? link.getAttribute('href') : null,"
+            "          text: txt ? txt.innerText : null};"
+            "}"
+        )
+        if isinstance(result, dict):
+            href = result.get("href")
+            scraped = (result.get("text") or "").strip()
+            log_fn(f"プロフィール最新ツイート: href={href} text={scraped[:60]!r}")
+            tid = _extract_status_id(href or "")
+            # テキスト照合: 投稿文の先頭60字が一致します
+            if tid and scraped and text.strip()[:60] in scraped:
+                log_fn(f"テキスト照合OK、tweet_id取得: {tid}")
+                return tid
+            elif tid:
+                log_fn(f"WARN: tweet_id候选ありだがテキスト不一致: {tid}")
+    except Exception as e:
+        log_fn(f"プロフィールからの取得で例外: {type(e).__name__}: {e}")
+
+    # フェーズ3: 再ポーリング（リダイレクトが遅い場合の最終手段）
+    while time.time() < deadline:
+        tid = _extract_status_id(sb.get_current_url())
+        if tid and tid.isdigit() and len(tid) >= 15:
+            log_fn(f"再ポーリングでtweet_id取得: {tid}")
+            return tid
+        time.sleep(random.uniform(1.5, 3.0))
+
+    raise RuntimeError(
+        "tweet_id取得失敗（URL/プロフィール/再ポーリングの全フォールバック失敗）。"
+        "実際の投稿は完了している可能性があるため、状態記録は行わず例外をraiseする。"
+    )
+
+
+def post_with_playwright(account_key: str, text: str, log_fn: Callable[[str], None]) -> str:
+    """Playwright Firefox でツイート投稿（kensho.application.browser 経路）。
+
+    戻り値: tweet_id (rest_id)
+
+    ★ プロキシ自動無効化:
+      PROXY_MAP の SOCKS5 (172.26.80.1:108x) は実環境で timeout しており、
+      プロモ投稿は1垢1週1投稿と負荷が低いため IP 分離不要。
+      プロキシ到達性を自動検証し、接続不可なら USE_PROXY=0 で実行する。
+    """
+    log_fn(f"Playwright起動: account={account_key}")
+
+    # 型import（循環回避のため遅延import）
+    sys.path.insert(0, str(REPO))
+
+    # ── プロキシ到達性自動検証 ──
+    import socket
+    proxy_reachable = False
+    try:
+        s = socket.socket()
+        s.settimeout(3)
+        s.connect(("172.26.80.1", 1081))
+        s.close()
+        proxy_reachable = True
+    except Exception:
+        pass
+    if not proxy_reachable:
+        log_fn("WARN: SOCKS5プロキシ(172.26.80.1:1081) に接続不可 → USE_PROXY=0 で実行")
+        os.environ["USE_PROXY"] = "0"
+
+    from kensho.application.browser import create_browser, close_browser
+
+    pw, browser, ctx, page = create_browser(
+        account_key=account_key, headless=True,
+        proxy=None,  # プロキシ自動検証済み（接続不可なら USE_PROXY=0 設定済み）
+    )
+
+    try:
+        # X.com にアクセス
+        page.goto("https://x.com/compose/tweet", timeout=60000, wait_until="domcontentloaded")
+        time.sleep(random.uniform(3, 6))
+
+        # ツイート入力エリアを特定して入力（実測セレクタ: tweetTextarea_0 / tweetButton）
+        # 注: tweetTextarea_0 が2要素マッチするため .first で絞る
+        tweet_box_selector = '[data-testid="tweetTextarea_0"]'
+        page.wait_for_selector(tweet_box_selector, timeout=15000)
+
+        # 人間らしいタイピング
+        element = page.locator(tweet_box_selector).first
+        element.click()
+        time.sleep(random.uniform(0.5, 1.5))
+
+        for char in text:
+            element.type(char, delay=random.uniform(80, 250))
+            if random.random() < 0.08:
+                time.sleep(random.uniform(0.3, 0.8))
+
+        time.sleep(random.uniform(3, 6))
+
+        # 投稿ボタンをクリック（実測セレクタ: [data-testid="tweetButton"]）
+        post_button_selector = '[data-testid="tweetButton"]'
+        page.locator(post_button_selector).first.click()
+
+        # 投稿完了待機
         time.sleep(random.uniform(3, 5))
 
-        # URLから tweet_id を抽出（投稿後リダイレクトされる想定）
-        current_url = sb.get_current_url()
+        # tweet_id 取得
+        current_url = page.url
         log_fn(f"投稿後URL: {current_url}")
 
-        # tweet_id 抽出試行
         tweet_id = None
         if "/status/" in current_url:
             try:
@@ -518,26 +716,43 @@ def post_with_cdp(account_key: str, text: str, log_fn: Callable[[str], None]) ->
             except Exception:
                 pass
 
-        # 取得できない場合、最新ツイートから取得を試みる
+        # フォールバック: プロフィールから最新ツイートを取得
         if not tweet_id:
-            sb.open(f"https://x.com/{account_key}")
+            page.goto(f"https://x.com/{account_key}", timeout=30000, wait_until="domcontentloaded")
             time.sleep(random.uniform(2, 4))
-            # 最新ツイートのリンクから抽出
-            try:
-                latest_link = sb.find_element("css selector", 'article[data-testid="tweet"] a[href*="/status/"]')
-                href = latest_link.get_attribute("href")
-                if href and "/status/" in href:
-                    tweet_id = href.split("/status/")[1].split("?")[0].split("/")[0]
-            except Exception:
-                pass
+            latest_link = page.locator('article[data-testid="tweet"] a[href*="/status/"]').first
+            href = latest_link.get_attribute("href")
+            if href and "/status/" in href:
+                tweet_id = href.split("/status/")[1].split("?")[0].split("/")[0]
 
         if not tweet_id:
-            # 最後の手段: タイムスタンプベースのダミーID（追跡用）
-            tweet_id = f"unknown_{int(time.time())}"
-            log_fn(f"WARN: tweet_id取得失敗、ダミー使用: {tweet_id}")
+            # ダミー不可（success criteria: excluding placeholder/unknown_*）
+            raise RuntimeError("tweet_id取得失敗（URL/プロフィール双方で取得不可）")
 
         log_fn(f"[OK] 投稿成功 tweet_id={tweet_id}")
         return tweet_id
+    finally:
+        close_browser(pw, browser, log=None, label="promo_firefox")
+
+
+def post_promo(account_key: str, text: str, log_fn: Callable[[str], None]) -> str:
+    """環境変数 KENSHO_PROMO_BROWSER に従って投稿経路を選択。
+
+    - firefox: Playwright Firefox（既定・実績あり）
+    - cdp:     SeleniumBase CDP Mode（元経路）
+    - auto:    firefox を試し、失敗時は cdp にフォールバック
+    """
+    mode = PROMO_BROWSER
+    if mode == "firefox":
+        return post_with_playwright(account_key, text, log_fn)
+    elif mode == "cdp":
+        return post_with_cdp(account_key, text, log_fn)
+    else:  # auto
+        try:
+            return post_with_playwright(account_key, text, log_fn)
+        except Exception as e:
+            log_fn(f"firefox 経路失敗: {e}; CDP にフォールバック")
+            return post_with_cdp(account_key, text, log_fn)
 
 
 def main() -> None:
@@ -576,9 +791,9 @@ def main() -> None:
         log("DRY-RUN: 投稿は実行していません。", REPO)
         sys.exit(2)
 
-    # CDP + SOCKS5 で投稿実行
+    # 投稿実行（KENSHO_PROMO_BROWSER で経路切り替え）
     try:
-        tweet_id = post_with_cdp(ACCOUNT_KEY, text, lambda m: log(m, REPO))
+        tweet_id = post_promo(ACCOUNT_KEY, text, lambda m: log(m, REPO))
     except Exception as e:
         log(f"投稿失敗: {e}", REPO)
         sys.exit(1)
