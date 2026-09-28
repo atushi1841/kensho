@@ -43,10 +43,10 @@
     "/mnt/d/Project2/kensho/scripts/deploy_feature_vector_actor.py"
   ],
   "evidence_hashes": {
-    "reports/t_0b6603ab_verification.md": "sha256:2a03a64293cdb8747b50760ce9a75c6e14068edbfeb5ff7969d6573bdb5350f9",
-    "apify-figure-feature-vectors/.actor/actor.json": "sha256:e7bbf7972b8d2c9bf8cb09a3ba624f901668d03f6055c361a8d8c994004ff5d1",
-    "apify-figure-feature-vectors/actor.json": "sha256:4cdefdf75af01d651e0eda5d0978ea6e63169c1d7acea7824445546508bcb466",
-    "scripts/deploy_feature_vector_actor.py": "sha256:f54fa5a69dd358e53c7b0c0644f9956dcacd421fa9b4b99dac21d6e13390a545"
+    "reports/t_0b6603ab_verification.md": "2a03a64293cdb8747b50760ce9a75c6e14068edbfeb5ff7969d6573bdb5350f9",
+    "apify-figure-feature-vectors/.actor/actor.json": "e7bbf7972b8d2c9bf8cb09a3ba624f901668d03f6055c361a8d8c994004ff5d1",
+    "apify-figure-feature-vectors/actor.json": "4cdefdf75af01d651e0eda5d0978ea6e63169c1d7acea7824445546508bcb466",
+    "scripts/deploy_feature_vector_actor.py": "f54fa5a69dd358e53c7b0c0644f9956dcacd421fa9b4b99dac21d6e13390a545"
   },
   "changed_files": [
     "apify-figure-feature-vectors/.actor/actor.json",
