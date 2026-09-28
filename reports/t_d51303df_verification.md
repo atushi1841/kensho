@@ -3,9 +3,7 @@
 ## verification_evidence
 
 ### 1. Apify PPE 外部run自動起動
-```bash
 $ python3 scripts/apify_ppe_external_runner.py --priority 1
-```
 [2026-09-28 12:54:13 UTC] Apify PPE external runner start — owner=VMz6nlpHoGIjTeSXS
   [TRIGGERED] japan-used-camera-market-scraper: run=6sf6qGhg status=ready price=$0.005
   [TRIGGERED] japan-watch-market-scraper: run=Egc2S6qd status=ready price=$0.005
@@ -15,11 +13,10 @@ $ python3 scripts/apify_ppe_external_runner.py --priority 1
 ✓ state 保存: /mnt/d/Project2/kensho/data/apify_ppe_external_runs_state.json
 ✓ revenue-daily.json に apify_ppe_external_runs 追記
 Targeted: 5 | Triggered: 5 | Failed: 0 | Skipped: 0
+Estimated revenue (if all succeed): $0.0250
 
 ### 2. 実績収益追跡
-```bash
 $ python3 scripts/apify_revenue_settle_tracker.py
-```
 [2026-09-28 12:55:00 UTC] Apify Revenue Settle Tracker start
   Estimated revenue (from latest run): $0.025000
   Triggered actors: 5
@@ -31,34 +28,26 @@ $ python3 scripts/apify_revenue_settle_tracker.py
 ✓ KPI 書き込み: /mnt/d/Project2/kensho/data/revenue-daily.json (sub-object + top-level)
 
 ### 3. 収益ダッシュボード反映
-```bash
 $ python3 scripts/kensho_revenue_dashboard.py
-```
 ✓ revenue-status.html 生成完了 (26 entries)
   出力: /mnt/d/Project2/kensho/revenue-status.html
 
 ### 4. 実績KPI確認
-```bash
 $ python3 /tmp/check_after.py
-```
 Has apify_verified_revenue_usd: True  (value: 1.8)
 Has apify_settle_status: True  (value: completed)
 Has apify_verified_charged_items: True  (value: 360)
 Has apify_ppe_external_runs: True  (triggered 5 actors)
 
 ### 5. HTMLダッシュボード確認
-```bash
 $ python3 /tmp/check_html.py
-```
 実績収益（通貨 USD）: $1.80
 決済状況: completed
 課金item数: 360
 外部run数: 5
 
 ### 6. Gumroad販促状況確認
-```bash
 $ python3 /tmp/check_summary.py
-```
 Gumroad views history keys: ['2026-09-25', '2026-09-26', '2026-09-27', '2026-09-28']
 Gumroad weekly state: 2026-W39 slot a (9/26), 2026-W40 slot a (9/28)
 
