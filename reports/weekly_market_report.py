@@ -36,6 +36,42 @@ GUMROAD_TOKEN = os.environ.get("GUMROAD_TOKEN", "")
 PRODUCT_ID = "VoJxWx8UC0KN7lDRsOts7A=="
 GUMROAD_API = "https://api.gumroad.com/v2"
 
+# Apify Store クロスプロモーション用
+APIFY_STORE_BASE = "https://apify.com/fruitful_quintessence"
+APIFY_ACTOR_URLS = {
+    "japan-used-camera-market-scraper": "https://apify.com/fruitful_quintessence/japan-used-camera-market-scraper",
+    "japan-watch-market-scraper": "https://apify.com/fruitful_quintessence/japan-watch-market-scraper",
+    "japan-luxury-brand-market-scraper": "https://apify.com/fruitful_quintessence/japan-luxury-brand-market-scraper",
+    "japan-used-instrument-market-scraper": "https://apify.com/fruitful_quintessence/japan-used-instrument-market-scraper",
+    "japan-offmall-market-scraper": "https://apify.com/fruitful_quintessence/japan-offmall-market-scraper",
+    "surugaya-japan-hobby-prices": "https://apify.com/fruitful_quintessence/surugaya-japan-hobby-prices",
+    "mandarake-auction-scraper": "https://apify.com/fruitful_quintessence/mandarake-auction-scraper",
+    "tackleberry-japan-fishing-tackle-scraper": "https://apify.com/fruitful_quintessence/tackleberry-japan-fishing-tackle-scraper",
+    "yahoo-auctions-japan-scraper": "https://apify.com/fruitful_quintessence/yahoo-auctions-japan-scraper",
+    "dlsite-scraper": "https://apify.com/fruitful_quintessence/dlsite-scraper",
+    "dmm-scraper": "https://apify.com/fruitful_quintessence/dmm-scraper",
+    "kitamura-japan-used-camera-scraper": "https://apify.com/fruitful_quintessence/kitamura-japan-used-camera-scraper",
+    "jackroad-used-watch-scraper": "https://apify.com/fruitful_quintessence/jackroad-used-watch-scraper",
+    "komehyo-japan-brand-scraper": "https://apify.com/fruitful_quintessence/komehyo-japan-brand-scraper",
+    "eurostat-indicators": "https://apify.com/fruitful_quintessence/eurostat-indicators",
+    "world-bank-indicators": "https://apify.com/fruitful_quintessence/world-bank-indicators",
+    "goo-net-car-scraper": "https://apify.com/fruitful_quintessence/goo-net-car-scraper",
+    "biglemon-machinery-scraper": "https://apify.com/fruitful_quintessence/biglemon-machinery-scraper",
+    "digimart-japan-used-instrument-scraper": "https://apify.com/fruitful_quintessence/digimart-japan-used-instrument-scraper",
+    "golfpartner-used-club-scraper": "https://apify.com/fruitful_quintessence/golfpartner-used-club-scraper",
+}
+
+# 市場名 → Apify actor 実名マッピング（クロスプロモーション用）
+MARKET_TO_ACTOR = {
+    "iosys-japan-used-smartphone-scraper": "iosys-japan-used-smartphone-scraper",
+    "jackroad-used-watch-scraper": "jackroad-used-watch-scraper",
+    "japan-used-instrument-market-scraper": "japan-used-instrument-market-scraper",
+    "kitamura-japan-used-camera-scraper": "kitamura-japan-used-camera-scraper",
+    "komehyo-japan-brand-scraper": "komehyo-japan-brand-scraper",
+    "mandarake-auction-scraper": "mandarake-auction-scraper",
+    "tackleberry-japan-fishing-tackle-scraper": "tackleberry-japan-fishing-tackle-scraper",
+}
+
 MARKET_NAMES = {
     "iosys-japan-used-smartphone-scraper": "中古スマホ・タブレット（アイオシス）",
     "jackroad-used-watch-scraper": "中古腕時計（ジャンクロード）",
@@ -181,7 +217,25 @@ def generate_report() -> tuple[str, dict]:
             "change_pct": pct_change if prev_stats["median"] > 0 else None,
         }
 
+    # Apify Store クロスプロモーションリンクを追加
     lines += [
+        "",
+        "## 関連データソース (Apify Store)",
+        "各市場の詳細データは Apify Store の PPE (Pay-per-event) アクターで取得可能です。従量課金で無料枠から開始できます。",
+        "",
+    ]
+    
+    for market_key in sorted(MARKET_NAMES.keys()):
+        if market_key in MARKET_TO_ACTOR:
+            actor_name = MARKET_TO_ACTOR[market_key]
+            actor_url = APIFY_ACTOR_URLS.get(actor_name, APIFY_STORE_BASE)
+            market_name = MARKET_NAMES[market_key]
+            lines.append(f"- [{market_name}]({actor_url}) — Apify Store で詳細データを取得")
+
+    lines += [
+        "",
+        "---",
+        "全アクター一覧: " + APIFY_STORE_BASE,
         "",
         "## 注記",
         "- 中央値は価格の中央値（外れ値影響を回避）",

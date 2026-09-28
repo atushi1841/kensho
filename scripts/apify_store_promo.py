@@ -48,6 +48,33 @@ ACCOUNT_KEY = "atushi16"
 # 週2投稿用スロット（月曜↔金曜で4日間隔・BOT検知回避）
 SLOTS: tuple[str, ...] = ("a", "b")
 
+# Apify Store ベース URL（プロフィールページ）
+APIFY_STORE_BASE = "https://apify.com/fruitful_quintessence"
+
+# Apify Store アクター URL（PPE 課金アクターへの直接リンク）
+APIFY_ACTOR_URLS = {
+    "japan-used-camera-market-scraper": "https://apify.com/fruitful_quintessence/japan-used-camera-market-scraper",
+    "japan-watch-market-scraper": "https://apify.com/fruitful_quintessence/japan-watch-market-scraper",
+    "japan-luxury-brand-market-scraper": "https://apify.com/fruitful_quintessence/japan-luxury-brand-market-scraper",
+    "japan-used-instrument-market-scraper": "https://apify.com/fruitful_quintessence/japan-used-instrument-market-scraper",
+    "japan-offmall-market-scraper": "https://apify.com/fruitful_quintessence/japan-offmall-market-scraper",
+    "surugaya-japan-hobby-prices": "https://apify.com/fruitful_quintessence/surugaya-japan-hobby-prices",
+    "mandarake-auction-scraper": "https://apify.com/fruitful_quintessence/mandarake-auction-scraper",
+    "tackleberry-japan-fishing-tackle-scraper": "https://apify.com/fruitful_quintessence/tackleberry-japan-fishing-tackle-scraper",
+    "yahoo-auctions-japan-scraper": "https://apify.com/fruitful_quintessence/yahoo-auctions-japan-scraper",
+    "dlsite-scraper": "https://apify.com/fruitful_quintessence/dlsite-scraper",
+    "dmm-scraper": "https://apify.com/fruitful_quintessence/dmm-scraper",
+    "kitamura-japan-used-camera-scraper": "https://apify.com/fruitful_quintessence/kitamura-japan-used-camera-scraper",
+    "jackroad-used-watch-scraper": "https://apify.com/fruitful_quintessence/jackroad-used-watch-scraper",
+    "komehyo-japan-brand-scraper": "https://apify.com/fruitful_quintessence/komehyo-japan-brand-scraper",
+    "eurostat-indicators": "https://apify.com/fruitful_quintessence/eurostat-indicators",
+    "world-bank-indicators": "https://apify.com/fruitful_quintessence/world-bank-indicators",
+    "goo-net-car-scraper": "https://apify.com/fruitful_quintessence/goo-net-car-scraper",
+    "biglemon-machinery-scraper": "https://apify.com/fruitful_quintessence/biglemon-machinery-scraper",
+    "digimart-japan-used-instrument-scraper": "https://apify.com/fruitful_quintessence/digimart-japan-used-instrument-scraper",
+    "golfpartner-used-club-scraper": "https://apify.com/fruitful_quintessence/golfpartner-used-club-scraper",
+}
+
 
 def week_key(d: date) -> str:
     """ISO 週キー（例: 2026-W39）。週次 dedup の単位。"""
@@ -224,32 +251,32 @@ def get_actor_display_info(actual_name: str) -> dict[str, str]:
 
 
 # 週2投稿用ローテーション文言（16種 = 週×スロットで独立選択）。raw ≤280 字を維持。
-# {actor_display}/{category}/{hashtags}/{store_url}/{price_usd} は pick_text 時に置換される。
+# {actor_display}/{category}/{hashtags}/{store_url}/{actor_url}/{price_usd} は pick_text 時に置換される。
 WEEKLY_TWEETS: list[str] = [
     "Apify Storeで {actor_display} を公開中。{category} の日本市場価格データをJSONで取得。\n"
     "PPE課金（${price_usd}/件）で必要な分だけ。無料トライアルも可。\n"
-    "👉 https://apify.com/fruitful_quintessence {hashtags} #Apify #データセット",
+    "👉 {actor_url} {hashtags} #Apify #データセット",
     "{actor_display} — 日本の{category}価格を週次更新で追跡。\n"
     "リセラー・バイヤー・アナリスト向けクリーンJSON。Pay-per-event $0.005/件。\n"
-    "Apify Storeで今すぐ試せます 👉 https://apify.com/fruitful_quintessence {hashtags}",
+    "Apify Storeで今すぐ試せます 👉 {actor_url} {hashtags}",
     "新着: {actor_display} が Apify Store に追加されました。\n"
     "{category}の実勢価格・コンディション・モデル情報をAPIで自動取得。\n"
     "外部runゼロから脱却へ — まずは無料枠でお試しを。{hashtags} #ApifyStore",
     "日本{category}市場の価格インテリジェンス、週次CSVで配信中。\n"
     "{actor_display} で競合価格・仕入れ判断・在庫評価を自動化。\n"
-    "Apify PPE課金なら初期費用ゼロ。詳細👇 {hashtags}",
+    "Apify PPE課金なら初期費用ゼロ。詳細👇 {actor_url} {hashtags}",
     "リセラー必見: {actor_display} で日本{category}の実売価格を把握。\n"
     "店頭/EC/オークション横断の生データをJSONで。\n"
-    "Apify Store で即実行可能・従量課金。{hashtags} #リセール #アービトラージ",
+    "Apify Store で即実行可能・従量課金。{actor_url} {hashtags} #リセール #アービトラージ",
     "{actor_display} 更新: 今週の{category}価格トレンドを反映。\n"
     "モデル/年式/コンディション別の granular なデータで精度アップ。\n"
-    "外部ユーザー募集中 — Apify Store で試すだけ。{hashtags}",
+    "外部ユーザー募集中 — Apify Store で試すだけ。{actor_url} {hashtags}",
     "クロスボーダー仕入れに {actor_display}。\n"
     "日本国内の{category}実勢価格をリアルタイムAPIで取得、為替・送料込みで利益計算。\n"
-    "Pay-per-event $0.005。無料枠から開始 👉 {hashtags}",
+    "Pay-per-event $0.005。無料枠から開始 👉 {actor_url} {hashtags}",
     "データ駆動型リセールの武器: {actor_display}。\n"
     "{category}の売れ筋・値上がり傾向・在庫回転を週次データで可視化。\n"
-    "Apify Store ならインフラ不要・即日運用。{hashtags} #データ分析 #マーケットインテリジェンス",
+    "Apify Store ならインフラ不要・即日運用。{actor_url} {hashtags} #データ分析 #マーケットインテリジェンス",
 ]
 
 
@@ -334,6 +361,53 @@ PRIORITY_ACTORS: list[dict[str, Any]] = [
 ]
 
 
+# X 投稿上限（CJK 1文字 = 2 文字カウント。X の現行 API に準拠）。
+# 英数字/記号は 1、CJK 範囲 (\u2E80-\u9FFF と広範囲の漢字) は 2 としてカウントする。
+X_CHAR_LIMIT = 280
+
+
+def x_text_len(text: str) -> int:
+    """X の文字数上限判定用に CJK 文字を 2 文字としてカウントする。"""
+    return sum(2 if ord(ch) > 0x2E80 else 1 for ch in text)
+
+
+def trim_to_x_limit(text: str, limit: int = X_CHAR_LIMIT) -> str:
+    """X 投稿上限（デフォルト 280 文字、CJK 換算）に収める。
+
+    末尾の「他: ...」から優先的に短くし、 Still over の場合は本文末尾を
+    文切りの good break（句点/読点/空白）で truncation し、'…' を付与する。
+    """
+    if x_text_len(text) <= limit:
+        return text
+
+    # ステップ1: 「他: ...」部分を削除（先頭の 1 つだけ残す）
+    head, sep, tail = text.partition(" 他: ")
+    if sep:
+        text = head
+        if x_text_len(text) <= limit:
+            return text
+
+    # ステップ2: 末尾の good break で truncation
+    budget = limit - 1  # '…' 分を予約
+    out = ""
+    cur = 0
+    for ch in text:
+        w = 2 if ord(ch) > 0x2E80 else 1
+        if cur + w > budget:
+            break
+        out += ch
+        cur += w
+
+    # 直前の good break（句点/読点/空白/改行）なら区切りよく切る
+    for cut in ("。", "、", " ", "\n"):
+        idx = out.rfind(cut)
+        if idx > len(out) * 0.5:  # 後半の cut のみ有効
+            out = out[:idx]
+            break
+
+    return out.rstrip() + "…"
+
+
 def pick_text(
     today: date,
     state: dict[str, Any],
@@ -361,8 +435,10 @@ def pick_text(
     category = primary.get("category", "データ")
     hashtags = primary.get("hashtags", "#Apify #データセット")
     price_usd = primary.get("price_usd", 0.005)
+    actual_name = primary.get("actual_name", "")
+    actor_url = APIFY_ACTOR_URLS.get(actual_name, APIFY_STORE_BASE)
 
-    # 他アクターも言及（最大3件まで）
+    # 他アクターも言及（最大3件まで）。上限オーバー時に優先的にカット対象。
     other_names = [a["display"] for a in actors[1:3]] if len(actors) > 1 else []
     other_mention = f" 他: {', '.join(other_names)}" if other_names else ""
 
@@ -370,9 +446,13 @@ def pick_text(
         actor_display=actor_display,
         category=category,
         hashtags=hashtags,
-        store_url="https://apify.com/fruitful_quintessence",
+        store_url=APIFY_STORE_BASE,
+        actor_url=actor_url,
         price_usd=f"{price_usd:.3f}",
     ) + other_mention
+
+    # X 文字数上限（CJK 換算 280）を遵守
+    text = trim_to_x_limit(text)
 
     return text, "", {"primary_actor": primary, "all_actors": actors, "slot": slot, "week_key": key}
 
