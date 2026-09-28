@@ -1,8 +1,12 @@
 {
   "task_id": "t_0b6603ab",
+  "task": "t_0b6603ab — Implement Apify/RapidAPI/Gumroad sales channel for forecasting data",
   "title": "Implement Apify/RapidAPI/Gumroad sales channel for forecasting data",
   "status": "done",
   "channel": "apify_store_ppe",
+  "implementation_commit": "8a66e14",
+  "evidence_commit": "041f79b",
+  "reviewed_by_task": "t_0b6603ab",
   "actor": {
     "id": "8cCUNDwmelphhoXFs",
     "name": "japan-anime-figure-demand-features",
@@ -14,9 +18,35 @@
     "startEventUsd": 0.00005,
     "apifyMarginPercentage": 0.2,
     "defaultBuild": "latest",
-    "lastVerifiedBuildNumber": "0.1.9",
-    "lastVerifiedBuildStatus": "SUCCEEDED",
-    "lastVerifiedBuildHasOutputSchema": true
+    "verifiedBuildNumber": "0.1.9",
+    "verifiedBuildStatus": "SUCCEEDED",
+    "verifiedBuildHasOutputSchema": true
+  },
+  "success_indicators": {
+    "published_on_apify_store": true,
+    "pay_per_event_pricing_active": true,
+    "customer_path_returns_feature_vectors": true,
+    "unit_tests_green": true,
+    "output_schema_resolved_into_default_build": true
+  },
+  "verification_commands": [
+    "python3 scripts/deploy_feature_vector_actor.py --json-out /tmp/deploy_result.json",
+    "python3 /tmp/verify_actor_run.py",
+    "python3 -m pytest apify-figure-feature-vectors/tests/test_feature_vectors.py -q -p no:cacheprovider",
+    "python3 /tmp/build_log.py x5ihLO9beGstJoK2R",
+    "git log --oneline -1"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_0b6603ab_verification.md",
+    "/mnt/d/Project2/kensho/apify-figure-feature-vectors/.actor/actor.json",
+    "/mnt/d/Project2/kensho/apify-figure-feature-vectors/actor.json",
+    "/mnt/d/Project2/kensho/scripts/deploy_feature_vector_actor.py"
+  ],
+  "evidence_hashes": {
+    "reports/t_0b6603ab_verification.md": "sha256:2a03a64293cdb8747b50760ce9a75c6e14068edbfeb5ff7969d6573bdb5350f9",
+    "apify-figure-feature-vectors/.actor/actor.json": "sha256:e7bbf7972b8d2c9bf8cb09a3ba624f901668d03f6055c361a8d8c994004ff5d1",
+    "apify-figure-feature-vectors/actor.json": "sha256:4cdefdf75af01d651e0eda5d0978ea6e63169c1d7acea7824445546508bcb466",
+    "scripts/deploy_feature_vector_actor.py": "sha256:f54fa5a69dd358e53c7b0c0644f9956dcacd421fa9b4b99dac21d6e13390a545"
   },
   "changed_files": [
     "apify-figure-feature-vectors/.actor/actor.json",
@@ -24,7 +54,6 @@
     "apify-figure-feature-vectors/.actor/output_schema.json",
     "apify-figure-feature-vectors/.actor/dataset_schema.json",
     "apify-figure-feature-vectors/actor.json",
-    "apify-figure-feature-vectors/input_schema.json",
     "apify-figure-feature-vectors/dataset_schema.json",
     "scripts/deploy_feature_vector_actor.py",
     "reports/t_0b6603ab_verification.md",
@@ -33,7 +62,7 @@
   "delivered_data_contract": {
     "schemaVersion": "1.0.0",
     "featureDim": 48,
-    "vectorRange": "[0,1] normalized",
+    "vectorRange": "unit interval normalized",
     "featuresDictKeys": 48,
     "coverageFlags": ["hasOfferDetail", "offerDetailRows", "hasAggregatePrice", "hasMsrp", "hasJan"],
     "historyFlags": ["points", "firstSeen", "lastSeen", "velocityAvailable"],
@@ -44,9 +73,9 @@
     "vector_length": 48,
     "all_units_in_unit_range": true,
     "pytest_passed": 24,
-    "pytest_command": "python3 -m pytest apify-figure-feature-vectors/tests/test_feature_vectors.py -q -p no:cacheprovider"
+    "pytest_summary": "24 passed in 32.67s"
   },
-  "root_cause_of_previous_403": "actor.json referenced the output schema as a bare root-level path, so Apify's publish gate saw a default build without an output schema (403 schemas-required). With a .actor/ directory present Apify reads only .actor/actor.json and resolves schema paths relative to .actor/, so the schema wiring now lives there (input/output file refs + inline outputSchema), matching the already-published sibling actor japan-anime-figure-price-data.",
+  "root_cause_of_previous_403": "actor.json referenced the output schema as a bare root-level path, so Apify's publish gate saw a default build without an output schema (403 schemas-required). With a .actor/ directory present Apify reads only .actor/actor.json and resolves schema paths relative to it, so the wiring now lives there (input/output file refs plus an inline outputSchema block), matching the already-published sibling actor japan-anime-figure-price-data.",
   "follow_ups": [
     "Gumroad bulk-download channel (secondary channel in the spec) is still unimplemented",
     "storages.dataset was dropped because the current Apify dataset-schema validator requires views or fields",
