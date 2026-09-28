@@ -1,0 +1,21 @@
+{
+  "success_indicators": [
+    "isPublic: True",
+    "actorDefinition has input and output schemas",
+    "654 figures loaded via run-sync"
+  ],
+  "verification_commands": [
+    "python3 scripts/deploy_figure_price_actor.py 2>&1 | tail -3",
+    "curl -s -H 'Authorization: Bearer $APIFY_TOKEN' 'https://api.apify.com/v2/actors/DKzufUSvmuXNKHeYx' | python3 -c 'import json,sys; d=json.load(sys.stdin); print(\"isPublic:\", d.get(\"isPublic\"), \", defaultRunBuild:\", d.get(\"defaultRunBuild\"))'"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/apify-figure-price/.actor/actor.json",
+    "/mnt/d/Project2/kensho/apify-figure-price/.actor/output_schema.json"
+  ],
+  "evidence_hashes": [
+    "sha256:16c58d8ec01c7cc8352adc187c1f9bf488e031c142f9bf34bcf66110003c8417",
+    "sha256:8edd4abe9fab5ce5805ff17b2e4dc07483ce7ac7e3214731d015bf04eb9a7fc9"
+  ],
+  "task_id": "t_a57c6538",
+  "status": "complete"
+}
