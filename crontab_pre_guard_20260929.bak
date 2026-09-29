@@ -1,0 +1,65 @@
+# ── Kensho パイプライン ネイティブcron（Hermes cron ticker置き換え）──
+# 2026-08-20 移行
+SHELL=/bin/bash
+
+# 応募パイプライン（15分ごと・orchestratorが内部でバッチ/日次上限制御）
+*/15 * * * * /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-auto-apply.sh > /dev/null 2>&1
+
+# 収集（毎正時 9〜21時 + 深夜3時にフル収集）→ orchestrator が内部で時刻判定
+0 3,9,10,11,12,13,14,15,16,17,18,19,20,21 * * * /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-collect-only.sh > /dev/null 2>&1
+
+# ステータス自動更新（15分ごと）
+*/15 * * * * /home/atushi/.hermes/profiles/kensho-sweeps/scripts/generate-kensho-status.sh > /dev/null 2>&1
+
+# 日次メンテナンス（03:15）
+15 3 * * * /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-maintenance.sh > /dev/null 2>&1
+
+# WiFi ウォッチドッグ（5分ごと）
+*/5 * * * * /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-wifi-watchdog.sh > /dev/null 2>&1
+# 懸賞ハブ(kensho_hub.html)自動生成 — 15分おき（素の実行・Hermesクラッシュなし）
+*/15 * * * * /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-hub-generate.sh > /dev/null 2>&1
+
+# AIチームコンテキスト監視（毎時・応答肥大化の事前検知）
+5 * * * * /home/atushi/.hermes/profiles/kensho-sweeps/scripts/ai-context-monitor.sh > /dev/null 2>&1
+# データマイニング分析（蓄積データの価格変化・異常検出）
+# ニーズマイニング（X/5ch/noteから収益アイデア検出・検証）
+40 0 * * * cd /mnt/d/Project2/needs-mining && /usr/bin/python3 mine_needs.py > /dev/null 2>&1
+10 8 * * * /home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/kensho-apify-seo-effect-sched.sh > /dev/null 2>&1
+# v21-C: Gumroad agyhq X daily post 9/5-9/11 (window+daily dedup guared in gumroad_x_post.py)
+# v26-2: Gumroad agyhq X impression collector one-shot 9/7 09:00 (kanban t_3556cdc6) — 廃止(v95で日次化)
+# v95(t_78989694): Gumroad X analytics 日次収集 08:50（08:45投稿→10:00判定 t_98334cc7 の間）
+50 8 * * * /home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/gumroad_x_xanalytics.sh > /dev/null 2>&1
+# v26-1: RapidAPI paid-effect 最終測定 (kanban t_25a7704e) — 9/12 07:11, gateway非依存のnative one-shot
+11 7 12 9 * cd /mnt/d/Project2/kensho && /usr/bin/python3 scripts/rapidapi_paid_effect.py --report >> logs/rapidapi_paid_effect_0912.log 2>&1
+7 7 * * * /home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/overseas_saas_monitor.sh > /dev/null 2>&1
+*/5 * * * * /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-hang-watchdog.sh >> /mnt/d/Project2/kensho/logs/hang_watchdog.log 2>&1
+# deadline backfill (kanban t_a5c55171, cpmeikan期限バックフィル・収集cronの45分後続)
+45 3,9-21 * * * /mnt/d/Project2/kensho/scripts/kensho-backfill-deadlines.sh > /dev/null 2>&1
+30 5 * * * bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-git-bundle-backup.sh >> /home/atushi/backups/kensho-git/backup.log 2>&1
+# t_e971e85a success-metric ① one-shot: 9/10 hunter(16:00) 実行後に当日新規投入<=3を実測（実行後にself-remove）
+# t_8646bcf9 agentic whitelist re-measure one-shot: standby fix 9/10 16:45投入後のflag反転確認（実行後self-remove）
+55 7 * * * bash /home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/kensho-timeout-watch.sh >> /mnt/d/Project2/kensho/logs/timeout_watch_cron.log 2>&1
+*/30 * * * * bash /home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/kensho-complete-watchdog.sh --apply >> /mnt/d/Project2/kensho/logs/complete_watchdog_cron.log 2>&1
+0 6 * * 1 /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-winrate-weekly.sh >> /mnt/d/Project2/kensho/logs/winrate_weekly.log 2>&1
+# [2026-09-29 中古差益アラート停止] 30 13 * * * /mnt/d/Project2/kensho/scripts/camera_monitor_7d_daily.sh > /dev/null 2>&1
+# t_3aa5365c: TCG価格データセット蓄積 (1日1回・低頻度収集)
+
+# TCG価格データセット 蓄積 (t_3aa5365c) — 1日1回低頻度で時系列スナップショット追記
+# t_3aa5365c: TCG価格データセット蓄積 (1日1回・低頻度収集)
+# t_3aa5365c: TCG価格データセット蓄積 (1日1回・低頻度収集)
+30 7 * * * /mnt/d/Project2/kensho/scripts/tcg_price_collect_cron.sh >> /mnt/d/Project2/kensho/logs/tcg_collect_cron.log 2>&1
+# kensho-value-feed 定期実行 (火/木/土 03:30)
+30 3 * * 1,3,5 /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-value-feed.sh > /dev/null 2>&1
+# Kensho 稼働サマリー GitHub自動同期 (自律稼働工場化)
+55 23 * * * /mnt/d/Project2/kensho/scripts/kensho_github_sync.sh >> /mnt/d/Project2/kensho/logs/github_sync_cron.log 2>&1
+# t_3848cbde: Gumroad販促施策自動化 (views収集/KPI評価/週次X販促)
+5 9 * * * /home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/gumroad_views_collect.sh > /dev/null 2>&1
+15 9 * * * /home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/gumroad_promo_kpi.sh > /dev/null 2>&1
+40 8 * * 1 /home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/gumroad_promo_weekly.sh > /dev/null 2>&1
+# [2026-09-29 停止] freellmapi単独運用のため無効化: */5 * * * * /usr/bin/python3 /home/atushi/freellmapi/freellmapi_fallback.py >> /home/atushi/freellmapi/fallback.log 2>&1
+*/30 * * * * bash /mnt/d/Project2/kensho/scripts/kensho-goal-stuck-watchdog.sh --apply >> /mnt/d/Project2/kensho/logs/goal_stuck_watchdog_cron.log 2>&1
+# t_e6968f4f: Gumroad販促週次X投稿 スロットb（金曜08:40、月曜slot aと4日間隔で週2投稿）
+40 8 * * 5 /home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/gumroad_promo_weekly_slot_b.sh > /dev/null 2>&1
+
+# Kanban AIチーム日次サマリー→Telegram（23:30）
+30 23 * * * /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban-daily-report.sh > /dev/null 2>&1
