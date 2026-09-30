@@ -1,0 +1,30 @@
+{
+  "success_indicators": [
+    "scripts/git_stale_lock_guard.py 実装（497行・新規）",
+    "tests/test_git_stale_lock_guard.py 実装（106行・新規）",
+    "--selftest 6/6 PASS（no_lock/stale_removed/young/held/dry_run）",
+    "pytest 5 passed"
+  ],
+  "verification_commands": [
+    "$ python3 -m pytest tests/test_git_stale_lock_guard.py -q --tb=no -p no:warnings 2>&1 | tail -1 => 5 passed",
+    "$ python3 scripts/git_stale_lock_guard.py --selftest --json 2>&1 | tail -6 => [PASS] no lock / stale lock removed / fresh lock kept / held lock kept / dry-run detects but keeps / selftest: 6/6 PASS",
+    "$ git diff --cached --stat 2>&1 | tail -3 =>  scripts/git_stale_lock_guard.py | 497 +++ / tests/test_git_stale_lock_guard.py | 106 +++ / 2 files changed, 603 insertions(+)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/git_stale_lock_guard.py",
+    "/mnt/d/Project2/kensho/tests/test_git_stale_lock_guard.py",
+    "/mnt/d/Project2/kensho/reports/t_f01a3a9e_verification.md"
+  ],
+  "evidence_hashes": [
+    "29a53b3af24d699b882309e81be0b0d24035ad6448fd9d69f609af61cb592724",
+    "97fdfe9c719c7a611d6d3a0712368b3dbefd309475917b72501485044ae50dcb",
+    "cf26ece15faef62331a292354aa4f94706bf946e2b2f5aefa5af268c7aa340c7"
+  ],
+  "outcome": {
+    "metric": "stale lock 発生→自動復旧",
+    "before": 2,
+    "after": 0
+  },
+  "task_id": "t_f01a3a9e",
+  "status": "complete"
+}
