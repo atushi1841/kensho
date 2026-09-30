@@ -9,6 +9,7 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from kensho.scraping.simple_rt_classifier import (  # noqa: E402
+    DEFAULT_MODEL,
     _extract_json,
     _load_api_key,
     classify_collected_items,
@@ -65,23 +66,24 @@ class TestLoadApiKey:
             "kensho.scraping.simple_rt_classifier.PROFILE_ENV_FILE",
             tmp_path / "no_such_profile.env",
         )
-        monkeypatch.delenv("BAI_API_KEY", raising=False)
+        monkeypatch.delenv("FREELMAPI_API_KEY", raising=False)
         monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
 
     def test_bom_env_file(self, monkeypatch: Any, tmp_path: Path) -> None:
         p = tmp_path / ".env"
-        p.write_bytes(b"\xef\xbb\xbfBAI_API_KEY=sk-bai-test\n")
+        p.write_bytes(b"\xef\xbb\xbfFREELMAPI_API_KEY=sk-local-test\n")
         self._patch_profile_env(monkeypatch, tmp_path)
-        assert _load_api_key(tmp_path) == "sk-bai-test"
+        assert _load_api_key(tmp_path) == "sk-local-test"
 
     def test_ignores_deepseek_key(self, monkeypatch: Any, tmp_path: Path) -> None:
-        """最後の砦のDEEPSEEK_API_KEYは絶対に使わない（フォールバックしない）"""
+        """最後の砦のDEEPSEEK_API_KEYは絶対に使わない（空のまま）"""
         p = tmp_path / ".env"
         p.write_bytes(b"DEEPSEEK_API_KEY=sk-deepseek\n")
         self._patch_profile_env(monkeypatch, tmp_path)
         assert _load_api_key(tmp_path) == ""
 
     def test_missing_key(self, monkeypatch: Any, tmp_path: Path) -> None:
+        """未設定時は空（キーが無ければ呼び出し側がfail-open）"""
         self._patch_profile_env(monkeypatch, tmp_path)
         assert _load_api_key(tmp_path) == ""
 
@@ -100,8 +102,7 @@ class TestClassifyTexts:
             api_key="sk-test",
         )
         assert res == {"t1": "FLAG", "t2": "OK"}
-        assert called and called[0]["model"] == "qwen3.8-flash"
-        assert "chat_template_kwargs" not in called[0]  # baiはthinking OFF不要
+        assert called and called[0]["model"] == DEFAULT_MODEL  # 2026-10-01指示: freellmapi auto 既定
         assert called[0]["messages"][0]["role"] == "system"
 
     def test_fail_open_on_error(self, monkeypatch: Any) -> None:
@@ -144,22 +145,30 @@ class TestClassifyTexts:
         res = classify_texts([("t1", "text")], project_root=tmp_path)
         assert res == {"t1": "UNKNOWN"}
 
-    def test_fallback_to_openrouter_when_bai_dead(self, monkeypatch: Any) -> None:
-        """bai(qwen3.8-flash)失敗時だけOpenRouter無料枠へフォールバックする。"""
+    def test_bai_closed_retry_when_primary_fails(self, monkeypatch: Any) -> None:
+        """一次 local qwen 失敗時は local qwen 内に閉じて再試行し、外部APIへは一切出ない。
+
+        2026-09-30 ユーザー指示「AI関連すべて local qwen に統一」で外部API（B.AI/OpenRouter）は
+        完全廃止（旧 test_fallback_to_openrouter_when_bai_dead の代替）。
+        """
         urls: list[str] = []
+        calls = {"n": 0}
 
         def fake_post(url: str, **kwargs: Any) -> _FakeResp:
             urls.append(url)
-            if "api.b.ai" in url:
-                raise RuntimeError("bai down")
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise RuntimeError("freellmapi primary down")
             return _ok_response([("t1", "OK")])
 
         monkeypatch.setattr("kensho.scraping.simple_rt_classifier.httpx.post", fake_post)
-        monkeypatch.setattr("kensho.scraping.simple_rt_classifier._load_api_key", lambda *a, **k: "sk-bai-test")
-        monkeypatch.setattr("kensho.scraping.simple_rt_classifier._load_or_key", lambda *a, **k: "sk-or-test")
+        monkeypatch.setattr("kensho.scraping.simple_rt_classifier._load_api_key", lambda *a, **k: "sk-local-test")
+        monkeypatch.setattr("kensho.scraping.simple_rt_classifier._load_or_key", lambda *a, **k: "sk-local-test")
         res = classify_texts([("t1", "text")])
         assert res == {"t1": "OK"}
-        assert len(urls) == 2 and "openrouter" in urls[1]
+        assert calls["n"] >= 2, f"expected a retry stage, got {calls['n']} call(s)"
+        assert all("127.0.0.1:3002" in u for u in urls), urls
+        assert not any("openrouter" in u for u in urls)
 
 
 class TestClassifyCollectedItems:

@@ -10,6 +10,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from kensho.scraping.anime_figure_unified import (
@@ -17,7 +19,18 @@ from kensho.scraping.anime_figure_unified import (
     run_unified_collection,
 )
 
+# t_1f4779d4 (2026-09-30): script-style async テストは pytest-asyncio(strict) 下で
+# 未マークの async def が "not natively supported" エラーになり、かつ本体は
+# モックなしで実ネットワーク(MyFigureList/Hpoi/figurememo)へ直結する
+# (tests/AGENTS.md の mock 方針に反する)。個別再設計(async/mocking)は別タスクのため
+# 根拠付き xfail 化で確定させる。モック再実装時は xfail を外し asyncio マークへ。
+_XFAIL_SCRIPT_STYLE = (
+    "script-style async: pytest-asyncio(strict)未マークで natively-supported error、"
+    "かつモックなし実ネットワーク依存 (tests/AGENTS.md mock方針) — 再設計は別タスク t_1f4779d4"
+)
 
+
+@pytest.mark.xfail(reason=_XFAIL_SCRIPT_STYLE, strict=False)
 async def test_basic_collection():
     """Test basic collection with MyFigureList only"""
     print("Testing basic collection with MyFigureList...")
@@ -46,6 +59,7 @@ async def test_basic_collection():
     return records
 
 
+@pytest.mark.xfail(reason=_XFAIL_SCRIPT_STYLE, strict=False)
 async def test_dataset_export():
     """Test dataset export functionality"""
     print("\nTesting dataset export...")
@@ -85,6 +99,7 @@ async def test_dataset_export():
     print(f"✓ CSV file created: {output_files_csv['csv'].name}")
 
 
+@pytest.mark.xfail(reason=_XFAIL_SCRIPT_STYLE, strict=False)
 async def test_gumroad_metadata():
     """Test Gumroad metadata generation"""
     print("\nTesting Gumroad metadata generation...")
@@ -120,6 +135,8 @@ async def test_gumroad_metadata():
     print(f"✓ Categories: {list(metadata['category_distribution'].keys())}")
 
 
+# 純ロジックのみ(ネットワーク/IOなし)のため asyncio マークだけで実行可能。
+@pytest.mark.asyncio
 async def test_price_calculations():
     """Test price calculation methods"""
     print("\nTesting price calculations...")
@@ -140,6 +157,7 @@ async def test_price_calculations():
     print("✓ Price calculations working correctly")
 
 
+@pytest.mark.xfail(reason=_XFAIL_SCRIPT_STYLE, strict=False)
 async def test_full_workflow():
     """Test complete workflow with all features"""
     print("\nTesting full workflow...")

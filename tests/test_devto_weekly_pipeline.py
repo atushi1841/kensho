@@ -66,6 +66,10 @@ class Harness:
     def __init__(self, tmp_path: Path, key: str = RAW_KEY):
         self.blog = tmp_path / "blog"
         self.blog.mkdir()
+        # t_1f4779d4: 同期元draftsをtmpに固定し、実リポの reports/journalism/drafts
+        # （例: devto-2026W40.md）がテストのblog/stateに混入するのを遮断する。
+        self.drafts = tmp_path / "drafts"
+        self.drafts.mkdir()
         self.envfile = tmp_path / ".env"
         self.envfile.write_text(f"OTHER=1\nDEVTO_API_KEY={key}\n", encoding="utf-8")
         self.bin = tmp_path / "bin"
@@ -100,6 +104,7 @@ class Harness:
             "PATH": f"{self.bin}:{env.get('PATH', '')}",
             "DEVTO_ENV_FILE": str(self.envfile),
             "DEVTO_BLOG_DIR": str(self.blog),
+            "DEVTO_DRAFTS_DIR": str(self.drafts),
             "STUB_CURL_LOG": str(self.log),
             "STUB_POST_BODY_FILE": str(self.post_body),
             "STUB_POST_CODE_FILE": str(self.post_code),
