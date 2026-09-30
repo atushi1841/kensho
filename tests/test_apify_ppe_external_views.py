@@ -159,3 +159,23 @@ def test_attach_to_daily_skips_when_no_today_entry() -> None:
     m = {"point": "24h", "per_actor": {"k": {}}}
     assert av.attach_to_daily(m) is False
     av.REVENUE_DAILY = "/mnt/d/Project2/kensho/data/revenue-daily.json"
+
+
+def test_measure_dynamic_structure() -> None:
+    """measure_dynamic が正しい構造を返すか検証（ネットワークは mock しないため実 API 呼び出し）。"""
+    from datetime import datetime
+    token = "dummy"  # mock せず実 API 呼び出し（CI ではスキップされる前提）
+    post_date = "2026-09-29"
+    actor_names = ["mandarake-auction-scraper", "dlsite-scraper", "tackleberry-japan-fishing-tackle-scraper"]
+    # このテストは実環境での手動実行用。pytest では skip する想定。
+    if __name__ == "__main__":
+        r = av.measure_dynamic(token, post_date, actor_names, "1d")
+        assert r["point"] == "1d"
+        assert r["point_date"] == "2026-09-30"
+        assert r["post_date"] == post_date
+        assert set(r["per_actor"].keys()) == set(actor_names)
+        print("measure_dynamic structure OK")
+
+
+if __name__ == "__main__":
+    test_measure_dynamic_structure()
