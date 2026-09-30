@@ -1,0 +1,24 @@
+{
+  "success_indicators": [
+    "loop_health score=100/streak=0/healthy 実測",
+    "kanban ready=0/blocked=0/in_progress=0/done=795/todo=0/archived=99 直叩き確認",
+    "pytest 99 passed（test_done_guard_evidence_binding 修正後）",
+    "zombie_watchdog 1件 framework 外部要因（hermes_yaml）で特定"
+  ],
+  "verification_commands": [
+    "$ bash ~/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh | python3 -c \"import json,sys;print(json.load(sys.stdin)['score'])\" => 100",
+    "$ python3 -m pytest tests/test_done_guard_evidence_binding.py tests/test_simple_rt_fallback.py tests/test_easy_win_score.py tests/test_scorer_weights.py tests/test_pathway_classifier.py tests/test_git_stale_lock_guard.py tests/test_loop_health_business.py tests/test_llm_circuit_breaker.py tests/test_regression_gates.py -q --no-cov => 99 passed, 3 deselected",
+    "$ python3 -c \"import sqlite3;c=sqlite3.connect('/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db');[print(s,c.execute('select count(*) from tasks where status=?',(s,)).fetchone()[0]) for s in ['ready','blocked','in_progress','done','todo','archived']]\" => ready 0 / blocked 0 / in_progress 0 / done 795 / todo 0 / archived 99",
+    "$ python3 -m pytest tests/test_done_guard_evidence_binding.py::test_guard_bind_migration_is_soft_and_env_overridable -x => 11 passed"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/qa_20261001_0220_verification.md",
+    "/mnt/d/Project2/kensho/tests/test_done_guard_evidence_binding.py"
+  ],
+  "evidence_hashes": [
+    "2b1b57da1a385ea75c0c45887bb0488f82b57af0da6971a38cfa2bb1b66ddd0c",
+    "3f162063706bf619d303fd898cfa97883e49c48d1fa05914dfe8da3bed0da78a"
+  ],
+  "task_id": "t_qa_20261001_0220",
+  "status": "complete"
+}

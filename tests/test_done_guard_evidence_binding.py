@@ -222,15 +222,17 @@ def test_guard_invokes_bind_checker(tmp_path: Path) -> None:
 
 
 def test_guard_bind_migration_is_soft_and_env_overridable(monkeypatch: pytest.MonkeyPatch) -> None:
-    """移行期間は soft（既定）で、KANBAN_GUARD_BIND_HARD により hard へ明示切替できる。"""
+    """移行期間は soft（既定）で、KANBAN_GUARD_BIND_HARD により hard へ明示切替できる。
+    BIND_HARD_AFTER=2026-10-01 以降はデフォルト hard（日付境界で自動切替）。"""
     guard = _load_guard()
     monkeypatch.delenv("KANBAN_GUARD_BIND_HARD", raising=False)
     assert guard.BIND_HARD_AFTER == "2026-10-01"
-    assert guard._bind_is_hard() is False           # 2026-09-25 時点 = 移行soft期間
-    monkeypatch.setenv("KANBAN_GUARD_BIND_HARD", "1")
-    assert guard._bind_is_hard() is True
+    # 日付 >= BIND_HARD_AFTER なら hard（環境変数未設定時）
+    assert guard._bind_is_hard() is True            # 2026-10-01 以降 = hard 化済
     monkeypatch.setenv("KANBAN_GUARD_BIND_HARD", "0")
-    assert guard._bind_is_hard() is False
+    assert guard._bind_is_hard() is False           # 明示的 soft 上書き可
+    monkeypatch.setenv("KANBAN_GUARD_BIND_HARD", "1")
+    assert guard._bind_is_hard() is True            # 明示的 hard 上書き可
 
 
 def test_guard_exposes_bind_condition_key() -> None:
