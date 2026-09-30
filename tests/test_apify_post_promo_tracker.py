@@ -140,11 +140,11 @@ def test_merge_state_updates_same_point_and_keeps_others() -> None:
 def test_attach_to_daily_writes_metric() -> None:
     """revenue-daily.json の当日エントリに metric が追記されるか。"""
     import tempfile
-    from datetime import datetime, UTC
+    from datetime import datetime
 
     with tempfile.TemporaryDirectory() as tmp:
         daily = Path(tmp) / "revenue-daily.json"
-        today = datetime.now(UTC).strftime("%Y-%m-%d")
+        today = datetime.now().astimezone().strftime("%Y-%m-%d")  # スクリプトと同じJST基準
         daily.write_text(json.dumps([{"date": today, "revenue_estimate": {}}]), encoding="utf-8")
 
         # モジュール変数を一時的に差し替え

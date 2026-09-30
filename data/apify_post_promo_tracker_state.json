@@ -1,0 +1,38 @@
+{
+ "post_date": "2026-09-29",
+ "points": {
+  "1d": {
+   "point": "1d",
+   "point_date": "2026-09-30",
+   "measured_at": "2026-09-30T05:08:42+00:00",
+   "post_date": "2026-09-29",
+   "per_actor": {
+    "mandarake-auction-scraper": {
+     "actor_id": "q2E37PVTg5JcGOTEn",
+     "actual_name": "mandarake-auction-scraper",
+     "external_views": 0,
+     "total_runs": 319,
+     "u30d": 1,
+     "bookmarks": 0
+    },
+    "dlsite-scraper": {
+     "actor_id": "6Z7tJ3plfUmAgGmbk",
+     "actual_name": "dlsite-scraper",
+     "external_views": 0,
+     "total_runs": 83,
+     "u30d": 1,
+     "bookmarks": 0
+    },
+    "tackleberry-japan-fishing-tackle-scraper": {
+     "actor_id": "wxMskoiHMPeeH2qAJ",
+     "actual_name": "tackleberry-japan-fishing-tackle-scraper",
+     "external_views": 0,
+     "total_runs": 201,
+     "u30d": 1,
+     "bookmarks": 0
+    }
+   }
+  }
+ },
+ "updated_at": "2026-09-30T05:08:42+00:00"
+}

@@ -248,7 +248,7 @@ def save_state(state: dict[str, Any]) -> None:
 
 def merge_state(state: dict[str, Any], m: dict[str, Any]) -> dict[str, Any]:
     """同一ポイントは上書き、それ以外は追記マージ。"""
-    state.setdefault("post_date", m.get("post_date"))
+    state["post_date"] = m.get("post_date")  # 最新計測へ同期（setdefault だと陳腐化したまま残る）
     state.setdefault("points", {})[m["point"]] = m
     state["updated_at"] = datetime.now(UTC).isoformat(timespec="seconds")
     return state
@@ -256,7 +256,7 @@ def merge_state(state: dict[str, Any], m: dict[str, Any]) -> dict[str, Any]:
 
 def attach_to_daily(m: dict[str, Any]) -> bool:
     """revenue-daily.json の当日エントリに追記。"""
-    today = datetime.now(UTC).strftime("%Y-%m-%d")
+    today = datetime.now().astimezone().strftime("%Y-%m-%d")  # JST基準（revenue-daily の日付はJST）
     if not os.path.exists(REVENUE_DAILY):
         return False
     try:

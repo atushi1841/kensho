@@ -1,0 +1,31 @@
+{
+  "success_indicators": [
+    "tracker --point now EXIT=0: 1d point measured for post date 2026-09-29 on 2026-09-30 JST",
+    "14/14 tests passed in tests/test_apify_post_promo_tracker.py and tests/test_apify_ppe_external_views.py",
+    "cron kensho-apify-post-promo-tracker registered at schedule 0 5 * * * in no-agent mode",
+    "state.post_date synced to latest measurement 2026-09-29 (setdefault->assign fix verified)",
+    "stray tracker block removed from 2026-09-28 entry in data/revenue-daily.json (UTC-basis artifact)"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/apify_post_promo_tracker.py --point now\n=== Apify Post-Promo external_views 動的追跡 ===\n  元投稿: tweet_id=2104655287496114428  date=2026-09-29\n  計測ポイント: 1d  日付: 2026-09-30\n  合計 external_views(proxy) = 0\n✓ state 保存: /mnt/d/Project2/kensho/data/apify_post_promo_tracker_state.json\n✓ revenue-daily.json に apify_post_promo_tracker 追記\nEXIT=0",
+    "$ python3 -m pytest tests/test_apify_post_promo_tracker.py tests/test_apify_ppe_external_views.py -q 2>&1 | tail -3\n-------------------------------------------------------------------------------\nTOTAL                                             11291  11236     1%\n============================= 14 passed in 16.20s ==============================",
+    "$ git log --oneline -1\nb238dc1 feat(revenue): apify_post_promo_tracker 投稿起点動的external_views追跡 cron (t_1706e7b2)",
+    "$ ls -l data/apify_post_promo_tracker_state.json\n-rwxrwxrwx 1 atushi atushi 905 Sep 30 14:08 data/apify_post_promo_tracker_state.json"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/apify_post_promo_tracker.py",
+    "/mnt/d/Project2/kensho/tests/test_apify_post_promo_tracker.py",
+    "/mnt/d/Project2/kensho/tests/test_apify_ppe_external_views.py",
+    "/mnt/d/Project2/kensho/data/apify_post_promo_tracker_state.json",
+    "/mnt/d/Project2/kensho/reports/t_1706e7b2_verification.md"
+  ],
+  "evidence_hashes": [
+    "c64ee472c7d2db4466328fc6c14788e2c709fe900a81186772eda43c91e2a1c1",
+    "79c6d5c9be69c5de41dee55a07da1c2c9011dd9d3a8b9d79577a3337b55b9eb1",
+    "9073ff782b94219bcd326251b1d93c8c29967fe2e4e9c3aa47c706182f64bcce",
+    "3d1aaa1d98f0eb5003b7d7073a91833c58146f48692a446f379d2288256e5f4b",
+    "d1eddb487fa905225c51e9d920c678a46b876c2060da61e26d7d6966ab82a100"
+  ],
+  "status": "complete",
+  "task_id": "t_1706e7b2"
+}

@@ -141,7 +141,7 @@ def test_attach_to_daily_writes_metric(mock_path: Any) -> None:
             },
         },
     }
-    assert av.attach_to_daily(m) is True
+    assert av.attach_to_daily_keys(m) is True
     entries = json.loads(daily.read_text(encoding="utf-8"))
     metric = entries[0]["apify_ppe_external_views_keys"]
     assert metric["point"] == "24h"
@@ -157,7 +157,7 @@ def test_attach_to_daily_skips_when_no_today_entry() -> None:
     daily.write_text(json.dumps([{"date": "2026-09-01"}]), encoding="utf-8")
     av.REVENUE_DAILY = str(daily)
     m = {"point": "24h", "per_actor": {"k": {}}}
-    assert av.attach_to_daily(m) is False
+    assert av.attach_to_daily_keys(m) is False
     av.REVENUE_DAILY = "/mnt/d/Project2/kensho/data/revenue-daily.json"
 
 
