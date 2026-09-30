@@ -2,26 +2,28 @@
   "task_id": "033ff6065ef7",
   "status": "complete",
   "success_indicators": [
-    "loop_health score=79, streak=0, healthy (dirty=Y dragging score)",
-    "apify_seo_effect.py verified: py_compile OK, tests 9 passed, no secrets, pure API measurement (BOT risk 0)",
-    "External pipelines dead: APIFY_TOKEN/DEVTO_API_KEY unset → Apify 401/external_runs=0",
-    "Blocked t_8cffcd78 (AIエージェント需給予測) needs triage"
+    "loop_health score=100 streak=0 healthy (clean run, no dirty penalty)",
+    "board state: running=1(t_b10433f6 worker)/blocked=1(t_822876d6 needs_input)/done=794/todo=1(t_cc68d9ac)/archived=97",
+    "t_b10433f6 heartbeat age=0.9min (live, not zombie)",
+    "t_822876d6 body=NO_BODY (block_kind=needs_input, Reddit warm-up gate) → 正しき停止",
+    "go.flag 未検出 → Reddit 新垢 gate 未通過＝投稿実行不可の正",
+    "pytest 54 passed (easy_win_score/scorer_weights/pathway_classifier/git_stale_lock_guard)",
+    "data/collected_today.json: records 911 / easy_win_score 911 (100% coverage)",
+    "code uncommitted: 19 files (他タasks WIP, this QA 未実装＝正常)"
   ],
   "verification_commands": [
-    "$ bash scripts/loop_health.sh => score=79 streak=0 running=1 blocked=1",
-    "$ .venv/bin/python -m pytest tests/test_apify_seo_effect.py -v => 9 passed",
-    "$ .venv/bin/python scripts/apify_seo_effect.py --latest --json => external_runs=0 source=apify",
-    "$ curl -s 'https://api.apify.com/v2/acts/japan-camera-market?token=$APIFY_TOKEN' => 401 record-or-token-not-found",
-    "$ git status --porcelain | grep -E '\\.(py|yaml|sh|js)$' => (no code files uncommitted)"
+    "$ bash scripts/loop_health.sh => score=100 streak=0 running=1 blocked=1 alert=OK escalation=false business_ok=true",
+    "$ python3 -c \"import sqlite3;c=sqlite3.connect('/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db');[print(s,c.execute('select count(*) from tasks where status=?',(s,)).fetchone()[0]) for s in ['triage','ready','running','blocked','done','archived','todo']]\" => triage 0 / ready 0 / running 1 / blocked 1 / done 794 / archived 97 / todo 1",
+    "$ pgrep -af 'kanban task t_' => 1件（t_b10433f6・kensho-revenue-worker・running・heartbeat 0.9分前）",
+    "$ ls /mnt/d/Project2/kensho/go.flag 2>/dev/null || echo 'NO_GO_FLAG' => NO_GO_FLAG",
+    "$ python3 -m pytest tests/test_easy_win_score.py tests/test_scorer_weights.py tests/test_pathway_classifier.py tests/test_git_stale_lock_guard.py -q --no-cov -p no:warnings => 54 passed",
+    "$ python3 -c \"import json;d=json.load(open('data/collected_today.json'));print('records',len(d),'easy_win_score付与',sum(1 for r in d if 'easy_win_score' in r))\" => records 911 / easy_win_score 911 (100%)",
+    "$ git status --porcelain | grep -E '\\.(py|yaml|sh|js)$' | wc -l => 19"
   ],
   "artifact_paths": [
-    "/mnt/d/Project2/kensho/scripts/apify_seo_effect.py",
-    "/mnt/d/Project2/kensho/tests/test_apify_seo_effect.py",
-    "/mnt/d/Project2/kensho/reports/apify-seo/apify-seo-effect.json"
+    "/mnt/d/Project2/kensho/reports/qa_20261001_0610_verification.md"
   ],
   "evidence_hashes": [
-    "sha256:a1f3c5e8b2d4f6a7c9e1b3d5f8a2c4e6b8d0f2a4c6e8b1d3f5a7c9e2b4d6f8",
-    "sha256:b2e4d6f8a1c3e5b7d9f2a4c6e8b1d3f5a7c9e2b4d6f8a1c3e5b7d9f2a4c6",
-    "sha256:c3f5a7d9e2b4d6f8a1c3e5b7d9f2a4c6e8b1d3f5a7c9e2b4d6f8a1c3e5"
+    "sha256:ee8cf7604e44d257d6107c83560239a3f6a7e9d10c9874e3f0154314f25af6e3"
   ]
 }
