@@ -1,0 +1,28 @@
+{
+  "success_indicators": [
+    "apify_visibility_watch.py v2 実装（MAX_ATTEMPTS=3・BACKOFF_BASE=2.0・APIFY_WATCH_TIMEOUT env 化）",
+    "指数バックオフ再試行 3 attempt 実装",
+    "配信失敗フォールバック redelivery_pending=1 実装",
+    "実測 visible=77（API 接続成功・timeout 15秒・RC=0）"
+  ],
+  "verification_commands": [
+    "APIFY_WATCH_TIMEOUT=15 python3 ~/.hermes/profiles/kensho-sweeps/scripts/apify_visibility_watch.py 2>&1 => visible=77 / redelivery_pending=1 / RC=0",
+    "python3 -c \"import ast; ast.parse(open('/home/atushi/.hermes/profiles/kensho-sweeps/scripts/apify_visibility_watch.py').read())\" 2>&1 => AST parse OK（構文エラーなし）",
+    "grep -n \"MAX_ATTEMPTS\\|BACKOFF_BASE\\|_timeout\\|_fetch_with_retry\\|redelivery_pending\" ~/.hermes/profiles/kensho-sweeps/scripts/apify_visibility_watch.py 2>&1 => MAX_ATTEMPTS=3 / BACKOFF_BASE=2.0 / _timeout / _fetch_with_retry / redelivery_pending 確認"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/apify_visibility_watch.py",
+    "/mnt/d/Project2/kensho/reports/t_eb3528fb_verification.md"
+  ],
+  "evidence_hashes": [
+    "f9321892d3f99ae44222fe5eab448557717dd18f9e3bdaf069ae3594700a61fb",
+    "68f06a8ae8af17688ef6f712e46c463967bb79dcacce94d81ca0cac4036bc61e"
+  ],
+  "outcome": {
+    "metric": "apify-visibility-watch 連続 Request timed out",
+    "before": 2,
+    "after": 0
+  },
+  "task_id": "t_eb3528fb",
+  "status": "complete"
+}
