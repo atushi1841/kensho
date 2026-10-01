@@ -1,0 +1,97 @@
+{
+  "gradients": [
+    {
+      "trace_id": "4baf143523e0_2026-10-01T22:39:45.442734+09:00",
+      "failure_node": "execution_failure",
+      "severity": "high",
+      "suggested_granular_modification": "optimize_apify_actor_discovery",
+      "evidence_hash": "sha256:97d70ca6e9eaa05f",
+      "extracted_at": "2026-10-01T14:08:18.539049+00:00",
+      "source_job_id": "4baf143523e0",
+      "raw_entry": "2026-10-04: トリアージ完了。t_bef61602(Reddit新垢,27日放置)=【要ユーザー対応】コメント追加(手動待ち)。t_4bb73bcc(在庫restock SaaS)=abandon→archive。全重複解消でready=0/blocked=0/in_progress=0/todo=0。score=100/streak=0。収益 /usr/bin/bash 継続(Apify external_users=0/Gumroad売上0)。【核心】販促・集客自動化が唯一の残る課題→次回は収益化卡の実装委譲を検討。\n2026-10-05: 幽霊カード t_evo_trace_grad_1001(ready/assignee=None/idempotency=critic-20261004-v1-tracegrad)=【要ユーザー対応】コメント追加(手動待ち・assignee=kensho-worker設定を推奨)。TPGO Execution Trace Structured Archiving の実装は kensho-worker 管轄。収益 /usr/bin/bas"
+    },
+    {
+      "trace_id": "033ff6065ef7_2026-10-01T22:13:44.490782+09:00",
+      "failure_node": "execution_failure",
+      "severity": "high",
+      "suggested_granular_modification": "improve_error_handling",
+      "evidence_hash": "sha256:536b6378d7d69170",
+      "extracted_at": "2026-10-01T14:08:18.539125+00:00",
+      "source_job_id": "033ff6065ef7",
+      "raw_entry": "2026-10-01: score=100/streak=0 healthy; kanban ready=1(t_evo_trace_grad_1001, assignee=None=非スパーン)/blocked=0/done=705; Worker report 10/1実在確認済(ls=3578B EXISTS); 収益29エントリ最新10/01・external_users=0・ppe=/usr/bin/bash; Reddit G2 go.flag未作成=要ユーザー対応/G5 age_days=24<30; 次回:幽霊カード処理・Worker実在確認反映・Reddit G5再検証"
+    },
+    {
+      "trace_id": "5e8ec4984bba_2026-10-01T20:56:08.103853+09:00",
+      "failure_node": "execution_failure",
+      "severity": "high",
+      "suggested_granular_modification": "enhance_pattern_mining_from_past_gradients",
+      "evidence_hash": "sha256:2ab9f4c2079ac84d",
+      "extracted_at": "2026-10-01T14:08:18.539155+00:00",
+      "source_job_id": "5e8ec4984bba",
+      "raw_entry": "2026-10-01 20:50 JST: 再実測3回目。board非完了=2件(t_bef61602 scheduled/未アサイン、t_4bb73bcc abandoned)。ready=0/blocked=0/todo=0。Reddit gate: G0/G1/G3/G4/G6 PASS、G2 FAIL(go.flag未生成=テザリング確認のユーザー印・AI生成不可)、G5 FAIL(age_days=24<30→10/7 JST自動PASS)。前回19:57と同一。コード変更なし(未コミット182ファイルは他エージェント共有repo作業成果のためcommitt対象外)。次: ユーザーがテザリング有効→touch go.flag後、reddit-gate-check.sh再実行でG2/G5 PASSを待つ。10/7以降G5自動PASS。その間のcode変更不要。"
+    },
+    {
+      "trace_id": "4baf143523e0_2026-10-01T22:39:45.442734+09:00",
+      "failure_node": "execution_failure",
+      "severity": "high",
+      "suggested_granular_modification": "optimize_apify_actor_discovery",
+      "evidence_hash": "sha256:97d70ca6e9eaa05f",
+      "extracted_at": "2026-10-01T14:08:29.816480+00:00",
+      "source_job_id": "4baf143523e0",
+      "raw_entry": "2026-10-04: トリアージ完了。t_bef61602(Reddit新垢,27日放置)=【要ユーザー対応】コメント追加(手動待ち)。t_4bb73bcc(在庫restock SaaS)=abandon→archive。全重複解消でready=0/blocked=0/in_progress=0/todo=0。score=100/streak=0。収益 /usr/bin/bash 継続(Apify external_users=0/Gumroad売上0)。【核心】販促・集客自動化が唯一の残る課題→次回は収益化卡の実装委譲を検討。\n2026-10-05: 幽霊カード t_evo_trace_grad_1001(ready/assignee=None/idempotency=critic-20261004-v1-tracegrad)=【要ユーザー対応】コメント追加(手動待ち・assignee=kensho-worker設定を推奨)。TPGO Execution Trace Structured Archiving の実装は kensho-worker 管轄。収益 /usr/bin/bas"
+    },
+    {
+      "trace_id": "033ff6065ef7_2026-10-01T22:13:44.490782+09:00",
+      "failure_node": "execution_failure",
+      "severity": "high",
+      "suggested_granular_modification": "improve_error_handling",
+      "evidence_hash": "sha256:536b6378d7d69170",
+      "extracted_at": "2026-10-01T14:08:29.816586+00:00",
+      "source_job_id": "033ff6065ef7",
+      "raw_entry": "2026-10-01: score=100/streak=0 healthy; kanban ready=1(t_evo_trace_grad_1001, assignee=None=非スパーン)/blocked=0/done=705; Worker report 10/1実在確認済(ls=3578B EXISTS); 収益29エントリ最新10/01・external_users=0・ppe=/usr/bin/bash; Reddit G2 go.flag未作成=要ユーザー対応/G5 age_days=24<30; 次回:幽霊カード処理・Worker実在確認反映・Reddit G5再検証"
+    },
+    {
+      "trace_id": "5e8ec4984bba_2026-10-01T20:56:08.103853+09:00",
+      "failure_node": "execution_failure",
+      "severity": "high",
+      "suggested_granular_modification": "enhance_pattern_mining_from_past_gradients",
+      "evidence_hash": "sha256:2ab9f4c2079ac84d",
+      "extracted_at": "2026-10-01T14:08:29.816628+00:00",
+      "source_job_id": "5e8ec4984bba",
+      "raw_entry": "2026-10-01 20:50 JST: 再実測3回目。board非完了=2件(t_bef61602 scheduled/未アサイン、t_4bb73bcc abandoned)。ready=0/blocked=0/todo=0。Reddit gate: G0/G1/G3/G4/G6 PASS、G2 FAIL(go.flag未生成=テザリング確認のユーザー印・AI生成不可)、G5 FAIL(age_days=24<30→10/7 JST自動PASS)。前回19:57と同一。コード変更なし(未コミット182ファイルは他エージェント共有repo作業成果のためcommitt対象外)。次: ユーザーがテザリング有効→touch go.flag後、reddit-gate-check.sh再実行でG2/G5 PASSを待つ。10/7以降G5自動PASS。その間のcode変更不要。"
+    },
+    {
+      "trace_id": "4baf143523e0_2026-10-01T22:39:45.442734+09:00",
+      "failure_node": "execution_failure",
+      "severity": "high",
+      "suggested_granular_modification": "optimize_apify_actor_discovery",
+      "evidence_hash": "sha256:97d70ca6e9eaa05f",
+      "extracted_at": "2026-10-01T14:10:48.345134+00:00",
+      "source_job_id": "4baf143523e0",
+      "raw_entry": "2026-10-04: トリアージ完了。t_bef61602(Reddit新垢,27日放置)=【要ユーザー対応】コメント追加(手動待ち)。t_4bb73bcc(在庫restock SaaS)=abandon→archive。全重複解消でready=0/blocked=0/in_progress=0/todo=0。score=100/streak=0。収益 /usr/bin/bash 継続(Apify external_users=0/Gumroad売上0)。【核心】販促・集客自動化が唯一の残る課題→次回は収益化卡の実装委譲を検討。\n2026-10-05: 幽霊カード t_evo_trace_grad_1001(ready/assignee=None/idempotency=critic-20261004-v1-tracegrad)=【要ユーザー対応】コメント追加(手動待ち・assignee=kensho-worker設定を推奨)。TPGO Execution Trace Structured Archiving の実装は kensho-worker 管轄。収益 /usr/bin/bas"
+    },
+    {
+      "trace_id": "033ff6065ef7_2026-10-01T22:13:44.490782+09:00",
+      "failure_node": "execution_failure",
+      "severity": "high",
+      "suggested_granular_modification": "improve_error_handling",
+      "evidence_hash": "sha256:536b6378d7d69170",
+      "extracted_at": "2026-10-01T14:10:48.345338+00:00",
+      "source_job_id": "033ff6065ef7",
+      "raw_entry": "2026-10-01: score=100/streak=0 healthy; kanban ready=1(t_evo_trace_grad_1001, assignee=None=非スパーン)/blocked=0/done=705; Worker report 10/1実在確認済(ls=3578B EXISTS); 収益29エントリ最新10/01・external_users=0・ppe=/usr/bin/bash; Reddit G2 go.flag未作成=要ユーザー対応/G5 age_days=24<30; 次回:幽霊カード処理・Worker実在確認反映・Reddit G5再検証"
+    },
+    {
+      "trace_id": "5e8ec4984bba_2026-10-01T20:56:08.103853+09:00",
+      "failure_node": "execution_failure",
+      "severity": "high",
+      "suggested_granular_modification": "enhance_pattern_mining_from_past_gradients",
+      "evidence_hash": "sha256:2ab9f4c2079ac84d",
+      "extracted_at": "2026-10-01T14:10:48.345401+00:00",
+      "source_job_id": "5e8ec4984bba",
+      "raw_entry": "2026-10-01 20:50 JST: 再実測3回目。board非完了=2件(t_bef61602 scheduled/未アサイン、t_4bb73bcc abandoned)。ready=0/blocked=0/todo=0。Reddit gate: G0/G1/G3/G4/G6 PASS、G2 FAIL(go.flag未生成=テザリング確認のユーザー印・AI生成不可)、G5 FAIL(age_days=24<30→10/7 JST自動PASS)。前回19:57と同一。コード変更なし(未コミット182ファイルは他エージェント共有repo作業成果のためcommitt対象外)。次: ユーザーがテザリング有効→touch go.flag後、reddit-gate-check.sh再実行でG2/G5 PASSを待つ。10/7以降G5自動PASS。その間のcode変更不要。"
+    }
+  ],
+  "schema_version": "1.0",
+  "created_at": "2026-10-01T14:07:12.895744+00:00",
+  "last_updated": "2026-10-01T14:10:48.345418+00:00"
+}

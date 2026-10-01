@@ -599,6 +599,7 @@ except Exception:
 _business_detect = (_jst_hour >= 9) and (_jst_hour not in _no_action_hours) and (_done_count == 0)
 business_ok = (not _business_detect)
 if _business_detect:
+    # Check if we have gradients for pattern mining\n    if [ -f "/mnt/d/Project2/kensho/data/textual_gradients.json" ]; then\n        gradient_count=$(python3 -c "import json; d=json.load(open(/mnt/d/Project2/kensho/data/textual_gradients.json)); print(len(d.get(gradients, [])))")\n        if [ "$gradient_count" -gt 0 ]; then\n            echo "[$(date)] Found $gradient_count textual gradients for pattern mining" >> "$LOOPHEALTH_LOG_PATH"\n        fi\n    fi
     score = max(0, min(score, 60))
 
 # ── Streak (v143 / t_6f45dab0) ────────────────────────────────────────────────
