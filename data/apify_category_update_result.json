@@ -1,0 +1,642 @@
+{
+ "total_generic": 79,
+ "targets": 40,
+ "ok": 40,
+ "fail": 0,
+ "results": [
+  {
+   "actor_id": "xUYsD13SVHHRFQS1H",
+   "name": "mandarake-surugaya-mcp",
+   "specific_category": "MCP_SERVERS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "MCP_SERVERS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "MCP_SERVERS"
+   ]
+  },
+  {
+   "actor_id": "0eeiFH0nLqlWVoOAc",
+   "name": "rakuten-japan-mcp",
+   "specific_category": "MCP_SERVERS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "MCP_SERVERS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "MCP_SERVERS"
+   ]
+  },
+  {
+   "actor_id": "wxMskoiHMPeeH2qAJ",
+   "name": "tackleberry-japan-fishing-tackle-scraper",
+   "specific_category": "SPORTS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ]
+  },
+  {
+   "actor_id": "57SNehd4cHNFyUCj3",
+   "name": "japan-market-mcp",
+   "specific_category": "MCP_SERVERS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "MCP_SERVERS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "MCP_SERVERS"
+   ]
+  },
+  {
+   "actor_id": "N1o8olAoZyXTJuhnb",
+   "name": "japan-rent-market-scraper",
+   "specific_category": "REAL_ESTATE",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ]
+  },
+  {
+   "actor_id": "5EOtT2UpEGEU83nhO",
+   "name": "japan-rent-market-cn",
+   "specific_category": "REAL_ESTATE",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ]
+  },
+  {
+   "actor_id": "lWHSccM79ZpPxOLls",
+   "name": "japan-rent-market-kr",
+   "specific_category": "REAL_ESTATE",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ]
+  },
+  {
+   "actor_id": "AiXA2WVMNTaGuHoDh",
+   "name": "japan-property-market-scraper",
+   "specific_category": "REAL_ESTATE",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ]
+  },
+  {
+   "actor_id": "aAe1nK4dpqgmBksOK",
+   "name": "japan-property-market-cn",
+   "specific_category": "REAL_ESTATE",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ]
+  },
+  {
+   "actor_id": "CeDRuOvv0IHA8NL4M",
+   "name": "japan-property-market-kr",
+   "specific_category": "REAL_ESTATE",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ]
+  },
+  {
+   "actor_id": "XOqsB7rCHYrb42kcY",
+   "name": "japan-kakaku-price-search",
+   "specific_category": "BUSINESS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "BUSINESS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "BUSINESS"
+   ]
+  },
+  {
+   "actor_id": "4SjfgE6nF1awZZtEI",
+   "name": "japan-kakaku-price-search-cn",
+   "specific_category": "BUSINESS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "BUSINESS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "BUSINESS"
+   ]
+  },
+  {
+   "actor_id": "5hzOkPeYWPzpv6fBd",
+   "name": "japan-kakaku-price-search-kr",
+   "specific_category": "BUSINESS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "BUSINESS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "BUSINESS"
+   ]
+  },
+  {
+   "actor_id": "bgm5Gxn4BeBmoO7xD",
+   "name": "goo-net-car-scraper",
+   "specific_category": "SPORTS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ]
+  },
+  {
+   "actor_id": "W9cXhDckzHd9RZWnQ",
+   "name": "biglemon-machinery-scraper",
+   "specific_category": "SPORTS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ]
+  },
+  {
+   "actor_id": "pcSpFWK2A2HWRE2mx",
+   "name": "goo-net-car-scraper-es",
+   "specific_category": "SPORTS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ]
+  },
+  {
+   "actor_id": "ksRNLhw7sjdmoVbVt",
+   "name": "goo-net-car-scraper-pt",
+   "specific_category": "SPORTS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ]
+  },
+  {
+   "actor_id": "FzQlnqfCsMfSlRG9j",
+   "name": "suumo-japan-real-estate-scraper",
+   "specific_category": "REAL_ESTATE",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ]
+  },
+  {
+   "actor_id": "8lfpT6vpZMl9JVagy",
+   "name": "suumo-japan-real-estate-scraper-cn",
+   "specific_category": "REAL_ESTATE",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ]
+  },
+  {
+   "actor_id": "GfdpyUl6gSpCQlGK8",
+   "name": "suumo-japan-real-estate-scraper-kr",
+   "specific_category": "REAL_ESTATE",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ]
+  },
+  {
+   "actor_id": "GXAtS99WP3st7AR27",
+   "name": "suumo-japan-real-estate-scraper-es",
+   "specific_category": "REAL_ESTATE",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "REAL_ESTATE"
+   ]
+  },
+  {
+   "actor_id": "vN10EvpaN6lNSRxUo",
+   "name": "goo-net-car-scraper-fr",
+   "specific_category": "SPORTS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ]
+  },
+  {
+   "actor_id": "L0xYjvLZT8aYUKjKQ",
+   "name": "goo-net-car-scraper-ru",
+   "specific_category": "SPORTS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ]
+  },
+  {
+   "actor_id": "xv30Eoxh7NMJgJIj5",
+   "name": "goobike-motorcycle-scraper",
+   "specific_category": "SPORTS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ]
+  },
+  {
+   "actor_id": "BdQF1T6wB5T25AO20",
+   "name": "upgarage-parts-scraper",
+   "specific_category": "SPORTS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ]
+  },
+  {
+   "actor_id": "xPSQSSsdVjRwWQAiA",
+   "name": "golfpartner-used-club-scraper",
+   "specific_category": "SPORTS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ]
+  },
+  {
+   "actor_id": "UVkH1uhlt57Jf6QnT",
+   "name": "japan-hotpepper-scraper",
+   "specific_category": "SOCIAL_MEDIA",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SOCIAL_MEDIA"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SOCIAL_MEDIA"
+   ]
+  },
+  {
+   "actor_id": "95ZKdUlpFBo8CBYJh",
+   "name": "japan-hotpepper-cn-scraper",
+   "specific_category": "SOCIAL_MEDIA",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SOCIAL_MEDIA"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SOCIAL_MEDIA"
+   ]
+  },
+  {
+   "actor_id": "FVJsHJhb4aPq54Uyd",
+   "name": "japan-hotpepper-kr-scraper",
+   "specific_category": "SOCIAL_MEDIA",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SOCIAL_MEDIA"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SOCIAL_MEDIA"
+   ]
+  },
+  {
+   "actor_id": "VCKdDJ5BdT9Z8aIDf",
+   "name": "tackleberry-scraper",
+   "specific_category": "SPORTS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SPORTS"
+   ]
+  },
+  {
+   "actor_id": "pWhvh8aWz4i6OM1ST",
+   "name": "japan-egov-laws",
+   "specific_category": "NEWS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "NEWS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "NEWS"
+   ]
+  },
+  {
+   "actor_id": "1g84gsOT7vE9yxNla",
+   "name": "japan-jma-weather",
+   "specific_category": "NEWS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "NEWS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "NEWS"
+   ]
+  },
+  {
+   "actor_id": "rIZ3NSg5Ul34PgpYx",
+   "name": "japan-corporate-numbers",
+   "specific_category": "NEWS",
+   "new_categories": [
+    "AUTOMATION",
+    "DEVELOPER_TOOLS",
+    "NEWS"
+   ],
+   "status": 200,
+   "response": [
+    "AUTOMATION",
+    "DEVELOPER_TOOLS",
+    "NEWS"
+   ]
+  },
+  {
+   "actor_id": "u2qsG1UfVHWsgl8Dg",
+   "name": "world-bank-indicators",
+   "specific_category": "NEWS",
+   "new_categories": [
+    "AUTOMATION",
+    "DEVELOPER_TOOLS",
+    "NEWS"
+   ],
+   "status": 200,
+   "response": [
+    "AUTOMATION",
+    "DEVELOPER_TOOLS",
+    "NEWS"
+   ]
+  },
+  {
+   "actor_id": "pAxQ0lRyArudhK9Wx",
+   "name": "eurostat-indicators",
+   "specific_category": "NEWS",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "NEWS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "NEWS"
+   ]
+  },
+  {
+   "actor_id": "FPlcw4CWMAKooZNe6",
+   "name": "japan-prize-giveaway-scraper",
+   "specific_category": "SOCIAL_MEDIA",
+   "new_categories": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SOCIAL_MEDIA"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "AUTOMATION",
+    "SOCIAL_MEDIA"
+   ]
+  },
+  {
+   "actor_id": "BxstMzzxh8jq6UtfS",
+   "name": "japan-jepx-mcp",
+   "specific_category": "NEWS",
+   "new_categories": [
+    "ECOMMERCE",
+    "NEWS"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "NEWS"
+   ]
+  },
+  {
+   "actor_id": "kjf9ZKQ5zWyOQxzvL",
+   "name": "kensho-sweep-mcp",
+   "specific_category": "MCP_SERVERS",
+   "new_categories": [
+    "MCP_SERVERS"
+   ],
+   "status": 200,
+   "response": [
+    "MCP_SERVERS"
+   ]
+  },
+  {
+   "actor_id": "DKzufUSvmuXNKHeYx",
+   "name": "japan-anime-figure-price-data",
+   "specific_category": "AI",
+   "new_categories": [
+    "ECOMMERCE",
+    "DEVELOPER_TOOLS",
+    "AI"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "DEVELOPER_TOOLS",
+    "AI"
+   ]
+  },
+  {
+   "actor_id": "8cCUNDwmelphhoXFs",
+   "name": "japan-anime-figure-demand-features",
+   "specific_category": "AI",
+   "new_categories": [
+    "ECOMMERCE",
+    "DEVELOPER_TOOLS",
+    "AI"
+   ],
+   "status": 200,
+   "response": [
+    "ECOMMERCE",
+    "DEVELOPER_TOOLS",
+    "AI"
+   ]
+  }
+ ]
+}
