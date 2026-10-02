@@ -16,5 +16,10 @@
     "12f8e15e8f83c3a6ab1cf51b2b9b3a8ad7c09a19066cca65d1a454caa33e5251"
   ],
   "task_id": "t_54fe509c",
-  "status": "complete"
+  "status": "complete",
+  "outcome": {
+    "metric": "monetize prompt output constraint sections",
+    "before": 0,
+    "after": 7
+  }
 }
