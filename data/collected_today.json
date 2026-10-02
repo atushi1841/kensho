@@ -8225,7 +8225,7 @@
     "winner_count": 30,
     "days_remaining": "",
     "applied": {
-      "atushi16": "DEFER:2026-10-01T14:55:38.404139",
+      "atushi16": "2026-10-02T13:36:28.068868",
       "kudou": "DEFER:2026-10-01T19:47:36.083567",
       "zin20120731": "2026-10-01T03:30:41Z",
       "TankanNotes": "2026-10-01T03:30:41Z",
@@ -9620,7 +9620,7 @@
     "winner_count": 5,
     "days_remaining": "",
     "applied": {
-      "atushi16": null,
+      "atushi16": "2026-10-02T14:10:18.941376",
       "kudou": null,
       "zin20120731": null,
       "TankanNotes": "DEFER:2026-10-02T11:26:39.295759"
@@ -11650,7 +11650,7 @@
     "days_remaining": "",
     "applied": {
       "atushi16": "2026-10-02T00:30:12Z",
-      "kudou": "DEFER:2026-10-02T20:28:13.687269",
+      "kudou": "DEFER:2026-10-02T12:57:47.172909",
       "zin20120731": null,
       "TankanNotes": "DEFER:2026-10-02T16:42:36.778503"
     },
@@ -14659,5 +14659,27 @@
     "simple_rt_ok": "FLAG",
     "導線": "外部フォーム",
     "easy_win_score": 11.6
+  },
+  {
+    "detail_url": "/kensho-everyday/archives/288182",
+    "x_url": "https://x.com/Konciwa100/status/2105598603368759613",
+    "source": "kensho-everyday",
+    "time": 0.0,
+    "deadline": "2026-10-11",
+    "winner_count": 100,
+    "days_remaining": "",
+    "applied": {
+      "atushi16": null,
+      "kudou": null,
+      "zin20120731": null,
+      "TankanNotes": null
+    },
+    "keyword_flag": false,
+    "tweet_id": "2105598603368759613",
+    "prize_rank": 0,
+    "tweet_text": "100名様にプレゼント！\nあったかルームシューズモニター募集✨\n\n秋が深まる前に、\n少し早めの冬支度を🧸\n\n【応募方法】\n① @Konciwa100をフォロー\n② この投稿にいいね\n③ 体験後レビュー投稿必須\n\n💬 コメントで当選率UP！\n\n「秋冬のおうち時間、どう過ごしたい？」\nぜひコメントで教えてください🫶 https://t.co/wwNAFT5mqW",
+    "simple_rt_ok": "UNKNOWN",
+    "導線": "X",
+    "easy_win_score": 33.4
   }
 ]
