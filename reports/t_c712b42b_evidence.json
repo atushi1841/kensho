@@ -1,0 +1,26 @@
+{
+  "task_id": "t_c712b42b",
+  "status": "complete",
+  "success_indicators": [
+    "Apify store search returned 6+ Jalan/Rakuten/Booking/Yahoo Travel actors (piquno/jalan-japan-hotel-scraper u30d=1 runs=181, abotapi/rakuten-travel-scraper, superslowsloth, jpopendata series)",
+    "Coronium mobile-proxies page confirms Japan travel/hotel pricing demand at $95/mo"
+  ],
+  "verification_commands": [
+    "$ python3 /home/atushi/.hermes/profiles/kensho-worker/cache/scratch/store_search.py \"jalan japan\" \"rakuten travel\" \"japan travel\" \"japan tourism\" \"booking japan hotel\" => 6 Jalan actors + 6 Rakuten actors + Booking.com (88 users/5.7k runs) + Coronium signal",
+    "$ curl -s https://www.coronium.io/mobile-proxies/japan | grep -i \"travel|hotel|jalan\" => Monitor JAL/ANA fares and Jalan/Rakuten Travel hotel pricing",
+    "$ ls -la /home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_c712b42b/japan-travel-scraper-feasibility.md => -rw-rw-r-- 1 atushi atushi 6367 Oct 2 08:19 ... (artifact exists)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_c712b42b_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:db7c3f0aaf05528888919bb4f0ecee85977fcee020c7880e89a77cd862fa7795"
+  ],
+  "outcome": {
+    "metric": "Japan travel scraping 既存Apify actorカバレッジ (Jalan/Rakuten/Booking/Yahoo)",
+    "before": 0,
+    "after": 18,
+    "direction": "up",
+    "note": "store search で18件の既存actor確認、構築不要のraw layerは存在"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "task_id": "t_f859baf0",
+  "status": "complete",
+  "success_indicators": [
+    "10times Japan live run SUCCEEDED: 22 events, all B2B Tradeshow/Conference/Workshop, zero matsuri/concert/exhibition",
+    "Apify store search for matsuri/concert/exhibition/ticket queries returned zero consumer-event actors"
+  ],
+  "verification_commands": [
+    "$ python3 /home/atushi/.hermes/profiles/kensho-worker/cache/scratch/run_jp_country.py => RUN: gkzIFALewO0lEmYD2 status: SUCCEEDED COUNT: 22 types: {'Tradeshow': 13, 'Conference': 7, 'Workshop': 2}",
+    "$ python3 /home/atushi/.hermes/profiles/kensho-worker/cache/scratch/store_search2.py => No actors for japan festival/japan concert/japan exhibition/matsuri/japan ticket/festival japan; only 10times (global B2B) + Peatix/Eventbrite (no Japan runs)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_f859baf0_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:459789955dd538bed4ee0a7ce0322b1c4a9a7f10e9efda59f5ad3c9038112bfc"
+  ],
+  "outcome": {
+    "metric": "10times Japan 実投稿のconsumer event (祭り/ライブ/展覧会) 含有率",
+    "before": 0,
+    "after": 0,
+    "direction": "equal",
+    "note": "22件全是B2B展示会/カンファレンス、consumer event 0件=グリーンフィールド確認"
+  }
+}
