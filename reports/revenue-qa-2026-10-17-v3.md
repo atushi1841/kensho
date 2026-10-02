@@ -14,7 +14,7 @@
 - **business_ok=True**（閾値再判定済み、外部run>0またはsales>0でTrueと更新）
 - ready=0 / blocked=0 / in_progress=0 / done=718
 
-** verdict: 健全だが更新停滞中 **
+**verdict: 健全だが更新停滞中**
 
 ---
 
@@ -87,4 +87,4 @@ BLOCK (1 not met: deliverable_token_exists)
 ---
 
 検証: kensho-revenue-qa (033ff6065ef7)
-コミット: c04c376（前回）→ 新規コミット不要（data/reportのみ変更）
+コミット: 6f14e3e reports/revenue-qa-2026-10-17-v3.md
