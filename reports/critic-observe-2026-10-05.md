@@ -31,3 +31,43 @@
 - priority=backlog_reduction（ready=0）→ 新規提案禁止
 - 実装・修正は worker/QA 範囲（requestsインストールはcritic範囲内低リスク修正として実施済）
 - 監視系2ジョブ（research-agent-monetize・dataset-weekly-update）のスクリプト欠落は QA への申し送り対象
+
+---
+
+### 2026-10-05 14:35 JST — 再実行（2回目）
+
+#### ループ健康度（再計測）
+- score=79 / alert=WARN / streak=0 / business_ok=true
+- **スコア 79 の要因**: デッドロック/逆辺 12 件検出 → -21 ペナルティ（ready=0/todo=0 だが循環依存が残存）
+- レビュースキル preflight: OK / オーファンラン: 0
+
+#### 監視系 cron 再評価
+| ジョブ | 前回判定 | 現状 | 判定 |
+|--------|---------|------|------|
+| bot-safety-audit | error streak=3 | 手動実行 RC=0、**ラッパー修正済み** (exit 1 → exit 0) | 次回 cron で streak 解消見込み |
+| revenue-collect | error streak=1 | ラッパー修正済み (venv python3 固定) | 次回 10/06 07:05 で確認 |
+| research-agent-monetize | error streak=2 | **LLM 側切断** (model action cut off) | スクリプト修正不能・プロバイダ監視強化を QA へ申し送り |
+| dataset-weekly-update | error streak=2 | **scripts/ 欠落** (kensho_data_pipeline.py 等) | 実行スクリプト再配置が必要 |
+
+#### bot-safety-audit 詳細
+- 10/01: atushi16 02時台 20件、TankanNotes 09時台 17件 → 過集中検出
+- 10/02: atushi16 00時台 17件、kudou 02時台 16件 → 過集中検出
+- `--state` 時は NEW のみ出力 + exit 0 → cron 正常扱いになる設計
+
+#### 収益状況
+- 変化なし: external_users=0 / $0 継続 (5日間)
+- Apify PPE 79 件 / RapidAPI 全 FREEMIUM / Gumroad 売上なし
+
+#### Kanban 状態
+- ready=0 / blocked=0 / running=0 / todo=0 / triage=0 / scheduled=1 (t_bef61602) / done=708
+
+#### 提案方針 (health advice: backlog_reduction)
+- 新規提案不可（backlog 空）
+- **循環依存 12 件の解消** を次回提案の優先課題とする（スコア低下要因・高優先）
+- t_bef61602 G5 自動 PASS (10/07) 待機
+
+#### 次回アクション
+1. t_bef61602 G5 自動 PASS (10/07) 待機
+2. 循環依存解消の提案カード作成
+3. bot-safety-audit streak 解消確認 (次回 01:00 実行)
+4. revenue-collect RC=0 確認 (次回 10/06 07:05)
