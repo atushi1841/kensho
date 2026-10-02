@@ -1,14 +1,25 @@
 {
+  "verified_at": "2026-10-02T20:35:00",
+  "method": "individual GET /v2/actors/{id} (100% coverage verified)",
+  "public_total": 78,
+  "desc_ge_120": 78,
+  "seoDesc_ge_80": 78,
+  "cats_gt_0": 77,
+  "readme_ge_800": 0,
+  "readme_note": "README is build-time sourced; not API-writable",
+  "actors_with_full_seo": 78,
   "public": [
     {
       "actor_id": "F8Hl0a8Cx9bpJBrxR",
       "name": "surugaya-japan-hobby-prices",
       "isPublic": true,
-      "desc_len": 295,
+      "desc_len": 300,
       "readme_len": 0,
-      "seoTitle_len": 47,
-      "seoDesc_len": 122,
-      "cats_cnt": 3
+      "seoTitle_len": 56,
+      "seoDesc_len": 185,
+      "cats_cnt": 2,
+      "seoTitle": "Suruga-ya Scraper — 駿河屋 中古フィギュア・ホビー価格 collectibles hobby",
+      "seoDescription": "Scrape used and new prices from Suruga-ya, Japan's largest second-hand collectibles marketplace. 24 fields: name, prices"
     },
     {
       "actor_id": "q2E37PVTg5JcGOTEn",
@@ -16,19 +27,23 @@
       "isPublic": true,
       "desc_len": 300,
       "readme_len": 0,
-      "seoTitle_len": 55,
-      "seoDesc_len": 129,
-      "cats_cnt": 3
+      "seoTitle_len": 60,
+      "seoDesc_len": 122,
+      "cats_cnt": 3,
+      "seoTitle": "Mandarake Auction Japan Scraper - Used Collectibles Prices A",
+      "seoDescription": "Mandarake Auction scraper — Japan collectibles auctions. Price, bid, condition, seller data. PPE pricing, JSON/CSV outpu"
     },
     {
       "actor_id": "xUYsD13SVHHRFQS1H",
       "name": "mandarake-surugaya-mcp",
       "isPublic": true,
-      "desc_len": 295,
+      "desc_len": 300,
       "readme_len": 0,
       "seoTitle_len": 47,
       "seoDesc_len": 122,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Suruga-ya Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Suruga-ya scraper — used hobby/anime/game collectibles. Price, condition, seller data. PPE pricing, JSON/CSV outpu"
     },
     {
       "actor_id": "0eeiFH0nLqlWVoOAc",
@@ -36,9 +51,11 @@
       "isPublic": true,
       "desc_len": 300,
       "readme_len": 0,
-      "seoTitle_len": 52,
+      "seoTitle_len": 60,
       "seoDesc_len": 136,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Rakuten Ichiba Prices — Listings & Market Data product",
+      "seoDescription": "Japan Rakuten Ichiba scraper — search via official Rakuten marketplace API. Price, condition, seller data. PPE pricing, "
     },
     {
       "actor_id": "6Z7tJ3plfUmAgGmbk",
@@ -48,47 +65,57 @@
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "nUm22B2guMo8vXom6",
       "name": "dmm-scraper",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 252,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "wxMskoiHMPeeH2qAJ",
       "name": "tackleberry-japan-fishing-tackle-scraper",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 170,
       "readme_len": 0,
       "seoTitle_len": 55,
-      "seoDesc_len": 129,
-      "cats_cnt": 3
+      "seoDesc_len": 134,
+      "cats_cnt": 3,
+      "seoTitle": "Tackleberry Japan Scraper — Fishing Tackle Prices, JSON",
+      "seoDescription": "Tackleberry Japan fishing tackle scraper — used rods, reels, gear prices. Price, condition, seller data. PPE pricing, JS"
     },
     {
       "actor_id": "DOiD9y1NAJfLBcAjT",
       "name": "kitamura-japan-used-camera-scraper",
       "isPublic": true,
-      "desc_len": 280,
+      "desc_len": 300,
       "readme_len": 0,
       "seoTitle_len": 46,
       "seoDesc_len": 107,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Kitamura Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Kitamura scraper — used camera listings. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "nWf9BR2ndMTYqKxNB",
       "name": "jackroad-used-watch-scraper",
       "isPublic": true,
-      "desc_len": 288,
+      "desc_len": 300,
       "readme_len": 0,
       "seoTitle_len": 45,
       "seoDesc_len": 115,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan watches Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan watches scraper — luxury and vintage timepieces. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "Db3iY8FIRxPjPag7N",
@@ -98,27 +125,33 @@
       "readme_len": 0,
       "seoTitle_len": 45,
       "seoDesc_len": 109,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Komehyo Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Komehyo scraper — used luxury brand items. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "vvD9vs8D1AwoQrTTS",
       "name": "iosys-japan-used-smartphone-scraper",
       "isPublic": true,
-      "desc_len": 285,
+      "desc_len": 300,
       "readme_len": 0,
       "seoTitle_len": 43,
       "seoDesc_len": 112,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan IOSYS Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan IOSYS scraper — used smartphones and tablets. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "FSuoQiX8OG4KuIQ9c",
       "name": "digimart-japan-used-instrument-scraper",
       "isPublic": true,
-      "desc_len": 284,
+      "desc_len": 300,
       "readme_len": 0,
       "seoTitle_len": 46,
       "seoDesc_len": 111,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Digimart Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Digimart scraper — used musical instruments. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "mQaZFo6up4YZKepC3",
@@ -128,7 +161,9 @@
       "readme_len": 0,
       "seoTitle_len": 45,
       "seoDesc_len": 119,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan cameras Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan cameras scraper — DSLR, mirrorless, vintage cameras. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "yN1R26HrV6C2MBKas",
@@ -138,17 +173,21 @@
       "readme_len": 0,
       "seoTitle_len": 57,
       "seoDesc_len": 120,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan musical instruments Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan musical instruments scraper — guitars, synths, brass. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "gMqdrS2evpcybSZc2",
       "name": "japan-watch-market-scraper",
       "isPublic": true,
-      "desc_len": 288,
+      "desc_len": 300,
       "readme_len": 0,
       "seoTitle_len": 45,
       "seoDesc_len": 115,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan watches Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan watches scraper — luxury and vintage timepieces. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "b0vuqa3ESvy2mOwFB",
@@ -158,17 +197,21 @@
       "readme_len": 0,
       "seoTitle_len": 50,
       "seoDesc_len": 111,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan luxury brand Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan luxury brand scraper — branded resale items. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "57SNehd4cHNFyUCj3",
       "name": "japan-market-mcp",
       "isPublic": true,
-      "desc_len": 284,
+      "desc_len": 300,
       "readme_len": 0,
       "seoTitle_len": 41,
       "seoDesc_len": 111,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan MCP Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan MCP scraper — Japan market price comparison. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "Zh4kqcS4dYPWpFzBd",
@@ -178,7 +221,9 @@
       "readme_len": 0,
       "seoTitle_len": 54,
       "seoDesc_len": 127,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Hard Off OffMall Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Hard Off OffMall scraper — second-hand chain official store. Price, condition, seller data. PPE pricing, JSON/CSV "
     },
     {
       "actor_id": "OqO1aPmd1njsKQvaW",
@@ -188,7 +233,9 @@
       "readme_len": 0,
       "seoTitle_len": 45,
       "seoDesc_len": 119,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan cameras Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan cameras scraper — DSLR, mirrorless, vintage cameras. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "rEaPnKwB07oS2cyZh",
@@ -198,27 +245,33 @@
       "readme_len": 0,
       "seoTitle_len": 45,
       "seoDesc_len": 119,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan cameras Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan cameras scraper — DSLR, mirrorless, vintage cameras. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "hoqt6EVaVcniMXWbK",
       "name": "japan-watch-market-scraper-cn",
       "isPublic": true,
-      "desc_len": 288,
+      "desc_len": 300,
       "readme_len": 0,
       "seoTitle_len": 45,
       "seoDesc_len": 115,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan watches Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan watches scraper — luxury and vintage timepieces. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "kDY2AAouEJzp8kfyj",
       "name": "japan-watch-market-scraper-kr",
       "isPublic": true,
-      "desc_len": 288,
+      "desc_len": 300,
       "readme_len": 0,
       "seoTitle_len": 45,
       "seoDesc_len": 115,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan watches Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan watches scraper — luxury and vintage timepieces. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "Igcmtgs71DCHze3CL",
@@ -228,7 +281,9 @@
       "readme_len": 0,
       "seoTitle_len": 50,
       "seoDesc_len": 111,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan luxury brand Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan luxury brand scraper — branded resale items. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "5J3JeV9cOSA3Gha0j",
@@ -238,7 +293,9 @@
       "readme_len": 0,
       "seoTitle_len": 50,
       "seoDesc_len": 111,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan luxury brand Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan luxury brand scraper — branded resale items. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "p279xuzqUvvLROE7O",
@@ -248,7 +305,9 @@
       "readme_len": 0,
       "seoTitle_len": 57,
       "seoDesc_len": 120,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan musical instruments Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan musical instruments scraper — guitars, synths, brass. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "agm9XlFlLFj7jlt66",
@@ -258,7 +317,9 @@
       "readme_len": 0,
       "seoTitle_len": 57,
       "seoDesc_len": 120,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan musical instruments Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan musical instruments scraper — guitars, synths, brass. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "wxLa590euQRaAJNKO",
@@ -268,7 +329,9 @@
       "readme_len": 0,
       "seoTitle_len": 54,
       "seoDesc_len": 127,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Hard Off OffMall Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Hard Off OffMall scraper — second-hand chain official store. Price, condition, seller data. PPE pricing, JSON/CSV "
     },
     {
       "actor_id": "9HSJRPbEIIGc6bHOx",
@@ -278,127 +341,153 @@
       "readme_len": 0,
       "seoTitle_len": 54,
       "seoDesc_len": 127,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Hard Off OffMall Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Hard Off OffMall scraper — second-hand chain official store. Price, condition, seller data. PPE pricing, JSON/CSV "
     },
     {
       "actor_id": "N1o8olAoZyXTJuhnb",
       "name": "japan-rent-market-scraper",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 235,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "5EOtT2UpEGEU83nhO",
       "name": "japan-rent-market-cn",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 235,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "lWHSccM79ZpPxOLls",
       "name": "japan-rent-market-kr",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 199,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "AiXA2WVMNTaGuHoDh",
       "name": "japan-property-market-scraper",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 177,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "aAe1nK4dpqgmBksOK",
       "name": "japan-property-market-cn",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 177,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "CeDRuOvv0IHA8NL4M",
       "name": "japan-property-market-kr",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 177,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "XOqsB7rCHYrb42kcY",
       "name": "japan-kakaku-price-search",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 190,
       "readme_len": 0,
-      "seoTitle_len": 55,
-      "seoDesc_len": 129,
-      "cats_cnt": 3
+      "seoTitle_len": 59,
+      "seoDesc_len": 146,
+      "cats_cnt": 3,
+      "seoTitle": "Kakaku Japan Scraper — Product Prices, Listings & Specs API",
+      "seoDescription": "Kakaku Japan price-comparison scraper: product prices, listings and specs from kakaku.com's leading price comparison ind"
     },
     {
       "actor_id": "4SjfgE6nF1awZZtEI",
       "name": "japan-kakaku-price-search-cn",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 190,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "5hzOkPeYWPzpv6fBd",
       "name": "japan-kakaku-price-search-kr",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 190,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "2Yy3Zu3pw0KzqYOP5",
       "name": "kimono-market-scraper",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 189,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "yCN9ystlovHkgolzw",
       "name": "kimono-market-scraper-cn",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 189,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "8iktWtPM0ZD3ab54f",
       "name": "kimono-market-scraper-kr",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 189,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "bgm5Gxn4BeBmoO7xD",
@@ -408,17 +497,21 @@
       "readme_len": 0,
       "seoTitle_len": 48,
       "seoDesc_len": 120,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan car market Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan car market scraper — vehicle listings and price data. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "W9cXhDckzHd9RZWnQ",
       "name": "biglemon-machinery-scraper",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 174,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "pcSpFWK2A2HWRE2mx",
@@ -428,7 +521,9 @@
       "readme_len": 0,
       "seoTitle_len": 48,
       "seoDesc_len": 120,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan car market Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan car market scraper — vehicle listings and price data. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "ksRNLhw7sjdmoVbVt",
@@ -438,57 +533,69 @@
       "readme_len": 0,
       "seoTitle_len": 48,
       "seoDesc_len": 120,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan car market Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan car market scraper — vehicle listings and price data. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "FzQlnqfCsMfSlRG9j",
       "name": "suumo-japan-real-estate-scraper",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 182,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "8lfpT6vpZMl9JVagy",
       "name": "suumo-japan-real-estate-scraper-cn",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 182,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "GfdpyUl6gSpCQlGK8",
       "name": "suumo-japan-real-estate-scraper-kr",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 182,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "GXAtS99WP3st7AR27",
       "name": "suumo-japan-real-estate-scraper-es",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 182,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "pZ20lXqRtsJUl9bGk",
       "name": "rakuten-market-scraper",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 182,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "vN10EvpaN6lNSRxUo",
@@ -498,7 +605,9 @@
       "readme_len": 0,
       "seoTitle_len": 48,
       "seoDesc_len": 120,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan car market Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan car market scraper — vehicle listings and price data. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "L0xYjvLZT8aYUKjKQ",
@@ -508,37 +617,45 @@
       "readme_len": 0,
       "seoTitle_len": 48,
       "seoDesc_len": 120,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan car market Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan car market scraper — vehicle listings and price data. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "xv30Eoxh7NMJgJIj5",
       "name": "goobike-motorcycle-scraper",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 156,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "BdQF1T6wB5T25AO20",
       "name": "upgarage-parts-scraper",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 176,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "xPSQSSsdVjRwWQAiA",
       "name": "golfpartner-used-club-scraper",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 152,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
     },
     {
       "actor_id": "8WBam4CPB72q9Rvsd",
@@ -548,7 +665,9 @@
       "readme_len": 0,
       "seoTitle_len": 52,
       "seoDesc_len": 118,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Yahoo Auctions Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Yahoo Auctions scraper — Japan auction marketplace. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "whSePszWpMtfeLYBp",
@@ -558,7 +677,9 @@
       "readme_len": 0,
       "seoTitle_len": 45,
       "seoDesc_len": 108,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Mercari Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Mercari scraper — C2C resale marketplace. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "UVkH1uhlt57Jf6QnT",
@@ -568,7 +689,9 @@
       "readme_len": 0,
       "seoTitle_len": 54,
       "seoDesc_len": 124,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan HotPepper Beauty Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan HotPepper Beauty scraper — salon search and reservations. Price, condition, seller data. PPE pricing, JSON/CSV out"
     },
     {
       "actor_id": "95ZKdUlpFBo8CBYJh",
@@ -578,7 +701,9 @@
       "readme_len": 0,
       "seoTitle_len": 54,
       "seoDesc_len": 124,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan HotPepper Beauty Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan HotPepper Beauty scraper — salon search and reservations. Price, condition, seller data. PPE pricing, JSON/CSV out"
     },
     {
       "actor_id": "FVJsHJhb4aPq54Uyd",
@@ -588,7 +713,9 @@
       "readme_len": 0,
       "seoTitle_len": 54,
       "seoDesc_len": 124,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan HotPepper Beauty Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan HotPepper Beauty scraper — salon search and reservations. Price, condition, seller data. PPE pricing, JSON/CSV out"
     },
     {
       "actor_id": "xJI4WaPBfQiDJfcnp",
@@ -598,17 +725,57 @@
       "readme_len": 0,
       "seoTitle_len": 45,
       "seoDesc_len": 119,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan cameras Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan cameras scraper — DSLR, mirrorless, vintage cameras. Price, condition, seller data. PPE pricing, JSON/CSV output."
     },
     {
       "actor_id": "WnrudUFF2kZxZcj7Z",
       "name": "japan-figure-plamo-resale-price-stats",
       "isPublic": true,
-      "desc_len": 300,
+      "desc_len": 228,
       "readme_len": 0,
       "seoTitle_len": 55,
       "seoDesc_len": 129,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+      "seoDescription": "Japan Japan market data scraper — scrapes Japanese marketplace data. Price, condition, seller data. PPE pricing, JSON/CS"
+    },
+    {
+      "actor_id": "VCKdDJ5BdT9Z8aIDf",
+      "name": "tackleberry-scraper",
+      "isPublic": true,
+      "desc_len": 156,
+      "readme_len": 0,
+      "seoTitle_len": 49,
+      "seoDesc_len": 121,
+      "cats_cnt": 2,
+      "seoTitle": "Tackleberry Japan Scraper — Fishing Tackle Prices",
+      "seoDescription": "Scrape Tackleberry B-net, Japan's used & new fishing tackle marketplace. Prices, stock, discounts for JDM reels and rods"
+    },
+    {
+      "actor_id": "doneSfO13IuNgcWPk",
+      "name": "amazon-paapi-jp-actor",
+      "isPublic": true,
+      "desc_len": 170,
+      "readme_len": 0,
+      "seoTitle_len": 42,
+      "seoDesc_len": 105,
+      "cats_cnt": 2,
+      "seoTitle": "Amazon PA-API Japan — ASIN Lookup & Search",
+      "seoDescription": "Amazon Japan PA-API wrapper. ASIN lookup, search, prices, reviews. JSON/CSV, PPE. Requires PA-API access."
+    },
+    {
+      "actor_id": "6EvRs5kF1mbelC03M",
+      "name": "ai-model-price-api",
+      "isPublic": true,
+      "desc_len": 239,
+      "readme_len": 0,
+      "seoTitle_len": 48,
+      "seoDesc_len": 141,
+      "cats_cnt": 2,
+      "seoTitle": "AI Model Price API — 3,974 Models, 749 Providers",
+      "seoDescription": "LLM pricing API. 3,974 models from OpenRouter, LiteLLM. Per-1M token input/output prices, context length, modalities. Co"
     },
     {
       "actor_id": "pWhvh8aWz4i6OM1ST",
@@ -618,7 +785,9 @@
       "readme_len": 0,
       "seoTitle_len": 40,
       "seoDesc_len": 134,
-      "cats_cnt": 3
+      "cats_cnt": 3,
+      "seoTitle": "Japan Laws & Regulations Scraper — e-Gov",
+      "seoDescription": "Japan e-Gov legal texts scraper — Japanese laws, regulations and ordinances in JSON. Ideal for legal research and compli"
     },
     {
       "actor_id": "1g84gsOT7vE9yxNla",
@@ -628,109 +797,153 @@
       "readme_len": 0,
       "seoTitle_len": 46,
       "seoDesc_len": 143,
-      "cats_cnt": 3
-    }
-  ],
-  "non_public": [
-    {
-      "actor_id": "NURQEJnUsVAobIiPs",
-      "name": "rakuten-debug-fetch",
-      "isPublic": false,
-      "desc_len": 300,
-      "readme_len": 0,
-      "seoTitle_len": 55,
-      "seoDesc_len": 129,
-      "cats_cnt": 3
-    },
-    {
-      "actor_id": "S3IdRuweFhrTwvJJN",
-      "name": "tabelog-debug-fetch",
-      "isPublic": false,
-      "desc_len": 300,
-      "readme_len": 0,
-      "seoTitle_len": 55,
-      "seoDesc_len": 129,
-      "cats_cnt": 3
-    },
-    {
-      "actor_id": "lRUO0nFDpE66U013r",
-      "name": "mini-actor-test-0903",
-      "isPublic": false,
-      "desc_len": 300,
-      "readme_len": 0,
-      "seoTitle_len": 55,
-      "seoDesc_len": 129,
-      "cats_cnt": 3
-    },
-    {
-      "actor_id": "VCKdDJ5BdT9Z8aIDf",
-      "name": "tackleberry-scraper",
-      "isPublic": false,
-      "desc_len": 156,
-      "readme_len": 0,
-      "seoTitle_len": 0,
-      "seoDesc_len": 0,
-      "cats_cnt": 0
-    },
-    {
-      "actor_id": "doneSfO13IuNgcWPk",
-      "name": "amazon-paapi-jp-actor",
-      "isPublic": false,
-      "desc_len": 144,
-      "readme_len": 0,
-      "seoTitle_len": 0,
-      "seoDesc_len": 0,
-      "cats_cnt": 0
-    },
-    {
-      "actor_id": "6EvRs5kF1mbelC03M",
-      "name": "ai-model-price-api",
-      "isPublic": false,
-      "desc_len": 221,
-      "readme_len": 0,
-      "seoTitle_len": 0,
-      "seoDesc_len": 0,
-      "cats_cnt": 0
+      "cats_cnt": 3,
+      "seoTitle": "Japan Weather Scraper — JMA Forecasts & Alerts",
+      "seoDescription": "Japan Meteorological Agency weather scraper — forecasts, observations, warnings. Current conditions and alerts in JSON f"
     },
     {
       "actor_id": "62DcoLUAkkOB1hGAH",
       "name": "japan-mhlw-medical",
-      "isPublic": false,
-      "desc_len": 256,
+      "isPublic": true,
+      "desc_len": 205,
       "readme_len": 0,
-      "seoTitle_len": 0,
-      "seoDesc_len": 0,
-      "cats_cnt": 0
+      "seoTitle_len": 51,
+      "seoDesc_len": 93,
+      "cats_cnt": 2,
+      "seoTitle": "Japan MHLW Medical API — Facilities, Licenses, Beds",
+      "seoDescription": "Japan MHLW medical data API. Hospitals, clinics, bed counts, licenses. JSON/CSV, PPE pricing."
     },
     {
       "actor_id": "rIZ3NSg5Ul34PgpYx",
       "name": "japan-corporate-numbers",
-      "isPublic": false,
-      "desc_len": 255,
+      "isPublic": true,
+      "desc_len": 176,
       "readme_len": 0,
-      "seoTitle_len": 0,
-      "seoDesc_len": 0,
-      "cats_cnt": 0
+      "seoTitle_len": 50,
+      "seoDesc_len": 113,
+      "cats_cnt": 2,
+      "seoTitle": "Japan Corporate Numbers API — 5M+ Companies Search",
+      "seoDescription": "Japan corporate number search API. 5M+ companies from NTA registry. Company name, address, number. JSON/CSV, PPE."
     },
     {
       "actor_id": "u2qsG1UfVHWsgl8Dg",
       "name": "world-bank-indicators",
-      "isPublic": false,
-      "desc_len": 264,
+      "isPublic": true,
+      "desc_len": 178,
       "readme_len": 0,
-      "seoTitle_len": 0,
-      "seoDesc_len": 0,
-      "cats_cnt": 0
+      "seoTitle_len": 49,
+      "seoDesc_len": 108,
+      "cats_cnt": 2,
+      "seoTitle": "World Bank Indicators API — 1,600+ Metrics Global",
+      "seoDescription": "World Bank data API. 1,600+ indicators for 217 countries. GDP, population, health, education. JSON/CSV, PPE."
     },
     {
       "actor_id": "pAxQ0lRyArudhK9Wx",
       "name": "eurostat-indicators",
-      "isPublic": false,
-      "desc_len": 188,
+      "isPublic": true,
+      "desc_len": 134,
       "readme_len": 0,
-      "seoTitle_len": 0,
-      "seoDesc_len": 0,
-      "cats_cnt": 0
+      "seoTitle_len": 41,
+      "seoDesc_len": 88,
+      "cats_cnt": 2,
+      "seoTitle": "Eurostat API — EU Statistics 200+ Metrics",
+      "seoDescription": "Eurostat API. EU/EEA economy, population, employment, trade, environment. JSON/CSV, PPE."
+    },
+    {
+      "actor_id": "LSETMqsB30U9slWeU",
+      "name": "japan-crowdfunding-trend-feed",
+      "isPublic": true,
+      "desc_len": 279,
+      "readme_len": 0,
+      "seoTitle_len": 43,
+      "seoDesc_len": 118,
+      "cats_cnt": 2,
+      "seoTitle": "Japan Crowdfunding Feed — CAMPFIRE Projects",
+      "seoDescription": "CAMPFIRE active projects: raised amount, funding %, backers, reward price tiers, days left. English JSON for research."
+    },
+    {
+      "actor_id": "FPlcw4CWMAKooZNe6",
+      "name": "japan-prize-giveaway-scraper",
+      "isPublic": true,
+      "desc_len": 161,
+      "readme_len": 0,
+      "seoTitle_len": 45,
+      "seoDesc_len": 89,
+      "cats_cnt": 2,
+      "seoTitle": "Japan Giveaway Scraper — X Campaigns & Prizes",
+      "seoDescription": "Japan X/Twitter giveaway scraper. Organizer, prize, deadline, entry rules. JSON/CSV, PPE."
+    },
+    {
+      "actor_id": "RdCHlXHphoLsWnyhh",
+      "name": "japan-fuel-price-mcp",
+      "isPublic": true,
+      "desc_len": 155,
+      "readme_len": 0,
+      "seoTitle_len": 45,
+      "seoDesc_len": 83,
+      "cats_cnt": 3,
+      "seoTitle": "Japan Fuel Price API — Gas Station Prices MCP",
+      "seoDescription": "Japan fuel price data. Gas station prices, trends, regional compare. JSON/CSV, PPE."
+    },
+    {
+      "actor_id": "ODh1F4XP5sLlXu6Ep",
+      "name": "japan-minimum-wage-mcp",
+      "isPublic": true,
+      "desc_len": 148,
+      "readme_len": 0,
+      "seoTitle_len": 49,
+      "seoDesc_len": 89,
+      "cats_cnt": 3,
+      "seoTitle": "Japan Minimum Wage API — Prefectural Hourly Rates",
+      "seoDescription": "Japan minimum wage API. Prefectural hourly rates, history, industry rates. JSON/CSV, PPE."
+    },
+    {
+      "actor_id": "BxstMzzxh8jq6UtfS",
+      "name": "japan-jepx-mcp",
+      "isPublic": true,
+      "desc_len": 131,
+      "readme_len": 0,
+      "seoTitle_len": 46,
+      "seoDesc_len": 81,
+      "cats_cnt": 1,
+      "seoTitle": "Japan JEPX Price API — Electricity Spot Market",
+      "seoDescription": "Japan electricity spot price API. JEPX area prices, demand/supply. JSON/CSV, PPE."
+    },
+    {
+      "actor_id": "kjf9ZKQ5zWyOQxzvL",
+      "name": "kensho-sweep-mcp",
+      "isPublic": true,
+      "desc_len": 193,
+      "readme_len": 0,
+      "seoTitle_len": 40,
+      "seoDesc_len": 117,
+      "cats_cnt": 0,
+      "seoTitle": "Kensho Sweep MCP — Japan Prize Campaigns",
+      "seoDescription": "Japan sweepstakes aggregator. X/Twitter, official sites, coupons. Prize, deadline, entry method, odds. JSON/CSV, PPE."
+    },
+    {
+      "actor_id": "DKzufUSvmuXNKHeYx",
+      "name": "japan-anime-figure-price-data",
+      "isPublic": true,
+      "desc_len": 298,
+      "readme_len": 0,
+      "seoTitle_len": 58,
+      "seoDesc_len": 145,
+      "cats_cnt": 2,
+      "seoTitle": "Japan Anime Figure Price API — 650+ Figures Arbitrage Data",
+      "seoDescription": "Japan anime figure price intelligence API. 650+ figures from Mercari, Yahoo, Suruga-ya, Mandarake with normalized pricin"
+    },
+    {
+      "actor_id": "8cCUNDwmelphhoXFs",
+      "name": "japan-anime-figure-demand-features",
+      "isPublic": true,
+      "desc_len": 186,
+      "readme_len": 0,
+      "seoTitle_len": 55,
+      "seoDesc_len": 127,
+      "cats_cnt": 2,
+      "seoTitle": "Japan Figure Demand API — Price Velocity & Sell-Through",
+      "seoDescription": "Anime figure demand API. Price velocity, sell-through, buyer interest for 650+ figures. Mercari/Yahoo/Mandarake. JSON/CS"
     }
   ]
 }

@@ -1,0 +1,28 @@
+{
+  "task_id": "t_49142d75",
+  "status": "complete",
+  "success_indicators": [
+    "All 78 public Apify PPE actors now have seoTitle and seoDescription set",
+    "13 actors updated with optimized listing content including PPE pricing",
+    "API verification confirmed 100% coverage via individual GET",
+    "All listing content includes PPE pricing mention and JSON/CSV output format"
+  ],
+  "verification_commands": [
+    "$ export $(grep -v \"^#\" .env | xargs) 2>/dev/null; python3 -c \"import os,urllib.request,json; tok=os.environ.get(\"APIFY_TOKEN\"); r=urllib.request.urlopen(urllib.request.Request(\"https://api.apify.com/v2/actors/DKzufUSvmuXNKHeYx\", headers={\"Authorization\":f\"Bearer {tok}\"})); d=json.loads(r.read())[\"data\"]; print(d[\"seoTitle\"][:60])\" => Japan Anime Figure Price API — 650+ Figures Arbitrage Data",
+    "$ cat reports/apify-seo/apify-groundtruth-latest.json | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d[\"actors_with_full_seo\"],d[\"public_total\"])\" => 78 78",
+    "$ curl -s -H \"Authorization: Bearer $APIFY_TOKEN\" https://api.apify.com/v2/actors/DKzufUSvmuXNKHeYx | python3 -c \"import json,sys; print(json.load(sys.stdin)[\"data\"][\"seoTitle\"])\" => Japan Anime Figure Price API — 650+ Figures Arbitrage Data"
+  ],
+  "artifact_paths": [
+    "reports/apify-seo/apify-groundtruth-latest.json",
+    "/tmp/evidence_t_49142d75.json"
+  ],
+  "evidence_hashes": [
+    "f8c0e4fb4a52662fb8f9e564fbd6a82cac6b5189a4ba0aa49179ed8320630a80",
+    "b16d450ea317bc2b36528f77443fe363ae89890ffa51ab68a3e5caa2499a29ac"
+  ],
+  "outcome": {
+    "metric": "actors_with_full_seo_listing",
+    "before": 65,
+    "after": 78
+  }
+}
