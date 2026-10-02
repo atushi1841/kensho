@@ -5,76 +5,76 @@
       "attempts": 4,
       "failures": 4,
       "consecutive_failures": 4,
-      "skipped": 3,
+      "skipped": 4,
       "knshow_502_count": 4,
       "last_error": "http=502(origin_outage)",
       "last_failure": "2026-10-02T11:00:12"
     },
     "ken-kaku": {
-      "attempts": 49,
+      "attempts": 56,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0,
       "knshow_502_count": 0
     },
     "kenshou.club": {
-      "attempts": 3869,
+      "attempts": 4421,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0,
       "knshow_502_count": 0
     },
     "cp.meikan": {
-      "attempts": 63,
+      "attempts": 72,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0,
       "knshow_502_count": 0
     },
     "ke-ma": {
-      "attempts": 77,
+      "attempts": 88,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0,
       "knshow_502_count": 0
     },
     "kensho-everyday": {
-      "attempts": 7,
+      "attempts": 8,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0,
       "knshow_502_count": 0
     },
     "prtimes": {
-      "attempts": 308,
+      "attempts": 352,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0,
       "knshow_502_count": 0
     },
     "kenshofan": {
-      "attempts": 14,
+      "attempts": 16,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0,
       "knshow_502_count": 0
     },
     "yahoo-shopping": {
-      "attempts": 7,
+      "attempts": 8,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0,
       "knshow_502_count": 0
     },
     "rakuten-market": {
-      "attempts": 7,
+      "attempts": 8,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0,
       "knshow_502_count": 0
     },
     "mercari": {
-      "attempts": 7,
+      "attempts": 8,
       "failures": 0,
       "consecutive_failures": 0,
       "skipped": 0,
@@ -87,7 +87,7 @@
     "successes": 4,
     "last": 0.5714285714285714
   },
-  "last_run": "2026-10-02T14:22:14",
+  "last_run": "2026-10-02T15:18:27",
   "skipped_this_run": [
     "knshow"
   ]
