@@ -124,3 +124,70 @@ def test_aux_auth_errors_detected(tmp_path: Path) -> None:
     # Expect aux_auth_errors >= 10 to trigger ERROR alert
     assert data.get("aux_auth_errors", 0) >= 10, f"Expected >=10 aux_auth_errors, got {data.get('aux_auth_errors')}"
     assert data["alert"] == "ALERT", f"Expected ALERT, got {data['alert']}"
+
+
+def test_priority_advice_fields_present(tmp_path: Path) -> None:
+    """t_b75f7c57 偽done 解消用回帰ゲート (t_7b49e7bf)。
+
+    loop_health JSON に priority / stagnation_streak / advice の3フィールドが
+    明示的に存在しない場合は done として受理できない（critic が role_summary から
+    priority を「推察」して動いていたが、フィールドが無いため判断基準が停止中）。
+    4分岐（blocked_triage / backlog_reduction / new_proposals / normal）の
+    判定ロジックと advice.{role}.action / reason の形を固定する。
+    """
+    import sqlite3
+
+    def _lh_db(tasks):
+        db_dir = tmp_path / "lh_db"
+        db_dir.mkdir(exist_ok=True)
+        db = db_dir / "kanban.db"
+        con = sqlite3.connect(db)
+        con.execute("CREATE TABLE IF NOT EXISTS tasks (id TEXT PRIMARY KEY, status TEXT, last_failure_error TEXT, started_at INTEGER)")
+        con.execute("CREATE TABLE IF NOT EXISTS links (parent TEXT, child TEXT, relation TEXT)")
+        for t in tasks:
+            con.execute("INSERT OR IGNORE INTO tasks (id, status, started_at) VALUES (?, ?, ?)", t)
+        con.commit(); con.close()
+        return db
+
+    now = int(datetime.now().timestamp())
+
+    def _run(tasks, db_tasks):
+        out = subprocess.run(
+            ["bash", str(SCRIPT), "--tasks", json.dumps(tasks), "--board", "kensho-ai-team",
+             "--db", str(_lh_db(db_tasks)), "--state", str(tmp_path / "s.json"),
+             "--dry-run", "--no-park"],
+            capture_output=True, text=True, timeout=120,
+        )
+        assert out.returncode == 0, out.stderr
+        return json.loads(out.stdout)
+
+    VALID = {"blocked_triage", "backlog_reduction", "new_proposals", "normal"}
+
+    # 1. blocked > 0 → blocked_triage
+    r = _run([{"id": "t_b1", "status": "blocked", "started_at": now - 100, "result": "waiting"}],
+             [("t_b1", "blocked", now - 100)])
+    assert r["priority"] == "blocked_triage"
+    assert r["advice"]["critic"]["action"] == "triage_blocked"
+    assert r["advice"]["worker"]["action"] == "triage_blocked"
+    assert r["advice"]["qa"]["action"] == "triage_blocked"
+
+    # 2. ready=0 blocked=0 running>0 → backlog_reduction
+    r = _run([{"id": "t_r1", "status": "running", "started_at": now - 3600, "result": None}],
+             [("t_r1", "running", now - 3600)])
+    assert r["priority"] == "backlog_reduction"
+    assert r["advice"]["critic"]["action"] == "reduce_backlog"
+
+    # 3. ready=0 blocked=0 running=0 → new_proposals
+    r = _run([], [])
+    assert r["priority"] == "new_proposals"
+    assert r["advice"]["critic"]["action"] == "propose_new"
+    assert r["advice"]["critic"]["reason"] == "ready=0かつrunning=0（board 全停止）→ 新規提案の起票を"
+
+    # 4. ready>0 → normal
+    r = _run([], [("t_n1", "ready", None)])
+    assert r["priority"] == "normal"
+    assert r["advice"]["critic"]["action"] == "continue"
+    assert r["advice"]["critic"]["reason"] == "通常運転（優先度判定不要）"
+
+    # stagnation_streak は streak と同一（停止ターン数）
+    assert r["stagnation_streak"] == r["streak"]

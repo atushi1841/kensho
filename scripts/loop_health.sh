@@ -633,6 +633,68 @@ if _real_deductions > 0:
 else:
     streak = 0
 
+# ── Priority & advice (t_b75f7c57 偽done 解消 / t_7b49e7bf 実装) ──────────────
+# critic は role_summary から priority を「推察」して動いていたが、priority/advice
+# フィールドが実装されていなかったため判断基準が停止中。全エージェント(critic/worker/
+# QA) の action を决定する health JSON の priority / advice を明示する。
+#   blocked_triage : blocked > 0
+#   backlog_reduction: ready == 0 AND blocked == 0
+#   new_proposals  : ready == 0 AND blocked == 0 AND running == 0
+#   normal         : それ以外
+# ready 数は DB の status カウントから取得（DB 不可時は None → 利用可能な情報のみで判断）。
+_ready_count = None
+try:
+    _dbp = os.environ.get("_LH_DB", "")
+    if _dbp and os.path.exists(_dbp):
+        with sqlite3.connect("file:%s?mode=ro" % _dbp, uri=True) as _c:
+            _row = _c.execute(
+                "SELECT "
+                "SUM(CASE WHEN status='ready' THEN 1 ELSE 0 END), "
+                "SUM(CASE WHEN status='todo' THEN 1 ELSE 0 END), "
+                "SUM(CASE WHEN status='done' THEN 1 ELSE 0 END) "
+                "FROM tasks"
+            ).fetchone()
+            if _row:
+                _ready_count = int(_row[0] or 0)
+except Exception:
+    pass
+
+if blocked:
+    priority = "blocked_triage"
+elif _ready_count is not None and _ready_count == 0:
+    if len(running) == 0:
+        priority = "new_proposals"
+    else:
+        priority = "backlog_reduction"
+elif _ready_count is None:
+    # DB から ready 数が取れない: 利用可能な情報のみで判断。
+    # running が居て blocked=0 は board 活動中とみなし normal（backlog_reduction の
+    # 偽陽性を防ぐ）。
+    if len(running) == 0 and not blocked:
+        priority = "new_proposals"
+    else:
+        priority = "normal"
+else:
+    priority = "normal"
+
+# role別 action & reason（{role: {action: ..., reason: ...}} 形式）
+def _role_advice(role):
+    if priority == "blocked_triage":
+        action = "triage_blocked"
+        reason = "blocked=%d件のブロックタスクを要処理" % len(blocked)
+    elif priority == "backlog_reduction":
+        action = "reduce_backlog"
+        reason = "ready=0（実行可能タスクなし）→ todo backlog の縮小を"
+    elif priority == "new_proposals":
+        action = "propose_new"
+        reason = "ready=0かつrunning=0（board 全停止）→ 新規提案の起票を"
+    else:
+        action = "continue"
+        reason = "通常運転（優先度判定不要）"
+    return {"action": action, "reason": reason}
+
+advice = {r: _role_advice(r) for r in ("critic", "worker", "qa")}
+
 # Build lines output (max 5)
 lines = []
 lines.append(f"score={score}")
@@ -682,7 +744,10 @@ print(json.dumps({
     "orphan_runs": orphan_runs,
     "stale_heartbeat_runs": stale_heartbeat_runs,
     "running_without_pid": running_without_pid,
-    "lines": lines[:5]
+    "lines": lines[:5],
+    "priority": priority,
+    "stagnation_streak": streak,
+    "advice": advice,
 }))
 PYEOF
 )

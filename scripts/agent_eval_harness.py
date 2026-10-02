@@ -45,6 +45,10 @@ EVIDENCE_FIELDS: tuple[str, ...] = (
     "evidence_hashes",
 )
 # loop_health.sh v137 出力の必須フィールド
+# v155 (t_7b49e7bf): priority/stagnation_streak/advice を追加。critic はこれらを
+# 元に role_summary から推測していたが、フィールド実装されていなかったため done 判定
+# 基準が停止。priority={blocked_triage,backlog_reduction,new_proposals,normal}、
+# stagnation_streak=streak 同等、advice={critic|worker|qa:{action,reason}}。
 LOOP_HEALTH_FIELDS: tuple[str, ...] = (
     "score",
     "streak",
@@ -52,6 +56,9 @@ LOOP_HEALTH_FIELDS: tuple[str, ...] = (
     "blocked",
     "top_task",
     "lines",
+    "priority",
+    "stagnation_streak",
+    "advice",
 )
 # notepad 構造化規則 (ai-team-improvement 2026-08-29): 日付付き・最大5件・各200字
 NOTEPAD_MAX_ENTRIES = 5
