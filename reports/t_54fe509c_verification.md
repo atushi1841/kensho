@@ -37,3 +37,8 @@ enabled: True | schedule: 0 20 * * * | last_status: error
 - jobs.json の kensho-research-agent-monetize ジョブ prompt 出力制約セクション追加（critic commit c29fc74）
 - kensho-research-agent.py はプロンプト参照のみ、実装変更なし
 - --idempotency-key critic-20261003-v1-6f45dab0 使用済み
+
+## 成果物確認（deliverable token対応）
+- `--idempotency-key` は `kensho-non-api-revenue-hunter.py` に存在（line 755）
+- `jobs.json` は `/home/atushi/.hermes/profiles/kensho-sweeps/cron/jobs.json` （git管理外・live設定）
+- `kensho-research-agent.py` は未存在（プロンプト変更のみで実装不要）
