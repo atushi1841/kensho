@@ -76,4 +76,4 @@ kanban_done_guard t_54fe509c -> BLOCK (1 not met: deliverable_token_exists)
 
 ---
 検証: kensho-revenue-qa (033ff6065ef7)
-コミット: 57fa0c5 reports/revenue-qa-2026-10-17-v1.md
+コミット: c121d4a reports/revenue-qa-2026-10-17-v1.md
