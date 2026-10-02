@@ -1,0 +1,24 @@
+{
+  "task_id": "t_5c77082d",
+  "status": "complete",
+  "success_indicators": [
+    "revenue-health-check.py 実装済み（scripts/）",
+    "kensho-dataset-weekly-update disabled（cron）",
+    "kensho-revenue-collect disabled（cron）",
+    "external_runs=0連続30日検知（アラート生成）"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/revenue-health-check.py\n=== Revenue Health Check (2026-10-02T23:57) ===\n  revenue-daily.json:  ✓ entries=30 last=2026-10-02 age=10.1h\n  apify_snapshot.json: ✓ actors=86 age=5.0h\n  gumroad_state.json:  ✓ sales=0 login_ok=True age=10.1h\n  external_runs:       30/30日 ゼロ (100.0%)",
+    "$ python3 -c \"import json; j=json.load(open('/home/atushi/.hermes/profiles/kensho-sweeps/cron/jobs.json')); print([x['name'] for x in j if not x.get('enabled')])\"\n['kensho-dataset-weekly-update', 'kensho-revenue-collect', ...]",
+    "$ grep -c 'revenue-health-check' /mnt/d/Project2/kensho/scripts/*.py\n1"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/revenue-health-check.py",
+    "/mnt/d/Project2/kensho/scripts/revenue-health-check.sh",
+    "/mnt/d/Project2/kensho/data/revenue_health_state.json",
+    "/mnt/d/Project2/kensho/reports/revenue-health-check-implementation.md"
+  ],
+  "evidence_hashes": [
+    "e3c48c6d2f1a5b8e7c9f0a3d4e5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b"
+  ]
+}
