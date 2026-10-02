@@ -32,3 +32,8 @@ enabled: True | schedule: 0 20 * * * | last_status: error
 
 ## 自己レビュー
 {"self_review":{"what_was_done":"t_54fe509c 実装済み確認—criticがjobs.jsonに出力制約セクション追加（586→785文字）、全7項目（制約/1500字/3件/reports/成功指標/検証コマンド/代替案）検証済み","what_went_well":["実装はcriticが既に完了（commit c29fc74）","プロンプト内全7要素の存在をpythonで機械検証","git状態確認—jobs.jsonはプロファイルディレクトリ（git管理外・ live設定）のため実装は設定反映として完了"],"what_could_improve":["last_status=errorのまま—次回実行（20:00 JST）でlast_status=ok確認必要"],"mistakes_or_risks":["jobs.jsonがgit管理外のため「変更」としての証跡が弱い—criticのreports/critic-observe-2026-10-03.mdで文書化済"],"learned":"設定変更はgittrackedファイルでない場合も、変更内容をreports/に文書化して証跡を残す必要がある。実装済みでもlast_statusは即座には更新されない（次回実行待ち）。","confidence":9,"verification_evidence":"出力制約セクション7要素すべて検証済み、prompt 586→785文字、commit c29fc74存在確認、jobs.json live設定反映確認"}}
+
+## 成果物
+- jobs.json の kensho-research-agent-monetize ジョブ prompt 出力制約セクション追加（critic commit c29fc74）
+- kensho-research-agent.py はプロンプト参照のみ、実装変更なし
+- --idempotency-key critic-20261003-v1-6f45dab0 使用済み
