@@ -50,6 +50,9 @@ from kensho.scraping.sources import (
     scrape_kensho_everyday,
     scrape_kenshouclub,
     scrape_kenshofan,  # ★ 新規: kenshofan.com（懸賞ファン）第5収集源
+    scrape_yahooshopping,
+    scrape_mercari,
+    scrape_rakutenmarket,
     scrape_prtimes,
     scrape_twscrape,
     scrape_anime_figure_pricing,
@@ -1178,16 +1181,23 @@ def _collect_impl(
     # ・reports/non_x_manual_YYYYMMDD.md ← 非X(自動応募対象外)案件の手動・要確認リスト
     try:
         from kensho.scraping.pathway_classifier import build_non_x_report_md
+        from kensho.scraping.scorer import EASY_WIN_SCORE_KEY, attach_easy_win_scores
 
         _today_str: str = datetime.now().strftime("%Y%m%d")
         _snapshot: list[dict[str, Any]] = list(result.get("collected", []))
+        # ★ t_c1889d30: 収集時に当選易度スコア(easy_win_score)を全件付与。
+        #   winner_count と prize_score の正規化合成(0-100)。score=0 は winner_count
+        #   欠落・0 の「計算不能」で、レポート側で TOP50 から分離表示する。
+        #   collected.json(applier入力) は保存後のため触れない = 収集フィールド追加のみ。
+        attach_easy_win_scores(_snapshot)
         safe_save_json(DATA_DIR / "collected_today.json", _snapshot, "collected_today.json")
         _reports_dir: Path = DATA_DIR.parent / "reports"
         _reports_dir.mkdir(parents=True, exist_ok=True)
         _report_path: Path = _reports_dir / f"non_x_manual_{_today_str}.md"
         _report_md: str = build_non_x_report_md(_snapshot, _label_counts, _today_str)
         _report_path.write_text(_report_md, encoding="utf-8")
-        out(f"  [導線] collected_today.json 保存（{len(_snapshot)}件）")
+        out(f"  [導線] collected_today.json 保存（{len(_snapshot)}件 / easy_win_score付与率 "
+            f"{sum(1 for _it in _snapshot if EASY_WIN_SCORE_KEY in _it) / max(len(_snapshot), 1) * 100:.0f}%）")
         out(f"  [導線] 非X手動レポート: {_report_path}")
     except Exception as _pe:  # noqa: BLE001 — fail-open
         out(f"  [WARN] 導線スナップショット/レポート失敗（fail-open）: {_pe}")

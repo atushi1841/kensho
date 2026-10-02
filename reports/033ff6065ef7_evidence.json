@@ -1,29 +1,28 @@
 {
-  "task_id": "033ff6065ef7",
-  "status": "complete",
   "success_indicators": [
     "loop_health score=100 streak=0 healthy (clean run, no dirty penalty)",
-    "board state: running=1(t_b10433f6 worker)/blocked=1(t_822876d6 needs_input)/done=794/todo=1(t_cc68d9ac)/archived=97",
-    "t_b10433f6 heartbeat age=0.9min (live, not zombie)",
-    "t_822876d6 body=NO_BODY (block_kind=needs_input, Reddit warm-up gate) → 正しき停止",
-    "go.flag 未検出 → Reddit 新垢 gate 未通過＝投稿実行不可の正",
-    "pytest 54 passed (easy_win_score/scorer_weights/pathway_classifier/git_stale_lock_guard)",
-    "data/collected_today.json: records 911 / easy_win_score 911 (100% coverage)",
-    "code uncommitted: 19 files (他タasks WIP, this QA 未実装＝正常)"
+    "board state: ready=0/blocked=0/in_progress=0/done=795/todo=0/triage=0",
+    "pytest 102 passed/1 skipped/3 deselected (57.43s)",
+    "freellmapi統一確認: simple_rt_classifier 11参照 / scorer 0参照 (設計適切)",
+    "easy_win_score 100%カバレッジ (649/649 records)",
+    "revenue-daily: entries=29, last=2026-10-01, apify actors=86, users30d=66",
+    "worker report 存在: reports/revenue-proposals/2026-10-01-revenue-worker-reddit-gate-recheck.md"
   ],
   "verification_commands": [
-    "$ bash scripts/loop_health.sh => score=100 streak=0 running=1 blocked=1 alert=OK escalation=false business_ok=true",
-    "$ python3 -c \"import sqlite3;c=sqlite3.connect('/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db');[print(s,c.execute('select count(*) from tasks where status=?',(s,)).fetchone()[0]) for s in ['triage','ready','running','blocked','done','archived','todo']]\" => triage 0 / ready 0 / running 1 / blocked 1 / done 794 / archived 97 / todo 1",
-    "$ pgrep -af 'kanban task t_' => 1件（t_b10433f6・kensho-revenue-worker・running・heartbeat 0.9分前）",
-    "$ ls /mnt/d/Project2/kensho/go.flag 2>/dev/null || echo 'NO_GO_FLAG' => NO_GO_FLAG",
-    "$ python3 -m pytest tests/test_easy_win_score.py tests/test_scorer_weights.py tests/test_pathway_classifier.py tests/test_git_stale_lock_guard.py -q --no-cov -p no:warnings => 54 passed",
-    "$ python3 -c \"import json;d=json.load(open('data/collected_today.json'));print('records',len(d),'easy_win_score付与',sum(1 for r in d if 'easy_win_score' in r))\" => records 911 / easy_win_score 911 (100%)",
-    "$ git status --porcelain | grep -E '\\.(py|yaml|sh|js)$' | wc -l => 19"
+    "$ bash ~/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh | python3 -c \"import json,sys;print(json.load(sys.stdin)['score'])\" => 100",
+    "$ python3 -c \"import sqlite3;c=sqlite3.connect('/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db');[print(s,c.execute('select count(*) from tasks where status=?',(s,)).fetchone()[0]) for s in ['ready','blocked','in_progress','done','todo','triage']]\" => ready 0 / blocked 0 / in_progress 0 / done 795 / todo 0 / triage 0",
+    "$ cd /mnt/d/Project2/kensho && .venv/bin/python -m pytest tests/test_done_guard_evidence_binding.py tests/test_simple_rt_fallback.py tests/test_easy_win_score.py tests/test_scorer_weights.py tests/test_pathway_classifier.py tests/test_git_stale_lock_guard.py tests/test_loop_health_business.py tests/test_llm_circuit_breaker.py tests/test_regression_gates.py tests/test_zombie_watchdog.py -q --no-cov -p no:warnings => 102 passed, 1 skipped, 3 deselected (57.43s)",
+    "$ grep -c freellmapi kensho/scraping/simple_rt_classifier.py => 11",
+    "$ grep -c freellmapi kensho/scraping/scorer.py => 0",
+    "$ python3 -c \"import json;d=json.load(open('data/collected_today.json'));print('records',len(d),'easy_win_score付与',sum(1 for r in d if 'easy_win_score' in r))\" => records 649 / easy_win_score 649 (100%)",
+    "$ git status --porcelain | grep -c ^?? => 258 (untracked); grep -c ^ M => 22 (modified)"
   ],
   "artifact_paths": [
-    "/mnt/d/Project2/kensho/reports/qa_20261001_0610_verification.md"
+    "/mnt/d/Project2/kensho/reports/qa_20261001_1420_verification.md"
   ],
   "evidence_hashes": [
-    "sha256:ee8cf7604e44d257d6107c83560239a3f6a7e9d10c9874e3f0154314f25af6e3"
-  ]
+    "sha256:0d400542365b4f635cffe5084080455fc7bdf50c7bfbc58642d4790a03621ef4"
+  ],
+  "task_id": "033ff6065ef7",
+  "status": "complete"
 }

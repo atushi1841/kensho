@@ -56,11 +56,13 @@ def render(entries: list[dict[str, Any]]) -> str:
     vol_runs = _volume.get("collected_today_runs")
     vol_runs_label = f"当日の収集run {vol_runs}本" if isinstance(vol_runs, int) else "run数不明"
 
-    # 直近の推移（7日分）
+    # 直近の推移（7日分）— Apify実収益列を追加
     recent = entries[-7:]
     trend_rows = ""
     for e in recent:
-        trend_rows += f"<tr><td>{e.get('date', '?')}</td><td>{e.get('apify', {}).get('total_runs', 0)}</td><td>{e.get('apify', {}).get('total_users_30d', 0)}</td><td>{e.get('rapidapi', {}).get('apis_total', 0)}</td><td>{e.get('rapidapi', {}).get('apis_private', 0)}</td></tr>"  # noqa: E501
+        actual_rev = e.get("apify_actual_revenue_usd")
+        actual_rev_display = f"${actual_rev:.2f}" if isinstance(actual_rev, (int, float)) else "—"
+        trend_rows += f"<tr><td>{e.get('date', '?')}</td><td>{e.get('apify', {}).get('total_runs', 0)}</td><td>{e.get('apify', {}).get('total_users_30d', 0)}</td><td>{e.get('rapidapi', {}).get('apis_total', 0)}</td><td>{e.get('rapidapi', {}).get('apis_private', 0)}</td><td>{actual_rev_display}</td></tr>"  # noqa: E501
 
     # Apify詳細（使用量順）
     apify_details = sorted(apify.get("details", []), key=lambda x: x.get("runs", 0), reverse=True)
@@ -176,6 +178,19 @@ li{{font-size:0.85rem;margin-bottom:4px}}
 </div>
 
 <div class="card">
+<div class="card-title">実績収益（決済完了分・Apify）</div>
+<div class="grid-3">
+<div class="stat-card"><div class="stat-val" style="color:#3fb950">{_fmt_money(last.get("apify_verified_revenue_usd"))}</div><div class="stat-label">実績収益（通貨 USD）</div></div>
+<div class="stat-card"><div class="stat-val" style="color:#58a6ff">{last.get("apify_settle_status", "—")}</div><div class="stat-label">決済状況</div></div>
+<div class="stat-card"><div class="stat-val" style="color:#d29922">{last.get("apify_verified_charged_items", "—")}</div><div class="stat-label">課金item数</div></div>
+</div>
+<div class="grid-3">
+<div class="stat-card"><div class="stat-val" style="color:#a371f7">{last.get("apify_ppe_external_runs", {}).get("summary", {}).get("total_triggered", "—")}</div><div class="stat-label">外部run数</div></div>
+</div>
+<p class="sub" style="margin-top:8px">実績収益=apify_verified_revenue_usd（決済確定済み）。月間収益見込みとは別指標（推定値と実績の混同防止）。</p>
+</div>
+
+<div class="card">
 <div class="card-title">収集ボリューム（実データ自動集計）</div>
 <div class="grid-3">
 <div class="stat-card"><div class="stat-val" style="color:#3fb950">{vol_today}</div><div class="stat-label">本日収集実績</div></div>
@@ -221,7 +236,7 @@ li{{font-size:0.85rem;margin-bottom:4px}}
 <div class="card">
 <div class="card-title">直近7日の推移</div>
 <table>
-<tr><th>日付</th><th>Apify runs</th><th>Apify u30d</th><th>RapidAPI API数</th><th>非公開API</th></tr>
+<tr><th>日付</th><th>Apify runs</th><th>Apify u30d</th><th>RapidAPI API数</th><th>非公開API</th><th>実収益(USD)</th></tr>
 {trend_rows}
 </table>
 </div>

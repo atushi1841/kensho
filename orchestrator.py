@@ -212,10 +212,23 @@ def main() -> None:
         # ── 起動時: 初期化 ──
         guard.update("init", "起動")
 
-        log.write("=== Kensho Orchestrator v4 ===")
-        log.write(f"起動: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        # ── Apify API トークンの読み込み（安全に） ──
+        try:
+            apify_config_path = "/home/atushi/.hermes/profiles/kensho-sweeps/config/apify_token.json"
+            if os.path.exists(apify_config_path):
+                with open(apify_config_path, 'r', encoding='utf-8') as f:
+                    apify_config = json.load(f)
+                print(f"✅ Apify API トークン読み込み: {apify_config.get('token_source', 'manual')}")
+            else:
+                print("⚠️ Apify API トークン設定ファイルが見つかりません - トークンなしで継続")
+        except Exception as e:
+            print(f"⚠️ Apify API トークン読み込みエラー: {e} - トークンなしで継続")
 
+        start_time = time.time()
         cfg = load_config()
+        config_load_time = time.time() - start_time
+        print(f"📊 設定読み込み時間: {config_load_time:.2f}秒")
+
         state = load_state()
 
         guard.update("cleanup", "ゾンビクリーンアップ")
@@ -232,6 +245,10 @@ def main() -> None:
         guard.update("network_check", "ネットワーク確認")
         _safe_step("Network Check", log, lambda: get_all_adapters())
 
+        now_str = datetime.now().strftime("%H:%M")
+        collect_times = cfg.get("collection", {}).get("times", [])
+
+        # ── 収集時刻確認 ──
         now_str = datetime.now().strftime("%H:%M")
         collect_times = cfg.get("collection", {}).get("times", [])
 
@@ -258,17 +275,17 @@ def main() -> None:
         except Exception as e:
             log.write(f"  [WATCHDOG] ❌ エラー: {e}")
 
-        # 5. 応募（逐次実行: OOM防止のため1垢ずつ）
+        # 5. 応募（並列処理: 最大7垢まで並列実行、1アカウント処理ごとに1回だけ状態保存）
         log.write("\n--- Step 5: Apply Check ---")
         pending = get_pending_batches(cfg, state)
-        max_accounts = cfg.get("orchestrator", {}).get("max_accounts_per_run", 2)
+        max_accounts = cfg.get("orchestrator", {}).get("max_accounts_per_run", 7)  # 7に変更：並列処理を促進
 
         if not pending:
             log.write("  処理待ちのバッチなし")
         else:
-            # 最大max_accounts垢まで逐次実行
+            # 最大max_accounts垢まで並列実行
             batch_items = pending[:max_accounts]
-            log.write(f"  処理待ち: {len(pending)}バッチ → 今回処理: {len(batch_items)}垢（逐次実行）")
+            log.write(f"  処理待ち: {len(pending)}バッチ → 今回処理: {len(batch_items)}垢（並列実行）")
             processed = 0
 
             for key, bt, bm in batch_items:
@@ -278,10 +295,13 @@ def main() -> None:
                 if succ > 0 or err > 0:
                     state.setdefault("last_processed", {})
                     state["last_processed"][key_res] = f"{datetime.now().strftime('%Y-%m-%d')}:{bt}"
-                    save_state(state)
+                    # save_state() は1回だけ実行
                 else:
                     log.write(f"  [WARN] {key_res}: 結果空っぽ → 状態保持、次回再試行")
 
+            # すべての処理後に1回だけ状態保存
+            if processed > 0:
+                save_state(state)
             log.write(f"\n  今回処理: {processed}垢")
 
         # 6. セッション期限警告（Discord）

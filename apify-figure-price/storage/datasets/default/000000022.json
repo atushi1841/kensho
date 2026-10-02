@@ -1,0 +1,42 @@
+{
+  "figureId": "50359",
+  "sourceUrl": "https://myfigurelist.com/figure/50359/Metal-Gear-Solid-4-Guns-of-the-Patriots-Metal-Gear-Ray-1-48",
+  "name": "Metal Gear Solid 4: Guns of the Patriots - Metal Gear Ray - 1/48",
+  "series": "Metal Gear",
+  "character": "Ray MetalGear",
+  "manufacturer": null,
+  "category": "Scale Figure",
+  "releaseDate": "2014-09-22",
+  "scale": "1/48",
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "4582191968902",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/11cfcf36-cd70-35bd-861f-57cae636e70d/Metal-Gear-Solid-4-Guns-of-the-Patriots-Metal-Gear-Ray-1-48_11c65a97-defa-3a0e-858f-29a0f7651b25.jpg",
+  "offers": [
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 46111,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/1-48-scale-metal-gear-solid-2-sons-of-liberty-1-48-ray-tha96890",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:52.086009"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 45648,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/10257357",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:52.086033"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": null,
+  "highestPriceJpy": null,
+  "inStockCount": 0,
+  "totalOffersCount": 2,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

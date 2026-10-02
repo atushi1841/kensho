@@ -1,0 +1,34 @@
+{
+  "figureId": "52465",
+  "sourceUrl": "https://myfigurelist.com/figure/52465/Mascot-Character-Ludens-Figma-EX-044b-Black-Ver",
+  "name": "Mascot Character - Ludens - Figma  (EX-044b) - Black Ver.",
+  "series": "Mascot Character",
+  "character": "Ludens",
+  "manufacturer": "Max Factory",
+  "category": "Scale Figure",
+  "releaseDate": "2020-10-03",
+  "scale": "Non-Scale",
+  "sculptor": "Asai (APSY) Masaki",
+  "heightCm": null,
+  "janCode": "52465",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/b03e2721-1cd5-349d-975f-d0394b357794/Mascot-Character-Ludens-Figma-EX-044b-Black-Ver_c8913fc8-03ff-3fdd-b4eb-150a62c7a296.jpg",
+  "offers": [
+    {
+      "shop_name": "Good Smile Online Shop",
+      "price_jpy": 12222,
+      "availability": "InStock",
+      "url": "https://www.goodsmile.com/en/product/7832/figma+Ludens+Black+ver.",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:00.546353"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 12222,
+  "highestPriceJpy": 12222,
+  "inStockCount": 1,
+  "totalOffersCount": 1,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

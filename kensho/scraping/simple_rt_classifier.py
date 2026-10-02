@@ -5,10 +5,11 @@
   実際には追加操作（外部サイトX連携・動画認証・キーワード入力・診断・写真/ハッシュタグ投稿等）を
   必要としており、無駄なRT/フォローを消費していた（25件サンプルでFLAG率52%）。
 - キーワードの付け外しはいたちごっこ（「結果をチェック」削除→漏れ 等）のため、
-  LLM（OpenRouter無料モデル）による自然言語判定に切り替える。
-- 実測: 対象4件(FLAG)+正常3件(OK) = 7/7正解（minimax/minimax-m3:free 採用）。
+  LLMによる自然言語判定に切り替える。
+- 実測: 対象4件(FLAG)+正常3件(OK) = 7/7正解（当時 minimax/minimax-m3:free 採用）。
 - ★ 公式DeepSeek APIキーは最後の砦のため**絶対に使わない**（ユーザー指摘 2026-08-28）。
-  OpenRouter の :free モデル（cost=0）のみ使用。
+- ★ 判定LLMは **freellmapi（`http://127.0.0.1:3002/v1` / model=auto）のみ**を使う
+  （2026-10-01 ユーザー指示「AI関連すべて freellmapi に統一」）。
 
 fail-open 設計: どんな失敗でも UNKNOWN を返し、応募側は従来挙動（応募継続）になる。
 """
@@ -27,24 +28,28 @@ import httpx
 
 from kensho.core.circuit_breaker import BreakerConfig, get_breaker, load_breaker_config, snapshots
 
-API_URL: str = "https://api.b.ai/v1/chat/completions"
-# ★ 2026-09-07: 収集判定LLMを bai/qwen3.8-flash へ（新メインと統一）。
-#   baiはOpenAI互換・chat_template_kwargs容認（enable_thinking無しでもOK）。
-#   死英時は OpenRouter 無料枠（minimax-m3:free）へ自動フォールバック（収集を止めない）。
-BAI_API_KEY_UNAME: str = "BAI_API_KEY"
-DEFAULT_MODEL: str = "qwen3.8-flash"
-FALLBACK_API_URL: str = "https://openrouter.ai/api/v1/chat/completions"
-FALLBACK_MODEL: str = "minimax/minimax-m3:free"
-SECOND_FALLBACK_MODEL: str = "nousresearch/hermes-3-mini:free"
+API_URL: str = "http://127.0.0.1:3002/v1/chat/completions"
+# ★ 2026-10-01: ユーザー指示「AI関連すべて freellmapi に統一」により、判定LLMを
+#   freellmapi（OpenAI互換ルーター / model=auto）に一本化。ローカルvLLM・外部API直叩きは廃止。
+#   qwen3.8-27b は thinking モデルのため chat_template_kwargs で enable_thinking=False を明示する
+#   （OFFにしないと reasoning トークンが max_tokens を食い、content が空になる事象がある）。
+FREELMAPI_KEY_NAME: str = "FREELMAPI_API_KEY"
+BAI_API_KEY_UNAME: str = FREELMAPI_KEY_NAME  # 旧名の後方互換エイリアス
+DEFAULT_MODEL: str = "auto"
+FALLBACK_API_URL: str = "http://127.0.0.1:3002/v1/chat/completions"
+FALLBACK_MODEL: str = "auto"
+SECOND_FALLBACK_MODEL: str = "auto"
 DEFAULT_BATCH_SIZE: int = 8
 
 # ★ t_96c94435 (2026-09-23): プロバイダ別サーキットブレーカー名。
 #   連続失敗が閾値に達したプロバイダは一定時間「遮断」され、遮断中は冷たい呼び出しを
 #   せず即フォールバックする（＝死んでいるプロバイダへの再試行は0件）。
 #   閾値・クールダウンは config.yaml `collection.llm_breaker` で動的調整。
-#   モデル名・優先順（bai → OpenRouter無料枠）は本タスクでは変更しない（禁止領域）。
-BREAKER_BAI: str = "bai"
-BREAKER_OPENROUTER: str = "openrouter"
+#   モデル名・優先順は 2026-10-01 のユーザー指示で freellmapi/auto に統一。
+BREAKER_BAI: str = "freellmapi"
+# ★ 2026-10-01: freellmapi への再試行段（別ブレーカーで1回だけ再挑戦）。
+BREAKER_BAI_RETRY: str = "freellmapi_retry"
+BREAKER_OPENROUTER: str = BREAKER_BAI_RETRY  # 旧名の後方互換エイリアス
 
 
 def _resolve_breaker_config(breaker_config: dict[str, Any] | None) -> BreakerConfig:
@@ -101,13 +106,16 @@ def _load_key_from_envs(key_name: str, project_root: str | Path | None = None) -
 
 
 def _load_api_key(project_root: str | Path | None = None) -> str:
-    """メイン判定LLMのAPIキー（BAI_API_KEY）を取得。★公式DeepSeekは使わない。"""
-    return _load_key_from_envs("BAI_API_KEY", project_root)
+    """メイン判定LLMのAPIキー（local qwen）。未設定なら開発用固定トークン。"""
+    return _load_key_from_envs(FREELMAPI_KEY_NAME, project_root)
 
 
 def _load_or_key(project_root: str | Path | None = None) -> str:
-    """OpenRouterフォールバック用キー。"""
-    return _load_key_from_envs("OPENROUTER_API_KEY", project_root)
+    """フォールバック段のキー（2026-09-30〜 local qwen 専用のため _load_api_key と同一）。
+
+    関数名は呼び出し元・テスト互換のために据え置き。外部APIは使わない。
+    """
+    return _load_api_key(project_root)
 
 
 def _extract_json(content: str) -> list[dict[str, Any]] | None:
@@ -146,9 +154,10 @@ def _call_api(
         ],
         "temperature": 0.1,
         "max_tokens": max_tokens,
+        # local qwen(thinking) は reasoning が max_tokens を食うため明示的にOFF
+        "chat_template_kwargs": {"enable_thinking": False},
     }
-    # bai qwen3.8-flash: chat_template_kwargs不要（容認はされるが完答）。
-    # OpenRouter無料モデルは 429（レート制限）が頻発する → 指数バックオフで2回再試行
+    # local vLLM は通常429を返さないが、Windows wake-proxy 経由の一時失敗に備えて再試行
     endpoint = url or API_URL
     for attempt in range(3):
         resp = httpx.post(
@@ -175,34 +184,34 @@ def _call_api_with_fallback(
     project_root: str | Path | None = None,
     breaker_config: dict[str, Any] | None = None,
 ) -> str:
-    """bai判定LLM優先。死活/エラー時だけOpenRouter無料枠へフォールバック（収集を止めない）。
+    """local qwen 判定LLM優先。失敗時は同じ local qwen の再試行段へ（収集を止めない）。
 
     api_key/project_root が明示された場合はそれを優先（呼び出し元の解決を尊重）。
 
     ★ t_96c94435: 各プロバイダはサーキットブレーカー経由で呼ぶ。
       - 連続失敗が閾値（既定3）に達したプロバイダは遮断され、遮断中は
         `allow()` が False を返すため **冷たい呼び出しをせず** 即フォールバックする
-        （bai全死時に毎バッチbaiを叩く無駄をゼロにする）。
+        （freellmapi全滅時に毎バッチ叩く無駄をゼロにする）。
       - クールダウン経過後は半開プローブ1回で再試行（backoff）、成功で閉じる。
       - 優先順・モデル名は変更しない（禁止領域）。
     """
     cfg = _resolve_breaker_config(breaker_config)
     key = api_key if api_key is not None else _load_api_key(project_root)
     if key:
-        bai_breaker = get_breaker(BREAKER_BAI, cfg)
-        if bai_breaker.allow():
+        llm_breaker = get_breaker(BREAKER_BAI, cfg)
+        if llm_breaker.allow():
             try:
                 content = _call_api(key, batch, model, max_tokens, timeout=timeout)
             except Exception:
-                bai_breaker.record_failure()  # bai失敗 → OR退避へ
+                llm_breaker.record_failure()  # bai失敗 → OR退避へ
             else:
-                bai_breaker.record_success()
+                llm_breaker.record_success()
                 return content
     or_key = _load_or_key()
     if not or_key:
-        raise RuntimeError("no available provider: bai失敗（または遮断中）かつOpenRouterキー無し")
-    or_breaker = get_breaker(BREAKER_OPENROUTER, cfg)
-    # Try primary fallback model（遮断中は冷たい呼び出しをせず即fail-openへ）
+        raise RuntimeError("no available provider: local qwen失敗（または遮断中）かつキー無し")
+    or_breaker = get_breaker(BREAKER_BAI_RETRY, cfg)
+    # freellmapiへの再試行段（遮断中は冷たい呼び出しをせず即fail-openへ）
     if or_breaker.allow():
         try:
             content = _call_api(or_key, batch, FALLBACK_MODEL, max_tokens, timeout=timeout, url=FALLBACK_API_URL)
@@ -210,9 +219,8 @@ def _call_api_with_fallback(
             or_breaker.record_failure()
         else:
             or_breaker.record_success()
-            _log_openrouter_usage(project_root)
             return content
-    # If primary fallback fails, try second fallback
+    # 二段目も同じ freellmapi/auto（別バッチで再挑戦）
     if or_breaker.allow():
         try:
             content = _call_api(or_key, batch, SECOND_FALLBACK_MODEL, max_tokens, timeout=timeout, url=FALLBACK_API_URL)
@@ -220,9 +228,8 @@ def _call_api_with_fallback(
             or_breaker.record_failure()
         else:
             or_breaker.record_success()
-            _log_openrouter_usage(project_root)
             return content
-    raise RuntimeError("all providers unavailable: OpenRouter無料枠が遮断中または失敗")
+    raise RuntimeError("all providers unavailable: local qwen(再試行段)が遮断中または失敗")
 
 
 def _log_openrouter_usage(project_root: str | Path | None = None) -> None:
@@ -261,8 +268,8 @@ def classify_texts(
     Returns:
         {id: "OK" | "FLAG" | "UNKNOWN"}
     - 例外・パース失敗・本文空は UNKNOWN（fail-open）
-    - 小バッチ（既定8件）で送るのは、OpenRouter無料モデルのレート制限(429)と
-      推論型モデルのトークン枯渇（本文空）を避けるため。
+    - 小バッチ（既定8件）で送るのは、local qwen の推論時間と
+      ルーター配下プロバイダのトークン枯渇（本文空）を避けるため。
     - breaker_config: 遮断閾値の上書き（config.yaml `collection.llm_breaker` と同形式）。
       None なら config.yaml の値を用いる。
     """
@@ -270,7 +277,7 @@ def classify_texts(
         return {}
     if api_key is None:
         api_key = _load_api_key(project_root)
-    # bai qwen3.8-flash は chat_template_kwargs不要・推理も完答（bai優先、OR退避は_fallbackが処理）
+    # local qwen3.8-27b（thinking OFF固定、_call_api が chat_template_kwargs を付与）
 
     result: dict[str, str] = {pid: "UNKNOWN" for pid, _ in pairs}
     for i in range(0, len(pairs), batch_size):
@@ -303,7 +310,7 @@ def classify_texts(
         except Exception as e:  # noqa: BLE001 — fail-open
             if log:
                 log.write(f"[simple_rt] batch {i // batch_size + 1} 失敗 → UNKNOWN: {e}")
-        time.sleep(0.5)  # OpenRouter無料モデルのレート制限対策（0.5秒間隔）
+        time.sleep(0.5)  # ローカルGPUの連続バッチ負荷を平準化（0.5秒間隔）
     return result
 
 

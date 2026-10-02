@@ -1,0 +1,43 @@
+{
+  "figureId": "125436",
+  "sourceUrl": "https://myfigurelist.com/figure/125436/Shin-Seiki-Evangelion-Sahaquiel-Angel-XX",
+  "name": "Shin Seiki Evangelion - Sahaquiel - Angel XX",
+  "series": "Shin Seiki Evangelion",
+  "character": "Sahaquiel",
+  "manufacturer": "WAVE",
+  "category": "Anime Figure",
+  "releaseDate": "2007-04-01",
+  "scale": null,
+  "sculptor": "OWL",
+  "heightCm": 14,
+  "janCode": "4943209560127",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/ddd93f36-6357-31f7-83b5-af9652be59dd/Shin-Seiki-Evangelion-Sahaquiel-Angel-XX_cfb4e855-d346-38fd-b412-26f81d55fcb4.jpg",
+  "offers": [
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 2356,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/a-10-sahaqiel-xx-wavcc-12",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:57:42.006239"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 2356,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/a-10-sahaqiel-xx-wavcc-12",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:00:00.363462"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": null,
+  "highestPriceJpy": null,
+  "inStockCount": 0,
+  "totalOffersCount": 1,
+  "confidence": 0.95,
+  "sourcesMerged": [
+    "csv",
+    "jsonl"
+  ]
+}

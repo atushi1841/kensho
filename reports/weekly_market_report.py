@@ -38,6 +38,11 @@ GUMROAD_API = "https://api.gumroad.com/v2"
 
 # Apify Store クロスプロモーション用
 APIFY_STORE_BASE = "https://apify.com/fruitful_quintessence"
+
+# Gumroad 商品（本レポート・データセットの販売 — t_28467ede 外部流入ルート）
+GUMROAD_REPORT_URL = "https://atushi5.gumroad.com/l/qdyyyi"    # 週次レポート詳細版 ($10)
+GUMROAD_SAMPLE_URL = "https://atushi5.gumroad.com/l/kutuxe"   # 無料サンプル 30行 ($0)
+GUMROAD_DATASET_URL = "https://atushi5.gumroad.com/l/agyhq"   # フルデータセット 週次更新 ($29.99)
 APIFY_ACTOR_URLS = {
     "japan-used-camera-market-scraper": "https://apify.com/fruitful_quintessence/japan-used-camera-market-scraper",
     "japan-watch-market-scraper": "https://apify.com/fruitful_quintessence/japan-watch-market-scraper",
@@ -236,6 +241,11 @@ def generate_report() -> tuple[str, dict]:
         "",
         "---",
         "全アクター一覧: " + APIFY_STORE_BASE,
+        "",
+        "## 購入・詳細データ (Gumroad)",
+        "- 週次レポートの詳細分析版: " + GUMROAD_REPORT_URL,
+        "- 無料サンプル（30行・7市場）: " + GUMROAD_SAMPLE_URL,
+        "- フルデータセット（週次更新・1,000行超）: " + GUMROAD_DATASET_URL,
         "",
         "## 注記",
         "- 中央値は価格の中央値（外れ値影響を回避）",

@@ -1,0 +1,42 @@
+{
+  "figureId": "125207",
+  "sourceUrl": "https://myfigurelist.com/figure/125207/The-Boys-Homelander-Mafex-No269-Blood-Splatter-Ver",
+  "name": "The Boys - Homelander - Mafex  (No.269) - Blood Splatter Ver.",
+  "series": "The Boys",
+  "character": "John Gillman",
+  "manufacturer": "Medicom Toy",
+  "category": "Anime Figure",
+  "releaseDate": "2025-08-23",
+  "scale": null,
+  "sculptor": "Ohata Masato",
+  "heightCm": null,
+  "janCode": "4530956472690",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/f60cc2be-4e90-3c0d-b2ba-991bc43d2acf/The-Boys-Homelander-Mafex-No269-Blood-Splatter-Ver_db7e362f-014b-30b8-8a45-0d75bb6f6a4d.jpg",
+  "offers": [
+    {
+      "shop_name": "Okini Land",
+      "price_jpy": 14924,
+      "availability": "OutOfStock",
+      "url": "https://okini.land/en/92774-mafex-homelander-blood-splatter-ver--medicom-toy-4530956472690.html?id_currency=5",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:37.338500"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 12800,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/mafex-homelander-blood-splatter-ver-medmafex-269",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:37.338524"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": null,
+  "highestPriceJpy": null,
+  "inStockCount": 0,
+  "totalOffersCount": 2,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

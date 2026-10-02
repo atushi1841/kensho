@@ -1,0 +1,111 @@
+{
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "figureIds": {
+        "type": "array",
+        "description": "Optional list of figure IDs (MyFigureList IDs) to filter results",
+        "items": { "type": "string" }
+      },
+      "series": {
+        "type": "string",
+        "description": "Filter by series name (partial match)"
+      },
+      "character": {
+        "type": "string",
+        "description": "Filter by character name (partial match)"
+      },
+      "manufacturer": {
+        "type": "string",
+        "description": "Filter by manufacturer name"
+      },
+      "scale": {
+        "type": "string",
+        "description": "Filter by scale (e.g., 1/7, 1/8)"
+      },
+      "minPrice": {
+        "type": "integer",
+        "description": "Minimum price in JPY"
+      },
+      "maxPrice": {
+        "type": "integer",
+        "description": "Maximum price in JPY"
+      },
+      "condition": {
+        "type": "string",
+        "enum": ["NewCondition", "UsedCondition", "RefurbishedCondition"],
+        "description": "Filter by condition grade"
+      },
+      "inStockOnly": {
+        "type": "boolean",
+        "description": "Only return items with in-stock offers",
+        "default": false
+      },
+      "includeHistory": {
+        "type": "boolean",
+        "description": "Include price history if available",
+        "default": false
+      },
+      "limit": {
+        "type": "integer",
+        "description": "Maximum number of results to return",
+        "default": 100
+      },
+      "offset": {
+        "type": "integer",
+        "description": "Pagination offset",
+        "default": 0
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "figureId": { "type": "string" },
+            "sourceUrl": { "type": "string" },
+            "name": { "type": "string" },
+            "series": { "type": "string" },
+            "character": { "type": "string" },
+            "manufacturer": { "type": "string" },
+            "category": { "type": "string" },
+            "releaseDate": { "type": "string" },
+            "scale": { "type": "string" },
+            "sculptor": { "type": "string" },
+            "heightCm": { "type": "number" },
+            "janCode": { "type": "string" },
+            "imageUrl": { "type": "string" },
+            "offers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "shopName": { "type": "string" },
+                  "priceJpy": { "type": "integer" },
+                  "availability": { "type": "string" },
+                  "url": { "type": "string" },
+                  "condition": { "type": "string" },
+                  "fetchedAt": { "type": "string" }
+                }
+              }
+            },
+            "msrpJpy": { "type": "integer" },
+            "lowestPriceJpy": { "type": "integer" },
+            "highestPriceJpy": { "type": "integer" },
+            "inStockCount": { "type": "integer" },
+            "totalOffersCount": { "type": "integer" },
+            "confidence": { "type": "number" },
+            "sourcesMerged": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      },
+      "total": { "type": "integer" },
+      "limit": { "type": "integer" },
+      "offset": { "type": "integer" }
+    }
+  }
+}

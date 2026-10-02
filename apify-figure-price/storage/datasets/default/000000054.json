@@ -1,0 +1,74 @@
+{
+  "figureId": "125460",
+  "sourceUrl": "https://myfigurelist.com/figure/125460/Nendoroid-Baldurs-Gate-III-Shadowheart",
+  "name": "Nendoroid Baldur's Gate III Shadowheart",
+  "series": "Baldur's Gate 3",
+  "character": "Shadowheart",
+  "manufacturer": "Good Smile Company",
+  "category": "Anime Figure",
+  "releaseDate": "2027-02-01",
+  "scale": null,
+  "sculptor": "Sculptor: toytec D.T.C",
+  "heightCm": null,
+  "janCode": "4570232589858",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/e1ba66b2-4203-4169-8f64-bf18f177f503/Nendoroid-Baldurs-Gate-III-Shadowheart_a413c0d5-dd2e-3241-b934-a2c085ecd272.jpg",
+  "offers": [
+    {
+      "shop_name": "Ninoma",
+      "price_jpy": 5940,
+      "availability": "PreOrder",
+      "url": "https://ninoma.com/products/nendoroid-baldurs-gate-iii-shadowheart?_pos=1&_sid=b5833b82b&_ss=r",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:12.524923"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 5874,
+      "availability": "PreOrder",
+      "url": "https://www.1999.co.jp/11439219",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:12.524949"
+    },
+    {
+      "shop_name": "Animota",
+      "price_jpy": 8074,
+      "availability": "PreOrder",
+      "url": "https://animota.net/en-eu/products/animota-e-pre11045",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:12.524954"
+    },
+    {
+      "shop_name": "Japan Figure",
+      "price_jpy": 8546,
+      "availability": "PreOrder",
+      "url": "https://japan-figure.com/products/good-smile-company-shadowheart-nendoroid-action-figure-10cm",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:12.524966"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 6000,
+      "availability": "PreOrder",
+      "url": "https://www.hlj.com/nendoroid-shadowheart-baldur-s-gate-iii-gsc58985",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:12.524983"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 5956,
+      "availability": "PreOrder",
+      "url": "https://www.nin-nin-game.com/en/nendoroid/249412-nendoroid-3098-baldur-s-gate-3-shadowheart-good-smile-company-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:12.524990"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": null,
+  "highestPriceJpy": null,
+  "inStockCount": 0,
+  "totalOffersCount": 6,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

@@ -1,0 +1,2 @@
+apify>=2.0.0
+apify-client>=1.4.0

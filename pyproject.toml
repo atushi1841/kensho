@@ -45,6 +45,11 @@ include = ["kensho*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v --tb=short --cov=kensho --cov-report=term-missing -m \"not live\""
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "live: 実ネットワーク・実ブラウザを使うテスト（addopts の -m \"not live\" で既定除外）",
+]
 
 [tool.mypy]
 python_version = "3.12"
@@ -87,6 +92,7 @@ preview = true
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
     "pytest-cov>=7.1.0",
     "pytest-mock>=3.15.1",
     "ruff>=0.15.20",

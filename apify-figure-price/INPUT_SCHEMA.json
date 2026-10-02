@@ -1,0 +1,92 @@
+{
+  "title": "Figure Price Query",
+  "description": "Filters for the Japan Anime Figure Price dataset. All fields are optional; omit to return the first 100 figures.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "figureIds": {
+      "type": "array",
+      "title": "Figure IDs",
+      "description": "Optional list of figure IDs (MyFigureList IDs) to filter results",
+      "items": {
+        "type": "string"
+      },
+      "editor": "json"
+    },
+    "series": {
+      "type": "string",
+      "title": "Series",
+      "description": "Filter by series name (partial match)",
+      "editor": "textfield"
+    },
+    "character": {
+      "type": "string",
+      "title": "Character",
+      "description": "Filter by character name (partial match)",
+      "editor": "textfield"
+    },
+    "manufacturer": {
+      "type": "string",
+      "title": "Manufacturer",
+      "description": "Filter by manufacturer name",
+      "editor": "textfield"
+    },
+    "scale": {
+      "type": "string",
+      "title": "Scale",
+      "description": "Filter by scale (e.g., 1/7, 1/8)",
+      "editor": "textfield"
+    },
+    "minPrice": {
+      "type": "integer",
+      "title": "Minimum Price (JPY)",
+      "description": "Minimum price in JPY",
+      "editor": "number"
+    },
+    "maxPrice": {
+      "type": "integer",
+      "title": "Maximum Price (JPY)",
+      "description": "Maximum price in JPY",
+      "editor": "number"
+    },
+    "condition": {
+      "type": "string",
+      "title": "Condition",
+      "enum": [
+        "NewCondition",
+        "UsedCondition",
+        "RefurbishedCondition"
+      ],
+      "description": "Filter by condition grade",
+      "editor": "select"
+    },
+    "inStockOnly": {
+      "type": "boolean",
+      "title": "In Stock Only",
+      "description": "Only return items with in-stock offers",
+      "default": false,
+      "editor": "checkbox"
+    },
+    "includeHistory": {
+      "type": "boolean",
+      "title": "Include History",
+      "description": "Include price history if available",
+      "default": false,
+      "editor": "checkbox"
+    },
+    "limit": {
+      "type": "integer",
+      "title": "Limit",
+      "description": "Maximum number of results to return",
+      "default": 100,
+      "editor": "number"
+    },
+    "offset": {
+      "type": "integer",
+      "title": "Offset",
+      "description": "Pagination offset",
+      "default": 0,
+      "editor": "number"
+    }
+  }
+}

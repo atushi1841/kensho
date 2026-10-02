@@ -1,521 +1,344 @@
-# ════════════════════════════════════════════
-# Kensho 全体設定 v3.1
-# ════════════════════════════════════════════
-
-general:
-  project_dir: "/mnt/d/Project2/kensho"
-  python: "/home/atushi/kensho-venv/bin/python"
-  log_retention_days: 30
-  session_warn_days: 14
-
-# ── 通知設定 ──
-notify:
-  discord_webhook: ""
-  windows_toast: false
-
-# ── Xアカウント ──
-# 垢を追加するときはここに追記
 accounts:
-  - key: atushi16
-    display: "@atushi16"
-    session: "data/x_session.json"
-    disable_reply: true
-    daily_target: 75
-    schedule:
-      collects: false
-      batches:
-        # 2026-08-28 増量対応: 10→12バッチ・max 10→15（8/24-25実績160件/dayを再現）
-        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "08:02", max: 15 }
-        - { time: "09:12", max: 15 }
-        - { time: "10:27", max: 15 }
-        - { time: "11:47", max: 15 }
-        - { time: "12:56", max: 15 }
-        - { time: "14:12", max: 15 }
-        - { time: "15:37", max: 15 }
-        - { time: "16:47", max: 15 }
-        - { time: "18:02", max: 15 }
-        - { time: "19:22", max: 15 }
-        - { time: "20:47", max: 15 }
-        - { time: "22:17", max: 15 }
-
-  - key: kudou
-    display: "@kudou_aoshi"
-    session: "data/x_session_kudou.json"
-    disable_reply: true
-    daily_target: 50
-    schedule:
-      collects: false
-      batches:
-        # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
-        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "08:24", max: 15 }
-        - { time: "10:03", max: 15 }
-        - { time: "12:42", max: 15 }
-        - { time: "14:31", max: 15 }
-        - { time: "15:42", max: 15 }
-        - { time: "17:21", max: 15 }
-        - { time: "18:38", max: 15 }
-        - { time: "19:54", max: 15 }
-        - { time: "21:18", max: 15 }
-        - { time: "22:28", max: 15 }
-
-  - key: zin20120731
-    display: "@zin20120731"
-    session: "data/x_session_c.json"
-    disable_reply: true
-    daily_target: 50
-    schedule:
-      collects: false
-      # ★ 2026-09-24 03:4x 応募バッチ一時停止（統括 kensho-sweeps / t_66c14eb4 のQA結果に基づく）
-      #   理由1: プロキシ 1084 (adapter zin_AW6povo) が dead。`data/status/zin20120731.json` = dead_proxy、
-      #          本日 03:00-03:2x のログに "Proxy zin20120731:1084 is dead" が14回以上、watchdog の復旧も失敗中。
-      #   理由2: セッション失効。session ファイル `data/x_session_c.json` の最終更新は 2026-09-18、
-      #          ログは「最終更新: 5日前」のまま。last_success も 2026-09-18 で以降 0 件。
-      #   根拠: 応募 自己修復最終失敗 32件中 29件が本垢（apply 0 success 1 errors）。self_heal の3回リトライが
-      #         ブラウザ起動＋Xログインを再実行し、goto failed 63→227件/日・ログイン試行 約55→108回/日 に増幅（BOTシグナル）。
-      #   方針: プロキシ死垢は自宅IPへフォールバックさせない（2026-08-01 確定ルール）ため応募を停止。
-      #          垢ブロック自体は残置＝proxy_watchdog の復旧試行は継続する（accounts から外すと復旧が止まるため外していない）。
-      #   復帰条件: (1) プロキシ1084の疎通回復（egress確認） (2) Xセッション再取得（ユーザー確認が必要な操作）
-      #   復帰方法: 下記 batches のコメントを外すだけ（このブロックを戻す）。
-      batches:
-        # 2026-08-28 増量対応: max 10→15（8/24-25実績160件/dayを再現）
-        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        # - { time: "08:06", max: 15 }
-        # - { time: "10:44", max: 15 }
-        # - { time: "11:59", max: 15 }
-        # - { time: "14:28", max: 15 }
-        # - { time: "16:39", max: 15 }
-        # - { time: "18:29", max: 15 }
-        # - { time: "20:09", max: 15 }
-        # - { time: "22:13", max: 15 }
-
-  # ★ 2026-08-23 復帰: 書き込みAPI認証エラーは「セッション(auth_token)失効」が原因と判明。
-  #   Chromeで通常表示(凍結なし)→ 新auth_token/ct0に更新済み(x_session_TankanNotes.json)。復帰。
-  # ★ 2026-08-26 一時停止: プロキシ1085が4日連続egress不通（SOCKS5ハンドシェイクOK→CONNECT不可）。
-  #   スマホ(Redmi Note 9S / SSID 2_redmi_n9s)テザリング側の実インターネット死。凍結ではない。
-  # ★ 2026-08-27 復帰: povo HR01ルーター(SSID 2_povo_HR01)へ切替。アダプタ=2_povo_tankan、出口IP=106.133.43.14、重複なし確認済み。
-  # ★ 2026-08-27 15:55: ワイモバイルHR01(SSID 10_ymo_HR01, アダプタ=Wi-Fi RTL8188EU#2)へ切替。
-  #   原因: povo無課金が76-200Kbpsの速度制限で応募困難。ワイモバイルは直接アクセス確認済み(72.2Mbps)。
-  #   対策: 過去のnetsh portproxy(172.26.80.1:1086→192.168.125.5:1086)残骸がWSL接続を横取りしていた→削除。
-  #   kensho_proxy.pyに--no-bind追加(Wi-Fiアダプタはデフォルトルート経由で正常動作)。出口IP=126.133.201.100。
-  - key: TankanNotes
-    display: "@TankanNotes"
-    session: "data/x_session_TankanNotes.json"
-    disable_reply: true
-    daily_target: 50
-    schedule:
-      collects: false
-      batches:
-        # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
-        # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-        - { time: "09:29", max: 15 }
-        - { time: "10:52", max: 15 }
-        - { time: "12:23", max: 15 }
-        - { time: "13:43", max: 15 }
-        - { time: "14:56", max: 15 }
-        - { time: "16:08", max: 15 }
-        - { time: "17:19", max: 15 }
-        - { time: "18:44", max: 15 }
-        - { time: "20:12", max: 15 }
-        - { time: "22:07", max: 15 }
-
-  # ★ 2026-09-24: inobase1-4（@inobase128508）は垢バン確定（ユーザー申告）→ 削除。
-  #   config / proxy_watchdog / browser.py(PROXY_MAP・fingerprint) から削除済み。プロキシ1089は起動しない。
-  #   以下は履歴（復帰予定なし）。
-  # - key: inobase1-4
-  #   display: "@inobase128508"
-  #   session: "data/x_session_inobase1-4.json"
-  #   disable_reply: true
-  #   daily_target: 50
-  #   schedule:
-  #     collects: false
-  #     batches:
-  #       # 2026-08-28 増量対応: max 12→15（8/24-25実績160件/dayを再現）
-  #       # 非キリ番化（m%5!=0・70分間隔・最終22:30以前）
-  #       - { time: "09:38", max: 15 }
-  #       - { time: "10:48", max: 15 }
-  #       - { time: "11:58", max: 15 }
-  #       - { time: "13:19", max: 15 }
-  #       - { time: "15:13", max: 15 }
-  #       - { time: "16:28", max: 15 }
-  #       - { time: "17:51", max: 15 }
-  #       - { time: "19:11", max: 15 }
-  #       - { time: "21:17", max: 15 }
-  #       - { time: "22:29", max: 15 }
-
-  # ★ 2026-08-31: royalkensho 凍結（code 64）→ 破棄。後継 @toushiwatch に置換。
-  #   アダプタを toushiwatch_airtra1 にリネーム。回線 2_povo_AW(air-tra1/povo) 引き継ぎ。
-  # ★ 2026-08-31 15:21: 応募停止（セッションにauth_token/ct0が無く未ログインのまま失敗アクション続行中）。
-  #   BOT検出リスク回避のためコメントアウト。セッション再取得（ブラウザでログイン→auth_token/ct0保存）後に復帰。
-  # ★ 2026-09-24: 回線載せ替え完了 — 垢バンで解放された RM10JE_S（旧 chugakujuken 用アダプタ）へ転用。
-  #   アダプタ改名 chugakujuken_RM10JE_S→RM10JE_S、プロキシ1087を RM10JE_S 束縛で起動。
-  #   実測: 出口IP 106.133.45.122（自宅219.104.132.236とは別）／egress OK／X API healthy（friends 6）／auth_token+ct0 有。
-  #   残作業: 応募再開はこの下のバッチ時刻行のコメント解除（＝ユーザーGO待ち）。
-  # - key: toushiwatch
-  #   display: "@toushiwatch"
-  #   session: "data/x_session_toushiwatch.json"
-  #   disable_reply: true
-  #   daily_target: 50
-  #   schedule:
-  #     collects: false
-  #     batches: []        # ★ t_46f09dc1: 空リスト明示。復帰時はこの行か下の時刻行を解凍する
-                           #   （`batches:` だけ解凍し時刻行が全コメントのまま残ると None になり orchestrator が毎回クラッシュした）
-        # 2026-08-31: royal のスケジュールを引き継ぎ（非キリ番・70分間隔・最終22:30以前）
-        # - { time: "09:46", max: 15 }
-        # - { time: "11:03", max: 15 }
-        # - { time: "12:31", max: 15 }
-        # - { time: "13:58", max: 15 }
-        # - { time: "15:22", max: 15 }
-        # - { time: "16:47", max: 15 }
-        # - { time: "18:07", max: 15 }
-        # - { time: "19:29", max: 15 }
-        # - { time: "21:05", max: 15 }
-        # - { time: "22:21", max: 15 }
-
-# ── 収集設定 ──
-collection:
-  source: "https://knshow.com"
-  use_scrapling: true        # true: Cloudflare突破にScrapling（curl_cffi + browserforge）を使用
-  # ★ t_f4698348 代替案: SOCKS5プロキシローテーション（Crawlee互換性なし→既存httpx+SOCKS5で実装）。
-  #   use_scrapling=false の時、この proxy_pool リストが設定されていれば収集fetchをSOCKS5プロキシ
-  #   round-robin（失敗クールダウン5分 + 全滅時ダイレクトフォールバック）経由に切替。
-  #   未設定/空リストなら従来の直接fetch（挙動不変）。プロキシは X セッションと別IPを維持すること。
-  # proxy_pool:
-  #   - "socks5h://172.26.80.1:1081"
-  #   - "socks5h://172.26.80.1:1082"
-  times: ["03:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"]
-  max_items: 500
-  # ★ t_8946706e: scope_reduction（自己修復アクション）が対象にするページ数上限。
-  #   未設定だと scope_reduction は no-op のままプランから除外され「到達不能な設定」になるため、
-  #   実効値（99=全ページ）を明示する。99 → 回復時のみ 1 ページに縮小される（通常runの挙動は不変）。
-  max_pages: 99
-  # ★ t_b64c35ea (2026-09-23): 1runの実行時間上限（秒）。超過したら残ソースを打ち切り、
-  #   それまでに収集できた分を部分保存する（プロセスは強制終了しない）。
-  #   理由: 毎時収集は /tmp/kensho-collect.lock の flock を collect の子プロセスが保持し続けるため、
-  #   1runが長時間化すると後続スロットが「⚠️ 前回の収集がまだ継続中 → スキップ」で丸ごと欠落する。
-  #   実測 9/21=6件 / 9/22=6件 / 9/23=6件（14中）がスキップ、13:00run=118分、21:00run=2.5h超。
-  #   1500秒(25分) = 通常所要13〜25分 + 事後処理の余裕で 1run 30分未満に収める。0以下で無効（従来挙動）。
-  max_run_seconds: 1500
-  # ★ 2026-08-28: LLMで「フォロー+RTだけで応募完了か」を判定（simple_rt_ok）
-  #   従来のキーワード判定の見逃し（外部X連携・動画認証・入力・診断・写真/ハッシュタグ投稿・
-  #   シェア等の追加操作が必要な案件をFLAG判定）を捕捉。fail-open（失敗時は従来挙動）。
-  llm_classify: true
-  # ★ 2026-09-07: GALLERIA機ローカルqwen単一運用（ユーザー指示）。cost=0・thinking OFF。
-  #   ローカル死活時のみコード内フォールバックでOpenRouter無料枠(minimax-m3:free)へ自動退避。
-  llm_model: "qwen3.8-27b"
-  llm_batch_size: 8
-  # ★ t_96c94435 (2026-09-23): LLMプロバイダ呼び出しのサーキットブレーカー（故障遮断）。
-  #   連続失敗 failure_threshold 回でそのプロバイダを遮断し、遮断中は冷たい再試行を
-  #   せず次の候補（OpenRouter無料枠）へ即フォールバックする（＝遮断中の再試行は0件）。
-  #   クールダウン経過後は半開プローブ1回で再試行（backoff）し、成功で閉じ、
-  #   失敗ならクールダウンを backoff_multiplier 倍（上限 max_cooldown_seconds）に延長。
-  #   モデル名・優先順は変更しない（禁止領域）。環境変数
-  #   KENSHO_LLM_BREAKER_THRESHOLD / _COOLDOWN_SECONDS / _BACKOFF_MULTIPLIER /
-  #   _MAX_COOLDOWN_SECONDS でも動的上書きできる。セクション欠落時はコード内既定(3/300/2.0/3600)。
-  llm_breaker:
-    failure_threshold: 3
-    cooldown_seconds: 300
-    backoff_multiplier: 2.0
-    max_cooldown_seconds: 3600
-  # 収集を応募(orchestrator)から分離: 専用cron(crontab 0 3,9-21)で実行。
-  # orchestratorの応募処理が収集の7.5分で圧迫されなくなる。
-  separate_cron: true
-  # ★ t_9cc18ba0: research(twscrape X直接検索)の実行時刻をapply非稼働帯に限定。
-  #   twscrapeはXセッション(auth_token)を使う唯一の収集ソースで、applyと同一セッション/IPで
-  #   同時刻(例:12:00収集 vs 11:47〜12:56応募)に走るとX側が「検索+応募の近接実行」と相関
-  #   検出しBOTフラグが付きやすい。research_hours(HH整数リスト)で実行時刻を絞り、
-  #   apply非稼働の深夜(no_action_window 00-07)の収集cron(03:00)でのみX検索する。
-  #   未設定なら従来挙動(毎時)。空リスト禁止(省略時は毎時=分離なし)。
-  research_hours: [3]
-  # ★ 2026-09-18 t_442337b4: 収集源ヘルスモニタ（source_health）閾値。
-  #   連続失敗 or 日次失敗率が閾値超でそのソースを自動skipしキャッシュ（既収集分）を維持。
-  #   全主要源timeout時は前日キャッシュから提供継続＋アラート。欠落時はコード内デフォルト(4/0.5/6)。
-  health_max_consecutive_failures: 4
-  health_daily_failure_rate: 0.5
-  health_min_attempts: 6
-
-# ── Keepalive ──
-keepalive:
-  interval_minutes: 5
-  interfaces:
-    - label: "WiFi-A (@kudou_aoshi)"
-      type: wifi_monitor
-      wifi_profile: "a"
-    - label: "WiFi-C (@zin20120731)"
-      type: wifi_monitor
-      wifi_profile: "AiR-WiFi_6_povo"
-    - label: "Ethernet-D (@TankanNotes)"
-      type: ping                       # 2026-09-10: HR01 Wi-Fi不良→LAN直結(Tankan_ETH3)へ切替。wifi_monitor(再接続=netsh wlan)は不適なのでping型へ
-      network_interface: "Tankan_ETH3"
-    - label: "WiFi-E (@toushiwatch)"
-      type: wifi_monitor
-      wifi_profile: "2_povo_AW"        # 2026-08-31: royal破棄→toushiwatch転用
-
-# ── レート制限（X BAN回避）──
-# 1垢あたりの日次上限。SocialNexis 2026年推奨値に準拠。
-# 新規アカウント（30日未満）はさらに30%減で運用。
-# 各バッチで上限に達したらその垢はその日は停止。
-rate_limits:
-  max_follow_per_day: 100           # 120→100（フォローが最も危険、少し抑える）
-  max_rt_per_day: 80                # そのまま
-  max_like_per_day: 250            # 200→250（いいねは安全、増やす）
-  max_reply_per_day: 10
-  max_total_actions_per_day: 100   # 2026-08-31提案98: 日次総アクション上限（KPI 100件/日整合）。follow+rt+like+reply の合計が100超で打ち止め。8/30実績でkudou 126等が超過（種別上限のみだと理論上430件/日まで可能→過剰エンゲージメント=deboost/摘発リスク）
-  max_actions_per_hour: 15         # 25→15（2026-08-30提案86: 1時間15件超過のBOTリスク対策。8/29実測でTankanNotes 12時20件・chugakujuken 13時17件・inobase1-4 12時19件+19時16件が超過。speed_guard(15件/180s)と併用）
-  active_hours_start: "08:00"
-  active_hours_end: "23:00"
-  min_delay_between_actions: 15   # 20→15（基本間隔を微縮小。実測で一度もrate制限に引っかかっていないため）
-  max_delay_between_actions: 60   # 45→60
-  extra_long_pause_chance: 0.20   # 0.25→0.20（長休憩確率微減。①のスキップ削減で自然間隔が広がるため）
-  break_after_n_items: 7          # 5→7（休憩頻度を約30%減。実測222回/日・5.4時間は過剰。7ツイート毎なら人間らしさ維持）
-  break_min_seconds: 40           # 45→40（休憩時間を微縮小、実測平均88秒→約75秒に）
-  break_max_seconds: 120          # 90→120
-  # ★ 2026-08-28提案53: セッション内速度ガード（Error 226対策）
-  #   Xは2-3分で20件超の連続アクションをトリガーに検出。既存の時間あたり上限(15件/時)に加え、
-  #   直近window_sec以内にmax_actions件を超えたらpause_sec秒の強制休止を入れる最終防衛線。
-  speed_guard_window_sec: 180     # 監視窓（3分）
-  speed_guard_max_actions: 15     # 窓内の上限アクション数
-  speed_guard_pause_sec: 30       # 超過時の強制休止秒数
-  memory_reserve_mb: 2048
-
-# ── PolicyEngine（アクション実行前ポリシー評価）──
-# AEE (Agent-Execution-Partnership) 由来のポリシー評価設定
-# PolicyEngineで各アクション前にチェック: 日次上限→時間あたり上限→最低間隔→確率スキップ→アクティブ時間
-# 注意: 日次上限の実制御は rate_limits 配下。PolicyEngineの時間あたり上限は補助的な上乗せレイヤー。
-policy_engine:
-  # リスククラス別の1時間あたり上限（確実性重視の値）→ 2026-08-28増量: 8/24-25実績160件/dayに到達可能なよう緩和
-  hourly_limits:
-    like: 30            # 20→30
-    follow: 15          # 8→15
-    rt: 20              # 12→20
-  # アクションごとの確率スキップ率（BOT対策：高リスクほど高確率でスキップ）→ 2026-08-28増量: スキップ率半減
-  skip_probability:
-    like: 0.03          # 0.05→0.03
-    follow: 0.05        # 0.10→0.05
-    rt: 0.05            # 0.08→0.05
-  # リスクウェイト（日次上限 × この倍率 = 事実上の上限）
-  risk_weights:
-    like: 1.0
-    follow: 0.8
-    rt: 0.9
-
-# ── Failure Ceiling（連続失敗上限）──
-# Loop Engineering: 連続XX回エラーでその垢のバッチを打ち切り、cooldown後に再開
-failure_ceiling:
-  enabled: true
-  max_consecutive_failures: 3      # 3回連続失敗で打ち切り
-  cooldown_minutes: 30             # 30分後に自動リセット
-
-# ── 自己修復ループ設定 ──
-# Loop Engineering Layer 1-4: 収集/応募の例外・空収集を自動リカバリ。
-# ai_assisted: true にすると OpenROUTER_API_KEY で AI に修正案を聞く（無料モデル）。
-self_healing:
-  enabled: true
-  max_attempts: 3
-  min_delay_sec: 3
-  max_delay_sec: 10
-  failure_ceiling_consecutive: 3
-  failure_ceiling_cooldown_minutes: 30
-  state_file: data/self_heal_state.json
-  log_tail_lines: 60
-  ai_assisted: false
-  ai_timeout_sec: 25
-  ai_model: ""
-  retry_empty_collection: false
-  retry_partial_apply: false
-  notify_on_error: true
-  allowed_ai_actions: "retry,switch_transport,reduce_scope"
-  # ★ t_8946706e (2026-09-24): 回復アクションの順序。使えない（対象パイプラインで意味の無い）アクションは
-  #   実行時に自動で除外される — ai_assisted=false なら ai_consult、apply なら transport_fallback /
-  #   scope_reduction は「使われない設定」として残さない。プランは run をまたぐ永続カーソルで
-  #   段階消費するため、max_attempts=3 のままでも後段のアクションへ到達できる（F4）。
-  #   ★ max_attempts は絶対に増やさないこと（増やすとセッション失効垢への盲目的リトライが復活し、
-  #     goto failed / ログイン試行が倍増＝BOTシグナル増幅。実測 63→227件/日）。
-  recovery_order: "jitter_retry,ai_consult,network_check,transport_fallback,scope_reduction"
-  # 自己修復では回復不能な失敗の種類/マーカー（1回で停止＋その垢だけ failure_ceiling_cooldown_minutes 遮断）。
-  # セッション失効・認証・プロキシ死骸・アカウント停止を「リトライ対象外」に分類する。
-  # kinds は applier/browser が返す理由キー（browser.check_x_login の reason_out）と一致させること。
-  fatal_signal_kinds: "session,auth,dead_proxy,rate_limit,rate_limited,suspended,frozen,no_auth_session,needs_login,login_failed,goto_failed,challenge"
-  fatal_signal_markers: "auth_token,no_auth_session,needs_login,not logged in,login failed,ログイン失敗,invalid session,cookie expired,session expired,dead_proxy,http_0,goto_failed,goto failed,proxy is dead,プロキシ死骸,rate_limited,account suspended,frozen,読み取り専用"
-
-# ── アクション検証設定 ──
-# Loop Engineering: page.gotoによる重検証（プロフィールに遷移してボタン状態を確認）
-# コスト高いのでデフォルトOFF。必要なアクションだけONに推奨。
-verification:
-  enabled: false                    # ★ 2026-08-28: true→false VERIFY無効化（BOT対策上の時間無駄を排除）
-                                    #   実測: 遅い回線でpage.goto 30-45sタイムアウト242回/日・成功0回。
-                                    #   提案8で「API成功はVERIFY失敗で覆されない」ため応募判定に不参加
-                                    #   → 完全な時間の無駄。verify_account_healthはenabled非依存で継続。
-  verify_follow: true              # ★ 2026-08-25: false→true フォロー空振り対策。8/24実測でクリック報59件 vs 実フォロワー増加約10件と乖離。フォロー後プロフィールでフォロー中を確認（enabled=falseで未使用・再開時に有効）
-  verify_rt: true                  # ★ 2026-08-23: RT必須案件のRT成否を必ず実機確認（RT崩壊対策）（enabled=falseで未使用・再開時に有効）
-  verify_like: false               # true: いいね後→ツイート遷移で確認
-  verify_account_health: true      # true: ループ開始前にアカウント健全性チェック（enabled非依存で独立実行）
-
-# ── 安全設定 ──
-safety:
-  ip_separation_check: true        # true: 応募前に各プロキシ経由IPがユニークか確認
-  ip_check_timeout: 10             # 各プロキシ接続のタイムアウト(秒)
-  cache_ttl_seconds: 300           # チェック結果のキャッシュ時間(秒)。5分（自宅IP変動の早期検出）
-  # ★ t_8946706e (2026-09-24): true なら data/status/<acct>.json が dead_proxy の垢を blocked 扱いにして
-  #   応募を試行しない（従来は警告のみで応募処理に進み、goto失敗→ログイン再試行を反復＝BOTシグナル増幅）。
-  #   自宅IPへのフォールバックは行わない（死骸のまま停止する）。
-  dead_proxy_check: true
-  home_internet_accounts:
-    - "atushi16"                   # 自宅インターネット回線を使う正規アカウント（他アカウントは個別SOCKS5プロキシ必須）
-    # ↓ 凍結済み（削除済み）
-
-# ── オーケストレーター ──
-orchestrator:
-  interval_minutes: 15
-  max_accounts_per_run: 1        # 1回(1垢ワーカー)=1垢。垢別並列ワーカーが各垢の予定バッチを消化。
-                                 # （2026-08-23 並列化: kensho-auto-apply.sh が垢ごとに背景起動）
-  max_concurrent_accounts: 7     # 並列垢ワーカー数。5→6(8/23)→7(8/27: @toushiwatch追加で7垢。6スロットだと7垢目が
-                                 # 常に上限到達で後回しになりバッチ枠が消化されない。7に解放して全垢が並列で枠を消化する)。
-  apply_timeout: 1800
-  batch_jitter_minutes: 15      # バッチ時刻を±15分ランダム化（BOT対策）
-  priority: "pending_first"
-  # ★ 2026-08-23 BOT対策: 深夜帯は応募アクション禁止（睡眠中の人間がやらない時間帯=最強のBOT信号）。
-  #   スケジュール(8:00〜22:47)を過ぎた積み残しバッチが深夜の15分cronで飲み込まれるバグの対策。
-  #   実測: atushi16 が00:48〜05:35にフォロー47件漏出。この窓では get_pending_batches が全バッチを返さない。
-  no_action_window: ["00:00", "07:00"]
-
-# ── 凍結祭りモニタリング（提案52, 2026-08-28）──
-# Xの凍結の波（凍結祭り）を日次Web検索で監視し、観測時は全垢のバッチサイズを
-# scale倍に減速する（例 0.5 = 50%減）。research-agent知見（2026年3/4/6/7月に凍結の波）。
-# 実装: kensho/utils/freeze_festival.py。state: data/freeze_festival_state.json
-# ⚠ デフォルト無効（enabled: false）: Web検索は日付情報が無く過去の波記事を拾う
-#   リスクがあり、誤検知時に本番出力を半減させてしまう。critic/research-agentが
-#   実際の波を観測したら enabled: true に変更して有効化する。
-freeze_festival:
-  enabled: false       # trueで有効化（観測時バッチサイズをscale倍に減速）
-  scale: 0.5           # 観測時のアクション量スケール
-  valid_days: 3        # 観測情報の有効日数（超過で通常運用に戻る）
-  search_query: "凍結祭り"  # SearXNG検索クエリ
-
-# ── アクションスキップ率（applier）──
-# 2026-08-20 低減: 応募量↑。BOT対策は日次/時間上限+不定期間隔(rate_limits)で担保。
-# ※フォローが最も危険・いいねが安全なため、アンバランスに保つ。
+- daily_target: 75
+  disable_reply: true
+  display: '@atushi16'
+  key: atushi16
+  schedule:
+    batches:
+    - max: 15
+      time: 08:02
+    - max: 15
+      time: 09:12
+    - max: 15
+      time: '10:27'
+    - max: 15
+      time: '11:47'
+    - max: 15
+      time: '12:56'
+    - max: 15
+      time: '14:12'
+    - max: 15
+      time: '15:37'
+    - max: 15
+      time: '16:47'
+    - max: 15
+      time: '18:02'
+    - max: 15
+      time: '19:22'
+    - max: 15
+      time: '20:47'
+    - max: 15
+      time: '22:17'
+    collects: false
+  session: data/x_session.json
+- daily_target: 50
+  disable_reply: true
+  display: '@kudou_aoshi'
+  key: kudou
+  schedule:
+    batches:
+    - max: 15
+      time: 08:24
+    - max: 15
+      time: '10:03'
+    - max: 15
+      time: '12:42'
+    - max: 15
+      time: '14:31'
+    - max: 15
+      time: '15:42'
+    - max: 15
+      time: '17:21'
+    - max: 15
+      time: '18:38'
+    - max: 15
+      time: '19:54'
+    - max: 15
+      time: '21:18'
+    - max: 15
+      time: '22:28'
+    collects: false
+  session: data/x_session_kudou.json
+- daily_target: 50
+  disable_reply: true
+  display: '@zin20120731'
+  key: zin20120731
+  schedule:
+    batches:
+    - max: 15
+      time: 08:00
+    - max: 15
+      time: 09:15
+    - max: 15
+      time: 06:30
+    - max: 15
+      time: 07:05
+    - max: 15
+      time: 07:80
+    - max: 15
+      time: 08:55
+    - max: 15
+      time: 09:30
+    - max: 15
+      time: '10:05'
+    - max: 15
+      time: 10:80
+    - max: 15
+      time: '11:55'
+    - max: 15
+      time: '12:30'
+    - max: 15
+      time: '13:05'
+    collects: false
+  session: data/x_session_c.json
+- daily_target: 50
+  disable_reply: true
+  display: '@TankanNotes'
+  key: TankanNotes
+  schedule:
+    batches:
+    - max: 15
+      time: 09:29
+    - max: 15
+      time: '10:52'
+    - max: 15
+      time: '12:23'
+    - max: 15
+      time: '13:43'
+    - max: 15
+      time: '14:56'
+    - max: 15
+      time: '16:08'
+    - max: 15
+      time: '17:19'
+    - max: 15
+      time: '18:44'
+    - max: 15
+      time: '20:12'
+    - max: 15
+      time: '22:07'
+    collects: false
+  session: data/x_session_TankanNotes.json
 applier:
-  skip_rates:
-    follow: 0.08      # 15%→8%  応募1件=フォローなので応募数に直結
-    rt: 0.10          # 20%→10%
-    like: 0.15        # 30%→15%
-    all: 0.03         # 5%→3%
-  # ★ 2026-08-29: フォロー+いいね伴走のいいねスキップ率（応募成立=フォロー状態+いいね）。
-  #   2026-08-29 提案83: 5%→10%に引き上げ（速度安全弁として。いいね単独許可で補完）。
-  #   0にすると機械的パターンになるため非推奨。
-  like_with_follow_skip: 0.10
-  # ★ 2026-08-29 提案83: フォロー非関連（RTのみ等）ツイートへのいいね単独実行スキップ率。
-  #   フォロー要件なしツイートでも、speed_guard(15件/180s) + 連続いいね4件カウンタ制限内で
-  #   いいね単独実行を許可(40%実行=60%スキップ)。L/F比率95%以上達成のため。
-  like_standalone_skip: 0.60
-  # ★ 2026-08-28提案63: 失敗アクションの短時間DEFER（分）。フォロー/RT失敗時に
-  #   同一ターゲットが次バッチで再ピックされるのを30分抑制（不安定期の機械的再訪問防止）。
-  retry_defer_minutes: 30
-  # ★ 2026-08-30提案88: クロスアカウント近接ガード。
-  #   別垢が同一ツイートを「近接時間内」に処理済みなら、自垢にDEFER(4〜8h)を書いてスキップ。
-  #   Xのネットワーク分析（複数アカウントが同一投稿クラスタと短時間に相互作用=リンク判定）対策。
-  #   → 6アカウントが同じcollected.jsonを参照するため、別垢の近接アクションを分散させる。
-  cross_account_proximity_hours: 6
-  cross_account_defer_min_hours: 4
-  # ★ 2026-08-30提案93: code 326（一時ロック）垢のフォロー停止時間。
-  #   Xの「Your account is temporarily locked」エラー後、フォローのみ停止して
-  #   like/RTは継続する期間。凍結（code 64・FROZEN_ABORT）とは別に扱い、
-  #   期限切れで自動復帰する。8/30実測: inobase1-4がcode326で6.5時間ロック中も
-  #   dispatch継続 → 提案93で修正。
-  follow_lock_hours: 4
-  cross_account_defer_max_hours: 8
-  # ★ 2026-09-18提案: 複数同時刻応答検知（軽量版）の検知窓/閾値。
-  #   同一キャンペーン(tweet)へ multi_response_threshold 垢以上が
-  #   multi_response_window_sec 秒以内に応募成功した場合 same_campaign_multi を
-  #   ログ+アラート（ブロックしない・対応はManual）。提案88近接DEFERのスリップスルー監視。
-  multi_response_window_sec: 1800    # 30分
-  multi_response_threshold: 2
-  # ★ t_c189d8d8 提案1: 連続RT/いいね異常検知しきい値。
-  #   RT or いいね がこの回数連続成功したらセッション強制終了（BAN祭りスパム判定の検出境界5回）。
-  #   フォロー成功 or 失敗でリセット。0以下なら無効（従来挙動に戻す）。
   anomaly_max_consecutive_rt_like: 5
-
-# ── NGワード（除外フィルター）──
-# この文字列を含むツイートは応募をスキップします
-# ※本当に「手動操作/外部操作」が必要で自動応募できない案件だけに限定。
-#   クイズ/アンケート(LIKEではない回答必須) や フォーム入力・合言葉入力必須のもの。
-#   URL/リンク/動画/画像/シェア/チェック/引用 は通常の懸賞告知に高頻度で出現する
-#   ためNG対象から除外（応募最大化のため。BOT対策はIP分離が主防御）。
-ng_words:
-  - "応募フォーム"
-  - "クイズ"
-  - "アンケート"
-  - "合言葉"
-  - "応募はこちら"
-
-# ── 必須ワード（応募条件）──
-# 2026-08-26修正: 「フォロー」必須だとRTのみ案件(フォロー不要)が全滅していたため緩和。
-#   RT/リポスト案件も応募対象に。NGワード・複数アカウントフォロー除外はそのまま有効。
-required_words:
-  require_all: []
-  require_any: ["フォロー", "リポスト", "RT"]
-
-# ── URLフィルター ──
-# true: URL（http/https）を含む投稿は応募しない
-# 2026-08-16: false に変更。懸賞ツイートの大半がデフォルト画像/クーポン/詳細URLを
-# 含むため、trueでは応募が実質止まる（533件/日を除外）。BOT対策はIP分離で担保。
-skip_url_posts: false
-
-# ── 収集フィルタ ──
+  cross_account_defer_max_hours: 8
+  cross_account_defer_min_hours: 4
+  cross_account_proximity_hours: 6
+  follow_lock_hours: 4
+  like_standalone_skip: 0.6
+  like_with_follow_skip: 0.1
+  multi_response_threshold: 2
+  multi_response_window_sec: 1800
+  retry_defer_minutes: 30
+  skip_rates:
+    all: 0.03
+    follow: 0.08
+    like: 0.15
+    rt: 0.1
+collection:
+  health_daily_failure_rate: 0.5
+  health_max_consecutive_failures: 4
+  health_min_attempts: 6
+  llm_batch_size: 8
+  llm_breaker:
+    backoff_multiplier: 2.0
+    cooldown_seconds: 300
+    failure_threshold: 3
+    max_cooldown_seconds: 3600
+  llm_classify: true
+  llm_model: qwen3.8-27b
+  max_items: 500
+  max_pages: 99
+  max_run_seconds: 1500
+  research_hours:
+  - 3
+  separate_cron: true
+  source: https://knshow.com
+  times:
+  - 03:00
+  - 09:00
+  - '10:00'
+  - '11:00'
+  - '12:00'
+  - '13:00'
+  - '14:00'
+  - '15:00'
+  - '16:00'
+  - '17:00'
+  - '18:00'
+  - '19:00'
+  - '20:00'
+  - '21:00'
+  use_scrapling: true
 collection_filter:
-  min_retweet_threshold: 3       # RT数がこれ未満はスキップ（偽懸賞対策）
-  min_like_threshold: 1          # いいね数がこれ未満はスキップ
-  max_tweet_age_hours: 72        # 3日以上前のツイートは応募しない
-  drop_without_must_word: true   # 2026-08-27: 必須ワード(フォロー/リポスト/RT)なしツイートを収集から除外（スループット改善②）
-
-# ── 賞品価値推定 ──
+  drop_without_must_word: true
+  max_tweet_age_hours: 72
+  min_like_threshold: 1
+  min_retweet_threshold: 3
+failure_ceiling:
+  cooldown_minutes: 30
+  enabled: true
+  max_consecutive_failures: 3
+freeze_festival:
+  enabled: false
+  scale: 0.5
+  search_query: 凍結祭り
+  valid_days: 3
+general:
+  log_retention_days: 30
+  project_dir: /mnt/d/Project2/kensho
+  python: /home/atushi/kensho-venv/bin/python
+  session_warn_days: 14
+keepalive:
+  interfaces:
+  - label: WiFi-A (@kudou_aoshi)
+    type: wifi_monitor
+    wifi_profile: a
+  - label: WiFi-C (@zin20120731)
+    type: wifi_monitor
+    wifi_profile: AiR-WiFi_6_povo
+  - label: Ethernet-D (@TankanNotes)
+    network_interface: Tankan_ETH3
+    type: ping
+  - label: WiFi-E (@toushiwatch)
+    type: wifi_monitor
+    wifi_profile: 2_povo_AW
+  interval_minutes: 5
+ng_words:
+- 応募フォーム
+- クイズ
+- アンケート
+- 合言葉
+- 応募はこちら
+notify:
+  discord_webhook: ''
+  windows_toast: false
+orchestrator:
+  apply_timeout: 1800
+  batch_jitter_minutes: 15
+  interval_minutes: 15
+  max_accounts_per_run: 7
+  max_concurrent_accounts: 7
+  no_action_window:
+  - 00:00
+  - 07:00
+  priority: pending_first
+policy_engine:
+  hourly_limits:
+    follow: 15
+    like: 30
+    rt: 20
+  risk_weights:
+    follow: 0.8
+    like: 1.0
+    rt: 0.9
+  skip_probability:
+    follow: 0.05
+    like: 0.03
+    rt: 0.05
 prize_scoring:
   enabled: true
-  jpy_patterns:
-    - "\\d{1,3}(?:,\\d{3})*万円"
-    - "\\d{1,3}(?:,\\d{3})*円"
-    - "\\d{1,3}(?:,\\d{3})*円相当"
-    - "\\d{1,3}(?:,\\d{3})*円分"
-  item_patterns:
-    - "Amazon.*ギフト券?|ギフト券"
-    - "商品券|図書券"
-    - "QUOカード|クオカード"
-    - "家電|スマホ|タブレット"
-    - "旅行|宿泊|温泉"
-    - "現金"
-    - "Switch|PS5|ゲーム機"
-  priority_multipliers:
-    "現金": 3.0
-    "Amazon.*ギフト券?|ギフト券": 2.5
-    "旅行|宿泊": 2.5
-    "家電|スマホ|タブレット": 2.0
-    "Switch|PS5": 2.0
-    "商品券|図書券": 1.5
-    "QUOカード|クオカード": 1.2
-  # ── リサーチ反映の重み（2026-09-03 v9 提案1）──
-  # 協賛・タイアップ・地域限定・店舗系は全国懸賞より約1.7倍当たりやすい
-  sponsor_multiplier:
-    "協賛|タイアップ|提供": 1.7
-    "地域限定|店舗|店頭|ローカル|ご当地": 1.5
-  # 食品系は当選人数600〜2000名と多く設定されやすい
   food_multiplier:
-    "飲料|ドリンク|お茶|コーヒー|ビール|ジュース|スイーツ": 1.5
-    "お菓子|スナック|チョコ|アイス|調味料|食品|ラーメン": 1.4
-  # 当選人数が閾値以上なら倍率アップ（当選確率が高い）
-  winner_count_multiplier:
-    "2000": 2.0
-    "600": 1.6
-    "100": 1.3
-  # 締切まで24時間以内なら競争率が低く当選しやすい
+    お菓子|スナック|チョコ|アイス|調味料|食品|ラーメン: 1.4
+    飲料|ドリンク|お茶|コーヒー|ビール|ジュース|スイーツ: 1.5
+  item_patterns:
+  - Amazon.*ギフト券?|ギフト券
+  - 商品券|図書券
+  - QUOカード|クオカード
+  - 家電|スマホ|タブレット
+  - 旅行|宿泊|温泉
+  - 現金
+  - Switch|PS5|ゲーム機
+  jpy_patterns:
+  - \d{1,3}(?:,\d{3})*万円
+  - \d{1,3}(?:,\d{3})*円
+  - \d{1,3}(?:,\d{3})*円相当
+  - \d{1,3}(?:,\d{3})*円分
+  priority_multipliers:
+    Amazon.*ギフト券?|ギフト券: 2.5
+    QUOカード|クオカード: 1.2
+    Switch|PS5: 2.0
+    商品券|図書券: 1.5
+    家電|スマホ|タブレット: 2.0
+    旅行|宿泊: 2.5
+    現金: 3.0
   short_deadline:
-    within_hours: 24
     multiplier: 1.3
-
-# ── Telegram通知 ──
+    within_hours: 24
+  sponsor_multiplier:
+    協賛|タイアップ|提供: 1.7
+    地域限定|店舗|店頭|ローカル|ご当地: 1.5
+  winner_count_multiplier:
+    '100': 1.3
+    '2000': 2.0
+    '600': 1.6
+rate_limits:
+  active_hours_end: '23:00'
+  active_hours_start: 08:00
+  break_after_n_items: 7
+  break_max_seconds: 120
+  break_min_seconds: 40
+  extra_long_pause_chance: 0.2
+  max_actions_per_hour: 15
+  max_delay_between_actions: 60
+  max_follow_per_day: 100
+  max_like_per_day: 250
+  max_reply_per_day: 10
+  max_rt_per_day: 80
+  max_total_actions_per_day: 100
+  memory_reserve_mb: 2048
+  min_delay_between_actions: 15
+  speed_guard_max_actions: 15
+  speed_guard_pause_sec: 30
+  speed_guard_window_sec: 180
+required_words:
+  require_all: []
+  require_any:
+  - フォロー
+  - リポスト
+  - RT
+safety:
+  cache_ttl_seconds: 300
+  dead_proxy_check: true
+  home_internet_accounts:
+  - atushi16
+  ip_check_timeout: 10
+  ip_separation_check: true
+self_healing:
+  ai_assisted: false
+  ai_model: ''
+  ai_timeout_sec: 25
+  allowed_ai_actions: retry,switch_transport,reduce_scope
+  enabled: true
+  failure_ceiling_consecutive: 3
+  failure_ceiling_cooldown_minutes: 30
+  fatal_signal_kinds: session,auth,dead_proxy,rate_limit,rate_limited,suspended,frozen,no_auth_session,needs_login,login_failed,goto_failed,challenge
+  fatal_signal_markers: auth_token,no_auth_session,needs_login,not logged in,login
+    failed,ログイン失敗,invalid session,cookie expired,session expired,dead_proxy,http_0,goto_failed,goto
+    failed,proxy is dead,プロキシ死骸,rate_limited,account suspended,frozen,読み取り専用
+  log_tail_lines: 60
+  max_attempts: 3
+  max_delay_sec: 10
+  min_delay_sec: 3
+  notify_on_error: true
+  recovery_order: jitter_retry,ai_consult,network_check,transport_fallback,scope_reduction
+  retry_empty_collection: false
+  retry_partial_apply: false
+  state_file: data/self_heal_state.json
+skip_url_posts: false
 telegram:
-  enabled: false                 # trueにしてtoken/chat_idを設定
-  token: ""                      # BotFatherから取得（例: "123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"）
-  chat_id: ""                    # 通知先チャットID（@userinfobot等で確認）
-  notify_on: ["dm_win"]         # 通知イベント: dm_win, error, daily_report
+  chat_id: '8510166694'
+  enabled: true
+  token: ${TELEGRAM_BOT_TOKEN}
+  notify_on:
+  - dm_win
+  - error
+  - daily_report
+  - over_concentration
+  - system_status
+verification:
+  enabled: true
+  verify_account_health: true
+  verify_follow: true
+  verify_like: false
+  verify_rt: true

@@ -2,12 +2,23 @@
 
 ## verification_evidence
 
-- `$ cd /mnt/d/Project2/kensho && python3 -m pytest tests/test_gumroad_promo.py -q --no-cov` → 29 passed in 1.89s (slot a/b 差異・週2投稿・旧state互換・16種ローテーション 全検証)
-- `$ cd /mnt/d/Project2/kensho && python3 scripts/gumroad_promo_weekly.py --slot b --dry-run` → 対象週: 2026-W39 / slot=b / DRY-RUN (新增8種 idx8「Stay ahead of the Japan hobby market」+ utm_campaign=w2026W39_b)
-- `$ cd /mnt/d/Project2/kensho && python3 scripts/gumroad_promo_weekly.py --slot a --dry-run` → スキップ: 今週aスロットは投稿済み (week=2026-W39, tweet_id=2103645539585953932) — 旧state互換確認
-- `$ (crontab -l; echo '...slot b...') | crontab -` → 金曜 08:40 `gumroad_promo_weekly_slot_b.sh` 追加 (月曜 slot a と4日間隔)
-- `$ python3 -m mypy scripts/gumroad_promo_weekly.py --strict` → 0 new errors (pre-existing 13 errors 全部 gumroad_x_post.py 由来・本タスク変更なし)
-- `$ python3 scripts/gumroad_promo_kpi.py` → twitter_views=0 参照経路正常 (views=None=当日データ未収集、KPI参照は前日比で判定)
+$ cd /mnt/d/Project2/kensho && python3 -m pytest tests/test_gumroad_promo.py -q --no-cov
+============================== 29 passed in 1.89s ==============================
+
+$ cd /mnt/d/Project2/kensho && python3 scripts/gumroad_promo_weekly.py --slot b --dry-run
+対象週: 2026-W39 / slot=b / atushi16 / 週次販促投稿
+ツイート内容: 'Stay ahead of the Japan hobby market. Free sample: https://atushi5.gumroad.com/l/kutuxe?utm_source=tw&utm_medium=s&utm_campaign=w2026W39_b Deep dive: https://atushi5.gumroad.com/l/qdyyyi?utm_source=tw&utm_medium=s&utm_campaign=w2026W39_b #priceguide'
+DRY-RUN: 投稿は実行していません。
+
+$ cd /mnt/d/Project2/kensho && python3 scripts/gumroad_promo_weekly.py --slot a --dry-run
+スキップ: 今週aスロットは投稿済み (week=2026-W39, tweet_id=2103645539585953932)
+
+$ crontab -l | grep -i gumroad
+40 8 * * 1 /home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/gumroad_promo_weekly.sh > /dev/null 2>&1
+40 8 * * 5 /home/atushi/.hermes/profiles/kensho-revenue-worker/scripts/gumroad_promo_weekly_slot_b.sh > /dev/null 2>&1
+
+$ cd /mnt/d/Project2/kensho && git log --oneline -1
+f426bee feat(gumroad): X販促投稿 週1→週2拡大 (t_e6968f4f) — WEEKLY_TWEETS 8→16種、slot a/b、金曜cron追加、state構造化
 
 ## 変更ファイル
 - scripts/gumroad_promo_weekly.py: WEEKLY_TWEETS 8→16種、SLOTS/pick_text(slot)/_slot_index 追加、state 年構造化

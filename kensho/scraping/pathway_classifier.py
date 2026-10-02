@@ -32,11 +32,20 @@
 
 from __future__ import annotations
 
+import math
 import re
 from typing import Any
 
+from kensho.scraping.scorer import EASY_WIN_SCORE_KEY
+
 # 自動応募対象になるラベル（X導線）
 X_LABEL: str = "X"
+
+# ── 当選易度 TOP50 表示（t_c1889d30）──
+# easy_win_score（収集時に scorer.compute_easy_win_score で付与）の高得点順 TOP50 を
+# デイリーレポートに表示する。計算不能（winner_count 欠落・0）は score=0 で付与した上で
+# TOP50 から分離して別セクションに切り出す。表示・可視化のみで応募ロジックには未反映。
+EASY_WIN_TOP_N: int = 50
 
 # 自動応募対象外の非Xラベル集合
 NON_X_LABELS: frozenset[str] = frozenset(
@@ -214,6 +223,78 @@ def _label_ja(label: str) -> str:
     return desc.get(label, label)
 
 
+def _winner_count_value(item: dict[str, Any]) -> float:
+    """winner_count を数値化。欠落・0・不正・非有限は 0.0（=計算不能）。"""
+    try:
+        wc: float = float(item.get("winner_count"))  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return 0.0
+    return wc if math.isfinite(wc) and wc > 0 else 0.0
+
+
+def easy_win_ranking(
+    items: list[dict[str, Any]], n: int = EASY_WIN_TOP_N
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """(easy_win_score 高得点順 TOP n, 計算不能リスト) を返す。
+
+    計算不能 = easy_win_score 未付与 または winner_count 欠落・0・不正
+    （scorer.compute_easy_win_score はこれらに score=0 を返す仕様）。
+    """
+    ranked: list[dict[str, Any]] = []
+    uncomputable: list[dict[str, Any]] = []
+    for it in items:
+        score = it.get(EASY_WIN_SCORE_KEY)
+        if isinstance(score, (int, float)) and not isinstance(score, bool) and _winner_count_value(it) > 0:
+            ranked.append(it)
+        else:
+            uncomputable.append(it)
+    ranked.sort(key=lambda it: float(it[EASY_WIN_SCORE_KEY]), reverse=True)
+    return ranked[:n], uncomputable
+
+
+def _easy_win_prize_cell(item: dict[str, Any]) -> str:
+    """賞品優先度セル（prize_score 未評価は '—'。スコア上は通常値1.0=ボーナス0として扱う）。"""
+    ps = item.get("prize_score")
+    if isinstance(ps, dict) and isinstance(ps.get("priority"), (int, float)):
+        return f"{float(ps['priority']):.1f}"
+    return "—"
+
+
+def easy_win_top_md(items: list[dict[str, Any]], n: int = EASY_WIN_TOP_N) -> str:
+    """当選易度 TOP50 + 計算不能分離のマークダウンセクション。"""
+    top, uncomputable = easy_win_ranking(items, n)
+    total = len(items)
+    computable_n = total - len(uncomputable)
+    lines: list[str] = [
+        f"## 当選易度 TOP{n}（easy_win_score 高得点順）",
+        "",
+        f"- 対象: 全{total}件中 計算可能 {computable_n}件（計算不能 {len(uncomputable)}件は TOP{n} 対象外）",
+        "- easy_win_score = winner_count 正規化（log1p/上限1000）と prize_score.priority "
+        "正規化（1.0=通常→0.0 / 3.0=満点→1.0）の等重合成 ×100（0-100）",
+        "- ※ 当選易度の可視化のみ。応募バッチ配分・応募ロジックには未反映。",
+        "",
+        "| 順位 | easy_win_score | 当選者数 | 賞品優先度 | 締切 | 導線 | X投稿URL |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    if not top:
+        lines.append("| — | — | — | — | — | — | （計算可能な案件なし） |")
+    for i, it in enumerate(top, start=1):
+        xu = str(it.get("x_url") or it.get("url") or "")
+        dl = str(it.get("deadline") or "")
+        lbl = str(it.get(PATHWAY_KEY) or "?")
+        lines.append(
+            f"| {i} | {float(it[EASY_WIN_SCORE_KEY]):.1f} | {int(_winner_count_value(it))} "
+            f"| {_easy_win_prize_cell(it)} | {dl} | {lbl} | {xu} |"
+        )
+    lines += [
+        "",
+        f"### 計算不能（winner_count 欠落・0）: {len(uncomputable)}件",
+        "",
+        f"- easy_win_score = 0 として全件付与済み。表示上はここに分離し TOP{n} には含めない。",
+    ]
+    return "\n".join(lines)
+
+
 def build_non_x_report_md(items: list[dict[str, Any]], label_counts_map: dict[str, int], today: str) -> str:
     """reports/non_x_manual_<date>.md の本文を組み立てる。"""
     nx = non_x_items(items)
@@ -233,7 +314,9 @@ def build_non_x_report_md(items: list[dict[str, Any]], label_counts_map: dict[st
     ]
     for lbl, cnt in sorted(label_counts_map.items(), key=lambda x: -x[1]):
         lines.append(f"| {lbl} | {cnt} | {_label_ja(lbl)} |")
-    lines += ["", "## 手動・要確認リスト（自動応募対象外）", ""]
+    # ★ t_c1889d30: 当選易度 TOP50（easy_win_score 高得点順）+ 計算不能の分離表示
+    lines += ["", easy_win_top_md(items), ""]
+    lines += ["## 手動・要確認リスト（自動応募対象外）", ""]
     if not nx:
         lines.append("（該当なし）")
     else:

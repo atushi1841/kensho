@@ -33,11 +33,14 @@ dir=None | 自動復帰
 ```
 
 ```text
-$ cd /mnt/d/Project2/kensho && git log --oneline -3
+$ cd /mnt/d/Project2/kensho && git log --oneline -4
+3fbcda0 docs(t_fa208e37): verification report for auto_direction_from_metric vocab expansion
 7867b53 fix(outcome_review_check): reduce direction_undeclared from 49 to 2 via pattern refinement
 f7c71d2 fix(t_fa208e37): auto_direction_from_metric 語彙拡張で方向未宣言を激減
 b2e5c9c docs(t_ceb1faef): add verification report and evidence.json
 ```
+
+commit 7867b53 / f7c71d2 / 3fbcda0 が祖先。
 
 ## 成功指標達成
 (1) direction 未宣言の outcome エントリ数: 81 件 → 2 件（75% 削減、20 件以下達成）

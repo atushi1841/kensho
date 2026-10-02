@@ -65,17 +65,21 @@ def _ids_from_payload(kwargs: dict[str, Any]) -> list[str]:
 
 
 def _patch_providers(monkeypatch: Any, calls: dict[str, int], *, bai_ok: bool, or_ok: bool) -> None:
-    """httpx.post をプロバイダ別に差し替え、呼び出し回数を calls に数える（実ネットワーク禁止）。"""
+    """httpx.post を段（一次=bai / 再試行=bai_retry）別に差し替え、呼び出し回数を calls に数える。
+
+    2026-09-29〜 両段とも B.AI（同一URL）なので、段の区別は Authorization のキーで行う。
+    """
 
     def fake_post(url: str, **kwargs: Any) -> _FakeResp:
-        if "api.b.ai" in url:
-            calls["bai"] += 1
-            if not bai_ok:
-                raise RuntimeError("bai全死（残高0）")
+        auth = str((kwargs.get("headers") or {}).get("Authorization", ""))
+        if "sk-or-test" in auth:  # 再試行段
+            calls["bai_retry"] += 1
+            if not or_ok:
+                raise RuntimeError("B.AI再試行段が枯渇")
             return _decision_response(_ids_from_payload(kwargs))
-        calls["openrouter"] += 1
-        if not or_ok:
-            raise RuntimeError("OpenRouter無料枠が日次上限枯渇")
+        calls["bai"] += 1
+        if not bai_ok:
+            raise RuntimeError("bai全死（残高0）")
         return _decision_response(_ids_from_payload(kwargs))
 
     monkeypatch.setattr(src.httpx, "post", fake_post)
@@ -257,9 +261,9 @@ class TestCircuitBreakerCore:
         b1.record_failure()
         b2 = get_breaker("bai", cfg)
         assert b2 is b1 and b2.state == "open"
-        # 別プロバイダは独立（bai が死んでも openrouter は影響を受けない）
-        assert get_breaker("openrouter", cfg).state == "closed"
-        assert set(snapshots()) == {"bai", "openrouter"}
+        # 別段も独立（bai が死んでも再試行段は影響を受けない）
+        assert get_breaker("bai_retry", cfg).state == "closed"
+        assert set(snapshots()) == {"bai", "bai_retry"}  # 直接生成した任意名（実配線名は src.BREAKER_* を参照）
 
 
 # ════════════════════════════════════════════
@@ -270,7 +274,7 @@ class TestCircuitBreakerCore:
 class TestClassifierBreakerWiring:
     def test_open_breaker_makes_zero_cold_calls_and_falls_back(self, monkeypatch: Any, tmp_path: Path) -> None:
         """bai全死（残高0）: 3バッチ目で遮断 → 以降baiは0回、OpenRouterへ即フォールバック。"""
-        calls = {"bai": 0, "openrouter": 0}
+        calls = {"bai": 0, "bai_retry": 0}
         _patch_providers(monkeypatch, calls, bai_ok=False, or_ok=True)
         res = src.classify_texts(
             _pairs(5),
@@ -281,15 +285,15 @@ class TestClassifierBreakerWiring:
         )
         assert res == {f"t{i}": "OK" for i in range(5)}  # フォールバックで収集は継続（fail-openではない）
         assert calls["bai"] == 3  # 遮断中(batch4,5)の同一プロバイダ再試行は0件
-        assert calls["openrouter"] == 5
-        bai = snapshots()["bai"]
+        assert calls["bai_retry"] == 5
+        bai = snapshots()["freellmapi"]
         assert bai["state"] == "open"
         assert bai["blocked_count"] == 2  # 防いだ冷たい再試行=2件
         assert bai["consecutive_failures"] >= 3
 
     def test_fail_open_when_all_providers_blocked(self, monkeypatch: Any, tmp_path: Path) -> None:
         """全プロバイダ死 → 遮断後は冷たい呼び出し0件で UNKNOWN（fail-open維持）。"""
-        calls = {"bai": 0, "openrouter": 0}
+        calls = {"bai": 0, "bai_retry": 0}
         _patch_providers(monkeypatch, calls, bai_ok=False, or_ok=False)
         res = src.classify_texts(
             _pairs(5),
@@ -300,12 +304,12 @@ class TestClassifierBreakerWiring:
         )
         assert res == {f"t{i}": "UNKNOWN" for i in range(5)}
         assert calls["bai"] == 3  # 遮断後は叩かない
-        assert calls["openrouter"] == 3  # バッチ1-3で(主/副)フォールバックモデルが失敗 → 遮断
-        assert snapshots()["openrouter"]["state"] == "open"
+        assert calls["bai_retry"] == 3  # バッチ1-3で(主/副)フォールバックモデルが失敗 → 遮断
+        assert snapshots()["freellmapi_retry"]["state"] == "open"
 
     def test_threshold_from_config_dict_is_honored(self, monkeypatch: Any, tmp_path: Path) -> None:
         """閾値をconfig化（ここでは1）→ 1回の失敗で即遮断し、2バッチ目はbai0回。"""
-        calls = {"bai": 0, "openrouter": 0}
+        calls = {"bai": 0, "bai_retry": 0}
         _patch_providers(monkeypatch, calls, bai_ok=False, or_ok=True)
         res = src.classify_texts(
             _pairs(3),
@@ -316,10 +320,10 @@ class TestClassifierBreakerWiring:
         )
         assert res == {f"t{i}": "OK" for i in range(3)}
         assert calls["bai"] == 1
-        assert snapshots()["bai"]["blocked_count"] == 2
+        assert snapshots()["freellmapi"]["blocked_count"] == 2
 
     def test_classify_collected_items_passes_breaker_config(self, monkeypatch: Any, tmp_path: Path) -> None:
-        calls = {"bai": 0, "openrouter": 0}
+        calls = {"bai": 0, "bai_retry": 0}
         _patch_providers(monkeypatch, calls, bai_ok=False, or_ok=True)
         items: list[dict[str, Any]] = [
             {"tweet_id": "t0", "tweet_text": "本文", "keyword_flag": False},
@@ -334,12 +338,12 @@ class TestClassifierBreakerWiring:
 
     def test_success_keeps_breaker_closed(self, monkeypatch: Any, tmp_path: Path) -> None:
         """bai健全時は遮断されず、baiだけが使われる（従来挙動の維持）。"""
-        calls = {"bai": 0, "openrouter": 0}
+        calls = {"bai": 0, "bai_retry": 0}
         _patch_providers(monkeypatch, calls, bai_ok=True, or_ok=True)
         res = src.classify_texts(_pairs(3), api_key="sk-bai-test", batch_size=1, project_root=tmp_path)
         assert res == {f"t{i}": "OK" for i in range(3)}
-        assert calls == {"bai": 3, "openrouter": 0}
-        assert snapshots()["bai"]["state"] == "closed"
+        assert calls == {"bai": 3, "bai_retry": 0}
+        assert snapshots()["freellmapi"]["state"] == "closed"
 
     def test_zero_cold_calls_while_breaker_open(self, monkeypatch: Any, tmp_path: Path) -> None:
         """成功指標: 遮断中の同一プロバイダ再試行を0件に。
@@ -347,7 +351,7 @@ class TestClassifierBreakerWiring:
         事前に3連続失敗で遮断状態を作ってから5バッチ走らせ、bai呼び出し=0件を実測する
         （クールダウン中のためプローブも発生しない）。
         """
-        calls = {"bai": 0, "openrouter": 0}
+        calls = {"bai": 0, "bai_retry": 0}
         _patch_providers(monkeypatch, calls, bai_ok=False, or_ok=True)
         bai = get_breaker(src.BREAKER_BAI, BreakerConfig(failure_threshold=3, cooldown_seconds=300))
         for _ in range(3):
@@ -357,8 +361,8 @@ class TestClassifierBreakerWiring:
         res = src.classify_texts(_pairs(5), api_key="sk-bai-test", batch_size=1, project_root=tmp_path)
         assert res == {f"t{i}": "OK" for i in range(5)}  # 即フォールバックで収集は継続
         assert calls["bai"] == 0  # 遮断中の同一プロバイダ再試行は0件
-        assert calls["openrouter"] == 5
-        assert snapshots()["bai"]["blocked_count"] == 5
+        assert calls["bai_retry"] == 5
+        assert snapshots()["freellmapi"]["blocked_count"] == 5
 
     def test_before_after_cold_call_reduction(self, monkeypatch: Any, tmp_path: Path) -> None:
         """Outcome Review 用の before/after 実測（同一シナリオ・遮断なし vs 遮断あり）。
@@ -371,16 +375,17 @@ class TestClassifierBreakerWiring:
 
         def run(threshold: int) -> dict[str, int]:
             reset_all()
-            calls = {"bai": 0, "openrouter": 0, "bai_after_threshold": 0}
+            calls = {"bai": 0, "bai_retry": 0, "bai_after_threshold": 0}
 
             def fake_post(url: str, **kwargs: Any) -> _FakeResp:
-                if "api.b.ai" in url:
-                    calls["bai"] += 1
-                    if calls["bai"] > 3:  # 3連続失敗＝遮断条件成立後の呼び出し
-                        calls["bai_after_threshold"] += 1
-                    raise RuntimeError("bai全死（残高0）")
-                calls["openrouter"] += 1
-                return _decision_response(_ids_from_payload(kwargs))
+                auth = str((kwargs.get("headers") or {}).get("Authorization", ""))
+                if "sk-or-test" in auth:  # 再試行段（B.AI）は成功
+                    calls["bai_retry"] += 1
+                    return _decision_response(_ids_from_payload(kwargs))
+                calls["bai"] += 1
+                if calls["bai"] > 3:  # 3連続失敗＝遮断条件成立後の呼び出し
+                    calls["bai_after_threshold"] += 1
+                raise RuntimeError("bai全死（残高0）")
 
             monkeypatch.setattr(src.httpx, "post", fake_post)
             monkeypatch.setattr(src, "_load_api_key", lambda *a, **k: "sk-bai-test")
@@ -405,26 +410,33 @@ class TestForbiddenAreasUnchanged:
     """禁止領域（モデル切替・優先順）に触れていないことを固定する。"""
 
     def test_model_constants_unchanged(self) -> None:
-        assert src.DEFAULT_MODEL == "qwen3.8-flash"
-        assert src.FALLBACK_MODEL == "minimax/minimax-m3:free"
-        assert src.SECOND_FALLBACK_MODEL == "nousresearch/hermes-3-mini:free"
-        assert src.API_URL == "https://api.b.ai/v1/chat/completions"
-        assert src.FALLBACK_API_URL == "https://openrouter.ai/api/v1/chat/completions"
+        """2026-10-01 ユーザー指示で freellmapi/auto に統一 — 以後の逸脱を固定する。"""
+        assert src.DEFAULT_MODEL == "auto"
+        assert src.FALLBACK_MODEL == "auto"
+        assert src.SECOND_FALLBACK_MODEL == "auto"
+        assert src.API_URL == "http://127.0.0.1:3002/v1/chat/completions"
+        assert src.FALLBACK_API_URL == "http://127.0.0.1:3002/v1/chat/completions"
 
     def test_priority_order_unchanged(self, monkeypatch: Any, tmp_path: Path) -> None:
-        """bai優先 → 失敗時のみ OpenRouter の順序が保たれている。"""
+        """一次段(freellmapi)優先 → 失敗時のみ再試行段(freellmapi) の順序が保たれている。
+
+        2026-10-01〜 両段とも freellmapi の auto（ローカルvLLM/外部直叩きは廃止）。
+        """
         urls: list[str] = []
 
         def fake_post(url: str, **kwargs: Any) -> _FakeResp:
             urls.append(url)
-            if "api.b.ai" in url:
-                raise RuntimeError("bai down")
-            return _decision_response(_ids_from_payload(kwargs))
+            auth = str((kwargs.get("headers") or {}).get("Authorization", ""))
+            if "sk-or-test" in auth:  # 再試行段は成功
+                return _decision_response(_ids_from_payload(kwargs))
+            raise RuntimeError("freellmapi down")
 
         monkeypatch.setattr(src.httpx, "post", fake_post)
         monkeypatch.setattr(src, "_load_api_key", lambda *a, **k: "sk-bai-test")
         monkeypatch.setattr(src, "_load_or_key", lambda *a, **k: "sk-or-test")
         res = src.classify_texts(_pairs(1), api_key="sk-bai-test", project_root=tmp_path)
         assert res == {"t0": "OK"}
-        assert "api.b.ai" in urls[0]
-        assert "openrouter" in urls[1]
+        assert "127.0.0.1:3002" in urls[0]
+        assert "127.0.0.1:3002" in urls[1]
+        assert all("openrouter" not in u for u in urls)  # 外部APIは一切呼ばない
+        assert all("127.0.0.1:3002" in u for u in urls)  # freellmapi のみ

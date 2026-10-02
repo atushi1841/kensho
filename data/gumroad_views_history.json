@@ -10,6 +10,24 @@
     "collected_at": "2026-09-26T09:33:50.746"
   },
   "2026-09-26": {
+    "views": 0,
+    "sales": 0,
+    "total": "0",
+    "referrers": {},
+    "login_ok": true,
+    "collected_at": "2026-09-27T09:05:22.738"
+  },
+  "2026-09-27": {
+    "views": 4,
+    "sales": 0,
+    "total": "0",
+    "referrers": {
+      "Direct, email, IM": 4
+    },
+    "login_ok": true,
+    "collected_at": "2026-09-28T09:05:19.866"
+  },
+  "2026-09-28": {
     "views": 1,
     "sales": 0,
     "total": "0",
@@ -17,6 +35,47 @@
       "Direct, email, IM": 1
     },
     "login_ok": true,
-    "collected_at": "2026-09-26T09:34:09.249"
+    "collected_at": "2026-09-29T09:05:20.822"
+  },
+  "2026-09-29": {
+    "views": 2,
+    "sales": 0,
+    "total": "0",
+    "referrers": {
+      "copilot.microsoft.com": 1,
+      "atushi5.gumroad.com": 1
+    },
+    "login_ok": true,
+    "collected_at": "2026-09-30T09:05:20.474"
+  },
+  "2026-09-30": {
+    "views": 0,
+    "sales": 0,
+    "total": "0",
+    "referrers": {},
+    "login_ok": true,
+    "collected_at": "2026-10-01T09:05:20.822"
+  },
+  "2026-10-01": {
+    "views": 2,
+    "sales": 0,
+    "total": "0",
+    "referrers": {
+      "copilot.microsoft.com": 1,
+      "Direct, email, IM": 1
+    },
+    "login_ok": true,
+    "collected_at": "2026-10-02T09:05:20.420"
+  },
+  "2026-10-02": {
+    "views": 2,
+    "sales": 0,
+    "total": "0",
+    "referrers": {
+      "copilot.microsoft.com": 1,
+      "Direct, email, IM": 1
+    },
+    "login_ok": true,
+    "collected_at": "2026-10-02T09:05:39.758"
   }
 }

@@ -51,6 +51,17 @@
 - Xセッションファイルは `data/x_session_<key>.json`
 - ネットワークI/FはUSB HUB経由でIP分離
 
+## 外部AIエージェント（freebuff / Codex / Claude Code 等）に渡すときの禁止事項
+
+このリポジトリを外部のコーディングエージェントに渡す場合、以下を厳守すること。
+
+- **読むな・触るな（認証情報）**: `.env`, `data/x_session_*.json`, `.secret-local/`,
+  `data/backups/`, `data/session_backup/`
+  → Xアカウントのセッション・APIキーが入っている。外部モデルに学習利用される危険がある
+- **変更するな**: `config.yaml` の `accounts:` セクション（アカウント管理は人間が手動で行う）
+- **実行するな**: 実ブラウザでの X 操作（応募・ログイン・スクレイピングの実行）
+- **作業対象**: `kensho/`, `tests/`, `scripts/` 配下のコード、および `tests/` の実行のみ
+
 ## 利用するスキル
 - `deepseek-coding` — DeepSeek V4でのコード作成
 - `claude-code` — Claude Code CLI連携

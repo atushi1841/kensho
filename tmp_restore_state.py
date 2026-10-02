@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+import json
+# 元のstateを復元
+original = {
+    'last_trigger': {
+        'mQaZFo6up4YZKepC3': '2026-09-26T16:10:54.320604+00:00',
+        'gMqdrS2evpcybSZc2': '2026-09-26T16:10:55.796156+00:00',
+        'b0vuqa3ESvy2mOwFB': '2026-09-26T16:10:57.268289+00:00',
+        'yN1R26HrV6C2MBKas': '2026-09-26T16:10:58.647258+00:00',
+        'Zh4kqcS4dYPWpFzBd': '2026-09-26T16:11:00.173632+00:00',
+        'q2E37PVTg5JcGOTEn': '2026-09-26T16:11:32.890631+00:00',
+        'wxMskoiHMPeeH2qAJ': '2026-09-26T16:11:34.313866+00:00',
+        '8WBam4CPB72q9Rvsd': '2026-09-26T16:11:35.885088+00:00',
+        '6Z7tJ3plfUmAgGmbk': '2026-09-26T16:11:37.290418+00:00',
+        'nUm22B2guMo8vXom6': '2026-09-26T16:11:38.674464+00:00',
+        'DOiD9y1NAJfLBcAjT': '2026-09-26T16:11:40.093741+00:00',
+        'Db3iY8FIRxPjPag7N': '2026-09-26T16:11:42.736348+00:00',
+        'W9cXhDckzHd9RZWnQ': '2026-09-26T15:49:23.981406+00:00',
+        'pAxQ0lRyArudhK9Wx': '2026-09-26T16:11:44.111478+00:00',
+        'FSuoQiX8OG4KuIQ9c': '2026-09-26T16:11:49.262875+00:00'
+    }
+}
+with open('data/apify_ppe_external_runs_state.json', 'w') as f:
+    json.dump(original, f, indent=2)
+print('state 復元完了')

@@ -1,0 +1,201 @@
+{
+  "total_campaigns": 7,
+  "accounts": [
+    "atushi16",
+    "kudou",
+    "zin20120731"
+  ],
+  "total_entries": 3,
+  "coverage_rate": 0.14285714285714285,
+  "value_known": 1,
+  "value_from_text": 1,
+  "deadline_known": 6,
+  "text_missing": 0,
+  "category_unclassified": 3,
+  "total_estimated_value_jpy": 1000,
+  "total_seats": 16,
+  "by_category": {
+    "分類不能・情報欠損": {
+      "n": 3.0,
+      "entries": 2.0,
+      "value": 0.0,
+      "wins": 0.0,
+      "seats": 7.0
+    },
+    "化粧品・日用品": {
+      "n": 1.0,
+      "entries": 0.0,
+      "value": 0.0,
+      "wins": 0.0,
+      "seats": 5.0
+    },
+    "金券・現金": {
+      "n": 1.0,
+      "entries": 1.0,
+      "value": 1000.0,
+      "wins": 0.0,
+      "seats": 0.0
+    },
+    "グッズ・ノベルティ": {
+      "n": 2.0,
+      "entries": 0.0,
+      "value": 0.0,
+      "wins": 0.0,
+      "seats": 4.0
+    }
+  },
+  "by_wincount": {
+    "2〜5名": {
+      "n": 3.0,
+      "entries": 0.0,
+      "wins": 0.0
+    },
+    "1名（最難関）": {
+      "n": 3.0,
+      "entries": 2.0,
+      "wins": 0.0
+    },
+    "枠数不明・記載なし": {
+      "n": 1.0,
+      "entries": 1.0,
+      "wins": 0.0
+    }
+  },
+  "by_deadline": {
+    "31日以上": 1,
+    "本日締切": 1,
+    "4〜7日": 1,
+    "明日締切": 1,
+    "8〜30日": 2,
+    "期限未記載": 1
+  },
+  "by_route": {
+    "X": 7
+  },
+  "by_source": {
+    "twscrape": 7
+  },
+  "by_account": {
+    "kudou": 1,
+    "zin20120731": 1,
+    "atushi16": 1
+  },
+  "keywords": [],
+  "missed": [
+    {
+      "title": "#スマスロモンスターハンターライズサンブレイク 導入記念",
+      "value": 1000,
+      "seats": 0,
+      "missing": 2,
+      "deadline": "2026-10-10",
+      "source": "twscrape"
+    },
+    {
+      "title": "🎮【超豪華プレゼント企画】",
+      "value": 0,
+      "seats": 5,
+      "missing": 3,
+      "deadline": "2026-10-31",
+      "source": "twscrape"
+    },
+    {
+      "title": "✦ No.00 New Collection ✦",
+      "value": 0,
+      "seats": 5,
+      "missing": 3,
+      "deadline": "2026-09-29",
+      "source": "twscrape"
+    },
+    {
+      "title": "🎁 #RIZIN_LANDMARK16 in NAGASAKI⛪️キャンペーン🎁",
+      "value": 0,
+      "seats": 3,
+      "missing": 3,
+      "deadline": "2026-10-10",
+      "source": "twscrape"
+    },
+    {
+      "title": "⚔️色違いネギガナイト配布⚔️",
+      "value": 0,
+      "seats": 1,
+      "missing": 1,
+      "deadline": "2026-09-28",
+      "source": "twscrape"
+    },
+    {
+      "title": "🎁 BUFFマーケット武器プレゼント企画 🎁",
+      "value": 0,
+      "seats": 1,
+      "missing": 3,
+      "deadline": "2026-10-02",
+      "source": "twscrape"
+    },
+    {
+      "title": "🔁4週連続フォロー＆RPキャンペーン！🔁",
+      "value": 0,
+      "seats": 1,
+      "missing": 3,
+      "deadline": "未記載",
+      "source": "twscrape"
+    }
+  ],
+  "wins": {
+    "matched": 4,
+    "unmatched": 12,
+    "total": 16,
+    "by_category": {
+      "分類不能・情報欠損": 2,
+      "グッズ・ノベルティ": 2
+    },
+    "by_wincount": {
+      "6〜20名": 2,
+      "2〜5名": 2
+    },
+    "by_source": {
+      "kenshouclub": 4
+    },
+    "matched_keys": {
+      "handle": 4
+    },
+    "entries_by_category": {
+      "Amazonギフト券": 149,
+      "ゲーム機・ゲームソフト": 33,
+      "体験・チケット": 56,
+      "分類不能・情報欠損": 808,
+      "金券・現金": 234,
+      "グッズ・ノベルティ": 156,
+      "食品・飲料": 222,
+      "旅行・宿泊": 47,
+      "Pay系・ポイント": 44,
+      "家電・ガジェット": 93,
+      "化粧品・日用品": 47,
+      "デジタル特典": 31
+    },
+    "entries_total": 1920
+  },
+  "wow": {
+    "prev_size": 401,
+    "size_delta": -394,
+    "new_campaigns": 7,
+    "disappeared": 401,
+    "value_delta": -273446,
+    "entries_delta": -462,
+    "new_sample": [
+      "⚔️色違いネギガナイト配布⚔️",
+      "🎁 BUFFマーケット武器プレゼント企画 🎁",
+      "✦ No.00 New Collection ✦",
+      "🎮【超豪華プレゼント企画】",
+      "#スマスロモンスターハンターライズサンブレイク 導入記念"
+    ]
+  },
+  "route_unknown": 0,
+  "week_label": "2026W40",
+  "scope": "week",
+  "generated_at": "2026-09-28 07:01 JST",
+  "data_files": [
+    "data/collected_today.json",
+    "data/collected.json",
+    "data/collected_history/collected_20260923.json"
+  ],
+  "fingerprint": "12218ea6954683d552f12a2e992c7792c73e6a7d7160868f1a176d0dce8fd04e"
+}

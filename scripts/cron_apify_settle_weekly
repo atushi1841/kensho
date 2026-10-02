@@ -1,0 +1,77 @@
+#!/bin/bash
+# cron_apify_settle_weekly — 週次Apify PPE実収益settle追跡＋Telegram通知
+# 日時: 毎週月曜 6:30 (JST)
+# 用途: t_5202c42b 週次Apify PPE実収益settleトラッキング
+
+set -euo pipefail
+
+PROFILE_DIR="/home/atushi/.hermes/profiles/kensho-revenue-worker"
+PROJECT_DIR="/mnt/d/Project2/kensho"
+LOG_DIR="$PROJECT_DIR/logs"
+RUN_LOG="$LOG_DIR/cron_apify_settle_weekly_$(date +%Y%m%d).log"
+
+mkdir -p "$LOG_DIR"
+
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] cron_apify_settle_weekly start" >> "$RUN_LOG"
+
+# 実行
+cd "$PROJECT_DIR"
+source .env 2>/dev/null
+python3 scripts/apify_revenue_settle_tracker.py --verify >> "$RUN_LOG" 2>&1
+
+EXIT_CODE=$?
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] cron_apify_settle_weekly exit=$EXIT_CODE" >> "$RUN_LOG"
+
+# Telegram通知実行（成功時のみ）
+if [ $EXIT_CODE -eq 0 ]; then
+    python3 -c "
+import json
+import os
+from datetime import datetime, UTC
+try:
+    with open('/mnt/d/Project2/kensho/data/apify_settle_state.json', encoding='utf-8') as f:
+        state = json.load(f)
+    latest = state.get('latest', {})
+    estimated = latest.get('estimated_revenue_usd', 0.0)
+    actual = latest.get('actual_revenue_usd', 0.0)
+    settle_rate = latest.get('settle_rate_pct', 0.0)
+    timestamp = latest.get('timestamp', '')
+    
+    message = f'''📊 Apify PPE Weekly Settle Report
+📅 {timestamp}
+💰 Estimated: \${estimated:.6f}
+💸 Actual:    \${actual:.6f}
+📈 Settle Rate: {settle_rate:.2f}%
+'''
+    
+    # Telegram送信
+    import urllib.request
+    import urllib.parse
+    
+    bot_token = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+    chat_id = os.environ.get('TELEGRAM_CHAT_ID', '')
+    
+    if bot_token and chat_id:
+        url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+        data = urllib.parse.urlencode({
+            'chat_id': chat_id,
+            'text': message,
+            'parse_mode': 'Plain'
+        }).encode()
+        
+        req = urllib.request.Request(url, data=data)
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            result = json.loads(resp.read().decode())
+            if result.get('ok'):
+                print('Telegram notification sent')
+            else:
+                print('Telegram failed:', result.get('description'))
+    else:
+        print('Telegram credentials not configured')
+        
+except Exception as e:
+    print(f'Error in Telegram notification: {e}')
+" >> "$RUN_LOG" 2>&1
+fi
+
+exit $EXIT_CODE

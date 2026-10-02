@@ -9,6 +9,7 @@ v1.0: 金額抽出 + 商品種別認識 + 優先度計算
 
 from __future__ import annotations
 
+import math
 import re
 from datetime import datetime
 from pathlib import Path
@@ -166,6 +167,82 @@ def score_prize(
 
     result["priority"] = round(priority, 2)
     return result
+
+
+# ── 当選易度スコア（t_c1889d30）────────────────────────────────────────
+# winner_count（口数が多いほど当選しやすい）と prize_score（賞品の優先度）を
+# 各々 [0,1] に正規化して等重合成し、0-100 のスコアにする。
+# 応募バッチ配分・応募ロジックには一切反映しない（表示・可視化のみ）。
+EASY_WIN_SCORE_KEY: str = "easy_win_score"
+EASY_WIN_WINNER_CAP: float = 1000.0  # winner_count 正規化上限（log1p スケール、超過は満点）
+EASY_WIN_PRIZE_PRIORITY_MIN: float = 1.0  # score_prize の通常値（=ボーナス0）
+EASY_WIN_PRIZE_PRIORITY_MAX: float = 3.0  # score_prize の満点（現金 3.0）
+EASY_WIN_WEIGHT_WINNER: float = 0.5
+EASY_WIN_WEIGHT_PRIZE: float = 0.5
+EASY_WIN_UNCOMPUTABLE: float = 0.0  # 計算不能（winner_count 欠落・0・不正）
+
+
+def normalize_winner_count(winner_count: Any) -> float:
+    """winner_count を [0,1] に正規化（多いほど当選しやすい → log1p + 上限クリップ）。
+
+    winner_count 欠落・0・数値化不能は 0.0（計算不能）。
+    """
+    try:
+        wc: float = float(winner_count)
+    except (TypeError, ValueError):
+        return 0.0
+    if not math.isfinite(wc) or wc <= 0:
+        return 0.0
+    return min(1.0, math.log1p(wc) / math.log1p(EASY_WIN_WINNER_CAP))
+
+
+def normalize_prize_score(prize_score: Any) -> float:
+    """prize_score.priority を [0,1] に正規化（1.0=通常 → 0.0、3.0=満点 → 1.0）。
+
+    prize_score 欠落・非dict・priority 欠落/不正は「評価なし=通常扱い」で
+    1.0 → 0.0（賞品ボーナスなし）。順位の相対関係には影響しない。
+    """
+    priority: Any = prize_score.get("priority") if isinstance(prize_score, dict) else None
+    try:
+        p: float = float(priority)
+    except (TypeError, ValueError):
+        p = EASY_WIN_PRIZE_PRIORITY_MIN
+    if not math.isfinite(p):
+        p = EASY_WIN_PRIZE_PRIORITY_MIN
+    span: float = EASY_WIN_PRIZE_PRIORITY_MAX - EASY_WIN_PRIZE_PRIORITY_MIN
+    return min(1.0, max(0.0, (p - EASY_WIN_PRIZE_PRIORITY_MIN) / span))
+
+
+def compute_easy_win_score(item: dict[str, Any]) -> float:
+    """当選易度スコア（0-100, 小数第1位）= winner_count と prize_score の正規化合成。
+
+    easy_win_score = 100 * (0.5 * normalize_winner_count + 0.5 * normalize_prize_score)
+
+    winner_count が欠落・0・数値化不能の「計算不能」案件は 0.0 を返す
+    （付与はするが、レポート表示では計算不能として TOP50 から分離する）。
+    """
+    w_norm: float = normalize_winner_count(item.get("winner_count"))
+    if w_norm <= 0.0:
+        return EASY_WIN_UNCOMPUTABLE
+    p_norm: float = normalize_prize_score(item.get("prize_score"))
+    score: float = 100.0 * (EASY_WIN_WEIGHT_WINNER * w_norm + EASY_WIN_WEIGHT_PRIZE * p_norm)
+    return round(score, 1)
+
+
+def attach_easy_win_scores(items: list[dict[str, Any]]) -> tuple[int, int]:
+    """items の全件に easy_win_score を付与し (計算可能件数, 計算不能件数) を返す。
+
+    収集時（collector）の付与と collected_today.json の時系列バックフィル
+    （scripts/backfill_easy_win_score.py）が同一ロジックになるよう一元化した関数。
+    再実行は冪等（同じ入力なら同じスコアで上書き）。入力リスト自体は並べ替えない。
+    """
+    computable: int = 0
+    for item in items:
+        score: float = compute_easy_win_score(item)
+        item[EASY_WIN_SCORE_KEY] = score
+        if score > 0:
+            computable += 1
+    return computable, len(items) - computable
 
 
 def format_prize_info(score: dict) -> str:

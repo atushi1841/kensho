@@ -1,0 +1,122 @@
+{
+  "figureId": "17770",
+  "sourceUrl": "https://myfigurelist.com/figure/17770/RIOBOT-Tekkaman-Blade-Blaster-Tekkaman-Evil",
+  "name": "RIOBOT Tekkaman Blade Blaster Tekkaman Evil",
+  "series": "Tekkaman Blade",
+  "character": "Shinya Aiba",
+  "manufacturer": "Sentinel",
+  "category": "Scale Figure",
+  "releaseDate": "2024-05-01",
+  "scale": "Non-Scale",
+  "sculptor": "T-REX",
+  "heightCm": null,
+  "janCode": "4571335880736",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4571335880736/RIOBOT-Tekkaman-Blade-Blaster-Tekkaman-Evil_1cc568ea-76c8-4bb6-bce1-09d754916e25.jpg",
+  "offers": [
+    {
+      "shop_name": "Plaza Japan",
+      "price_jpy": 15491,
+      "availability": "InStock",
+      "url": "https://www.plazajapan.com/4571335880736/",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.301048"
+    },
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 32670,
+      "availability": "InStock",
+      "url": "https://www.amiami.com/eng/detail/?gcode=FIGURE-160212-R",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.301068"
+    },
+    {
+      "shop_name": "Okini Land",
+      "price_jpy": 38476,
+      "availability": "OutOfStock",
+      "url": "https://okini.land/en/62627-riobot-blaster-tekkaman-evil-sen-ti-nel-4571335880736.html?id_currency=5",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.301073"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 33000,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/riobot-tekkaman-blade-blaster-tekkaman-evil-set88073",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.301077"
+    },
+    {
+      "shop_name": "Ninoma",
+      "price_jpy": 45052,
+      "availability": "OutOfStock",
+      "url": "https://ninoma.com/products/riobot-tekkaman-blade-blaster-tekkaman-evil?_pos=1&_sid=741b293e6&_ss=r",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.301080"
+    },
+    {
+      "shop_name": "Meccha Japan",
+      "price_jpy": 32000,
+      "availability": "InStock",
+      "url": "https://meccha-japan.com/en/assembled-mecha-and-robots/119520-figure-blaster-tekkaman-evil-tekkaman-blade.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.301084"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 33009,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/eng/11022100",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.301087"
+    },
+    {
+      "shop_name": "Animota",
+      "price_jpy": 39896,
+      "availability": "InStock",
+      "url": "https://animota.net/en-eu/products/animota-e-pre3414",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.301090"
+    },
+    {
+      "shop_name": "Japan Figure",
+      "price_jpy": 37600,
+      "availability": "InStock",
+      "url": "https://japan-figure.com/products/sentinel-riobot-space-knight-tekkaman-blade-blaster-evil-diecast-abs-action-figure",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.301093"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 30310,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/uchuu-no-kishi-tekkaman-blade-blaster-tekkaman-evil-riobot-sentinel?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.301096"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 86952,
+      "availability": "OutOfStock",
+      "url": "https://www.nin-nin-game.com/en/sentinel/103922-riobot-tekkaman-the-space-knight-tekkaman-evil-sentinel-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.301100"
+    },
+    {
+      "shop_name": "Hobby Genki",
+      "price_jpy": 30492,
+      "availability": "OutOfStock",
+      "url": "https://hobby-genki.com/fr/sentinel/23439-riobot-tekkaman-blade-blaster-tekkaman-evil-figure-4571335880736.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.301103"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 15491,
+  "highestPriceJpy": 39896,
+  "inStockCount": 6,
+  "totalOffersCount": 12,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

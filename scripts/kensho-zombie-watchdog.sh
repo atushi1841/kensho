@@ -51,17 +51,23 @@ while [[ $# -gt 0 ]]; do
 done
 
 # hermes venv python を解決（hermes_cli import 用）
+# 注意: hermes_cli は hermes-agent ディレクトリ配下のモジュール（utils.py 等）を
+# sys.path 経由で import する。PYTHONPATH を通さないと
+# ModuleNotFoundError: No module named 'hermes_yaml' で落ちる（2026-10-01 実測）
+HERMES_AGENT_DIR="${HERMES_AGENT_DIR:-$HOME/.hermes/hermes-agent}"
 PY="python3"
 if ! python3 -c 'import hermes_cli.kanban_db' >/dev/null 2>&1; then
-    VENV="$HOME/.hermes/hermes-agent/venv/bin/python3"
+    VENV="$HERMES_AGENT_DIR/venv/bin/python3"
     [ -x "$VENV" ] && PY="$VENV"
 fi
+export PYTHONPATH="$HERMES_AGENT_DIR${PYTHONPATH:+:$PYTHONPATH}"
 
 mkdir -p "$STATE_DIR" 2>/dev/null || true
 
 "$PY" - "$BOARD" "$MAX_UNBLOCKS" "$APPLY" "$SILENT" "$LEDGER" <<'PYEOF'
 import json
 import os
+import sqlite3
 import sys
 import time
 
@@ -112,7 +118,8 @@ def _is_blocked_by_pv(conn, task_id: str) -> bool:
     return False
 
 targets = []
-with kb.connect_closing(board=board) as conn:
+with closing(sqlite3.connect(kb.kanban_db_path(board))) as conn:
+    conn.row_factory = sqlite3.Row
     rows = conn.execute(
         "SELECT id, title, assignee, created_at FROM tasks WHERE status = 'blocked'"
     ).fetchall()
@@ -136,7 +143,8 @@ auto_ok = [t for t in targets if t["unblocks"] < max_unblocks]
 
 unblocked, failed = [], []
 if apply_mode and auto_ok:
-    with kb.connect_closing(board=board) as conn:
+    with closing(sqlite3.connect(kb.kanban_db_path(board))) as conn:
+        conn.row_factory = sqlite3.Row
         for t in auto_ok:
             tid = t["id"]
             try:

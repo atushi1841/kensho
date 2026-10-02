@@ -1,0 +1,74 @@
+{
+  "figureId": "11522",
+  "sourceUrl": "https://myfigurelist.com/figure/11522/Silent-Mobius-Kiddie-Phenyl-Swimsuit-Jacket-ver-1-7-Complete-Figure",
+  "name": "Silent Mobius - Kiddie Phenyl -Swimsuit Jacket ver.- 1/7 Complete Figure",
+  "series": "Silent Möbius",
+  "character": "Kiddie Phenyl",
+  "manufacturer": "Grand Toys",
+  "category": "Scale Figure",
+  "releaseDate": "2017-07-01",
+  "scale": "1/7",
+  "sculptor": "TEAM GENESIS",
+  "heightCm": null,
+  "janCode": "4582221158266",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4582221158266/Silent-Mobius-Kiddie-Phenyl-Swimsuit-Jacket-ver-1-7-Complete-Figure_45a64485-8f3d-4fbb-b8d2-849b5901894f.jpg",
+  "offers": [
+    {
+      "shop_name": "Figuya",
+      "price_jpy": 23744,
+      "availability": "OutOfStock",
+      "url": "https://figuya.com/en/products/kiddy-phenil-grand-toys-griffon",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.399652"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 10285,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/eng/10461557",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.399681"
+    },
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 10070,
+      "availability": "OutOfStock",
+      "url": "https://www.amiami.com/eng/detail/?gcode=FIGURE-029513",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.399687"
+    },
+    {
+      "shop_name": "Japan Figure",
+      "price_jpy": 13422,
+      "availability": "InStock",
+      "url": "https://japan-figure.com/products/grand-toys-silent-mobius-kiddie-phenyl-swimsuit-jacket-ver-1-7-scale-figure-grand-toys",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.399691"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 12753,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/1-7-scale-silent-mobius-kiddy-phenil-swimwear-jacket-ver-pvc-grf15826",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.399696"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 15575,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/silent-mobius-kiddy-phenil-grand-toys-1-7?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.399712"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 13422,
+  "highestPriceJpy": 15575,
+  "inStockCount": 2,
+  "totalOffersCount": 6,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

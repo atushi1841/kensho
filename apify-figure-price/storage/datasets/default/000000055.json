@@ -1,0 +1,106 @@
+{
+  "figureId": "2496",
+  "sourceUrl": "https://myfigurelist.com/figure/2496/Takopis-Original-Sin-Takopi-Complete-Figure",
+  "name": "Takopi's Original Sin Takopi Complete Figure",
+  "series": "Takopi no Genzai",
+  "character": "Takopi",
+  "manufacturer": "Good Smile Company",
+  "category": "Scale Figure",
+  "releaseDate": "2023-04-01",
+  "scale": "Non-Scale",
+  "sculptor": "Hiroshi Yuasa",
+  "heightCm": null,
+  "janCode": "4580590166455",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4580590166455/Takopi's-Original-Sin-Takopi-Complete-Figure_128b4fc9-12d4-49d0-8d27-6be141e40078.jpg",
+  "offers": [
+    {
+      "shop_name": "Plaza Japan",
+      "price_jpy": 7819,
+      "availability": "OutOfStock",
+      "url": "https://www.plazajapan.com/4580590166455/",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:17.514459"
+    },
+    {
+      "shop_name": "Meccha Japan",
+      "price_jpy": 4915,
+      "availability": "OutOfStock",
+      "url": "https://meccha-japan.com/en/figuresmecha/89865-figure-takopi-takopis-original-sin.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:17.514486"
+    },
+    {
+      "shop_name": "Lunar Toy Store",
+      "price_jpy": 5405,
+      "availability": "OutOfStock",
+      "url": "https://www.lunartoystore.com/catalogsearch/result/?q=4580590166455",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:17.514492"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 4930,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/eng/search?typ1_c=101&cat=&state=&sold=0&sortid=6&searchkey=4580590166455",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:17.514497"
+    },
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 4800,
+      "availability": "OutOfStock",
+      "url": "https://www.amiami.com/eng/detail/?gcode=FIGURE-147540",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:17.514501"
+    },
+    {
+      "shop_name": "Okini Land",
+      "price_jpy": 4843,
+      "availability": "OutOfStock",
+      "url": "https://okini.land/en/43270-takopi-good-smile-company-4580590166455.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:17.514506"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 5220,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/takopi-takopi-s-original-sin-gsc16645",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:17.514510"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 5598,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/takopii-no-genzai-takopii-sofubi-figure-good-smile-company-max-factory?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:17.514513"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 4930,
+      "availability": "OutOfStock",
+      "url": "https://www.nin-nin-game.com/en/our-selection-hidden/79551-soft-vinyl-figure-takopi-s-original-sin-takopi-good-smile-company-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:17.514517"
+    },
+    {
+      "shop_name": "Hobby Genki",
+      "price_jpy": 4582,
+      "availability": "OutOfStock",
+      "url": "https://hobby-genki.com/fr/good-smile-company/10249-takopi-takopi-s-original-sin-soft-vinyl-4580590166455.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:17.514521"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 5598,
+  "highestPriceJpy": 5598,
+  "inStockCount": 1,
+  "totalOffersCount": 10,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

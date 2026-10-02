@@ -11,8 +11,8 @@ import pathlib
 from kensho.scraping.simple_rt_classifier import FALLBACK_MODEL, SECOND_FALLBACK_MODEL, _log_openrouter_usage
 
 # 1. Verify constants
-assert FALLBACK_MODEL == "minimax/minimax-m3:free", f"Unexpected FALLBACK_MODEL: {FALLBACK_MODEL}"
-assert SECOND_FALLBACK_MODEL == "nousresearch/hermes-3-mini:free", (
+assert FALLBACK_MODEL == "auto", f"Unexpected FALLBACK_MODEL: {FALLBACK_MODEL}"
+assert SECOND_FALLBACK_MODEL == "auto", (
     f"Unexpected SECOND_FALLBACK_MODEL: {SECOND_FALLBACK_MODEL}"
 )
 print("Constants OK")

@@ -1,0 +1,14 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Figure Price Results",
+  "description": "Paginated list of anime figure price data items with offers, delivered via the Actor default dataset.",
+  "type": "object",
+  "properties": {
+    "dataset": {
+      "type": "string",
+      "title": "Figure Price Dataset",
+      "description": "Default dataset with paginated anime figure price items and multi-shop offers",
+      "template": "{{{links.apiDefaultDatasetUrl}}}"
+    }
+  }
+}

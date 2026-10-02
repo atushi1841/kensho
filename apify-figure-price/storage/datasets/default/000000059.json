@@ -1,0 +1,58 @@
+{
+  "figureId": "117722",
+  "sourceUrl": "https://myfigurelist.com/figure/117722/Piapro-Characters-Hatsune-Miku-Banpresto-Evolve-Sakura",
+  "name": "Piapro Characters - Hatsune Miku - Banpresto Evolve - Sakura",
+  "series": "Piapro Characters",
+  "character": "Miku Hatsune",
+  "manufacturer": "BANDAI SPIRITS",
+  "category": "Anime Figure",
+  "releaseDate": "2026-04-28",
+  "scale": null,
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "117722",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/e55eb981-93be-3a9d-9256-389005c46080/Piapro-Characters-Hatsune-Miku-Banpresto-Evolve-Sakura_21847d90-bbb7-3fab-a7a2-19809f5c4dad.jpg",
+  "offers": [
+    {
+      "shop_name": "Gundam Planet",
+      "price_jpy": 6346,
+      "availability": "InStock",
+      "url": "https://www.gundamplanet.com/products/banpresto-evolve-sakura-miku",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:15.617942"
+    },
+    {
+      "shop_name": "Exfigure",
+      "price_jpy": 5385,
+      "availability": "InStock",
+      "url": "https://exfigure.com/products/piapro-characters-hatsune-miku-banpresto-evolve-sakura-bandai-spirits",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:15.617969"
+    },
+    {
+      "shop_name": "Animota",
+      "price_jpy": 4135,
+      "availability": "InStock",
+      "url": "https://animota.net/en-eu/products/animota-e-fig20217",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:15.617975"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 3024,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/piapro-characters-hatsune-miku-banpresto-evolve-sakura-bandai-spirits?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:15.617980"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 3024,
+  "highestPriceJpy": 6346,
+  "inStockCount": 4,
+  "totalOffersCount": 4,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

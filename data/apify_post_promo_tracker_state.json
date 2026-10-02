@@ -4,14 +4,14 @@
   "1d": {
    "point": "1d",
    "point_date": "2026-09-30",
-   "measured_at": "2026-09-30T05:08:42+00:00",
+   "measured_at": "2026-09-30T20:01:01+00:00",
    "post_date": "2026-09-29",
    "per_actor": {
     "mandarake-auction-scraper": {
      "actor_id": "q2E37PVTg5JcGOTEn",
      "actual_name": "mandarake-auction-scraper",
      "external_views": 0,
-     "total_runs": 319,
+     "total_runs": 320,
      "u30d": 1,
      "bookmarks": 0
     },
@@ -27,12 +27,12 @@
      "actor_id": "wxMskoiHMPeeH2qAJ",
      "actual_name": "tackleberry-japan-fishing-tackle-scraper",
      "external_views": 0,
-     "total_runs": 201,
+     "total_runs": 202,
      "u30d": 1,
      "bookmarks": 0
     }
    }
   }
  },
- "updated_at": "2026-09-30T05:08:42+00:00"
+ "updated_at": "2026-09-30T20:01:01+00:00"
 }

@@ -44,11 +44,64 @@ class TestSafeSaveJson:
         current = json.loads(filepath.read_text(encoding="utf-8"))
         assert current == {"version": 2}
 
+    def test_overwrite_existing(self, tmp_path: Path) -> None:
+        """既存ファイルを上書きして保存できる"""
+        filepath = tmp_path / "overwrite.json"
+        filepath.write_text('{"version": 1}', encoding="utf-8")
+        safe_save_json(filepath, {"version": 2}, "overwrite_test")
+        loaded = json.loads(filepath.read_text(encoding="utf-8"))
+        assert loaded == {"version": 2}
+
+    def test_no_backup_on_first_save(self, tmp_path: Path) -> None:
+        """新規保存時はバックアップが作られない"""
+        filepath = tmp_path / "first.json"
+        safe_save_json(filepath, {"n": 1}, "first_test")
+        backup_dir = tmp_path / "backups"
+        assert not backup_dir.exists() or list(backup_dir.glob("first.json.*.bak")) == []
+
     def test_tmp_file_cleaned(self, tmp_path: Path) -> None:
         """一時ファイル（.tmp）が残らない"""
         filepath = tmp_path / "clean_tmp.json"
         safe_save_json(filepath, {"data": 1}, "clean_test")
         assert not filepath.with_suffix(".tmp").exists()
+
+    def test_overwrite_leaves_no_tmp(self, tmp_path: Path) -> None:
+        """上書き保存後も一時ファイル（.tmp）が残らない"""
+        filepath = tmp_path / "overwrite_tmp.json"
+        filepath.write_text('{"old": true}', encoding="utf-8")
+        safe_save_json(filepath, {"new": True}, "overwrite_tmp_test")
+        assert filepath.exists()
+        assert not filepath.with_suffix(".tmp").exists()
+
+    def test_empty_existing_file_not_backed_up(self, tmp_path: Path) -> None:
+        """既存ファイルが空（0バイト）ならバックアップを作らない"""
+        filepath = tmp_path / "empty.json"
+        filepath.write_text("", encoding="utf-8")
+        safe_save_json(filepath, {"data": 1}, "empty_test")
+        backup_dir = tmp_path / "backups"
+        assert list(backup_dir.glob("empty.json.*.bak")) == []
+
+    def test_old_backups_cleaned_up(self, tmp_path: Path) -> None:
+        """バックアップがMAX_BACKUPS(20)件を超えたら古いものが削除される"""
+        from kensho.utils.backup import BACKUP_DIR_NAME, MAX_BACKUPS
+
+        filepath = tmp_path / "rot.json"
+        backup_dir = tmp_path / BACKUP_DIR_NAME
+        backup_dir.mkdir(parents=True)
+        # MAX_BACKUPS + 2件のダミーバックアップを事前作成
+        for i in range(MAX_BACKUPS + 2):
+            (backup_dir / f"rot.json.2026010{i % 10}_00000{i}.bak").write_text('{"v": 1}', encoding="utf-8")
+        safe_save_json(filepath, {"v": 2}, "rot_test")
+        remaining = list(backup_dir.glob("rot.json.*.bak"))
+        assert len(remaining) <= MAX_BACKUPS
+
+    def test_roundtrip_preserves_unicode(self, tmp_path: Path) -> None:
+        """日本語データがensure_ascii=Falseで可読なまま保存される"""
+        filepath = tmp_path / "jp.json"
+        safe_save_json(filepath, {"賞品": "Amazonギフト券"}, "jp_test")
+        raw = filepath.read_text(encoding="utf-8")
+        assert "Amazonギフト券" in raw  # \uXXXXエスケードされていない
+        assert json.loads(raw) == {"賞品": "Amazonギフト券"}
 
     def test_collected_list_save(self, tmp_path: Path) -> None:
         """collected形式のデータ（リスト内包dict）を保存できる"""

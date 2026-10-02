@@ -1,6 +1,6 @@
 # t_009d58ef Verification Report — Anime Figure Price Tracking Implementation
 
-## Task Requirements Verification
+## verification_evidence
 
 Task: Implement anime figure price tracking from Hpoi API + figurememo + MyFigureList
 

@@ -53,3 +53,37 @@ class TestCp932Safe:
         for c in cases:
             safe: str = cp932_safe(c)
             safe.encode("cp932")  # 例外を投げない
+
+    def test_emoji_codepoint_notation(self) -> None:
+        """マップ外の絵文字は [U+XXXX] 表記になる"""
+        assert cp932_safe("🎁") == "[U+1F381]"
+        assert cp932_safe("👍") == "[U+1F44D]"
+        assert cp932_safe("\U0001f4be") == "[U+1F4BE]"  # 💾
+
+    def test_variation_selector(self) -> None:
+        """異体字セレクタ（U+FE0F）は [U+FE0F] に置換される"""
+        assert cp932_safe("\ufe0f") == "[U+FE0F]"
+
+    def test_longest_match_priority(self) -> None:
+        """⚠️（⚠+VS16）は変換マップ優先で [!] になる（単体の⚠は絵文字範囲外で除去）"""
+        assert cp932_safe("⚠️") == "[!]"
+        assert cp932_safe("⚠") == ""
+
+    def test_unencodable_non_emoji_removed(self) -> None:
+        """絵文字範囲外のcp932非対応文字（é, ½）は除去される"""
+        assert cp932_safe("café") == "caf"
+        assert cp932_safe("½") == ""
+
+    def test_cp932_encodable_symbols_preserved(self) -> None:
+        """cp932に含まれる記号（①, Ⅴ, Ж）はそのまま維持される"""
+        for ch in ("①", "Ⅴ", "Ж"):
+            assert cp932_safe(ch) == ch
+
+    def test_mixed_text(self) -> None:
+        """日本語文中の絵文字だけが置換される"""
+        assert cp932_safe("在庫✅あり") == "在庫[OK]あり"
+
+    def test_result_always_encodable(self) -> None:
+        """混在テキストの変換結果も必ずcp932でエンコード可能"""
+        mixed: str = "懸賞🎁当選❗café☕‼️"
+        cp932_safe(mixed).encode("cp932")  # 例外を投げない

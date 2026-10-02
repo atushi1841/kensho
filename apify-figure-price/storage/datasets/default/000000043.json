@@ -1,0 +1,82 @@
+{
+  "figureId": "94507",
+  "sourceUrl": "https://myfigurelist.com/figure/94507/Mashin-Eiyuuden-Wataru-Ryuuoumaru-Robot-Spirits-Robot-Spirits-ltSide-MASHINgt-30th-Anniversary-Special-Edition",
+  "name": "Mashin Eiyuuden Wataru - Ryuuoumaru - Robot Spirits - Robot Spirits &lt;Side MASHIN&gt; - 30th Anniversary Special Edition",
+  "series": "Mashin Eiyuuden Wataru",
+  "character": "Ryuuoumaru",
+  "manufacturer": "BANDAI SPIRITS",
+  "category": "Anime Figure",
+  "releaseDate": "2018-11-23",
+  "scale": null,
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "4573102550071",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/86b864b6-a1c6-39ba-8b9c-697b88d72787/Mashin-Eiyuuden-Wataru-Ryuuoumaru-Robot-Spirits-Robot-Spirits-ltSide-MASHINgt-30th-Anniversary-Special-Edition_b4fb1636-40d9-34c6-9373-e89082e49b53.jpg",
+  "offers": [
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 7776,
+      "availability": "OutOfStock",
+      "url": "NOTFOUND",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:06.553765"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 7200,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/robot-damashii-side-mashin-ryuomaru-30th-anniversary-special-edition-bans55007",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:06.553793"
+    },
+    {
+      "shop_name": "Ninoma",
+      "price_jpy": 12134,
+      "availability": "InStock",
+      "url": "https://ninoma.com/products/ryuuoumaru-30th-anniversary-special-edition-version-robot-damashii-mashin-eiyuuden-wataru-bandai?_pos=1&_sid=4e60a0079&_ss=r",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:06.553799"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 6732,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/10540730",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:06.553804"
+    },
+    {
+      "shop_name": "Animota",
+      "price_jpy": 22582,
+      "availability": "InStock",
+      "url": "https://animota.net/en-eu/products/animota-e-fig6650",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:06.553808"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 11389,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/mashin-eiyuuden-wataru-ryuuoumaru-robot-damashii-robot-damashii-side-mashin-30th-anniversary-special-edition-bandai?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:06.553812"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 12059,
+      "availability": "InStock",
+      "url": "https://www.nin-nin-game.com/en/metal-robot-spirits-robot-damashii/27082-ryuoumaru-30-anniversary-special-memorial-version-mashin-hero-wataru-robot-spirits-side-mashin-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:06.553832"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 11389,
+  "highestPriceJpy": 22582,
+  "inStockCount": 4,
+  "totalOffersCount": 7,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

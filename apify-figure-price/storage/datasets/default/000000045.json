@@ -1,0 +1,74 @@
+{
+  "figureId": "6228",
+  "sourceUrl": "https://myfigurelist.com/figure/6228/Lucky-Dosukebe!-Minato-Abeno-1-7-Complete-Figure",
+  "name": "Lucky Dosukebe! Minato Abeno 1/7 Complete Figure",
+  "series": "Lucky☆Star",
+  "character": "Minato Abeno",
+  "manufacturer": "Q-six",
+  "category": "Scale Figure",
+  "releaseDate": "2020-02-01",
+  "scale": "1/7",
+  "sculptor": "Nollgreco",
+  "heightCm": null,
+  "janCode": "4580001941855",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4580001941855/Lucky-Dosukebe!-Minato-Abeno-1-7-Complete-Figure_f40b321e-c520-4fa0-908e-69113e9a2167.jpg",
+  "offers": [
+    {
+      "shop_name": "Figuya",
+      "price_jpy": 37757,
+      "availability": "OutOfStock",
+      "url": "https://figuya.com/en/products/minato-abeno-normal-version-q-six-17223-en",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.130604"
+    },
+    {
+      "shop_name": "Lunar Toy Store",
+      "price_jpy": 30120,
+      "availability": "OutOfStock",
+      "url": "https://www.lunartoystore.com/4580001941855",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.130637"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 16280,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/eng/10639918",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.130643"
+    },
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 14650,
+      "availability": "OutOfStock",
+      "url": "https://www.amiami.com/eng/detail/?gcode=FIGURE-052577",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.130647"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 48947,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/lucky-dosukebe-abeno-minato-1-7-q-six?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.130651"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 15529,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/1-7-scale-lucky-dosukebe-minato-abeno-pvc-qsx94185",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:10.130655"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 48947,
+  "highestPriceJpy": 48947,
+  "inStockCount": 1,
+  "totalOffersCount": 6,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

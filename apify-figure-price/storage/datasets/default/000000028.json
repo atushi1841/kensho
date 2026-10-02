@@ -1,0 +1,42 @@
+{
+  "figureId": "123676",
+  "sourceUrl": "https://myfigurelist.com/figure/123676/Kaizoku-Sentai-Gokaiger-DX-Gokai-Machine-Series-03-Gao-Lion",
+  "name": "Kaizoku Sentai Gokaiger - DX - Gokai Machine Series - 03 - Gao Lion",
+  "series": "Kaizoku Sentai Gokaiger",
+  "character": null,
+  "manufacturer": "Bandai",
+  "category": "Anime Figure",
+  "releaseDate": "2011-04-16",
+  "scale": null,
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "4543112650290",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/848702c7-0afe-3ec1-9a9d-b643de66de6b/Kaizoku-Sentai-Gokaiger-DX-Gokai-Machine-Series-03-Gao-Lion_6c087ead-3ed3-3282-8b20-c0cc928cc590.jpg",
+  "offers": [
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 4207,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/10144102",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:57.987251"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 3600,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/gohkai-machine-03-gaolion-ban965029",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:57.987275"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": null,
+  "highestPriceJpy": null,
+  "inStockCount": 0,
+  "totalOffersCount": 2,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

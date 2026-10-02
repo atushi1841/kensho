@@ -20,6 +20,37 @@ SCRIPT = Path(
 assert SCRIPT.exists(), f"loop_health.sh not found: {SCRIPT}"
 
 
+def _isolated_lh_db(base: Path) -> Path:
+    """実盤 kanban.db から独立したダミーDBを base配下に作り --db で固定する (t_1f4779d4)。
+
+    loop_health.sh は --db で解決した _LH_DB に対し kanban_dep_deadlock_guard.py
+    （board=ディレクトリ名）・orphan_run_reaper.py・zombieクエリを走らせるため、
+    実盤DBを渡すと実盤の ready==0&&todo>0 deadlock(-21) 等の板状態減点が score に
+    混入し、business gate のスコア検証が実盤の状態で揺れる。ダミーは tasks>=1 で
+    ないと auto-detect が実盤へ再解決されるため running を1行入れる。ディレクトリ名
+    lh_db を board 名とするため guard は実盤へ問合せない。
+    """
+    import sqlite3
+    import time
+
+    db_dir = base / "lh_db"
+    db_dir.mkdir(parents=True, exist_ok=True)
+    db = db_dir / "kanban.db"
+    con = sqlite3.connect(db)
+    con.execute(
+        "CREATE TABLE IF NOT EXISTS tasks ("
+        "id TEXT PRIMARY KEY, status TEXT, last_failure_error TEXT, started_at INTEGER)"
+    )
+    con.execute("CREATE TABLE IF NOT EXISTS links (parent TEXT, child TEXT, relation TEXT)")
+    con.execute(
+        "INSERT OR IGNORE INTO tasks (id, status, started_at) VALUES (?, 'running', ?)",
+        ("t_lhdummy00000001", int(time.time()) - 3600),
+    )
+    con.commit()
+    con.close()
+    return db
+
+
 def _run(tmp_path: Path, log_lines: list[str]) -> dict:
     log = tmp_path / "auto_99990101.log"
     log.write_text("\n".join(log_lines) + "\n", encoding="utf-8")
@@ -35,6 +66,8 @@ def _run(tmp_path: Path, log_lines: list[str]) -> dict:
             "[]",
             "--board",
             "kensho-ai-team",
+            "--db",
+            str(_isolated_lh_db(tmp_path)),
             "--state",
             str(state),
             "--dry-run",

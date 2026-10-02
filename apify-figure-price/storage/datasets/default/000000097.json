@@ -1,0 +1,42 @@
+{
+  "figureId": "4974",
+  "sourceUrl": "https://myfigurelist.com/figure/4974/My-Hero-Academia-Tsuyu-Asui-Hero-Suit-Ver-2P-Color-1-8-Complete-Figure",
+  "name": "My Hero Academia Tsuyu Asui Hero Suit Ver. 2P Color 1/8 Complete Figure",
+  "series": "Boku no Hero Academia",
+  "character": "Tsuyu Asui",
+  "manufacturer": "Takara Tomy",
+  "category": "Scale Figure",
+  "releaseDate": "2024-03-01",
+  "scale": "1/8",
+  "sculptor": "Yoshinori Itou",
+  "heightCm": null,
+  "janCode": "4573347242519",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4573347242519/My-Hero-Academia-Tsuyu-Asui-Hero-Suit-Ver-2P-Color-1-8-Complete-Figure_85570f19-43ea-416c-9104-b642a8890b5b.jpg",
+  "offers": [
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 14850,
+      "availability": "InStock",
+      "url": "https://www.amiami.com/eng/detail/?gcode=FIGURE-051810",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:46.257165"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 14052,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/boku-no-hero-academia-asui-tsuyu-1-8-hero-suit-ver-2p-color-bell-fine-takara-tomy?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:46.257192"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 14052,
+  "highestPriceJpy": 14850,
+  "inStockCount": 2,
+  "totalOffersCount": 2,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

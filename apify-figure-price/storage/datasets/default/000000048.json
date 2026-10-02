@@ -1,0 +1,74 @@
+{
+  "figureId": "24122",
+  "sourceUrl": "https://myfigurelist.com/figure/24122/Green-Twin-Tail-Bunny-chan-Fishnet-Tights-Ver-1-4-Complete-Figure",
+  "name": "Green Twin Tail Bunny-chan Fishnet Tights Ver. 1/4 Complete Figure",
+  "series": null,
+  "character": null,
+  "manufacturer": "Partylook",
+  "category": "Scale Figure",
+  "releaseDate": "2025-01-01",
+  "scale": "1/4",
+  "sculptor": "Chiho",
+  "heightCm": null,
+  "janCode": "4897136260240",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4897136260240/Green-Twin-Tail-Bunny-chan-Fishnet-Tights-Ver-1-4-Complete-Figure_c25a5fd6-ff35-417f-9aff-678ecf723dd3.jpg",
+  "offers": [
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 29700,
+      "availability": "InStock",
+      "url": "NOTFOUND",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:09.584747"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 41013,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/1-4-scale-green-twin-tail-bunny-chan-fishnet-tights-ver-plo26024",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:09.584773"
+    },
+    {
+      "shop_name": "Meccha Japan",
+      "price_jpy": 38145,
+      "availability": "InStock",
+      "url": "https://meccha-japan.com/en/figures/139383-figure-green-twin-tail-bunny-chan-fishnet-tights-ver.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:09.584779"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 37620,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/11101205",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:09.584783"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 36126,
+      "availability": "InStock",
+      "url": "https://www.nin-nin-game.com/en/plus18-figures/133104-original-character-green-twintail-bunny-14-fishnet-ver-party-look-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:09.584787"
+    },
+    {
+      "shop_name": "Hobby Genki",
+      "price_jpy": 36036,
+      "availability": "OutOfStock",
+      "url": "https://hobby-genki.com/en/18-age-restricted-products/36417-green-twin-tail-bunny-chan-fishnet-tights-ver-14-scale-figure-4897136260240.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:09.584791"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 29700,
+  "highestPriceJpy": 38145,
+  "inStockCount": 3,
+  "totalOffersCount": 6,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

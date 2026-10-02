@@ -1,0 +1,82 @@
+{
+  "figureId": "93401",
+  "sourceUrl": "https://myfigurelist.com/figure/93401/Kamen-Rider-Amazons-Season-2-Kamen-Rider-Amazon-Neo-SHFiguarts",
+  "name": "Kamen Rider Amazons Season 2 - Kamen Rider Amazon Neo - S.H.Figuarts",
+  "series": "Kamen Rider Amazon",
+  "character": "Kamen Rider Amazon Neo",
+  "manufacturer": "Bandai",
+  "category": "Anime Figure",
+  "releaseDate": "2017-10-28",
+  "scale": null,
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "4549660175759",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/822cf740-6243-34ea-b087-9f6dd30cd217/Kamen-Rider-Amazons-Season-2-Kamen-Rider-Amazon-Neo-SHFiguarts_cf0d8f16-9992-3600-adf1-b873e863fbf3.jpg",
+  "offers": [
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 4450,
+      "availability": "OutOfStock",
+      "url": "NOTFOUND",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:03.542409"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 4675,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/s-h-figuarts-kamen-rider-amazon-neo-bann17575",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:03.542440"
+    },
+    {
+      "shop_name": "Ninoma",
+      "price_jpy": 11051,
+      "availability": "InStock",
+      "url": "https://ninoma.com/products/kamen-rider-amazon-neo-s-h-figuarts-kamen-rider-amazons-season-2-bandai?_pos=1&_sid=fffd9a555&_ss=r",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:03.542447"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 5142,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/10469939",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:03.542452"
+    },
+    {
+      "shop_name": "Japan Figure",
+      "price_jpy": 11446,
+      "availability": "InStock",
+      "url": "https://japan-figure.com/products/s-h-figuarts-masked-kamen-rider-amazon-neo-action-figure-bandai-bandai",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:03.542456"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 10398,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/kamen-rider-amazons-season-2-kamen-rider-amazon-neo-s-h-figuarts-bandai?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:03.542461"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 16570,
+      "availability": "InStock",
+      "url": "https://www.nin-nin-game.com/en/kamen-rider/23879-kamen-rider-amazon-neo-sh-figuarts-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:03.542465"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 10398,
+  "highestPriceJpy": 16570,
+  "inStockCount": 4,
+  "totalOffersCount": 7,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

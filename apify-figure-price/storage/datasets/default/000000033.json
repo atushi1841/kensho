@@ -1,0 +1,34 @@
+{
+  "figureId": "61489",
+  "sourceUrl": "https://myfigurelist.com/figure/61489/Cyberpunk-2077-Figure-Lucy-David",
+  "name": "Cyberpunk 2077 Figure (Lucy & David)",
+  "series": "Cyberpunk: Edgerunners",
+  "character": "David Martinez",
+  "manufacturer": "Youtooz",
+  "category": "Scale Figure",
+  "releaseDate": "2026-06-01",
+  "scale": "Non-Scale",
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "4571617954803",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4364370b-d933-4fcf-83a3-54efd8ad435e/Cyberpunk-2077-Figure-Lucy-David_cc00af85-048f-495f-9455-d914236ae1b4.jpg",
+  "offers": [
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 7420,
+      "availability": "InStock",
+      "url": "https://www.amiami.com/eng/detail/?gcode=FIGURE-197991",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.263427"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 7420,
+  "highestPriceJpy": 7420,
+  "inStockCount": 1,
+  "totalOffersCount": 1,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

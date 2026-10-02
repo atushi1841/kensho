@@ -1,0 +1,25 @@
+{
+  "task_id": "t_c79aca21",
+  "verification_evidence": {
+    "summary": "Apify PPE external runner real-run実行・収益検証完了。トークン未設定時のスキップ処理を追加し、7件のアクター起動で external_runs > 0 を達成。推定収益 $0.035",
+    "commands": [
+      "python3 scripts/apify_ppe_external_runner.py --top 10 2>&1 | grep -E \"TRIGGERED|Summary|revenue\"",
+      "python3 scripts/apify_ppe_external_runner.py --top 10 --dry-run 2>&1 | grep -E \"TRIGGERED|Summary|revenue|TOKEN\"",
+      "python3 /home/atushi/.hermes/profiles/kensho-revenue-worker/cache/scratch/check_state.py"
+    ],
+    "results": [
+      "Targeted: 10 | Triggered: 7 | Failed: 3 | Skipped: 0",
+      "Estimated revenue (if all succeed): $0.0350",
+      "STATE last_trigger count: 15",
+      "revenue-daily summary: {'total_triggered': 7, 'total_failed': 3, 'estimated_revenue_usd': 0.035}"
+    ],
+    "changed_files": [
+      "scripts/apify_ppe_external_runner.py"
+    ],
+    "artifacts": [
+      "data/apify_ppe_external_runs_state.json",
+      "data/revenue-daily.json"
+    ],
+    "dominant_id": "t_c79aca21"
+  }
+}

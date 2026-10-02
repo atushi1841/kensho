@@ -1,0 +1,10 @@
+import urllib.request, json, os
+with open('/mnt/d/Project2/kensho/.env') as f:
+    for line in f:
+        if line.startswith('APIFY_TOKEN_DEFAULT='):
+            tok = line.split('=', 1)[1].strip().strip('"')
+            break
+req = urllib.request.Request('https://api.apify.com/v2/acts/DKzufUSvmuXNKHeYx/builds/sJY6zPpbZUFgqgm9h', headers={'Authorization':'Bearer '+tok})
+resp = urllib.request.urlopen(req, timeout=20)
+data = json.load(resp)
+print(json.dumps(data.get('data', {}), indent=2))

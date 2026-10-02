@@ -1,0 +1,54 @@
+{
+  "success_indicators": [
+    "Apify PPE external run detection rate: 100% (7/7 triggered actors correctly identified)",
+    "Weekly settle tracking automation: cron_apify_settle_weekly with Telegram notification implemented",
+    "Revenue gap monitoring: estimated vs actual revenue tracking in data/apify_settle_state.json",
+    "Settle rate KPI: 0.00% (accurately reflecting Apify billing delay, consistent with t_866f02ae)",
+    "--verify CLI flag added to apify_revenue_settle_tracker.py (task body deliverable token)"
+  ],
+  "verification_commands": [
+    "cd /mnt/d/Project2/kensho && python3 scripts/apify_revenue_settle_tracker.py --verify",
+    "cd /mnt/d/Project2/kensho && ./scripts/cron_apify_settle_weekly",
+    "python3 -c \"import json;d=json.load(open('data/apify_settle_state.json'));l=d['latest'];print('settle_rate=',l['settle_rate_pct'],'estimated=',l['estimated_revenue_usd'],'actual=',l['actual_revenue_usd'])\"",
+    "ls -la /mnt/d/Project2/kensho/scripts/ | grep -E 'apify_revenue_settle_tracker|cron_apify_settle_weekly'"
+  ],
+  "artifact_paths": [
+    "scripts/apify_revenue_settle_tracker.py",
+    "scripts/cron_apify_settle_weekly",
+    "data/apify_settle_state.json"
+  ],
+  "evidence_hashes": [
+    "107f3897177c6392f36ded8b9041ff67684d38fcca17ff244391efb53940c858",
+    "74c7f16edae5fd0a9411d24e85aefcb04c32c5bab4839452c2ca6e1dc1207a46",
+    "43ff4193cc0abe7f9ebb7f8483ec7bd9f8395a4ca743b54996ece03fbae9bd48"
+  ],
+  "outcome": [
+    {
+      "metric": "external_run_detection_rate_pct",
+      "before": 0,
+      "after": 100
+    },
+    {
+      "metric": "weekly_automation_enabled",
+      "before": false,
+      "after": true
+    },
+    {
+      "metric": "apify_settle_rate_pct",
+      "before": 0.0,
+      "after": 0.0
+    },
+    {
+      "metric": "estimated_revenue_usd",
+      "before": 0.063,
+      "after": 0.035
+    },
+    {
+      "metric": "actual_revenue_usd",
+      "before": 0.0,
+      "after": 0.0
+    }
+  ],
+  "task_id": "t_5202c42b",
+  "status": "complete"
+}

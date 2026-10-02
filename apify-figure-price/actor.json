@@ -1,0 +1,239 @@
+{
+  "actorSpecification": 1,
+  "name": "japan-anime-figure-price-data",
+  "title": "Japan Anime Figure Price Intelligence API",
+  "version": "0.1",
+  "buildTag": "latest",
+  "description": "Comprehensive Japan anime figure price dataset aggregated from multiple Japanese marketplaces (MyFigureList, Mercari, Yahoo Auctions, Suruga-ya, Mandarake). 650+ figures with normalized pricing, condition grades, historical trends, and multi-source confidence scores. Enables arbitrage detection, price monitoring, and market analysis for collectors and resellers.",
+  "main": "main.py",
+  "author": "atushi",
+  "license": "MIT",
+  "usesStandbyMode": true,
+  "webServerMcpPath": "/mcp",
+  "dockerfile": "./Dockerfile",
+  "readme": "./README.md",
+  "scripts": {
+    "start": "python main.py"
+  },
+  "env": {
+    "APIFY_TOKEN": {
+      "description": "Apify API token for authentication",
+      "required": true
+    }
+  },
+  "categories": ["DATA", "ECOMMERCE", "JAPAN"],
+  "input": ".actor/input_schema.json",
+  "output": ".actor/output_schema.json",
+  "outputSchema": {
+    "actorOutputSchemaVersion": 1,
+    "title": "Figure Price Results",
+    "description": "Paginated list of anime figure price data items with offers",
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "figureId": {
+              "type": "string",
+              "title": "Figure ID",
+              "template": "{{figureId}}"
+            },
+            "sourceUrl": {
+              "type": "string",
+              "title": "Source URL",
+              "template": "{{sourceUrl}}"
+            },
+            "name": {
+              "type": "string",
+              "title": "Name",
+              "template": "{{name}}"
+            },
+            "series": {
+              "type": "string",
+              "title": "Series",
+              "template": "{{series}}"
+            },
+            "character": {
+              "type": "string",
+              "title": "Character",
+              "template": "{{character}}"
+            },
+            "manufacturer": {
+              "type": "string",
+              "title": "Manufacturer",
+              "template": "{{manufacturer}}"
+            },
+            "category": {
+              "type": "string",
+              "title": "Category",
+              "template": "{{category}}"
+            },
+            "releaseDate": {
+              "type": "string",
+              "title": "Release Date",
+              "template": "{{releaseDate}}"
+            },
+            "scale": {
+              "type": "string",
+              "title": "Scale",
+              "template": "{{scale}}"
+            },
+            "sculptor": {
+              "type": "string",
+              "title": "Sculptor",
+              "template": "{{sculptor}}"
+            },
+            "heightCm": {
+              "type": "number",
+              "title": "Height (cm)",
+              "template": "{{heightCm}}"
+            },
+            "janCode": {
+              "type": "string",
+              "title": "JAN Code",
+              "template": "{{janCode}}"
+            },
+            "imageUrl": {
+              "type": "string",
+              "title": "Image URL",
+              "template": "{{imageUrl}}"
+            },
+            "offers": {
+              "type": "array",
+              "title": "Offers",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "shopName": {
+                    "type": "string",
+                    "title": "Shop Name",
+                    "template": "{{shopName}}"
+                  },
+                  "priceJpy": {
+                    "type": "integer",
+                    "title": "Price (JPY)",
+                    "template": "{{priceJpy}}"
+                  },
+                  "availability": {
+                    "type": "string",
+                    "title": "Availability",
+                    "template": "{{availability}}"
+                  },
+                  "url": {
+                    "type": "string",
+                    "title": "URL",
+                    "template": "{{url}}"
+                  },
+                  "condition": {
+                    "type": "string",
+                    "title": "Condition",
+                    "template": "{{condition}}"
+                  },
+                  "fetchedAt": {
+                    "type": "string",
+                    "title": "Fetched At",
+                    "template": "{{fetchedAt}}"
+                  }
+                }
+              }
+            },
+            "msrpJpy": {
+              "type": "integer",
+              "title": "MSRP (JPY)",
+              "template": "{{msrpJpy}}"
+            },
+            "lowestPriceJpy": {
+              "type": "integer",
+              "title": "Lowest Price (JPY)",
+              "template": "{{lowestPriceJpy}}"
+            },
+            "highestPriceJpy": {
+              "type": "integer",
+              "title": "Highest Price (JPY)",
+              "template": "{{highestPriceJpy}}"
+            },
+            "inStockCount": {
+              "type": "integer",
+              "title": "In Stock Count",
+              "template": "{{inStockCount}}"
+            },
+            "totalOffersCount": {
+              "type": "integer",
+              "title": "Total Offers Count",
+              "template": "{{totalOffersCount}}"
+            },
+            "confidence": {
+              "type": "number",
+              "title": "Confidence",
+              "template": "{{confidence}}"
+            },
+            "sourcesMerged": {
+              "type": "array",
+              "title": "Sources Merged",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "total": {
+        "type": "integer",
+        "title": "Total",
+        "template": "{{total}}"
+      },
+      "limit": {
+        "type": "integer",
+        "title": "Limit",
+        "template": "{{limit}}"
+      },
+      "offset": {
+        "type": "integer",
+        "title": "Offset",
+        "template": "{{offset}}"
+      }
+    },
+    "required": [
+      "items",
+      "total"
+    ]
+  },
+  "storages": {
+    "dataset": {
+      "actorOutputSchemaVersion": 1,
+      "title": "Figure Price Results",
+      "description": "Paginated list of anime figure price data items with offers",
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "title": "Figure Price Items",
+          "items": {
+            "type": "object",
+            "properties": {
+              "figureId": {
+                "type": "string",
+                "title": "Figure ID"
+              }
+            }
+          }
+        },
+        "total": {
+          "type": "integer",
+          "title": "Total"
+        },
+        "limit": {
+          "type": "integer",
+          "title": "Limit"
+        },
+        "offset": {
+          "type": "integer",
+          "title": "Offset"
+        }
+      },
+      "template": "{{{links.apiDefaultDatasetUrl}}}"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "figureId": "104364",
+  "sourceUrl": "https://myfigurelist.com/figure/104364/Ultraman-Blazar-Ultra-Action-Figure",
+  "name": "Ultraman Blazar - Ultra Action Figure",
+  "series": "Ultraman Blazar",
+  "character": "Gento Hiruma",
+  "manufacturer": "Bandai",
+  "category": "Anime Figure",
+  "releaseDate": "2023-07-08",
+  "scale": null,
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "4570117973727",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/aec5640b-d2a2-3eea-8f4a-2abb9e7efb15/Ultraman-Blazar-Ultra-Action-Figure_d118777c-1af0-3d95-b096-6a6a0035d016.jpg",
+  "offers": [
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 2300,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/ultra-action-figure-ultraman-blazer-bann97372",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:24.739128"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 2150,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/10976699",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:24.739151"
+    },
+    {
+      "shop_name": "Japan Figure",
+      "price_jpy": 2527,
+      "availability": "InStock",
+      "url": "https://japan-figure.com/products/bandai-ultraman-blazer-ultra-action-figure-for-kids-and-collectors",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:24.739157"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 2472,
+      "availability": "InStock",
+      "url": "https://www.nin-nin-game.com/en/ultraman/120520-ultraman-ultra-action-figure-series-ultraman-blazar-bandai-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:24.739161"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 2472,
+  "highestPriceJpy": 2527,
+  "inStockCount": 2,
+  "totalOffersCount": 4,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

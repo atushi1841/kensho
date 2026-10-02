@@ -1,0 +1,7 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Output schema of kensho-sweep-mcp",
+  "description": "kensho-sweep-mcp exposes a Streamable HTTP MCP server on the Apify standby container (APIFY_CONTAINER_PORT). It produces no dataset or key-value store output; its result is the MCP tool interface itself. Connect an MCP client to the standby URL and call current_sweep, sweep_history, or top_prize_movers.",
+  "type": "object",
+  "properties": {}
+}

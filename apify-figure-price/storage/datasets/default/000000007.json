@@ -1,0 +1,91 @@
+{
+  "figureId": "125437",
+  "sourceUrl": "https://myfigurelist.com/figure/125437/Sen-to-Chihiro-no-Kamikakushi-Kaonashi-Ogino-Chihiro-Dream-Tomica-Dream-Tomica-Studio-Ghibli-03",
+  "name": "Sen to Chihiro no Kamikakushi - Kaonashi - Ogino Chihiro - Dream Tomica - Dream Tomica Studio Ghibli  (03)",
+  "series": "Sen to Chihiro no Kamikakushi",
+  "character": "Kaonashi",
+  "manufacturer": "Takara Tomy",
+  "category": "Anime Figure",
+  "releaseDate": "2022-11-19",
+  "scale": null,
+  "sculptor": null,
+  "heightCm": 8,
+  "janCode": "4904810189916",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/ddd6e43b-fc1e-3836-b4a0-66a75572bc68/Sen-to-Chihiro-no-Kamikakushi-Kaonashi-Ogino-Chihiro-Dream-Tomica-Dream-Tomica-Studio-Ghibli-03_60e3ed55-05cf-335c-97c9-5ad5b3c4074f.jpg",
+  "offers": [
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 1122,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/10905601",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:57:39.073206"
+    },
+    {
+      "shop_name": "Japan Figure",
+      "price_jpy": 3007,
+      "availability": "InStock",
+      "url": "https://japan-figure.com/products/takara-tomy-quot-tomica-dream-tomica-ghibli-full-03-spirited-away-umihara-electric-railway-quot-mini-car-toy-3-years-old-and-over-passed-toy-safety-standards-st-mark-certified-tomica-takara-tomy",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:57:39.073250"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 1200,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/dream-tomica-full-of-ghibli-03-spirited-away-unabara-electric-railway-tkt18991",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:57:39.073260"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 2893,
+      "availability": "InStock",
+      "url": "https://www.nin-nin-game.com/en/tomica/109183-dream-tomica-lots-of-ghibli-spirited-away-sea-railway-03-takara-tomy-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:57:39.073265"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 1122,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/10905601",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:00:00.165951"
+    },
+    {
+      "shop_name": "Japan Figure",
+      "price_jpy": 3007,
+      "availability": "InStock",
+      "url": "https://japan-figure.com/products/takara-tomy-quot-tomica-dream-tomica-ghibli-full-03-spirited-away-umihara-electric-railway-quot-mini-car-toy-3-years-old-and-over-passed-toy-safety-standards-st-mark-certified-tomica-takara-tomy",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:00:00.165977"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 1200,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/dream-tomica-full-of-ghibli-03-spirited-away-unabara-electric-railway-tkt18991",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:00:00.165983"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 2893,
+      "availability": "InStock",
+      "url": "https://www.nin-nin-game.com/en/tomica/109183-dream-tomica-lots-of-ghibli-spirited-away-sea-railway-03-takara-tomy-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:00:00.165988"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 2893,
+  "highestPriceJpy": 3007,
+  "inStockCount": 2,
+  "totalOffersCount": 4,
+  "confidence": 0.95,
+  "sourcesMerged": [
+    "csv",
+    "jsonl"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "actorSpecification": 1,
+  "name": "kensho-sweep-mcp",
+  "title": "Kensho Japan X/Twitter Sweepstakes MCP",
+  "version": "3.0",
+  "buildTag": "latest",
+  "description": "Read-only MCP server exposing the kensho Japan X/Twitter sweepstakes dataset (1133 campaigns from knshow.com, kenshou.club, ken-kaku.com, cp.meikan.org). Three tools: current_sweep, sweep_history, top_prize_movers. No input required, no API key, no network.",
+  "readme": "./README.md",
+  "input": {
+    "title": "Input schema for kensho-sweep-mcp",
+    "description": "kensho-sweep-mcp is a read-only MCP server. It requires no input parameters — start it and connect an MCP client (e.g. via the Apify MCP integration or Smithery) to discover its tools: current_sweep, sweep_history, top_prize_movers. All data is bundled locally; no network, no API key, no account.",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {},
+    "required": []
+  },
+  "output": {
+    "actorOutputSchemaVersion": 1,
+    "title": "Output schema of kensho-sweep-mcp",
+    "description": "kensho-sweep-mcp exposes a Streamable HTTP MCP server on the Apify standby container (APIFY_CONTAINER_PORT). It produces no dataset or key-value store output; its result is the MCP tool interface itself. Connect an MCP client to the standby URL and call current_sweep, sweep_history, or top_prize_movers.",
+    "type": "object",
+    "properties": {}
+  },
+  "usesStandbyMode": false,
+  "defaultMemoryMbytes": 1024,
+  "minMemoryMbytes": 256,
+  "maxMemoryMbytes": 4096
+}

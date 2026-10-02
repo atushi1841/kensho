@@ -35,6 +35,36 @@ LOOP_HEALTH = Path(
 _ID_RE = re.compile(r"^\s*(t_\w+)\s+unblocks=")
 
 
+def _isolated_lh_db(base: Path) -> Path:
+    """実盤 kanban.db から独立したダミーDBを base配下に作り --db で固定する (t_1f4779d4)。
+
+    loop_health.sh は --db で解決した _LH_DB に対し kanban_dep_deadlock_guard.py
+    （board=ディレクトリ名）・orphan_run_reaper.py・zombieクエリを走らせるため、
+    実盤DBを渡すと実盤の板状態減点(ready==0&&todo>0 deadlock -21 等)が score に
+    混入しスコア検証が実盤状態で揺れる。ダミーは tasks>=1 でないと auto-detect が
+    実盤へ再解決されるため running を1行入れる。
+    """
+    import sqlite3
+    import time
+
+    db_dir = base / "lh_db"
+    db_dir.mkdir(parents=True, exist_ok=True)
+    db = db_dir / "kanban.db"
+    con = sqlite3.connect(db)
+    con.execute(
+        "CREATE TABLE IF NOT EXISTS tasks ("
+        "id TEXT PRIMARY KEY, status TEXT, last_failure_error TEXT, started_at INTEGER)"
+    )
+    con.execute("CREATE TABLE IF NOT EXISTS links (parent TEXT, child TEXT, relation TEXT)")
+    con.execute(
+        "INSERT OR IGNORE INTO tasks (id, status, started_at) VALUES (?, 'running', ?)",
+        ("t_lhdummy00000001", int(time.time()) - 3600),
+    )
+    con.commit()
+    con.close()
+    return db
+
+
 def _watchdog_dryrun_ids() -> list[str]:
     """--dry-run 出力から検出された task_id を順に返す。"""
     proc = subprocess.run(
@@ -108,7 +138,7 @@ def test_watchdog_dryrun_excludes_iteration_budget_blocked():
         assert r["id"] not in dry_run_ids, f"非ゾンビ blocked {r['id']} が検出された"
 
 
-def test_loop_health_zombie_override_penalizes_score():
+def test_loop_health_zombie_override_penalizes_score(tmp_path):
     """成功指標: LOOPHEALTH_ZOMBIE_COUNT=2 → zombie_task_count=2 / score -20。"""
     if not LOOP_HEALTH.exists():
         import pytest
@@ -125,6 +155,8 @@ def test_loop_health_zombie_override_penalizes_score():
             "[]",
             "--board",
             "kensho-ai-team",
+            "--db",
+            str(_isolated_lh_db(tmp_path)),
             "--state",
             str(state),
             "--dry-run",
@@ -143,7 +175,7 @@ def test_loop_health_zombie_override_penalizes_score():
     assert out["score"] <= 80 and out["score"] >= 60
 
 
-def test_loop_health_zombie_zero_override():
+def test_loop_health_zombie_zero_override(tmp_path):
     """成功指標: LOOPHEALTH_ZOMBIE_COUNT=0 → zombie_task_count=0 / score 減点なし。"""
     if not LOOP_HEALTH.exists():
         import pytest
@@ -160,6 +192,8 @@ def test_loop_health_zombie_zero_override():
             "[]",
             "--board",
             "kensho-ai-team",
+            "--db",
+            str(_isolated_lh_db(tmp_path)),
             "--state",
             str(state),
             "--dry-run",

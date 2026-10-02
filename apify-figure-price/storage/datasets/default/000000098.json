@@ -1,0 +1,58 @@
+{
+  "figureId": "112360",
+  "sourceUrl": "https://myfigurelist.com/figure/112360/Saint-Seiya-Sagittarius-Seiya-Candy-Toy-Saint-Seiya-Daizenshuu",
+  "name": "Saint Seiya - Sagittarius Seiya - Candy Toy - Saint Seiya Daizenshuu",
+  "series": "Saint Seiya",
+  "character": "Seiya Sagittarius",
+  "manufacturer": "Bandai",
+  "category": "Anime Figure",
+  "releaseDate": "2016-12-19",
+  "scale": null,
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "4549660097846",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/cdee33e3-3149-3a54-8ebe-eff2bc28e6ca/Saint-Seiya-Sagittarius-Seiya-Candy-Toy-Saint-Seiya-Daizenshuu_2964436f-bcf2-3a5d-8aaa-e9ca5df56ebd.jpg",
+  "offers": [
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 2100,
+      "availability": "OutOfStock",
+      "url": "https://www.amiami.com/eng/detail/?gcode=GOODS-00097554",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:45.804015"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 2250,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/saint-seiya-daizenshuu-sagittarius-seiya-bann09784",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:45.804040"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 2612,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/10397644",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:45.804045"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 7140,
+      "availability": "OutOfStock",
+      "url": "https://www.nin-nin-game.com/en/saint-seiya/19196-saint-seiya-daizenshu-sagittarius-seiya-bandai-en.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:45.804049"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": null,
+  "highestPriceJpy": null,
+  "inStockCount": 0,
+  "totalOffersCount": 4,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

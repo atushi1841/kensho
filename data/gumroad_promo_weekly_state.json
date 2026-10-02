@@ -7,6 +7,22 @@
         "posted_at": "2026-09-26T09:39:15",
         "date": "2026-09-26"
       }
+    },
+    "2026-W40": {
+      "a": {
+        "tweet_id": "2104355452087882033",
+        "text": "Japanese anime figure & collectibles price data, updated weekly. Try the free sample CSV first: https://atushi5.gumroad.com/l/kutuxe?utm_source=tw&utm_medium=s&utm_campaign=w2026W40_a #animefigures #datasets",
+        "posted_at": "2026-09-28T08:40:11",
+        "date": "2026-09-28",
+        "slot": "a"
+      },
+      "b": {
+        "tweet_id": "2105805074207551750",
+        "text": "Resellers: track Japanese hobby market prices weekly. Free sample: https://atushi5.gumroad.com/l/kutuxe?utm_source=tw&utm_medium=s&utm_campaign=w2026W40_b #reselling",
+        "posted_at": "2026-10-02T08:40:28",
+        "date": "2026-10-02",
+        "slot": "b"
+      }
     }
   }
 }

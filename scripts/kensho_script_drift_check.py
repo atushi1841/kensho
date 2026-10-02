@@ -84,7 +84,9 @@ def check_profile(profile: str, hermes_root: Path, kensho_root: Path) -> list[di
             script = job.get(key)
             if not script or not isinstance(script, str):
                 continue
-            name = Path(script).name
+            # script field may contain full command with args (e.g. "wrapper.sh arg1 arg2")
+            # extract the actual script basename from the first token
+            name = Path(script.split()[0]).name
             if not name.endswith(CHECK_SUFFIXES) or name in seen:
                 continue
             seen.add(name)

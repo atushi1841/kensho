@@ -211,20 +211,3266 @@
     "revenue_usd": 0.0,
     "per_actor": {}
    }
+  },
+  {
+   "timestamp": "2026-09-27T00:09:16+00:00",
+   "estimated_revenue_usd": 0.0,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {}
+   }
+  },
+  {
+   "timestamp": "2026-09-27T09:33:57+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T10:39:05+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T10:49:14+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T10:53:21+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T10:53:52+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T11:01:48+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T11:05:09+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T11:12:18+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T11:16:30+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T11:17:11+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T11:23:46+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T12:08:41+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T12:09:49+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T12:14:40+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T13:36:44+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 7,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 7,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 13
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 42
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T13:37:32+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "window_days": 7,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 7,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 13
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 42
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    }
+   }
+  },
+  {
+   "timestamp": "2026-09-27T13:52:25+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 2.07,
+   "settle_rate_pct": 5914.29,
+   "settle_status": "completed",
+   "window_days": 7,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 7,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 13
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 42
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "MgekeE2LtJvUDqaCQ",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "cNgZV15bYpCczUUal",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "5SzLq38wM7r3Jc5a6",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "gS7SFa6zLQZ4GcYHA",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "LdjKH6A34TTwQ6wrT",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     },
+     "mandarake-auction-scraper": {
+      "run_id": "lsAkzmdbBxNyB9xTq",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 24,
+      "verified": true
+     },
+     "dlsite-scraper": {
+      "run_id": "o6QPlJVZD0gH8IRrl",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 30,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 414,
+    "verified_revenue_usd": 2.07
+   }
+  },
+  {
+   "timestamp": "2026-09-27T13:56:03+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 2.07,
+   "settle_rate_pct": 5914.29,
+   "settle_status": "completed",
+   "window_days": 7,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 7,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 13
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 42
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "MgekeE2LtJvUDqaCQ",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "cNgZV15bYpCczUUal",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "5SzLq38wM7r3Jc5a6",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "gS7SFa6zLQZ4GcYHA",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "LdjKH6A34TTwQ6wrT",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     },
+     "mandarake-auction-scraper": {
+      "run_id": "lsAkzmdbBxNyB9xTq",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 24,
+      "verified": true
+     },
+     "dlsite-scraper": {
+      "run_id": "o6QPlJVZD0gH8IRrl",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 30,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 414,
+    "verified_revenue_usd": 2.07
+   }
+  },
+  {
+   "timestamp": "2026-09-27T13:56:56+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 2.07,
+   "settle_rate_pct": 5914.29,
+   "settle_status": "completed",
+   "window_days": 7,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 7,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 13
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 42
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "MgekeE2LtJvUDqaCQ",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "cNgZV15bYpCczUUal",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "5SzLq38wM7r3Jc5a6",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "gS7SFa6zLQZ4GcYHA",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "LdjKH6A34TTwQ6wrT",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     },
+     "mandarake-auction-scraper": {
+      "run_id": "lsAkzmdbBxNyB9xTq",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 24,
+      "verified": true
+     },
+     "dlsite-scraper": {
+      "run_id": "o6QPlJVZD0gH8IRrl",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 30,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 414,
+    "verified_revenue_usd": 2.07
+   }
+  },
+  {
+   "timestamp": "2026-09-27T13:57:43+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 2.07,
+   "settle_rate_pct": 5914.29,
+   "settle_status": "completed",
+   "window_days": 7,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 7,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 13
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 42
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "MgekeE2LtJvUDqaCQ",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "cNgZV15bYpCczUUal",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "5SzLq38wM7r3Jc5a6",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "gS7SFa6zLQZ4GcYHA",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "LdjKH6A34TTwQ6wrT",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     },
+     "mandarake-auction-scraper": {
+      "run_id": "lsAkzmdbBxNyB9xTq",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 24,
+      "verified": true
+     },
+     "dlsite-scraper": {
+      "run_id": "o6QPlJVZD0gH8IRrl",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 30,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 414,
+    "verified_revenue_usd": 2.07
+   }
+  },
+  {
+   "timestamp": "2026-09-27T14:27:09+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 2.07,
+   "settle_rate_pct": 5914.29,
+   "settle_status": "completed",
+   "window_days": 7,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 7,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 42
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "MgekeE2LtJvUDqaCQ",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "cNgZV15bYpCczUUal",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "5SzLq38wM7r3Jc5a6",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "gS7SFa6zLQZ4GcYHA",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "LdjKH6A34TTwQ6wrT",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     },
+     "mandarake-auction-scraper": {
+      "run_id": "lsAkzmdbBxNyB9xTq",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 24,
+      "verified": true
+     },
+     "dlsite-scraper": {
+      "run_id": "o6QPlJVZD0gH8IRrl",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 30,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 414,
+    "verified_revenue_usd": 2.07
+   }
+  },
+  {
+   "timestamp": "2026-09-27T14:37:57+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 2.07,
+   "settle_rate_pct": 5914.29,
+   "settle_status": "completed",
+   "window_days": 7,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 7,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 42
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "MgekeE2LtJvUDqaCQ",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "cNgZV15bYpCczUUal",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "5SzLq38wM7r3Jc5a6",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "gS7SFa6zLQZ4GcYHA",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "LdjKH6A34TTwQ6wrT",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     },
+     "mandarake-auction-scraper": {
+      "run_id": "lsAkzmdbBxNyB9xTq",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 24,
+      "verified": true
+     },
+     "dlsite-scraper": {
+      "run_id": "o6QPlJVZD0gH8IRrl",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 30,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 414,
+    "verified_revenue_usd": 2.07
+   }
+  },
+  {
+   "timestamp": "2026-09-27T14:52:26+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 2.07,
+   "settle_rate_pct": 5914.29,
+   "settle_status": "completed",
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "MgekeE2LtJvUDqaCQ",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "cNgZV15bYpCczUUal",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "5SzLq38wM7r3Jc5a6",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "gS7SFa6zLQZ4GcYHA",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "LdjKH6A34TTwQ6wrT",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     },
+     "mandarake-auction-scraper": {
+      "run_id": "lsAkzmdbBxNyB9xTq",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 24,
+      "verified": true
+     },
+     "dlsite-scraper": {
+      "run_id": "o6QPlJVZD0gH8IRrl",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 30,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 414,
+    "verified_revenue_usd": 2.07
+   }
+  },
+  {
+   "timestamp": "2026-09-27T14:57:54+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 2.07,
+   "settle_rate_pct": 5914.29,
+   "settle_status": "completed",
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "MgekeE2LtJvUDqaCQ",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "cNgZV15bYpCczUUal",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "5SzLq38wM7r3Jc5a6",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "gS7SFa6zLQZ4GcYHA",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "LdjKH6A34TTwQ6wrT",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     },
+     "mandarake-auction-scraper": {
+      "run_id": "lsAkzmdbBxNyB9xTq",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 24,
+      "verified": true
+     },
+     "dlsite-scraper": {
+      "run_id": "o6QPlJVZD0gH8IRrl",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 30,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 414,
+    "verified_revenue_usd": 2.07
+   }
+  },
+  {
+   "timestamp": "2026-09-27T14:58:57+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 2.07,
+   "settle_rate_pct": 5914.29,
+   "settle_status": "completed",
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 47
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "MgekeE2LtJvUDqaCQ",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "cNgZV15bYpCczUUal",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "5SzLq38wM7r3Jc5a6",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "gS7SFa6zLQZ4GcYHA",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "LdjKH6A34TTwQ6wrT",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     },
+     "mandarake-auction-scraper": {
+      "run_id": "lsAkzmdbBxNyB9xTq",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 24,
+      "verified": true
+     },
+     "dlsite-scraper": {
+      "run_id": "o6QPlJVZD0gH8IRrl",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 30,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 414,
+    "verified_revenue_usd": 2.07
+   }
+  },
+  {
+   "timestamp": "2026-09-27T16:46:44+00:00",
+   "estimated_revenue_usd": 0.035,
+   "actual_revenue_usd": 2.07,
+   "settle_rate_pct": 5914.29,
+   "settle_status": "completed",
+   "window_days": 7,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 7,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 14
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 42
+     },
+     "mandarake-auction-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "dlsite-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "MgekeE2LtJvUDqaCQ",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "cNgZV15bYpCczUUal",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "5SzLq38wM7r3Jc5a6",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "gS7SFa6zLQZ4GcYHA",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "LdjKH6A34TTwQ6wrT",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     },
+     "mandarake-auction-scraper": {
+      "run_id": "lsAkzmdbBxNyB9xTq",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 24,
+      "verified": true
+     },
+     "dlsite-scraper": {
+      "run_id": "o6QPlJVZD0gH8IRrl",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 30,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 414,
+    "verified_revenue_usd": 2.07
+   }
+  },
+  {
+   "timestamp": "2026-09-28T09:21:49+00:00",
+   "estimated_revenue_usd": 0.0,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "settle_status": "dry_run",
+   "window_days": 30,
+   "dry_run": true,
+   "actual_data": {
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {}
+   }
+  },
+  {
+   "timestamp": "2026-09-28T12:47:46+00:00",
+   "estimated_revenue_usd": 0.0,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "settle_status": "dry_run",
+   "window_days": 30,
+   "dry_run": true,
+   "actual_data": {
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {}
+   }
+  },
+  {
+   "timestamp": "2026-09-28T12:55:11+00:00",
+   "estimated_revenue_usd": 0.025,
+   "actual_revenue_usd": 1.8,
+   "settle_rate_pct": 7200.0,
+   "settle_status": "completed",
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 17
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 43
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "6sf6qGhgzMr4lq1g0",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "Egc2S6qdubgfaNtLE",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "qsUikKhwyRlS6bCxy",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "dKP0o2vfgjsG5WCXx",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "WlZBZXaTvqHD5cEEj",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 360,
+    "verified_revenue_usd": 1.8
+   }
+  },
+  {
+   "timestamp": "2026-09-28T13:13:16+00:00",
+   "estimated_revenue_usd": 0.025,
+   "actual_revenue_usd": 1.8,
+   "settle_rate_pct": 7200.0,
+   "settle_status": "completed",
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 17
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 43
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "6sf6qGhgzMr4lq1g0",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "Egc2S6qdubgfaNtLE",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "qsUikKhwyRlS6bCxy",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "dKP0o2vfgjsG5WCXx",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "WlZBZXaTvqHD5cEEj",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 360,
+    "verified_revenue_usd": 1.8
+   }
+  },
+  {
+   "timestamp": "2026-09-28T13:37:35+00:00",
+   "estimated_revenue_usd": 0.025,
+   "actual_revenue_usd": 1.8,
+   "settle_rate_pct": 7200.0,
+   "settle_status": "completed",
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 17
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 43
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "6sf6qGhgzMr4lq1g0",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "Egc2S6qdubgfaNtLE",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "qsUikKhwyRlS6bCxy",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "dKP0o2vfgjsG5WCXx",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 100,
+      "verified": true
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "WlZBZXaTvqHD5cEEj",
+      "status": "SUCCEEDED",
+      "billed": true,
+      "charged_items": 60,
+      "verified": true
+     }
+    },
+    "verified_charged_items": 360,
+    "verified_revenue_usd": 1.8
+   }
+  },
+  {
+   "timestamp": "2026-09-28T14:14:19+00:00",
+   "estimated_revenue_usd": 0.025,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "settle_status": "zero_settle",
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 17
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 43
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "6sf6qGhgzMr4lq1g0",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "Egc2S6qdubgfaNtLE",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "qsUikKhwyRlS6bCxy",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "dKP0o2vfgjsG5WCXx",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "WlZBZXaTvqHD5cEEj",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     }
+    },
+    "verified_charged_items": 0,
+    "verified_revenue_usd": 0
+   }
+  },
+  {
+   "timestamp": "2026-09-28T14:17:44+00:00",
+   "estimated_revenue_usd": 0.025,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "settle_status": "zero_settle",
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 17
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 43
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "6sf6qGhgzMr4lq1g0",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "Egc2S6qdubgfaNtLE",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "qsUikKhwyRlS6bCxy",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "dKP0o2vfgjsG5WCXx",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "WlZBZXaTvqHD5cEEj",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     }
+    },
+    "verified_charged_items": 0,
+    "verified_revenue_usd": 0
+   }
+  },
+  {
+   "timestamp": "2026-09-28T14:38:24+00:00",
+   "estimated_revenue_usd": 0.025,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "settle_status": "zero_settle",
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 17
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 43
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "6sf6qGhgzMr4lq1g0",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "Egc2S6qdubgfaNtLE",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "qsUikKhwyRlS6bCxy",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "dKP0o2vfgjsG5WCXx",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "WlZBZXaTvqHD5cEEj",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     }
+    },
+    "verified_charged_items": 0,
+    "verified_revenue_usd": 0
+   }
+  },
+  {
+   "timestamp": "2026-09-28T14:38:24+00:00",
+   "estimated_revenue_usd": 0.025,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "settle_status": "zero_settle",
+   "window_days": 7,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 7,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 43
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "6sf6qGhgzMr4lq1g0",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "Egc2S6qdubgfaNtLE",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "qsUikKhwyRlS6bCxy",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "dKP0o2vfgjsG5WCXx",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "WlZBZXaTvqHD5cEEj",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     }
+    },
+    "verified_charged_items": 0,
+    "verified_revenue_usd": 0
+   }
+  },
+  {
+   "timestamp": "2026-09-28T14:51:39+00:00",
+   "estimated_revenue_usd": 0.025,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "settle_status": "zero_settle",
+   "window_days": 7,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 7,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 43
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "6sf6qGhgzMr4lq1g0",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "Egc2S6qdubgfaNtLE",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "qsUikKhwyRlS6bCxy",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "dKP0o2vfgjsG5WCXx",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "WlZBZXaTvqHD5cEEj",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     }
+    },
+    "verified_charged_items": 0,
+    "verified_revenue_usd": 0
+   }
+  },
+  {
+   "timestamp": "2026-09-28T15:38:06+00:00",
+   "estimated_revenue_usd": 0.025,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "settle_status": "zero_settle",
+   "window_days": 1,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 1,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 2
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 2
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 2
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 2
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 6
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "6sf6qGhgzMr4lq1g0",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "Egc2S6qdubgfaNtLE",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "qsUikKhwyRlS6bCxy",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "dKP0o2vfgjsG5WCXx",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "WlZBZXaTvqHD5cEEj",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     }
+    },
+    "verified_charged_items": 0,
+    "verified_revenue_usd": 0
+   }
+  },
+  {
+   "timestamp": "2026-09-28T16:29:56+00:00",
+   "estimated_revenue_usd": 0.025,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "settle_status": "zero_settle",
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 17
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 43
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "6sf6qGhgzMr4lq1g0",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "Egc2S6qdubgfaNtLE",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "qsUikKhwyRlS6bCxy",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "dKP0o2vfgjsG5WCXx",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "WlZBZXaTvqHD5cEEj",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     }
+    },
+    "verified_charged_items": 0,
+    "verified_revenue_usd": 0
+   }
+  },
+  {
+   "timestamp": "2026-09-28T17:07:40+00:00",
+   "estimated_revenue_usd": 0.025,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "settle_status": "zero_settle",
+   "window_days": 7,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 7,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 16
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 15
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 41
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "6sf6qGhgzMr4lq1g0",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "Egc2S6qdubgfaNtLE",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "qsUikKhwyRlS6bCxy",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "dKP0o2vfgjsG5WCXx",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "WlZBZXaTvqHD5cEEj",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     }
+    },
+    "verified_charged_items": 0,
+    "verified_revenue_usd": 0
+   }
+  },
+  {
+   "timestamp": "2026-09-28T17:15:17+00:00",
+   "estimated_revenue_usd": 0.025,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "settle_status": "zero_settle",
+   "window_days": 1,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 1,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 2
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 2
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 2
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 2
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "6sf6qGhgzMr4lq1g0",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "Egc2S6qdubgfaNtLE",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "qsUikKhwyRlS6bCxy",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "dKP0o2vfgjsG5WCXx",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "WlZBZXaTvqHD5cEEj",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     }
+    },
+    "verified_charged_items": 0,
+    "verified_revenue_usd": 0
+   }
   }
  ],
  "latest": {
-  "timestamp": "2026-09-26T22:47:31+00:00",
-  "estimated_revenue_usd": 0.0,
+  "timestamp": "2026-09-28T17:15:17+00:00",
+  "estimated_revenue_usd": 0.025,
   "actual_revenue_usd": 0.0,
   "settle_rate_pct": 0.0,
-  "window_days": 30,
+  "settle_status": "zero_settle",
+  "window_days": 1,
   "dry_run": false,
   "actual_data": {
+   "window_days": 1,
    "external_runs": 0,
    "charged_items": 0,
    "revenue_usd": 0.0,
-   "per_actor": {}
+   "per_actor": {
+    "japan-used-camera-market-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 2
+    },
+    "japan-watch-market-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 2
+    },
+    "japan-luxury-brand-market-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 2
+    },
+    "japan-used-instrument-market-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 2
+    },
+    "japan-offmall-market-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 4
+    }
+   },
+   "run_id_verified": {
+    "japan-used-camera-market-scraper": {
+     "run_id": "6sf6qGhgzMr4lq1g0",
+     "status": "SUCCEEDED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    },
+    "japan-watch-market-scraper": {
+     "run_id": "Egc2S6qdubgfaNtLE",
+     "status": "SUCCEEDED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    },
+    "japan-luxury-brand-market-scraper": {
+     "run_id": "qsUikKhwyRlS6bCxy",
+     "status": "SUCCEEDED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    },
+    "japan-used-instrument-market-scraper": {
+     "run_id": "dKP0o2vfgjsG5WCXx",
+     "status": "SUCCEEDED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    },
+    "japan-offmall-market-scraper": {
+     "run_id": "WlZBZXaTvqHD5cEEj",
+     "status": "SUCCEEDED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    }
+   },
+   "verified_charged_items": 0,
+   "verified_revenue_usd": 0
   }
  }
 }

@@ -1,0 +1,82 @@
+{
+  "figureId": "106215",
+  "sourceUrl": "https://myfigurelist.com/figure/106215/Wuthering-Waves-Augusta-1-7-Complete-Figure",
+  "name": "Wuthering Waves Augusta 1/7 Complete Figure",
+  "series": "Wuthering Waves",
+  "character": "Augusta",
+  "manufacturer": "Hobby sakura",
+  "category": "Anime Figure",
+  "releaseDate": "2027-05-01",
+  "scale": null,
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "6979272330860",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/b5c9f9a7-90c6-4066-93fe-1f10781e6227/Wuthering-Waves-Augusta-1-7-Complete-Figure_ee2ee691-d291-38d5-8c1a-cef1342bcdc7.jpg",
+  "offers": [
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 27220,
+      "availability": "PreOrder",
+      "url": "NOTFOUND",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.553422"
+    },
+    {
+      "shop_name": "Meccha Japan",
+      "price_jpy": 27973,
+      "availability": "PreOrder",
+      "url": "https://meccha-japan.com/en/figures/183132-figure-augusta-wuthering-waves.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.553448"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 28737,
+      "availability": "PreOrder",
+      "url": "https://www.1999.co.jp/11428034",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.553454"
+    },
+    {
+      "shop_name": "Animota",
+      "price_jpy": 43124,
+      "availability": "PreOrder",
+      "url": "https://animota.net/en-eu/products/animota-e-pre10951",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.553458"
+    },
+    {
+      "shop_name": "Japan Figure",
+      "price_jpy": 45358,
+      "availability": "PreOrder",
+      "url": "https://japan-figure.com/products/hobby-sakura-wuthering-waves-augusta-1-7-scale-figure",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.553462"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 42589,
+      "availability": "PreOrder",
+      "url": "https://solarisjapan.com/products/wuthering-waves-augusta-1-7-hobby-sakura?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.553475"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 29330,
+      "availability": "PreOrder",
+      "url": "https://www.nin-nin-game.com/en/japanese-import-hobbies-toys-game-character/246212-wuthering-waves-augusta-17-with-bonus-hobby-sakura-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:01.553485"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": null,
+  "highestPriceJpy": null,
+  "inStockCount": 0,
+  "totalOffersCount": 7,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

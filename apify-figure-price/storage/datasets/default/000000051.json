@@ -1,0 +1,58 @@
+{
+  "figureId": "11327",
+  "sourceUrl": "https://myfigurelist.com/figure/11327/ToHeart2-Tamaki-Kosaka-Race-Queen-Red-Ver-Complete-Figure-Miyazawa-Models-Limited-Edition",
+  "name": "ToHeart2 Tamaki Kosaka Race Queen [Red Ver.] Complete Figure Miyazawa Models Limited Edition",
+  "series": "ToHeart2",
+  "character": "Tamaki Kosaka",
+  "manufacturer": "Kaitendo",
+  "category": "Scale Figure",
+  "releaseDate": "2011-08-01",
+  "scale": "Non-Scale",
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "4560266121414",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4560266121414/ToHeart2-Tamaki-Kosaka-Race-Queen-Red-Ver-Complete-Figure-Miyazawa-Models-Limited-Edition_8766999d-63d5-41cb-b21e-4e4b3155e9e4.jpg",
+  "offers": [
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 3272,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/eng/10148266",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:13.011036"
+    },
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 3120,
+      "availability": "OutOfStock",
+      "url": "https://www.amiami.com/eng/detail/?gcode=FIG-MOE-2671",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:13.011058"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 6764,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/kaitendouhs-little-figuer-to-heart-2-kousaka-tamaki-race-queen-red-ver-miyazawa-limited-edition-1?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:13.011063"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 3500,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/1-12-scale-tamaki-kousaka-race-queen-red-ver-pvc-ltd-ktd12129",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:13.011067"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 6764,
+  "highestPriceJpy": 6764,
+  "inStockCount": 1,
+  "totalOffersCount": 4,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

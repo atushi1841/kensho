@@ -1,0 +1,43 @@
+{
+  "figureId": "17638",
+  "sourceUrl": "https://myfigurelist.com/figure/17638/KDcolle-SPY-ROOM-Light-Novel-Glint-Monika-KADOKAWA-Special-Set",
+  "name": "KDcolle SPY ROOM Light Novel <<Glint>> Monika KADOKAWA Special Set",
+  "series": "Spy Kyoushitsu",
+  "character": "Monica McMillan",
+  "manufacturer": "KADOKAWA",
+  "category": "Scale Figure",
+  "releaseDate": "2024-05-01",
+  "scale": "1/7",
+  "sculptor": "Fundoshi",
+  "heightCm": 22,
+  "janCode": "4942330190913",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4942330190913/KDcolle-SPY-ROOM-Light-Novel-Glint-Monika-KADOKAWA-Special-Set_582853f3-2e6e-4dac-84c5-2fffcf8af47a.jpg",
+  "offers": [
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 28600,
+      "availability": "InStock",
+      "url": "NOTFOUND",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:57:35.557028"
+    },
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 28600,
+      "availability": "InStock",
+      "url": "NOTFOUND",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:00:00.787291"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 28600,
+  "highestPriceJpy": 28600,
+  "inStockCount": 1,
+  "totalOffersCount": 1,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "csv",
+    "jsonl"
+  ]
+}

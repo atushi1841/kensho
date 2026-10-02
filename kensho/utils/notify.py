@@ -8,6 +8,7 @@ v1.0: Telegram / 標準出力 への通知送信に対応
 
 from __future__ import annotations
 
+import os
 import logging
 import urllib.parse
 import urllib.request
@@ -15,17 +16,47 @@ from pathlib import Path
 
 import yaml
 
+try:
+    from dotenv import load_dotenv
+
+    # cron実行時はcwdが不定なので、プロジェクトルートの.envを明示的に読む
+    _ENV_PATH = Path(__file__).resolve().parents[2] / ".env"
+    if _ENV_PATH.exists():
+        load_dotenv(_ENV_PATH, override=False)
+    else:
+        load_dotenv()
+except Exception:
+    pass
+
 log = logging.getLogger(__name__)
 
 
+def _resolve_env(val: str) -> str:
+    """${VAR} や $VAR を環境変数で置換（未設定なら空文字）"""
+    if not isinstance(val, str):
+        return val
+    import re
+    def repl(m):
+        var = m.group(1) or m.group(2)
+        return os.environ.get(var, "")
+    # ${VAR} と $VAR の両対応
+    return re.sub(r'\$\{([^}]+)\}|\$([A-Z_][A-Z0-9_]*)', repl, val)
+
+
 def _load_config() -> dict:
-    """config.yaml の telegram セクションを読み込む"""
+    """config.yaml の telegram セクションを読み込む（環境変数展開込み）"""
     cfg_path = Path(__file__).resolve().parents[2] / "config.yaml"
     if not cfg_path.exists():
         return {"enabled": False}
     with open(cfg_path, encoding="utf-8") as f:
         raw = yaml.safe_load(f)
-    return raw.get("telegram", {}) or {}
+    tg = raw.get("telegram", {}) or {}
+    # token / chat_id の環境変数展開
+    if "token" in tg:
+        tg["token"] = _resolve_env(tg["token"])
+    if "chat_id" in tg:
+        tg["chat_id"] = _resolve_env(tg["chat_id"])
+    return tg
 
 
 def send_telegram(message: str, token: str | None = None, chat_id: str | None = None) -> bool:

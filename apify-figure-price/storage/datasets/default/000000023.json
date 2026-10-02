@@ -1,0 +1,58 @@
+{
+  "figureId": "3736",
+  "sourceUrl": "https://myfigurelist.com/figure/3736/Nendoroid-Touhou-Project-Yuyuko-Saigyouji-NicoNico-Chokuhan-Animate-Gamers-Toranoana-Exclusive",
+  "name": "Nendoroid - Touhou Project: Yuyuko Saigyouji [NicoNico Chokuhan, Animate, Gamers, Toranoana Exclusive]",
+  "series": "Touhou Project",
+  "character": "Yuyuko Saigyouji",
+  "manufacturer": "Good Smile Company",
+  "category": "Scale Figure",
+  "releaseDate": "2011-06-01",
+  "scale": "Non-Scale",
+  "sculptor": "JUN",
+  "heightCm": null,
+  "janCode": "4582191967509",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4582191967509/Nendoroid-Touhou-Project-Yuyuko-Saigyouji-NicoNico-Chokuhan-Animate-Gamers-Toranoana-Exclusive_cce71369-bf5f-41af-a19f-638b2634f9f1.jpg",
+  "offers": [
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 6480,
+      "availability": "InStock",
+      "url": "https://www.amiami.com/eng/detail/?gcode=FIG-MOE-02789-R",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:55.297948"
+    },
+    {
+      "shop_name": "Okini Land",
+      "price_jpy": 6600,
+      "availability": "InStock",
+      "url": "https://okini.land/en/14214-nendoroid-yuyuko-saigyouji-good-smile-company-4582191967509.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:55.298036"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 9356,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/touhou-project-saigyouji-yuyuko-nendoroid-148?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:55.298071"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 11775,
+      "availability": "InStock",
+      "url": "https://www.nin-nin-game.com/en/nendoroid/4539-touhou-project-saigyouji-yuyuko-nendoroid-148-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:55.298085"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 6480,
+  "highestPriceJpy": 11775,
+  "inStockCount": 4,
+  "totalOffersCount": 4,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

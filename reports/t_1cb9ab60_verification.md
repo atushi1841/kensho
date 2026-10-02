@@ -2,22 +2,52 @@
 
 ## verification_evidence
 
-$ python3 scripts/normalize_figure_data.py => Reading /mnt/d/Project2/kensho/data/anime_figure_prices.jsonl... / Loaded 287 raw rows / Unique figure_ids: 271 / Duplicate groups: 16 / Writing /mnt/d/Project2/kensho/data/anime_figure_prices_normalized_v2.jsonl... / Writing /mnt/d/Project2/kensho/reports/revenue-proposals/2026-09-27-revenue-worker.md... / Done. / Output rows: 271 / Deduped groups: 16 / Merged offers: 698
+$ python3 /tmp/normalize_merge.py
+Loaded 287 jsonl records
+Loaded 415 csv records
+Wrote 654 normalized records to /mnt/d/Project2/kensho/data/anime_figure_prices_normalized.jsonl
+Unique merge keys: 654
+Confidence distribution: min=0.95, max=1.00, avg=1.00
+Sources merged counts: 32 multi-source, 622 single-source
 
-$ python3 -c "import json; d=[json.loads(l) for l in open('data/anime_figure_prices_normalized_v2.jsonl')]; print(len(d), len(set(r['figure_id'] for r in d)), sum(1 for r in d if r.get('currency')=='JPY'), sum(1 for r in d if r.get('version')), sum(1 for r in d if 'confidence_score' in r))" => 271 271 271 72 271
+$ python3 /tmp/check_normalized.py
+Total records: 654
+Sources merged: [(('csv',), 383), (('jsonl',), 239), (('csv', 'jsonl'), 32)]
+Confidence: [(1.0, 641), (0.95, 13)]
+...
+Unique figure_ids: 654
+Dup figure_ids: 0
 
-$ git -C /mnt/d/Project2/kensho commit -m "feat: t_1cb9ab60 - normalize figure price data, dedup 16 groups, add currency/version/confidence" => [main a0b2379] feat: t_1cb9ab60 - normalize figure price data, dedup 16 groups, add currency/version/confidence / 3 files changed, 719 insertions(+) / create mode 100644 data/anime_figure_prices_normalized_v2.jsonl / create mode 100644 reports/revenue-proposals/2026-09-27-revenue-worker.md / create mode 100644 scripts/normalize_figure_data.py
+$ python3 /tmp/export_csv.py
+Wrote CSV with 654 records to /mnt/d/Project2/kensho/data/anime_figure_prices_normalized.csv
+Schema: ['figure_id', 'source', 'source_url', 'name', 'series', 'character', 'manufacturer', 'category', 'release_date', 'scale', 'sculptor', 'height_cm', 'jan_code', 'image_url', 'offers', 'msrp_jpy', 'lowest_price_jpy', 'highest_price_jpy', 'in_stock_count', 'total_offers_count', 'fetched_at', 'confidence', 'sources_merged']
 
-$ git -C /mnt/d/Project2/kensho push => To https://github.com/atushi1841/kensho.git / fd6fec4..a0b2379 main -> main
+### Output artifacts
 
-## Summary
+- `/mnt/d/Project2/kensho/data/anime_figure_prices_normalized.jsonl` — 654 normalized JSON Lines records
+- `/mnt/d/Project2/kensho/data/anime_figure_prices_normalized.csv` — 654 normalized CSV records
 
-- Input: 287 raw rows from MyFigureList (data/anime_figure_prices.jsonl)
-- Output: 271 deduplicated, normalized records (data/anime_figure_prices_normalized_v2.jsonl)
-- 16 duplicate groups merged (32 rows → 16)
-- 698 offers merged and deduplicated
-- Added fields: currency=JPY (271), version extracted (72), confidence_score (271, avg 0.92)
-- Manufacturer normalization: 143 unique → 142 standardized names
-- Scale normalization: 63 "None"/"Non-Scale" strings → null
-- All records have release_date, name, image_url, jan_code
-- Git commit a0b2379 pushed to origin/main
+### Normalization applied
+
+- **Dates**: Various formats → `YYYY-MM-DD` (partial dates padded with `-01`)
+- **Scales**: `Non-Scale`, `1/7`, `1/8`, etc. → standardized `1/X` or `Non-Scale`
+- **Prices**: Extracted integer JPY from strings with commas/symbols
+- **Names**: Whitespace normalized, full-width chars converted
+- **Merge key**: `(name[:50], release_date, scale)`
+
+### Merge results
+
+- **287** jsonl records + **415** CSV records → **654** unique merged records (0 duplicate figure_ids)
+- **32** figures present in both sources → merged with confidence 1.0 (name+release+scale agreement) or 0.95
+- **622** single-source records retained with confidence 1.0
+- All records include `confidence` (0.95–1.00) and `sources_merged` array
+
+### Schema (consistent across JSONL + CSV)
+
+figure_id, source, source_url, name, series, character, manufacturer, category, release_date, scale, sculptor, height_cm, jan_code, image_url, offers (JSON), msrp_jpy, lowest_price_jpy, highest_price_jpy, in_stock_count, total_offers_count, fetched_at, confidence, sources_merged
+
+### Notes
+
+- Hpoi API and figurememo sources were unavailable (DNS/connection timeout per upstream task t_dd850be8) — only MyFigureList data available
+- Output files written to project data/ directory for downstream consumers
+- No duplicate figure_ids in final output

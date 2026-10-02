@@ -1,0 +1,58 @@
+{
+  "figureId": "8097",
+  "sourceUrl": "https://myfigurelist.com/figure/8097/ToHeart2-Sasara-Kusugawa-Gym-Class-Pool-Arc-1-6-Complete-Figure",
+  "name": "ToHeart2 - Sasara Kusugawa Gym Class (Pool Arc) 1/6 Complete Figure",
+  "series": "ToHeart2",
+  "character": "Sasara Kusugawa",
+  "manufacturer": "Beat",
+  "category": "Scale Figure",
+  "releaseDate": "2014-06-01",
+  "scale": "1/6",
+  "sculptor": "Kazushi Kawasaki",
+  "heightCm": null,
+  "janCode": "4546431106370",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4546431106370/ToHeart2-Sasara-Kusugawa-Gym-Class-Pool-Arc-1-6-Complete-Figure_31b9982f-a4f2-4bbb-adbf-377c08de8965.jpg",
+  "offers": [
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 8228,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/eng/10264394",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:57.897893"
+    },
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 7280,
+      "availability": "OutOfStock",
+      "url": "https://www.amiami.com/eng/detail/?gcode=FIGURE-004942",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:57.897960"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 7920,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/1-6-scale-to-heart-2-sasara-kusugawa-physical-education-class-bet10637",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:57.898043"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 25506,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/to-heart-2-kusugawa-sasara-1-6-swimsuit-ver-beat?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:57.898060"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 25506,
+  "highestPriceJpy": 25506,
+  "inStockCount": 1,
+  "totalOffersCount": 4,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

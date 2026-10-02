@@ -70,7 +70,11 @@ def load_api_key(path=None):
 
     戻り値をそのままログへ出さないこと。表示は mask_key() を通す。
     """
-    key = ""
+    # .env 内に KEY_NAME が複数行ある場合（*** プレースホルダ + 実キーなど）、
+    # 最初の一致で break しない。プレースホルダ/無効キーを飛ばして最初の有効キーを返す。
+    # 2026-09-28 (t_2f8a0c1d): 従来は最初の行（***）を返して EXIT_KEY_INVALID になることが多かった。
+    valid_key = ""
+    last_key = ""
     target = path or env_file()
     try:
         with open(target, encoding="utf-8", errors="replace") as fh:
@@ -80,10 +84,14 @@ def load_api_key(path=None):
                     continue
                 name, value = line.split("=", 1)
                 if name.strip() == KEY_NAME:
-                    key = value.strip().strip('"').strip("'")
-                    break
+                    value = value.strip().strip('"').strip("'")
+                    last_key = value
+                    if is_valid_key(value):
+                        valid_key = value
+                        break
     except (FileNotFoundError, PermissionError, OSError):
-        key = ""
+        pass
+    key = valid_key or last_key
     if not key:
         key = os.environ.get(KEY_NAME, "").strip()
     return key

@@ -1,0 +1,28 @@
+{
+  "manifest_version": "0.4",
+  "name": "kensho-kema",
+  "display_name": "Kensho Kema Sweepstakes MCP",
+  "version": "1.0.0",
+  "buildTag": "latest",
+  "description": "Read-only MCP server exposing the kensho Japan X/Twitter sweepstakes dataset from kema (additional sweepstakes source for Kensho collection). Kema is a sweepstakes collector that feeds into the main Kensho data pipeline.",
+  "readme": "./README.md",
+  "input": {
+    "title": "Input schema for kensho-kema",
+    "description": "kensho-kema is a read-only MCP server. It requires no input parameters — start it and connect an MCP client to discover its tools. All data is bundled locally; no network, no API key, no account.",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {},
+    "required": []
+  },
+  "output": {
+    "actorOutputSchemaVersion": 1,
+    "title": "Output schema of kensho-kema",
+    "description": "kensho-kema exposes a Streamable HTTP MCP server on the Apify standby container. It produces no dataset or key-value store output; its result is the MCP tool interface itself. Connect an MCP client to the standby URL and call sweepstakes tools.",
+    "type": "object",
+    "properties": {}
+  },
+  "usesStandbyMode": false,
+  "defaultMemoryMbytes": 1024,
+  "minMemoryMbytes": 256,
+  "maxMemoryMbytes": 4096
+}

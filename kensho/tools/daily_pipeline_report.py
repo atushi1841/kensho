@@ -17,6 +17,7 @@ from __future__ import annotations
 import collections
 import datetime
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -300,6 +301,39 @@ def main() -> int:
         print(f"- 前日({prev})成功: {prev_total}件 → 本日: {total_actions}件 ({arrow}{abs(diff)})")
     else:
         print(f"- 前日({prev})データなし")
+
+    # ── Kanban AIチーム実績（前日） ──
+    print()
+    print("## Kanban AIチーム（前日）")
+    kanban_out = ""
+    try:
+        res = subprocess.run(
+            [sys.executable, str(ROOT / "kensho" / "tools" / "kanban_report.py"), date_s],
+            capture_output=True,
+            text=True,
+            timeout=20,
+            encoding="utf-8",
+        )
+        if res.returncode == 0 and res.stdout.strip():
+            kanban_out = res.stdout.strip()
+            print(kanban_out)
+        else:
+            print("(kanban_report.py 実行失敗 / 出力なし)")
+    except Exception as e:
+        print(f"(kanban集計スキップ: {e})")
+
+    # ── Telegram 送信（daily_report イベント） ──
+    # これまでの print 出力を StringIO で取得して送信
+    try:
+        from kensho.utils.notify import send_notification
+        import sys as _sys
+        from io import StringIO
+        # ここまでの全標準出力を取得するため、print を StringIO にリダイレクトしてから再実行するのは面倒なので
+        # kanban_report の出力だけを送信する（pipeline_report は stdout に出ている = cron log / critic 入力になる）
+        msg = f"Kensho 日次レポート ({date_s})\n\nKanban AIチーム:\n{kanban_out or '(なし)'}"
+        send_notification("daily_report", msg)
+    except Exception:
+        pass
 
     return 0
 

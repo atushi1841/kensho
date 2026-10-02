@@ -48,58 +48,77 @@ FREE_SAMPLE_URL = "https://atushi5.gumroad.com/l/kutuxe"  # FREE Sample ($0) - �
 PAID_DATASET_URL = "https://atushi5.gumroad.com/l/agyhq"  # Weekly CSV dataset - 短縮ID
 WEEKLY_REPORT_URL = "https://atushi5.gumroad.com/l/qdyyyi"  # 週次レポート ($10) - 短縮ID
 
+# Apify Store クロスプロモーション用
+APIFY_STORE_BASE = "https://apify.com/fruitful_quintessence"
+APIFY_ACTOR_URLS = {
+    "japan-used-camera-market-scraper": "https://apify.com/fruitful_quintessence/japan-used-camera-market-scraper",
+    "japan-watch-market-scraper": "https://apify.com/fruitful_quintessence/japan-watch-market-scraper",
+    "japan-luxury-brand-market-scraper": "https://apify.com/fruitful_quintessence/japan-luxury-brand-market-scraper",
+    "japan-used-instrument-market-scraper": "https://apify.com/fruitful_quintessence/japan-used-instrument-market-scraper",
+    "japan-offmall-market-scraper": "https://apify.com/fruitful_quintessence/japan-offmall-market-scraper",
+    "surugaya-japan-hobby-prices": "https://apify.com/fruitful_quintessence/surugaya-japan-hobby-prices",
+    "mandarake-auction-scraper": "https://apify.com/fruitful_quintessence/mandarake-auction-scraper",
+    "tackleberry-japan-fishing-tackle-scraper": "https://apify.com/fruitful_quintessence/tackleberry-japan-fishing-tackle-scraper",
+    "yahoo-auctions-japan-scraper": "https://apify.com/fruitful_quintessence/yahoo-auctions-japan-scraper",
+    "dlsite-scraper": "https://apify.com/fruitful_quintessence/dlsite-scraper",
+    "dmm-scraper": "https://apify.com/fruitful_quintessence/dmm-scraper",
+    "kitamura-japan-used-camera-scraper": "https://apify.com/fruitful_quintessence/kitamura-japan-used-camera-scraper",
+    "jackroad-used-watch-scraper": "https://apify.com/fruitful_quintessence/jackroad-used-watch-scraper",
+    "komehyo-japan-brand-scraper": "https://apify.com/fruitful_quintessence/komehyo-japan-brand-scraper",
+    "eurostat-indicators": "https://apify.com/fruitful_quintessence/eurostat-indicators",
+    "world-bank-indicators": "https://apify.com/fruitful_quintessence/world-bank-indicators",
+    "goo-net-car-scraper": "https://apify.com/fruitful_quintessence/goo-net-car-scraper",
+    "biglemon-machinery-scraper": "https://apify.com/fruitful_quintessence/biglemon-machinery-scraper",
+    "digimart-japan-used-instrument-scraper": "https://apify.com/fruitful_quintessence/digimart-japan-used-instrument-scraper",
+    "golfpartner-used-club-scraper": "https://apify.com/fruitful_quintessence/golfpartner-used-club-scraper",
+}
 
-def promo_url(base: str, campaign: str) -> str:
+# Apify アクターをランダムに選んで言及（クロスプロモーション用）
+import random
+APIFY_PROMO_ACTORS = list(APIFY_ACTOR_URLS.keys())
+
+# 短縮URL（Apifyクロスプロモーション用は短くする）
+# Gumroad短縮URLはUTM付きで約70字。Apify URLは約90字。
+# ツイート280字制限内に収めるため、{free}または{paid}のどちらか1つのみ使用するテンプレートにする
+def promo_url(base: str, campaign: str, short: str | None = None) -> str:
     """Gumroad 商品URL に utm_source=tw&utm_medium=s を付与（t_b8ec048a）。
 
     X 販促からの流入を Gumroad referrer 表で区別できるようにする。
     campaign は短縮キー（例: w2026W39）。文字数制限（280字）を守るため
     パラメータ名を短縮: utm_source=tw / utm_medium=s / utm_campaign=w...
+    
+    short が指定された場合は campaign キーとしてそれを使用（短縮用）。
     """
     # campaign キーを短縮: weekly_promo_2026-W39 -> w2026W39
-    short = campaign.replace("weekly_promo_", "w").replace("-", "")
-    return f"{base}?utm_source=tw&utm_medium=s&utm_campaign={short}"
+    if short:
+        campaign_key = short
+    else:
+        campaign_key = campaign.replace("weekly_promo_", "w").replace("-", "")
+    return f"{base}?utm_source=tw&utm_medium=s&utm_campaign={campaign_key}"
 
 
-# 週2投稿用ローテーション文言（16種 = 週×スロットで独立選択）。raw ≤280 字を維持。
+# 週2投稿用ローテーション文言（16種 = 週×スロットで独立選択）。
 # {free}/{paid}/{report} は pick_text 時に promo_url() で utm 付与置換される。
-# 旧8種（t_3848cbde）は下位8種としてそのまま保持・新增8種を上位に追加し、
-# 週1投稿時代の文言も完全に轮転から除外しない（旧 idx7「This week's snapshot」は
-# 新 idx7 として保持。slot a の W39 実投稿は既に投稿済みのため再実行されない）。
+# ※クロスプロモーション時（33%確率）に Apify URL (~90字) が追加されるため、
+#   テンプレート本体は190字以内に抑制（{free}または{paid}の片方のみ + Apify = 258字以内）。
 WEEKLY_TWEETS: list[str] = [
-    "Japanese anime figure & collectibles price data, updated weekly. "
-    "Try the free sample CSV first: {free} #animefigures #datasets",
-    "Resellers: track Japanese hobby market prices with a weekly CSV. "
-    "Free sample: {free} Full dataset: {paid} #reselling",
-    "New week, new price data for anime figures & collectibles in Japan. "
-    "Preview: {free} #marketdata #collectibles",
-    "Weekly Japan hobby market report is out — what moved, what didn't. "
-    + "{report} Sample CSV: {free} #pricedata",
-    "Building a price model on Japanese collectibles? Start with the free sample: "
-    + "{free} Full weekly dataset: {paid} #dataanalytics",
-    "Sold-comps style price history for anime figures, kits and hobby items — "
-    + "weekly CSV. Sample: {free} #figures #hobby",
-    "Free 30-row sample of the Japan hobby & collectibles price dataset: "
-    + "{free} Full version updates every week. #anime #datasets",
-    "This week's Japanese collectibles price snapshot is live. "
-    + "Free sample: {free} Deep-dive report: {report} #priceguide",
+    "Japanese anime figure & collectibles price data, updated weekly. Free sample: {free} #animefigures #datasets",
+    "Resellers: track Japanese hobby market prices weekly. Free sample: {free} #reselling",
+    "New week, new price data for anime figures in Japan. Preview: {free} #marketdata #collectibles",
+    "Weekly Japan hobby market report — what moved, what didn't. {report} Sample CSV: {free} #pricedata",
+    "Building a price model on Japanese collectibles? Start free: {free} Full weekly dataset: {paid} #dataanalytics",
+    "Sold-comps price history for anime figures/kits — weekly CSV. Sample: {free} #figures #hobby",
+    "Free 30-row sample of Japan hobby & collectibles price dataset: {free} Full version updates weekly. #anime #datasets",
+    "This week's Japanese collectibles price snapshot live. Free sample: {free} Deep-dive report: {report} #priceguide",
     # ── 週2投稿拡大（t_e6968f4f）: 新增8種 ──
-    "Weekly CSV of Japanese anime figure prices, fresh off the press. "
-    "Grab the free sample: {free} #animefigures",
-    "Track Japan's hobby market every week. Free sample: {free} "
-    "Paid dataset: {paid} #marketdata",
-    "Price intelligence for Japanese collectibles, delivered weekly. "
-    "Start free: {free} #pricedata",
-    "What's hot in Japan's anime market this week? Free sample: {free} "
-    "Full report: {report} #anime",
-    "Resellers, here's your weekly Japan hobby price sheet. "
-    "Sample: {free} Full CSV: {paid} #reselling",
-    "Japanese collectibles price trends, updated every week. "
-    "Preview for free: {free} #figures #hobby",
-    "One weekly CSV, all Japanese anime figure & collectibles prices. "
-    "Free sample: {free} #datasets",
-    "Stay ahead of the Japan hobby market. Free sample: {free} "
-    "Deep dive: {report} #priceguide",
+    "Weekly CSV of Japanese anime figure prices, fresh off the press. Grab free sample: {free} #animefigures",
+    "Track Japan's hobby market weekly. Free sample: {free} Paid dataset: {paid} #marketdata",
+    "Price intelligence for Japanese collectibles, delivered weekly. Start free: {free} #pricedata",
+    "What's hot in Japan's anime market this week? Free sample: {free} Full report: {report} #anime",
+    "Resellers: your weekly Japan hobby price sheet. Sample: {free} Full CSV: {paid} #reselling",
+    "Japanese collectibles price trends, updated weekly. Preview free: {free} #figures #hobby",
+    "One weekly CSV, all Japanese anime figure & collectibles prices. Free sample: {free} #datasets",
+    "Stay ahead of the Japan hobby market. Free sample: {free} Deep dive: {report} #priceguide",
 ]
 
 # 週2投稿のスロット（BOT検知回避のため月曜↔金曜で4日間隔）。
@@ -141,6 +160,8 @@ def pick_text(today: date, state: dict[str, Any], slot: str = "a", force: bool =
 
     slot は "a"（月曜既存）/ "b"（金曜新增 t_e6968f4f）。
     週2投稿でも同一文言連投を避けるため、週×スロットで独立文言を割り当てる。
+    
+    クロスプロモーション: 3分の1の確率で Apify Store アクターへの言及を追加。
     """
     key = week_key(today)
     posted = state.get("posted_weeks", {}).get(key, {})
@@ -153,12 +174,27 @@ def pick_text(today: date, state: dict[str, Any], slot: str = "a", force: bool =
     iso = today.isocalendar()
     idx = _slot_index(iso.week, slot)
     campaign = f"weekly_promo_{key}_{slot}"
+    # 短縮キー（クロスプロモーション時のApify URL追加対応）
+    short_key = campaign.replace("weekly_promo_", "w").replace("-", "")
     raw = WEEKLY_TWEETS[idx]
-    text = raw.format(
-        free=promo_url(FREE_SAMPLE_URL, campaign),
-        paid=promo_url(PAID_DATASET_URL, campaign),
-        report=promo_url(WEEKLY_REPORT_URL, campaign),
-    )
+
+    # クロスプロモーション: 3分の1の確率で Apify アクターをランダム選択
+    apify_mention = ""
+    if random.random() < 0.33:
+        promo_actor = random.choice(APIFY_PROMO_ACTORS)
+        apify_mention = f" 関連データ: {APIFY_ACTOR_URLS[promo_actor]} #ApifyStore"
+        # クロスプロモーション時は短縮キーを使用してURLを短くする
+        text = raw.format(
+            free=promo_url(FREE_SAMPLE_URL, campaign, short=short_key),
+            paid=promo_url(PAID_DATASET_URL, campaign, short=short_key),
+            report=promo_url(WEEKLY_REPORT_URL, campaign, short=short_key),
+        ) + apify_mention
+    else:
+        text = raw.format(
+            free=promo_url(FREE_SAMPLE_URL, campaign),
+            paid=promo_url(PAID_DATASET_URL, campaign),
+            report=promo_url(WEEKLY_REPORT_URL, campaign),
+        )
     return text, ""
 
 

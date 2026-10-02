@@ -1,0 +1,22 @@
+## 2026-09-28 ブラウザ自動化最新調査サマリ
+
+**詳細レポート**: reports/research-20260928.md
+
+### 即効アクション（今週）
+1. **Playwright v1.63更新 + Test locks/frameLocator/visible()導入** - 低コスト高効果、BOTシグナル削減の足掛かり
+2. **CloakBrowser無料枠トライアル** - 73 C++パッチでCloudflare/再CAPTCHA突破の実測、有料判断の材料に
+3. **Patchright検証環境構築** - CDP層パッチでRuntime.enableリーク根絶、playwright-stealth完全置換の道筋
+
+### 高優先継続課題
+- **人間らしい入力自前実装**（ベジェマウス/揺らぎタイピング/物理スクロール） - ML行動検知対策の核心
+- **CDP互換性監視自動化** - browser_protocol.json diffをCI組込、Fetch/Storageドメイン変更を早期検知
+
+### 技術的負債解消の方向性
+- **playwright-stealthは完全放棄**（Cloudflare v9で機能せず、JSインジェクション限界）
+- **選択肢**: Patchright(Playwrightフォーク・CDPパッチ) または CloakBrowser(C++ソースパッチ・有料) または nodriver(Python CDP直結)
+- **KenshoのCDP 9222運用**は維持、Playwrightの`browserContext.newCDPSession()`併用で生CDPアクセス確保
+
+### 次回深掘りテーマ
+- Patchright vs CloakBrowser 実地ベンチ（goto failed/日、応募成功率、エラー率で比較）
+- Unbrowse的API-first収集の懸賞サイト適用可否（内部API発見調査）
+- MCPサーバー化によるAIエージェント連携（Hermes/Claude Codeから標準ツール呼出）

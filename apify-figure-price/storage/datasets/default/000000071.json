@@ -1,0 +1,42 @@
+{
+  "figureId": "60605",
+  "sourceUrl": "https://myfigurelist.com/figure/60605/Golden-Axe-Tyris-Flare-1-12",
+  "name": "Golden Axe - Tyris Flare - 1/12",
+  "series": "Golden Axe",
+  "character": "Tyris Flare",
+  "manufacturer": "Storm Collectibles",
+  "category": "Scale Figure",
+  "releaseDate": "2022-03-01",
+  "scale": "1/12",
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "4570030946129",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/116b69fc-ac7f-38b5-a778-d7f1ff2672f1/Golden-Axe-Tyris-Flare-1-12_6559e449-bf3b-303f-8503-b0f06d397ead.jpg",
+  "offers": [
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 17230,
+      "availability": "OutOfStock",
+      "url": "NOTFOUND",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:27.815684"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 17800,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/golden-axe-tyris-flare-blue-dragon-set-scc94612",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:27.815707"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": null,
+  "highestPriceJpy": null,
+  "inStockCount": 0,
+  "totalOffersCount": 2,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

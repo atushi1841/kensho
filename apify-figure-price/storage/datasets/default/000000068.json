@@ -1,0 +1,50 @@
+{
+  "figureId": "10144",
+  "sourceUrl": "https://myfigurelist.com/figure/10144/Lucky-Star-Tsukasa-Hiiragi-Uniform-Ver-Complete-Figure",
+  "name": "Lucky Star - Tsukasa Hiiragi Uniform  Ver. Complete Figure",
+  "series": "Lucky Star",
+  "character": "Tsukasa Hiiragi",
+  "manufacturer": "WAVE",
+  "category": "Scale Figure",
+  "releaseDate": "2009-08-01",
+  "scale": "Non-Scale",
+  "sculptor": "Bunmei",
+  "heightCm": null,
+  "janCode": "4943209550678",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4943209550678/Lucky-Star-Tsukasa-Hiiragi-Uniform-Ver-Complete-Figure_f7d7e3e9-8c7f-417a-84fb-df18490ab11c.jpg",
+  "offers": [
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 3272,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/eng/10086025",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:25.246139"
+    },
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 3200,
+      "availability": "OutOfStock",
+      "url": "https://www.amiami.com/eng/detail/?gcode=FIG-MOE-0621",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:25.246168"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 2975,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/1-12-scale-tsukasa-hiiragi-uniform-ver-pvc-wavnf-67",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:25.246175"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": null,
+  "highestPriceJpy": null,
+  "inStockCount": 0,
+  "totalOffersCount": 3,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

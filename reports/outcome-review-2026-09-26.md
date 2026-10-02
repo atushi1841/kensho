@@ -18,23 +18,22 @@
   - `t_ee5ca962` gumroad_leg_seconds 240→42 (方向: down)
   - `t_350dc888` 契約テスト tests/test_loop_health_json_contract.py の failed 件数 1→0 (方向: down)
   - `t_5ecf88bf` crash-loopカードをparkできる検出率（閾値超過カードに対するpark実行） 0→1 (方向: up)
-- ⚠️ after<before: 11件（悪化疑い 10件 / 方向未宣言 1件）
+- ⚠️ after<before: 8件（悪化疑い 6件 / 方向未宣言 2件）
 - 悪化疑いの詳細:
   - `t_d5e647a1` 401/HTTP失敗時の偽成功報告率(%) 100→0 (方向: down)
-  - `t_1ab013e8` tests/test_revenue_collect.py の V94/UnknownBilling 系の失敗数 1→0 (方向: down)
   - `t_fda64102` actors_free（誤報告件数） 20→0 (方向: down)
   - `t_f8cec77d` 1 懸賞あたり再実行（CEILING 連続失敗）総件数 / 日 6→9 (方向: up)
   - `t_f8cec77d` goto Timeout 失敗件数 / 日（BOT シグナル代理） 3.7→7 (方向: up)
   - `t_f8cec77d` 圏外垢応募前スキップ（WiFi Disconnected 検出回数） 0→132 (方向: up)
-  - `t_62e7242b` outcome-review レポート内の `方向:` 行数 0→33 (方向: up)
-  - `t_8946706e` accounts sharing one failure-ceiling counter 4→1 (方向: down)
-  - `t_5af1b5d8` 最小PATH実行 vs 通常実行の JSON diff 行数 36→0 (方向: down)
-  - `t_e67d5550` crontab-referenced scripts with bare hermes (of 20) 1→0 (方向: down)
+  - `t_5af1b5d8` 最小PATH実行の running 件数(縮退の有無) 0→3 (方向: up)
+  - `t_5af1b5d8` bare hermes 実行呼出箇所数 6→0 (方向: down)
   - `t_3609e866` complete_watchdog 誤検知件数 54→0 (方向: down)
+  - `t_66c14eb4` self_heal 最終失敗の可観測件数（ログ復元、件） 0→36 (方向: up)
   - `t_66c14eb4` 1失敗あたり実測試行回数（回） 0→3.0 (方向: up)
   - `t_66c14eb4` BOTシグナル: goto failed 件/日 63→227 (方向: up)
   - `t_66c14eb4` BOTシグナル: ログイン試行(Xにログイン確認中) 回/日 54→108 (方向: up)
 - 方向未宣言の詳細:
+  - `t_e67d5550` real kanban cards created during verification 0→0 (方向未宣言)
   - `t_66c14eb4` apply 操作開始あたり最終失敗率（%） 20.81→33.33 (方向未宣言) [after の分母は3操作開始のみで統計的意味なし。悪化方向の数値も併記 統計的意味なし(n/a)]
 - 未実測タスク（before/after の数値を追記してクローズすること）:
   - `t_3ecce448` [収益・高] twscrape dead-skipがresearch外runでzero_streakを毎回増やし、9/2（kensho-revenue-worker）

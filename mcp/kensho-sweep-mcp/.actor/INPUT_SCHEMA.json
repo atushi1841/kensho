@@ -1,0 +1,8 @@
+{
+  "title": "Input schema for kensho-sweep-mcp",
+  "description": "kensho-sweep-mcp is a read-only MCP server. It requires no input parameters — start it and connect an MCP client (e.g. via the Apify MCP integration or Smithery) to discover its tools: current_sweep, sweep_history, top_prize_movers. All data is bundled locally; no network, no API key, no account.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {},
+  "required": []
+}

@@ -1,0 +1,122 @@
+{
+  "figureId": "19234",
+  "sourceUrl": "https://myfigurelist.com/figure/19234/Nendoroid-Blue-Archive-Takanashi-Hoshino",
+  "name": "Nendoroid Blue Archive Takanashi Hoshino",
+  "series": "Blue Archive",
+  "character": "Hoshino Wakaba",
+  "manufacturer": "Good Smile Company",
+  "category": "Scale Figure",
+  "releaseDate": "2024-10-01",
+  "scale": "Non-Scale",
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "4580590193390",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4580590193390/Nendoroid-Blue-Archive-Takanashi-Hoshino_e50647e6-5d61-4555-a287-eaf2170ef946.jpg",
+  "offers": [
+    {
+      "shop_name": "Plaza Japan",
+      "price_jpy": 9581,
+      "availability": "InStock",
+      "url": "https://www.plazajapan.com/4580590193390/",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:51.821733"
+    },
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 7480,
+      "availability": "InStock",
+      "url": "NOTFOUND",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:51.821787"
+    },
+    {
+      "shop_name": "Okini Land",
+      "price_jpy": 8585,
+      "availability": "OutOfStock",
+      "url": "https://okini.land/en/71782-nendoroid-takanashi-hoshino-good-smile-company-4580590193390.html?id_currency=5",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:51.821797"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 6000,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/nendoroid-hoshino-takanashi-blue-archive-gsc19339",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:51.821802"
+    },
+    {
+      "shop_name": "Ninoma",
+      "price_jpy": 10958,
+      "availability": "InStock",
+      "url": "NOTFOUND",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:51.821806"
+    },
+    {
+      "shop_name": "Meccha Japan",
+      "price_jpy": 10013,
+      "availability": "OutOfStock",
+      "url": "https://meccha-japan.com/en/chibi-style/134656-nendoroid-hoshino-takanashi-blue-archive.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:51.821821"
+    },
+    {
+      "shop_name": "Lunar Toy Store",
+      "price_jpy": 15310,
+      "availability": "OutOfStock",
+      "url": "https://www.lunartoystore.com/sp-exodia-the-forbidden-one-pop-up-parade",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:51.821832"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 5963,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/eng/11083720",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:51.821837"
+    },
+    {
+      "shop_name": "Animota",
+      "price_jpy": 13428,
+      "availability": "InStock",
+      "url": "https://animota.net/en-eu/products/animota-e-pre5059",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:51.821841"
+    },
+    {
+      "shop_name": "Japan Figure",
+      "price_jpy": 9631,
+      "availability": "InStock",
+      "url": "https://japan-figure.com/products/good-smile-company-blue-archive-takanashi-hoshino-nendoroid-2461-collectible",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:51.821846"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 8726,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/blue-archive-takanashi-hoshino-nendoroid-2461-good-smile-company?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:51.821850"
+    },
+    {
+      "shop_name": "Hobby Genki",
+      "price_jpy": 5544,
+      "availability": "OutOfStock",
+      "url": "https://hobby-genki.com/fr/nendoroid/33123-nendoroid-hoshino-takanashi-blue-archive-figure-4580590193390.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:01:51.821854"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 7480,
+  "highestPriceJpy": 13428,
+  "inStockCount": 6,
+  "totalOffersCount": 12,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

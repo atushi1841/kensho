@@ -1,0 +1,98 @@
+{
+  "figureId": "588",
+  "sourceUrl": "https://myfigurelist.com/figure/588/SH-Figuarts-Sailor-Chibi-Moon-Sailor-Moon",
+  "name": "S.H. Figuarts - Sailor Chibi Moon \"Sailor Moon\"",
+  "series": "Bishoujo Senshi Sailor Moon",
+  "character": "Usagi Tsukino",
+  "manufacturer": "Bandai",
+  "category": "Scale Figure",
+  "releaseDate": "2015-05-01",
+  "scale": "Non-Scale",
+  "sculptor": null,
+  "heightCm": null,
+  "janCode": "4543112920140",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/4543112920140/SH-Figuarts-Sailor-Chibi-Moon-Sailor-Moon_30cac19d-20d7-44f3-86ec-a3a2180be217.jpg",
+  "offers": [
+    {
+      "shop_name": "Amiami",
+      "price_jpy": 3250,
+      "availability": "OutOfStock",
+      "url": "https://www.amiami.com/eng/detail/?gcode=FIGURE-009635",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:19.137985"
+    },
+    {
+      "shop_name": "Okini Land",
+      "price_jpy": 5520,
+      "availability": "InStock",
+      "url": "https://okini.land/en/11059-s-h-figuarts-sailor-chibi-moon-bandai-4543112920140.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:19.138010"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 3570,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/s-h-figuarts-sailor-chibi-moon-ban992014",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:19.138073"
+    },
+    {
+      "shop_name": "Ninoma",
+      "price_jpy": 9415,
+      "availability": "InStock",
+      "url": "https://www.ninoma.com/index.php/sh-figuarts-sailor-moon-sailor-chibi-moon",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:19.138104"
+    },
+    {
+      "shop_name": "Meccha Japan",
+      "price_jpy": 8000,
+      "availability": "OutOfStock",
+      "url": "https://meccha-japan.com/en/sh-figuarts/41696-figure-chibiusa-tsukino-sailor-moon-shfiguarts.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:19.138118"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 3927,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/eng/10306928",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:19.138124"
+    },
+    {
+      "shop_name": "Animota",
+      "price_jpy": 13306,
+      "availability": "InStock",
+      "url": "https://animota.net/products/animota-e-fig2563",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:19.138128"
+    },
+    {
+      "shop_name": "Solaris Japan",
+      "price_jpy": 8907,
+      "availability": "InStock",
+      "url": "https://solarisjapan.com/products/bishoujo-senshi-sailor-moon-sailor-chibimoon-s-h-figuarts-bandai?aff=1095",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:19.138132"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 9160,
+      "availability": "InStock",
+      "url": "https://www.nin-nin-game.com/en/japanese-import-sailor-moon-hobbies-and-figures/14025-sailor-moon-sailor-chibi-moon-sh-figuarts-en.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T10:02:19.138136"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 5520,
+  "highestPriceJpy": 13306,
+  "inStockCount": 5,
+  "totalOffersCount": 9,
+  "confidence": 1.0,
+  "sourcesMerged": [
+    "jsonl"
+  ]
+}

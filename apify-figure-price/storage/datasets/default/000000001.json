@@ -1,0 +1,123 @@
+{
+  "figureId": "62857",
+  "sourceUrl": "https://myfigurelist.com/figure/62857/Dragon-Quest-VI-Maboroshi-no-Daichi-Battle-Rex-Metallic-Monsters-Gallery-Hacksaurus-Metallic-Monster-Gallery",
+  "name": "Dragon Quest VI Maboroshi no Daichi - Battle Rex - Metallic Monsters Gallery - Hacksaurus - Metallic Monster Gallery",
+  "series": "Dragon Quest VI: Maboroshi no Daichi",
+  "character": "Battle Rex",
+  "manufacturer": "Square Enix",
+  "category": "Anime Figure",
+  "releaseDate": "2023-10-01",
+  "scale": null,
+  "sculptor": null,
+  "heightCm": 5,
+  "janCode": "4988601257961",
+  "imageUrl": "https://cdn.myfigurelist.com/figure-images/031956bd-4ac0-3146-9c89-7295f7d63320/Dragon-Quest-VI-Maboroshi-no-Daichi-Battle-Rex-Metallic-Monsters-Gallery-Hacksaurus-Metallic-Monster-Gallery_a93b39aa-d8a6-3464-9bb1-d8cc04717625.jpg",
+  "offers": [
+    {
+      "shop_name": "Ninoma",
+      "price_jpy": 7372,
+      "availability": "InStock",
+      "url": "https://ninoma.com/products/dragon-quest-metallic-monsters-gallery-hacksaurus?_pos=1&_sid=4649d2249&_ss=r",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:57:36.314844"
+    },
+    {
+      "shop_name": "Meccha Japan",
+      "price_jpy": 6195,
+      "availability": "InStock",
+      "url": "https://meccha-japan.com/en/figures/115888-figure-hacksaurus-dragon-quest-metallic-monsters-gallery.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:57:36.314872"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 4125,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/11006950",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:57:36.314878"
+    },
+    {
+      "shop_name": "Okini Land",
+      "price_jpy": 4875,
+      "availability": "OutOfStock",
+      "url": "https://okini.land/en/58611-dragon-quest-metallic-monsters-gallery-hacksaurus-square-enix-4988601257961.html?id_currency=5",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:57:36.314883"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 4500,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/dragon-quest-metallic-monsters-gallery-battle-rex-reissue-enx25796-2",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:57:36.314888"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 4091,
+      "availability": "OutOfStock",
+      "url": "https://www.nin-nin-game.com/en/dragon-quest/141808-dragon-quest-metallic-monster-gallery-hacksaurus-reissue-square-enix-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:57:36.314892"
+    },
+    {
+      "shop_name": "Ninoma",
+      "price_jpy": 7372,
+      "availability": "InStock",
+      "url": "https://ninoma.com/products/dragon-quest-metallic-monsters-gallery-hacksaurus?_pos=1&_sid=4649d2249&_ss=r",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:59:51.116504"
+    },
+    {
+      "shop_name": "Meccha Japan",
+      "price_jpy": 6195,
+      "availability": "InStock",
+      "url": "https://meccha-japan.com/en/figures/115888-figure-hacksaurus-dragon-quest-metallic-monsters-gallery.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:59:51.116567"
+    },
+    {
+      "shop_name": "Hobby Search",
+      "price_jpy": 4125,
+      "availability": "OutOfStock",
+      "url": "https://www.1999.co.jp/11006950",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:59:51.116577"
+    },
+    {
+      "shop_name": "Okini Land",
+      "price_jpy": 4875,
+      "availability": "OutOfStock",
+      "url": "https://okini.land/en/58611-dragon-quest-metallic-monsters-gallery-hacksaurus-square-enix-4988601257961.html?id_currency=5",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:59:51.116583"
+    },
+    {
+      "shop_name": "Hobby Link Japan",
+      "price_jpy": 4500,
+      "availability": "OutOfStock",
+      "url": "https://www.hlj.com/dragon-quest-metallic-monsters-gallery-battle-rex-reissue-enx25796-2",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:59:51.116588"
+    },
+    {
+      "shop_name": "Nin-Nin Game",
+      "price_jpy": 4091,
+      "availability": "OutOfStock",
+      "url": "https://www.nin-nin-game.com/en/dragon-quest/141808-dragon-quest-metallic-monster-gallery-hacksaurus-reissue-square-enix-.html",
+      "condition": "NewCondition",
+      "fetched_at": "2026-09-27T09:59:51.116593"
+    }
+  ],
+  "msrpJpy": null,
+  "lowestPriceJpy": 6195,
+  "highestPriceJpy": 7372,
+  "inStockCount": 2,
+  "totalOffersCount": 6,
+  "confidence": 0.95,
+  "sourcesMerged": [
+    "csv",
+    "jsonl"
+  ]
+}
