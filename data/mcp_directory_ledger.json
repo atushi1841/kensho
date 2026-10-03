@@ -1,103 +1,81 @@
 {
-  "task_id": "t_7b23112d",
-  "created": "2026-10-04T02:37:00Z",
-  "updated": "2026-10-04T02:42:00Z",
+  "generated_at": "2026-10-04T06:42:24",
+  "registries": {
+    "official_mcp_registry": "https://registry.modelcontextprotocol.io"
+  },
   "servers": [
     {
-      "name": "japan-anime-figure-mcp",
-      "repo": "https://github.com/atushi1841/kensho/tree/main/mcp/japan-anime-figure-mcp",
-      "tools": 3
+      "server": "kensho-kaku",
+      "registry_name": "io.github.atushi1841/kensho-kaku",
+      "registry_verified": true,
+      "git_repo": "https://github.com/atushi1841/kensho-kaku",
+      "release_asset": "https://github.com/atushi1841/kensho-kaku/releases/download/v1.0.0/server.mcpb",
+      "fileSha256": "a8d2b7f08a262389be50f4e635081516a262bb91f315d469db586b64646f9767",
+      "version": "1.0.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/kensho-kaku'",
+      "verified_at": "2026-10-04T06:41:51",
+      "registry_version": "1.0.0"
     },
     {
-      "name": "kensho-sweep-mcp",
-      "repo": "https://github.com/atushi1841/kensho/tree/main/mcp/kensho-sweep-mcp",
-      "tools": 3
+      "server": "kensho-kclub",
+      "registry_name": "io.github.atushi1841/kensho-kclub",
+      "registry_verified": true,
+      "git_repo": "https://github.com/atushi1841/kensho-kclub",
+      "release_asset": "https://github.com/atushi1841/kensho-kclub/releases/download/v1.0.0/server.mcpb",
+      "fileSha256": "828c6090ee8f1938afd59c0eb03e6adb1919f22e779838988282a463c6f61e75",
+      "version": "1.0.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/kensho-kclub'",
+      "verified_at": "2026-10-04T06:41:51",
+      "registry_version": "1.0.0"
     },
     {
-      "name": "tcg-price-japan",
-      "repo": "https://github.com/atushi1841/kensho/tree/main/mcp/tcg-price-japan",
-      "tools": 3
+      "server": "kensho-kema",
+      "registry_name": "io.github.atushi1841/kensho-kema",
+      "registry_verified": true,
+      "git_repo": "https://github.com/atushi1841/kensho-kema",
+      "release_asset": "https://github.com/atushi1841/kensho-kema/releases/download/v1.0.0/server.mcpb",
+      "fileSha256": "fa1476f02f91b48d602732ae3f067ed37faa985f79beebebd677deadf390a6f5",
+      "version": "1.0.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/kensho-kema'",
+      "verified_at": "2026-10-04T06:41:52",
+      "registry_version": "1.0.0"
     },
     {
-      "name": "kensho-kaku",
-      "repo": "https://github.com/atushi1841/kensho/tree/main/mcp/kensho-kaku",
-      "tools": 3
+      "server": "kensho-sweep-mcp",
+      "registry_name": "io.github.atushi1841/kensho-sweep-mcp",
+      "registry_verified": true,
+      "git_repo": "https://github.com/atushi1841/kensho-sweep-mcp",
+      "release_asset": "https://github.com/atushi1841/kensho-sweep-mcp/releases/download/v1.0.0/server.mcpb",
+      "fileSha256": "396651d822782d8c7d67c89b6e1201950f441258bfc784fe9bbf09dcf7ffb355",
+      "version": "1.0.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/kensho-sweep-mcp'",
+      "verified_at": "2026-10-04T06:42:22",
+      "registry_version": "1.0.0"
     },
     {
-      "name": "kensho-kclub",
-      "repo": "https://github.com/atushi1841/kensho/tree/main/mcp/kensho-kclub",
-      "tools": 3
+      "server": "tcg-price-japan",
+      "registry_name": "io.github.atushi1841/tcg-price-japan",
+      "registry_verified": true,
+      "git_repo": "https://github.com/atushi1841/tcg-price-japan",
+      "release_asset": "https://github.com/atushi1841/tcg-price-japan/releases/download/v1.0.0/server.mcpb",
+      "fileSha256": "f5478c6f52cf5a4e3e64b3f17bb47657fdfc76e9be8326852edbbc34c80cf991",
+      "version": "1.0.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/tcg-price-japan'",
+      "verified_at": "2026-10-04T06:42:23",
+      "registry_version": "1.0.0"
     },
     {
-      "name": "kensho-kema",
-      "repo": "https://github.com/atushi1841/kensho/tree/main/mcp/kensho-kema",
-      "tools": 3
+      "server": "japan-anime-figure-mcp",
+      "registry_name": "io.github.atushi1841/japan-anime-figure-mcp",
+      "registry_verified": true,
+      "git_repo": "https://github.com/atushi1841/japan-anime-figure-mcp",
+      "release_asset": "https://github.com/atushi1841/japan-anime-figure-mcp/releases/download/v1.0.0/server.mcpb",
+      "fileSha256": "d4f44c27f1c42af8b4e10353d10a9e68812f7dee9c5a829e2b01f8a5c1a0c405",
+      "version": "1.0.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/japan-anime-figure-mcp'",
+      "verified_at": "2026-10-04T06:42:24",
+      "registry_version": "1.0.0"
     }
   ],
-  "directories": [
-    {
-      "name": "Smithery",
-      "url": "https://smithery.ai",
-      "status": "done",
-      "method": "MCPB方式自動公開済み",
-      "date": "2026-10-03",
-      "note": "6本すべてregistry検証済み"
-    },
-    {
-      "name": "mcp.so",
-      "url": "https://mcp.so/servers",
-      "status": "manual_required",
-      "method": "Webフォーム手動申請（API未確認）",
-      "date": null,
-      "note": "Submitボタンあり。自動API未発見。手動申請必要"
-    },
-    {
-      "name": "Glama",
-      "url": "https://glama.ai/mcp/servers",
-      "status": "manual_required",
-      "method": "Add Server→サインイン→Dockerfile確認",
-      "date": null,
-      "note": "Dockerfile必須・glama.jsonで所有権主張。自動化不可"
-    },
-    {
-      "name": "PulseMCP",
-      "url": "https://www.pulsemcp.com/servers",
-      "status": "paused",
-      "method": "新規提交一時停止中",
-      "date": "2026-10-04",
-      "note": "新submit/pause中と表示。再開待ち"
-    },
-    {
-      "name": "LobeHub",
-      "url": "https://lobehub.com/mcp",
-      "status": "manual_required",
-      "method": "手動登録（API未確認）",
-      "date": null,
-      "note": "MCPマーケットプレイス。自動API未確認"
-    },
-    {
-      "name": "awesome-mcp-servers",
-      "url": "https://github.com/punkpeye/awesome-mcp-servers",
-      "status": "blocked",
-      "method": "GitHub PR必要",
-      "date": null,
-      "note": "gh auth未ログイン・GH_TOKEN未設定。PR作成不可。再開条件=GH_TOKEN設定"
-    },
-    {
-      "name": "mcpservers.org",
-      "url": "https://mcpservers.org/",
-      "status": "unknown",
-      "method": "調査中",
-      "date": null,
-      "note": "9800+サーバー掲載。申請方法未確認"
-    }
-  ],
-  "summary": {
-    "auto_possible": 0,
-    "manual_required": 3,
-    "blocked": 1,
-    "paused": 1,
-    "unknown": 1,
-    "done": 1
-  }
+  "note": "全6本が公式レジストリに登録済み。GitHub Actions + OIDC で自動公開（サーバーごとの .github/workflows/publish-mcp.yml）。crawl型ディレクトリ（glama.ai, github.com/mcp）への波及は時間差あり（登録直後は404）。"
 }
