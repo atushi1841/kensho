@@ -17,8 +17,8 @@
     "/mnt/d/Project2/kensho/reports/t_fb291adc_verification.md"
   ],
   "evidence_hashes": [
-    "sha256:a360d48b7e12f45c89d0e7f3b2a1c5e6d8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3 kensho/scraping/competition_scorer.py",
-    "sha256:b0a3994c8d23e56f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f tests/test_competition_scorer.py"
+    "sha256:161f07c37eca729351ed881ef33746feff4317bb58ba2d556f2ee15ba06a5b2f",
+    "sha256:c79da7f05963aa787ddc54518dbfeb1f226beff00cb14a11fbb2c2af14584d5d"
   ],
   "outcome": {
     "metric": "competition_score_test_count",
