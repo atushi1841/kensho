@@ -1,7 +1,8 @@
 {
   "generated_at": "2026-10-04T06:42:24",
   "registries": {
-    "official_mcp_registry": "https://registry.modelcontextprotocol.io"
+    "official_mcp_registry": "https://registry.modelcontextprotocol.io",
+    "official_mcp_registry_total": 8
   },
   "servers": [
     {
@@ -75,6 +76,30 @@
       "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/japan-anime-figure-mcp'",
       "verified_at": "2026-10-04T06:42:24",
       "registry_version": "1.0.0"
+    },
+    {
+      "server": "japan-minimum-wage-mcp",
+      "registry_name": "io.github.atushi1841/japan-minimum-wage-mcp",
+      "registry_verified": true,
+      "registry_version": "0.1.0",
+      "git_repo": "https://github.com/atushi1841/japan-minimum-wage-mcp",
+      "release_asset": "https://github.com/atushi1841/japan-minimum-wage-mcp/releases/download/v0.1.0/server.mcpb",
+      "fileSha256": "3118a7e27a5af116ee95496c3b4a2a1852599bf362d3c5b4130b03724fcf21b1",
+      "version": "0.1.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/japan-minimum-wage-mcp'",
+      "verified_at": "2026-10-04T08:02:05"
+    },
+    {
+      "server": "japan-fuel-price-mcp",
+      "registry_name": "io.github.atushi1841/japan-fuel-price-mcp",
+      "registry_verified": true,
+      "registry_version": "0.1.0",
+      "git_repo": "https://github.com/atushi1841/japan-fuel-price-mcp",
+      "release_asset": "https://github.com/atushi1841/japan-fuel-price-mcp/releases/download/v0.1.0/server.mcpb",
+      "fileSha256": "b3c4cec804b805d8f01f6129f4e0fcb5d315dba478702e08cf2e86b251616afc",
+      "version": "0.1.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/japan-fuel-price-mcp'",
+      "verified_at": "2026-10-04T08:02:05"
     }
   ],
   "note": "全6本が公式レジストリに登録済み。GitHub Actions + OIDC で自動公開（サーバーごとの .github/workflows/publish-mcp.yml）。crawl型ディレクトリ（glama.ai, github.com/mcp）への波及は時間差あり（登録直後は404）。"
