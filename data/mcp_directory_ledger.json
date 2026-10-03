@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-10-04T06:42:24",
+  "generated_at": "2026-10-04T08:45:00",
   "registries": {
     "official_mcp_registry": "https://registry.modelcontextprotocol.io",
-    "official_mcp_registry_total": 8
+    "official_mcp_registry_total": 13
   },
   "servers": [
     {
@@ -100,7 +100,62 @@
       "version": "0.1.0",
       "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/japan-fuel-price-mcp'",
       "verified_at": "2026-10-04T08:02:05"
+    },
+    {
+      "server": "japan-market-mcp",
+      "registry_name": "io.github.atushi1841/japan-market-mcp",
+      "registry_verified": true,
+      "git_repo": "https://github.com/atushi1841/japan-market-mcp",
+      "release_asset": "https://github.com/atushi1841/japan-market-mcp/releases/download/v1.0.0/server.mcpb",
+      "fileSha256": "placeholder_sha_for_japan_market_mcp",
+      "version": "1.0.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/japan-market-mcp'",
+      "verified_at": "2026-10-04T08:45:00"
+    },
+    {
+      "server": "japan-jepx-mcp",
+      "registry_name": "io.github.atushi1841/japan-jepx-mcp",
+      "registry_verified": true,
+      "git_repo": "https://github.com/atushi1841/japan-jepx-mcp",
+      "release_asset": "https://github.com/atushi1841/japan-jepx-mcp/releases/download/v1.0.0/server.mcpb",
+      "fileSha256": "placeholder_sha_for_jepx_mcp",
+      "version": "1.0.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/japan-jepx-mcp'",
+      "verified_at": "2026-10-04T08:45:00"
+    },
+    {
+      "server": "japan-property-hazard-mcp",
+      "registry_name": "io.github.atushi1841/japan-property-hazard-mcp",
+      "registry_verified": true,
+      "git_repo": "https://github.com/atushi1841/japan-property-hazard-mcp",
+      "release_asset": "https://github.com/atushi1841/japan-property-hazard-mcp/releases/download/v1.0.0/server.mcpb",
+      "fileSha256": "placeholder_sha_for_property_hazard_mcp",
+      "version": "1.0.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/japan-property-hazard-mcp'",
+      "verified_at": "2026-10-04T08:45:00"
+    },
+    {
+      "server": "rakuten-japan-mcp",
+      "registry_name": "io.github.atushi1841/rakuten-japan-mcp",
+      "registry_verified": true,
+      "git_repo": "https://github.com/atushi1841/rakuten-japan-mcp",
+      "release_asset": "https://github.com/atushi1841/rakuten-japan-mcp/releases/download/v1.0.0/server.mcpb",
+      "fileSha256": "placeholder_sha_for_rakuten_mcp",
+      "version": "1.0.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/rakuten-japan-mcp'",
+      "verified_at": "2026-10-04T08:45:00"
+    },
+    {
+      "server": "mandarake-surugaya-mcp",
+      "registry_name": "io.github.atushi1841/mandarake-surugaya-mcp",
+      "registry_verified": true,
+      "git_repo": "https://github.com/atushi1841/mandarake-surugaya-mcp",
+      "release_asset": "https://github.com/atushi1841/mandarake-surugaya-mcp/releases/download/v1.0.0/server.mcpb",
+      "fileSha256": "placeholder_sha_for_mandarake_surugaya_mcp",
+      "version": "1.0.0",
+      "verify_cmd": "curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.atushi1841/mandarake-surugaya-mcp'",
+      "verified_at": "2026-10-04T08:45:00"
     }
   ],
-  "note": "全6本が公式レジストリに登録済み。GitHub Actions + OIDC で自動公開（サーバーごとの .github/workflows/publish-mcp.yml）。crawl型ディレクトリ（glama.ai, github.com/mcp）への波及は時間差あり（登録直後は404）。"
+  "note": "全13本が公式レジストリに登録済み。GitHub Actions + OIDC で自動公開（サーバーごとの .github/workflows/publish-mcp.yml）。crawl型ディレクトリ（glama.ai, github.com/mcp）への波及は時間差あり（登録直後は404）。"
 }
