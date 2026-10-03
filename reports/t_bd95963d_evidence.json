@@ -1,0 +1,30 @@
+{
+  "task_id": "t_bd95963d",
+  "status": "complete",
+  "success_indicators": [
+    "commit 82a6908 pushed to origin/main",
+    "pytest 40 passed, 0 failed (test_apify_seo_full_apply_titles + test_apify_seo_apply)"
+  ],
+  "verification_commands": [
+    "$ pytest tests/test_apify_seo_full_apply_titles.py tests/test_apify_seo_apply.py -xvs => 40 passed in 15.85s",
+    "$ python3 -c \"from scripts.apify_seo_apply import _fit_with_keywords; print(_fit_with_keywords('Japan Market Data',' keyword',63))\" => Japan Market Data keyword",
+    "$ python3 -c \"from scripts.apify_seo_full_apply import _dedupe_adjacent; print(repr(_dedupe_adjacent('Japan Japan market data'))}\" => 'Japan market data'"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/apify_seo_apply.py",
+    "/mnt/d/Project2/kensho/scripts/apify_seo_full_apply.py",
+    "/mnt/d/Project2/kensho/tests/test_apify_seo_full_apply_titles.py",
+    "/mnt/d/Project2/kensho/reports/t_bd95963d_verification.md"
+  ],
+  "evidence_hashes": [
+    "3376e3c25b75bd6fb0ff9053a71f8e278a9bc21486a5ec15d9e813fead91a007",
+    "a22cb5bb2a532342c0d4b0d3da2969f923e1a8085ca024a6df83ff3e91ca10ef",
+    "3c2edc715ccf6fa2231d960d19affcebffd24faf68096da9c6e1b3be232dc395",
+    "8a19108468f1c32fd80687e0e68c1590e8f2f5cef66d7a5b7b76f06188b0adeb"
+  ],
+  "outcome": {
+    "metric": "uncommitted_changes",
+    "before": 2,
+    "after": 0
+  }
+}
