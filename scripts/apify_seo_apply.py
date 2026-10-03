@@ -183,6 +183,21 @@ def list_my_actors(token: str) -> dict[str, str]:
 # --- 値のマージ（pure function, テスト可能）---
 
 
+def _fit_with_keywords(base: str, suffix: str, cap: int) -> str:
+    """base + suffix を cap 文字に収める。
+
+    単純な [:cap]  truncation では suffix（追加キーワード）が末尾から切れて
+    実際に stores に反映されない（PUT は 200 だが値が unchanged）ため、
+    suffix 優先で base の末尾をカットする。cap に収まらなければ suffix 側も切る。
+    """
+    if len(base) + len(suffix) <= cap:
+        return (base + suffix)[:cap]
+    keep = cap - len(suffix)
+    if keep < 0:
+        return suffix[:cap]
+    return base[:keep].rstrip() + suffix
+
+
 def merge_title(actor: dict[str, Any], finding: Finding) -> tuple[str, list[str]]:
     """title_keyword_gap 系の suggested を title に反映。
 
@@ -200,8 +215,10 @@ def merge_title(actor: dict[str, Any], finding: Finding) -> tuple[str, list[str]
             new_tokens.append(kw)
     if not new_tokens:
         return current_title, []
-    new_title = (current_title + " " + " ".join(new_tokens)).strip()
-    return new_title[:MAX_TITLE], ["title"]
+    # MAX_TITLE(63) 内に収めるが、キーワード（suffix）が切れないよう base 優先でカット
+    suffix = " " + " ".join(new_tokens)
+    new_title = _fit_with_keywords(current_title.strip(), suffix, MAX_TITLE)
+    return new_title, ["title"]
 
 
 def merge_description(actor: dict[str, Any], finding: Finding) -> tuple[str, list[str]]:
@@ -221,17 +238,18 @@ def merge_description(actor: dict[str, Any], finding: Finding) -> tuple[str, lis
             base = current
         # 推奨語句がない場合は "Updated for better discoverability." を付加
         suffix = " Updated for better discoverability."
-        new_desc = (base + suffix).strip()
-        return new_desc[:MAX_DESCRIPTION], ["description"]
+        new_desc = _fit_with_keywords(base, suffix, MAX_DESCRIPTION)
+        return new_desc, ["description"]
     if "追加:" in finding.suggested:
         after = finding.suggested.split("追加:", 1)[1].strip()
         keywords = [k.strip().split("(")[0].strip() for k in after.split(",") if k.strip()]
         new_tokens = [k for k in keywords if k and k.lower() not in current.lower()]
         if not new_tokens:
             return current, []
+        # キーワードが末尾から切れないよう base 優先でカット
         suffix = " " + ", ".join(new_tokens) + "."
-        new_desc = (current.rstrip(".") + suffix).strip()
-        return new_desc[:MAX_DESCRIPTION], ["description"]
+        new_desc = _fit_with_keywords(current.rstrip("."), suffix, MAX_DESCRIPTION)
+        return new_desc, ["description"]
     return current, []
 
 
@@ -335,7 +353,7 @@ def build_update_payload(actor: dict[str, Any], finding: Finding) -> tuple[dict[
         desc = actor.get("description", "") or ""
         suffix = " Updated for better discoverability."
         if suffix.strip() not in desc:
-            payload["description"] = (desc.rstrip(".") + suffix).strip()[:MAX_DESCRIPTION]
+            payload["description"] = _fit_with_keywords(desc.rstrip("."), suffix, MAX_DESCRIPTION)
             changed.append("description")
 
     return payload, changed

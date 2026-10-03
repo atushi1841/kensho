@@ -44,6 +44,7 @@ import argparse
 import csv
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -101,7 +102,33 @@ def infer_usage(actor_name: str) -> tuple[str, str]:
     for kw, (label, desc) in USAGE_KEYWORDS.items():
         if kw in name_l:
             return (label, desc)
-    return ("Japan market data", "scrapes Japanese marketplace data")
+    # 汎用ラベルへ落とすと "Japan Japan market data Scraper ..." のように
+    # 重複語の同一タイトルが量産される（2026-10-03 実測: 19本が同一）。
+    # アクター名から話題語を導いて一意性を確保する。
+    topic = name_l
+    for prefix in ("japan-", "jp-", "jpn-"):
+        if topic.startswith(prefix):
+            topic = topic[len(prefix) :]
+            break
+    topic = re.sub(r"-(scraper|api|actor|feed|stats|search|fetch|test)$", "", topic)
+    topic = re.sub(r"-(scraper|api)$", "", topic)
+    label = topic.replace("-", " ").strip() or "market data"
+    return (label, "scrapes Japanese marketplace data")
+
+
+def _dedupe_adjacent(text: str) -> str:
+    """直後に同じ語が並ぶのを1つに畳む（"Japan Japan market" → "Japan market"）。
+
+    ラベルと固定接頭辞の連結（"Japan " + label）で重複語が生まれるため、
+    生成した文字列を出力する直前に必ず通す。
+    """
+    out: list[str] = []
+    for word in text.split():
+        norm = word.strip(",.;:—–-").lower()
+        if out and norm and norm == out[-1].strip(",.;:—–-").lower():
+            continue
+        out.append(word)
+    return " ".join(out)
 
 
 def _truncate(text: str, limit: int, suffix: str = "...") -> str:
@@ -122,25 +149,25 @@ def build_description(actor_name: str, label: str, usage: str) -> str:
         f"JSON / CSV output via Apify dataset, pay-per-event per item scraped. "
         f"Ideal for resale arbitrage, market research, and price monitoring."
     )
-    return _truncate(text, CHAR_LIMITS["description"])
+    return _truncate(_dedupe_adjacent(text), CHAR_LIMITS["description"])
 
 
 def build_seo_description(actor_name: str, label: str, usage: str) -> str:
     """seoDescription <=160字の CTR 最適化英文。"""
     text = f"Japan {label} scraper — {usage}. Price, condition, seller data. PPE pricing, JSON/CSV output."
-    return _truncate(text, CHAR_LIMITS["seoDescription"])
+    return _truncate(_dedupe_adjacent(text), CHAR_LIMITS["seoDescription"])
 
 
 def build_seo_title(actor_name: str, label: str) -> str:
     """seoTitle <=60字。"""
     text = f"Japan {label} Scraper — Price, Listings, JSON"
-    return _truncate(text, CHAR_LIMITS["seoTitle"])
+    return _truncate(_dedupe_adjacent(text), CHAR_LIMITS["seoTitle"])
 
 
 def build_title(actor_name: str, label: str) -> str:
     """title <=63字。"""
     text = f"Japan {label} Prices — Listings & Market Data"
-    return _truncate(text, CHAR_LIMITS["title"])
+    return _truncate(_dedupe_adjacent(text), CHAR_LIMITS["title"])
 
 
 def build_readme(actor_name: str, label: str, usage: str) -> str:
