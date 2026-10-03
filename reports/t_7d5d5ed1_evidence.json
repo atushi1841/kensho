@@ -1,0 +1,30 @@
+{
+  "task_id": "t_7d5d5ed1",
+  "status": "complete",
+  "success_indicators": [
+    "manifest repositoryUrl/homepageUrl 追加完了",
+    "mcpb 再パック完了 kensho-kema",
+    "git commit 50255bf push 完了"
+  ],
+  "verification_commands": [
+    "$ git -C /mnt/d/Project2/kensho log -1 --oneline → 50255bf manifest repositoryUrl/homepageUrl 追加 (t_7d5d5ed1 step1)",
+    "$ python3 -c \"import json; d=json.load(open(/mnt/d/Project2/kensho/mcp/kensho-kema/manifest.json)); print(d.get(repositoryUrl))\" → https://github.com/atushi1841/kensho",
+    "$ ls -l /mnt/d/Project2/kensho/mcp/kensho-kema/server.mcpb"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/manifest.json",
+    "/mnt/d/Project2/kensho/mcp/kensho-kclub/manifest.json",
+    "/mnt/d/Project2/kensho/mcp/kensho-kaku/manifest.json",
+    "/mnt/d/Project2/kensho/mcp/kensho-sweep-mcp/manifest.json",
+    "/mnt/d/Project2/kensho/mcp/tcg-price-japan/manifest.json",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/server.mcpb"
+  ],
+  "evidence_hashes": [
+    "sha256:322a45d5d281a19d3c722cebe93483b69993065304d606ce484fc6be5a9c7672",
+    "sha256:7bb4df3dca8f7e45b723db7d8d86c9e739efe5d312e9a0cc6bee41d9a5388a7f",
+    "sha256:4cbae59f49afa2ad4cd856376626d2fc9386b02bb8cf1a3f7e1768b0e42e40da",
+    "sha256:04283c35a592b5367652d3c87519503d80d530180e76f09548c277bd194c5edd",
+    "sha256:e3f0094d847279e63eb5c3111b879f2511ab76750f90a752772b912c0095b4b1",
+    "sha256:3ab9bb3add7bbb02954de29263fa37d8624a99f032a9d78961f6d294abd50921"
+  ]
+}
