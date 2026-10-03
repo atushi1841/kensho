@@ -45,6 +45,9 @@ from pathlib import Path
 from typing import Any
 
 REPO = Path(__file__).resolve().parent.parent
+# 同ディレクトリのモジュールを直接importできるようにする（pytestからのimportにも対応）
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from reddit_comment_writer import quality_check, write_comment  # noqa: E402
 COOKIE_FILE = REPO / "data" / "reddit" / "cookie_new.json"
 HISTORY_FILE = REPO / "data" / "reddit" / "warmup_history.json"
 SCHEDULE_FILE = REPO / "data" / "reddit" / "warmup_schedule.json"
@@ -76,7 +79,7 @@ SUB_WEIGHT: dict[str, float] = {
     "AskReddit": 1.0,
 }
 
-# factual关键词与图价数据的匹配关键词
+# スレ内容と図録価格データを突き合わせるためのキーワード
 FACTUAL_TOPICS: list[dict[str, Any]] = [
     {"keywords": ["figure", "anime figure", "collection", "prize", "pull", "scale figure"],
      "weight": 1.5,
@@ -334,8 +337,9 @@ def draft_from_candidates(cands: list[dict[str, Any]], fact: dict[str, Any],
             continue
 
         draft = make_draft(c, topic, fact)
-        # 120-400字にばらす: 末尾をランダムに削る/補う
-        draft = trim_to_range(draft, MIN_DRAFT_CHARS, MAX_DRAFT_CHARS)
+        # 品質ゲートを通過できない候補は出さない（埋め草で水増ししない）
+        if not draft:
+            continue
         used_subs.add(c["sub"])
         used_titles_toks.append(set(re.findall(r"[a-z0-9\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff]+", draft.lower())))
         result.append({
@@ -353,6 +357,34 @@ def draft_from_candidates(cands: list[dict[str, Any]], fact: dict[str, Any],
 
 def make_draft(cand: dict[str, Any], topic: dict[str, Any] | None,
                fact: dict[str, Any]) -> str:
+    """スレ本文を読んで、そのスレ固有の英語コメントを1つ書く。
+
+    2026-10-03 改修: 定型文プールの連結と「長さが足りなければ埋め草で水増し」を廃止した。
+    旧方式は同一文の反復（「参考になれば幸いです。参考になれば幸いです。」）と
+    全草稿の同型化を生み、Reddit が最も嫌う "AI slop" の典型だった。
+    生成できない/品質ゲートに落ちた場合は **空文字** を返す（水増ししない）。
+    """
+    fact_for_llm: dict[str, Any] | None = None
+    if topic and fact:
+        fact_for_llm = {
+            "topic": "used anime figure and hobby listings on Japanese marketplaces",
+            "median": fact.get("median"),
+            "p25": fact.get("p25"),
+            "p75": fact.get("p75"),
+            "count": fact.get("count"),
+        }
+    history = [str(h.get("draft", "")) for h in load_history() if h.get("draft")]
+    return write_comment(
+        sub=str(cand.get("sub", "")),
+        title=str(cand.get("title", "")),
+        body=str(cand.get("selftext", "") or ""),
+        fact=fact_for_llm,
+        history=history,
+    ) or ""
+
+
+def _make_draft_template_legacy(cand: dict[str, Any], topic: dict[str, Any] | None,
+                               fact: dict[str, Any]) -> str:
     """1つの事実を入れた草稿を生成。宣伝なし・リンクなし・長さは後でトリム。"""
     parts: list[str] = []
     base = cand.get("title", "")
@@ -406,22 +438,14 @@ def make_draft(cand: dict[str, Any], topic: dict[str, Any] | None,
 
 def trim_to_range(text: str, lo: int, hi: int) -> str:
     """日本語/英数字文字数でlo-hi範囲に収める。末尾切り捨て＋語尾調整。"""
-    padding_options = [
-        " ぜひ皆さんの意見も聞かせてください。",
-        " 参考になれば幸いです。",
-        " 何か別の視点があれば教えて下さい。",
-        " 私も同じような経験があるので、お力になれれば。",
-        " 違う立場の方の意見も聞いてみたいです。",
-    ]
     char_count = len(text)
     if lo <= char_count <= hi:
         return text
     if char_count < lo:
-        # 短すぎる: 十分になるまで補う
-        while len(text) < lo and padding_options:
-            pad = random.choice(padding_options)
-            text = text.rstrip() + pad
-            char_count = len(text)
+        # 短すぎる場合でも埋め草で水増ししない。旧実装はここで定型文を継ぎ足し、
+        # 「参考になれば幸いです。参考になれば幸いです。」のような反復を生んでいた。
+        # 呼び出し側の品質ゲート（reddit_comment_writer.quality_check）が弾く。
+        return text.strip()
     # 長すぎる: 末尾を切る（単語境界で）
     # 日本語は文字単位で切っても大丈夫（区切り文字は含まない前提）
     while len(text) > hi and "。" in text:
@@ -750,7 +774,16 @@ def main() -> int:
 
 
 def do_submit(sched: dict[str, Any], fact: dict[str, Any]) -> int:
-    """実投稿実行（危险）。CDP+cookie + /api/comment パターンを使用。"""
+    """実投稿実行（危険）。CDP+cookie + /api/comment パターンを使用。
+
+    2026-10-03: 投稿経路（submit_comment_via_cdp）は未実装のため、この関数は
+    必ずここで停止する。誤って「投稿できた」と誤解されないよう明示的に失敗させる。
+    """
+    print("ERROR: 投稿経路は未実装です。reddit_warmup_agent は現在ドラフト生成のみです。",
+          file=sys.stderr)
+    print("       --submit を使っても投稿されません。実装は別タスクで行ってください。", file=sys.stderr)
+    return 2
+
     log("SUBMIT mode ACTIVE. Will post comments via CDP+browser fetch.")
 
     username = "sabotenJAL"
@@ -804,16 +837,25 @@ def do_submit(sched: dict[str, Any], fact: dict[str, Any]) -> int:
 
 
 def submit_comment_via_cdp(sub: str, post_id: str, body: str) -> dict[str, Any]:
-    """CDP + ブラウザ内 fetch で /api/comment を叩く（既存パターン流用）。
-    実環境では Windows PowerShell 経由で CDP Chrome を起動し、
-    runtime.evaluate で fetch('/api/comment') を実行する。
+    """/api/comment を CDP + ブラウザ内 fetch で叩く（実装は次段階）。
+
+    2026-10-03 時点の状態を明示する:
+      ここは **未実装** であり、呼ぶと必ず NotImplementedError になる。
+      旧版は {"ok": False} を返すだけの「動かないスタブ」だったため、
+      「--submit で撃てる」と誤解される余地があった。誤解のほうが危険なので
+      明示的に例外を上げる。
+
+    実装する場合の正しい経路（スキル reddit-posting-automation に実証手順あり）:
+      1. cookie_new.json をヘッダ文字列に変換して CDP の Chrome に注入
+      2. powershell.exe 経由で Windows 側の Chrome を --remote-debugging-port 付きで起動
+      3. Runtime.evaluate で fetch('/api/comment', {method:'POST', ...}) を実行
+      4. thing_id は 't3_' + post_id
+      導線は scripts/apify_console_driver.js（WSL→powershell→node の CDP 型）を流用できる。
     """
-    # この実装は skeleton: 実際の CDPrun は WSL -> powershell.exe が必要
-    # ドライランではここは呼ばれない想定。--submit 時は別途 CDP起動処理が必要。
-    log(f"CDP submit stub called: r/{sub} t3_{post_id}")
-    # 実際の CDPrun は gumroad_cross_post_trigger.py のパターンを参照。
-    # ここでは仮実装（テスト時は通らない）。
-    return {"ok": False, "error": "CDP not implemented in this stub for dry-run safety"}
+    raise NotImplementedError(
+        "submit_comment_via_cdp は未実装です。--submit しても投稿されません。"
+        " 実装するまでは --submit を使わないでください。"
+    )
 
 
 if __name__ == "__main__":

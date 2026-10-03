@@ -35,6 +35,21 @@ FAKE_COOKIE = [
 FIGURE_DATA_PATH = Path("/mnt/d/Project2/kensho/data/anime_figure_prices_normalized.jsonl")
 
 
+@pytest.fixture(autouse=True)
+def _stub_comment_writer(monkeypatch: pytest.MonkeyPatch) -> None:
+    """単体テストがLLM（ネットワーク）へ出ないよう、生成器を既定でスタブ化する。
+
+    生成器を実際に呼ぶテストは、この fixture の後に自分で差し替える。
+    """
+    monkeypatch.setattr(
+        wa, "write_comment",
+        lambda **kw: (
+            "I've been logging second-hand listings across a few Japanese shops and the "
+            "spread between asking and selling prices is wider than most people expect."
+        ),
+    )
+
+
 class FakeResponse:
     def __init__(self, body: bytes, status: int = 200) -> None:
         self.body = body
@@ -155,35 +170,47 @@ def test_jaccard_empty() -> None:
 # draft generation
 # ---------------------------------------------------------------------------
 
-def test_draft_length_range() -> None:
-    """草稿は 120-400 字範囲内に収まる（複数回ランダムシードで確認）。"""
+DRAFT_STUB = (
+    "I've been logging second-hand listings across a few Japanese shops, and the gap "
+    "between asking prices and what actually sells is bigger than most people assume, "
+    "especially once an item is discontinued."
+)
+
+
+def test_draft_length_range(monkeypatch: pytest.MonkeyPatch) -> None:
+    """生成草稿は品質ゲート（長さ含む）を通過する。"""
     c = {"sub": "japan", "title": "Best anime figures under 5000 yen?",
          "post_id": "test1", "age_hours": 1.5, "comments": 2,
          "score": 5, "source": "rising", "created_utc": int(time.time()) - 5400,
          "author": "someuser"}
     fact = {"count": 654, "median": 8500, "p25": 5000, "p75": 12000, "min": 3000, "max": 25000}
-    # 3回試行して全て範囲内か確認
-    for seed in range(3):
-        random.seed(seed)
-        draft = wa.draft_from_candidates([c], fact, [], count=1)[0]["draft"]
-        assert wa.MIN_DRAFT_CHARS <= len(draft) <= wa.MAX_DRAFT_CHARS, \
-            f"seed={seed}: draft length {len(draft)} out of [{wa.MIN_DRAFT_CHARS}, {wa.MAX_DRAFT_CHARS}]: {draft[:80]}"
-
-
-def test_draft_no_links() -> None:
-    """リンクが含まれていないことを確認。"""
-    c = {"sub": "NoStupidQuestions", "title": "Why do people buy stuff online?",
-         "post_id": "z1", "age_hours": 2.0, "comments": 3,
-         "score": 8, "source": "rising", "created_utc": int(time.time()) - 7200,
-         "author": "u"}
-    fact = {}
+    monkeypatch.setattr(wa, "write_comment", lambda **kw: DRAFT_STUB)
     draft = wa.draft_from_candidates([c], fact, [], count=1)[0]["draft"]
-    assert "http" not in draft.lower(), f"link in draft: {draft}"
-    assert "www." not in draft.lower(), f"www in draft: {draft}"
+    ok, reason = wa.quality_check(draft)
+    assert ok, reason
+    assert wa.MIN_DRAFT_CHARS <= len(draft) <= wa.MAX_DRAFT_CHARS
 
 
-def test_factual_grounding_injected() -> None:
-    """factual トピックが組み込まれている。"""
+def test_quality_gate_rejects_links() -> None:
+    """リンク入りは品質ゲートで弾かれる。"""
+    with_link = (
+        "I checked the same thing last year and the numbers were close, though my "
+        "sample was smaller than I expected. See https://example.com for the details."
+    )
+    ok, reason = wa.quality_check(with_link)
+    assert not ok
+    assert reason == "contains_link"
+
+
+def test_factual_grounding_passed_to_writer(monkeypatch: pytest.MonkeyPatch) -> None:
+    """実データの数値が生成器へ渡される（捏造させないための入力）。"""
+    captured: dict = {}
+
+    def _fake(**kw: object) -> str:
+        captured.update(kw)
+        return DRAFT_STUB
+
+    monkeypatch.setattr(wa, "write_comment", _fake)
     c = {"sub": "DataIsBeautiful", "title": "What dataset would you love to see visualized?",
          "post_id": "f1", "age_hours": 1.0, "comments": 2,
          "score": 12, "source": "rising", "created_utc": int(time.time()) - 3600,
@@ -191,12 +218,19 @@ def test_factual_grounding_injected() -> None:
     fact = {"count": 654, "median": 8500, "p25": 5000, "p75": 12000, "min": 3000, "max": 25000}
     drafts = wa.draft_from_candidates([c], fact, [], count=1)
     assert len(drafts) == 1
-    draft_text = drafts[0]["draft"]
-    # 価格情報は「5,000〜12,000」形式で入る
-    has_price = ("5,000" in draft_text and "12,000" in draft_text) or \
-                ("5000" in draft_text and "12000" in draft_text) or \
-                "8500" in draft_text
-    assert has_price, f"factual price not in draft: {draft_text}"
+    assert captured["fact"]["median"] == 8500
+    assert captured["fact"]["count"] == 654
+    assert str(captured["title"]).startswith("What dataset")
+
+
+def test_draft_skipped_when_writer_returns_none(monkeypatch: pytest.MonkeyPatch) -> None:
+    """生成器が書けないときは草稿を出さない（水増ししない）。"""
+    monkeypatch.setattr(wa, "write_comment", lambda **kw: None)
+    c = {"sub": "japan", "title": "Any question at all here?",
+         "post_id": "q1", "age_hours": 1.0, "comments": 1,
+         "score": 3, "source": "rising", "created_utc": int(time.time()) - 3600,
+         "author": "u"}
+    assert wa.draft_from_candidates([c], {}, [], count=1) == []
 
 
 def test_dedup_by_jaccard(tmp_path: Path) -> None:
@@ -433,10 +467,11 @@ def test_load_fact_data_missing() -> None:
 # trim_to_range
 # ---------------------------------------------------------------------------
 
-def test_trim_short() -> None:
+def test_trim_short_does_not_pad() -> None:
+    """短すぎても埋め草で水増ししない（旧実装は定型文を継ぎ足していた）。"""
     short = "あいう"
     trimmed = wa.trim_to_range(short, 120, 400)
-    assert len(trimmed) >= 120, f"trim result too short: '{trimmed}' ({len(trimmed)})"
+    assert trimmed == short, f"短い入力を水増ししている: '{trimmed}'"
 
 
 def test_trim_long() -> None:
