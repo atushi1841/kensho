@@ -256,20 +256,22 @@ def attach_to_daily(results: list[dict[str, Any]]) -> bool:
         "triggered_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "actors": [
             {
-                "actual_name": r["actual_name"],
-                "actor_id": r["actor_id"],
-                "price_usd": r["price_usd"],
-                "triggered": r["triggered"],
-                "run_id": r["run_id"],
-                "status": r["status"],
-                "error": r["error"],
+                "actual_name": r.get("actual_name", "?"),
+                "actor_id": r.get("actor_id", "?"),
+                "price_usd": r.get("price_usd", 0),
+                "triggered": r.get("triggered", False),
+                "run_id": r.get("run_id"),
+                "status": r.get("status"),
+                "error": r.get("error"),
+                "skipped": r.get("skipped", False),
+                "reason": r.get("reason", ""),
             }
             for r in results
         ],
         "summary": {
-            "total_triggered": sum(1 for r in results if r["triggered"]),
-            "total_failed": sum(1 for r in results if r["error"]),
-            "estimated_revenue_usd": sum(r["price_usd"] for r in results if r["triggered"] and not r["error"]),
+            "total_triggered": sum(1 for r in results if r.get("triggered")),
+            "total_failed": sum(1 for r in results if r.get("error")),
+            "estimated_revenue_usd": sum(r.get("price_usd", 0) for r in results if r.get("triggered") and not r.get("error")),
         },
     }
     
