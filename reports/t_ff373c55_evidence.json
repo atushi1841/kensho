@@ -15,9 +15,12 @@
     "/mnt/d/Project2/kensho/orchestrator.py",
     "/mnt/d/Project2/kensho/kensho/orchestrator.py",
     "/mnt/d/Project2/kensho/data/competition_score.json",
-    "/mnt/d/Project2/kensho/data/collected_today.json"
+    "/mnt/d/Project2/kensho/data/collected_today.json",
+    "/mnt/d/Project2/kensho/reports/t_ff373c55_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_ff373c55_evidence.json"
   ],
   "evidence_hashes": [
-    "a3dba35f8e9c2d1b4a7e6f5d3c2b1a0987654321fedcba9876543210abcdef1234"
+    "8a6f0b154d0afb0aa14d611c386eb135a26e7f8aeeea0f7a5292044a86ec010d",
+    "501405360112c38123391b027fa378eb2f65a9bf430531ecb25b074e34b5e178"
   ]
 }
