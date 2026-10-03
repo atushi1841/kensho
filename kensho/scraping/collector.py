@@ -1176,6 +1176,28 @@ def _collect_impl(
     except Exception as _dse:  # noqa: BLE001
         out(f"  [WARN] dead-source sentinel 失敗（fail-open）: {_dse}")
 
+    # ── 競争率スコア算出 + 保存（t_fb291adc）──
+    # data/competition_score.json に各懸賞の競争率スコアを保存
+    # スコアが低い = 低競争率 = 高優先度（先に応募すべき）
+    try:
+        from kensho.scraping.competition_scorer import (
+            COMPETITION_SCORE_KEY,
+            compute_batch_competition_scores,
+            save_competition_scores,
+        )
+
+        _scored_items: list[dict[str, Any]] = list(result.get("collected", []))
+        _comp_scores: dict[str, dict[str, Any]] = compute_batch_competition_scores(_scored_items)
+        _score_path: Path = DATA_DIR / "competition_score.json"
+        save_competition_scores(_comp_scores, _score_path)
+
+        _scored_count: int = sum(1 for _it in _scored_items if COMPETITION_SCORE_KEY in _it)
+        out(f"  [競争率] competition_score.json 保存（{len(_comp_scores)}件 / 付与率 "
+            f"{_scored_count / max(len(_scored_items), 1) * 100:.0f}%）")
+        out(f"  [競争率] ファイル: {_score_path}")
+    except Exception as _ce:  # noqa: BLE001 — fail-open
+        out(f"  [WARN] 競争率スコア算出/保存失敗（fail-open）: {_ce}")
+
     # ── 導線スナップショット + 非X手動レポート（t_f7b0d3bd）──
     # ・data/collected_today.json ← 収集済み全件のJSONリスト（導入ラベル付き）
     # ・reports/non_x_manual_YYYYMMDD.md ← 非X(自動応募対象外)案件の手動・要確認リスト

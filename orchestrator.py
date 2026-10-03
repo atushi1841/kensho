@@ -78,12 +78,12 @@ def should_collect(now_str: str, collect_times: list[str]) -> bool:
 
 def get_pending_batches(cfg: dict[str, Any], state: dict[str, Any]) -> list[tuple[str, str, int]]:
     """
-    スケジュール時刻を過ぎて未処理のバッチ一覧を取得。
-    優先順位: round_robin（最後に処理した垢を避ける） or pending_first
+    スケジュール時刻を過ぎた未処理のバッチ一覧を取得。
+    優先順位: competition_score（低スコア=低競争率=高優先度）> round_robin > pending_first
     """
     now: datetime = datetime.now()
     now_m = now.hour * 60 + now.minute
-    priority = cfg.get("orchestrator", {}).get("priority", "round_robin")
+    priority = cfg.get("orchestrator", {}).get("priority", "competition_score")
 
     pending = []  # [(account_key, batch_time_str, batch_max)]
 
@@ -116,7 +116,43 @@ def get_pending_batches(cfg: dict[str, Any], state: dict[str, Any]) -> list[tupl
     if not pending:
         return []
 
-    if priority == "pending_first":
+    # ── 競争率スコア順ソート（priority=competition_score）──
+    if priority == "competition_score":
+        try:
+            col_path = os.path.join(os.path.dirname(__file__), "data", "collected.json")
+            comp_path = os.path.join(os.path.dirname(__file__), "data", "competition_score.json")
+            if os.path.exists(col_path) and os.path.exists(comp_path):
+                with open(col_path) as f:
+                    col_data = json.load(f)
+                with open(comp_path) as f:
+                    comp_data = json.load(f)
+
+                items = col_data.get("collected", [])
+                # tweet_id → competition_score のマッピング
+                score_map: dict[str, float] = {}
+                for _item in items:
+                    _tid = _item.get("tweet_id", "") or _item.get("x_url", "")
+                    if _tid and _tid in comp_data:
+                        score_map[_tid] = comp_data[_tid].get("score", 50.0)
+
+                # 各アカウントのpending件数 × 平均スコアでソート
+                def _avg_score(key: str) -> float:
+                    _cand_scores = [
+                        score_map.get(item.get("tweet_id", "") or item.get("x_url", ""), 50.0)
+                        for item in items
+                        if item.get("applied", {}).get(key) is None
+                    ]
+                    if not _cand_scores:
+                        return 50.0
+                    return sum(_cand_scores) / len(_cand_scores)
+
+                pending.sort(key=lambda x: _avg_score(x[0]))
+        except Exception as _e:
+            print(f"[WARN] competition_scoreソート失敗: {_e}", flush=True)
+            # fallback: round_robin
+            priority = "round_robin"
+
+    elif priority == "pending_first":
         try:
             col_path = os.path.join(os.path.dirname(__file__), "data", "collected.json")
             if os.path.exists(col_path):
