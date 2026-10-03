@@ -90,6 +90,7 @@ MCP_RESIDENT_SUFFIX = "-mcp"
 MCP_RESIDENT_IDS = {"57SNehd4cHNFyUCj3", "RdCHlXHphoLsWnyhh", "0eeiFH0nLqlWVoOAc", "xUYsD13SVHHRFQS1H", "BxstMzzxh8jq6UtfS"}
 
 # 起動間隔（同一アクターの連続起動防止用）
+# 2026-10-04 t_ab4e4024: 24hに固定（週1cron実行対応。72hだと隔週実行になるため）
 MIN_INTERVAL_HOURS = 24
 
 # 実行タイムアウト上書き
