@@ -638,11 +638,12 @@ else:
 # フィールドが実装されていなかったため判断基準が停止中。全エージェント(critic/worker/
 # QA) の action を决定する health JSON の priority / advice を明示する。
 #   blocked_triage : blocked > 0
-#   backlog_reduction: ready == 0 AND blocked == 0
-#   new_proposals  : ready == 0 AND blocked == 0 AND running == 0
+#   backlog_reduction: ready == 0 AND blocked == 0 AND todo > 0（縮小すべきbacklogが実在する）
+#   new_proposals  : ready == 0 AND blocked == 0 AND todo == 0（盤面にworkが無い＝供給が必要）
 #   normal         : それ以外
-# ready 数は DB の status カウントから取得（DB 不可時は None → 利用可能な情報のみで判断）。
+# ready/todo 数は DB の status カウントから取得（DB 不可時は None → 利用可能な情報のみで判断）。
 _ready_count = None
+_todo_count = None
 try:
     _dbp = os.environ.get("_LH_DB", "")
     if _dbp and os.path.exists(_dbp):
@@ -656,13 +657,19 @@ try:
             ).fetchone()
             if _row:
                 _ready_count = int(_row[0] or 0)
+                _todo_count = int(_row[1] or 0)
 except Exception:
     pass
 
 if blocked:
     priority = "blocked_triage"
 elif _ready_count is not None and _ready_count == 0:
-    if len(running) == 0:
+    if _todo_count == 0:
+        # 2026-10-04 修正(t_): 旧実装は running>0 を理由に backlog_reduction を返していたが、
+        # todo もゼロ＝縮小すべきbacklogが存在しない。running は「進行中が1件」を意味するだけで
+        # 供給の必要が無いことの根拠にならない。この誤判定により、盤面が空のときに
+        # 「新規提案禁止」が無限に続くデッドロックへ入っていた（Critic が14日で2枚しか
+        # 起票できていなかった真因）。todo 実在時のみ backlog_reduction とする。
         priority = "new_proposals"
     else:
         priority = "backlog_reduction"
@@ -687,7 +694,7 @@ def _role_advice(role):
         reason = "ready=0（実行可能タスクなし）→ todo backlog の縮小を"
     elif priority == "new_proposals":
         action = "propose_new"
-        reason = "ready=0かつrunning=0（board 全停止）→ 新規提案の起票を"
+        reason = "ready=0かつtodo=0（盤面にworkが無い）→ 新規提案の起票を"
     else:
         action = "continue"
         reason = "通常運転（優先度判定不要）"
