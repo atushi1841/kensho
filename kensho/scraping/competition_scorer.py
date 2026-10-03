@@ -293,10 +293,11 @@ def compute_batch_competition_scores(items: list[dict[str, Any]]) -> dict[str, d
     return result
 
 
-def save_competition_scores(scores: dict[str, dict[str, Any]], output_path: Path) -> None:
+def save_competition_scores(scores: dict[str, dict[str, Any]], output_path: Path | str) -> None:
     """競争率スコアをJSONに保存."""
     import json
     try:
+        output_path = Path(output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(
             json.dumps(scores, ensure_ascii=False, indent=2),
