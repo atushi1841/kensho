@@ -222,7 +222,7 @@ orchestrator:
   no_action_window:
   - 00:00
   - 07:00
-  priority: pending_first
+  priority: competition_score
 policy_engine:
   hourly_limits:
     follow: 15
