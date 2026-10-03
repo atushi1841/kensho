@@ -40,7 +40,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 # ── パス設定 ──────────────────────────────────────────────────────────────────
-PROJECT_DIR = Path(__file__).resolve().parent.parent
+# 固定パス（cron実行時はprofile dirを指すため、 Kensho repo dirを明示）
+PROJECT_DIR = Path("/mnt/d/Project2/kensho")
 DATA_DIR = PROJECT_DIR / "data"
 CRON_JOBS_FILE = Path("/home/atushi/.hermes/profiles/kensho-sweeps/cron/jobs.json")
 NOTEPAD_DIR = Path("/home/atushi/.hermes/profiles/kensho-sweeps/cron/notepad")
