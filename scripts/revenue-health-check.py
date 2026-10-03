@@ -169,7 +169,16 @@ def check_freshness() -> dict:
 def check_external_runs(rev_data: list | None) -> dict:
     """revenue-daily.json の details から external_runs 累計日数を計算。"""
     if not rev_data or not isinstance(rev_data, list):
-        return {"zero_days": 0, "status": "unknown", "warn": False}
+        # 2026-10-03 修正: print_report が total_days / zero_pct を無条件参照するため、
+        # 早期リターンでも同じキー集合を返す（欠損時に KeyError で監視自体が落ちていた）。
+        return {
+            "zero_days": 0,
+            "total_days": 0,
+            "zero_pct": 0.0,
+            "total_external_runs_all_time": 0,
+            "status": "unknown",
+            "warn": False,
+        }
 
     # 各actorのexternal_runsを日次集計して、ゼロ連続日数を求める
     zero_count = 0
@@ -295,8 +304,9 @@ def print_report(state: dict, dry_run: bool = True) -> None:
          f"sales={gs.get('sales')} login_ok={gs.get('login_ok')} age={gs.get('age_h')}h")
 
     er = state["external_runs"]
-    _say(f"  external_runs:       {er['zero_days']}/{er['total_days']}日 ゼロ "
-         f"({er['zero_pct']}%) total_all_time={er.get('total_external_runs_all_time', '?')}")
+    # 2026-10-03: 欠損キーで監視が落ちないよう .get で防御（原因は check_external_runs 側も修正済み）
+    _say(f"  external_runs:       {er.get('zero_days', 0)}/{er.get('total_days', 0)}日 ゼロ "
+         f"({er.get('zero_pct', 0.0)}%) total_all_time={er.get('total_external_runs_all_time', '?')}")
 
     gs2 = state["gumroad_sales"]
     _say(f"  gumroad_sales:       sales={gs2.get('sales')} "
