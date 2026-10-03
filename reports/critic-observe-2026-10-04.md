@@ -7,15 +7,19 @@
 ## Cron 健康度
 | ジョブ | 状態 | 最終結果 | streak |
 |-------|------|---------|--------|
-| kensho-research-agent-monetize | paused→active 復帰 | error 3連続 | →0 |
+| nightly-critic | active | ok | 0 |
+| nightly-worker | active | ok | 0 |
+| nightly-qa | active | ok | 0 |
+| kensho-research-agent-monetize | active | None | 0（復帰済み） |
+| kensho-non-api-revenue-hunter | active | ok | 0 |
+| kensho-revenue-health-check | active | ok（fix済み）| 0 |
+| kensho-revenue-collect | paused | error | 1 |
 | kensho-dataset-weekly-update | paused | error | 2 |
-| kensho-revenue-collect | active | error (RapidAPI cookie期限) | 1 |
-| kensho-revenue-health-check | active | error (DATA_DIR bug) | →0 |
 
 ## 本日の対応
-1. **monetize 復帰**: prompt に出力制約（500字以内・提案2件以内）を追加、max_tokens=2000設定、paused→active
-2. **revenue-health-check**: DATA_DIR 固定化済（前回修正確認済、--dry-run で exit_code=0 確認）
-3. **提案 t_a978d748 作成**: monetize 復帰計画を kensho-revenue-worker に割当
+1. **revenue-health-check fix**: early-returnブランチに`total_days`/`zero_pct`フィールド不足が原因で`KeyError: 'total_days'`が発生。3箇所のearly-returnにデフォルト値を追加して修正完了
+2. **commit ccbfa1d**（kensho-sweeps repo）
+3. **t_a978d748**: 前日作成済み、monetize 復帰計画
 
 ## 収益状況
 - external_runs: 30/30日 ゼロ（構造的要因）
