@@ -11,10 +11,9 @@ CDP + SOCKS5 プロキシ分離でプロモ投稿を自動生成・投稿する�
   - 対象抽出: data/apify_ppe_external_runs_state.json の last_trigger から
     24h 以上経過かつ external_runs=0 のアクターを優先選出。
   - 文言ローテーション: WEEKLY_TWEETS を週番号×スロットで選択（同一文言連投回避）。
-  # 投稿経路: kensho.application.selenium_cdp (CDP Mode + SOCKS5) または
-  #            kensho.application.browser (Playwright Firefox)。
-  #            KENSHO_PROMO_BROWSER 環境変数で切り替え（auto=firefox優先・cdpフォールバック）。
-  #            Playwright Firefox は X /status/ permalink への 403 を回避できる（browser.py 参照）。
+  # 投稿経路: scripts/x_post_driver.js（Windows Chrome + CDP + node）を既定とする。
+  #            KENSHO_PROMO_BROWSER 環境変数で切り替え（auto=win優先、firefox/cdpにフォールバック）。
+  #            2026-10-03 実測で WSL から動くのは win 経路のみ（詳細は下部の経路切り替え節）。
   - 効果測定連携: 投稿 tweet_id を data/apify_store_promo_state.json に記録し、
     翌週の external_runs 変化で効果を追跡可能にする。
 
@@ -48,9 +47,14 @@ PPE_PRICE_FILE = DATA_DIR / "tmp" / "pay_per_event.json"
 
 # ──────────────────────────────────────────────────────────────
 # 投稿経路切り替え（環境変数で制御）
-#   KENSHO_PROMO_BROWSER=firefox → Playwright Firefox（実績あり・確実）
-#   KENSHO_PROMO_BROWSER=cdp    → SeleniumBase CDP Mode（元経路）
-#   未設定/その他               → firefox 優先、cdp フォールバック
+#   KENSHO_PROMO_BROWSER=win     → Windows Chrome + CDP + node（既定・唯一WSLで動く経路）
+#   KENSHO_PROMO_BROWSER=firefox → Playwright Firefox
+#   KENSHO_PROMO_BROWSER=cdp     → SeleniumBase CDP Mode
+#   未設定/auto                  → win → firefox → cdp の順に試す
+#
+# 2026-10-03 実測: WSL の Linux Chrome/chromedriver は SIGTRAP で起動できず
+#   (uc_driver exited -5)、Playwright Firefox は X の入力欄を出せない。
+#   Windows Chrome を CDP で操作する scripts/x_post_driver.js のみが投稿に成功した。
 # ──────────────────────────────────────────────────────────────
 PROMO_BROWSER: str = os.environ.get("KENSHO_PROMO_BROWSER", "auto").lower()
 
@@ -743,24 +747,78 @@ def post_with_playwright(account_key: str, text: str, log_fn: Callable[[str], No
         close_browser(pw, browser, log=None, label="promo_firefox")
 
 
+WIN_TEMP = Path("/mnt/c/temp")
+X_DRIVER_JS = REPO / "scripts" / "x_post_driver.js"
+
+
+def post_with_windows_cdp(account_key: str, text: str, log_fn: Callable[[str], None]) -> str:
+    """Windows の実 Chrome を CDP で操作して投稿する（2026-10-03 実測で唯一通る経路）。
+
+    WSL の Linux Chrome/chromedriver は SIGTRAP で起動できず（uc_driver exited -5）、
+    Playwright Firefox は X の入力欄を出せない。Windows Chrome + CDP + node だけが動く。
+    戻り値は実ツイートID（数字のみ）。取れない場合は例外（偽の成功を返さない）。
+    """
+    import shutil
+    import subprocess
+
+    if not X_DRIVER_JS.exists():
+        raise RuntimeError(f"driver が見つからない: {X_DRIVER_JS}")
+    (WIN_TEMP / "x_body.txt").write_text(text, encoding="utf-8")
+    shutil.copyfile(X_DRIVER_JS, WIN_TEMP / "x_post_driver.js")
+    out_json = WIN_TEMP / "x_post_out.json"
+    if out_json.exists():
+        out_json.unlink()
+
+    log_fn("Windows Chrome + CDP 経路で投稿します")
+    try:
+        proc = subprocess.run(
+            ["powershell.exe", "-NoProfile", "-Command",
+             "cd C:\\temp; node x_post_driver.js x_body.txt C:\\temp\\x_post_out.json"],
+            capture_output=True, text=True, timeout=420,
+        )
+        tail = ((proc.stdout or "") + (proc.stderr or "")).strip().splitlines()[-3:]
+    except subprocess.TimeoutExpired as e:
+        raise RuntimeError(f"windows-cdp タイムアウト: {e}") from e
+
+    if not out_json.exists():
+        raise RuntimeError(f"driver が結果を書かなかった: {tail}")
+    res = json.loads(out_json.read_text(encoding="utf-8"))
+    tweet_id = str(res.get("tweet_id") or "")
+    if not tweet_id.isdigit():
+        raise RuntimeError(f"実IDが取れなかった (status={res.get('status')}, log={tail})")
+    log_fn(f"投稿成功: tweet_id={tweet_id} permalink={res.get('permalink')}")
+    return tweet_id
+
+
 def post_promo(account_key: str, text: str, log_fn: Callable[[str], None]) -> str:
     """環境変数 KENSHO_PROMO_BROWSER に従って投稿経路を選択。
 
-    - firefox: Playwright Firefox（既定・実績あり）
-    - cdp:     SeleniumBase CDP Mode（元経路）
-    - auto:    firefox を試し、失敗時は cdp にフォールバック
+    - win:  Windows Chrome + CDP + node（既定・唯一の動作経路）
+    - firefox: Playwright Firefox
+    - cdp:     SeleniumBase CDP Mode
+    - auto:  win → firefox → cdp の順に試す
+
+    2026-10-03 変更: 既定を win にした。firefox は X の入力欄を出せず、
+    seleniumbase は WSL で uc_driver が SIGTRAP(-5) で即死するため、
+    この2つを先に試すのは無駄な試行（＝BOTシグナルを増やす）でしかない。
     """
     mode = PROMO_BROWSER
+    if mode in ("win", "windows", "cdp-win"):
+        return post_with_windows_cdp(account_key, text, log_fn)
     if mode == "firefox":
         return post_with_playwright(account_key, text, log_fn)
-    elif mode == "cdp":
+    if mode == "cdp":
         return post_with_cdp(account_key, text, log_fn)
-    else:  # auto
-        try:
-            return post_with_playwright(account_key, text, log_fn)
-        except Exception as e:
-            log_fn(f"firefox 経路失敗: {e}; CDP にフォールバック")
-            return post_with_cdp(account_key, text, log_fn)
+    # auto: 動く経路を先に
+    try:
+        return post_with_windows_cdp(account_key, text, log_fn)
+    except Exception as e:
+        log_fn(f"windows-cdp 経路失敗: {e}; firefox にフォールバック")
+    try:
+        return post_with_playwright(account_key, text, log_fn)
+    except Exception as e:
+        log_fn(f"firefox 経路失敗: {e}; seleniumbase にフォールバック")
+        return post_with_cdp(account_key, text, log_fn)
 
 
 def main() -> None:

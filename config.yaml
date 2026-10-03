@@ -5,29 +5,29 @@ accounts:
   key: atushi16
   schedule:
     batches:
-    - max: 15
+    - max: 7
       time: 08:02
-    - max: 15
+    - max: 7
       time: 09:12
-    - max: 15
+    - max: 7
       time: '10:27'
-    - max: 15
+    - max: 7
       time: '11:47'
-    - max: 15
+    - max: 7
       time: '12:56'
-    - max: 15
+    - max: 7
       time: '14:12'
-    - max: 15
+    - max: 7
       time: '15:37'
-    - max: 15
+    - max: 7
       time: '16:47'
-    - max: 15
+    - max: 7
       time: '18:02'
-    - max: 15
+    - max: 7
       time: '19:22'
-    - max: 15
+    - max: 7
       time: '20:47'
-    - max: 15
+    - max: 7
       time: '22:17'
     collects: false
   session: data/x_session.json
