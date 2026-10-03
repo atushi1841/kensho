@@ -23,11 +23,17 @@
     "entry_point": "server/server.py",
     "mcp_config": {
       "command": "python",
-      "args": ["${__dirname}/server/server.py"]
+      "args": [
+        "${__dirname}/server/server.py"
+      ]
     }
   },
   "compatibility": {
-    "platforms": ["darwin", "linux", "win32"],
+    "platforms": [
+      "darwin",
+      "linux",
+      "win32"
+    ],
     "runtimes": {
       "python": ">=3.10"
     }
@@ -35,15 +41,69 @@
   "tools": [
     {
       "name": "tcg_current_price",
-      "description": "Latest used/new/list price snapshot (JPY) for a Pokemon/TCG item in the Japan Suruga-ya dataset."
+      "description": "Current used/new/list price for a Pokemon/TCG item in the Japan (Suruga-ya) dataset.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "item": {
+            "type": "string",
+            "description": "item name or URL substring (e.g. \"リザードン\", \"pokemon card\")."
+          }
+        },
+        "required": [
+          "item"
+        ],
+        "type": "object"
+      }
     },
     {
       "name": "tcg_price_history",
-      "description": "Price time series (oldest first) for an item, up to limit rows."
+      "description": "Price time series (trend) for an item in the Japan TCG used-price dataset.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "item": {
+            "type": "string",
+            "description": "item name or URL substring."
+          },
+          "limit": {
+            "default": 50,
+            "type": "integer",
+            "description": "max number of history rows to return (default 50)."
+          }
+        },
+        "required": [
+          "item"
+        ],
+        "type": "object"
+      }
     },
     {
       "name": "tcg_top_movers",
-      "description": "Biggest |delta JPY| movers in the dataset, with optional up/down direction filter."
+      "description": "Biggest used-price movers in the Japan TCG dataset (ranked by |delta JPY|).",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "direction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "None/\"both\" = up+down, \"up\" = price rose, \"down\" = price fell."
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer",
+            "description": "max movers to return (default 10)."
+          }
+        },
+        "type": "object"
+      }
     }
   ],
   "tools_generated": false,
@@ -58,5 +118,7 @@
     "mcp"
   ],
   "license": "MIT",
-  "privacy_policies": []
+  "privacy_policies": [],
+  "repositoryUrl": "https://github.com/atushi1841/kensho",
+  "homepageUrl": "https://github.com/atushi1841/kensho"
 }

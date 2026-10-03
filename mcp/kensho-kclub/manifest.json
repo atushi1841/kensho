@@ -5,7 +5,53 @@
   "version": "1.0.0",
   "buildTag": "latest",
   "description": "Read-only MCP server exposing the kensho Japan X/Twitter sweepstakes dataset from kenshou.club (additional sweepstakes source for Kensho collection). Kenshou.club archives tagged with 'twitterで応募' provides 50-200+ sweepstakes entries per run.",
-  "readme": "./README.md",
+  "long_description": "Exposes the accumulated kensho Japan sweepstakes dataset from kenshou.club as three read-only MCP tools: current_sweep (latest match), sweep_history (time series), and top_prize_movers (biggest value changes). Pure local data, zero dependencies beyond fastmcp. Ideal for AI agents researching Japanese X/Twitter giveaways.",
+  "author": {
+    "name": "atushi1841"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atushi1841/kensho"
+  },
+  "homepage": "https://github.com/atushi1841/kensho",
+  "documentation": "https://github.com/atushi1841/kensho/tree/main/mcp/kensho-kclub",
+  "support": "https://github.com/atushi1841/kensho/issues",
+  "server": {
+    "type": "python",
+    "entry_point": "src/stdio_main.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "src/stdio_main.py"
+      ]
+    }
+  },
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "linux",
+      "win32"
+    ],
+    "runtimes": {
+      "python": ">=3.10"
+    }
+  },
+  "keywords": [
+    "japan",
+    "sweepstakes",
+    "giveaway",
+    "kenshou",
+    "twitter",
+    "x",
+    "prize",
+    "contest",
+    "mcp"
+  ],
+  "license": "MIT",
+  "privacy_policies": [],
   "input": {
     "title": "Input schema for kensho-kclub",
     "description": "kensho-kclub is a read-only MCP server. It requires no input parameters — start it and connect an MCP client to discover its tools. All data is bundled locally; no network, no API key, no account.",
@@ -24,5 +70,75 @@
   "usesStandbyMode": false,
   "defaultMemoryMbytes": 1024,
   "minMemoryMbytes": 256,
-  "maxMemoryMbytes": 4096
+  "maxMemoryMbytes": 4096,
+  "tools": [
+    {
+      "name": "current_sweep",
+      "description": "Latest sweep matching keyword in the kensho Japan sweepstakes dataset from kenshou.club.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "item name, prize, or URL substring (e.g. \"Amazonギフト\", \"iPhone\", \"リザードン\")."
+          }
+        },
+        "required": [
+          "keyword"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "sweep_history",
+      "description": "Time series of sweeps matching keyword in the kensho dataset from kenshou.club.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "item name, prize, or URL substring."
+          },
+          "limit": {
+            "default": 50,
+            "type": "integer",
+            "description": "max number of history rows to return (default 50)."
+          }
+        },
+        "required": [
+          "keyword"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "top_prize_movers",
+      "description": "Biggest prize value movers in the kensho sweepstakes dataset from kenshou.club (ranked by |delta JPY|).",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "direction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "None/\"both\" = up+down, \"up\" = value rose, \"down\" = value fell."
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer",
+            "description": "max movers to return (default 10)."
+          }
+        },
+        "type": "object"
+      }
+    }
+  ],
+  "repositoryUrl": "https://github.com/atushi1841/kensho",
+  "homepageUrl": "https://github.com/atushi1841/kensho"
 }

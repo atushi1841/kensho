@@ -3,26 +3,118 @@
   "name": "kensho-kema",
   "display_name": "Kensho Kema Sweepstakes MCP",
   "version": "1.0.0",
-  "buildTag": "latest",
-  "description": "Read-only MCP server exposing the kensho Japan X/Twitter sweepstakes dataset from kema (additional sweepstakes source for Kensho collection). Kema is a sweepstakes collector that feeds into the main Kensho data pipeline.",
-  "readme": "./README.md",
-  "input": {
-    "title": "Input schema for kensho-kema",
-    "description": "kensho-kema is a read-only MCP server. It requires no input parameters — start it and connect an MCP client to discover its tools. All data is bundled locally; no network, no API key, no account.",
-    "type": "object",
-    "schemaVersion": 1,
-    "properties": {},
-    "required": []
+  "description": "Read-only MCP server exposing the kensho Japan X/Twitter sweepstakes dataset from ke-ma.net (悬賞マニア). 3 tools: current_sweep, sweep_history, top_prize_movers. Fully local — bundled data, no network, no API key.",
+  "long_description": "ke-ma.net（悬賞マニア）の日本国内 X（Twitter）懸賞データをローカルに同梱し、AIエージェントから照会できるMCPサーバーです。\n\n## 提供ツール\n\n| ツール | 内容 |\n|---|---|\n| `current_sweep(keyword)` | キーワードに一致する最新の懸賞スナップショット（当選者数、賞品、推定額、残日数） |\n| `sweep_history(keyword, limit=50)` | 一致する懸賞の価格・賞品の時系列（古順） |\n| `top_prize_movers(direction, limit=10)` | 賞金額の変動が大きい順（up/down フィルタ可能） |\n\n## 動作要件\n\n- 完全ローカル実行（APIキー不要・ネットワーク不要）\n- 依存解決に [uv](https://docs.astral.sh/uv/) を使用（`uv run` 経由で起動、Python 3.10以上）\n- データは `data/accumulated.jsonl`（2026-10-03 スナップショット、30観測）を同梱\n- データ更新は Kensho パイプライン経由で行います（外部取得機能はなし）",
+  "author": {
+    "name": "atushi1841"
   },
-  "output": {
-    "actorOutputSchemaVersion": 1,
-    "title": "Output schema of kensho-kema",
-    "description": "kensho-kema exposes a Streamable HTTP MCP server on the Apify standby container. It produces no dataset or key-value store output; its result is the MCP tool interface itself. Connect an MCP client to the standby URL and call sweepstakes tools.",
-    "type": "object",
-    "properties": {}
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atushi1841/kensho"
   },
-  "usesStandbyMode": false,
-  "defaultMemoryMbytes": 1024,
-  "minMemoryMbytes": 256,
-  "maxMemoryMbytes": 4096
+  "homepage": "https://github.com/atushi1841/kensho",
+  "server": {
+    "type": "python",
+    "entry_point": "src/stdio_main.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "src/stdio_main.py"
+      ]
+    }
+  },
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "linux",
+      "win32"
+    ],
+    "runtimes": {
+      "python": ">=3.10"
+    }
+  },
+  "keywords": [
+    "japan",
+    "sweepstakes",
+    "x",
+    "twitter",
+    "ke-ma",
+    "懸賞",
+    "prize",
+    "gift",
+    "amazon"
+  ],
+  "tools": [
+    {
+      "name": "current_sweep",
+      "description": "Latest sweep matching keyword in the kensho Japan sweepstakes dataset from ke-ma.net (懸賞マニア).",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "tweet text, prize, or URL substring (e.g. \"PDRN\", \"MEDIHEal\", \"礼物\")."
+          }
+        },
+        "required": [
+          "keyword"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "sweep_history",
+      "description": "Time series of sweeps matching keyword in the kensho dataset from ke-ma.net (懸賞マニア).",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "tweet text, prize, or URL substring."
+          },
+          "limit": {
+            "default": 50,
+            "type": "integer",
+            "description": "max number of history rows to return (default 50)."
+          }
+        },
+        "required": [
+          "keyword"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "top_prize_movers",
+      "description": "Biggest prize value movers in the kensho sweepstakes dataset from ke-ma.net (懸賞マニア), ranked by |delta JPY|.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "direction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "None/\"both\" = up+down, \"up\" = value rose, \"down\" = value fell."
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer",
+            "description": "max movers to return (default 10)."
+          }
+        },
+        "type": "object"
+      }
+    }
+  ],
+  "repositoryUrl": "https://github.com/atushi1841/kensho",
+  "homepageUrl": "https://github.com/atushi1841/kensho"
 }

@@ -6,9 +6,7 @@
   "description": "Read-only Japan X/Twitter sweepstakes campaign data from kensho collection (1133 observations). Three tools: current sweep, sweep history, and top prize movers. No account, no API key, no network.",
   "long_description": "Exposes the accumulated kensho Japan X/Twitter sweepstakes dataset (1133 observations from knshow.com, kenshou.club, ken-kaku.com, cp.meikan.org, 2026-09-27 snapshot) as three read-only MCP tools: current_sweep (latest matching campaign), sweep_history (time series), and top_prize_movers (biggest |delta JPY| prize value movers with optional up/down filter). Pure local data, zero dependencies beyond fastmcp. Ideal for AI agents researching Japanese sweepstakes market trends and high-value campaigns.",
   "author": {
-    "name": "Kensho Project",
-    "email": "atushi1841@gmail.com",
-    "url": "https://github.com/atushi1841"
+    "name": "atushi1841"
   },
   "repository": {
     "type": "git",
@@ -17,36 +15,29 @@
   "homepage": "https://github.com/atushi1841/kensho",
   "documentation": "https://github.com/atushi1841/kensho/tree/main/mcp/kensho-sweep-mcp",
   "support": "https://github.com/atushi1841/kensho/issues",
-  "icon": "icon.png",
   "server": {
     "type": "python",
-    "entry_point": "server/server.py",
+    "entry_point": "src/stdio_main.py",
     "mcp_config": {
-      "command": "python",
-      "args": ["${__dirname}/server/server.py"]
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "src/stdio_main.py"
+      ]
     }
   },
   "compatibility": {
-    "platforms": ["darwin", "linux", "win32"],
+    "platforms": [
+      "darwin",
+      "linux",
+      "win32"
+    ],
     "runtimes": {
       "python": ">=3.10"
     }
   },
-  "tools": [
-    {
-      "name": "current_sweep",
-      "description": "Latest sweep matching keyword in the kensho Japan sweepstakes dataset (X/Twitter campaigns from knshow, kenshou.club, etc.)."
-    },
-    {
-      "name": "sweep_history",
-      "description": "Time series of sweeps matching keyword (oldest first), up to limit rows."
-    },
-    {
-      "name": "top_prize_movers",
-      "description": "Biggest |delta JPY| prize value movers in the dataset, with optional up/down direction filter."
-    }
-  ],
-  "tools_generated": false,
   "keywords": [
     "japan",
     "sweepstakes",
@@ -58,5 +49,75 @@
     "mcp"
   ],
   "license": "MIT",
-  "privacy_policies": []
+  "privacy_policies": [],
+  "tools": [
+    {
+      "name": "current_sweep",
+      "description": "Latest sweep matching keyword in the kensho Japan sweepstakes dataset.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "item name, prize, or URL substring (e.g. \"Amazonギフト\", \"iPhone\", \"リザードン\")."
+          }
+        },
+        "required": [
+          "keyword"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "sweep_history",
+      "description": "Time series of sweeps matching keyword in the kensho dataset.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "item name, prize, or URL substring."
+          },
+          "limit": {
+            "default": 50,
+            "type": "integer",
+            "description": "max number of history rows to return (default 50)."
+          }
+        },
+        "required": [
+          "keyword"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "top_prize_movers",
+      "description": "Biggest prize value movers in the kensho sweepstakes dataset (ranked by |delta JPY|).",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "direction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "None/\"both\" = up+down, \"up\" = value rose, \"down\" = value fell."
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer",
+            "description": "max movers to return (default 10)."
+          }
+        },
+        "type": "object"
+      }
+    }
+  ],
+  "repositoryUrl": "https://github.com/atushi1841/kensho",
+  "homepageUrl": "https://github.com/atushi1841/kensho"
 }
