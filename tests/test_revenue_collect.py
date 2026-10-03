@@ -444,6 +444,12 @@ class TestGumroadCdpResilience:
             self.returncode = returncode
             self.stdout = stdout
             self.stderr = stderr
+            # v2（t_d704d372）: Popen + polling モデル用。
+            # poll() は完了検知、communicate() は完了後の出力取得。
+            self.poll = lambda: returncode  # デフォルト: 即完了
+
+        def communicate(self, timeout: float = 5) -> tuple[str, str]:
+            return self.stdout, self.stderr
 
     @pytest.fixture(autouse=True)
     def _fake_node_paths(self, tmp_path: Any, monkeypatch: Any) -> None:
@@ -509,46 +515,69 @@ class TestGumroadCdpResilience:
             st = json.load(f)
         assert st["last_success_at"] == "2026-09-08T09:00:00"  # 前回値を保持
 
-    def test_update_runs_node_with_total_timeout(self) -> None:
-        """cdp収集は1回のnode実行・タイムアウトは GUMROAD_TOTAL_TIMEOUT。成功時のみpersist。"""
+    def test_update_runs_node_in_background(self) -> None:
+        """v2（t_d704d372）: CDP収集は Popen(start_new_session=True) でバックグラウンド起動。
+        完了は polling で検知し、完了後のみ persist。subprocess.run は使わない。"""
+        fake_proc = self._FakeProc(returncode=0)
+        fake_proc.poll = lambda: 0  # 即完了
         with (
-            patch("kensho_revenue_collect.subprocess.run", return_value=self._FakeProc(returncode=0)) as mrun,
+            patch("kensho_revenue_collect.subprocess.Popen", return_value=fake_proc) as mpop,
             patch.object(krc, "_persist_last_success_at") as mpersist,
         ):
             ok = krc.update_gumroad_state_via_cdp()
         assert ok is True
-        mrun.assert_called_once()
-        assert mrun.call_args.kwargs["timeout"] == krc.GUMROAD_TOTAL_TIMEOUT
+        assert mpop.call_args.kwargs.get("start_new_session") is True
         mpersist.assert_called_once()
 
     def test_update_skips_persist_on_nonzero(self) -> None:
+        fake_proc = self._FakeProc(returncode=1, stderr="boom")
+        fake_proc.poll = lambda: 1
         with (
-            patch("kensho_revenue_collect.subprocess.run", return_value=self._FakeProc(returncode=1, stderr="boom")),
+            patch("kensho_revenue_collect.subprocess.Popen", return_value=fake_proc),
             patch.object(krc, "_persist_last_success_at") as mpersist,
         ):
             assert krc.update_gumroad_state_via_cdp() is False
         mpersist.assert_not_called()
 
     def test_update_fail_prints_fail_mark(self) -> None:
+        fake_proc = self._FakeProc(returncode=1, stderr="boom")
+        fake_proc.poll = lambda: 1
         with (
-            patch("kensho_revenue_collect.subprocess.run", return_value=self._FakeProc(returncode=1, stderr="boom")),
+            patch("kensho_revenue_collect.subprocess.Popen", return_value=fake_proc),
             patch("builtins.print") as mprint,
         ):
             krc.update_gumroad_state_via_cdp()
         msgs = " ".join(str(a) for c in mprint.call_args_list for a in c.args)
         assert "fail-mark" in msgs
 
-    def test_update_timeout_prints_timeout_mark(self) -> None:
+    def test_update_poll_timeout_prints_poll_mark(self) -> None:
+        """ポーリング時間内に完了せず → 前回値継続（poll-mark）。"""
+        fake_proc = self._FakeProc()
+        fake_proc.poll = lambda: None  # 常に未完了
         with (
-            patch(
-                "kensho_revenue_collect.subprocess.run",
-                side_effect=subprocess.TimeoutExpired("node.exe", krc.GUMROAD_TOTAL_TIMEOUT),
-            ),
+            patch("kensho_revenue_collect.subprocess.Popen", return_value=fake_proc),
+            patch("kensho_revenue_collect.time.sleep"),  # ポーリングのsleepを短路
+            patch("kensho_revenue_collect.time.monotonic", side_effect=[0.0, 100.0]),
             patch("builtins.print") as mprint,
         ):
-            krc.update_gumroad_state_via_cdp()
+            ok = krc.update_gumroad_state_via_cdp()
+        assert ok is False
         msgs = " ".join(str(a) for c in mprint.call_args_list for a in c.args)
-        assert "timeout-mark" in msgs
+        assert "poll-mark" in msgs
+
+    def test_update_poll_completes_after_retry(self) -> None:
+        """1回目は未完了、2回目のpollで完了 → 成功。"""
+        fake_proc = self._FakeProc(returncode=0)
+        fake_proc.poll = lambda: 0  # 2回目以降は完了
+        with (
+            patch("kensho_revenue_collect.subprocess.Popen", return_value=fake_proc),
+            patch("kensho_revenue_collect.time.sleep"),
+            patch("kensho_revenue_collect.time.monotonic", side_effect=[0.0, 10.0, 10.0]),
+            patch.object(krc, "_persist_last_success_at") as mpersist,
+        ):
+            ok = krc.update_gumroad_state_via_cdp()
+        assert ok is True
+        mpersist.assert_called_once()
 
 
 # ── critic v94 (t_360dd497): Apify課金状態の二重障害（APIタイムアウト全放棄+フォールバック路径欠損）──

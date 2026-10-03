@@ -119,14 +119,22 @@ def gumroad_collector_flags(gumroad: dict[str, Any]) -> dict[str, Any]:
         "gumroad_login_ok": gumroad.get("login_ok"),
     }
 
-# Gumroad CDP収集の恒久対策（t_cfe11a7c / critic v60）:
+# Gumroad CDP収集の恒久対策（t_cfe11a7c / critic v60 → t_d704d372）:
 # 根因は「深夜早朝にWindows Chrome/CDPが未起動」+「固定プロファイル起動が既存Chromeに
 # ハンドオフされCDPが立たず、nodeの起動待ちが90秒を超えてTimeoutExpired → 前回値凍結」。
 # CDPの事前チェック・自動起動・起動待ちは node（gumroad_sales_collect.js, Windows側）で
 # 実施する。理由: 本スクリプト(WSL側Python)は Windows localhost:CDP に接続できないため、
-# ポート判定はWindows側のnodeでのみ正しく行える。Pythonは一度のsubprocess実行で
-# 起動(最大45秒)＋収集を丸ごと渡し、合計時限をここで保証する（起動/収集の分離=node内封じ込め）。
-GUMROAD_TOTAL_TIMEOUT = 240.0  # CDP起動(≤45s)+ページ収集の合計上限（従来の90秒→240秒）
+# ポート判定はWindows側のnodeでのみ正しく行える。
+# v2（t_d704d372）: subprocess.run(timeout=240) の blocking を解消。
+#   Popen + start_new_session でバックグラウンド起動（Python 即 return）し、
+#   Apify/RapidAPI の収集をブロックしない。完了は polling で検知し、
+#   待機時間内に完了しなければ「前回値で継続」（node が自力で gumroad_state.json を
+#   更新し続けるため、次回以降の鮮度は回復する）。
+# node側の合計時限（起動≤45s＋収集）は GUMROAD_TOTAL_TIMEOUT が上限。
+GUMROAD_TOTAL_TIMEOUT = 45.0  # node内部の合計時限（起動≤45s+収集）。Python側はbackground即return
+GUMROAD_CDP_POLL_INTERVAL = 3.0  # バックグラウンド完了のポーリング間隔（秒）
+GUMROAD_CDP_POLL_MAX_SECONDS = 30.0  # Python側が完了を待つ最大時間（超えたら前回値継続）
+COLLECT_TOTAL_TIMEOUT_SECONDS = 90.0  # 収集全体（Apify+RapidAPI+CDPポーリング）の合計上限
 
 # actors_ppe=0 異常検出時の自動再収集設定（9/3 00:20異常の再発防止: t_fc85c305）
 RETRY_DELAY_SECONDS = 3.0  # 再収集までの待機秒数
@@ -976,9 +984,12 @@ def update_gumroad_state_via_cdp() -> bool:
     WSL側Pythonは Windows localhost:CDP に接続できないため、ポート判定・起動は
     Windows側nodeでのみ正しく行える（歴史的観察: 127.0.0.1:9222 がWSLから常にCLOSED）。
 
-    - タイムアウト分離: node内部で起動待ち（最大45秒）→ ページ収集の順に処理し、
-      Python側は1回のsubprocessに GUMROAD_TOTAL_TIMEOUT(240秒) をかける
-      （従来の timeouts=90秒 が、Chrome起動の遅延でTimeoutExpired→前回値凍結を起こしていた）。
+    v2（t_d704d372）: 従来の subprocess.run(timeout=240) は critic 実行間隔（約1h）を
+    超えて blocking し、毎回の収集実行が 60s timeout（exit 124）で強制終了していた。
+    → Popen(start_new_session=True) でバックグラウンド起動（Python 即 return）し、
+      Apify/RapidAPI の収集をブロックしない。完了は polling で検知する。
+    → 待機時間内に完了しなければ「前回値で継続」（node が自力で gumroad_state.json を
+      更新し続けるため、次回以降の鮮度は回復する）。
     - 成功時のみ last_success_at を永続化。
     - 失敗しても既存の gumroad_state.json があれば収集は継続（呼び出し側でフォールバック）。
     """
@@ -989,33 +1000,64 @@ def update_gumroad_state_via_cdp() -> bool:
         print("  ⚠️ gumroad_sales_collect.jsが見つかりません — Gumroad売上データは前回値を使用")
         return False
 
+    cmd = [GUMROAD_NODE, _to_windows_path(GUMROAD_SCRIPT)]
     try:
-        r = subprocess.run(
-            [GUMROAD_NODE, _to_windows_path(GUMROAD_SCRIPT)],
-            capture_output=True,
+        # v2: Popen + start_new_session でバックグラウンド起動（Python 即 return）。
+        # 従来の subprocess.run は node の完了を待つため、Chrome起動の遅延（最大45s）+
+        # 収集時間の合計が critic 実行間隔（約1h）に達し、毎回の収集実行が
+        # 60s timeout（exit 124）で強制終了していた。
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,
-            timeout=GUMROAD_TOTAL_TIMEOUT,
+            start_new_session=True,
         )
-        if r.stdout:
-            for line in r.stdout.strip().splitlines():
+    except FileNotFoundError:
+        print("  ⚠️ node.exe実行失敗 — Gumroad売上データは前回値を使用")
+        return False
+    except Exception as e:
+        print(f"fail-mark ⚠️ Gumroad売上取得起動エラー: {e} — 前回値を使用")
+        return False
+
+    # バックグラウンド完了を polling で検知（最大30秒）。
+    # 超えたら「前回値で継続」— node が自力で gumroad_state.json を更新し続けるため、
+    # 次回以降の鮮度は回復する（収集のブロックは解消され、Apify/RapidAPI は完了する）。
+    deadline = time.monotonic() + GUMROAD_CDP_POLL_MAX_SECONDS
+    completed = False
+    while time.monotonic() < deadline:
+        rc = proc.poll()
+        if rc is not None:
+            completed = True
+            break
+        time.sleep(GUMROAD_CDP_POLL_INTERVAL)
+
+    if completed:
+        # 完了検知後は残りの出力を読み取る（ブロックしないよう短いポーリングで取得）
+        try:
+            stdout, stderr = proc.communicate(timeout=5)
+        except subprocess.TimeoutExpired:
+            stdout, stderr = "", ""
+            proc.kill()
+        if stdout:
+            for line in stdout.strip().splitlines():
                 print(f"    {line}")
-        if r.returncode != 0:
-            if r.stderr:
-                print(f"fail-mark ⚠️ Gumroad売上取得失敗 (rc={r.returncode}): {r.stderr.strip()[:200]}")
+        if rc != 0:
+            if stderr:
+                print(f"fail-mark ⚠️ Gumroad売上取得失敗 (rc={rc}): {stderr.strip()[:200]}")
             else:
-                print(f"fail-mark ⚠️ Gumroad売上取得失敗 (rc={r.returncode})")
+                print(f"fail-mark ⚠️ Gumroad売上取得失敗 (rc={rc})")
             return False
         # 成功時のみ last_success_at を永続化（鮮度表示の基準）
         _persist_last_success_at()
         return True
-    except subprocess.TimeoutExpired:
-        print(
-            f"timeout-mark ⚠️ Gumroad売上取得がタイムアウト（{GUMROAD_TOTAL_TIMEOUT:.0f}秒・CDP起動+収集）— 前回値を使用"
-        )
-        return False
-    except Exception as e:
-        print(f"fail-mark ⚠️ Gumroad売上取得エラー: {e} — 前回値を使用")
-        return False
+
+    # ポーリング時間内に完了せず → 前回値で継続（node は自力で更新し続ける）
+    print(
+        f"poll-mark ⚠️ Gumroad収集が{GUMROAD_CDP_POLL_MAX_SECONDS:.0f}秒以内に完了せず"
+        f" — 前回値を使用（nodeはバックグラウンドで継続中）"
+    )
+    return False
 
 
 def collect_gumroad() -> dict[str, Any]:
@@ -1290,9 +1332,31 @@ def append_to_file(entry: dict[str, Any]) -> None:
 
 
 def main() -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser(description="kensho_revenue_collect — 収益データ収集")
+    parser.add_argument(
+        "--skip-gumroad",
+        action="store_true",
+        help="Gumroad CDP収集をスキップ（CDP接続が継続的に失敗する場合の代替モード）",
+    )
+    parser.add_argument(
+        "--total-timeout",
+        type=float,
+        default=COLLECT_TOTAL_TIMEOUT_SECONDS,
+        help=f"収集全体の合計時間上限（秒、デフォルト{COLLECT_TOTAL_TIMEOUT_SECONDS}）",
+    )
+    # parse_known_args: テストから sys.argv（pytest引数等）で呼び出しても
+    # 未知の位置引数でエラーにならないようする（v2 / t_d704d372）。
+    args, _ = parser.parse_known_args()
+
+    start_monotonic = time.monotonic()
     print("【kensho_revenue_collect】収益データ収集開始")
     print(f"  実行時刻: {datetime.now().isoformat()}")
     print()
+
+    def _elapsed() -> float:
+        return time.monotonic() - start_monotonic
 
     # 1. Apify
     print("▶ Apify収集...")
@@ -1329,8 +1393,15 @@ def main() -> None:
 
     # 3. Gumroad
     print("▶ Gumroad収集...")
-    # CDPで売上データを更新（Chrome自動起動込み・失敗時は前回値で継続）
-    gumroad_updated = update_gumroad_state_via_cdp()
+    # v2（t_d704d372）: CDPはバックグラウンド起動（Popen+polling）で blocking を解消。
+    #   --skip-gumroad で CDP を完全スキップ（Apify/RapidAPI のみ収集）— CDP 接続が
+    #   継続的に失敗する場合の代替モード。node が自力で gumroad_state.json を更新し，
+    #   次回以降は通常モードで回復する。
+    if args.skip_gumroad:
+        print("  ⏭️ --skip-gumroad: Gumroad CDP収集をスキップ（Apify/RapidAPIのみ）")
+        gumroad_updated = False
+    else:
+        gumroad_updated = update_gumroad_state_via_cdp()
     gumroad = collect_gumroad()
     # 提案A (t_d7db4ef7): 実売上があれば受入基準ファイル data/gumroad_sales.log に追記
     record_gumroad_sales()
@@ -1347,6 +1418,15 @@ def main() -> None:
         )
     elif not gumroad_updated:
         print("  ⚠️ Gumroad売上データなし（state_exists=False）— CDP収集は失敗・stateファイル未作成")
+
+    # 収集全体の合計時間上限超过検出（超过場合は結果を保存して早期終了）
+    if _elapsed() > args.total_timeout:
+        print(
+            f"  ⏱️ 収集全体が{args.total_timeout:.0f}秒超过（{_elapsed():.1f}s）— "
+            f"結果を保存して早期終了します"
+        )
+    else:
+        print(f"  ⏱️ 収集経過: {_elapsed():.1f}s / {args.total_timeout:.0f}s")
 
     # 4. 集約
     print("▶ 収益サマリー生成...")

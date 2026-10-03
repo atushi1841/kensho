@@ -1,0 +1,30 @@
+{
+  "task_id": "t_d704d372",
+  "status": "complete",
+  "success_indicators": [
+    "Gumroad CDP background化（Popen+polling）でblocking解消",
+    "--skip-gumroad フラグ追加でフォールバック経路確保",
+    "COLLECT_TOTAL_TIMEOUT 90秒で全体上限設定",
+    "テスト66件全通過"
+  ],
+  "verification_commands": [
+    "$ timeout 120 .venv/bin/python -m pytest tests/test_revenue_collect.py -x -q => 66 passed in 37.64s",
+    "$ grep -n GUMROAD_CDP_POLL scripts/kensho_revenue_collect.py => 135:GUMROAD_CDP_POLL_INTERVAL=3.0, 136:GUMROAD_CDP_POLL_MAX_SECONDS=30.0",
+    "$ grep -n skip_gumroad scripts/kensho_revenue_collect.py => 1400: if args.skip_gumroad:",
+    "$ md5sum scripts/kensho_revenue_collect.py tests/test_revenue_collect.py => a360d48..., b0a3994..."
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/kensho_revenue_collect.py",
+    "/mnt/d/Project2/kensho/tests/test_revenue_collect.py",
+    "/mnt/d/Project2/kensho/reports/t_d704d372_verification.md"
+  ],
+  "evidence_hashes": [
+    "a360d48bd794d66b12ace2b4e648f447 scripts/kensho_revenue_collect.py",
+    "b0a3994a57d8bf86a09aef82cfe6eb4e tests/test_revenue_collect.py"
+  ],
+  "outcome": {
+    "metric": "test_count",
+    "before": 62,
+    "after": 66
+  }
+}
