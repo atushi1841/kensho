@@ -468,7 +468,15 @@ def pick_text(
         posted = {"a": posted}
     if not force and slot in posted:
         prev = posted[slot] or {}
-        return None, f"今週{slot}スロットは投稿済み (week={key}, tweet_id={prev.get('tweet_id', '?')})", {}
+        tid = str(prev.get("tweet_id") or "")
+        # 2026-10-03 修正: placeholder/unknown_* の偽IDを「投稿済み」と誤認していた。
+        # 実際には投稿されていないのに以降の週次実行が全部スキップされ、
+        # 外部導線が無言で死んでいた（state に Test placeholder が入っていた）。
+        # 実ID（数字のみ）以外は未投稿として扱い、投稿を続行する。
+        if tid.isdigit():
+            return None, f"今週{slot}スロットは投稿済み (week={key}, tweet_id={tid})", {}
+        if tid:
+            print(f"[warn] 偽の投稿記録を無視します (week={key}, slot={slot}, tweet_id={tid!r})")
 
     iso = today.isocalendar()
     idx = _slot_index(iso.week, slot)

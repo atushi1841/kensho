@@ -226,9 +226,34 @@ KEYWORD_STOPWORDS = QUERY_STOPWORDS | {
 WORD_RE = re.compile(r"[a-z][a-z0-9+#\-]{2,}")
 
 
+def _load_env_file(path: str = "/mnt/d/Project2/kensho/.env") -> dict[str, str]:
+    """リポジトリの .env を絶対パスで読む（cron の cwd が /tmp でも効くように）。"""
+    out: dict[str, str] = {}
+    try:
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                m = re.match(r"\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)", line)
+                if m:
+                    out[m.group(1)] = m.group(2).strip().strip('"').strip("'")
+    except OSError:
+        pass
+    return out
+
+
 def get_apify_token() -> str:
-    """Apify APIトークンを取得（環境変数優先、無ければ既定値）。"""
-    return os.environ.get("APIFY_TOKEN", "").strip() or APIFY_TOKEN_DEFAULT
+    """Apify APIトークンを取得する。
+
+    2026-10-03 恒久修正: 以前は環境変数 APIFY_TOKEN と（環境からしか読まない）
+    APIFY_TOKEN_DEFAULT を見ていたため、素の実行では両方空で 401 になった。
+    実キー名は .env の APIFY_TOKEN_DEFAULT。**絶対パスの .env を読み、
+    両方の名前をフォールバックで探す**。これを崩すと 401 が再発する。
+    """
+    env = _load_env_file()
+    for name in ("APIFY_TOKEN", "APIFY_TOKEN_DEFAULT"):
+        val = (os.environ.get(name) or env.get(name) or "").strip()
+        if val:
+            return val
+    return ""
 
 
 def _normalize_words(text: str) -> list[str]:

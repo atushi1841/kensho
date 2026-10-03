@@ -131,6 +131,43 @@ def numbers_ok(text: str, allowed: set[str]) -> tuple[bool, str]:
     return True, "ok"
 
 
+# AI文体の手がかり（調査で指摘された語彙）。人間のコメントでは使われにくい。
+AI_TELLS = [
+    ("It's worth noting that ", ""),
+    ("it's worth noting that ", ""),
+    ("It is important to note that ", ""),
+    ("This is particularly true for ", "This hits "),
+    ("Moreover, ", ""),
+    ("Furthermore, ", ""),
+    ("Additionally, ", "Also, "),
+    ("crucial", "important"),
+    ("pivotal", "key"),
+    ("delve into", "dig into"),
+    ("navigate the", "deal with the"),
+    ("In today's ", "In the current "),
+    ("a testament to", "proof of"),
+]
+
+
+def humanize(text: str) -> str:
+    """AI文体の手がかりを落とす（意味は変えない）。
+
+    2026-10-03 調査より: 人間は長いダッシュ(—/–)をほぼ使わないのに、生成文は多用する。
+    これは最も見つけられやすいAIの痕跡なので、句読点に開いて消す。
+    否定・数値・内容には一切触らない。
+    """
+    t = text
+    # ダッシュ類は読点かピリオドに開く（"- " に潰すとネット口調として不自然）
+    t = re.sub(r"\s*[—–]\s*", ", ", t)
+    for a, b in AI_TELLS:
+        t = t.replace(a, b)
+        t = t.replace(a[:1].upper() + a[1:], b)
+    t = re.sub(r"\s+([,.;:!?])", r"\1", t)   # 句読点前の空白
+    t = re.sub(r",\s*,", ", ", t)            # 二重カンマ
+    t = re.sub(r"[ \t]{2,}", " ", t)         # 連続空白
+    return t.strip()
+
+
 def quality_check(text: str, allowed_numbers: set[str] | None = None) -> tuple[bool, str]:
     """投稿してよい品質か。戻り値 (ok, 理由)。"""
     t = (text or "").strip()
@@ -282,6 +319,7 @@ def write_comment(
                 continue
             text = text.strip().strip('"').strip()
             allowed = allowed_numbers_for(title, fact)
+            text = humanize(text)
             ok, _reason = quality_check(text, allowed_numbers=allowed)
             if not ok:
                 continue

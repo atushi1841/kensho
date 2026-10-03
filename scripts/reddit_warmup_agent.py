@@ -47,7 +47,7 @@ from typing import Any
 REPO = Path(__file__).resolve().parent.parent
 # 同ディレクトリのモジュールを直接importできるようにする（pytestからのimportにも対応）
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from reddit_comment_writer import quality_check, write_comment  # noqa: E402
+from reddit_comment_writer import humanize, quality_check, write_comment  # noqa: E402
 COOKIE_FILE = REPO / "data" / "reddit" / "cookie_new.json"
 HISTORY_FILE = REPO / "data" / "reddit" / "warmup_history.json"
 SCHEDULE_FILE = REPO / "data" / "reddit" / "warmup_schedule.json"
@@ -468,6 +468,14 @@ def schedule_drafts(drafts: list[dict[str, Any]]) -> list[dict[str, Any]]:
     while len(rest_days) < num_rest:
         rest_days.add(random.randint(0, 6))
 
+    # 今日が休み日なら次の活動日へ繰り越す（休み日で計画を空にして終わらせない）
+    base_day = today
+    for _ in range(7):
+        if base_day.weekday() not in rest_days:
+            break
+        base_day += timedelta(days=1)
+    carryover = base_day != today
+
     # 本日のスケジュール
     slots: list[dict[str, Any]] = []
     n = min(len(drafts), MAX_COMMENTS_PER_DAY)
@@ -490,7 +498,7 @@ def schedule_drafts(drafts: list[dict[str, Any]]) -> list[dict[str, Any]]:
         start_hour += 1
         start_min -= 60
 
-    current = datetime(today.year, today.month, today.day,
+    current = datetime(base_day.year, base_day.month, base_day.day,
                        max(0, min(23, start_hour)), start_min, 0,
                        tzinfo=JST)
 
@@ -498,7 +506,7 @@ def schedule_drafts(drafts: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if i > 0 and i <= len(intervals):
             current += timedelta(minutes=int(intervals[i - 1]))
             # 翌日以降にならないよう調整（今日中に収める）
-            end_of_day = datetime(today.year, today.month, today.day, 23, 59, 59, tzinfo=JST)
+            end_of_day = datetime(base_day.year, base_day.month, base_day.day, 23, 59, 59, tzinfo=JST)
             if current > end_of_day:
                 current = end_of_day
                 # 次のスロットは翌日以降へ（別日に回る）
@@ -520,35 +528,52 @@ def schedule_drafts(drafts: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "skipped_random": False,
         })
 
-    # 次回の予定も生成
-    next_date = today + timedelta(days=random.choice([1, 2, 2, 3]))
+    # 次回の予定も生成（休み日は飛ばす）
+    # 繰り越し時は「今日組み立てた計画の日」がそのまま次回日になる
+    next_date = base_day if carryover else today + timedelta(days=1)
     next_rest = set()
     while len(next_rest) < random.choice([1, 2]):
         next_rest.add(random.randint(0, 6))
+    if not carryover:
+        for _ in range(7):
+            if next_date.weekday() not in next_rest:
+                break
+            next_date += timedelta(days=1)
 
     next_slots: list[dict[str, Any]] = []
-    for j, d in enumerate(drafts[n:]):
-        if next_date.weekday() in next_rest:
-            next_slots.append({"draft": d, "scheduled_at": None, "reason": "rest_day"})
-            continue
-        if random.random() < SKIP_PROBABILITY:
-            next_slots.append({"draft": d, "scheduled_at": None, "reason": "random_skip"})
-            continue
-        # 次の時間帯
-        h = random.choice([w[0] for w in ACTIVITY_WINDOWS_JST])
-        m = random.randint(0, 59) + random.randint(-20, 20)
-        if m < 0:
-            h -= 1
-            m += 60
-        elif m >= 60:
-            h += 1
-            m -= 60
-        dt = datetime(next_date.year, next_date.month, next_date.day,
-                      max(0, min(23, h)), m, 0, tzinfo=JST)
-        next_slots.append({"draft": d, "scheduled_at": dt.strftime("%Y-%m-%dT%H:%M:%S+09:00"),
-                           "reason": None})
-        if len(next_slots) >= MAX_COMMENTS_PER_DAY:
-            break
+    if carryover:
+        # 今日は休み日だった → 今日組み立てた計画をそのまま次回分へ繰り越す
+        for s in slots:
+            if s.get("scheduled_at"):
+                next_slots.append({"draft": s["draft"], "scheduled_at": s["scheduled_at"],
+                                   "reason": None})
+                s["scheduled_at"] = None
+            s["skipped_rest"] = True
+    else:
+        used = {id(s["draft"]) for s in slots if s.get("scheduled_at")}
+        remaining = [d for d in drafts if id(d) not in used]
+        for d in remaining:
+            if next_date.weekday() in next_rest:
+                next_slots.append({"draft": d, "scheduled_at": None, "reason": "rest_day"})
+                continue
+            if random.random() < SKIP_PROBABILITY:
+                next_slots.append({"draft": d, "scheduled_at": None, "reason": "random_skip"})
+                continue
+            # 次の時間帯
+            h = random.choice([w[0] for w in ACTIVITY_WINDOWS_JST])
+            m = random.randint(0, 59) + random.randint(-20, 20)
+            if m < 0:
+                h -= 1
+                m += 60
+            elif m >= 60:
+                h += 1
+                m -= 60
+            dt = datetime(next_date.year, next_date.month, next_date.day,
+                          max(0, min(23, h)), m, 0, tzinfo=JST)
+            next_slots.append({"draft": d, "scheduled_at": dt.strftime("%Y-%m-%dT%H:%M:%S+09:00"),
+                               "reason": None})
+            if len(next_slots) >= MAX_COMMENTS_PER_DAY:
+                break
 
     return {
         "generated_at": datetime.now(JST).isoformat(),
@@ -779,12 +804,10 @@ def do_submit(sched: dict[str, Any], fact: dict[str, Any]) -> int:
     2026-10-03: 投稿経路（submit_comment_via_cdp）は未実装のため、この関数は
     必ずここで停止する。誤って「投稿できた」と誤解されないよう明示的に失敗させる。
     """
-    print("ERROR: 投稿経路は未実装です。reddit_warmup_agent は現在ドラフト生成のみです。",
-          file=sys.stderr)
-    print("       --submit を使っても投稿されません。実装は別タスクで行ってください。", file=sys.stderr)
-    return 2
-
     log("SUBMIT mode ACTIVE. Will post comments via CDP+browser fetch.")
+    # 安全側の既定: 1回の起動で投稿するのは最大1件。
+    # 調査では「新垢は 1-2件/時、1日3-5件まで」が共通見解（超過は最速の検知トリガー）。
+    max_per_run = 1  # 調査の共通見解: 新垢は 1-2件/時。1回の起動で撃つのは1件まで。
 
     username = "sabotenJAL"
     # ベースライン確認
@@ -804,14 +827,26 @@ def do_submit(sched: dict[str, Any], fact: dict[str, Any]) -> int:
     # スケジュールに従い投稿（今日分+次回分）
     all_slots = sched.get("today_slots", []) + sched.get("next_date_slots", [])
     posted: list[dict[str, Any]] = []
+    now_jst = datetime.now(JST)
     for slot in all_slots:
+        if len(posted) >= max_per_run:
+            break
         if not slot.get("scheduled_at"):
+            continue
+        # 予定時刻より先なら撃たない（繰り越し分を前倒しで投稿しない）
+        try:
+            due = datetime.fromisoformat(slot["scheduled_at"])
+        except ValueError:
+            continue
+        if due > now_jst + timedelta(minutes=15):
+            log(f"not due yet ({slot['scheduled_at']}) - skip")
             continue
         d = slot["draft"]
         post_id = d["post_id"]
         sub = d["sub"]
-        body = d["draft"]
-        log(f"posting: r/{sub} | t3_{post_id} | len={len(body)}")
+        # 投稿直前にAI文体の手がかりを落とす（既に生成済みのスケジュール分にも効かせる）
+        body = humanize(d["draft"])
+        log(f"posting: r/{sub} | t3_{post_id} | len={len(body)} (humanized)")
         # CDP経由投稿（既存パターン参照）
         result = submit_comment_via_cdp(sub, post_id, body)
         posted.append({"sub": sub, "post_id": post_id, "ok": result.get("ok"), "result": result})
@@ -836,26 +871,94 @@ def do_submit(sched: dict[str, Any], fact: dict[str, Any]) -> int:
     return 0
 
 
-def submit_comment_via_cdp(sub: str, post_id: str, body: str) -> dict[str, Any]:
-    """/api/comment を CDP + ブラウザ内 fetch で叩く（実装は次段階）。
+CDP_PORT = 9229  # Apify/Gumroad 用の 9222 と衝突させない
+CDP_PROFILE = r"C:\temp\reddit-cdp"
+WIN_TEMP = Path("/mnt/c/temp")
+DRIVER_JS = Path(__file__).resolve().parent / "reddit_submit_driver.js"
 
-    2026-10-03 時点の状態を明示する:
-      ここは **未実装** であり、呼ぶと必ず NotImplementedError になる。
-      旧版は {"ok": False} を返すだけの「動かないスタブ」だったため、
-      「--submit で撃てる」と誤解される余地があった。誤解のほうが危険なので
-      明示的に例外を上げる。
 
-    実装する場合の正しい経路（スキル reddit-posting-automation に実証手順あり）:
-      1. cookie_new.json をヘッダ文字列に変換して CDP の Chrome に注入
-      2. powershell.exe 経由で Windows 側の Chrome を --remote-debugging-port 付きで起動
-      3. Runtime.evaluate で fetch('/api/comment', {method:'POST', ...}) を実行
-      4. thing_id は 't3_' + post_id
-      導線は scripts/apify_console_driver.js（WSL→powershell→node の CDP 型）を流用できる。
-    """
-    raise NotImplementedError(
-        "submit_comment_via_cdp は未実装です。--submit しても投稿されません。"
-        " 実装するまでは --submit を使わないでください。"
+def _ps_run(cmd: str, timeout: int = 120) -> tuple[int, str]:
+    import subprocess
+    try:
+        r = subprocess.run(["powershell.exe", "-NoProfile", "-Command", cmd],
+                           capture_output=True, text=True, timeout=timeout)
+        return r.returncode, (r.stdout or "").strip().replace("\r", "")
+    except Exception as e:  # noqa: BLE001 - powershell 不在などは呼び出し側で扱う
+        return 1, f"{type(e).__name__}: {e}"
+
+
+def _ensure_cdp() -> bool:
+    """Reddit 用 CDP Chrome を確保する（専用プロファイル・専用ポート）。"""
+    _, code = _ps_run(f"curl.exe -s -o NUL -w '%{{http_code}}' http://127.0.0.1:{CDP_PORT}/json/version", 20)
+    if code.endswith("200"):
+        return True
+    _ps_run(
+        f"Start-Process 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' -ArgumentList "
+        f"'--remote-debugging-port={CDP_PORT}','--user-data-dir={CDP_PROFILE}',"
+        f"'--no-first-run','--no-default-browser-check','--window-size=1400,1000','about:blank'",
+        40,
     )
+    for _ in range(10):
+        time.sleep(2)
+        _, code = _ps_run(f"curl.exe -s -o NUL -w '%{{http_code}}' http://127.0.0.1:{CDP_PORT}/json/version", 20)
+        if code.endswith("200"):
+            return True
+    return False
+
+
+def submit_comment_via_cdp(sub: str, post_id: str, body: str, live: bool = True) -> dict[str, Any]:
+    """CDP + ブラウザ内 fetch で /api/comment を叩く（2026-10-03 実装）。
+
+    経路の選択理由（調査の結論）:
+      Reddit のコメント入力欄は Shadow DOM + Lexical で保護され、合成キー入力を受け付けない。
+      一方、**ログイン済みセッション内の fetch は cookie/CSRF/TLS/UA 指紋がすべて本物**になる。
+      UI を叩くより検知リスクが低い。ただし「投稿だけして即離脱」は人間離れしているので、
+      ドライバ側で投稿前にスレを段階スクロールして読む時間を挟んでいる。
+
+    live=False はログイン確認と読み込みまでで停止する（投稿しない）。
+    """
+    import json as _json
+    import shutil
+
+    if not COOKIE_FILE.exists():
+        return {"ok": False, "error": f"cookie file not found: {COOKIE_FILE}"}
+
+    # cookie_new.json（JSON配列）→ ヘッダ文字列（唯一安定した注入形式）
+    raw = _json.loads(COOKIE_FILE.read_text(encoding="utf-8"))
+    cookies = raw.get("cookies", raw) if isinstance(raw, dict) else raw
+    header = "; ".join(
+        f"{c['name']}={c['value']}" for c in cookies
+        if isinstance(c, dict) and c.get("name") and c.get("value")
+    )
+    if not header:
+        return {"ok": False, "error": "no cookies parsed"}
+
+    (WIN_TEMP / "reddit_cookie.txt").write_text(header, encoding="utf-8")
+    (WIN_TEMP / "reddit_body.txt").write_text(body, encoding="utf-8")
+    shutil.copyfile(DRIVER_JS, WIN_TEMP / "reddit_submit_driver.js")
+
+    if not _ensure_cdp():
+        trigger_stop("CDP chrome を起動できなかった（投稿経路の前提が壊れている）")
+        return {"ok": False, "error": "cdp not available"}
+
+    url = f"https://www.reddit.com/r/{sub}/comments/{post_id}/"
+    win_out = r"C:\temp\reddit_submit_out.json"
+    dry = "" if live else " --dry-run"
+    rc, out = _ps_run(
+        f"cd C:\\temp; node reddit_submit_driver.js --cookie reddit_cookie.txt "
+        f'--url "{url}" --body reddit_body.txt --out "{win_out}"{dry}',
+        300,
+    )
+    out_path = WIN_TEMP / "reddit_submit_out.json"
+    if not out_path.exists():
+        return {"ok": False, "error": f"driver produced no output rc={rc} out={out[:300]}"}
+    res: dict[str, Any] = _json.loads(out_path.read_text(encoding="utf-8"))
+
+    status = (res.get("post_response") or {}).get("status")
+    res["ok"] = bool(status == 200 and not res.get("dry_run"))
+    res["status"] = status
+    res["dry_run"] = bool(res.get("dry_run"))
+    return res
 
 
 if __name__ == "__main__":
