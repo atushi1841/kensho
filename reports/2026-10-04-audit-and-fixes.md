@@ -189,6 +189,34 @@ dispatcherが40秒で拾って実行が始まった。** 供給ループは復�
 - ✅ paused 22本のトリアージ → 判定＋親の検証で「復帰推奨5本」を取り消し（§6）
 - ⏳ freellmapi の失敗率低下は24h窓での再測定待ち（無効化直後の1時間は401ゼロを確認済み）
 
+## 8. 【追加】収益データの凍結を解消（収集ジョブの復帰）
+
+ヘルスチェックが「revenue-daily.json 鮮度不足(32.1h)」を出し続けていた件を追跡した。
+
+**真因**: 収集ジョブ `kensho-revenue-collect`（5 7 * * *、`kensho_revenue_collect_daily.sh` を実行）が
+**無効化されていた**。無効化の理由は paused_reason に「Consolidated into revenue-health-check.py」と
+あるが、**revenue-health-check.py は検査専用（読むだけ）で収集機能を持たない** → 収集する実行者が
+存在せず、データが Oct 2 13:51 で凍結。監視は毎日「鮮度不足」を正しく警告していた（監視のバグではなく
+上流の欠落）。
+
+無効化の直接原因は Oct 2 07:05 の実行が `ModuleNotFoundError: No module named 'requests'`
+（cron環境の素の python3）で落ちたことで、これは同日の venv 固定修正（`kensho_revenue_collect_daily.sh`
+v2: `/home/atushi/kensho-venv/bin/python3`）で解決済みだった。**修正済みのバグで無効化されたまま、
+誰も復帰させていなかった**のが実態。
+
+### 検証（実測）
+- 手動実行: `bash kensho_revenue_collect_daily.sh` → **EXIT=0 / 409秒**で完走
+  - Apify 86アクター（逐次取得のため約2分）→ 総runs 5308 / PPE課金 80件
+  - RapidAPI 24本、Gumroad 1商品（CDP background化が機能: `poll-mark` で30秒打ち切り→前回値使用）
+  - スクリプト内に「90秒超過で結果を保存して早期終了」の自己防衛あり（実測391.6s）
+- **revenue-daily.json が更新**: 30→31 entries、最終 2026-10-02 → **2026-10-04**
+- ヘルスチェック再実行: `revenue-daily.json ✓ age=0.0h` / `gumroad_state ✓ 0.0h`（修正前は ✗ 32.1h）
+  **警告 6件 → 4件**。残りは「external_runs=0 が31日連続」「Gumroad売上ゼロ31日」＝構造的な事業事実
+- `kensho-revenue-collect` を **resume**（enabled=true / state=scheduled を確認）
+
+※ ハングに見えたが実際は「86アクター逐次取得で約7分」という遅さだった（API自体は1.5秒/件）。
+`timeout 280` では足りず打ち切られ、faulthandler のスタックが DNS 待ちに見えたのはその一瞬を捉えたため。
+
 ## verification_evidence
 
 ```
