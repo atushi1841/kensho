@@ -151,11 +151,43 @@ dispatcherが40秒で拾って実行が始まった。** 供給ループは復�
 - t_f1b09c25 を私が assign した後の status が `done` になったが、completed イベントが無い
   （同一内容の実行カードが別にあるため実害なし）。イベント無しの status 変更は要観察。
 
-## 6. 未完了（結果待ち）
+## 6. paused 22本のトリアージ結果（サブエージェント委譲→親が検証）
 
-- nightly-critic を手動発火して検証中（修正後に実際に起票するか）
-- paused 22本の復帰可否トリアージ（サブエージェント実行中）
-- freellmapi の失敗率低下は24h窓で再測定が必要
+| 区分 | 件数 | 内容 |
+|---|---|---|
+| 不要（重複） | 4 | kensho-weekly-stealth-check / optimize-storage-monthly / kensho-apply-stall-check / kensho-data-journalism-weekly → いずれも enabled な同名 twin が稼働中 |
+| 不要（統合済み・意図的停止） | 3 | kensho-dataset-weekly-update, kensho-revenue-collect（revenue-health-check.pyへ統合）, kensho-auto-fallback-watchdog（freellmapi単独運用のため停止と理由明記） |
+| 不要（スクリプト消滅） | 1 | kensho-winrate-weekly（再設定が必要） |
+| 不明→保留 | 12 | price-alert-daily / suruga-price-tracker / hotpepper-sales-observe / daily-model-stick×2 / reddit-sabotenJAL-weekly / apify-run-monitor / Japan Fuel APIメトリクス（期間限定） / kensho-research-agent ほか |
+| 復帰推奨（サブエージェント判定） | 5 | gateway-memory-watchdog / line-openchat-collect / car-price-alert-daily / car-price-alert-daily-check / yahoo-resale-research-daily |
+
+### ⚠️ 「復帰推奨」5本は復帰させた後、**親が取り消した**
+
+サブエージェントは「last_error が一過性 I/O だから復帰」と判定したが、親が検証したところ不十分だった:
+
+- **全ての最終実行が 2026-08-19**（6週間前）。`next_run_at` も 8/19-20 のまま固まっていた
+- 対象プロジェクトの実体が**いずれも8月中旬から休眠**:
+  car-price-alert=8/12、japan-car-price-alert=8/17、yahoo-auctions-japan-scraper=8/17、akiko-line=8/16
+- 停止時期が **2026-08-14 の「転売・取引自動化は構造的却下」の直後**と一致
+- gateway-memory-watchdog は **RSS 2GB超でHermes Gatewayを強制再起動する副作用**持ち
+
+→ 5本とも `pause` で元に戻した（enabled=false / state=paused を確認）。
+
+教訓: **「一過性エラーだから復帰」は復帰の根拠にならない。最終実行日・対象プロジェクトの鮮度・副作用
+の3点を見る。** 判定できないものは復帰させず、ユーザー判断待ちとして提示する。
+（`cron-job-workflow` スキルに記録）
+
+### ユーザー判断が必要なもの（復帰候補・未実行）
+1. `apify-run-monitor` — Apifyの実行監視。script実在。収益導線に関わるので復帰価値はあるが停止理由不明
+2. `suruga-price-tracker` / `price-alert-daily` — 価格監視。駿河屋は Apify actor の対象データ源
+3. `daily-model-stick` ×2 — 日次モデル固定（freellmapi単独運用になったので不要の可能性）
+4. `gateway-memory-watchdog` — 復帰するなら閾値と再起動方針の再設計が必要（いまは無効のまま）
+
+## 7. 完了状況
+
+- ✅ nightly-critic の修正検証 → 起票→40秒でdispatch→実行中を実測（§5）
+- ✅ paused 22本のトリアージ → 判定＋親の検証で「復帰推奨5本」を取り消し（§6）
+- ⏳ freellmapi の失敗率低下は24h窓での再測定待ち（無効化直後の1時間は401ゼロを確認済み）
 
 ## verification_evidence
 
