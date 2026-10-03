@@ -61,6 +61,31 @@ cron ラッパーが `KENSHO_PROMO_BROWSER=firefox` を固定していた（WSL�
 - 検証: dry-run で `inserted_chars=206`（本文が実際に入ったことを確認）
 - 未検証: 投稿ボタンのクリック以降のみ（次回実走 2026-10-05(月) 09:00 JST）
 
+## 1.5 【追加】第2の真因: 注入側が判断フィールドを捨てていた
+
+1時間後、手動発火した nightly-critic が **「ok」を返したのに新規カード0枚**、出力は9/18の定型ブロック
+だったことから深掘りして発見。
+
+- `kensho-revenue-report.sh` L29 が健康度JSONを
+  `jq -r '.role_summary.critic // .'` で絞り込んでおり、**`priority` / `advice` を丸ごと破棄**していた
+- critic のプロンプトは「script出力の `advice.critic` フィールドが行動方針を決定する」と明記
+- ＝ **判断材料が届いていないので、毎時実行されていても何も提案しない**（632回実行して実質ゼロ）
+- 注入実測（修正前）: キー15個（alert/score/running/... のみ）
+- 注入実測（修正後）: `priority=new_proposals` / `advice={"action":"propose_new",...}` を追加
+
+修正:
+```bash
+# 旧: priority/advice が消える
+jq -r '.role_summary.critic // .'
+# 新: role_summary を保ったまま priority と advice.critic を併せて注入
+jq -r '. as $t | ($t.role_summary.critic // $t) as $r | {role_summary: $r, priority: $t.priority, advice: $t.advice.critic}'
+```
+
+`kensho-revenue-report.sh` はプロファイル内の実体ファイル（git管理外）。`loop_health.sh` は
+repoへのsymlinkなので修正はコミット済み。
+
+worker/qa のラッパーには同種の絞り込みは無し（jq/role_summary/advice の参照なし）。
+
 ## 2. 誤診の訂正（初回スナップショットとの差）
 
 | 初回の見立て | 実測 |
@@ -100,7 +125,33 @@ $ python3 -c "import yaml;c=yaml.safe_load(open('config.yaml'))..."  # atushi16
 12バッチ max=7 容量84 daily_target=75
 ```
 
-## 5. 未完了（結果待ち）
+## 5. 検証結果（Critic復活の実証）
+
+修正の**効果を実測で確認**した（01:13〜01:15の連続イベント）:
+
+| 時刻 | 出来事 |
+|---|---|
+| 01:13:03 | t_f1b09c25 起票（**assignee=null**）→ ready のまま滞留 |
+| 01:15:17 | t_fb291adc 起票（同一タイトル・本文、**assignee=kensho-revenue-worker**、created_by=kensho-sweeps） |
+| 01:15:56 | assigned(t_f1b09c25) / claimed(t_fb291adc) |
+| 01:15:59 | spawned(t_fb291adc, pid=1269734) |
+| 01:16:47 | heartbeat（**実行中**） |
+
+起票内容: 「競争率スコア実装：収集時に低競争率懸賞を優先採択するバッチ配分ロジック」
+（reports/research-20261003.md の実データ 68件応募→11件当選 16.2% を根拠に、低競争率の
+地方共同企画を優先採択する提案＝**収益直結**）。
+
+→ **修正前に「14日で2枚」だったCriticが、修正直後に収益直結の提案を出し、
+dispatcherが40秒で拾って実行が始まった。** 供給ループは復活した。
+
+### 残った小さな欠陥（記録のみ）
+- 01:13の起票だけ assignee が空で、dispatcher に拾われず滞留した（同一内容を2分後に
+  作り直しており、エージェントは自力で回復した）。**assignee無しカードは永久に拾われない**
+  という仕様は罠なので、`ai-team-improvement` スキルに記録。
+- t_f1b09c25 を私が assign した後の status が `done` になったが、completed イベントが無い
+  （同一内容の実行カードが別にあるため実害なし）。イベント無しの status 変更は要観察。
+
+## 6. 未完了（結果待ち）
 
 - nightly-critic を手動発火して検証中（修正後に実際に起票するか）
 - paused 22本の復帰可否トリアージ（サブエージェント実行中）
