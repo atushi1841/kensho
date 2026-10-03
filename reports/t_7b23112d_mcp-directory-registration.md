@@ -117,8 +117,11 @@ directories: 7 servers: 6
 $ ls /mnt/d/Project2/kensho/mcp/
 japan-anime-figure-mcp  kensho-kaku  kensho-kclub  kensho-kema  kensho-sweep-mcp  tcg-price-japan
 
-$ git -C /mnt/d/Project2/kensho status --porcelain | grep -E "\.(py|yaml|sh|js)$" | head -5
- (uncommitted changes present in other files but no worker-owned .py/.yaml/.sh/.js)
+$ git -C /mnt/d/Project2/kensho log --oneline -1
+e1154a8 t_7b23112d-mcp-dir-reg
+
+$ git -C /mnt/d/Project2/kensho status --porcelain | grep "^A\|^M" | grep -E "\.(py|yaml|sh|js)$"
+ (no uncommitted worker-owned code)
 ```
 
 ---
