@@ -1,0 +1,25 @@
+{
+  "success_indicators": [
+    "suumo 4→1本に統合完了 (DELETE 3本: cn/kr/es)",
+    "kakaku 3→1本に統合完了 (DELETE 2本: cn/kr)",
+    "2本のメインactorをパブリック化 (PUT isPublic=true, HTTP 200)"
+  ],
+  "verification_commands": [
+    "curl -s -H \"Authorization: Bearer ${APIFY_TOKEN}\" \"https://api.apify.com/v2/actors?limit=100&userId=fruitful_quintessence\" | python3 -c \"import json,sys;d=json.load(sys.stdin);items=d['data']['items'];suumo=[a for a in items if 'suumo' in a.get('name','').lower()];kakaku=[a for a in items if 'kakaku' in a.get('name','').lower()];print(f'suumo={len(suumo)} kakaku={len(kakaku)}')\" => suumo=1 kakaku=1",
+    "curl -s -H \"Authorization: Bearer ${APIFY_TOKEN}\" -X PUT -d '{\"isPublic\":true}' \"https://api.apify.com/v2/actors/FzQlnqfCsMfSlRG9j\" => HTTP 200",
+    "curl -s -H \"Authorization: Bearer ${APIFY_TOKEN}\" -X DELETE \"https://api.apify.com/v2/actors/8lfpT6vpZMl9JVagy\" => HTTP 204"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_d65c58ba_verification.md"
+  ],
+  "evidence_hashes": [
+    "c49916a4be049346dbe59ffce85d2b2a0a03445e82c8f2e2bea2da7f37dc2635"
+  ],
+  "outcome": {
+    "metric": "重複出品actor数",
+    "before": 7,
+    "after": 2
+  },
+  "task_id": "t_d65c58ba",
+  "status": "complete"
+}
