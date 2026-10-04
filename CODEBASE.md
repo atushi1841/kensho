@@ -91,3 +91,41 @@ kensho/
 ## テスト
 - 51テスト全パス（pytest）、mypy strict 0 error
 - 実行: `python -m pytest`（D:\Project2\kensho ルートから）
+
+## データ商品・外部API（収益化資産・CODEBASE反映）
+
+### Apify Store — 86 Actors (PPE課金)
+- `scripts/apify_store_opportunity.py` — ストア機会分析（86本全件監査済み）
+- `scripts/apify_seo_desc_repair.py` — SEOメタデータ修復（完了済み）
+- `scripts/apify_make_private.py` — Private化制御（PPE維持のため未実行推奨）
+- `scripts/apify_store_rank.py` — ランキング/競合監視
+- `scripts/apify_console_driver.js` — Apify Console自動操作（Playwright）
+
+### Gumroad — デジタル商品自動化
+- `scripts/gumroad_views_check.py` — 商品viewスクレイピング（URL修正済み: 404→200復旧）
+- `scripts/gumroad_cross_post.py` — 既存データセットのクロスポスト（dev.to等）
+- `scripts/github_release_weekly.py` — 週次データセットGitHub Releases自動公開
+- `.github/workflows/weekly-release.yml` — GitHub Actionsスケジュール（毎週月曜 00:00 UTC）
+
+### MCP / Smithery レジストリ登録
+- `scripts/mcp_registry_register.py` — MCP公式レジストリ登録（6 servers完了）
+- `scripts/smithery_register.py` — Smithery登録（description/icon充実済み）
+- `scripts/mcp_so_batch_register.py` — mcp.so一括登録パイプライン
+
+### 外部流入チャネル自動化
+- `scripts/publish_devto.py` — dev.to記事投稿（APIキー設定済み・検証済み）
+- `scripts/devto_weekly_pipeline.py` — 週次SEO記事パイプライン（cron: devto-weekly-seo-post）
+- `scripts/devto_internal_links.py` — 既存記事への内部リンク挿入
+
+### 収益監視・検証
+- `scripts/seo_rank_watch.py` — dev.to/Apify順位監視
+- `scripts/apify_store_check.py` — Apifyストア監査（日次）
+- `scripts/revenue-gap-detector.sh` — 収益ギャップ検出（外部ユーザー0日数等）
+- `scripts/loop_health.sh` — AIチームループ健全性（score/blocked/escalation JSON出力）
+
+---
+
+## 関連ドキュメント
+- `README_DATASET.md` — データセット仕様・ダウンロード・有償版案内
+- `references/apify-visibility-2026.md` — 86アクター実測監査レポート（設定側完了・需要側のみ）
+- `references/kanban-sync-integration.md` — AIチーム Kanban同期設計

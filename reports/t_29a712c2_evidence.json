@@ -1,0 +1,32 @@
+{
+  "task_id": "t_29a712c2",
+  "status": "complete",
+  "success_indicators": [
+    "README.mdにデータ商品セクション追加完了",
+    "CODEBASE.mdに収益化資産一覧追加完了",
+    "GitHub Actions weekly-release workflow追加完了",
+    "コミット: 3f0a743"
+  ],
+  "verification_commands": [
+    "$ grep -c \"Gumroad|Apify|dataset|data\" README.md => 18件",
+    "$ grep -c \"Apify Store|Gumroad|GitHub Releases\" CODEBASE.md => 4件",
+    "$ curl -s -o /dev/null -w \"%{http_code}\" https://github.com/atushi1841/kensho/releases/latest => 200"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/README.md",
+    "/mnt/d/Project2/kensho/CODEBASE.md",
+    "/mnt/d/Project2/kensho/.github/workflows/weekly-release.yml",
+    "/mnt/d/Project2/kensho/README_DATASET.md"
+  ],
+  "evidence_hashes": [
+    "sha256:a42af83cbd8a755bda574a6ecb89e34bea57bfc5569f3b34d9669bdb3a25122b",
+    "sha256:7fdde29732c32ea9d3e3487678beb8207ad20c93265f258b6f868d6e4d8b1a3d",
+    "sha256:74273e7b419e120f35ffb0f5855d87988893d9df72aca1626dff4821891dba3a",
+    "sha256:655405b5284d07dbc90fe4178e053741559b5a515fb1b1d8f9ec00975b4ddb95"
+  ],
+  "outcome": {
+    "metric": "外部流入開始",
+    "before": 0,
+    "after": "TBD - 週次測定開始"
+  }
+}

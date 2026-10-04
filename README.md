@@ -131,6 +131,30 @@ web_search fch "懸賞 自動応募"
 | プロキシ | SOCKS5（アカウント別IP対応） |
 | 実行環境 | WSL2 (Ubuntu) on Windows 11 |
 
+## データ商品・外部API（収益化資産）
+
+### Apify Store — 86 Actors (PPE課金・無料枠あり)
+- **マーケットプレイス**: [atushi1841のアクター一覧](https://apify.com/atushi1841)
+- 課金モデル: **PPE (Pay Per Event)** — 実行ごと課金、無料枠あり
+- 主力カテゴリ: メルカリ / Yahooオークション / 楽天 / SUUMO / 価格.com / 1688 / テレ東 / 他
+- 全アクター: **seoTitle/seoDescription 完備 / 最小権限 / カテゴリ設定済み**
+- レビュー獲得・外部掲載で可視性向上中（dev.to / GitHub / MCPレジストリ）
+
+### Gumroad — デジタル商品販売
+- **商品ページ**: [agyhq](https://gumroad.com/a/agyhq) — アニメフィギュア価格データセット
+- 週次更新データを自動配信（GitHub Releases連動）
+
+### GitHub Releases — 週次データセット公開
+- **リリースページ**: [atushi1841/kensho/releases](https://github.com/atushi1841/kensho/releases)
+- 毎週月曜 09:00 JST 自動公開（GitHub Actions）
+- ファイル: `anime_figure_prices_weekly/YYYY-Www.csv.gz` (≈900 KB)
+- スキーマ: figure_id / name / series / character / manufacturer / release_date / scale / msrp_jpy / lowest_price_jpy / highest_price_jpy / in_stock_count / offers(JSON) / fetched_at / confidence / sources_merged
+
+### データセット仕様書
+- **README_DATASET.md** — 詳細スキーマ・ダウンロード方法・有償版(履歴データ)案内
+
+---
+
 ## 関連リソース
 
 - **Hermes Agent profile**: `kensho-sweeps`

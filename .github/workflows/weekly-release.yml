@@ -1,0 +1,34 @@
+name: Weekly Dataset Release
+
+on:
+  schedule:
+    # Every Monday at 09:00 JST (= 00:00 UTC)
+    - cron: '0 0 * * 1'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  release-dataset:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run weekly release script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/github_release_weekly.py --publish
+
+      - name: Verify release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG=$(python3 -c "import datetime; d=datetime.date.today(); iso=d.isocalendar(); print(f'weekly/{iso[0]}-W{iso[1]:02d}')")
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG" \
+            | python3 -c "import sys,json; r=json.load(sys.stdin); print('Release:', r.get('html_url')); [print('  Asset:', a['name'], '→', a['download_count'], 'DL') for a in r.get('assets',[])]"
