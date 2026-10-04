@@ -1,0 +1,27 @@
+{
+  "success_indicators": [
+    "GitHub repo atushi1841/kensho visibility changed from private to public via API PATCH",
+    "https://github.com/atushi1841/kensho returns HTTP 200 (publicly accessible)",
+    "commit 8780d62 (Apify Store links in 6 MCP READMEs) confirmed on origin/main via merge-base --is-ancestor"
+  ],
+  "verification_commands": [
+    "$ curl -s -X PATCH https://api.github.com/repos/atushi1841/kensho -H \"Authorization: token $TOKEN\" -d '{\"private\":false}' | python3 -c \"import json,sys; d=json.load(sys.stdin); print('visibility:', d.get('visibility'), '| private:', d.get('private'))\" => visibility: public | private: False",
+    "$ curl -s -o /dev/null -w \"HTTP %{http_code}\" https://github.com/atushi1841/kensho => HTTP 200",
+    "$ curl -s https://api.github.com/repos/atushi1841/kensho/commits/8780d62 | python3 -c \"import json,sys; d=json.load(sys.stdin); [print(' ', f.get('filename')) for f in d.get('files',[])]\" => 10 files (6 MCP README + manifest.json)",
+    "$ git -C /mnt/d/Project2/kensho merge-base --is-ancestor 8780d62 origin/main && echo '8780d62 IS on origin/main' => 8780d62 IS on origin/main",
+    "$ curl -s https://api.github.com/repos/atushi1841/kensho | python3 -c \"import json,sys; d=json.load(sys.stdin); print('visibility:', d.get('visibility'), '| stars:', d.get('stargazers_count'))\" => visibility: public | stars: 0"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_933be77d_verification.md"
+  ],
+  "evidence_hashes": [
+    "f78620ed35ece1c229b540b649a0ecfaa2f4f44770f0703d4c513610027bed88"
+  ],
+  "outcome": {
+    "metric": "GitHub repo visibility",
+    "before": 0,
+    "after": 1
+  },
+  "task_id": "t_933be77d",
+  "status": "complete"
+}
