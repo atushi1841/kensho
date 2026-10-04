@@ -127,18 +127,21 @@ def check_freshness() -> dict:
         results["revenue_daily"] = {"exists": True, "fresh": False, "error": "not list"}
 
     # apify_actors_detail_snapshot.json
+    # 2026-10-04: 旧実装は各actorの modifiedAt（Apify側の最終更新日時）を鮮度と誤用していた。
+    # actorが更新されない限り常に「鮮度不足」になる誤判定だったため、ファイル取得時刻(mtime)で判定する。
     p2 = DATA_DIR / "apify_actors_detail_snapshot.json"
     d2 = _load_json(p2)
     if d2 is None:
         results["apify_snapshot"] = {"exists": False, "fresh": False}
     elif isinstance(d2, list):
-        last2 = d2[-1] if d2 else {}
-        age2 = _age_hours(last2.get("modifiedAt"))
-        # modifiedAt は UTC ISO、_age_hours が補正してくれる
+        try:
+            age2 = (_now_jst().timestamp() - p2.stat().st_mtime) / 3600
+        except Exception:
+            age2 = None
         results["apify_snapshot"] = {
             "exists": True,
             "fresh": age2 is not None and age2 < FRESHNESS_H,
-            "age_h": round(age2, 1) if age2 else None,
+            "age_h": round(age2, 1) if age2 is not None else None,
             "actors": len(d2),
         }
     else:
@@ -273,6 +276,21 @@ def run_checks(dry_run: bool = True) -> tuple[dict, list[str]]:
     for w in warnings:
         alerts.append(f"revenue-warn: {w}")
 
+    # 2026-10-04: exitコードを「実障害」と「実態通知」に分離する。
+    # アラート（鮮度不足・外部run 0・Gumroad 0等）は正常な実態の通知であり、
+    # 毎日 exit 1 にすると cron の last_status が error 常態化し watchdog が誤検知する。
+    # ファイル欠損/読取不能のみを致命(critical)として非0で返す。
+    criticals: list[str] = []
+    for key, label in (
+        ("revenue_daily", "revenue-daily.json"),
+        ("apify_snapshot", "apify_actors_detail_snapshot.json"),
+        ("gumroad_state", "gumroad_state.json"),
+    ):
+        if not freshness.get(key, {}).get("exists", True):
+            criticals.append(
+                f"{label}: ファイル欠損/読取不能（収集パイプライン停止の疑い）"
+            )
+
     state = {
         "checked_at": _iso_jst(_now_jst()),
         "freshness": freshness,
@@ -281,6 +299,8 @@ def run_checks(dry_run: bool = True) -> tuple[dict, list[str]]:
         "warnings": warnings,
         "alerts": alerts,
         "alert_count": len(alerts),
+        "criticals": criticals,
+        "critical_count": len(criticals),
     }
     return state, alerts
 
@@ -315,11 +335,16 @@ def print_report(state: dict, dry_run: bool = True) -> None:
     if state["warnings"]:
         _say(f"  warnings: {state['warnings']}")
 
+    if state.get("criticals"):
+        _say(f"  CRITICALS ({len(state['criticals'])}):")
+        for c in state["criticals"]:
+            _say(f"    \U0001f534  {c}", tag="CRITICAL")
+
     if state["alerts"]:
         _say(f"  ALERTS ({len(state['alerts'])}):")
         for a in state["alerts"]:
             _say(f"    ⚠️  {a}", tag="ALERT")
-    else:
+    elif not state.get("criticals"):
         _say("  All checks OK.")
 
     if dry_run:
@@ -474,7 +499,8 @@ def main() -> int:
         if dry_run and changed:
             _say(f"  [DRY-RUN] would disable {len(changed)} cron(s): {changed}")
 
-    if alerts and not dry_run:
+    # 実障害(critical)のみ非0。アラートは通知済みなので exit 0（watchdog誤検知の防止）。
+    if state.get("criticals") and not dry_run:
         return 1
     return 0
 
