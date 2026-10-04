@@ -1,0 +1,27 @@
+{
+  "task_id": "t_725c7a14",
+  "status": "complete",
+  "success_indicators": [
+    "github_release_weekly.py created and working",
+    "weekly-release.yml workflow added",
+    "README_DATASET.md with Gumroad link",
+    "dev.to article published id=4796617"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/github_release_weekly.py --help => usage printed",
+    "$ ls .github/workflows/weekly-release.yml => file exists",
+    "$ curl -s https://api.github.com/repos/atushi1841/kensho/releases => 3 releases"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/github_release_weekly.py",
+    "/mnt/d/Project2/kensho/.github/workflows/weekly-release.yml",
+    "/mnt/d/Project2/kensho/README_DATASET.md",
+    "/mnt/d/Project2/kensho/reports/github_release_dataset_verification.md"
+  ],
+  "evidence_hashes": [
+    "83b63665a8a66d99f83953812494471e34d3967e0c669d32f6d98ca509bf1486",
+    "74273e7b419e120f35ffb0f5855d87988893d9df72aca1626dff4821891dba3a",
+    "655405b5284d07dbc90fe4178e053741559b5a515fb1b1d8f9ec00975b4ddb95",
+    "33a41ad54a30f9f9cf5c8a39f00b40774d4c866ba2b6ad3fdc5a16f99b44a259"
+  ]
+}
