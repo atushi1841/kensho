@@ -141,6 +141,10 @@ def test_priority_advice_fields_present(tmp_path: Path) -> None:
         db_dir = tmp_path / "lh_db"
         db_dir.mkdir(exist_ok=True)
         db = db_dir / "kanban.db"
+        # ケース間で同一パスに INSERT OR IGNORE すると前ケースの行が残り、
+        # priority 判定（todo 数）が汚染される。ケースごとに DB を作り直す。
+        if db.exists():
+            db.unlink()
         con = sqlite3.connect(db)
         con.execute("CREATE TABLE IF NOT EXISTS tasks (id TEXT PRIMARY KEY, status TEXT, last_failure_error TEXT, started_at INTEGER)")
         con.execute("CREATE TABLE IF NOT EXISTS links (parent TEXT, child TEXT, relation TEXT)")
@@ -171,17 +175,27 @@ def test_priority_advice_fields_present(tmp_path: Path) -> None:
     assert r["advice"]["worker"]["action"] == "triage_blocked"
     assert r["advice"]["qa"]["action"] == "triage_blocked"
 
-    # 2. ready=0 blocked=0 running>0 → backlog_reduction
-    r = _run([{"id": "t_r1", "status": "running", "started_at": now - 3600, "result": None}],
-             [("t_r1", "running", now - 3600)])
+    # 2. ready=0 blocked=0 todo>0 → backlog_reduction（縮小すべきbacklogが実在する時のみ）
+    r = _run([{"id": "t_t1", "status": "todo", "started_at": now - 3600, "result": None}],
+             [("t_t1", "todo", now - 3600)])
     assert r["priority"] == "backlog_reduction"
     assert r["advice"]["critic"]["action"] == "reduce_backlog"
 
-    # 3. ready=0 blocked=0 running=0 → new_proposals
-    r = _run([], [])
+    # 2b. ready=0 blocked=0 todo=0 running>0 → new_proposals
+    #     running を理由に backlog_reduction を返すと「新規提案禁止」の無限デッドロックに
+    #     入るため 2026-10-04 に変更（bdafab4）。その回帰ゲート。
+    r = _run([{"id": "t_r1", "status": "running", "started_at": now - 3600, "result": None}],
+             [("t_r1", "running", now - 3600)])
     assert r["priority"] == "new_proposals"
     assert r["advice"]["critic"]["action"] == "propose_new"
-    assert r["advice"]["critic"]["reason"] == "ready=0かつrunning=0（board 全停止）→ 新規提案の起票を"
+
+    # 3. ready=0 blocked=0 todo=0 running=0 → new_proposals
+    #    ※ 空DBを渡すと loop_health は実盤面DBへフォールバックする（_db_has_tasks ガード）
+    #      ため、done 1件を入れて「tasks は在るが todo/ready は 0」を再現する。
+    r = _run([], [("t_done0", "done", now - 100)])
+    assert r["priority"] == "new_proposals"
+    assert r["advice"]["critic"]["action"] == "propose_new"
+    assert r["advice"]["critic"]["reason"] == "ready=0かつtodo=0（盤面にworkが無い）→ 新規提案の起票を"
 
     # 4. ready>0 → normal
     r = _run([], [("t_n1", "ready", None)])
