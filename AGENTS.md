@@ -65,3 +65,21 @@
 ## 利用するスキル
 - `deepseek-coding` — DeepSeek V4でのコード作成
 - `claude-code` — Claude Code CLI連携
+
+## セキュリティ規則（2026-10-04 追加・厳守）
+
+**背景**: AIチームが個人用X自動化コードを public リポジトリで公開してしまい、Apify APIトークンが
+`data/revenue-daily.json` 経由で漏洩（GitHub Secret Scanning 検知）。以下は例外なく守ること。
+
+1. **公開リポジトリへの push 禁止**。push 先は private の `atushi1841/kensho` のみ。
+   `git remote -v` で private であることを確認してから push する。
+2. **新規リポジトリは必ず private で作成**する。公開が必須な商品リポジトリ（MCPサーバー等）は
+   オーナーの明示的な承認を得てから public にする。
+3. **秘密情報をURLに載せない**。`?token=...` のクエリ渡しは禁止。必ず
+   `Authorization: Bearer <token>` ヘッダで送る（`scripts/_apify_auth.py` を使う）。
+   URL内トークンは requests/urllib の例外文に混入し、それがJSONやログに保存されて漏洩する。
+4. 秘密情報は `.env`（git追跡外）のみに置く。コード・データ・state・ログへ書き出さない。
+   やむを得ず例外文を保存する場合は `redact_secrets()` を通す。
+5. push 前に `.git/hooks/pre-push` が秘密パターンを検査する。検出されたら push は中止される
+   （apify_api_ / ghp_ / github_pat_ / sk- / AKIA / Slack / 秘密鍵）。
+6. 収益・状態系のJSONは特に注意（外部APIの例外文が保存されやすい）。
