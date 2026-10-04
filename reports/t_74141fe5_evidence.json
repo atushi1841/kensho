@@ -1,0 +1,22 @@
+{
+  "success_indicators": [
+    "MCPレジストリ検索でkenshoエントリ4件検出",
+    "全mcpbファイルSHA256がレジストリ記載値と一致",
+    "GitHub全4repoがweb公開状態でAPI 200応答",
+    "レジストリ登録エントリ=4件（収益ゲート条件達成）"
+  ],
+  "verification_commands": [
+    "curl -s 'https://registry.modelcontextprotocol.io/v0.1/servers?search=kensho&version=latest' => servers:4",
+    "curl -L -s https://github.com/atushi1841/kensho-sweep-mcp/releases/download/v1.0.0/server.mcpb | sha256sum => 396651d822782d8c7d67c89b6e1201950f441258bfc784fe9bbf09dcf7ffb355",
+    "curl -s 'https://api.github.com/repos/atushi1841/kensho-sweep-mcp' => HTTP 200, stars:0",
+    "curl -s 'https://registry.modelcontextprotocol.io/v0.1/servers/io.github.atushi1841%2Fkensho-sweep-mcp/versions/latest' => status:active, isLatest:true"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-10-05-mcp-registry-verification.md"
+  ],
+  "evidence_hashes": [
+    "304a0369d1fedb9c1fe936406ab3c36c504806a33b1211f9a1c4e7f79b927c55"
+  ],
+  "task_id": "t_74141fe5",
+  "status": "complete"
+}
