@@ -1,0 +1,12 @@
+# Smithery.ai configuration for kensho-sweep-mcp
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties: {}
+  commandFunction: |
+    (config) => ({
+      command: 'python',
+      args: ['${__dirname}/server/server.py']
+    })
+exampleConfig: {}

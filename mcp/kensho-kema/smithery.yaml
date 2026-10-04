@@ -1,0 +1,12 @@
+# Smithery.ai configuration for kensho-kema MCP
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties: {}
+  commandFunction: |
+    (config) => ({
+      command: 'uv',
+      args: ['run', '--directory', '${__dirname}', 'src/stdio_main.py']
+    })
+exampleConfig: {}

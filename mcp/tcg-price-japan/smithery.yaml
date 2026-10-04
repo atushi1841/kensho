@@ -1,0 +1,12 @@
+# Smithery.ai configuration for tcg-price-japan MCP
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties: {}
+  commandFunction: |
+    (config) => ({
+      command: 'python',
+      args: ['${__dirname}/server/server.py']
+    })
+exampleConfig: {}
