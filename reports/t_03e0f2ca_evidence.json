@@ -1,0 +1,28 @@
+{
+  "task_id": "t_03e0f2ca",
+  "success_indicators": [
+    "gumroad_views_check.py の参照URLが 404→200 に修正され、Gumroad商品ページスクレイピング復旧（curl実測: HTTP 200, 25336 bytes）",
+    "dev.to 英語記事 id=4796304 が公開され、外部流入チャネル（dev.to）が開拓された",
+    "Apify Store 8 Actor の英語紹介記事により、Kensho商品可視性が dev.to プラットフォームに延伸"
+  ],
+  "verification_commands": [
+    "$ curl -s -o /dev/null -w \"HTTP %{http_code}\" https://atushi5.gumroad.com/l/agyhq => HTTP 200",
+    "$ curl -s -o /dev/null -w \"HTTP %{http_code}\" https://gumroad.com/l/japanese-hobby-collectibles-dataset => HTTP 404",
+    "$ python3 scripts/publish_devto.py reports/journalism/drafts/devto-2026W40-en.md --publish --public => [OK] https://dev.to/atu_ino_ed473db24d76d234a/japanese-market-data-you-can-actually-use-8-apify-actors-for-scraping-mercari-yahoo-auctions-2ehd (id=4796304)",
+    "$ python3 scripts/gumroad_promo_kpi.py => KPI sales_source=api sales_week=0 sales_met=False views=2(prev=2) dod=0.0%"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/gumroad_views_check.py",
+    "/mnt/d/Project2/kensho/reports/2026-10-04-revenue-worker-gumroad-crosstpost.md"
+  ],
+  "evidence_hashes": [
+    "5162ce87730684c4101703b34f3d6ebf77d175d4681042b3514cf7e7816b6fe8",
+    "b093e7c8618ed038fe132984ad6f6db25e177da2198b128bdcf2e9f882f1146a"
+  ],
+  "outcome": {
+    "metric": "外部流入チャネル数",
+    "before": 0,
+    "after": 1
+  },
+  "status": "complete"
+}
