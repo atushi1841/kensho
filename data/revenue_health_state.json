@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-10-02T23:57:12.802349+09:00",
+  "checked_at": "2026-10-04T20:12:25.176350+09:00",
   "freshness": {
     "revenue_daily": {
       "exists": true,
       "fresh": true,
-      "age_h": 10.1,
-      "entries": 30,
-      "last_date": "2026-10-02",
+      "age_h": 13.0,
+      "entries": 31,
+      "last_date": "2026-10-04",
       "warnings": [
         "Gumroad売上ゼロ継続（販促施策の実行候補）"
       ]
@@ -14,21 +14,21 @@
     "apify_snapshot": {
       "exists": true,
       "fresh": true,
-      "age_h": 5.0,
+      "age_h": 0.7,
       "actors": 86
     },
     "gumroad_state": {
       "exists": true,
       "fresh": true,
-      "age_h": 10.1,
+      "age_h": 13.0,
       "sales": 0,
       "total_revenue": 0,
       "login_ok": true
     }
   },
   "external_runs": {
-    "zero_days": 30,
-    "total_days": 30,
+    "zero_days": 31,
+    "total_days": 31,
     "zero_pct": 100.0,
     "total_external_runs_all_time": 0,
     "status": "zero_streak",
@@ -36,8 +36,8 @@
   },
   "gumroad_sales": {
     "sales": 0,
-    "zero_sales_days": 30,
-    "total_days": 30,
+    "zero_sales_days": 31,
+    "total_days": 31,
     "warn": true,
     "login_ok": true,
     "products": 0
@@ -46,9 +46,11 @@
     "Gumroad売上ゼロ継続（販促施策の実行候補）"
   ],
   "alerts": [
-    "external_runs=0 連続 30日 (100.0%) — 外部顧客なし継続",
-    "Gumroad売上ゼロ連続 30日",
+    "external_runs=0 連続 31日 (100.0%) — 外部顧客なし継続",
+    "Gumroad売上ゼロ連続 31日",
     "revenue-warn: Gumroad売上ゼロ継続（販促施策の実行候補）"
   ],
-  "alert_count": 3
+  "alert_count": 3,
+  "criticals": [],
+  "critical_count": 0
 }

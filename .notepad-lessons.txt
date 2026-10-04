@@ -20,3 +20,11 @@
 - Patchright vs CloakBrowser 実地ベンチ（goto failed/日、応募成功率、エラー率で比較）
 - Unbrowse的API-first収集の懸賞サイト適用可否（内部API発見調査）
 - MCPサーバー化によるAIエージェント連携（Hermes/Claude Codeから標準ツール呼出）
+
+## 2026-10-04 ユーザー方針: X投稿は当面実施しない
+
+- **X投稿（x-posting-cdp / CDP 9222 経由）は当面やらない**（ユーザー判断 2026-10-04）。
+- 理由: 今は不要。Windows Chrome の常時起動という手間を取らない方針。
+- 影響: 「Windows Chrome を起動してください」を要ユーザー対応として再提案しない。X投稿前提の新規タスクも起票しない。
+- 再開条件: ユーザーが明示的に指示した時のみ。
+- 代替の外部露出: Qiita/dev.to/Reddit などブラウザ常駐が不要なチャネルで進める。

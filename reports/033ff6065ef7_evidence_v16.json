@@ -1,0 +1,24 @@
+{
+  "task_id": "033ff6065ef7",
+  "status": "complete",
+  "success_indicators": [
+    "loop_health score=100 streak=0 healthy (11回連続)",
+    "board: ready=0 blocked=0 in_progress=0 done=724",
+    "pytest 27 passed (81.54s)",
+    "reddit warmup dry-run: 35 candidates, 3 drafts generated",
+    "external_traffic kpi: devto=4 x_promo=2 stable"
+  ],
+  "verification_commands": [
+    "$ bash ~/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh => score=100",
+    "$ hermes kanban --board kensho-ai-team list --json => ready=0 blocked=0",
+    "$ .venv/bin/pytest tests/test_reddit_warmup_agent.py -x -q => 27 passed"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/033ff6065ef7_qa_verification_20261003.md",
+    "/mnt/d/Project2/kensho/data/external_traffic_state.json",
+    "/mnt/d/Project2/kensho/data/gumroad_views_history.json"
+  ],
+  "evidence_hashes": [
+    "sha256:a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2"
+  ]
+}

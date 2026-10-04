@@ -1,0 +1,19 @@
+{
+  "note": "内部用（テスト/デバッグ）アクターの台帳。商品ではないため SEO改善・プロモーション・収益集計の対象から除外する。削除はしない（不可逆のため）。isPublic は false のまま維持する。",
+  "updated_at": "2026-10-03",
+  "excluded_from": ["apify_seo_audit", "apify_seo_apply", "apify_seo_full_apply", "apify_store_promo", "収益KPI集計"],
+  "internal_actors": [
+    {"name": "rakuten-debug-fetch", "id": "NURQEJnUsVAobIiPs", "isPublic": false, "run_count": 0, "reason": "楽天APIの疎通確認用。結果を返すだけで商品データを持たない"},
+    {"name": "tabelog-debug-fetch", "id": "S3IdRuweFhrTwvJJN", "isPublic": false, "run_count": 0, "reason": "食べログの疎通確認用"},
+    {"name": "mini-actor-test-0903", "id": "lRUO0nFDpE66U013r", "isPublic": false, "run_count": 0, "reason": "アクター最小構成の検証用（2026-09-03作成）"},
+    {"name": "my-actor", "id": "90MPAX9mfR1DbNDJh", "isPublic": false, "run_count": 0, "reason": "Apifyテンプレートの初期アクター"},
+    {"name": "my-actor-1", "id": "KAmLNI93rwL86w8d6", "isPublic": false, "run_count": 0, "reason": "Apifyテンプレートの初期アクター（複製）"},
+    {"name": "test-actor", "id": "LXzxoGGC0bmMTqEtd", "isPublic": false, "run_count": 0, "reason": "動作確認用"}
+  ],
+  "private_but_product": [
+    {"name": "kensho-high-value-leads", "id": "SWVTsribU0AIJVXtR", "isPublic": false,
+     "note": "テスト用ではない実プロダクト。非公開のままなので Store から見えない。公開するか要判断（2026-10-03に検出）"},
+    {"name": "japan-property-hazard-mcp", "id": "XJCgrhOZE47qc7T3i", "isPublic": false,
+     "note": "2026-10-03 に PPE を追加した直後。公開するかは別途判断"}
+  ]
+}

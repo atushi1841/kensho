@@ -3380,18 +3380,221 @@
     "verified_charged_items": 0,
     "verified_revenue_usd": 0
    }
+  },
+  {
+   "timestamp": "2026-10-03T19:56:34+00:00",
+   "estimated_revenue_usd": 0.053,
+   "actual_revenue_usd": 0.0,
+   "settle_rate_pct": 0.0,
+   "settle_status": "zero_settle",
+   "window_days": 30,
+   "dry_run": false,
+   "actual_data": {
+    "window_days": 30,
+    "external_runs": 0,
+    "charged_items": 0,
+    "revenue_usd": 0.0,
+    "per_actor": {
+     "japan-used-camera-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 20
+     },
+     "japan-watch-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 18
+     },
+     "japan-luxury-brand-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 18
+     },
+     "japan-used-instrument-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 18
+     },
+     "japan-offmall-market-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 49
+     },
+     "tackleberry-japan-fishing-tackle-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 31
+     },
+     "dmm-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 4
+     },
+     "kitamura-japan-used-camera-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 13
+     },
+     "komehyo-japan-brand-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 13
+     },
+     "eurostat-indicators": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 3
+     },
+     "world-bank-indicators": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 2
+     },
+     "biglemon-machinery-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 3
+     },
+     "golfpartner-used-club-scraper": {
+      "external_runs": 0,
+      "charged_items": 0,
+      "revenue_usd": 0.0,
+      "total_runs_window": 1
+     }
+    },
+    "run_id_verified": {
+     "japan-used-camera-market-scraper": {
+      "run_id": "1OJXfyHJcF1yRJipM",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-watch-market-scraper": {
+      "run_id": "2aoZHnLv3EDlrdiKu",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-luxury-brand-market-scraper": {
+      "run_id": "hbdaqw7FFRBGyC4dc",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-used-instrument-market-scraper": {
+      "run_id": "Vc8hmjqf9JP2fSPsM",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "japan-offmall-market-scraper": {
+      "run_id": "zJY9zolU7G51fDoPV",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "tackleberry-japan-fishing-tackle-scraper": {
+      "run_id": "RxGbNSMv1vdOtj682",
+      "status": "FAILED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "dmm-scraper": {
+      "run_id": "qs63zhqCy1UoO7wz6",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "kitamura-japan-used-camera-scraper": {
+      "run_id": "MCJ53U7kczy1qVcAx",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "komehyo-japan-brand-scraper": {
+      "run_id": "j3y8gfsVjQVpJOuj8",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "eurostat-indicators": {
+      "run_id": "MLvgDFm8A3ikjRL8I",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "world-bank-indicators": {
+      "run_id": "vgjPUegRBswwYxuUR",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "biglemon-machinery-scraper": {
+      "run_id": "b4xHf5X0ZUQjctwOL",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     },
+     "golfpartner-used-club-scraper": {
+      "run_id": "6M1BxN4LleI4iwYi7",
+      "status": "SUCCEEDED",
+      "billed": false,
+      "charged_items": 0,
+      "verified": false,
+      "skipped_reason": "owner_run"
+     }
+    },
+    "verified_charged_items": 0,
+    "verified_revenue_usd": 0
+   }
   }
  ],
  "latest": {
-  "timestamp": "2026-09-28T17:15:17+00:00",
-  "estimated_revenue_usd": 0.025,
+  "timestamp": "2026-10-03T19:56:34+00:00",
+  "estimated_revenue_usd": 0.053,
   "actual_revenue_usd": 0.0,
   "settle_rate_pct": 0.0,
   "settle_status": "zero_settle",
-  "window_days": 1,
+  "window_days": 30,
   "dry_run": false,
   "actual_data": {
-   "window_days": 1,
+   "window_days": 30,
    "external_runs": 0,
    "charged_items": 0,
    "revenue_usd": 0.0,
@@ -3400,36 +3603,84 @@
      "external_runs": 0,
      "charged_items": 0,
      "revenue_usd": 0.0,
-     "total_runs_window": 2
+     "total_runs_window": 20
     },
     "japan-watch-market-scraper": {
      "external_runs": 0,
      "charged_items": 0,
      "revenue_usd": 0.0,
-     "total_runs_window": 2
+     "total_runs_window": 18
     },
     "japan-luxury-brand-market-scraper": {
      "external_runs": 0,
      "charged_items": 0,
      "revenue_usd": 0.0,
-     "total_runs_window": 2
+     "total_runs_window": 18
     },
     "japan-used-instrument-market-scraper": {
      "external_runs": 0,
      "charged_items": 0,
      "revenue_usd": 0.0,
-     "total_runs_window": 2
+     "total_runs_window": 18
     },
     "japan-offmall-market-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 49
+    },
+    "tackleberry-japan-fishing-tackle-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 31
+    },
+    "dmm-scraper": {
      "external_runs": 0,
      "charged_items": 0,
      "revenue_usd": 0.0,
      "total_runs_window": 4
+    },
+    "kitamura-japan-used-camera-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 13
+    },
+    "komehyo-japan-brand-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 13
+    },
+    "eurostat-indicators": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 3
+    },
+    "world-bank-indicators": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 2
+    },
+    "biglemon-machinery-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 3
+    },
+    "golfpartner-used-club-scraper": {
+     "external_runs": 0,
+     "charged_items": 0,
+     "revenue_usd": 0.0,
+     "total_runs_window": 1
     }
    },
    "run_id_verified": {
     "japan-used-camera-market-scraper": {
-     "run_id": "6sf6qGhgzMr4lq1g0",
+     "run_id": "1OJXfyHJcF1yRJipM",
      "status": "SUCCEEDED",
      "billed": false,
      "charged_items": 0,
@@ -3437,7 +3688,7 @@
      "skipped_reason": "owner_run"
     },
     "japan-watch-market-scraper": {
-     "run_id": "Egc2S6qdubgfaNtLE",
+     "run_id": "2aoZHnLv3EDlrdiKu",
      "status": "SUCCEEDED",
      "billed": false,
      "charged_items": 0,
@@ -3445,7 +3696,7 @@
      "skipped_reason": "owner_run"
     },
     "japan-luxury-brand-market-scraper": {
-     "run_id": "qsUikKhwyRlS6bCxy",
+     "run_id": "hbdaqw7FFRBGyC4dc",
      "status": "SUCCEEDED",
      "billed": false,
      "charged_items": 0,
@@ -3453,7 +3704,7 @@
      "skipped_reason": "owner_run"
     },
     "japan-used-instrument-market-scraper": {
-     "run_id": "dKP0o2vfgjsG5WCXx",
+     "run_id": "Vc8hmjqf9JP2fSPsM",
      "status": "SUCCEEDED",
      "billed": false,
      "charged_items": 0,
@@ -3461,7 +3712,71 @@
      "skipped_reason": "owner_run"
     },
     "japan-offmall-market-scraper": {
-     "run_id": "WlZBZXaTvqHD5cEEj",
+     "run_id": "zJY9zolU7G51fDoPV",
+     "status": "SUCCEEDED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    },
+    "tackleberry-japan-fishing-tackle-scraper": {
+     "run_id": "RxGbNSMv1vdOtj682",
+     "status": "FAILED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    },
+    "dmm-scraper": {
+     "run_id": "qs63zhqCy1UoO7wz6",
+     "status": "SUCCEEDED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    },
+    "kitamura-japan-used-camera-scraper": {
+     "run_id": "MCJ53U7kczy1qVcAx",
+     "status": "SUCCEEDED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    },
+    "komehyo-japan-brand-scraper": {
+     "run_id": "j3y8gfsVjQVpJOuj8",
+     "status": "SUCCEEDED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    },
+    "eurostat-indicators": {
+     "run_id": "MLvgDFm8A3ikjRL8I",
+     "status": "SUCCEEDED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    },
+    "world-bank-indicators": {
+     "run_id": "vgjPUegRBswwYxuUR",
+     "status": "SUCCEEDED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    },
+    "biglemon-machinery-scraper": {
+     "run_id": "b4xHf5X0ZUQjctwOL",
+     "status": "SUCCEEDED",
+     "billed": false,
+     "charged_items": 0,
+     "verified": false,
+     "skipped_reason": "owner_run"
+    },
+    "golfpartner-used-club-scraper": {
+     "run_id": "6M1BxN4LleI4iwYi7",
      "status": "SUCCEEDED",
      "billed": false,
      "charged_items": 0,

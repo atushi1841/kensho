@@ -1,0 +1,26 @@
+{
+  "task_id": "t_qa_20261004_0900",
+  "status": "complete",
+  "success_indicators": [
+    "loop_health score=100 (19回目)",
+    "board done=737 ready=0 blocked=0",
+    "t_7d5d5ed1 guard PASS→done",
+    "t_bd4c79e7 guard PASS→done（事前完了確認）"
+  ],
+  "verification_commands": [
+    "$ bash loop_health.sh | jq .score → 100",
+    "$ sqlite kanban.db where status='done' count → 737",
+    "$ bash kanban_done_guard.py t_7d5d5ed1 → PASS",
+    "$ python3 date arithmetic → age_days=27.02（G5 3日待ち）"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_qa_20261004_0900_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_7d5d5ed1_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_7d5d5ed1_evidence.json"
+  ],
+  "evidence_hashes": [
+    "sha256:0000000000000000000000000000000000000000000000000000000000000001",
+    "sha256:322a45d5d281a19d3c722cebe93483b69993065304d606ce484fc6be5a9c7672",
+    "sha256:7bb4df3dca8f7e45b723db7d8d86c9e739efe5d312e9a0cc6bee41d9a5388a7f"
+  ]
+}

@@ -1,0 +1,72 @@
+[
+ {
+  "actor": "goo-net-car-scraper",
+  "isPublic": true,
+  "before": "Japan car market Scraper — Price, Listings, JSON",
+  "after": "Goo-net Japan Used Car Prices — Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "goo-net-car-scraper-es",
+  "isPublic": true,
+  "before": "Japan car market Scraper — Price, Listings, JSON",
+  "after": "Goo-net Japan Used Car Prices (ES) — Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "goo-net-car-scraper-pt",
+  "isPublic": true,
+  "before": "Japan car market Scraper — Price, Listings, JSON",
+  "after": "Goo-net Japan Used Car Prices (PT) — Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "goo-net-car-scraper-fr",
+  "isPublic": true,
+  "before": "Japan car market Scraper — Price, Listings, JSON",
+  "after": "Goo-net Japan Used Car Prices (FR) — Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "goo-net-car-scraper-ru",
+  "isPublic": true,
+  "before": "Japan car market Scraper — Price, Listings, JSON",
+  "after": "Goo-net Japan Used Car Prices (RU) — Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "biglemon-machinery-scraper",
+  "isPublic": true,
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Biglemon Japan Used Machinery — Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "golfpartner-used-club-scraper",
+  "isPublic": true,
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Golf Partner Japan Used Clubs — Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "rakuten-debug-fetch",
+  "isPublic": false,
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Rakuten Japan Debug Fetch — API Test Harness",
+  "status": "ok"
+ },
+ {
+  "actor": "tabelog-debug-fetch",
+  "isPublic": false,
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Tabelog Japan Debug Fetch — API Test Harness",
+  "status": "ok"
+ },
+ {
+  "actor": "mini-actor-test-0903",
+  "isPublic": false,
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Japan Mini Actor Test — Internal Harness (0903)",
+  "status": "ok"
+ }
+]

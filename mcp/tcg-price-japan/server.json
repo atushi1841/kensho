@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.atushi1841/tcg-price-japan",
+  "description": "Japan TCG (Pokemon) used-price trends from suruga-ya.jp. Tools: price, history, movers.",
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/atushi1841/tcg-price-japan",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/atushi1841/tcg-price-japan/releases/download/v1.0.0/server.mcpb",
+      "version": "1.0.0",
+      "fileSha256": "f5478c6f52cf5a4e3e64b3f17bb47657fdfc76e9be8326852edbbc34c80cf991",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

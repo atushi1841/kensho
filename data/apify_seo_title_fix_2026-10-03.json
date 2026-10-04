@@ -1,0 +1,224 @@
+[
+ {
+  "actor": "goobike-motorcycle-scraper",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "GooBike Japan Used Motorcycle Prices — Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "jackroad-used-watch-scraper",
+  "before": "Japan watches Scraper — Price, Listings, JSON",
+  "after": "Jackroad Japan Used Watch Prices — Luxury Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-camera-market-cn-scraper",
+  "before": "Japan cameras Scraper — Price, Listings, JSON",
+  "after": "Japan Camera Market (CN) — Used Camera Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-camera-market-kr-scraper",
+  "before": "Japan cameras Scraper — Price, Listings, JSON",
+  "after": "Japan Camera Market (KR) — Used Camera Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-figure-plamo-resale-price-stats",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Japan Figure & Plamo Resale Stats — Price History, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-hotpepper-cn-scraper",
+  "before": "Japan HotPepper Beauty Scraper — Price, Listings, JSON",
+  "after": "HotPepper Beauty Japan (CN) — Salon Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-hotpepper-kr-scraper",
+  "before": "Japan HotPepper Beauty Scraper — Price, Listings, JSON",
+  "after": "HotPepper Beauty Japan (KR) — Salon Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-hotpepper-scraper",
+  "before": "Japan HotPepper Beauty Scraper — Price, Listings, JSON",
+  "after": "HotPepper Beauty Japan Scraper — Salon Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-kakaku-price-search-cn",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Kakaku.com Japan (CN) — Product Price Comparison, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-kakaku-price-search-kr",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Kakaku.com Japan (KR) — Product Price Comparison, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-luxury-brand-market-cn",
+  "before": "Japan luxury brand Scraper — Price, Listings, JSON",
+  "after": "Japan Luxury Brand Market (CN) — Resale Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-luxury-brand-market-kr",
+  "before": "Japan luxury brand Scraper — Price, Listings, JSON",
+  "after": "Japan Luxury Brand Market (KR) — Resale Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-luxury-brand-market-scraper",
+  "before": "Japan luxury brand Scraper — Price, Listings, JSON",
+  "after": "Japan Luxury Brand Market Scraper — Resale Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-offmall-market-cn",
+  "before": "Japan Hard Off OffMall Scraper — Price, Listings, JSON",
+  "after": "Hard Off OffMall Japan (CN) — Used Goods Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-offmall-market-kr",
+  "before": "Japan Hard Off OffMall Scraper — Price, Listings, JSON",
+  "after": "Hard Off OffMall Japan (KR) — Used Goods Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-offmall-market-scraper",
+  "before": "Japan Hard Off OffMall Scraper — Price, Listings, JSON",
+  "after": "Hard Off OffMall Japan Scraper — Used Goods Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-property-market-cn",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Japan Real Estate Market (CN) — Property Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-property-market-kr",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Japan Real Estate Market (KR) — Property Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-property-market-scraper",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Japan Real Estate Market Scraper — Property Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-rent-market-cn",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Japan Rental Market (CN) — Rent & Lease Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-rent-market-kr",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Japan Rental Market (KR) — Rent & Lease Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-rent-market-scraper",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Japan Rental Market Scraper — Rent & Lease Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-used-instrument-market-cn",
+  "before": "Japan musical instruments Scraper — Price, Listings, JSON",
+  "after": "Japan Used Instrument Market (CN) — Gear Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-used-instrument-market-kr",
+  "before": "Japan musical instruments Scraper — Price, Listings, JSON",
+  "after": "Japan Used Instrument Market (KR) — Gear Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-used-instrument-market-scraper",
+  "before": "Japan musical instruments Scraper — Price, Listings, JSON",
+  "after": "Japan Used Instrument Market Scraper — Gear Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-watch-market-scraper",
+  "before": "Japan watches Scraper — Price, Listings, JSON",
+  "after": "Japan Used Watch Market Scraper — Luxury Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-watch-market-scraper-cn",
+  "before": "Japan watches Scraper — Price, Listings, JSON",
+  "after": "Japan Used Watch Market (CN) — Luxury Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "japan-watch-market-scraper-kr",
+  "before": "Japan watches Scraper — Price, Listings, JSON",
+  "after": "Japan Used Watch Market (KR) — Luxury Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "kimono-market-scraper",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Japan Kimono & Wa Market Scraper — Secondhand Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "kimono-market-scraper-cn",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Japan Kimono Market (CN) — Secondhand Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "kimono-market-scraper-kr",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Japan Kimono Market (KR) — Secondhand Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "rakuten-market-scraper",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "Rakuten Ichiba Japan — Marketplace Product Prices, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "suumo-japan-real-estate-scraper",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "SUUMO Japan Real Estate Scraper — Property Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "suumo-japan-real-estate-scraper-cn",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "SUUMO Japan Real Estate (CN) — Property Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "suumo-japan-real-estate-scraper-es",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "SUUMO Japan Real Estate (ES) — Property Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "suumo-japan-real-estate-scraper-kr",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "SUUMO Japan Real Estate (KR) — Property Listings, JSON",
+  "status": "ok"
+ },
+ {
+  "actor": "upgarage-parts-scraper",
+  "before": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "after": "UP-GARAGE Japan Used Auto Parts — Listings, JSON",
+  "status": "ok"
+ }
+]

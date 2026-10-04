@@ -1,0 +1,240 @@
+{
+ "measured_at": "2026-10-03T08:11:33.525868+00:00",
+ "label": "baseline",
+ "depth": 200,
+ "own_user": "fruitful_quintessence",
+ "rows": [
+  {
+   "keyword": "mercari japan",
+   "sort": null,
+   "total_matches": 61,
+   "our_best_rank": 18,
+   "our_actor": "mercari-japan-search-scraper",
+   "our_title": "Mercari Japan Price Scraper — C2C Marketplace Listings",
+   "our_users30d": 1,
+   "top3": [
+    {
+     "rank": 1,
+     "name": "mercari-japan-scraper",
+     "user": "fatihtahta",
+     "users30d": 29
+    },
+    {
+     "rank": 2,
+     "name": "mercari-jp-scraper",
+     "user": "abotapi",
+     "users30d": 7
+    },
+    {
+     "rank": 3,
+     "name": "mercari-japan-listings-scraper",
+     "user": "datalab-jp",
+     "users30d": 3
+    }
+   ]
+  },
+  {
+   "keyword": "yahoo auctions japan",
+   "sort": null,
+   "total_matches": 48,
+   "our_best_rank": 20,
+   "our_actor": "yahoo-auctions-japan-scraper",
+   "our_title": "Yahoo Auctions Japan Scraper — Vintage Camera & Collectibles",
+   "our_users30d": 1,
+   "top3": [
+    {
+     "rank": 1,
+     "name": "yahoo-auctions-sold-scraper",
+     "user": "datalab-jp",
+     "users30d": 7
+    },
+    {
+     "rank": 2,
+     "name": "yahoo-auctions-japan-marketplace-scraper",
+     "user": "jungle_synthesizer",
+     "users30d": 9
+    },
+    {
+     "rank": 3,
+     "name": "buyee-scraper",
+     "user": "getascraper",
+     "users30d": 4
+    }
+   ]
+  },
+  {
+   "keyword": "japan used camera",
+   "sort": null,
+   "total_matches": 30,
+   "our_best_rank": 2,
+   "our_actor": "japan-used-camera-market-scraper",
+   "our_title": "Japan Used Camera Market Scraper — Prices & Listings API",
+   "our_users30d": 1,
+   "top3": [
+    {
+     "rank": 1,
+     "name": "japan-camera-gear-sold-comps",
+     "user": "jpmarketdata",
+     "users30d": 1
+    },
+    {
+     "rank": 2,
+     "name": "japan-used-camera-market-scraper",
+     "user": "fruitful_quintessence",
+     "users30d": 1
+    },
+    {
+     "rank": 3,
+     "name": "kitamura-japan-used-camera-scraper",
+     "user": "fruitful_quintessence",
+     "users30d": 0
+    }
+   ]
+  },
+  {
+   "keyword": "anime figure price",
+   "sort": null,
+   "total_matches": 22,
+   "our_best_rank": 1,
+   "our_actor": "surugaya-japan-hobby-prices",
+   "our_title": "Surugaya Anime Figure Price Scraper — Japan Used Collectibles",
+   "our_users30d": 0,
+   "top3": [
+    {
+     "rank": 1,
+     "name": "surugaya-japan-hobby-prices",
+     "user": "fruitful_quintessence",
+     "users30d": 0
+    },
+    {
+     "rank": 2,
+     "name": "japan-anime-figure-price-data",
+     "user": "fruitful_quintessence",
+     "users30d": 1
+    },
+    {
+     "rank": 3,
+     "name": "solarisjapan-scraper",
+     "user": "lulzasaur",
+     "users30d": 1
+    }
+   ]
+  },
+  {
+   "keyword": "japan rent suumo",
+   "sort": null,
+   "total_matches": 30,
+   "our_best_rank": 4,
+   "our_actor": "japan-rent-market-scraper",
+   "our_title": "Japan Rental Market Scraper - Rent & Lease Prices API",
+   "our_users30d": 1,
+   "top3": [
+    {
+     "rank": 1,
+     "name": "suumo-market-checker",
+     "user": "jpmarketdata",
+     "users30d": 1
+    },
+    {
+     "rank": 2,
+     "name": "japan-rent-market-benchmark",
+     "user": "jpmarketdata",
+     "users30d": 1
+    },
+    {
+     "rank": 3,
+     "name": "suumo-property-scraper",
+     "user": "lentic_clockss",
+     "users30d": 0
+    }
+   ]
+  },
+  {
+   "keyword": "mandarake",
+   "sort": null,
+   "total_matches": 7,
+   "our_best_rank": 1,
+   "our_actor": "mandarake-auction-scraper",
+   "our_title": "Mandarake Auction Price Scraper — Japan Anime Collectibles",
+   "our_users30d": 1,
+   "top3": [
+    {
+     "rank": 1,
+     "name": "mandarake-auction-scraper",
+     "user": "fruitful_quintessence",
+     "users30d": 1
+    },
+    {
+     "rank": 2,
+     "name": "mandarake-scraper",
+     "user": "lulzasaur",
+     "users30d": 1
+    },
+    {
+     "rank": 3,
+     "name": "mandarake-market-checker",
+     "user": "jpmarketdata",
+     "users30d": 0
+    }
+   ]
+  },
+  {
+   "keyword": "japan watch price",
+   "sort": null,
+   "total_matches": 82,
+   "our_best_rank": 1,
+   "our_actor": "japan-watch-market-scraper-kr",
+   "our_title": "Japan watches Prices — Listings & Market Data",
+   "our_users30d": 1,
+   "top3": [
+    {
+     "rank": 1,
+     "name": "japan-watch-market-scraper-kr",
+     "user": "fruitful_quintessence",
+     "users30d": 1
+    },
+    {
+     "rank": 2,
+     "name": "japan-watch-market-scraper-cn",
+     "user": "fruitful_quintessence",
+     "users30d": 1
+    },
+    {
+     "rank": 3,
+     "name": "japan-watch-market-scraper",
+     "user": "fruitful_quintessence",
+     "users30d": 1
+    }
+   ]
+  },
+  {
+   "keyword": "japan hotel",
+   "sort": null,
+   "total_matches": 0,
+   "our_best_rank": null,
+   "our_actor": null,
+   "our_title": null,
+   "our_users30d": null,
+   "top3": [
+    {
+     "rank": 1,
+     "name": "japan-hotels-ikyu",
+     "user": "jpopendata",
+     "users30d": 1
+    },
+    {
+     "rank": 2,
+     "name": "jalan-japan-hotel-scraper",
+     "user": "piquno",
+     "users30d": 0
+    },
+    {
+     "rank": 3,
+     "name": "rakuten-travel-scraper",
+     "user": "abotapi",
+     "users30d": 2
+    }
+   ]
+  }
+ ]
+}

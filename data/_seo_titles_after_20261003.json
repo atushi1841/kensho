@@ -1,0 +1,408 @@
+[
+ {
+  "id": "L0xYjvLZT8aYUKjKQ",
+  "name": "goo-net-car-scraper-ru",
+  "title": "Japan car market Prices — Listings & Market Data",
+  "seoTitle": "Japan car market Scraper — Price, Listings, JSON",
+  "desc": "Scrapes car market data from Japanese vehicle listings and price data sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal mileage, transmission, addresses, autotrader, descriptions, engine."
+ },
+ {
+  "id": "xv30Eoxh7NMJgJIj5",
+  "name": "goobike-motorcycle-scraper",
+  "title": "GooBike Japan Scraper - Used Motorcycle Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes GooBike (Japan's top used motorcycle marketplace) for bike listings, prices, mileage, year and location. For dealers, resellers and market research excel, sale, scraped, download, html."
+ },
+ {
+  "id": "nWf9BR2ndMTYqKxNB",
+  "name": "jackroad-used-watch-scraper",
+  "title": "Japan watches Prices — Listings & Market Data",
+  "seoTitle": "Japan watches Scraper — Price, Listings, JSON",
+  "desc": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arb chrono24, filters, incremental, location, mode, shipping."
+ },
+ {
+  "id": "8cCUNDwmelphhoXFs",
+  "name": "japan-anime-figure-demand-features",
+  "title": "Japan Anime Figure Demand Features API — Price Signals",
+  "seoTitle": "Japan Figure Demand API — Price Velocity & Sell-Through",
+  "desc": "Anime figure demand signals from Mercari, Yahoo Auctions, Mandarake. Price velocity, sell-through rate, listing count, buyer interest scores. 650+ figures tracked. JSON/CSV, PPE pricing image, scrape, title, collectibles, condition, jpy."
+ },
+ {
+  "id": "DKzufUSvmuXNKHeYx",
+  "name": "japan-anime-figure-price-data",
+  "title": "Japan Anime Figure Price API — 650+ Figures & Arbitrage",
+  "seoTitle": "Japan Anime Figure Price API — 650+ Figures Arbitrage Data",
+  "desc": "Comprehensive Japan anime figure price dataset (MyFigureList, Mercari, Yahoo Auctions, Suruga-ya, Mandarake). 650+ figures with normalized pricing, condition grades, multi-source confidence scores. Enable arbitrage detection and price monitorin image, scrape, collectibles, category, code, franchise."
+ },
+ {
+  "id": "OqO1aPmd1njsKQvaW",
+  "name": "japan-camera-market-cn-scraper",
+  "title": "Japan cameras Prices — Listings & Market Data",
+  "seoTitle": "Japan cameras Scraper — Price, Listings, JSON",
+  "desc": "Scrapes cameras data from Japanese DSLR, mirrorless, vintage cameras sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and product, products, specs."
+ },
+ {
+  "id": "rEaPnKwB07oS2cyZh",
+  "name": "japan-camera-market-kr-scraper",
+  "title": "Japan cameras Prices — Listings & Market Data",
+  "seoTitle": "Japan cameras Scraper — Price, Listings, JSON",
+  "desc": "Scrapes cameras data from Japanese DSLR, mirrorless, vintage cameras sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price mo products, specs."
+ },
+ {
+  "id": "rIZ3NSg5Ul34PgpYx",
+  "name": "japan-corporate-numbers",
+  "title": "Japan Corporate Numbers API — 5M+ Companies",
+  "seoTitle": "Japan Corporate Numbers API — 5M+ Companies Search",
+  "desc": "Scrapes Japan National Tax Agency corporate number registry (5M+ entities). Extracts company name, number, address, update date. JSON/CSV output via Apify dataset. PPE pricing profiles, european, events, industry, kana, lookup."
+ },
+ {
+  "id": "LSETMqsB30U9slWeU",
+  "name": "japan-crowdfunding-trend-feed",
+  "title": "Japan Crowdfunding Trend Feed - CAMPFIRE backed Projects",
+  "seoTitle": "Japan Crowdfunding Feed — CAMPFIRE Projects",
+  "desc": "Scrape active CAMPFIRE crowdfunding projects into structured JSON: raised amount, funding percent, backers, reward price tiers (min/max), funding dates and days left. English-mapped category names — perfect for cross-border sourcing, product research, edgar, filings, form, keyword, korea, official."
+ },
+ {
+  "id": "pWhvh8aWz4i6OM1ST",
+  "name": "japan-egov-laws",
+  "title": "Japan e-Gov Laws & Regulations Scraper",
+  "seoTitle": "Japan Laws & Regulations Scraper — e-Gov",
+  "desc": "Japan e-Gov legal scraper. Extracts Japanese laws, regulations, cabinet orders and ministry ordinances with full text, effective dates and amendment history. JSON / CSV output via Apify dataset, pay-per-event. Ideal for legal research, compliance analysis official, articles, basis, celex, decisions."
+ },
+ {
+  "id": "WnrudUFF2kZxZcj7Z",
+  "name": "japan-figure-plamo-resale-price-stats",
+  "title": "Japan Figure & Plamo Resale Price Stats API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Aggregated resale price statistics for anime figures and plastic models from Japanese marketplaces (Mercari, Suruga-ya, Yahoo Auctions). Price ranges, median, trends by item. For resellers, market research and AI pricing agents excel, scrape, export, scraped, download."
+ },
+ {
+  "id": "RdCHlXHphoLsWnyhh",
+  "name": "japan-fuel-price-mcp",
+  "title": "Japan Fuel Price MCP — Gas Station Prices",
+  "seoTitle": "Japan Fuel Price API — Gas Station Prices MCP",
+  "desc": "Japan gasoline/diesel prices from gogo.gs and official sources. Station-level prices, trends, regional comparison. JSON/CSV via Apify dataset. PPE pricing anp, etanol, gasolina, glp, para, por."
+ },
+ {
+  "id": "95ZKdUlpFBo8CBYJh",
+  "name": "japan-hotpepper-cn-scraper",
+  "title": "Japan HotPepper Beauty Prices — Listings & Market Data",
+  "seoTitle": "Japan HotPepper Beauty Scraper — Price, Listings, JSON",
+  "desc": "Scrapes HotPepper Beauty data from Japanese salon search and reservations sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for r address, customer, demographics, esthetic, eyelash, hair."
+ },
+ {
+  "id": "FVJsHJhb4aPq54Uyd",
+  "name": "japan-hotpepper-kr-scraper",
+  "title": "Japan HotPepper Beauty Prices — Listings & Market Data",
+  "seoTitle": "Japan HotPepper Beauty Scraper — Price, Listings, JSON",
+  "desc": "Scrapes HotPepper Beauty data from Japanese salon search and reservations sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for r address, customer, demographics, esthetic, eyelash, hair."
+ },
+ {
+  "id": "UVkH1uhlt57Jf6QnT",
+  "name": "japan-hotpepper-scraper",
+  "title": "Japan HotPepper Beauty Prices — Listings & Market Data",
+  "seoTitle": "Japan HotPepper Beauty Scraper — Price, Listings, JSON",
+  "desc": "Scrapes HotPepper Beauty data from Japanese salon search and reservations sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for r address, customer, demographics, esthetic, eyelash, hair."
+ },
+ {
+  "id": "1g84gsOT7vE9yxNla",
+  "name": "japan-jma-weather",
+  "title": "Japan JMA Weather Data Scraper",
+  "seoTitle": "Japan Weather Scraper — JMA Forecasts & Alerts",
+  "desc": "Japan JMA (Meteorological Agency) weather scraper. Extracts current conditions, forecasts, wind, precipitation, temperature, and weather warnings/alerts for prefecture and city locations. JSON / CSV output via Apify dataset. Ideal for weather apps, monitoring dashbo official, codes, key, open, rain."
+ },
+ {
+  "id": "XOqsB7rCHYrb42kcY",
+  "name": "japan-kakaku-price-search",
+  "title": "Kakaku Japan Price Search - Product Price Comparison API",
+  "seoTitle": "Kakaku Japan Scraper — Product Prices, Listings & Specs API",
+  "desc": "Scrapes Kakaku.com (Japan's largest price comparison site) for product prices, shop listings, rankings and review scores. Structured JSON for price monitoring, market research and AI agents category, count, clean, image, images, jpy."
+ },
+ {
+  "id": "4SjfgE6nF1awZZtEI",
+  "name": "japan-kakaku-price-search-cn",
+  "title": "Kakaku Japan Price Search (CN) - Product Price Comparison API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Kakaku.com (Japan's largest price comparison site) for product prices, shop listings, rankings and review scores. Structured JSON for price monitoring, market research and AI agents excel, export, sale, scraped, download."
+ },
+ {
+  "id": "5hzOkPeYWPzpv6fBd",
+  "name": "japan-kakaku-price-search-kr",
+  "title": "Kakaku Japan Price Search (KR) - Product Price Comparison API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Kakaku.com (Japan's largest price comparison site) for product prices, shop listings, rankings and review scores. Structured JSON for price monitoring, market research and AI agents excel, export, sale, scraped, download."
+ },
+ {
+  "id": "Igcmtgs71DCHze3CL",
+  "name": "japan-luxury-brand-market-cn",
+  "title": "Japan luxury brand Prices — Listings & Market Data",
+  "seoTitle": "Japan luxury brand Scraper — Price, Listings, JSON",
+  "desc": "Scrapes luxury brand data from Japanese branded resale items sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and brands, fashion, pre-owned, urls."
+ },
+ {
+  "id": "5J3JeV9cOSA3Gha0j",
+  "name": "japan-luxury-brand-market-kr",
+  "title": "Japan luxury brand Prices — Listings & Market Data",
+  "seoTitle": "Japan luxury brand Scraper — Price, Listings, JSON",
+  "desc": "Scrapes luxury brand data from Japanese branded resale items sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market product, brands, designer, fashion, pre-owned."
+ },
+ {
+  "id": "b0vuqa3ESvy2mOwFB",
+  "name": "japan-luxury-brand-market-scraper",
+  "title": "Japan luxury brand Prices — Listings & Market Data",
+  "seoTitle": "Japan luxury brand Scraper — Price, Listings, JSON",
+  "desc": "Scrapes luxury brand data from Japanese branded resale items sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price brands, designer, fashion."
+ },
+ {
+  "id": "57SNehd4cHNFyUCj3",
+  "name": "japan-market-mcp",
+  "title": "Japan MCP Prices — Listings & Market Data",
+  "seoTitle": "Japan MCP Scraper — Price, Listings, JSON",
+  "desc": "Scrapes MCP data from Japanese Japan market price comparison sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and excel, download, html, integrate."
+ },
+ {
+  "id": "62DcoLUAkkOB1hGAH",
+  "name": "japan-mhlw-medical",
+  "title": "Japan MHLW Medical Data API — Facilities & Licenses",
+  "seoTitle": "Japan MHLW Medical API — Facilities, Licenses, Beds",
+  "desc": "Scrapes Japanese Ministry of Health, Labour and Welfare data for medical facilities, hospital licenses, bed counts, and healthcare statistics. JSON/CSV output via Apify dataset. PPE pricing. Updated daily attribution, embedded, english, homes, schema, source."
+ },
+ {
+  "id": "ODh1F4XP5sLlXu6Ep",
+  "name": "japan-minimum-wage-mcp",
+  "title": "Japan Minimum Wage MCP — Prefectural Rates",
+  "seoTitle": "Japan Minimum Wage API — Prefectural Hourly Rates",
+  "desc": "Japan prefectural minimum wage rates (hourly). Historical trends, industry-specific rates, effective dates. JSON/CSV via Apify dataset. PPE pricing locations, b2b, clutch, project, reviews, service."
+ },
+ {
+  "id": "wxLa590euQRaAJNKO",
+  "name": "japan-offmall-market-cn",
+  "title": "Japan Hard Off OffMall Prices — Listings & Market Data",
+  "seoTitle": "Japan Hard Off OffMall Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Hard Off OffMall data from Japanese second-hand chain official store sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale card, history, one, optional, profiles, rankings."
+ },
+ {
+  "id": "9HSJRPbEIIGc6bHOx",
+  "name": "japan-offmall-market-kr",
+  "title": "Japan Hard Off OffMall Prices — Listings & Market Data",
+  "seoTitle": "Japan Hard Off OffMall Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Hard Off OffMall data from Japanese second-hand chain official store sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale ar card, history, one, profiles, rankings, stats."
+ },
+ {
+  "id": "Zh4kqcS4dYPWpFzBd",
+  "name": "japan-offmall-market-scraper",
+  "title": "Japan Hard Off OffMall Prices — Listings & Market Data",
+  "seoTitle": "Japan Hard Off OffMall Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Hard Off OffMall data from Japanese second-hand chain official store sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale card, history, one, optional, profiles, rankings."
+ },
+ {
+  "id": "aAe1nK4dpqgmBksOK",
+  "name": "japan-property-market-cn",
+  "title": "Japan Real Estate Market Scraper (CN) - Property Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Japanese real estate portals for property listings, sale prices, location, size and building age. Structured JSON for market research, investment analysis and AI agents excel, export, scraped, download, html."
+ },
+ {
+  "id": "CeDRuOvv0IHA8NL4M",
+  "name": "japan-property-market-kr",
+  "title": "Japan Real Estate Market Scraper (KR) - Property Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Japanese real estate portals for property listings, sale prices, location, size and building age. Structured JSON for market research, investment analysis and AI agents excel, export, scraped, download, html."
+ },
+ {
+  "id": "AiXA2WVMNTaGuHoDh",
+  "name": "japan-property-market-scraper",
+  "title": "Japan Real Estate Market Scraper - Property Listing Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Japanese real estate portals for property listings, sale prices, location, size and building age. Structured JSON for market research, investment analysis and AI agents excel, export, scraped, download, html."
+ },
+ {
+  "id": "5EOtT2UpEGEU83nhO",
+  "name": "japan-rent-market-cn",
+  "title": "Japan Rental Market Scraper (CN) - Rent & Lease Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Japanese rental/lease marketplaces for property and item rental listings, prices, deposits and terms. Extracts location, rent, size, fees. For market research, relocation tools and AI agents. Updated for better discoverability excel, export, sale, scraped, download."
+ },
+ {
+  "id": "lWHSccM79ZpPxOLls",
+  "name": "japan-rent-market-kr",
+  "title": "Japan Rental Market Scraper (KR) - Rent & Lease Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Japanese rental/lease marketplaces for property and item rental listings, prices, deposits and terms. Extracts location, rent, size, fees. For market research, relocation tools and AI agents excel, export, sale, scraped, download."
+ },
+ {
+  "id": "N1o8olAoZyXTJuhnb",
+  "name": "japan-rent-market-scraper",
+  "title": "Japan Rental Market Scraper - Rent & Lease Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Japanese rental/lease marketplaces for property and item rental listings, prices, deposits and terms. Extracts location, rent, size, fees. For market research, relocation tools and AI agents. Updated for better discoverability excel, export, sale, scraped, download."
+ },
+ {
+  "id": "mQaZFo6up4YZKepC3",
+  "name": "japan-used-camera-market-scraper",
+  "title": "Japan Used Camera Market Scraper — Prices & Listings API",
+  "seoTitle": "Japan Used Camera Price Scraper API — Real-time Market Data",
+  "desc": "Scrape real-time used camera prices from Japan retailers (Map Camera, Kitamura, Yahoo Auctions, Mercari). Extracts model, price, condition, seller, images. JSON/CSV. Pay-per-event battery, device, gsmarena, models, phone, specs."
+ },
+ {
+  "id": "p279xuzqUvvLROE7O",
+  "name": "japan-used-instrument-market-cn",
+  "title": "Japan musical instruments Prices — Listings & Market Data",
+  "seoTitle": "Japan musical instruments Scraper — Price, Listings, JSON",
+  "desc": "Scrapes musical instruments data from Japanese guitars, synths, brass sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and pric drums, brand, gear."
+ },
+ {
+  "id": "agm9XlFlLFj7jlt66",
+  "name": "japan-used-instrument-market-kr",
+  "title": "Japan musical instruments Prices — Listings & Market Data",
+  "seoTitle": "Japan musical instruments Scraper — Price, Listings, JSON",
+  "desc": "Scrapes musical instruments data from Japanese guitars, synths, brass sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market rese drums, gear, keyboards, location."
+ },
+ {
+  "id": "yN1R26HrV6C2MBKas",
+  "name": "japan-used-instrument-market-scraper",
+  "title": "Japan musical instruments Prices — Listings & Market Data",
+  "seoTitle": "Japan musical instruments Scraper — Price, Listings, JSON",
+  "desc": "Scrapes musical instruments data from Japanese guitars, synths, brass sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, mark brand, location, photos, query, ratings."
+ },
+ {
+  "id": "gMqdrS2evpcybSZc2",
+  "name": "japan-watch-market-scraper",
+  "title": "Japan watches Prices — Listings & Market Data",
+  "seoTitle": "Japan watches Scraper — Price, Listings, JSON",
+  "desc": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arb chrono24, filters, incremental, location, mode, shipping."
+ },
+ {
+  "id": "hoqt6EVaVcniMXWbK",
+  "name": "japan-watch-market-scraper-cn",
+  "title": "Japan watches Prices — Listings & Market Data",
+  "seoTitle": "Japan watches Scraper — Price, Listings, JSON",
+  "desc": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbi chrono24, filters, incremental, listing, location, mode."
+ },
+ {
+  "id": "kDY2AAouEJzp8kfyj",
+  "name": "japan-watch-market-scraper-kr",
+  "title": "Japan watches Prices — Listings & Market Data",
+  "seoTitle": "Japan watches Scraper — Price, Listings, JSON",
+  "desc": "Scrapes watches data from Japanese luxury and vintage timepieces sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, ma chrono24, filters, incremental, location, mode."
+ },
+ {
+  "id": "2Yy3Zu3pw0KzqYOP5",
+  "name": "kimono-market-scraper",
+  "title": "Japan Kimono & Wa Price Scraper - Secondhand Kimono Market API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Japanese kimono marketplaces for secondhand kimono, obi and wa-fukuyouhin listings with prices, condition, size and seller data. For resellers, vintage buyers and AI pricing agents excel, export, sale, scraped, download, integrate."
+ },
+ {
+  "id": "yCN9ystlovHkgolzw",
+  "name": "kimono-market-scraper-cn",
+  "title": "Japan Kimono Price Scraper (CN) - Secondhand Kimono Market API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Japanese kimono marketplaces for secondhand kimono, obi and wa-fukuyouhin listings with prices, condition, size and seller data. For resellers, vintage buyers and AI pricing agents excel, export, sale, scraped, download."
+ },
+ {
+  "id": "8iktWtPM0ZD3ab54f",
+  "name": "kimono-market-scraper-kr",
+  "title": "Japan Kimono Price Scraper (KR) - Secondhand Kimono Market API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Japanese kimono marketplaces for secondhand kimono, obi and wa-fukuyouhin listings with prices, condition, size and seller data. For resellers, vintage buyers and AI pricing agents excel, export, sale, scraped, download."
+ },
+ {
+  "id": "q2E37PVTg5JcGOTEn",
+  "name": "mandarake-auction-scraper",
+  "title": "Mandarake Auction Price Scraper — Japan Anime Collectibles",
+  "seoTitle": "Mandarake Auction Scraper Japan API — Anime Collectibles",
+  "desc": "Scrape Mandarake Auctions for anime/manga collectibles: current bids, buyout prices, sold data. Extracts title, price, condition, remaining time. JSON/CSV. Pay-per-event stock, toys."
+ },
+ {
+  "id": "xUYsD13SVHHRFQS1H",
+  "name": "mandarake-surugaya-mcp",
+  "title": "Japan Suruga-ya Prices — Listings & Market Data",
+  "seoTitle": "Japan Suruga-ya Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Suruga-ya data from Japanese used hobby/anime/game collectibles sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for resale arbitrage, market research, and price mo figures, url."
+ },
+ {
+  "id": "whSePszWpMtfeLYBp",
+  "name": "mercari-japan-search-scraper",
+  "title": "Mercari Japan Price Scraper — C2C Marketplace Listings",
+  "seoTitle": "Mercari Japan Scraper API — C2C Marketplace Prices",
+  "desc": "Scrape Mercari Japan for real-time C2C marketplace listings. Extracts title, price (JPY), condition, seller, images, category. JSON/CSV output via Apify dataset. Pay-per-event per item scraped largest."
+ },
+ {
+  "id": "0eeiFH0nLqlWVoOAc",
+  "name": "rakuten-japan-mcp",
+  "title": "Japan Rakuten Ichiba Prices — Listings & Market Data product",
+  "seoTitle": "Japan Rakuten Ichiba Prices — Listings & Market Data product",
+  "desc": "Scrapes Rakuten Ichiba data from Japanese search via official Rakuten marketplace API sources. Extracts title, price (JPY), condition, seller, images, and category per item. JSON / CSV output via Apify dataset, pay-per-event per item scraped. Ideal for re competitive, e-commerce, merchant, products."
+ },
+ {
+  "id": "pZ20lXqRtsJUl9bGk",
+  "name": "rakuten-market-scraper",
+  "title": "Rakuten Japan Scraper - Marketplace Product Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes Rakuten Ichiba (Japan's largest marketplace) for product listings, prices, rankings, coupons and reviews. Structured JSON for price monitoring, market research and AI agents excel, export, sale, scraped, download."
+ },
+ {
+  "id": "F8Hl0a8Cx9bpJBrxR",
+  "name": "surugaya-japan-hobby-prices",
+  "title": "Surugaya Anime Figure Price Scraper — Japan Used Collectibles",
+  "seoTitle": "Surugaya Anime Figure Price Scraper Japan API",
+  "desc": "Scrape real-time used anime figure prices from Surugaya Japan. 24 fields: name, price, brand, release date, stock, images, condition. JSON/CSV. Pay-per-event jpy, maker, resale."
+ },
+ {
+  "id": "FzQlnqfCsMfSlRG9j",
+  "name": "suumo-japan-real-estate-scraper",
+  "title": "SUUMO Japan Real Estate Scraper - Property Listings Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes SUUMO (Japan's largest real estate portal) for sale and rental listings, prices, location, size and building age. Structured JSON for market research and investment analysis excel, export, scraped, download, html."
+ },
+ {
+  "id": "8lfpT6vpZMl9JVagy",
+  "name": "suumo-japan-real-estate-scraper-cn",
+  "title": "SUUMO Japan Real Estate Scraper (CN) - Listings Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes SUUMO (Japan's largest real estate portal) for sale and rental listings, prices, location, size and building age. Structured JSON for market research and investment analysis excel, export, scraped, download, integrate."
+ },
+ {
+  "id": "GXAtS99WP3st7AR27",
+  "name": "suumo-japan-real-estate-scraper-es",
+  "title": "SUUMO Japan Real Estate Scraper (ES) - Listings Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes SUUMO (Japan's largest real estate portal) for sale and rental listings, prices, location, size and building age. Structured JSON for market research and investment analysis excel, export, scraped, download, html."
+ },
+ {
+  "id": "GfdpyUl6gSpCQlGK8",
+  "name": "suumo-japan-real-estate-scraper-kr",
+  "title": "SUUMO Japan Real Estate Scraper (KR) - Listings Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes SUUMO (Japan's largest real estate portal) for sale and rental listings, prices, location, size and building age. Structured JSON for market research and investment analysis excel, export, scraped, download, html."
+ },
+ {
+  "id": "wxMskoiHMPeeH2qAJ",
+  "name": "tackleberry-japan-fishing-tackle-scraper",
+  "title": "Map Camera Price Scraper — Japan Used Camera Market Leader",
+  "seoTitle": "Map Camera Scraper Japan API — #1 Used Camera Retailer",
+  "desc": "Scrape Map Camera (Japan's #1 used camera retailer) for DSLR, mirrorless, vintage camera prices. Extracts model, price (JPY), condition, warranty, images, stock. JSON/CSV. Pay-per-event coordinates, date, gps, photos, size, url."
+ },
+ {
+  "id": "BdQF1T6wB5T25AO20",
+  "name": "upgarage-parts-scraper",
+  "title": "UP-GARAGE Japan Scraper - Used Auto Parts Prices API",
+  "seoTitle": "Japan Japan market data Scraper — Price, Listings, JSON",
+  "desc": "Scrapes UP-GARAGE (Japan's largest used auto parts marketplace) for part listings, prices, condition, mileage and fitment data. For repair shops, resellers and market research excel, sale, scraped, download, html."
+ },
+ {
+  "id": "u2qsG1UfVHWsgl8Dg",
+  "name": "world-bank-indicators",
+  "title": "World Bank Indicators API — 1,600+ Global Metrics",
+  "seoTitle": "World Bank Indicators API — 1,600+ Metrics Global",
+  "desc": "World Bank development indicators for 217 economies. 1,600+ metrics: GDP, population, health, education, climate. JSON/CSV output via Apify dataset. PPE pricing, updated monthly plus, top."
+ },
+ {
+  "id": "8WBam4CPB72q9Rvsd",
+  "name": "yahoo-auctions-japan-scraper",
+  "title": "Yahoo Auctions Japan Scraper — Vintage Camera & Collectibles",
+  "seoTitle": "Yahoo Auctions Japan Scraper API — Vintage & Collectibles",
+  "desc": "Scrape Yahoo Auctions Japan for vintage cameras, lenses, anime figures. Current bid, buyout price, time remaining, seller rating. JSON/CSV. Pay-per-event end, title, images, sold."
+ }
+]

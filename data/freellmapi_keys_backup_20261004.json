@@ -1,0 +1,437 @@
+{
+ "saved_at": "2026-10-04T00:17:28",
+ "keys": [
+  {
+   "id": 123,
+   "platform": "llm7",
+   "label": "chiemi",
+   "enabled": true
+  },
+  {
+   "id": 122,
+   "platform": "openrouter",
+   "label": "chiemi",
+   "enabled": true
+  },
+  {
+   "id": 121,
+   "platform": "cloudflare",
+   "label": "chiemi",
+   "enabled": true
+  },
+  {
+   "id": 120,
+   "platform": "groq",
+   "label": "chiemi",
+   "enabled": true
+  },
+  {
+   "id": 119,
+   "platform": "google",
+   "label": "chiemi",
+   "enabled": true
+  },
+  {
+   "id": 118,
+   "platform": "requesty",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 117,
+   "platform": "unorouter",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 116,
+   "platform": "xkiro",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 115,
+   "platform": "siliconflow",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 112,
+   "platform": "agnes",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 111,
+   "platform": "blaze",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 110,
+   "platform": "speechify",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 109,
+   "platform": "septor",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 108,
+   "platform": "router9",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 107,
+   "platform": "experiential",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 106,
+   "platform": "electronhub",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 105,
+   "platform": "sail",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 104,
+   "platform": "moondream",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 103,
+   "platform": "speka",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 100,
+   "platform": "sealion",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 98,
+   "platform": "aion",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 96,
+   "platform": "groq",
+   "label": "",
+   "enabled": true
+  },
+  {
+   "id": 95,
+   "platform": "openrouter",
+   "label": "openrouter-新(9/26)",
+   "enabled": true
+  },
+  {
+   "id": 93,
+   "platform": "custom",
+   "label": "Routeway",
+   "enabled": true
+  },
+  {
+   "id": 94,
+   "platform": "custom",
+   "label": "AINative",
+   "enabled": true
+  },
+  {
+   "id": 91,
+   "platform": "custom",
+   "label": "Logfare",
+   "enabled": true
+  },
+  {
+   "id": 92,
+   "platform": "custom",
+   "label": "NavyAI",
+   "enabled": true
+  },
+  {
+   "id": 90,
+   "platform": "custom",
+   "label": "Waterfall",
+   "enabled": true
+  },
+  {
+   "id": 89,
+   "platform": "custom",
+   "label": "AirForce",
+   "enabled": true
+  },
+  {
+   "id": 88,
+   "platform": "custom",
+   "label": "Lucidity composite",
+   "enabled": true
+  },
+  {
+   "id": 73,
+   "platform": "routeway",
+   "label": "routeway anon-test",
+   "enabled": true
+  },
+  {
+   "id": 74,
+   "platform": "ainative",
+   "label": "ainative anon-test",
+   "enabled": true
+  },
+  {
+   "id": 70,
+   "platform": "navy",
+   "label": "navy anon-test",
+   "enabled": true
+  },
+  {
+   "id": 67,
+   "platform": "logfare",
+   "label": "logfare anon-test",
+   "enabled": true
+  },
+  {
+   "id": 66,
+   "platform": "waterfall",
+   "label": "waterfall anon-test",
+   "enabled": true
+  },
+  {
+   "id": 63,
+   "platform": "lucidity",
+   "label": "lucidity anon-test",
+   "enabled": true
+  },
+  {
+   "id": 64,
+   "platform": "airforce",
+   "label": "airforce anon-test",
+   "enabled": true
+  },
+  {
+   "id": 44,
+   "platform": "aihorde",
+   "label": "AI Horde anon",
+   "enabled": true
+  },
+  {
+   "id": 45,
+   "platform": "kilo",
+   "label": "Kilo anonymous",
+   "enabled": true
+  },
+  {
+   "id": 46,
+   "platform": "ovh",
+   "label": "OVH anonymous",
+   "enabled": true
+  },
+  {
+   "id": 43,
+   "platform": "custom",
+   "label": "models.github.ai",
+   "enabled": true
+  },
+  {
+   "id": 42,
+   "platform": "custom",
+   "label": "ollama.com",
+   "enabled": true
+  },
+  {
+   "id": 40,
+   "platform": "custom",
+   "label": "opencode.ai",
+   "enabled": true
+  },
+  {
+   "id": 41,
+   "platform": "custom",
+   "label": "api.cerebras.ai",
+   "enabled": true
+  },
+  {
+   "id": 39,
+   "platform": "custom",
+   "label": "api.llm7.io",
+   "enabled": true
+  },
+  {
+   "id": 38,
+   "platform": "custom",
+   "label": "api.z.ai",
+   "enabled": true
+  },
+  {
+   "id": 37,
+   "platform": "custom",
+   "label": "gen.pollinations.ai",
+   "enabled": true
+  },
+  {
+   "id": 36,
+   "platform": "huggingface",
+   "label": "HF YoIIC",
+   "enabled": true
+  },
+  {
+   "id": 35,
+   "platform": "cerebras",
+   "label": "Cerebras new",
+   "enabled": true
+  },
+  {
+   "id": 33,
+   "platform": "nvidia",
+   "label": "NVIDIA nvapi",
+   "enabled": true
+  },
+  {
+   "id": 29,
+   "platform": "zhipu",
+   "label": "Z.ai alt",
+   "enabled": true
+  },
+  {
+   "id": 27,
+   "platform": "ollama",
+   "label": "Ollama Cloud",
+   "enabled": true
+  },
+  {
+   "id": 26,
+   "platform": "github",
+   "label": "GitHub Models",
+   "enabled": true
+  },
+  {
+   "id": 25,
+   "platform": "opencode",
+   "label": "OpenCode Zen",
+   "enabled": true
+  },
+  {
+   "id": 24,
+   "platform": "zhipu",
+   "label": "Z.ai main",
+   "enabled": true
+  },
+  {
+   "id": 6,
+   "platform": "custom",
+   "label": "kensho-bai",
+   "enabled": true
+  },
+  {
+   "id": 7,
+   "platform": "github",
+   "label": "github-test",
+   "enabled": true
+  },
+  {
+   "id": 8,
+   "platform": "google",
+   "label": "kensho-google",
+   "enabled": true
+  },
+  {
+   "id": 12,
+   "platform": "huggingface",
+   "label": "hf-saboten1",
+   "enabled": true
+  },
+  {
+   "id": 13,
+   "platform": "llm7",
+   "label": "llm7-main",
+   "enabled": true
+  },
+  {
+   "id": 14,
+   "platform": "llm7",
+   "label": "llm7-main",
+   "enabled": true
+  },
+  {
+   "id": 15,
+   "platform": "mistral",
+   "label": "mistral-main",
+   "enabled": true
+  },
+  {
+   "id": 17,
+   "platform": "nvidia",
+   "label": "nvidia-main",
+   "enabled": true
+  },
+  {
+   "id": 18,
+   "platform": "ollama",
+   "label": "ollama-test",
+   "enabled": true
+  },
+  {
+   "id": 19,
+   "platform": "openrouter",
+   "label": "kensho-openrouter",
+   "enabled": true
+  },
+  {
+   "id": 20,
+   "platform": "openrouter",
+   "label": "kensho-openrouter-byok",
+   "enabled": true
+  },
+  {
+   "id": 21,
+   "platform": "openrouter",
+   "label": "test",
+   "enabled": true
+  },
+  {
+   "id": 23,
+   "platform": "pollinations",
+   "label": "pollinations-main",
+   "enabled": true
+  },
+  {
+   "id": 1,
+   "platform": "bai",
+   "label": "kensho-bai-mimo",
+   "enabled": false
+  },
+  {
+   "id": 3,
+   "platform": "cerebras",
+   "label": "cerebras-main",
+   "enabled": true
+  },
+  {
+   "id": 4,
+   "platform": "cloudflare",
+   "label": "cloudflare-workers-ai",
+   "enabled": true
+  },
+  {
+   "id": 5,
+   "platform": "cohere",
+   "label": "cohere-trial",
+   "enabled": true
+  }
+ ]
+}

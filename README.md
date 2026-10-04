@@ -150,8 +150,35 @@ web_search fch "懸賞 自動応募"
 - ファイル: `anime_figure_prices_weekly/YYYY-Www.csv.gz` (≈900 KB)
 - スキーマ: figure_id / name / series / character / manufacturer / release_date / scale / msrp_jpy / lowest_price_jpy / highest_price_jpy / in_stock_count / offers(JSON) / fetched_at / confidence / sources_merged
 
+### MCP レジストリ — 8 servers 公開中
+
+Kensho の MCP サーバー群を AI クライアント（Claude / Cursor / VS Code 等）から直接呼び出せるよう、主要レジストリに登録済み。
+
+| レジストリ | サーバー数 | 状態 |
+|---|---|---|
+| **MCP 公式レジストリ** | 8 | ✅ active（`io.github.atushi1841/*`） |
+| **Smithery** | 6 | ✅ description / icon / repositoryUrl 充実 |
+| **mcp.so** | 6 | 📝 YAML 設定済（手動提出待ち） |
+
+**公開サーバー**（共に read-only・ローカルデータ・APIキー不要）:
+- `kensho-sweep-mcp` — 懸賞campaignデータ 1133件
+- `kensho-kaku` — ken-kaku.com 懸賞データ
+- `kensho-kclub` — kenshou.club 懸賞データ
+- `kensho-kema` — ke-ma.net 懸賞データ
+- `japan-anime-figure-mcp` — アニメフィギュア価格比較
+- `tcg-price-japan` — TCG（ポケモン）中古価格
+- `japan-fuel-price-mcp` — 国内燃料価格（都道府県別）
+- `japan-minimum-wage-mcp` — 最低賃金（47都道府県）
+
+**接続方法**（mcp.so YAML 設定は `mcp_so_configs/` 参照）:
+```json
+{ "mcpServers": { "kensho-sweep-mcp": { "command": "python", "args": ["${__dirname}/main.py"] } } }
+```
+
+**収益化経路**: mcp.so 経由でアクターが見つかる → Apify Store（86 Actors, PPE課金）へ流入。
+
 ### データセット仕様書
-- **README_DATASET.md** — 詳細スキーマ・ダウンロード方法・有償版(履歴データ)案内
+|- **README_DATASET.md** — 詳細スキーマ・ダウンロード方法・有償版(履歴データ)案内
 
 ---
 

@@ -1,0 +1,4 @@
+日本オークション市場の価格モニタリング、今週も更新。
+Mandarake Auction で仕入れ判断・在庫評価を自動化。
+初期費用ゼロで開始 https://apify.com/fruitful_quintessence/mandarake-auction-scraper #まんだらけ #オークション
+📊 週次分析（無料サンプル）: https://atushi5.gumroad.com/l/kutuxe

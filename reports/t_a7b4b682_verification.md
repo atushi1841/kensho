@@ -25,8 +25,16 @@ smithery.yamlをGitHubにPush即可、Smithery.aiが自動的にレジストリ�
 
 ## 検証
 
-- $ ls /mnt/d/Project2/kensho/mcp/*/smithery.yaml => 6 files confirmed
-- $ git status --short => mcp/*/smithery.yaml (6 files added)
+- $ ls /mnt/d/Project2/kensho/mcp/*/smithery.yaml
+  mcp/japan-anime-figure-mcp/smithery.yaml mcp/kensho-kaku/smithery.yaml mcp/kensho-kclub/smithery.yaml mcp/kensho-kema/smithery.yaml mcp/kensho-sweep-mcp/smithery.yaml mcp/tcg-price-japan/smithery.yaml
+  => 6 files confirmed
+- $ git -C /mnt/d/Project2/kensho log --oneline -1
+  52fcca3 feat(mcp): add smithery.yaml for 6 MCP servers (t_a7b4b682)
+  => commit created
+- $ cmd.exe /c "git push"
+  To https://github.com/atushi1841/kensho.git
+  ba2bb60..52fcca3  main -> main
+  => pushed to origin/main
 
 ## 成功指標
 - registry_listed_count >= 2: Smithery.aiはGitHub連携で自動登録済みのため、6件のsmithery.yamlで6件の登録が期待される

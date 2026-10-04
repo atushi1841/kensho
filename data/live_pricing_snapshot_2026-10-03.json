@@ -1,0 +1,690 @@
+[
+ {
+  "id": "F8Hl0a8Cx9bpJBrxR",
+  "name": "surugaya-japan-hobby-prices",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.35,
+  "numEntries": 10
+ },
+ {
+  "id": "q2E37PVTg5JcGOTEn",
+  "name": "mandarake-auction-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.35,
+  "numEntries": 10
+ },
+ {
+  "id": "xUYsD13SVHHRFQS1H",
+  "name": "mandarake-surugaya-mcp",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.001,
+  "numEntries": 5
+ },
+ {
+  "id": "0eeiFH0nLqlWVoOAc",
+  "name": "rakuten-japan-mcp",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 3
+ },
+ {
+  "id": "6Z7tJ3plfUmAgGmbk",
+  "name": "dlsite-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 3
+ },
+ {
+  "id": "nUm22B2guMo8vXom6",
+  "name": "dmm-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "wxMskoiHMPeeH2qAJ",
+  "name": "tackleberry-japan-fishing-tackle-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 4
+ },
+ {
+  "id": "DOiD9y1NAJfLBcAjT",
+  "name": "kitamura-japan-used-camera-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "nWf9BR2ndMTYqKxNB",
+  "name": "jackroad-used-watch-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "Db3iY8FIRxPjPag7N",
+  "name": "komehyo-japan-brand-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "vvD9vs8D1AwoQrTTS",
+  "name": "iosys-japan-used-smartphone-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "FSuoQiX8OG4KuIQ9c",
+  "name": "digimart-japan-used-instrument-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "mQaZFo6up4YZKepC3",
+  "name": "japan-used-camera-market-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 3
+ },
+ {
+  "id": "yN1R26HrV6C2MBKas",
+  "name": "japan-used-instrument-market-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 3
+ },
+ {
+  "id": "gMqdrS2evpcybSZc2",
+  "name": "japan-watch-market-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 3
+ },
+ {
+  "id": "b0vuqa3ESvy2mOwFB",
+  "name": "japan-luxury-brand-market-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 3
+ },
+ {
+  "id": "57SNehd4cHNFyUCj3",
+  "name": "japan-market-mcp",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": null,
+  "numEntries": 1
+ },
+ {
+  "id": "Zh4kqcS4dYPWpFzBd",
+  "name": "japan-offmall-market-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 4
+ },
+ {
+  "id": "OqO1aPmd1njsKQvaW",
+  "name": "japan-camera-market-cn-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "rEaPnKwB07oS2cyZh",
+  "name": "japan-camera-market-kr-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "hoqt6EVaVcniMXWbK",
+  "name": "japan-watch-market-scraper-cn",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "kDY2AAouEJzp8kfyj",
+  "name": "japan-watch-market-scraper-kr",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "Igcmtgs71DCHze3CL",
+  "name": "japan-luxury-brand-market-cn",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "5J3JeV9cOSA3Gha0j",
+  "name": "japan-luxury-brand-market-kr",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "p279xuzqUvvLROE7O",
+  "name": "japan-used-instrument-market-cn",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "agm9XlFlLFj7jlt66",
+  "name": "japan-used-instrument-market-kr",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "wxLa590euQRaAJNKO",
+  "name": "japan-offmall-market-cn",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "9HSJRPbEIIGc6bHOx",
+  "name": "japan-offmall-market-kr",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "N1o8olAoZyXTJuhnb",
+  "name": "japan-rent-market-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "5EOtT2UpEGEU83nhO",
+  "name": "japan-rent-market-cn",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "lWHSccM79ZpPxOLls",
+  "name": "japan-rent-market-kr",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "AiXA2WVMNTaGuHoDh",
+  "name": "japan-property-market-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "aAe1nK4dpqgmBksOK",
+  "name": "japan-property-market-cn",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "CeDRuOvv0IHA8NL4M",
+  "name": "japan-property-market-kr",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "XOqsB7rCHYrb42kcY",
+  "name": "japan-kakaku-price-search",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "4SjfgE6nF1awZZtEI",
+  "name": "japan-kakaku-price-search-cn",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "5hzOkPeYWPzpv6fBd",
+  "name": "japan-kakaku-price-search-kr",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "2Yy3Zu3pw0KzqYOP5",
+  "name": "kimono-market-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "yCN9ystlovHkgolzw",
+  "name": "kimono-market-scraper-cn",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "8iktWtPM0ZD3ab54f",
+  "name": "kimono-market-scraper-kr",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "bgm5Gxn4BeBmoO7xD",
+  "name": "goo-net-car-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "W9cXhDckzHd9RZWnQ",
+  "name": "biglemon-machinery-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "pcSpFWK2A2HWRE2mx",
+  "name": "goo-net-car-scraper-es",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "ksRNLhw7sjdmoVbVt",
+  "name": "goo-net-car-scraper-pt",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "FzQlnqfCsMfSlRG9j",
+  "name": "suumo-japan-real-estate-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "8lfpT6vpZMl9JVagy",
+  "name": "suumo-japan-real-estate-scraper-cn",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "GfdpyUl6gSpCQlGK8",
+  "name": "suumo-japan-real-estate-scraper-kr",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "GXAtS99WP3st7AR27",
+  "name": "suumo-japan-real-estate-scraper-es",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "pZ20lXqRtsJUl9bGk",
+  "name": "rakuten-market-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "NURQEJnUsVAobIiPs",
+  "name": "rakuten-debug-fetch",
+  "isPublic": false,
+  "model": null,
+  "price": null,
+  "numEntries": 0
+ },
+ {
+  "id": "S3IdRuweFhrTwvJJN",
+  "name": "tabelog-debug-fetch",
+  "isPublic": false,
+  "model": null,
+  "price": null,
+  "numEntries": 0
+ },
+ {
+  "id": "vN10EvpaN6lNSRxUo",
+  "name": "goo-net-car-scraper-fr",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "L0xYjvLZT8aYUKjKQ",
+  "name": "goo-net-car-scraper-ru",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "xv30Eoxh7NMJgJIj5",
+  "name": "goobike-motorcycle-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "BdQF1T6wB5T25AO20",
+  "name": "upgarage-parts-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "xPSQSSsdVjRwWQAiA",
+  "name": "golfpartner-used-club-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "8WBam4CPB72q9Rvsd",
+  "name": "yahoo-auctions-japan-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 3
+ },
+ {
+  "id": "whSePszWpMtfeLYBp",
+  "name": "mercari-japan-search-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 3
+ },
+ {
+  "id": "UVkH1uhlt57Jf6QnT",
+  "name": "japan-hotpepper-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "95ZKdUlpFBo8CBYJh",
+  "name": "japan-hotpepper-cn-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "FVJsHJhb4aPq54Uyd",
+  "name": "japan-hotpepper-kr-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "xJI4WaPBfQiDJfcnp",
+  "name": "japan-camera-resale-price-stats",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "lRUO0nFDpE66U013r",
+  "name": "mini-actor-test-0903",
+  "isPublic": false,
+  "model": null,
+  "price": null,
+  "numEntries": 0
+ },
+ {
+  "id": "WnrudUFF2kZxZcj7Z",
+  "name": "japan-figure-plamo-resale-price-stats",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "VCKdDJ5BdT9Z8aIDf",
+  "name": "tackleberry-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "doneSfO13IuNgcWPk",
+  "name": "amazon-paapi-jp-actor",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "6EvRs5kF1mbelC03M",
+  "name": "ai-model-price-api",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "pWhvh8aWz4i6OM1ST",
+  "name": "japan-egov-laws",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "1g84gsOT7vE9yxNla",
+  "name": "japan-jma-weather",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "62DcoLUAkkOB1hGAH",
+  "name": "japan-mhlw-medical",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "rIZ3NSg5Ul34PgpYx",
+  "name": "japan-corporate-numbers",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "u2qsG1UfVHWsgl8Dg",
+  "name": "world-bank-indicators",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "pAxQ0lRyArudhK9Wx",
+  "name": "eurostat-indicators",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "LSETMqsB30U9slWeU",
+  "name": "japan-crowdfunding-trend-feed",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "90MPAX9mfR1DbNDJh",
+  "name": "my-actor",
+  "isPublic": false,
+  "model": null,
+  "price": null,
+  "numEntries": 0
+ },
+ {
+  "id": "FPlcw4CWMAKooZNe6",
+  "name": "japan-prize-giveaway-scraper",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "RdCHlXHphoLsWnyhh",
+  "name": "japan-fuel-price-mcp",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": null,
+  "numEntries": 1
+ },
+ {
+  "id": "SWVTsribU0AIJVXtR",
+  "name": "kensho-high-value-leads",
+  "isPublic": false,
+  "model": "PAY_PER_EVENT",
+  "price": 0.005,
+  "numEntries": 1
+ },
+ {
+  "id": "LXzxoGGC0bmMTqEtd",
+  "name": "test-actor",
+  "isPublic": false,
+  "model": null,
+  "price": null,
+  "numEntries": 0
+ },
+ {
+  "id": "ODh1F4XP5sLlXu6Ep",
+  "name": "japan-minimum-wage-mcp",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": null,
+  "numEntries": 1
+ },
+ {
+  "id": "XJCgrhOZE47qc7T3i",
+  "name": "japan-property-hazard-mcp",
+  "isPublic": false,
+  "model": null,
+  "price": null,
+  "numEntries": 0
+ },
+ {
+  "id": "BxstMzzxh8jq6UtfS",
+  "name": "japan-jepx-mcp",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "kjf9ZKQ5zWyOQxzvL",
+  "name": "kensho-sweep-mcp",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 2
+ },
+ {
+  "id": "DKzufUSvmuXNKHeYx",
+  "name": "japan-anime-figure-price-data",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ },
+ {
+  "id": "KAmLNI93rwL86w8d6",
+  "name": "my-actor-1",
+  "isPublic": false,
+  "model": null,
+  "price": null,
+  "numEntries": 0
+ },
+ {
+  "id": "8cCUNDwmelphhoXFs",
+  "name": "japan-anime-figure-demand-features",
+  "isPublic": true,
+  "model": "PAY_PER_EVENT",
+  "price": 0.002,
+  "numEntries": 1
+ }
+]

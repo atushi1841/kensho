@@ -1,0 +1,14 @@
+[project]
+name = "kensho-kema"
+version = "1.0.0"
+description = "MCP server: kensho Japan X/Twitter sweepstakes dataset from ke-ma.net (read-only, bundled data)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp>=3.0.0,<4.0.0",
+    "mcp>=1.25.0,<2.0.0",
+]
+
+# MCPB (uv runtime) はローカル配布用。
+[tool.uv]
+package = false

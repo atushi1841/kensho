@@ -1,0 +1,17 @@
+[project]
+name = "tcg-price-japan"
+version = "1.0.0"
+description = "Read-only MCP server exposing Japan TCG (Pokemon/TCG) used-price trend data from suruga-ya.jp."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+author = { name = "Kensho Project" }
+dependencies = [
+    "fastmcp>=3.0.0",
+]
+
+[project.scripts]
+tcg-price-japan = "src.stdio_main:main"
+
+[tool.uv]
+package = false

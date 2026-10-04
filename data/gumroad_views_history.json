@@ -68,14 +68,31 @@
     "collected_at": "2026-10-02T09:05:20.420"
   },
   "2026-10-02": {
+    "views": 0,
+    "sales": 0,
+    "total": "0",
+    "referrers": {},
+    "login_ok": true,
+    "collected_at": "2026-10-03T09:05:20.106"
+  },
+  "2026-10-03": {
     "views": 2,
     "sales": 0,
     "total": "0",
     "referrers": {
-      "copilot.microsoft.com": 1,
-      "Direct, email, IM": 1
+      "Direct, email, IM": 2
     },
     "login_ok": true,
-    "collected_at": "2026-10-02T09:05:39.758"
+    "collected_at": "2026-10-04T09:05:20.758"
+  },
+  "2026-10-04": {
+    "views": 2,
+    "sales": 0,
+    "total": "0",
+    "referrers": {
+      "Direct, email, IM": 2
+    },
+    "login_ok": true,
+    "collected_at": "2026-10-04T09:05:40.521"
   }
 }

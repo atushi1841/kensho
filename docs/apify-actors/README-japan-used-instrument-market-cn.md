@@ -1,6 +1,7 @@
 # japan-used-instrument-market-cn
 
-This Apify actor scrapes **musical instruments** data from Japanese guitars, synths, brass sources. It produces structured JSON or CSV suitable for resale arbitrage, market research, price monitoring, AI training pipelines, and competitor analysis.
+This Apify actor scrapes **musical instruments** data from Japanese guitars, synths, brass sources. It produces structured JSON or CSV
+suitable for resale arbitrage, market research, price monitoring, AI training pipelines, and competitor analysis.
 
 ## What it scrapes
 
@@ -44,7 +45,8 @@ Results are written to the default Apify dataset in this shape:
 
 ## Pricing
 
-Pay-per-event: **charged per item scraped**. See the actor's pricing tab for the current per-item rate. No monthly subscription required; you pay only for what you actually collect.
+Pay-per-event: **charged per item scraped**. See the actor's pricing tab for the current per-item rate.
+No monthly subscription required; you pay only for what you actually collect.
 
 ## Use cases
 
@@ -56,6 +58,10 @@ Pay-per-event: **charged per item scraped**. See the actor's pricing tab for the
 
 ## Notes
 
-This actor is part of a suite covering major Japanese marketplaces and second-hand chains. Combine it with sibling actors (camera/watch/luxury/instrument/offmall/surugaya/komehyo/mercari/iosys/etc.) to build a unified Japan-market dataset.
+This actor is part of a suite covering major Japanese marketplaces and second-hand chains.
+Combine it with sibling actors
+(camera/watch/luxury/instrument/offmall/surugaya/komehyo/mercari/iosys/etc.)
+to build a unified Japan-market dataset.
 
-Source listings are public; the actor respects robots.txt and includes polite crawl delays. For high-volume or commercial scraping, configure residential proxies via the input schema.
+Source listings are public; the actor respects robots.txt and includes polite crawl delays.
+For high-volume or commercial scraping, configure residential proxies via the input schema.

@@ -1,0 +1,17 @@
+[project]
+name = "kensho-kclub"
+version = "1.0.0"
+description = "Read-only MCP server exposing Japan X/Twitter sweepstakes data from kenshou.club."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+author = { name = "Kensho Project" }
+dependencies = [
+    "fastmcp>=3.0.0",
+]
+
+[project.scripts]
+kensho-kclub = "src.stdio_main:main"
+
+[tool.uv]
+package = false

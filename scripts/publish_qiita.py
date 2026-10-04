@@ -96,12 +96,77 @@ def build_payload(meta: dict, body: str, force_public: bool) -> dict:
     }
 
 
+def _find_existing_draft(token: str, title: str) -> list[str]:
+    """同一 title の Draft（private=True）を authenticated_user/items から検索し、
+    id リストを返す（無ければ []）。"""
+    import urllib.error
+    import urllib.request
+
+    url = "https://qiita.com/api/v2/authenticated_user/items"
+    hits: list[str] = []
+    for page in range(1, 6):
+        req = urllib.request.Request(
+            f"{url}?per_page=100&page={page}",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                items = json.load(r)
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                import time
+                time.sleep(15)
+                continue
+            return hits
+        if not items:
+            break
+        for it in items:
+            if it.get("private") and it.get("title") == title:
+                hits.append(it.get("id"))
+    return hits
+
+
+def _delete_item(token: str, item_id: str) -> bool:
+    """Qiita 記事（下書き含む）を削除する。"""
+    import urllib.error
+    import urllib.request
+
+    req = urllib.request.Request(
+        f"https://qiita.com/api/v2/items/{item_id}",
+        headers={"Authorization": f"Bearer {token}"},
+        method="DELETE",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30):
+            return True
+    except urllib.error.HTTPError as e:
+        print(f"[WARN] DELETE {item_id} failed: HTTP {e.code}", file=sys.stderr)
+        return False
+
+
+def _patch_item(token: str, item_id: str, payload: dict) -> dict:
+    """既存 Draft を PATCH で更新（--public 対応）。"""
+    import urllib.error
+    import urllib.request
+
+    req = urllib.request.Request(
+        f"https://qiita.com/api/v2/items/{item_id}",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        method="PATCH",
+    )
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.load(r)
+
+
 def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     ap = argparse.ArgumentParser()
     ap.add_argument("draft", type=Path)
     ap.add_argument("--publish", action="store_true", help="実際に投稿する（既定は dry-run）")
     ap.add_argument("--public", action="store_true", help="private:true を無視して公開する")
+    ap.add_argument("--cleanup-duplicates", action="store_true",
+                    help="同一 title の既存 Draft を削除する（--publish と併用）")
     args = ap.parse_args()
 
     draft = args.draft if args.draft.is_absolute() else repo_root / args.draft
@@ -145,13 +210,27 @@ def main() -> int:
                 data = json.load(r)
                 break
         except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", "replace")
+            if e.code == 422 and "title has already been used" in body and attempt == 0:
+                # 既存 Draft（同一 title）を --public で PATCH 更新する
+                draft_ids = _find_existing_draft(token, payload["title"])
+                if args.cleanup_duplicates:
+                    for did in draft_ids:
+                        print(f"[CLEANUP] 重複 Draft {did} を削除します", file=sys.stderr)
+                        _delete_item(token, did)
+                    draft_ids = []
+                if draft_ids:
+                    draft_id = draft_ids[0]
+                    print(f"[PATCH] 既存 Draft {draft_id} を --public で更新します", file=sys.stderr)
+                    data = _patch_item(token, draft_id, payload)
+                    break
+                # 削除済み or なし → 通常 POST にフォールバック
             if e.code == 429 and attempt < max_retries:
                 wait = min(15 * (2 ** attempt), 120)
                 print(f"[WAIT] 429 rate-limited — retry in {wait}s (attempt {attempt+1}/{max_retries})", file=sys.stderr)
                 time.sleep(wait)
                 continue
-            detail = e.read().decode("utf-8", "replace")[:500]
-            print(f"[ERR] HTTP {e.code}: {detail}", file=sys.stderr)
+            print(f"[ERR] HTTP {e.code}: {body[:500]}", file=sys.stderr)
             return 4
         except Exception as e:  # noqa: BLE001
             print(f"[ERR] {type(e).__name__}: {e}", file=sys.stderr)

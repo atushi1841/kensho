@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "status": "closed",
+  "reason": null,
+  "trip_count": 3,
+  "last_trip_at": "2026-10-04T14:29:18.675791+00:00",
+  "last_reset_at": "2026-10-04T14:29:20.501801+00:00",
+  "stagnation_threshold": 3,
+  "history": [
+    {
+      "timestamp": "2026-10-04T14:15:34.897311+00:00",
+      "signal": "no progress - iteration 1",
+      "signal_hash": "1aeded3d649aab60",
+      "status": "progress"
+    },
+    {
+      "timestamp": "2026-10-04T14:15:35.338953+00:00",
+      "signal": "no progress - iteration 2",
+      "signal_hash": "23d2c686fffabe25",
+      "status": "progress"
+    },
+    {
+      "timestamp": "2026-10-04T14:15:35.682020+00:00",
+      "signal": "no progress - iteration 3",
+      "signal_hash": "65b6f075b31e55ee",
+      "status": "progress"
+    },
+    {
+      "timestamp": "2026-10-04T14:16:48.228734+00:00",
+      "signal": "no progress - iteration 1",
+      "signal_hash": "1aeded3d649aab60",
+      "status": "progress"
+    },
+    {
+      "timestamp": "2026-10-04T14:16:48.248599+00:00",
+      "signal": "no progress - iteration 2",
+      "signal_hash": "23d2c686fffabe25",
+      "status": "progress"
+    },
+    {
+      "timestamp": "2026-10-04T14:16:48.334679+00:00",
+      "signal": "no progress - iteration 3",
+      "signal_hash": "65b6f075b31e55ee",
+      "status": "progress"
+    },
+    {
+      "timestamp": "2026-10-04T14:19:21.599143+00:00",
+      "signal": "test stagnation 1",
+      "signal_hash": "e75acbcce36efbdd",
+      "status": "progress"
+    },
+    {
+      "timestamp": "2026-10-04T14:19:24.939353+00:00",
+      "signal": "test stagnation 1",
+      "signal_hash": "e75acbcce36efbdd",
+      "status": "progress"
+    },
+    {
+      "timestamp": "2026-10-04T14:19:28.200360+00:00",
+      "signal": "test stagnation 1",
+      "signal_hash": "e75acbcce36efbdd",
+      "status": "progress"
+    },
+    {
+      "timestamp": "2026-10-04T14:22:06.910727+00:00",
+      "signal": "no progress",
+      "signal_hash": "e727537feac80881",
+      "status": "duplicate"
+    },
+    {
+      "timestamp": "2026-10-04T14:22:06.927587+00:00",
+      "signal": "no progress",
+      "signal_hash": "e727537feac80881",
+      "status": "duplicate"
+    },
+    {
+      "timestamp": "2026-10-04T14:22:07.133587+00:00",
+      "signal": "no progress",
+      "signal_hash": "e727537feac80881",
+      "status": "duplicate"
+    },
+    {
+      "timestamp": "2026-10-04T14:24:19.130621+00:00",
+      "signal": "test stagnation 1",
+      "signal_hash": "e75acbcce36efbdd",
+      "status": "duplicate"
+    },
+    {
+      "timestamp": "2026-10-04T14:24:20.921004+00:00",
+      "signal": "test stagnation 1",
+      "signal_hash": "e75acbcce36efbdd",
+      "status": "duplicate"
+    },
+    {
+      "timestamp": "2026-10-04T14:24:22.573352+00:00",
+      "signal": "test stagnation 1",
+      "signal_hash": "e75acbcce36efbdd",
+      "status": "duplicate"
+    },
+    {
+      "timestamp": "2026-10-04T14:29:18.675791+00:00",
+      "signal": "no progress",
+      "signal_hash": "e727537feac80881",
+      "status": "duplicate"
+    },
+    {
+      "timestamp": "2026-10-04T14:29:18.691177+00:00",
+      "signal": "no progress",
+      "signal_hash": "e727537feac80881",
+      "status": "duplicate"
+    },
+    {
+      "timestamp": "2026-10-04T14:29:18.706188+00:00",
+      "signal": "no progress",
+      "signal_hash": "e727537feac80881",
+      "status": "duplicate"
+    }
+  ],
+  "history_max": 50,
+  "review_required": true,
+  "consecutive_stagnant": 0
+}

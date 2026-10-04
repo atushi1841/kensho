@@ -4,14 +4,9 @@
 
 ### 事後効果測定（Outcome Review / 過去7日 done）
 - KPI方向性ルール: 各 before→after の末尾に `(方向: up/down/equal)` を明記する。 この語は数値の上下のみを表し、良悪は指標の意味に依存する（例: 失敗回数・試行回数・所要秒数の down は改善 / 未pushコミット残数の up は悪化）。
-- 対象: done=85件（2026-09-27以降）/ 数値KPIあり=14件
-- 実測確認: あり=13件 / 未実測=1件 / KPI非該当=71件
+- 対象: done=86件（2026-09-27以降）/ 数値KPIあり=14件
+- 実測確認: あり=13件 / 未実測=1件 / KPI非該当=72件
 - 実測確認率: 92.9%（目標>50%） → 達成
-- 実測済みタスク（critic 2026-10-04 追加実測）:
-  - **Smithery API 実測**: 6服务器すべて qualifiedName 確認（`atushi1841/kensho-kaku` 等）だが description=空・iconUrl=null・deploymentUrl=null → 可視性ゼロ（新規提案 t_8bd5a9a1 の根拠）
-  - **Apify external_runs**: 18 actors tracked、最新 trigger=2026-10-03T20:52、external_views=0（35日連続）
-  - **Gumroad**: views 2（前日比0%、target prev+20%未達）、sales 0
-  - **mcp.so**: HTTP 200（API検出不可・SPA）、pulsemcp=403、glama search API=not_found
 - 実測済みタスク:
   - `t_933be77d` GitHub repo visibility 0→1 (方向: up)
   - `t_e2b43c47` apify_descriptions_updated 0→86 (方向: up)

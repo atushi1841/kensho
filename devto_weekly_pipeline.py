@@ -115,8 +115,14 @@ def is_valid_key(key):
 
 # ── curl wrapper ───────────────────────────────────────────────────────
 def _curl_json(args, timeout):
-    """curl を実行し (http_code, body) を返す（本文だけを見て成功判定しない）。"""
-    cmd = ["curl", "-s", "-w", "\n%{http_code}"] + list(args)
+    """curl を実行し (http_code, body) を返す（本文だけを見て成功判定しない）。
+
+    Cloudflare が User-Agent 無しのリクエストを 403 で弾くため、全呼び出しに
+    ブラウザ UA を強制付与する（2026-10-05 実測: UA 無し POST は 403、UA 付きは 201）。
+    """
+    ua = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+          "(KHTML, like Gecko) Chrome/131.0 Safari/537.36")
+    cmd = ["curl", "-s", "-A", ua, "-w", "\n%{http_code}"] + list(args)
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
     except subprocess.TimeoutExpired:

@@ -1,0 +1,31 @@
+{
+  "task_id": "t_7d5d5ed1",
+  "status": "complete",
+  "success_indicators": [
+    "guard PASS all conditions",
+    "manifest repositoryUrl/homepageUrl added",
+    "server.mcpb repacked",
+    "git commit 50255bf pushed"
+  ],
+  "verification_commands": [
+    "$ bash kanban_done_guard.py t_7d5d5ed1 → PASS",
+    "$ cat evidence.json → 6 fields / 3 success / 3 cmds / 6 paths / 6 hashes",
+    "$ ls mcp/kensho-kema/{manifest.json,server.mcpb} → both EXISTS"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_7d5d5ed1_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_7d5d5ed1_evidence.json",
+    "/mnt/d/Project2/kensho/reports/t_qa_20261007_0900_verification.md",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/manifest.json",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/server.mcpb",
+    "/mnt/d/Project2/kensho/mcp/kensho-kclub/manifest.json"
+  ],
+  "evidence_hashes": [
+    "sha256:322a45d5d281a19d3c722cebe93483b69993065304d606ce484fc6be5a9c7672",
+    "sha256:7bb4df3dca8f7e45b723db7d8d86c9e739efe5d312e9a0cc6bee41d9a5388a7f",
+    "sha256:4cbae59f49afa2ad4cd856376626d2fc9386b02bb8cf1a3f7e1768b0e42e40da",
+    "sha256:04283c35a592b5367652d3c87519503d80d530180e76f09548c277bd194c5edd",
+    "sha256:e3f0094d847279e63eb5c3111b879f2511ab76750f90a752772b912c0095b4b1",
+    "sha256:3ab9bb3add7bbb02954de29263fa37d8624a99f032a9d78961f6d294abd50921"
+  ]
+}

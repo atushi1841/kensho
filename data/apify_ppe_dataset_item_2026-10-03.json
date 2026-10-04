@@ -1,0 +1,20 @@
+{
+ "japan-fuel-price-mcp": {
+  "PUT": 200,
+  "entries_before": 1,
+  "entries_after": 2,
+  "dataset-item入り": true,
+  "価格": [
+   0.002
+  ]
+ },
+ "japan-minimum-wage-mcp": {
+  "PUT": 200,
+  "entries_before": 1,
+  "entries_after": 2,
+  "dataset-item入り": true,
+  "価格": [
+   0.002
+  ]
+ }
+}

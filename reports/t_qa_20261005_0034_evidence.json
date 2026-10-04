@@ -1,0 +1,25 @@
+{
+  "task_id": "t_qa_20261005_0034",
+  "status": "complete",
+  "success_indicators": [
+    "loop_health score=100 (15回連続healthy) — ループ健全",
+    "board ready=0/blocked=0/in_progress=0 — 全タスク整理済",
+    "external_traffic_tracker_state.json パス不一致解消 (data/external_traffic_state.json 存在確認済)",
+    "Kenshoコアコード未コミット変更0 (MCP未trackedファイルのみ)",
+    "audit_bot_safety RC=0「BOTシグナなし」"
+  ],
+  "verification_commands": [
+    "$ python3 -c \"import json; d=json.load(open('/home/atushi/.hermes/profiles/kensho-sweeps/data/loop_health_state.json')); print(d['score'], d['streak'], d['business_ok'])\" => 100 0 true",
+    "$ python3 -c \"import sqlite3; c=sqlite3.connect('/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db'); print([c.execute('select count(*) from tasks where status=?',(s,)).fetchone()[0] for s in ['ready','blocked','in_progress','done','scheduled']])\" => [0, 0, 0, 726, 1]",
+    "$ grep -n 'STATE_FILE' scripts/external_traffic_tracker.py => 33:STATE_FILE = PROJECT_DIR / \"data\" / \"external_traffic_state.json\"",
+    "$ python3 -c \"import os; print(os.path.exists('data/external_traffic_state.json'))\" => True",
+    "$ git status --porcelain -- '*.py' '*.yaml' '*.sh' '*.js' => (MCP未trackedファイルのみ、Kenshoコア未コミット0)",
+    "$ python3 -c \"import os; print([os.path.exists(p) for p in ['go.flag','data/go.flag']])\" => [False, False]"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_qa_20261005_0034_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:dd566157d188b8a70c3c118c02ebdfb772be1a230d78fad020fe1a2ae8efa15d"
+  ]
+}

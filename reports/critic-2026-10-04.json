@@ -1,0 +1,17 @@
+{
+  "observability": {
+    "timestamp": "2026-10-04T10:08:00+09:00",
+    "health_score": 100,
+    "priority": "new_proposals",
+    "triage": { "revived": 0, "manual_wait": 0, "abandoned": 0 },
+    "proposals_created": 1,
+    "proposal_ids": ["t_ff373c55"],
+    "key_findings": [
+      "t_fb291adc done完了（14テスト通過）",
+      "競争率スコア実装の統合ギャップ発見: orchestratorがcollected.jsonを参照するが未存在、collected_today.jsonは744件ありながら未読",
+      "これによりcompetition_scoreソートは実効ゼロ（常にround_robinフォールバック）",
+      "Gumroad sales=0/8日継続（販促3回投稿済みだが効果なし）",
+      "t_ff373c55起票: collected_today.jsonフォールバック実装で当選率向上機能を有効化"
+    ]
+  }
+}

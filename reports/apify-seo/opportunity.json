@@ -1,0 +1,245 @@
+{
+ "generated_at": "2026-10-03T08:46:19.764308+00:00",
+ "rows": [
+  {
+   "keyword": "mercari japan",
+   "demand_top5_u30": 50,
+   "top1_u30": 29,
+   "top1_actor": "mercari-japan-scraper",
+   "our_rank": 18,
+   "our_present": true
+  },
+  {
+   "keyword": "yahoo auctions japan",
+   "demand_top5_u30": 24,
+   "top1_u30": 7,
+   "top1_actor": "yahoo-auctions-sold-scraper",
+   "our_rank": 20,
+   "our_present": true
+  },
+  {
+   "keyword": "japan real estate",
+   "demand_top5_u30": 14,
+   "top1_u30": 7,
+   "top1_actor": "suumo-scraper",
+   "our_rank": 9,
+   "our_present": true
+  },
+  {
+   "keyword": "japan kakaku price",
+   "demand_top5_u30": 6,
+   "top1_u30": 1,
+   "top1_actor": "japan-kakaku-price-search-cn",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "japan weather api",
+   "demand_top5_u30": 5,
+   "top1_u30": 2,
+   "top1_actor": "jma-weather-forecast",
+   "our_rank": 2,
+   "our_present": true
+  },
+  {
+   "keyword": "japan car price",
+   "demand_top5_u30": 5,
+   "top1_u30": 1,
+   "top1_actor": "upgarage-japan-used-parts-checker",
+   "our_rank": 2,
+   "our_present": true
+  },
+  {
+   "keyword": "nendoroid price",
+   "demand_top5_u30": 5,
+   "top1_u30": 1,
+   "top1_actor": "anime-figure-scraper",
+   "our_rank": 2,
+   "our_present": true
+  },
+  {
+   "keyword": "japan used instrument guitar",
+   "demand_top5_u30": 4,
+   "top1_u30": 1,
+   "top1_actor": "digimart-japan-used-instrument-scraper",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "mandarake",
+   "demand_top5_u30": 4,
+   "top1_u30": 1,
+   "top1_actor": "mandarake-auction-scraper",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "japan smartphone used",
+   "demand_top5_u30": 4,
+   "top1_u30": 0,
+   "top1_actor": "iosys-japan-used-smartphone-scraper",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "japan prize giveaway",
+   "demand_top5_u30": 4,
+   "top1_u30": 1,
+   "top1_actor": "japan-prize-giveaway-scraper",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "japan used camera",
+   "demand_top5_u30": 4,
+   "top1_u30": 1,
+   "top1_actor": "japan-camera-gear-sold-comps",
+   "our_rank": 2,
+   "our_present": true
+  },
+  {
+   "keyword": "japan rent suumo",
+   "demand_top5_u30": 4,
+   "top1_u30": 1,
+   "top1_actor": "suumo-market-checker",
+   "our_rank": 4,
+   "our_present": true
+  },
+  {
+   "keyword": "japan corporate registry",
+   "demand_top5_u30": 4,
+   "top1_u30": 1,
+   "top1_actor": "japan-houjin-bangou-scraper",
+   "our_rank": 4,
+   "our_present": true
+  },
+  {
+   "keyword": "japan hotel price",
+   "demand_top5_u30": 4,
+   "top1_u30": 1,
+   "top1_actor": "japan-hotels-ikyu",
+   "our_rank": null,
+   "our_present": false
+  },
+  {
+   "keyword": "anime figure price",
+   "demand_top5_u30": 3,
+   "top1_u30": 0,
+   "top1_actor": "surugaya-japan-hobby-prices",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "japan luxury brand",
+   "demand_top5_u30": 3,
+   "top1_u30": 1,
+   "top1_actor": "japan-luxury-brand-market-kr",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "japan wage data",
+   "demand_top5_u30": 3,
+   "top1_u30": 0,
+   "top1_actor": "japan-minimum-wage-mcp",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "japan fuel price",
+   "demand_top5_u30": 3,
+   "top1_u30": 0,
+   "top1_actor": "japan-fuel-price-mcp",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "japan used motorcycle",
+   "demand_top5_u30": 3,
+   "top1_u30": 1,
+   "top1_actor": "goobike-motorcycle-scraper",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "japan used watch",
+   "demand_top5_u30": 3,
+   "top1_u30": 1,
+   "top1_actor": "jackroad-watch-price-checker",
+   "our_rank": 2,
+   "our_present": true
+  },
+  {
+   "keyword": "japan egov law",
+   "demand_top5_u30": 3,
+   "top1_u30": 1,
+   "top1_actor": "japan-laws-egov",
+   "our_rank": 2,
+   "our_present": true
+  },
+  {
+   "keyword": "japan mcp server",
+   "demand_top5_u30": 2,
+   "top1_u30": 1,
+   "top1_actor": "japan-market-mcp",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "japan train fare",
+   "demand_top5_u30": 2,
+   "top1_u30": 0,
+   "top1_actor": "japan-train-route-fare-finder",
+   "our_rank": null,
+   "our_present": false
+  },
+  {
+   "keyword": "dlsite",
+   "demand_top5_u30": 1,
+   "top1_u30": 1,
+   "top1_actor": "dlsite-scraper",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "kimono resale",
+   "demand_top5_u30": 1,
+   "top1_u30": 1,
+   "top1_actor": "kimono-market-scraper",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "golf club used japan",
+   "demand_top5_u30": 1,
+   "top1_u30": 1,
+   "top1_actor": "golfpartner-used-club-scraper",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "fishing tackle japan",
+   "demand_top5_u30": 1,
+   "top1_u30": 1,
+   "top1_actor": "tackleberry-scraper",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "japan crowdfunding",
+   "demand_top5_u30": 1,
+   "top1_u30": 1,
+   "top1_actor": "japan-crowdfunding-trend-feed",
+   "our_rank": 1,
+   "our_present": true
+  },
+  {
+   "keyword": "japan hotspot wifi",
+   "demand_top5_u30": 0,
+   "top1_u30": null,
+   "top1_actor": null,
+   "our_rank": null,
+   "our_present": false
+  }
+ ]
+}

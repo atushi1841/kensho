@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.atushi1841/kensho-sweep-mcp",
+  "description": "Japan X/Twitter sweepstakes campaign data (1133 records). Tools: search, history, movers.",
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/atushi1841/kensho-sweep-mcp",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/atushi1841/kensho-sweep-mcp/releases/download/v1.0.0/server.mcpb",
+      "version": "1.0.0",
+      "fileSha256": "396651d822782d8c7d67c89b6e1201950f441258bfc784fe9bbf09dcf7ffb355",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

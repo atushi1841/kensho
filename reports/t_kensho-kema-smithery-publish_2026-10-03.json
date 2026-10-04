@@ -1,0 +1,22 @@
+{
+  "status": "SUCCESS",
+  "verified": true,
+  "release_id": "40fc0c6f-ab31-46d2-a2e8-a3a1833b48bc",
+  "server_url": "https://smithery.ai/servers/atushi1841/kensho-kema",
+  "tools": ["current_sweep", "sweep_history", "top_prize_movers"],
+  "changed_files": [
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/manifest.json",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/README.md",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/server/server.py",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/src/stdio_main.py",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/data/accumulated.jsonl",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/pyproject.toml",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/requirements.txt",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/.mcpbignore",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/scripts/sync_manifest_tools.py",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/scripts/pack_mcpb.py",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/uv.lock",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/server.mcpb"
+  ],
+  "blockers": ""
+}

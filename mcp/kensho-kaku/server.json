@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.atushi1841/kensho-kaku",
+  "description": "Japan X/Twitter sweepstakes data from ken-kaku.com. 3 tools: search, history, prize movers.",
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/atushi1841/kensho-kaku",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/atushi1841/kensho-kaku/releases/download/v1.0.0/server.mcpb",
+      "version": "1.0.0",
+      "fileSha256": "a8d2b7f08a262389be50f4e635081516a262bb91f315d469db586b64646f9767",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

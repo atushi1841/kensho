@@ -1,0 +1,98 @@
+{
+  "generated_at": "2026-10-03T11:10:19",
+  "audit_source": "reports/apify-seo/apify-seo-audit-2026-10-03.csv",
+  "findings_total": 176,
+  "actors_targeted": 68,
+  "by_issue": {
+    "missing_keywords": 68,
+    "short_description": 39,
+    "missing_categories": 36,
+    "title_keyword_gap": 17,
+    "discovery_gap": 10,
+    "no_competitor_data": 6,
+    "seo_title_missing": 0,
+    "seo_description_missing": 0
+  },
+  "applied": {
+    "total_findings_processed": 68,
+    "ok": 58,
+    "ng": 10,
+    "ng_reason": "no-op（batch-1 で既に適用済み）"
+  },
+  "verification": {
+    "method": "GET /v2/acts/{id} read-back 後変更確認",
+    "batch1_checked": 10,
+    "batch2_checked": 58,
+    "changed_total": 68,
+    "unchanged_total": 0
+  },
+  "examples": [
+    {
+      "actor": "ai-model-price-api",
+      "issue": "missing_keywords",
+      "field": "description",
+      "before_len": 239,
+      "after_len": 247,
+      "effective": true
+    },
+    {
+      "actor": "goo-net-car-scraper",
+      "issue": "missing_keywords",
+      "field": "description",
+      "before_len": 293,
+      "after_len": 300,
+      "note": "300字上限に拡張"
+    },
+    {
+      "actor": "jackroad-used-watch-scraper",
+      "issue": "title_keyword_gap",
+      "field": "title",
+      "effective": true
+    }
+  ],
+  "failed": [
+    {
+      "actor": "ai-model-price-api",
+      "issue": "no-op（既に適用済み）"
+    },
+    {
+      "actor": "amazon-paapi-jp-actor",
+      "issue": "no-op（既に適用済み）"
+    },
+    {
+      "actor": "biglemon-machinery-scraper",
+      "issue": "no-op（既に適用済み）"
+    },
+    {
+      "actor": "dmm-scraper",
+      "issue": "no-op（既に適用済み）"
+    },
+    {
+      "actor": "eurostat-indicators",
+      "issue": "no-op（既に適用済み）"
+    },
+    {
+      "actor": "golfpartner-used-club-scraper",
+      "issue": "no-op（既に適用済み）"
+    },
+    {
+      "actor": "goo-net-car-scraper",
+      "issue": "no-op（既に適用済み）"
+    },
+    {
+      "actor": "goo-net-car-scraper-es",
+      "issue": "no-op（既に適用済み）"
+    },
+    {
+      "actor": "goo-net-car-scraper-fr",
+      "issue": "no-op（既に適用済み）"
+    },
+    {
+      "actor": "goo-net-car-scraper-pt",
+      "issue": "no-op（既に適用済み）"
+    }
+  ],
+  "code_changes": [
+    "scripts/apify_seo_apply.py に _fit_with_keywords() を追加（300字・63字の上限で suffix キーワードが切れないよう base 優先カット）"
+  ]
+}

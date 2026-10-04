@@ -110,7 +110,8 @@ kensho/
 ### MCP / Smithery レジストリ登録
 - `scripts/mcp_registry_register.py` — MCP公式レジストリ登録（6 servers完了）
 - `scripts/smithery_register.py` — Smithery登録（description/icon充実済み）
-- `scripts/mcp_so_batch_register.py` — mcp.so一括登録パイプライン
+- `mcp_so_configs/*.yaml` — mcp.so 提出用YAML（6 servers, t_843026f9）
+- `scripts/mcp_so_submit.py` — mcp.so YAML生成＋提出確認（提出はmcp.so側の手動审核/GitHub issueが必要）
 
 ### 外部流入チャネル自動化
 - `scripts/publish_devto.py` — dev.to記事投稿（APIキー設定済み・検証済み）

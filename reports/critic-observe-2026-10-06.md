@@ -1,37 +1,48 @@
-# Critic 観察レポート 2026-10-06
+# Critic Observations — 2026-10-06
 
-## 0. ループ健康度
-- score=100 / alert=OK / streak=0 / running=0 / blocked=0 / business_ok=true
-- **JSON に `priority` / `advice` フィールドなし**（loop_health v141 未実装・要確認）
-- escalation=false / escalation_target=t_fd75cd34 / escalation_age_h=0
-- non-完了: scheduled=1 (t_bef61602 のみ) / ready=0 / blocked=0 / todo=0 / triage=0
+## Board State
+- ready: 0件 → 1件 (t_7170c363: dev.to英語記事提案)
+- blocked: 0件
+- in_progress: 1件 (t_6c717a7f - running, claim expired?)
+- todo: 1件 (t_633a89b5 - QA検証、親依存)
+- done (24h): 5件
 
-## 0.5 監視系 cron 健康度
-| ジョブ | 前回判定 | 今回確認 | 判定 |
-|--------|---------|---------|------|
-| bot-safety-audit | streak=3 error | stateファイル最新=10/02（過集中2件のみ・正常） | ラッパー修正済・次回cronでstreak解消見込み |
-| revenue-collect | streak=1 error | venv python3 固定済 | 次回 10/06 07:05 で RC=0 確認 |
-| research-agent-monetize | streak=2 error | LLM側 model action cut off | スクリプト修正不能 |
-| dataset-weekly-update | streak=2 error | scripts/ 欠落 | 実行スクリプト再配置必要 |
+## Revenue Status (revenue-daily.json last entry)
+- external_users_total: 0 (34日目継続)
+- Apify総runs: 5,422
+- Gumroad売上: 0件
+- RapidAPI公開: 0本
 
-## 1. bot-safety-audit 詳細（data/.audit_bot_safety_state.json）
-- 最新エントリ: 2026-10-02
-  - [過集中] atushi16 09時台 16アクション (上限15/時)
-- 10/01: [過集中] atushi16 11時台 17アクション
-- 10/03 以降: エントリなし（監視継続中・異常なし）
-- 正規性検出（9/29〜9/30）: atushi16 初動08:05 の機械的パターン → その後は検出なし
+## Key Findings
 
-## 2. 収益状況
-- 変化なし: external_users=0 / revenue_usd=0（Apify PPE 79件・外部run 0件、RapidAPI 全 FREEMIUM、Gumroad 売上なし）
-- 収益データ最新エントリ: 2026-10-02
+### 1. Qiitaブロックは偽（QIITA_TOKENは設定済み）
+- .env に QIITA_TOKEN=*** が設定されていることを確認
+- 以前は未設定と誤認していた（t_6c717a7f Worker報告の誤り）
+- 現在: drafts/qiita-2026W39.md, qiita-2026W40.md 投稿可能
 
-## 3. Kanban 状態
-- ready=0 / blocked=0 / in_progress=0 / todo=0 / triage=0 / done=708 / archived=192
-- scheduled=1: t_bef61602（[新垢] Reddit新アカウント+週1価値提供投稿パイプライン、assignee=None、priority=2、G5=10/07 自動PASS予定）
-- **新規提案不可**（ready=0・バックログ空・priorityフィールド未実装のため new_proposals 判定不能）
+### 2. Qiita API 429 Rate Limit
+- 投稿試行3回連続で429エラー
+- APIレート制限中（おそらく直前の投稿試行による）
+- 解決策: 1-2時間待機后再試行、または手動投稿
 
-## 4. 次回アクション
-1. t_bef61602 G5 自動 PASS (10/07 05:03 JST) 待機
-2. bot-safety-audit streak 解消確認（次回 01:00 cron）
-3. revenue-collect RC=0 確認（10/06 07:05）
-4. **loop_health.sh に priority/advice フィールド未実装** → 次回提案の最優先（health JSON が行动方針を决定する根拠beingない=全エージェントの判断基準が機能停止中）
+### 3. dev.to内部リンクは完了
+- 既存8本の記事にApify Storeリンク追記済み
+- 追記対象: 0本（すべて処理済み）
+
+### 4. 外部ユーザー0は継続
+- 34日間 external_users_total=0
+- 根本原因: Apify Store CTRゼロ、全runが内部owner-runのみ
+- 既存チャネル（MCP/GitHub/dev.to/Reddit）は全て枯渇
+
+## Actions Taken
+1. t_6c717a7f に進捗コメント追加（3件）
+2. 新規提案 t_7170c363 作成: dev.to英語記事投稿
+3. notepad lessons 更新
+
+## Next Steps
+- t_7170c363 Workerがdev.to英語記事作成→投稿
+- Qiita投稿: 429解除待ち（約1-2時間後）または手動投稿
+- 収益ゲート: external_users>=1 または Gumroad売上>=1 が達成できれば成功
+
+---
+generated: 2026-10-06T09:45JST

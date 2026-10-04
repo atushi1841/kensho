@@ -1,0 +1,177 @@
+actor,issue,field,current,suggested,evidence,search_query,queries_tried,competitors
+surugaya-japan-hobby-prices,short_description,description,158字,競合中央値 264字以上に拡張（最大 294字）,競合4件のdesc_len中央値=264,surugaya anime,1,4
+surugaya-japan-hobby-prices,missing_keywords,title+description,"(不在) jpy, maker, resale","説明/タイトルに追加: jpy(競合2件), maker(競合2件), resale(競合2件)",競合4件中2件以上に出現し自社全文に不在,surugaya anime,1,4
+surugaya-japan-hobby-prices,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間1ユーザー）,競合中央値u30d=1 / 自社0 / 競合1位=surugaya-scraper,surugaya anime,1,4
+surugaya-japan-hobby-prices,title_keyword_gap,title,Surugaya Anime Figure Price Scraper — Japan Used Collectibles,"タイトルへ追加: suruga-ya(競合4件), hobby(競合2件)",競合title4件中2件以上に出現し自社titleに不在,surugaya anime,1,4
+mandarake-auction-scraper,short_description,description,170字,競合中央値 276字以上に拡張（最大 298字）,競合2件のdesc_len中央値=276,mandarake,4,2
+mandarake-auction-scraper,missing_keywords,title+description,"(不在) stock, toys","説明/タイトルに追加: stock(競合2件), toys(競合2件)",競合2件中2件以上に出現し自社全文に不在,mandarake,4,2
+mandarake-surugaya-mcp,missing_keywords,title+description,"(不在) figures, image, scrape, url","説明/タイトルに追加: figures(競合2件), image(競合2件), scrape(競合2件), url(競合2件)",競合2件中2件以上に出現し自社全文に不在,suruga listings,1,2
+mandarake-surugaya-mcp,title_keyword_gap,title,Japan Suruga-ya Prices — Listings & Market Data,タイトルへ追加: collectibles(競合2件),競合title2件中2件以上に出現し自社titleに不在,suruga listings,1,2
+rakuten-japan-mcp,missing_keywords,title+description,"(不在) competitive, e-commerce, merchant, products, scrape","説明/タイトルに追加: competitive(競合2件), e-commerce(競合2件), merchant(競合2件), products(競合2件), scrape(競合2件)",競合5件中2件以上に出現し自社全文に不在,rakuten ichiba,1,5
+rakuten-japan-mcp,missing_categories,categories,"ECOMMERCE,AUTOMATION,MCP_SERVERS",追加候補: LEAD_GENERATION(競合3件),競合5件中2件以上が設定,rakuten ichiba,1,5
+dlsite-scraper,no_competitor_data,search_query,animate anime,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,animate anime,7,0
+dmm-scraper,short_description,description,207字,競合中央値 287字以上に拡張（最大 300字）,競合4件のdesc_len中央値=287,hard off,1,4
+dmm-scraper,missing_keywords,title+description,"(不在) abstract, atp, clay, elo, grass, key","説明/タイトルに追加: abstract(競合2件), atp(競合2件), clay(競合2件), elo(競合2件), grass(競合2件), key(競合2件)",競合4件中2件以上に出現し自社全文に不在,hard off,1,4
+dmm-scraper,title_keyword_gap,title,Hard Off OffMall Price Scraper — Japan Second-hand Chain,"タイトルへ追加: elo(競合2件), tennis(競合2件)",競合title4件中2件以上に出現し自社titleに不在,hard off,1,4
+tackleberry-japan-fishing-tackle-scraper,short_description,description,186字,競合中央値 230字以上に拡張（最大 273字）,競合5件のdesc_len中央値=230,map camera,1,5
+tackleberry-japan-fishing-tackle-scraper,missing_keywords,title+description,"(不在) coordinates, date, gps, photos, size, url","説明/タイトルに追加: coordinates(競合3件), date(競合3件), gps(競合3件), photos(競合3件), size(競合3件), url(競合3件)",競合5件中2件以上に出現し自社全文に不在,map camera,1,5
+tackleberry-japan-fishing-tackle-scraper,missing_categories,categories,"ECOMMERCE,AUTOMATION,SPORTS","追加候補: TRAVEL(競合4件), OTHER(競合2件), VIDEOS(競合2件)",競合5件中2件以上が設定,map camera,1,5
+tackleberry-japan-fishing-tackle-scraper,title_keyword_gap,title,Map Camera Price Scraper — Japan Used Camera Market Leader,タイトルへ追加: gps(競合3件),競合title5件中3件以上に出現し自社titleに不在,map camera,1,5
+kitamura-japan-used-camera-scraper,no_competitor_data,search_query,kitamura camera,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,kitamura camera,5,0
+jackroad-used-watch-scraper,missing_keywords,title+description,"(不在) chrono24, filters, incremental, location, mode, shipping","説明/タイトルに追加: chrono24(競合3件), filters(競合3件), incremental(競合2件), location(競合2件), mode(競合2件), shipping(競合2件)",競合5件中2件以上に出現し自社全文に不在,watches listings,1,5
+jackroad-used-watch-scraper,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: LEAD_GENERATION(競合3件),競合5件中2件以上が設定,watches listings,1,5
+jackroad-used-watch-scraper,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間68ユーザー）,競合中央値u30d=12 / 自社0 / 競合1位=facebook-marketplace-scraper,watches listings,1,5
+jackroad-used-watch-scraper,title_keyword_gap,title,Japan watches Prices — Listings & Market Data,タイトルへ追加: chrono24(競合3件),競合title5件中3件以上に出現し自社titleに不在,watches listings,1,5
+komehyo-japan-brand-scraper,short_description,description,282字,競合中央値 294字以上に拡張（最大 294字）,競合1件のdesc_len中央値=294,komehyo brand,3,1
+komehyo-japan-brand-scraper,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間1ユーザー）,競合中央値u30d=1 / 自社0 / 競合1位=komehyo-luxury-market-checker,komehyo brand,3,1
+iosys-japan-used-smartphone-scraper,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間1ユーザー）,競合中央値u30d=1 / 自社0 / 競合1位=iosys-phone-market-checker,iosys listings,1,1
+digimart-japan-used-instrument-scraper,no_competitor_data,search_query,digimart listings,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,digimart listings,8,0
+japan-used-camera-market-scraper,short_description,description,180字,競合中央値 260字以上に拡張（最大 286字）,競合5件のdesc_len中央値=260,camera real,1,5
+japan-used-camera-market-scraper,missing_keywords,title+description,"(不在) battery, device, gsmarena, models, phone, specs","説明/タイトルに追加: battery(競合2件), device(競合2件), gsmarena(競合2件), models(競合2件), phone(競合2件), specs(競合2件)",競合5件中2件以上に出現し自社全文に不在,camera real,1,5
+japan-used-instrument-market-scraper,missing_keywords,title+description,"(不在) brand, guitar, location, photos, query, ratings","説明/タイトルに追加: brand(競合2件), guitar(競合2件), location(競合2件), photos(競合2件), query(競合2件), ratings(競合2件)",競合5件中2件以上に出現し自社全文に不在,musical instruments,1,5
+japan-used-instrument-market-scraper,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: LEAD_GENERATION(競合2件),競合5件中2件以上が設定,musical instruments,1,5
+japan-watch-market-scraper,missing_keywords,title+description,"(不在) chrono24, filters, incremental, location, mode, shipping","説明/タイトルに追加: chrono24(競合3件), filters(競合3件), incremental(競合2件), location(競合2件), mode(競合2件), shipping(競合2件)",競合5件中2件以上に出現し自社全文に不在,watches listings,1,5
+japan-watch-market-scraper,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: LEAD_GENERATION(競合3件),競合5件中2件以上が設定,watches listings,1,5
+japan-watch-market-scraper,title_keyword_gap,title,Japan watches Prices — Listings & Market Data,タイトルへ追加: chrono24(競合3件),競合title5件中3件以上に出現し自社titleに不在,watches listings,1,5
+japan-luxury-brand-market-scraper,missing_keywords,title+description,"(不在) brands, designer, fashion","説明/タイトルに追加: brands(競合2件), designer(競合2件), fashion(競合2件)",競合5件中2件以上に出現し自社全文に不在,luxury brand,1,5
+japan-luxury-brand-market-scraper,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間12ユーザー）,競合中央値u30d=1 / 自社0 / 競合1位=chrono24-search-scraper,luxury brand,1,5
+japan-market-mcp,missing_keywords,title+description,"(不在) excel, scrape, sale, download, html, integrate","説明/タイトルに追加: excel(競合4件), scrape(競合4件), sale(競合3件), download(競合2件), html(競合2件), integrate(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+japan-market-mcp,missing_categories,categories,"ECOMMERCE,AUTOMATION,MCP_SERVERS",追加候補: REAL_ESTATE(競合4件),競合5件中2件以上が設定,listings json,1,5
+japan-offmall-market-scraper,missing_keywords,title+description,"(不在) card, history, one, optional, profiles, rankings","説明/タイトルに追加: card(競合2件), history(競合2件), one(競合2件), optional(競合2件), profiles(競合2件), rankings(競合2件)",競合5件中2件以上に出現し自社全文に不在,hard off,1,5
+japan-offmall-market-scraper,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: AI(競合2件),競合5件中2件以上が設定,hard off,1,5
+japan-camera-market-cn-scraper,missing_keywords,title+description,"(不在) product, products, scrape, specs","説明/タイトルに追加: product(競合2件), products(競合2件), scrape(競合2件), specs(競合2件)",競合3件中2件以上に出現し自社全文に不在,camera,3,3
+japan-camera-market-cn-scraper,title_keyword_gap,title,Japan cameras Prices — Listings & Market Data,タイトルへ追加: camera(競合2件),競合title3件中2件以上に出現し自社titleに不在,camera,3,3
+japan-camera-market-kr-scraper,missing_keywords,title+description,"(不在) products, scrape, specs","説明/タイトルに追加: products(競合2件), scrape(競合2件), specs(競合2件)",競合3件中2件以上に出現し自社全文に不在,camera,3,3
+japan-camera-market-kr-scraper,title_keyword_gap,title,Japan cameras Prices — Listings & Market Data,タイトルへ追加: camera(競合2件),競合title3件中2件以上に出現し自社titleに不在,camera,3,3
+japan-watch-market-scraper-cn,missing_keywords,title+description,"(不在) chrono24, filters, incremental, listing, location, mode","説明/タイトルに追加: chrono24(競合3件), filters(競合3件), incremental(競合2件), listing(競合2件), location(競合2件), mode(競合2件)",競合5件中2件以上に出現し自社全文に不在,watches listings,1,5
+japan-watch-market-scraper-cn,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: LEAD_GENERATION(競合3件),競合5件中2件以上が設定,watches listings,1,5
+japan-watch-market-scraper-cn,title_keyword_gap,title,Japan watches Prices — Listings & Market Data,タイトルへ追加: chrono24(競合3件),競合title5件中3件以上に出現し自社titleに不在,watches listings,1,5
+japan-watch-market-scraper-kr,missing_keywords,title+description,"(不在) scrape, chrono24, filters, incremental, location, mode","説明/タイトルに追加: scrape(競合4件), chrono24(競合3件), filters(競合3件), incremental(競合2件), location(競合2件), mode(競合2件)",競合5件中2件以上に出現し自社全文に不在,watches listings,1,5
+japan-watch-market-scraper-kr,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: LEAD_GENERATION(競合3件),競合5件中2件以上が設定,watches listings,1,5
+japan-watch-market-scraper-kr,title_keyword_gap,title,Japan watches Prices — Listings & Market Data,タイトルへ追加: chrono24(競合3件),競合title5件中3件以上に出現し自社titleに不在,watches listings,1,5
+japan-luxury-brand-market-cn,missing_keywords,title+description,"(不在) brands, fashion, pre-owned, urls","説明/タイトルに追加: brands(競合2件), fashion(競合2件), pre-owned(競合2件), urls(競合2件)",競合5件中2件以上に出現し自社全文に不在,luxury brand,1,5
+japan-luxury-brand-market-kr,missing_keywords,title+description,"(不在) product, brands, designer, fashion, pre-owned, scrape","説明/タイトルに追加: product(競合3件), brands(競合2件), designer(競合2件), fashion(競合2件), pre-owned(競合2件), scrape(競合2件)",競合5件中2件以上に出現し自社全文に不在,luxury brand,1,5
+japan-used-instrument-market-cn,missing_keywords,title+description,"(不在) instrument, drums, scrape, brand, gear, guitar","説明/タイトルに追加: instrument(競合4件), drums(競合3件), scrape(競合3件), brand(競合2件), gear(競合2件), guitar(競合2件)",競合5件中2件以上に出現し自社全文に不在,musical instruments,1,5
+japan-used-instrument-market-cn,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: LEAD_GENERATION(競合2件),競合5件中2件以上が設定,musical instruments,1,5
+japan-used-instrument-market-kr,missing_keywords,title+description,"(不在) instrument, drums, gear, keyboards, location, music","説明/タイトルに追加: instrument(競合4件), drums(競合3件), gear(競合2件), keyboards(競合2件), location(競合2件), music(競合2件)",競合5件中2件以上に出現し自社全文に不在,musical instruments,1,5
+japan-used-instrument-market-kr,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: LEAD_GENERATION(競合2件),競合5件中2件以上が設定,musical instruments,1,5
+japan-offmall-market-cn,missing_keywords,title+description,"(不在) card, history, one, optional, profiles, rankings","説明/タイトルに追加: card(競合2件), history(競合2件), one(競合2件), optional(競合2件), profiles(競合2件), rankings(競合2件)",競合5件中2件以上に出現し自社全文に不在,hard off,1,5
+japan-offmall-market-cn,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: AI(競合2件),競合5件中2件以上が設定,hard off,1,5
+japan-offmall-market-kr,missing_keywords,title+description,"(不在) card, history, one, profiles, rankings, stats","説明/タイトルに追加: card(競合2件), history(競合2件), one(競合2件), profiles(競合2件), rankings(競合2件), stats(競合2件)",競合5件中2件以上に出現し自社全文に不在,hard off,1,5
+japan-offmall-market-kr,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: AI(競合2件),競合5件中2件以上が設定,hard off,1,5
+japan-rent-market-scraper,short_description,description,235字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+japan-rent-market-scraper,missing_keywords,title+description,"(不在) excel, scrape, export, sale, scraped, download","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), sale(競合3件), scraped(競合3件), download(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+japan-rent-market-cn,short_description,description,235字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+japan-rent-market-cn,missing_keywords,title+description,"(不在) excel, scrape, export, sale, scraped, download","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), sale(競合3件), scraped(競合3件), download(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+japan-rent-market-kr,short_description,description,199字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+japan-rent-market-kr,missing_keywords,title+description,"(不在) excel, scrape, export, sale, scraped, download","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), sale(競合3件), scraped(競合3件), download(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+japan-property-market-scraper,short_description,description,177字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+japan-property-market-scraper,missing_keywords,title+description,"(不在) excel, scrape, export, scraped, download, html","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), scraped(競合3件), download(競合2件), html(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+japan-property-market-cn,short_description,description,177字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+japan-property-market-cn,missing_keywords,title+description,"(不在) excel, scrape, export, scraped, download, html","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), scraped(競合3件), download(競合2件), html(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+japan-property-market-kr,short_description,description,177字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+japan-property-market-kr,missing_keywords,title+description,"(不在) excel, scrape, export, scraped, download, html","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), scraped(競合3件), download(競合2件), html(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+japan-kakaku-price-search,short_description,description,190字,競合中央値 223字以上に拡張（最大 300字）,競合5件のdesc_len中央値=223,kakaku product,1,5
+japan-kakaku-price-search,missing_keywords,title+description,"(不在) category, count, clean, image, images, jpy","説明/タイトルに追加: category(競合3件), count(競合3件), clean(競合2件), image(競合2件), images(競合2件), jpy(競合2件)",競合5件中2件以上に出現し自社全文に不在,kakaku product,1,5
+japan-kakaku-price-search,missing_categories,categories,"ECOMMERCE,AUTOMATION,BUSINESS",追加候補: LEAD_GENERATION(競合2件),競合5件中2件以上が設定,kakaku product,1,5
+japan-kakaku-price-search,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間5ユーザー）,競合中央値u30d=1 / 自社0 / 競合1位=kakaku-product-scraper,kakaku product,1,5
+japan-kakaku-price-search-cn,short_description,description,190字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+japan-kakaku-price-search-cn,missing_keywords,title+description,"(不在) excel, scrape, export, sale, scraped, download","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), sale(競合3件), scraped(競合3件), download(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+japan-kakaku-price-search-cn,missing_categories,categories,"ECOMMERCE,AUTOMATION,BUSINESS",追加候補: REAL_ESTATE(競合4件),競合5件中2件以上が設定,listings json,1,5
+japan-kakaku-price-search-kr,short_description,description,190字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+japan-kakaku-price-search-kr,missing_keywords,title+description,"(不在) excel, scrape, export, sale, scraped, download","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), sale(競合3件), scraped(競合3件), download(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+japan-kakaku-price-search-kr,missing_categories,categories,"ECOMMERCE,AUTOMATION,BUSINESS",追加候補: REAL_ESTATE(競合4件),競合5件中2件以上が設定,listings json,1,5
+kimono-market-scraper,short_description,description,189字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+kimono-market-scraper,missing_keywords,title+description,"(不在) excel, export, sale, scraped, download, integrate","説明/タイトルに追加: excel(競合4件), export(競合3件), sale(競合3件), scraped(競合3件), download(競合2件), integrate(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+kimono-market-scraper,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: REAL_ESTATE(競合4件),競合5件中2件以上が設定,listings json,1,5
+kimono-market-scraper-cn,short_description,description,189字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+kimono-market-scraper-cn,missing_keywords,title+description,"(不在) excel, scrape, export, sale, scraped, download","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), sale(競合3件), scraped(競合3件), download(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+kimono-market-scraper-cn,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: REAL_ESTATE(競合4件),競合5件中2件以上が設定,listings json,1,5
+kimono-market-scraper-kr,short_description,description,189字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+kimono-market-scraper-kr,missing_keywords,title+description,"(不在) excel, scrape, export, sale, scraped, download","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), sale(競合3件), scraped(競合3件), download(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+kimono-market-scraper-kr,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: REAL_ESTATE(競合4件),競合5件中2件以上が設定,listings json,1,5
+goo-net-car-scraper,missing_keywords,title+description,"(不在) mileage, transmission, addresses, autotrader, descriptions, engine","説明/タイトルに追加: mileage(競合3件), transmission(競合3件), addresses(競合2件), autotrader(競合2件), descriptions(競合2件), engine(競合2件)",競合5件中2件以上に出現し自社全文に不在,car listings,1,5
+biglemon-machinery-scraper,short_description,description,174字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+biglemon-machinery-scraper,missing_keywords,title+description,"(不在) excel, sale, scraped, download, integrate, monitor","説明/タイトルに追加: excel(競合4件), sale(競合3件), scraped(競合3件), download(競合2件), integrate(競合2件), monitor(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+biglemon-machinery-scraper,missing_categories,categories,"ECOMMERCE,AUTOMATION,SPORTS",追加候補: REAL_ESTATE(競合4件),競合5件中2件以上が設定,listings json,1,5
+goo-net-car-scraper-es,missing_keywords,title+description,"(不在) mileage, scrape, transmission, addresses, autotrader, descriptions","説明/タイトルに追加: mileage(競合3件), scrape(競合3件), transmission(競合3件), addresses(競合2件), autotrader(競合2件), descriptions(競合2件)",競合5件中2件以上に出現し自社全文に不在,car listings,1,5
+goo-net-car-scraper-pt,missing_keywords,title+description,"(不在) mileage, scrape, transmission, addresses, autotrader, descriptions","説明/タイトルに追加: mileage(競合3件), scrape(競合3件), transmission(競合3件), addresses(競合2件), autotrader(競合2件), descriptions(競合2件)",競合5件中2件以上に出現し自社全文に不在,car listings,1,5
+suumo-japan-real-estate-scraper,short_description,description,182字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+suumo-japan-real-estate-scraper,missing_keywords,title+description,"(不在) excel, scrape, export, scraped, download, html","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), scraped(競合3件), download(競合2件), html(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+suumo-japan-real-estate-scraper-cn,short_description,description,182字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+suumo-japan-real-estate-scraper-cn,missing_keywords,title+description,"(不在) excel, scrape, export, scraped, download, integrate","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), scraped(競合3件), download(競合2件), integrate(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+suumo-japan-real-estate-scraper-kr,short_description,description,182字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+suumo-japan-real-estate-scraper-kr,missing_keywords,title+description,"(不在) excel, scrape, export, scraped, download, html","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), scraped(競合3件), download(競合2件), html(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+suumo-japan-real-estate-scraper-es,short_description,description,182字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+suumo-japan-real-estate-scraper-es,missing_keywords,title+description,"(不在) excel, scrape, export, scraped, download, html","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), scraped(競合3件), download(競合2件), html(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+rakuten-market-scraper,short_description,description,182字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+rakuten-market-scraper,missing_keywords,title+description,"(不在) excel, scrape, export, sale, scraped, download","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), sale(競合3件), scraped(競合3件), download(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+rakuten-market-scraper,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: REAL_ESTATE(競合4件),競合5件中2件以上が設定,listings json,1,5
+goo-net-car-scraper-fr,missing_keywords,title+description,"(不在) mileage, scrape, transmission, addresses, autotrader, descriptions","説明/タイトルに追加: mileage(競合3件), scrape(競合3件), transmission(競合3件), addresses(競合2件), autotrader(競合2件), descriptions(競合2件)",競合5件中2件以上に出現し自社全文に不在,car listings,1,5
+goo-net-car-scraper-ru,missing_keywords,title+description,"(不在) mileage, transmission, addresses, autotrader, descriptions, engine","説明/タイトルに追加: mileage(競合3件), transmission(競合3件), addresses(競合2件), autotrader(競合2件), descriptions(競合2件), engine(競合2件)",競合5件中2件以上に出現し自社全文に不在,car listings,1,5
+goobike-motorcycle-scraper,short_description,description,156字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+goobike-motorcycle-scraper,missing_keywords,title+description,"(不在) excel, scrape, sale, scraped, download, html","説明/タイトルに追加: excel(競合4件), scrape(競合4件), sale(競合3件), scraped(競合3件), download(競合2件), html(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+goobike-motorcycle-scraper,missing_categories,categories,"ECOMMERCE,AUTOMATION,SPORTS",追加候補: REAL_ESTATE(競合4件),競合5件中2件以上が設定,listings json,1,5
+upgarage-parts-scraper,short_description,description,176字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+upgarage-parts-scraper,missing_keywords,title+description,"(不在) excel, scrape, sale, scraped, download, html","説明/タイトルに追加: excel(競合4件), scrape(競合4件), sale(競合3件), scraped(競合3件), download(競合2件), html(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+upgarage-parts-scraper,missing_categories,categories,"ECOMMERCE,AUTOMATION,SPORTS",追加候補: REAL_ESTATE(競合4件),競合5件中2件以上が設定,listings json,1,5
+upgarage-parts-scraper,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間859ユーザー）,競合中央値u30d=768 / 自社0 / 競合1位=facebook-marketplace-scraper,listings json,1,5
+golfpartner-used-club-scraper,short_description,description,152字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+golfpartner-used-club-scraper,missing_keywords,title+description,"(不在) excel, scrape, export, sale, scraped, download","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), sale(競合3件), scraped(競合3件), download(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+golfpartner-used-club-scraper,missing_categories,categories,"ECOMMERCE,AUTOMATION,SPORTS",追加候補: REAL_ESTATE(競合4件),競合5件中2件以上が設定,listings json,1,5
+yahoo-auctions-japan-scraper,short_description,description,154字,競合中央値 281字以上に拡張（最大 297字）,競合5件のdesc_len中央値=281,yahoo auctions,1,5
+yahoo-auctions-japan-scraper,missing_keywords,title+description,"(不在) end, title, images, sold","説明/タイトルに追加: end(競合3件), title(競合3件), images(競合2件), sold(競合2件)",競合5件中2件以上に出現し自社全文に不在,yahoo auctions,1,5
+mercari-japan-search-scraper,short_description,description,193字,競合中央値 282字以上に拡張（最大 282字）,競合2件のdesc_len中央値=282,mercari c2c,1,2
+mercari-japan-search-scraper,missing_keywords,title+description,(不在) largest,説明/タイトルに追加: largest(競合2件),競合2件中2件以上に出現し自社全文に不在,mercari c2c,1,2
+japan-hotpepper-scraper,missing_keywords,title+description,"(不在) address, customer, demographics, esthetic, eyelash, hair","説明/タイトルに追加: address(競合3件), customer(競合2件), demographics(競合2件), esthetic(競合2件), eyelash(競合2件), hair(競合2件)",競合3件中2件以上に出現し自社全文に不在,hotpepper beauty,1,3
+japan-hotpepper-scraper,title_keyword_gap,title,Japan HotPepper Beauty Prices — Listings & Market Data,タイトルへ追加: salon(競合2件),競合title3件中2件以上に出現し自社titleに不在,hotpepper beauty,1,3
+japan-hotpepper-cn-scraper,missing_keywords,title+description,"(不在) address, customer, demographics, esthetic, eyelash, hair","説明/タイトルに追加: address(競合3件), customer(競合2件), demographics(競合2件), esthetic(競合2件), eyelash(競合2件), hair(競合2件)",競合3件中2件以上に出現し自社全文に不在,hotpepper beauty,1,3
+japan-hotpepper-cn-scraper,title_keyword_gap,title,Japan HotPepper Beauty Prices — Listings & Market Data,タイトルへ追加: salon(競合2件),競合title3件中2件以上に出現し自社titleに不在,hotpepper beauty,1,3
+japan-hotpepper-kr-scraper,missing_keywords,title+description,"(不在) address, customer, demographics, esthetic, eyelash, hair","説明/タイトルに追加: address(競合3件), customer(競合2件), demographics(競合2件), esthetic(競合2件), eyelash(競合2件), hair(競合2件)",競合3件中2件以上に出現し自社全文に不在,hotpepper beauty,1,3
+japan-hotpepper-kr-scraper,title_keyword_gap,title,Japan HotPepper Beauty Prices — Listings & Market Data,タイトルへ追加: salon(競合2件),競合title3件中2件以上に出現し自社titleに不在,hotpepper beauty,1,3
+japan-figure-plamo-resale-price-stats,short_description,description,228字,競合中央値 282字以上に拡張（最大 298字）,競合5件のdesc_len中央値=282,listings json,1,5
+japan-figure-plamo-resale-price-stats,missing_keywords,title+description,"(不在) excel, scrape, export, sale, scraped, download","説明/タイトルに追加: excel(競合4件), scrape(競合4件), export(競合3件), sale(競合3件), scraped(競合3件), download(競合2件)",競合5件中2件以上に出現し自社全文に不在,listings json,1,5
+japan-figure-plamo-resale-price-stats,missing_categories,categories,"ECOMMERCE,AUTOMATION,DEVELOPER_TOOLS",追加候補: REAL_ESTATE(競合4件),競合5件中2件以上が設定,listings json,1,5
+tackleberry-scraper,no_competitor_data,search_query,tackleberry fishing,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,tackleberry fishing,6,0
+amazon-paapi-jp-actor,short_description,description,170字,競合中央値 251字以上に拡張（最大 285字）,競合5件のdesc_len中央値=251,amazon asin,1,5
+amazon-paapi-jp-actor,missing_keywords,title+description,"(不在) asins, country, date, descriptions, download, information","説明/タイトルに追加: asins(競合2件), country(競合2件), date(競合2件), descriptions(競合2件), download(競合2件), information(競合2件)",競合5件中2件以上に出現し自社全文に不在,amazon asin,1,5
+amazon-paapi-jp-actor,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間2265ユーザー）,競合中央値u30d=439 / 自社0 / 競合1位=Amazon-crawler,amazon asin,1,5
+ai-model-price-api,missing_keywords,title+description,(不在) perfect,説明/タイトルに追加: perfect(競合2件),競合5件中2件以上に出現し自社全文に不在,model,3,5
+ai-model-price-api,missing_categories,categories,"AI,AUTOMATION","追加候補: DEVELOPER_TOOLS(競合3件), SOCIAL_MEDIA(競合2件)",競合5件中2件以上が設定,model,3,5
+japan-egov-laws,missing_keywords,title+description,"(不在) official, law, articles, basis, celex, decisions","説明/タイトルに追加: official(競合4件), law(競合3件), articles(競合2件), basis(競合2件), celex(競合2件), decisions(競合2件)",競合5件中2件以上に出現し自社全文に不在,laws regulations,1,5
+japan-egov-laws,missing_categories,categories,"ECOMMERCE,AUTOMATION,NEWS","追加候補: DEVELOPER_TOOLS(競合3件), OTHER(競合3件), BUSINESS(競合2件)",競合5件中2件以上が設定,laws regulations,1,5
+japan-egov-laws,title_keyword_gap,title,Japan e-Gov Laws & Regulations Scraper,タイトルへ追加: law(競合3件),競合title5件中3件以上に出現し自社titleに不在,laws regulations,1,5
+japan-jma-weather,missing_keywords,title+description,"(不在) official, codes, forecast, key, open, rain","説明/タイトルに追加: official(競合4件), codes(競合3件), forecast(競合3件), key(競合3件), open(競合3件), rain(競合3件)",競合5件中2件以上に出現し自社全文に不在,weather jma,1,5
+japan-jma-weather,missing_categories,categories,"ECOMMERCE,AUTOMATION,NEWS",追加候補: TRAVEL(競合2件),競合5件中2件以上が設定,weather jma,1,5
+japan-jma-weather,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間2ユーザー）,競合中央値u30d=1 / 自社0 / 競合1位=jma-weather-forecast,weather jma,1,5
+japan-jma-weather,title_keyword_gap,title,Japan JMA Weather Data Scraper,"タイトルへ追加: forecast(競合3件), official(競合3件)",競合title5件中3件以上に出現し自社titleに不在,weather jma,1,5
+japan-mhlw-medical,short_description,description,205字,競合中央値 283字以上に拡張（最大 298字）,競合2件のdesc_len中央値=283,mhlw,4,2
+japan-mhlw-medical,missing_keywords,title+description,"(不在) attribution, embedded, english, homes, schema, source","説明/タイトルに追加: attribution(競合2件), embedded(競合2件), english(競合2件), homes(競合2件), schema(競合2件), source(競合2件)",競合2件中2件以上に出現し自社全文に不在,mhlw,4,2
+japan-mhlw-medical,missing_categories,categories,"NEWS,AUTOMATION",追加候補: LEAD_GENERATION(競合2件),競合2件中2件以上が設定,mhlw,4,2
+japan-mhlw-medical,title_keyword_gap,title,Japan MHLW Medical Data API — Facilities & Licenses,タイトルへ追加: open(競合2件),競合title2件中2件以上に出現し自社titleに不在,mhlw,4,2
+japan-corporate-numbers,short_description,description,176字,競合中央値 223字以上に拡張（最大 290字）,競合5件のdesc_len中央値=223,corporate numbers,1,5
+japan-corporate-numbers,missing_keywords,title+description,"(不在) profiles, european, events, industry, kana, lookup","説明/タイトルに追加: profiles(競合3件), european(競合2件), events(競合2件), industry(競合2件), kana(競合2件), lookup(競合2件)",競合5件中2件以上に出現し自社全文に不在,corporate numbers,1,5
+japan-corporate-numbers,missing_categories,categories,"AUTOMATION,DEVELOPER_TOOLS,NEWS","追加候補: LEAD_GENERATION(競合3件), SEO_TOOLS(競合2件)",競合5件中2件以上が設定,corporate numbers,1,5
+japan-corporate-numbers,title_keyword_gap,title,Japan Corporate Numbers API — 5M+ Companies,タイトルへ追加: company(競合4件),競合title5件中3件以上に出現し自社titleに不在,corporate numbers,1,5
+world-bank-indicators,short_description,description,178字,競合中央値 189字以上に拡張（最大 292字）,競合5件のdesc_len中央値=189,world bank,1,5
+world-bank-indicators,missing_keywords,title+description,"(不在) plus, top","説明/タイトルに追加: plus(競合2件), top(競合2件)",競合5件中2件以上に出現し自社全文に不在,world bank,1,5
+world-bank-indicators,missing_categories,categories,"AUTOMATION,DEVELOPER_TOOLS,NEWS","追加候補: LEAD_GENERATION(競合2件), MCP_SERVERS(競合2件), SOCIAL_MEDIA(競合2件)",競合5件中2件以上が設定,world bank,1,5
+eurostat-indicators,short_description,description,174字,競合中央値 272字以上に拡張（最大 291字）,競合3件のdesc_len中央値=272,book off,1,3
+eurostat-indicators,missing_keywords,title+description,"(不在) ask, bid, official, order, volume","説明/タイトルに追加: ask(競合2件), bid(競合2件), official(競合2件), order(競合2件), volume(競合2件)",競合3件中2件以上に出現し自社全文に不在,book off,1,3
+eurostat-indicators,missing_categories,categories,"ECOMMERCE,AUTOMATION,NEWS",追加候補: DEVELOPER_TOOLS(競合2件),競合3件中2件以上が設定,book off,1,3
+japan-crowdfunding-trend-feed,missing_keywords,title+description,"(不在) edgar, filings, form, keyword, korea, official","説明/タイトルに追加: edgar(競合2件), filings(競合2件), form(競合2件), keyword(競合2件), korea(競合2件), official(競合2件)",競合5件中2件以上に出現し自社全文に不在,crowdfunding feed,1,5
+japan-crowdfunding-trend-feed,missing_categories,categories,"ECOMMERCE,NEWS","追加候補: AUTOMATION(競合3件), DEVELOPER_TOOLS(競合3件), BUSINESS(競合2件)",競合5件中2件以上が設定,crowdfunding feed,1,5
+japan-prize-giveaway-scraper,short_description,description,161字,競合中央値 178字以上に拡張（最大 196字）,競合2件のdesc_len中央値=178,giveaway campaigns,1,2
+japan-prize-giveaway-scraper,missing_categories,categories,"ECOMMERCE,AUTOMATION,SOCIAL_MEDIA",追加候補: DEVELOPER_TOOLS(競合2件),競合2件中2件以上が設定,giveaway campaigns,1,2
+japan-fuel-price-mcp,short_description,description,155字,競合中央値 269字以上に拡張（最大 290字）,競合5件のdesc_len中央値=269,fuel gas,1,5
+japan-fuel-price-mcp,missing_keywords,title+description,"(不在) anp, etanol, gasolina, glp, para, por","説明/タイトルに追加: anp(競合2件), etanol(競合2件), gasolina(競合2件), glp(競合2件), para(競合2件), por(競合2件)",競合5件中2件以上に出現し自社全文に不在,fuel gas,1,5
+japan-fuel-price-mcp,missing_categories,categories,"MCP_SERVERS,DEVELOPER_TOOLS,AI","追加候補: AUTOMATION(競合3件), TRAVEL(競合2件)",競合5件中2件以上が設定,fuel gas,1,5
+japan-minimum-wage-mcp,short_description,description,148字,競合中央値 274字以上に拡張（最大 298字）,競合5件のdesc_len中央値=274,minimum wage,1,5
+japan-minimum-wage-mcp,missing_keywords,title+description,"(不在) locations, b2b, clutch, project, reviews, service","説明/タイトルに追加: locations(競合3件), b2b(競合2件), clutch(競合2件), project(競合2件), reviews(競合2件), service(競合2件)",競合5件中2件以上に出現し自社全文に不在,minimum wage,1,5
+japan-minimum-wage-mcp,missing_categories,categories,"MCP_SERVERS,DEVELOPER_TOOLS,AI","追加候補: AUTOMATION(競合3件), LEAD_GENERATION(競合3件), BUSINESS(競合2件)",競合5件中2件以上が設定,minimum wage,1,5
+japan-minimum-wage-mcp,discovery_gap,stats.totalUsers30Days,0,上位キーワード改善を優先（競合1位は月間1ユーザー）,競合中央値u30d=1 / 自社0 / 競合1位=portugal-e-leiloes-auctions-api,minimum wage,1,5
+japan-jepx-mcp,no_competitor_data,search_query,jepx electricity,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,jepx electricity,6,0
+kensho-sweep-mcp,no_competitor_data,search_query,kensho sweep,検索クエリを手動で広げる（別キーワード候補を試す）,Store検索で競合0件,kensho sweep,6,0
+japan-anime-figure-price-data,missing_keywords,title+description,"(不在) image, scrape, collectibles, category, code, franchise","説明/タイトルに追加: image(競合5件), scrape(競合4件), collectibles(競合3件), category(競合2件), code(競合2件), franchise(競合2件)",競合5件中2件以上に出現し自社全文に不在,anime figure,1,5
+japan-anime-figure-demand-features,short_description,description,186字,競合中央値 254字以上に拡張（最大 292字）,競合5件のdesc_len中央値=254,anime figure,4,5
+japan-anime-figure-demand-features,missing_keywords,title+description,"(不在) image, scrape, title, collectibles, condition, jpy","説明/タイトルに追加: image(競合5件), scrape(競合4件), title(競合4件), collectibles(競合3件), condition(競合3件), jpy(競合3件)",競合5件中2件以上に出現し自社全文に不在,anime figure,4,5

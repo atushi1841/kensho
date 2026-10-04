@@ -1,0 +1,71 @@
+{
+  "events": [
+    {
+      "type": "devto_publish",
+      "article_id": 4606013,
+      "title": "How to Scrape Mercari Japan in 2026",
+      "url": "https://dev.to/atu_ino_ed473db24d76d234a/how-to-scrape-mercari-japan-in-2026-prices-listings-sold-data-no-api-key-1bk8",
+      "cta_links": [
+        "https://atushi5.gumroad.com/l/kutuxe",
+        "https://atushi5.gumroad.com/l/agyhq"
+      ],
+      "recorded_at": "2026-10-03T13:06:31.919417"
+    },
+    {
+      "type": "x_promo_post",
+      "campaign": "w2026W40_a",
+      "tweet_id": "2104355452087882033",
+      "actor_names": [],
+      "recorded_at": "2026-10-03T13:06:32.258401"
+    },
+    {
+      "type": "devto_publish",
+      "article_id": 4760098,
+      "title": "懸賞112件の自動応募ログ",
+      "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-112jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta-i07",
+      "cta_links": [
+        "https://atushi5.gumroad.com/l/kutuxe",
+        "https://atushi5.gumroad.com/l/agyhq",
+        "https://atushi5.gumroad.com/l/qdyyyi"
+      ],
+      "recorded_at": "2026-10-03T13:06:41.024380"
+    },
+    {
+      "type": "devto_publish",
+      "article_id": 4760099,
+      "title": "懸賞7件の自動応募ログ",
+      "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-7jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta-253f",
+      "cta_links": [
+        "https://atushi5.gumroad.com/l/kutuxe",
+        "https://atushi5.gumroad.com/l/agyhq",
+        "https://atushi5.gumroad.com/l/qdyyyi"
+      ],
+      "recorded_at": "2026-10-03T13:06:41.293219"
+    },
+    {
+      "type": "x_promo_post",
+      "campaign": "w2026W40_b",
+      "tweet_id": "2105805074207551750",
+      "actor_names": [
+        "mandarake-auction-scraper",
+        "dlsite-scraper",
+        "tackleberry-japan-fishing-tackle-scraper"
+      ],
+      "recorded_at": "2026-10-03T13:06:41.573443"
+    },
+    {
+      "type": "devto_publish",
+      "article_id": 4760099,
+      "title": "Weekly Japanese Anime Figure & Collectibles Market Report (Week 40, 2026)",
+      "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-7jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta-253f",
+      "cta_links": [
+        "https://atushi5.gumroad.com/l/kutuxe",
+        "https://atushi5.gumroad.com/l/agyhq",
+        "https://atushi5.gumroad.com/l/qdyyyi"
+      ],
+      "recorded_at": "2026-10-03T13:08:19.894472"
+    }
+  ],
+  "summary": {},
+  "updated_at": "2026-10-03T13:08:19.894518"
+}

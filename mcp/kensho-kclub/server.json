@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.atushi1841/kensho-kclub",
+  "description": "Japan X/Twitter sweepstakes data from kenshou.club. Tools: search, history, prize movers.",
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/atushi1841/kensho-kclub",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/atushi1841/kensho-kclub/releases/download/v1.0.0/server.mcpb",
+      "version": "1.0.0",
+      "fileSha256": "828c6090ee8f1938afd59c0eb03e6adb1919f22e779838988282a463c6f61e75",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

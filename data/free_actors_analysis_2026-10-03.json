@@ -1,0 +1,92 @@
+[
+  {
+    "name": "japan-market-mcp",
+    "id": "57SNehd4cHNFyUCj3",
+    "isPublic": true,
+    "total_runs": 0,
+    "ext_runs_7d": 0,
+    "model": "PAY_PER_EVENT",
+    "entries": 1
+  },
+  {
+    "name": "japan-fuel-price-mcp",
+    "id": "RdCHlXHphoLsWnyhh",
+    "isPublic": true,
+    "total_runs": 0,
+    "ext_runs_7d": 0,
+    "model": "PAY_PER_EVENT",
+    "entries": 1
+  },
+  {
+    "name": "japan-minimum-wage-mcp",
+    "id": "ODh1F4XP5sLlXu6Ep",
+    "isPublic": true,
+    "total_runs": 0,
+    "ext_runs_7d": 0,
+    "model": "PAY_PER_EVENT",
+    "entries": 1
+  },
+  {
+    "name": "japan-property-hazard-mcp",
+    "id": "XJCgrhOZE47qc7T3i",
+    "isPublic": false,
+    "total_runs": 0,
+    "ext_runs_7d": 0,
+    "model": null,
+    "entries": 0
+  },
+  {
+    "name": "rakuten-debug-fetch",
+    "id": "NURQEJnUsVAobIiPs",
+    "isPublic": false,
+    "total_runs": 0,
+    "ext_runs_7d": 0,
+    "model": null,
+    "entries": 0
+  },
+  {
+    "name": "tabelog-debug-fetch",
+    "id": "S3IdRuweFhrTwvJJN",
+    "isPublic": false,
+    "total_runs": 0,
+    "ext_runs_7d": 0,
+    "model": null,
+    "entries": 0
+  },
+  {
+    "name": "mini-actor-test-0903",
+    "id": "lRUO0nFDpE66U013r",
+    "isPublic": false,
+    "total_runs": 0,
+    "ext_runs_7d": 0,
+    "model": null,
+    "entries": 0
+  },
+  {
+    "name": "my-actor",
+    "id": "90MPAX9mfR1DbNDJh",
+    "isPublic": false,
+    "total_runs": 0,
+    "ext_runs_7d": 0,
+    "model": null,
+    "entries": 0
+  },
+  {
+    "name": "test-actor",
+    "id": "LXzxoGGC0bmMTqEtd",
+    "isPublic": false,
+    "total_runs": 0,
+    "ext_runs_7d": 0,
+    "model": null,
+    "entries": 0
+  },
+  {
+    "name": "my-actor-1",
+    "id": "KAmLNI93rwL86w8d6",
+    "isPublic": false,
+    "total_runs": 0,
+    "ext_runs_7d": 0,
+    "model": null,
+    "entries": 0
+  }
+]

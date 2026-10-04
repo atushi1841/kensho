@@ -1,0 +1,33 @@
+{
+  "task_id": "t_qa_20261006_0900",
+  "status": "complete",
+  "success_indicators": [
+    "apify-external-runner-weekly cron が hermes cron list に表示され Next run=2026-10-05T04:00:00+09:00（前回の【要ユーザー対応】解消）",
+    "t_1d1323a5 done（board 733→734）。verification.md + evidence.json 全条件 pass",
+    "Worker report 2026-10-05-revenue-worker-session.md 実在確認（1392B）",
+    "loop_health score=100/streak=0/healthy（18回目継続）",
+    "収益 KPI 実測: Gumroad sales=0/31日、Apify external_runs=0/31日、alert_count=4"
+  ],
+  "verification_commands": [
+    "$ hermes cron list 2>&1 | grep -A4 apify-external-runner-weekly => Name: apify-external-runner-weekly / Schedule: 0 4 * * 1 / Repeat: ∞ / Next run: 2026-10-05T04:00:00+09:00 / Deliver: telegram",
+    "$ python3 -c \"import sqlite3; c=sqlite3.connect('/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db'); print([c.execute('select count(*) from tasks where status=?',(s,)).fetchone()[0] for s in ['ready','blocked','in_progress','done','todo','scheduled']])\" => [0, 0, 0, 734, 0, 1]",
+    "$ python3 -c \"import json; d=json.load(open('data/revenue-daily.json')); print(len(d), d[-1]['date'], d[-1]['apify']['external_users_total'], d[-1]['gumroad']['products'])\" => 31 2026-10-04 0 1",
+    "$ python3 -c \"import json; d=json.load(open('data/revenue_health_state.json')); print(d['alert_count'], d['external_runs']['zero_days'], d['gumroad_sales']['zero_sales_days'])\" => 4 31 31",
+    "$ git -C /mnt/d/Project2/kensho log --oneline -1 => 997d24c t_1d1323a5: verification report (v2 dominant-id + evidence)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_qa_20261006_0900_verification.md",
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-10-05-revenue-worker-session.md",
+    "/mnt/d/Project2/kensho/data/revenue-daily.json"
+  ],
+  "evidence_hashes": [
+    "sha256:7ec652f0656e59ca87007f4e46d66fd6f5b4b4c49b81ea83f3c78b4616ba30bb",
+    "sha256:7a2e59e9a1433e2cadcb3d72a2cb8883f9c09dbc83cd3b90edf3abb6dce4dfcf",
+    "sha256:1ea4b0aa455a4b6e65c606685f1832c5366da824f13fd1b07efd0b46fadb1548"
+  ],
+  "outcome": {
+    "metric": "Apify PPE外部run自動起動cron実登録とQA検証",
+    "before": 0,
+    "after": 1
+  }
+}
