@@ -146,7 +146,7 @@ def main() -> int:
                 break
         except urllib.error.HTTPError as e:
             if e.code == 429 and attempt < max_retries:
-                wait = min(60 * (2 ** attempt), 300)
+                wait = min(15 * (2 ** attempt), 120)
                 print(f"[WAIT] 429 rate-limited — retry in {wait}s (attempt {attempt+1}/{max_retries})", file=sys.stderr)
                 time.sleep(wait)
                 continue
