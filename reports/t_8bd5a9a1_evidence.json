@@ -1,0 +1,33 @@
+{
+  "task_id": "t_8bd5a9a1",
+  "status": "complete",
+  "success_indicators": [
+    "description populated for 6/6 Smithery servers",
+    "repositoryUrl added to smithery.yaml for 6 servers",
+    "iconUrl set for all 6 servers via API PATCH",
+    "all 6 verified via read-back curl"
+  ],
+  "verification_commands": [
+    "$ curl -s https://api.smithery.ai/servers/atushi1841/kensho-kaku | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d[\"description\"][:80])'",
+    "$ curl -s https://api.smithery.ai/servers/atushi1841/kensho-kclub | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d[\"description\"][:80])'",
+    "$ curl -s https://api.smithery.ai/servers/atushi1841/kensho-kema | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d[\"description\"][:80])'",
+    "$ curl -s https://api.smithery.ai/servers/atushi1841/kensho-sweep-mcp | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d[\"description\"][:80])'",
+    "$ curl -s https://api.smithery.ai/servers/atushi1841/tcg-price-japan | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d[\"description\"][:80])'",
+    "$ curl -s https://api.smithery.ai/servers/atushi1841/japan-anime-figure-mcp | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d[\"description\"][:80])'",
+    "$ git log --oneline -1 => c1cbbbf feat(smithery): add description/iconUrl/repositoryUrl to 6 MCP servers (t_8bd5a9a1)",
+    "$ git status --porcelain | grep -E 'mcp/' => (empty)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/mcp/kensho-kaku/smithery.yaml",
+    "/mnt/d/Project2/kensho/mcp/kensho-kclub/smithery.yaml",
+    "/mnt/d/Project2/kensho/mcp/kensho-kema/smithery.yaml",
+    "/mnt/d/Project2/kensho/mcp/kensho-sweep-mcp/smithery.yaml",
+    "/mnt/d/Project2/kensho/mcp/tcg-price-japan/smithery.yaml",
+    "/mnt/d/Project2/kensho/mcp/japan-anime-figure-mcp/smithery.yaml",
+    "/mnt/d/Project2/kensho/reports/t_8bd5a9a1_verification.md"
+  ],
+  "evidence_hashes": [
+    "604b338985ec3af990df6d38bb057b677bf76b2414f4d5cd485854c36f276ad9"
+  ],
+  "outcome": {"metric": "Smithery description empty servers", "before": 6, "after": 0}
+}
