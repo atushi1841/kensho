@@ -1,4 +1,7 @@
 # Smithery.ai configuration for tcg-price-japan MCP
+description: "TCG price Japan — Trading card game used prices from suruga-ya.jp. Tools: tcg_current_price, tcg_price_history, tcg_top_movers."
+repositoryUrl: https://github.com/atushi1841/tcg-price-japan
+iconUrl: https://raw.githubusercontent.com/atushi1841/tcg-price-japan/main/icon.png
 startCommand:
   type: stdio
   configSchema:

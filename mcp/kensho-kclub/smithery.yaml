@@ -1,4 +1,7 @@
 # Smithery.ai configuration for kensho-kclub MCP
+description: "Kensho Club sweepstakes data from kenshou.club — current sweep, history, and top prize movers. Tools: current_sweep, sweep_history, top_prize_movers."
+repositoryUrl: https://github.com/atushi1841/kensho-kclub
+iconUrl: https://raw.githubusercontent.com/atushi1841/kensho-kclub/main/icon.png
 startCommand:
   type: stdio
   configSchema:
@@ -6,7 +9,7 @@ startCommand:
     properties: {}
   commandFunction: |
     (config) => ({
-      command: 'uv',
-      args: ['run', '--directory', '${__dirname}', 'src/stdio_main.py']
+      command: 'python',
+      args: ['uv', 'run', '--directory', '${__dirname}', 'src/stdio_main.py']
     })
 exampleConfig: {}

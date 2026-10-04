@@ -1,4 +1,7 @@
 # Smithery.ai configuration for kensho-sweep-mcp
+description: "Japan X/Twitter sweepstakes MCP — sweepstakes from knshow.com, kenshou.club, ken-kaku.com, cp.meikan.org. Tools: current_sweep, sweep_history, top_prize_movers."
+repositoryUrl: https://github.com/atushi1841/kensho-sweep-mcp
+iconUrl: https://raw.githubusercontent.com/atushi1841/kensho-sweep-mcp/main/icon.png
 startCommand:
   type: stdio
   configSchema:
