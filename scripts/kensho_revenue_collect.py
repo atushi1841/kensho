@@ -27,6 +27,47 @@ from kensho.core import collection_volume  # noqa: E402
 
 
 # ── 簡易.envローダー（9/7追加: 401対策。dotenv無しのstandalone実装） ──
+
+# ---------------------------------------------------------------------------
+# 秘密情報の取り扱い（2026-10-04 GitHub Secret Scanning 検知への恒久対策）
+#   漏洩経路: Apify API を URL に ?token=... で呼ぶと、requests の例外文
+#   （"Max retries exceeded with url: /v2/users/me?token=apify_api_..."）に
+#   トークンが混入し、それが result["error"] として JSON に保存されていた。
+# ---------------------------------------------------------------------------
+import re as _re_secret
+
+_REDACT_PATTERNS = (
+    # token=... を先に潰す（後段の apify_api_ が二重に置換して見苦しくなるのを防ぐ）
+    (_re_secret.compile(r"(token=)[A-Za-z0-9_\-\.]+"), r"\1***REDACTED***"),
+    (_re_secret.compile(r"apify_api_[A-Za-z0-9]+"), "apify_api_***REDACTED***"),
+)
+
+
+def redact_secrets(text: Any) -> str:
+    """ログ・保存前に秘密情報をマスクする（多重防御の最後の砦）。"""
+    s = str(text)
+    for pat, rep in _REDACT_PATTERNS:
+        s = pat.sub(rep, s)
+    return s
+
+
+def _apify_get(url: str, **kwargs: Any):
+    """Apify API 用の GET。URL内の token= を Authorization ヘッダへ移す。
+
+    URLにトークンを残すと例外文経由で漏洩するため、ここで必ず剥がす。
+    """
+    import requests as _rq
+
+    m = _re_secret.search(r"token=([^&\s]+)", url)
+    if m:
+        tok = m.group(1)
+        url = _re_secret.sub(r"([?&])token=[^&]*&?", r"\1", url).rstrip("?&")
+        h = dict(kwargs.pop("headers", None) or {})
+        h.setdefault("Authorization", "Bearer " + tok)
+        kwargs["headers"] = h
+    return _rq.get(url, **kwargs)
+
+
 def _load_env_file() -> None:
     env_path = os.path.join(PROJECT_DIR, ".env")
     if not os.path.exists(env_path):
@@ -273,7 +314,7 @@ def fetch_apify_pricing() -> dict[str, dict[str, Any]]:
         return {}
     try:
         # 1. 全アクターのID一覧を取得
-        resp = requests.get(f"https://api.apify.com/v2/acts?my=true&token={token}", timeout=30)
+        resp = _apify_get(f"https://api.apify.com/v2/acts?my=true&token={token}", timeout=30)
         resp.raise_for_status()
         data = resp.json().get("data", {})
         items = data.get("items", [])
@@ -296,7 +337,7 @@ def fetch_apify_pricing() -> dict[str, dict[str, Any]]:
                 )
                 break
             try:
-                r = requests.get(f"https://api.apify.com/v2/acts/{aid}?token={token}", timeout=30)
+                r = _apify_get(f"https://api.apify.com/v2/acts/{aid}?token={token}", timeout=30)
                 if r.status_code != 200:
                     consecutive_failures += 1
                     continue
@@ -413,8 +454,7 @@ def measure_apify_ppe_revenue(
     }
     try:
         owner = (
-            requests
-            .get(f"https://api.apify.com/v2/users/me?token={token}", timeout=30)
+            _apify_get(f"https://api.apify.com/v2/users/me?token={token}", timeout=30)
             .json()
             .get("data", {})
             .get("id")
@@ -432,7 +472,7 @@ def measure_apify_ppe_revenue(
         if price is None:
             continue
         try:
-            resp = requests.get(
+            resp = _apify_get(
                 f"https://api.apify.com/v2/acts/{aid}/runs?token={token}&limit=100",
                 timeout=30,
             )
@@ -460,7 +500,7 @@ def measure_apify_ppe_revenue(
             ext_runs += 1
             # 外部ユーザーrunのみdetail取得してcharged eventsを確認
             try:
-                dr = requests.get(
+                dr = _apify_get(
                     f"https://api.apify.com/v2/acts/{aid}/runs/{run.get('id')}?token={token}",
                     timeout=30,
                 )
@@ -951,8 +991,8 @@ def record_gumroad_sales(
         f"{fields['collected_at']} total_sales={fields['total_sales']}"
         f" earnings_usd={fields['total_earnings_usd']}"
         f" balance_usd={fields['balance_usd']} login_ok={fields['login_ok']}"
-        f" collectors={json.dumps(collectors, ensure_ascii=False)}"
-        + (f" markers={json.dumps(markers, ensure_ascii=False)}" if markers else "")
+        f" collectors={redact_secrets(json.dumps(collectors, ensure_ascii=False))}"
+        + (f" markers={redact_secrets(json.dumps(markers, ensure_ascii=False))}" if markers else "")
         + "\n"
     )
 
@@ -1327,7 +1367,9 @@ def append_to_file(entry: dict[str, Any]) -> None:
     # 直近MAX_ENTRIES件だけ保持
     entries = entries[-MAX_ENTRIES:]
     with open(OUTPUT, "w", encoding="utf-8") as f:
-        json.dump(entries, f, ensure_ascii=False, indent=1)
+        # 保存直前にも秘密情報をマスク（多重防御）。過去に requests の例外文へ
+        # トークンが混入し、この経路で公開リポジトリへ漏洩した（2026-10-04）。
+        f.write(redact_secrets(json.dumps(entries, ensure_ascii=False, indent=1)))
     print(f"✓ revenue-daily.json 更新完了 ({len(entries)} entries, 日付: {entry_date})")
 
 
