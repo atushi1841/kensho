@@ -54,9 +54,10 @@ TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 # ── 対象cron名 ────────────────────────────────────────────────────────────────
 # 本スクリプトに監視を移行し、disable対象とするもの（根本エラー継続中 or スクリプトbug）
+# 2026-10-04: kensho-revenue-collect を除外。venv固定(10-02)で収集は復旧済み・手動実行で完走を確認し、
+# 07:05の日次収集を復帰させた。ここに残すと毎朝のアラートで再disableされ、復帰が無意味になる。
 DISABLE_TARGETS = [
-    "kensho-revenue-collect",            # RapidAPI cookie期限切れで継続abort
-    "kensho-dataset-weekly-update",      # 成功済みなのにexit 1（スクリプトbug）
+    "kensho-dataset-weekly-update",      # 成功済みなのにexit 1（スクリプトbug・未修正）
 ]
 # 維持対象（design-intentional or transient）
 KEEP_TARGETS = [
@@ -491,8 +492,10 @@ def main() -> int:
     # Telegram通知
     send_telegram_alert(alerts)
 
-    # Cron無効化
-    if disable_flag or (not dry_run and alerts):
+    # Cron無効化 — 実障害(critical)または明示フラグ時のみ。
+    # 2026-10-04: 旧条件は「アラートがあれば disable」で、売上ゼロ等の実態通知でも
+    # 健全な cron を巻き込んで停止させていた（collector 復帰が毎朝無効化される原因）。
+    if disable_flag or (not dry_run and state.get("criticals")):
         to_disable = [n for n in DISABLE_TARGETS]
         # dry-run時も含め表示
         changed = disable_crons(to_disable, dry_run=dry_run)
