@@ -289,8 +289,8 @@ def publish_article(article, status_callback=print, api_key=None, published_stat
         http_code, body = _curl_json(
             [
                 "-X", "POST",
-                "-H", f"Api-Key: ***",
-                "-H", "Content-Type: application/json",
+                "-H", f"Api-Key: {key}",
+                            "-H", "Content-Type: application/json",
                 "-H", "Accept: application/vnd.forem.api-v1+json",
                 "-d", payload,
                 API_URL,

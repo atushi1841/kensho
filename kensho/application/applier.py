@@ -71,6 +71,49 @@ _DEFER_PREFIX: str = "DEFER:"
 _FOLLOW_LOCK_FILE: Path = DATA_DIR / "follow_lock.json"
 
 
+def _recent_success_count(account_key: str, window_sec: int = 3600) -> int:
+    """audit.jsonl から直近 window_sec 以内の当該垢の成功アクション数を実測する。
+
+    2026-10-05: 従来の時間上限はプロセス内カウンタのみで、orchestrator が15分毎に再起動
+    するたび 0 に戻り、実質無効化されていた（実測: atushi16 が 16-17件/時、上限15）。
+    プロセスを跨いだレート制限を担保するため、追記専用の audit 台帳から実測する。
+    """
+    import json as _json
+    import os as _os
+    from datetime import datetime as _dt, timedelta as _td, timezone as _tz
+
+    audit_path: Path = DATA_DIR / "audit.jsonl"
+    if not audit_path.exists():
+        return 0
+    cutoff = _dt.now(_tz.utc) - _td(seconds=window_sec)
+    count = 0
+    try:
+        with open(audit_path, "rb") as fh:
+            fh.seek(0, _os.SEEK_END)
+            size = fh.tell()
+            back = min(size, 500_000)
+            fh.seek(size - back)
+            blob = fh.read().decode("utf-8", "replace")
+        for line in blob.splitlines()[-2000:]:
+            if account_key not in line or '"success"' not in line:
+                continue
+            try:
+                d = _json.loads(line)
+            except Exception:
+                continue
+            if d.get("account") != account_key or d.get("status") != "success":
+                continue
+            try:
+                t = _dt.strptime(str(d.get("timestamp", "")), "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=_tz.utc)
+            except Exception:
+                continue
+            if t >= cutoff:
+                count += 1
+    except Exception:
+        return 0
+    return count
+
+
 def _get_follow_lock(account_key: str, state_path: Path | None = None) -> datetime | None:
     """code 326一時ロックの解除予定時刻を返す。期限切れなら自動クリアしてNone。
 
@@ -903,7 +946,8 @@ def _apply_impl(
     # ★ 時間あたりアクション制限（ループ内でカウント）
     _hourly_max: int = limits.get("max_actions_per_hour", 20)
     _hourly_start: float = time.time()
-    _hourly_count: int = 0
+    # 2026-10-05: プロセス跨ぎの実測値で初期化（15分毎の再起動で 0 に戻り実効上限が崩れていた）。
+    _hourly_count: int = _recent_success_count(account_key, 3600)
 
     # ★ 2026-08-28提案53: セッション内速度ガード（Error 226対策）
     #   Xは2-3分で20件超の連続アクションを検出する。既存の時間あたり上限に加え、
@@ -1291,9 +1335,9 @@ def _apply_impl(
             # ★ 時間あたり上限チェック
             _elapsed_hourly: float = time.time() - _hourly_start
             if _elapsed_hourly >= 3600:
-                # 1時間経過 → カウンタリセット
+                # 1時間経過 → 実測値でリセット（プロセス内カウントでは跨ぎを担保できない）
                 _hourly_start = time.time()
-                _hourly_count = 0
+                _hourly_count = _recent_success_count(account_key, 3600)
             elif _hourly_count >= _hourly_max:
                 out(f"[LIMIT] {account_key}: 時間あたり上限（{_hourly_max}件/時）到達 → 残りスキップ")
                 break
