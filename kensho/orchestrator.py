@@ -196,6 +196,86 @@ def get_pending_batches(
     if not pending:
         return []
 
+    # ── 競争率スコア順ソート（priority=competition_score）──
+    # t_ff373c55: collected.json が消滅している場合（最新更新2026-10-03以降の再生成未実施）
+    #   → data/collected_today.json をフォールバック読み込み（同一データのlist形式）。
+    #   両ファイルとも存在しない場合は round_robin にフォールバック（既存挙動）。
+    # critic 2026-10-05: 全アカウントが同一プールを持つため、アカウント間平均スコアのみでは
+    #   差別化が virtually 无声（max 1.6pt）。pending 件数差（最大28.9%）を主軸にした
+    #   重み付きソートに変更。
+    if priority == "competition_score":
+        try:
+            _base = os.path.join(os.path.dirname(__file__), "..", "data")
+            col_path = os.path.join(_base, "collected.json")
+            col_today_path = os.path.join(_base, "collected_today.json")
+            comp_path = os.path.join(_base, "competition_score.json")
+
+            items: list[dict[str, Any]] = []
+            _src = ""
+            if os.path.exists(col_path):
+                with open(col_path) as f:
+                    col_data = json.load(f)
+                if isinstance(col_data, dict):
+                    items = col_data.get("collected", [])
+                elif isinstance(col_data, list):
+                    items = col_data
+                _src = "collected.json"
+            elif os.path.exists(col_today_path):
+                with open(col_today_path) as f:
+                    col_data = json.load(f)
+                if isinstance(col_data, dict):
+                    items = col_data.get("collected", [])
+                elif isinstance(col_data, list):
+                    items = col_data
+                _src = "collected_today.json"
+
+            if items and os.path.exists(comp_path):
+                with open(comp_path) as f:
+                    comp_data = json.load(f)
+
+                # tweet_id → competition_score のマッピング
+                score_map: dict[str, float] = {}
+                for _item in items:
+                    _tid = _item.get("tweet_id", "") or _item.get("x_url", "")
+                    if _tid and _tid in comp_data:
+                        score_map[_tid] = comp_data[_tid].get("score", 50.0)
+
+                # 各アカウントの pending 件数と平均スコアを算出
+                _pending_counts: dict[str, int] = {}
+                _score_sums: dict[str, float] = {}
+                for key, _, _ in pending:
+                    _cand = [
+                        score_map.get(item.get("tweet_id", "") or item.get("x_url", ""), 50.0)
+                        for item in items
+                        if item.get("applied", {}).get(key) is None
+                    ]
+                    _pending_counts[key] = len(_cand)
+                    _score_sums[key] = sum(_cand)
+
+                _max_pending = max(_pending_counts.values()) if _pending_counts else 1
+
+                # ソート键: pending 件数降序（更多の未応募＝優先）→ 平均スコア昇序（低競争率＝優先）
+                def _sort_key(x: tuple[str, str, int]) -> tuple[float, float]:
+                    key = x[0]
+                    pc = _pending_counts.get(key, 0)
+                    avg = (_score_sums.get(key, 0.0) / pc) if pc else 50.0
+                    return (-pc / _max_pending, avg)
+
+                pending.sort(key=_sort_key)
+                _detail = ", ".join(
+                    f"{k}={_pending_counts.get(k, 0)}件/avg{_score_sums.get(k, 0.0)/_pending_counts.get(k,1):.1f}"
+                    for k, _, _ in pending
+                )
+                print(
+                    f"[INFO] competition_scoreソート: ソース={_src} items={len(items)} "
+                    f"配分={_detail}",
+                    flush=True,
+                )
+        except Exception as _e:
+            print(f"[WARN] competition_scoreソート失敗: {_e}", flush=True)
+            # fallback: round_robin
+            priority = "round_robin"
+
     if priority == "pending_first":
         try:
             col_path = os.path.join(os.path.dirname(__file__), "..", "data", "collected.json")
