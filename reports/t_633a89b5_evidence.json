@@ -16,7 +16,10 @@
     "/mnt/d/Project2/kensho/reports/t_633a89b5_verification.md",
     "/mnt/d/Project2/kensho/reports/t_6c717a7f_verification.md"
   ],
-  "evidence_hashes": [],
+  "evidence_hashes": [
+    "290bd6e9f6fefdbd394648fbfb370780027f8a6bf52169184ad0a769c3f90eb0",
+    "262281cfec2d2a35d8798cfd62b81c6d8255310b5a83fea2717c7562e5147382"
+  ],
   "task_id": "t_633a89b5",
   "status": "complete",
   "outcome": {
