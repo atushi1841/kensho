@@ -74,7 +74,7 @@ accounts:
     - max: 15
       time: 07:05
     - max: 15
-      time: 07:80
+      time: 07:35
     - max: 15
       time: 08:55
     - max: 15
@@ -82,7 +82,7 @@ accounts:
     - max: 15
       time: '10:05'
     - max: 15
-      time: 10:80
+      time: 10:45
     - max: 15
       time: '11:55'
     - max: 15
