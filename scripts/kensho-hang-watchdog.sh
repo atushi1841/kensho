@@ -157,7 +157,23 @@ echo "$PROC_LIST" | while read -r pid etime_s args; do
     if flock -n "$LOCK" -c true 2>/dev/null; then
       echo "[$(date '+%F %T')] ロック解放済み: $acct ($LOCK)"
     else
-      echo "[$(date '+%F %T')] WARN: ロック未解放: $acct ($LOCK) — fuser -v $LOCK で確認"
+      # 2026-10-04: ハング残存プロセスが flock を握り続けると hub が同一垢を永久スキップし
+      #   応募が停止する（skill記載の実害）。「未解放」= 生存プロセスが保持中（flockは死亡で自動解放）
+      #   なので、保持PIDを特定して KILL し強制解放する。自分自身($$)は除く。
+      HOLDERS=$(fuser "$LOCK" 2>/dev/null | tr -s ' ' '\n' | grep -E '^[0-9]+$' | grep -v -x -e "$$" | sort -u | tr '\n' ' ')
+      HOLDERS="${HOLDERS% }"
+      if [ -n "$HOLDERS" ]; then
+        echo "[$(date '+%F %T')] ロック未解放: $acct ($LOCK) holder=$HOLDERS → KILLして強制解放"
+        kill -KILL $HOLDERS 2>/dev/null
+        sleep 1
+      else
+        echo "[$(date '+%F %T')] WARN: ロック未解放: $acct ($LOCK) 保持者不明 — fuser -v $LOCK で確認"
+      fi
+      if flock -n "$LOCK" -c true 2>/dev/null; then
+        echo "[$(date '+%F %T')] ロック強制解放済み: $acct"
+      else
+        echo "[$(date '+%F %T')] WARN: ロックなお未解放: $acct — 手動確認が必要"
+      fi
     fi
   fi
   echo "[$(date '+%F %T')] killed: $acct (pid=$pid pgid=$PG)"
