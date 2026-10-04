@@ -33,6 +33,8 @@ from datetime import datetime
 # ── Configuration ──────────────────────────────────────────────────────
 DEFAULT_ENV_FILE = "/mnt/d/Project2/kensho/.env"
 DEFAULT_BLOG_DIR = "/mnt/d/Project2/apify-sales-funnel/blog"
+# dev.to タグ上限は4
+MAX_TAGS = 4
 # 下書き生成先（kensho_data_journalism.py が outdir=reports/journalism/drafts に書く）
 # このディレクトリの devto-*.md を blog dir へ同期してから公開する（2026-09-27 t_fa77fd1e: 
 # 下書きが blog dir にいなければ EXIT_NO_CANDIDATES で外部導線が無言死していた）
@@ -257,6 +259,9 @@ def publish_article(article, status_callback=print, api_key=None, published_stat
     """
     title = article["title"]
     tags = article["tags"]
+    if not isinstance(tags, list):
+        tags = []
+    tags = tags[:MAX_TAGS] if tags else ["development","automation"]
     content = article["content"]
     key = api_key if api_key is not None else load_api_key()
 
@@ -276,17 +281,30 @@ def publish_article(article, status_callback=print, api_key=None, published_stat
         }
     })
 
-    http_code, body = _curl_json(
-        [
-            "-X", "POST",
-            "-H", f"Api-Key: {key}",
-            "-H", "Content-Type: application/json",
-            "-H", "Accept: application/vnd.forem.api-v1+json",
-            "-d", payload,
-            API_URL,
-        ],
-        timeout=120,
-    )
+    import time
+    retry_delays = [30, 60, 120]
+    last_code = 0
+    last_body = ""
+    for attempt in range(1, 4):
+        http_code, body = _curl_json(
+            [
+                "-X", "POST",
+                "-H", f"Api-Key: ***",
+                "-H", "Content-Type: application/json",
+                "-H", "Accept: application/vnd.forem.api-v1+json",
+                "-d", payload,
+                API_URL,
+            ],
+            timeout=120,
+        )
+        last_code, last_body = http_code, body
+        if http_code == 429:
+            if attempt < 3:
+                status_callback(f"[WARN] HTTP 429 rate limit, retry {attempt}/3 after {retry_delays[attempt-1]}s")
+                time.sleep(retry_delays[attempt-1])
+                continue
+        break
+    http_code, body = last_code, last_body
 
     if http_code in (401, 403):
         status_callback(
