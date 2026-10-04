@@ -251,6 +251,44 @@ def save_published_state(state, path=None):
 
 
 # ── Step 2: Publish article to dev.to ──────────────────────────────────
+def _sanitize_tag(tag: str) -> str:
+    """Normalize a single dev.to tag: lowercase, strip non-alphanum, collapse to single word.
+
+    dev.to rejects tags containing ANY non-alphanumeric characters (including hyphens,
+    underscores, spaces, etc.). e.g. "web-scraping" → 422, "market-data" → 422.
+    We convert everything to a single lowercase alphanumeric token.
+    """
+    raw = tag.strip().lower()
+    # Strip leading/trailing punctuation (brackets, quotes, etc.)
+    raw = raw.strip("[]\"' ,;-_!")
+    if not raw:
+        return ""
+    # dev.to only allows alphanumeric characters in tags
+    # Replace any non-alphanumeric chars with nothing (collapse)
+    cleaned = "".join(c for c in raw if c.isalnum())
+    return cleaned
+
+
+def _normalize_tags(tags: list) -> list:
+    """Remove invalid tags (spaces/hyphens → clean) and truncate to MAX_TAGS."""
+    normalized = [t for t in (_sanitize_tag(t) for t in tags) if t]
+    # dev.to allows up to MAX_TAGS; drop extras after normalization
+    return normalized[:MAX_TAGS] if normalized else ["development", "automation"]
+
+
+def _strip_frontmatter(content: str) -> str:
+    """Remove YAML frontmatter (--- ... ---) from markdown content before sending to dev.to.
+
+    dev.to parses frontmatter tags from body_markdown, which can cause
+    'Tag list exceed the maximum of 4 tags' even when the API tags field is correct.
+    """
+    if content.startswith("---"):
+        parts = content.split("---", 2)
+        if len(parts) >= 3:
+            return parts[2].lstrip()
+    return content
+
+
 def publish_article(article, status_callback=print, api_key=None, published_state=None):
     """Publish a single article to dev.to.
 
@@ -258,11 +296,8 @@ def publish_article(article, status_callback=print, api_key=None, published_stat
              失敗時 None（偽の成功を返さない）
     """
     title = article["title"]
-    tags = article["tags"]
-    if not isinstance(tags, list):
-        tags = []
-    tags = tags[:MAX_TAGS] if tags else ["development","automation"]
-    content = article["content"]
+    tags = _normalize_tags(article["tags"] or [])
+    content = _strip_frontmatter(article["content"])
     key = api_key if api_key is not None else load_api_key()
 
     if not is_valid_key(key):
@@ -290,7 +325,7 @@ def publish_article(article, status_callback=print, api_key=None, published_stat
             [
                 "-X", "POST",
                 "-H", f"Api-Key: {key}",
-                            "-H", "Content-Type: application/json",
+                "-H", "Content-Type: application/json",
                 "-H", "Accept: application/vnd.forem.api-v1+json",
                 "-d", payload,
                 API_URL,

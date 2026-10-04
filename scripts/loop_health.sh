@@ -772,6 +772,10 @@ TOP_TASK=$(echo "$ANALYSIS" | jq -r '.top_task // empty')
 REPEATS=$(echo "$ANALYSIS" | jq -r '.repeats | length')
 DONE_BLOCKED=$(echo "$ANALYSIS" | jq -r '.done_blocked | length')
 BUSINESS_STOPPED=$(echo "$ANALYSIS" | jq -r 'if .business_ok == false then true else false end')
+PRIORITY=$(echo "$ANALYSIS" | jq -r '.priority // "normal"')
+ADVICE_CRITIC=$(echo "$ANALYSIS" | jq -r '.advice.critic.action // "continue"')
+ADVICE_WORKER=$(echo "$ANALYSIS" | jq -r '.advice.worker.action // "continue"')
+ADVICE_QA=$(echo "$ANALYSIS" | jq -r '.advice.qa.action // "continue"')
 
 # ─── Alert decision (v24/v30 band logic preserved) ──────────────────────────
 ESCALATE_THRESHOLD=55
@@ -945,6 +949,10 @@ STATE_JSON=$(jq -n \
   --argjson last_escalate_streak "$LAST_ESCALATE_STREAK" \
   --argjson last_low_band "$LAST_LOW_BAND" \
   --argjson business_ok "$BUSINESS_STOPPED" \
+  --arg priority "$PRIORITY" \
+  --arg advice_critic "$ADVICE_CRITIC" \
+  --arg advice_worker "$ADVICE_WORKER" \
+  --arg advice_qa "$ADVICE_QA" \
   --arg escalated_at "${ESCALATED_AT:-}" \
   --argjson park_cooldown_until "$PARK_CD_UNTIL" \
   --arg park_after_h "$PARK_AFTER_H" \
@@ -960,6 +968,8 @@ STATE_JSON=$(jq -n \
     last_escalate_streak: $last_escalate_streak,
     last_low_band: $last_low_band,
     business_ok: ($business_ok | not),
+    priority: $priority,
+    advice: {critic: $advice_critic, worker: $advice_worker, qa: $advice_qa},
     escalated_at: $escalated_at,
     park_cooldown_until: $park_cooldown_until,
     park_after_h: $park_after_h,
