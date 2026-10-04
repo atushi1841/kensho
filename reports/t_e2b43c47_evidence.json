@@ -1,0 +1,28 @@
+{
+  "task_id": "t_e2b43c47",
+  "status": "complete",
+  "success_indicators": [
+    "apify actor descriptions updated: 86/86",
+    "dev.to articles published: 3 new",
+    "internal links added to existing articles: 1"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/apify_seo_full_apply.py --apply --limit 0 --sleep 0.2",
+    "$ curl -s https://dev.to/api/articles/4794070 -H \"User-Agent: Mozilla/5.0\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print('ID:', d['id'])\"",
+    "$ python3 scripts/devto_internal_links.py --apply"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/apify-seo-full/apify-seo-full-2026-10-04.json",
+    "/mnt/d/Project2/kensho/reports/apify-seo/devto-links.json"
+  ],
+  "evidence_hashes": [
+    "7e615d547233737efc36a8f50abbec16e7727d2315e87fe1e4b39292dc6c8016",
+    "b05c8fe32ee28c8b30bffc60ec4613dbfe11566f606aa61b211cd4d34c8c58f5",
+    "d8f8c1bb8a51b198199fcb23e297c526b10929db6d6ec0f32b10e9fc3247816e"
+  ],
+  "outcome": {
+    "metric": "apify_descriptions_updated",
+    "before": 0,
+    "after": 86
+  }
+}
