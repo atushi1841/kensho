@@ -1,0 +1,20 @@
+{
+  "success_indicators": [
+    "dev.to 8 articles confirmed to have Apify Store links",
+    "Reddit warmup 2 comments posted (karma 1→4)",
+    "Apify API verified 88 actors, 0 externalUsers (32-day streak)"
+  ],
+  "verification_commands": [
+    "python3 scripts/devto_internal_links.py --apply",
+    "python3 scripts/reddit_warmup_agent.py --submit --i-understand-risk --count 2",
+    "curl -s https://api.apify.com/v2/acts?limit=100&owner=fruitful_quintessence | python3 -c ..."
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_60a9d9c2_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:08db2432508825a42c64120e21c960fc21f38b358da6f7c15e657a0a8c00dcc2"
+  ],
+  "task_id": "t_60a9d9c2",
+  "status": "complete"
+}
