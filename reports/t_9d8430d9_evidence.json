@@ -1,0 +1,25 @@
+{
+  "task_id": "t_9d8430d9",
+  "status": "complete",
+  "success_indicators": [
+    "viewer.html created in apify-figure-price repo",
+    "HTML displays sample data from CSV (654 records)",
+    "Static viewer accessible at GitHub Pages URL"
+  ],
+  "verification_commands": [
+    "$ curl -s -o /dev/null -w '%{http_code}' https://raw.githubusercontent.com/atushi1841/kensho/main/apify-figure-price/viewer.html",
+    "$ wc -c apify-figure-price/viewer.html",
+    "$ head -20 apify-figure-price/viewer.html | grep -c 'Anime Figure Price'"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/apify-figure-price/viewer.html"
+  ],
+  "evidence_hashes": [
+    "sha256:f7248afa41bf93f79e53ad59ab14e0bbba339990c0f5bdc4ea3520b535b5a474"
+  ],
+  "outcome": {
+    "metric": "GitHub repo dataset accessibility",
+    "before": 0,
+    "after": 1
+  }
+}

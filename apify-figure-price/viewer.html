@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Figure Price Dataset - Kensho</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
+        .summary { background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #4a90d9; color: white; }
+        .price { color: #2ecc71; font-weight: bold; }
+        .out-of-stock { color: #e74c3c; }
+        code { background: #f4f4f4; padding: 2px 6px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🎌 Anime Figure Price Intelligence Dataset</h1>
+    <div class="summary">
+        <h3>Dataset Overview</h3>
+        <p><strong>Records:</strong> 654 figures</p>
+        <p><strong>Source:</strong> MyFigureList (primary) + Mercari, Yahoo Auctions, Suruga-ya, Mandarake</p>
+        <p><strong>Last Updated:</strong> 2026-10-05</p>
+        <p><strong>Schema:</strong> 24 columns including figure ID, name, series, character, manufacturer, price data</p>
+    </div>
+    <h2>Sample Data (first 10 records)</h2>
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>ID</th><th>Name</th><th>Series</th><th>Character</th><th>Manufacturer</th>
+                <th>Lowest Price (JPY)</th><th>MSRP (JPY)</th><th>In Stock</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <h2>How to Access Full Dataset</h2>
+    <pre><code># Via Apify Actor
+npx @apify/apify-cli add japan-anime-figure-price-data
+npx @apify/apify-cli run japan-anime-figure-price-data --input '{"limit": 100}'
+
+# Or download raw data from this repo
+curl -O https://raw.githubusercontent.com/atushi1841/kensho/main/apify-figure-price/data/anime_figure_prices_normalized.csv
+curl -O https://raw.githubusercontent.com/atushi1841/kensho/main/apify-figure-price/data/anime_figure_prices_normalized.jsonl</code></pre>
+    <h2>API Example</h2>
+    <pre><code>from apify_client import ApifyClient
+client = ApifyClient("YOUR_APIFY_TOKEN")
+run = client.actor("DKzufUSvmuXNKHeYx").call(input={"series": "Fate", "limit": 50})</code></pre>
+    <script>
+    fetch('https://raw.githubusercontent.com/atushi1841/kensho/main/apify-figure-price/data/anime_figure_prices_normalized.jsonl')
+        .then(r => r.slice(0, 10))
+        .then(data => {
+            const rows = data.split('\\n').slice(0, 10).map(line => {
+                try { return JSON.parse(line); } catch { return null; }
+            }).filter(Boolean);
+            const tbody = document.querySelector('#dataTable tbody');
+            rows.forEach(d => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = \`
+                    <td>\${d.figure_id}</td>
+                    <td title="\${d.name?.substring(0, 50)}">\${d.name?.substring(0, 50)}...</td>
+                    <td>\${d.series}</td>
+                    <td>\${d.character || '-'}</td>
+                    <td>\${d.manufacturer}</td>
+                    <td class="price">\${d.lowest_price_jpy || '-'}</td>
+                    <td>\${d.msrp_jpy || '-'}</td>
+                    <td class="\${(d.in_stock_count||0)>0?'':'out-of-stock'}">\${d.in_stock_count || 0}</td>
+                \`;
+                tbody.appendChild(tr);
+            });
+        });
+    </script>
+</body>
+</html>
