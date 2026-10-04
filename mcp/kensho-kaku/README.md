@@ -16,6 +16,13 @@ Read-only MCP server exposing the kensho Japan X/Twitter sweepstakes dataset fro
 - Source: ken-kaku.com sweepstakes collection (additional to knshow, kenshou.club, cp.meikan)
 - No network, no API key, no account required
 
+## Data Source: Apify Store
+
+The underlying dataset is also available as a managed Apify Actor:
+
+- **kensho-sweep-mcp** — [https://apify.com/atushi1841/acts/kensho-sweep-mcp](https://apify.com/atushi1841/acts/kensho-sweep-mcp)
+  (Actor ID: `kjf9ZKQ5zWyOQxzvL`) — the parent sweepstakes dataset that includes ken-kaku.com observations
+
 ## Run
 
 ```bash

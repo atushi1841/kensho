@@ -4,7 +4,7 @@
   "display_name": "Kensho Kenshou Club Sweepstakes MCP",
   "version": "1.0.0",
   "buildTag": "latest",
-  "description": "Read-only MCP server exposing the kensho Japan X/Twitter sweepstakes dataset from kenshou.club (additional sweepstakes source for Kensho collection). Kenshou.club archives tagged with 'twitterで応募' provides 50-200+ sweepstakes entries per run.",
+  "description": "Read-only MCP server exposing the kensho Japan X/Twitter sweepstakes dataset from kenshou.club (additional sweepstakes source for Kensho collection). Kenshou.club archives tagged with 'twitterで応募' provides 50-200+ sweepstakes entries per run. Also available as Apify Actor kensho-sweep-mcp (https://apify.com/atushi1841/acts/kensho-sweep-mcp).",
   "long_description": "Exposes the accumulated kensho Japan sweepstakes dataset from kenshou.club as three read-only MCP tools: current_sweep (latest match), sweep_history (time series), and top_prize_movers (biggest value changes). Pure local data, zero dependencies beyond fastmcp. Ideal for AI agents researching Japanese X/Twitter giveaways.",
   "author": {
     "name": "atushi1841"

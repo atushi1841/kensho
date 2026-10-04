@@ -3,7 +3,7 @@
   "name": "kensho-kema",
   "display_name": "Kensho Kema Sweepstakes MCP",
   "version": "1.0.0",
-  "description": "Read-only MCP server exposing the kensho Japan X/Twitter sweepstakes dataset from ke-ma.net (悬賞マニア). 3 tools: current_sweep, sweep_history, top_prize_movers. Fully local — bundled data, no network, no API key.",
+  "description": "Read-only MCP server exposing the kensho Japan X/Twitter sweepstakes dataset from ke-ma.net (懸賞マニア). 3 tools: current_sweep, sweep_history, top_prize_movers. Fully local — bundled data, no network, no API key. Also available as Apify Actor kensho-sweep-mcp (https://apify.com/atushi1841/acts/kensho-sweep-mcp).",
   "long_description": "ke-ma.net（悬賞マニア）の日本国内 X（Twitter）懸賞データをローカルに同梱し、AIエージェントから照会できるMCPサーバーです。\n\n## 提供ツール\n\n| ツール | 内容 |\n|---|---|\n| `current_sweep(keyword)` | キーワードに一致する最新の懸賞スナップショット（当選者数、賞品、推定額、残日数） |\n| `sweep_history(keyword, limit=50)` | 一致する懸賞の価格・賞品の時系列（古順） |\n| `top_prize_movers(direction, limit=10)` | 賞金額の変動が大きい順（up/down フィルタ可能） |\n\n## 動作要件\n\n- 完全ローカル実行（APIキー不要・ネットワーク不要）\n- 依存解決に [uv](https://docs.astral.sh/uv/) を使用（`uv run` 経由で起動、Python 3.10以上）\n- データは `data/accumulated.jsonl`（2026-10-03 スナップショット、30観測）を同梱\n- データ更新は Kensho パイプライン経由で行います（外部取得機能はなし）",
   "author": {
     "name": "atushi1841"

@@ -3,7 +3,7 @@
   "name": "tcg-price-japan",
   "display_name": "Japan TCG Used-Price MCP",
   "version": "1.0.0",
-  "description": "Read-only Japan TCG (Pokemon/TCG) used-price trend data from suruga-ya.jp. Three tools: current price, price history, and top movers. No account, no API key, no network.",
+  "description": "Read-only Japan TCG (Pokemon/TCG) used-price trend data from suruga-ya.jp. Three tools: current price, price history, and top movers. No account, no API key, no network. Also available as Apify Actor surugaya-japan-hobby-prices (https://apify.com/atushi1841/acts/surugaya-japan-hobby-prices).",
   "long_description": "Exposes the accumulated kensho Japan TCG used-price dataset (960 observations from suruga-ya.jp, 2026-09-21 snapshot) as three read-only MCP tools: tcg_current_price (latest used/new/list price in JPY), tcg_price_history (time series), and tcg_top_movers (biggest |delta JPY| movers with optional up/down filter). Pure local data, zero dependencies beyond fastmcp. Ideal for AI agents researching Japanese collectibles market trends.",
   "author": {
     "name": "Kensho Project",

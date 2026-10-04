@@ -17,6 +17,13 @@ used-price dataset collected from suruga-ya.jp.
 - Marketplace: suruga-ya.jp
 - No network, no API key, no account required
 
+## Data Source: Apify Store
+
+The underlying dataset is also available as a managed Apify Actor:
+
+- **surugaya-japan-hobby-prices** — [https://apify.com/atushi1841/acts/surugaya-japan-hobby-prices](https://apify.com/atushi1841/acts/surugaya-japan-hobby-prices)
+  (Actor ID: `F8Hl0a8Cx9bpJBrxR`) — same surugaya-ya.jp TCG price data, refreshed on a schedule
+
 ## Run
 
 ```bash

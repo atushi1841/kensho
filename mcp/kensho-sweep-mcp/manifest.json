@@ -3,7 +3,7 @@
   "name": "kensho-sweep-mcp",
   "display_name": "Japan X/Twitter Sweepstakes MCP",
   "version": "1.0.0",
-  "description": "Read-only Japan X/Twitter sweepstakes campaign data from kensho collection (1133 observations). Three tools: current sweep, sweep history, and top prize movers. No account, no API key, no network.",
+  "description": "Read-only Japan X/Twitter sweepstakes campaign data from kensho collection (1133 observations). Three tools: current sweep, sweep history, and top prize movers. No account, no API key, no network. Also available as Apify Actor kensho-sweep-mcp (https://apify.com/atushi1841/acts/kensho-sweep-mcp).",
   "long_description": "Exposes the accumulated kensho Japan X/Twitter sweepstakes dataset (1133 observations from knshow.com, kenshou.club, ken-kaku.com, cp.meikan.org, 2026-09-27 snapshot) as three read-only MCP tools: current_sweep (latest matching campaign), sweep_history (time series), and top_prize_movers (biggest |delta JPY| prize value movers with optional up/down filter). Pure local data, zero dependencies beyond fastmcp. Ideal for AI agents researching Japanese sweepstakes market trends and high-value campaigns.",
   "author": {
     "name": "atushi1841"
