@@ -154,13 +154,29 @@ def get_pending_batches(
         # ── 日別ランダムジッター（BOT対策）──
         jitter_min = cfg.get("orchestrator", {}).get("batch_jitter_minutes", 0)
         for batch in (acct.get("schedule", {}) or {}).get("batches", []) or []:
-            parts = batch["time"].split(":")
-            batch_m = int(parts[0]) * 60 + int(parts[1])
+            # 2026-10-04: 時刻は文字列 "HH:MM" 前提。YAML 1.1 は `10:45` を sexagesimal
+            # int(645) として読むため、クォート漏れ1件で orchestrator が AttributeError で
+            # 即死していた（実測: 1日59回クラッシュ、zin20120731 の "10:45" が原因）。
+            # 型/形式が不正なバッチはクラッシュさせずスキップし、警告を残す。
+            tval = batch.get("time") if isinstance(batch, dict) else None
+            if isinstance(tval, int) and not isinstance(tval, bool):
+                # sexagesimal 誤パース救済: 645 -> "10:45"
+                tval = f"{tval // 60:02d}:{tval % 60:02d}"
+                print(f"[WARN] batch time が数値(YAML sexagesimal): acct={key} -> '{tval}' として解釈")
+            if not isinstance(tval, str) or tval.count(":") != 1:
+                print(f"[WARN] 不正な batch time をスキップ: acct={key} time={(batch or {}).get('time')!r}")
+                continue
+            try:
+                parts = tval.split(":")
+                batch_m = int(parts[0]) * 60 + int(parts[1])
+            except (ValueError, IndexError):
+                print(f"[WARN] 時刻パース失敗をスキップ: acct={key} time={tval!r}")
+                continue
             orig_m = batch_m  # 状態比較用に元の時刻を保持
 
             # 日別決定論的ジッターを適用（同日・同垢・同バッチなら同じ値）
             if jitter_min > 0:
-                seed_str = f"{now.strftime('%Y-%m-%d')}:{key}:{batch['time']}"
+                seed_str = f"{now.strftime('%Y-%m-%d')}:{key}:{tval}"
                 r = random.Random(seed_str)
                 offset = r.randint(-jitter_min, jitter_min)
                 batch_m += offset
@@ -191,7 +207,7 @@ def get_pending_batches(
             #   （例 0.5 → max=12のとき実効5〜7件 → 1日25〜35件）
             if _ff_scale < 1.0:
                 batch_max = max(2, int(batch_max * _ff_scale))
-            pending.append((key, batch["time"], batch_max))
+            pending.append((key, tval, batch_max))
 
     if not pending:
         return []

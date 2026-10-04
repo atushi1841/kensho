@@ -82,7 +82,7 @@ accounts:
     - max: 15
       time: '10:05'
     - max: 15
-      time: 10:45
+      time: '10:45'
     - max: 15
       time: '11:55'
     - max: 15
