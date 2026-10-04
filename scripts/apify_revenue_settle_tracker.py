@@ -33,6 +33,10 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 # === 設定 ===
+# 2026-10-04 漏洩対策: トークンはURLではなく Authorization ヘッダで送る
+import os as _os, sys as _sys  # noqa: E401
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from _apify_auth import apify_get as _apify_get, apify_urlopen as _apify_urlopen, redact_secrets  # noqa: E402
 PROJECT_DIR = "/mnt/d/Project2/kensho"
 API_BASE = "https://api.apify.com/v2"
 STATE_FILE = os.path.join(PROJECT_DIR, "data", "apify_settle_state.json")
@@ -98,7 +102,7 @@ def get(path: str, token: str | None = None) -> JsonValue:
     sep = "&" if "?" in path else "?"
     url = f"{API_BASE}{path}{sep}token={t}"
     req = urllib.request.Request(url, headers={"Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=30) as resp:
+    with _apify_urlopen(req, timeout=30) as resp:
         data = json.loads(resp.read().decode("utf-8"))
         return data if isinstance(data, (dict, list, str, int, float, bool, type(None))) else {}
 
@@ -226,7 +230,7 @@ def fetch_actual_revenue(token: str, owner: str, name_to_id: dict[str, str], pri
         try:
             url = f"https://api.apify.com/v2/acts/{aid}/runs?token={token}&limit=100"
             req = urllib.request.Request(url, headers={"Accept": "application/json"})
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            with _apify_urlopen(req, timeout=30) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
             if not isinstance(data, dict):
                 continue
@@ -259,7 +263,7 @@ def fetch_actual_revenue(token: str, owner: str, name_to_id: dict[str, str], pri
                 if run_id:
                     durl = f"https://api.apify.com/v2/acts/{aid}/runs/{run_id}?token={token}"
                     dreq = urllib.request.Request(durl, headers={"Accept": "application/json"})
-                    with urllib.request.urlopen(dreq, timeout=30) as dresp:
+                    with _apify_urlopen(dreq, timeout=30) as dresp:
                         ddata = json.loads(dresp.read().decode("utf-8"))
                     if isinstance(ddata, dict):
                         cec = (ddata.get("data") or {}).get("chargedEventCounts", {}) or {}
@@ -357,7 +361,7 @@ def main(argv: list[str] | None = None) -> int:
                     try:
                         url = f"https://api.apify.com/v2/acts/{name_to_id[name]}/runs/{rid}?token={token}"
                         req = urllib.request.Request(url, headers={"Accept": "application/json"})
-                        with urllib.request.urlopen(req, timeout=30) as resp:
+                        with _apify_urlopen(req, timeout=30) as resp:
                             d = json.loads(resp.read().decode("utf-8"))
                         ddata = d.get("data", {})
                         status = ddata.get("status")

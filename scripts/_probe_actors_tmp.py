@@ -1,5 +1,8 @@
 import json, os, requests
-
+# 2026-10-04 漏洩対策: トークンはURLではなく Authorization ヘッダで送る
+import os as _os, sys as _sys  # noqa: E401
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from _apify_auth import apify_get as _apify_get, apify_urlopen as _apify_urlopen, redact_secrets  # noqa: E402
 env = {}
 with open('/mnt/d/Project2/kensho/.env') as f:
     for line in f:
@@ -33,19 +36,19 @@ missing_url = [n for n in names if n not in url_keys]
 print('PRIORITY without URL entry:', missing_url)
 
 # 4) live API: owner + runs for a sample
-r = requests.get(f'{API_BASE}/users/me?token={token}', timeout=30)
+r = _apify_get(f'{API_BASE}/users/me?token={token}', timeout=30)
 owner = (r.json().get('data') or {}).get('id', '')
 print('owner:', owner)
 
 for name in ['mandarake-auction-scraper', 'dlsite-scraper', 'tackleberry-japan-fishing-tackle-scraper', 'japan-used-camera-market-scraper']:
     fb = {'mandarake-auction-scraper':'q2E37PVTg5JcGOTEn','dlsite-scraper':'6Z7tJ3plfUmAgGmbk','tackleberry-japan-fishing-tackle-scraper':'wxMskoiHMPeeH2qAJ','japan-used-camera-market-scraper':'mQaZFo6up4YZKepC3'}[name]
-    rr = requests.get(f'{API_BASE}/acts?my=true&token={token}', timeout=30)
+    rr = _apify_get(f'{API_BASE}/acts?my=true&token={token}', timeout=30)
     items = (rr.json().get('data') or {}).get('items', [])
     aid = fb
     for it in items:
         if it.get('name') == name:
             aid = it.get('id') or fb
-    rr2 = requests.get(f'{API_BASE}/acts/{aid}/runs?token={token}&desc=1&limit=1000', timeout=30)
+    rr2 = _apify_get(f'{API_BASE}/acts/{aid}/runs?token={token}&desc=1&limit=1000', timeout=30)
     its = (rr2.json().get('data') or {}).get('items', [])
     ext = sum(1 for x in its if (x.get('userId') or '') != owner)
     print(f'{name}: id={aid} total_runs={len(its)} external={ext} status={rr2.status_code}')

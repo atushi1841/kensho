@@ -43,7 +43,10 @@ from datetime import datetime, timedelta, UTC
 from typing import Any, cast
 
 import requests
-
+# 2026-10-04 漏洩対策: トークンはURLではなく Authorization ヘッダで送る
+import os as _os, sys as _sys  # noqa: E401
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from _apify_auth import apify_get as _apify_get, apify_urlopen as _apify_urlopen, redact_secrets  # noqa: E402
 PROJECT_DIR = "/mnt/d/Project2/kensho"
 API_BASE = "https://api.apify.com/v2"
 
@@ -130,7 +133,7 @@ def load_prices() -> dict[str, float]:
 def resolve_ids(token: str) -> dict[str, str]:
     known = {k["actual_name"]: k["fallback_id"] for k in KEYS}
     try:
-        resp = requests.get(f"{API_BASE}/acts?my=true&token={token}", timeout=30)
+        resp = _apify_get(f"{API_BASE}/acts?my=true&token={token}", timeout=30)
         if resp.status_code == 200:
             items = resp.json().get("data", {}).get("items", [])
             for it in items:
@@ -144,7 +147,7 @@ def resolve_ids(token: str) -> dict[str, str]:
 def resolve_promo_ids(token: str) -> dict[str, str]:
     known = {a["actual_name"]: a["fallback_id"] for a in PROMO_ACTORS}
     try:
-        resp = requests.get(f"{API_BASE}/acts?my=true&token={token}", timeout=30)
+        resp = _apify_get(f"{API_BASE}/acts?my=true&token={token}", timeout=30)
         if resp.status_code == 200:
             items = resp.json().get("data", {}).get("items", [])
             for it in items:
@@ -157,7 +160,7 @@ def resolve_promo_ids(token: str) -> dict[str, str]:
 
 def fetch_owner(token: str) -> str:
     try:
-        resp = requests.get(f"{API_BASE}/users/me?token={token}", timeout=30)
+        resp = _apify_get(f"{API_BASE}/users/me?token={token}", timeout=30)
         return cast(str, (resp.json().get("data") or {}).get("id", ""))
     except Exception:
         return ""
@@ -177,7 +180,7 @@ def collect_actor_metrics(token: str, actual_name: str, actor_id: str, owner: st
         "price_usd": price,
     }
     try:
-        resp = requests.get(f"{API_BASE}/acts/{actor_id}?token={token}", timeout=30)
+        resp = _apify_get(f"{API_BASE}/acts/{actor_id}?token={token}", timeout=30)
         if resp.status_code == 200:
             a = resp.json().get("data") or {}
             stats = a.get("stats") or {}
@@ -189,7 +192,7 @@ def collect_actor_metrics(token: str, actual_name: str, actor_id: str, owner: st
     except Exception:
         pass
     try:
-        resp = requests.get(f"{API_BASE}/acts/{actor_id}/runs?token={token}&desc=1&limit={RUNS_LIMIT}", timeout=30)
+        resp = _apify_get(f"{API_BASE}/acts/{actor_id}/runs?token={token}&desc=1&limit={RUNS_LIMIT}", timeout=30)
         if resp.status_code == 200:
             items = resp.json().get("data", {}).get("items", [])
             ext = 0

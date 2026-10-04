@@ -19,6 +19,10 @@ from datetime import datetime, timedelta
 from typing import Any, Dict, List
 
 # === 設定 ===
+# 2026-10-04 漏洩対策: トークンはURLではなく Authorization ヘッダで送る
+import os as _os, sys as _sys  # noqa: E401
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from _apify_auth import apify_get as _apify_get, apify_urlopen as _apify_urlopen, redact_secrets  # noqa: E402
 PROJECT_DIR = "/mnt/d/Project2/kensho"
 API_BASE = "https://api.apify.com/v2"
 TOKEN_FILE = os.path.join(PROJECT_DIR, ".env")
@@ -52,7 +56,7 @@ def api_request(token: str, method: str, path: str, body: Any = None) -> Any:
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
     
     try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
+        with _apify_urlopen(req, timeout=60) as resp:
             return json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
         raise Exception(f"ERROR: HTTP {e.code} on {method} {path}: {e.read().decode()}")
@@ -120,7 +124,7 @@ def get_actor_stats(token: str, actor_id: str) -> Dict[str, Any]:
         # 過去30日間のrunを取得
         path = f"/acts/{actor_id}/runs?token={token}&desc=1&limit=100"
         req = urllib.request.Request(path, headers={"Accept": "application/json"})
-        with urllib.request.urlopen(req, timeout=60) as resp:
+        with _apify_urlopen(req, timeout=60) as resp:
             data = json.loads(resp.read().decode("utf-8"))
         
         runs = data.get("data", {}).get("items", [])
@@ -150,7 +154,7 @@ def get_actor_stats(token: str, actor_id: str) -> Dict[str, Any]:
                 if run_id:
                     detail_url = f"https://api.apify.com/v2/acts/{actor_id}/runs/{run_id}?token={token}"
                     detail_req = urllib.request.Request(detail_url, headers={"Accept": "application/json"})
-                    with urllib.request.urlopen(detail_req, timeout=30) as detail_resp:
+                    with _apify_urlopen(detail_req, timeout=30) as detail_resp:
                         detail_data = json.loads(detail_resp.read().decode("utf-8"))
                     
                     if isinstance(detail_data, dict):

@@ -46,7 +46,10 @@ import sys
 import time
 from datetime import datetime
 from typing import Any
-
+# 2026-10-04 漏洩対策: トークンはURLではなく Authorization ヘッダで送る
+import os as _os, sys as _sys  # noqa: E401
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from _apify_auth import apify_get as _apify_get, apify_urlopen as _apify_urlopen, redact_secrets  # noqa: E402
 PROJECT_DIR = "/mnt/d/Project2/kensho"
 DEFAULT_OUT_DIR = os.path.join(PROJECT_DIR, "reports", "apify-seo")
 
@@ -336,7 +339,7 @@ def fetch_json(url: str, timeout: int = 30) -> dict[str, Any]:
 
     req = urllib.request.Request(url, headers={"User-Agent": "kensho-seo-audit/1.0"})
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        with _apify_urlopen(req, timeout=timeout) as resp:
             body = resp.read().decode("utf-8", errors="replace")
             return json.loads(body) if body else {}
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError) as exc:

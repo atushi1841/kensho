@@ -31,7 +31,10 @@ from pathlib import Path
 from typing import Any, cast
 
 import requests
-
+# 2026-10-04 漏洩対策: トークンはURLではなく Authorization ヘッダで送る
+import os as _os, sys as _sys  # noqa: E401
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from _apify_auth import apify_get as _apify_get, apify_urlopen as _apify_urlopen, redact_secrets  # noqa: E402
 PROJECT_DIR = "/mnt/d/Project2/kensho"
 API_BASE = "https://api.apify.com/v2"
 
@@ -149,7 +152,7 @@ def resolve_ids(token: str, actor_names: list[str]) -> dict[str, str]:
     """実API名 → actor_id を /acts から解決。失敗時はフォールバック id を使用。"""
     known = {name: TRACKED_ACTORS[name] for name in actor_names if name in TRACKED_ACTORS}
     try:
-        resp = requests.get(f"{API_BASE}/acts?my=true&token={token}", timeout=30)
+        resp = _apify_get(f"{API_BASE}/acts?my=true&token={token}", timeout=30)
         if resp.status_code == 200:
             items = resp.json().get("data", {}).get("items", [])
             for it in items:
@@ -162,7 +165,7 @@ def resolve_ids(token: str, actor_names: list[str]) -> dict[str, str]:
 
 
 def fetch_owner(token: str) -> str:
-    resp = requests.get(f"{API_BASE}/users/me?token={token}", timeout=30)
+    resp = _apify_get(f"{API_BASE}/users/me?token={token}", timeout=30)
     return cast(str, (resp.json().get("data") or {}).get("id", ""))
 
 
@@ -183,7 +186,7 @@ def collect_actor_metrics(
     }
     # 1) actor 詳細（stats）
     try:
-        resp = requests.get(f"{API_BASE}/acts/{actor_id}?token={token}", timeout=30)
+        resp = _apify_get(f"{API_BASE}/acts/{actor_id}?token={token}", timeout=30)
         if resp.status_code == 200:
             a = resp.json().get("data") or {}
             stats = a.get("stats") or {}
@@ -194,7 +197,7 @@ def collect_actor_metrics(
         pass
     # 2) runs 一覧で外部 run（owner 以外）を累積カウント
     try:
-        resp = requests.get(
+        resp = _apify_get(
             f"{API_BASE}/acts/{actor_id}/runs?token={token}&desc=1&limit={RUNS_LIMIT}",
             timeout=30,
         )
