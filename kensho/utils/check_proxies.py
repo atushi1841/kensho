@@ -25,7 +25,6 @@ PROXY_MAP: dict[str, str] = {
     "kudou": "socks5h://172.26.80.1:1082",
     "zin20120731": "socks5h://172.26.80.1:1084",
     "TankanNotes": "socks5h://172.26.80.1:1085",
-    "inobase1-4": "socks5h://172.26.80.1:1089",
     "toushiwatch": "socks5h://172.26.80.1:1087",
 }
 
@@ -36,7 +35,6 @@ EXPECTED_ASN: dict[str, str] = {
     "kudou": "KDDI",  # POVO → au/KDDI系（実測 AS2516 KDDI）
     "zin20120731": "楽天",  # 楽天モバイル
     "TankanNotes": "SoftBank",  # ワイモバイル → SoftBank系（実測 AS17676 SoftBank）
-    "inobase1-4": "KDDI",  # POVO → au/KDDI系（実測 AS2516 KDDI）
     "toushiwatch": "KDDI",  # POVO → au/KDDI系
 }
 

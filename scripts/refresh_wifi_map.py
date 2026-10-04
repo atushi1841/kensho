@@ -142,6 +142,11 @@ def main() -> int:
 
     ips, wlan, ports = collect_ips(), collect_wlan(), collect_ports()
     home = _curl_ip([])  # 自宅回線のグローバルIP（プロキシ未使用）
+    if not home:
+        # ★ 2026-10-04 修正: 測定失敗時に home_ip を空で書き出すと、他垢の出口IPが自宅IPと
+        #   一致しても egress_warn_home が立たず、絶対ルール（自宅IPはatushi16のみ）の
+        #   検知が無効化される。測定系全滅時は既存値を保持する方針（直下のコメント）に合わせる。
+        home = data.get("home_ip") or ""
     # ★ 2026-09-25 QA修正: 実測系が全滅した場合は「停止」「未検出」を書かない（既存値を保持）。
     #   測定失敗をそのままmapに書くと、稼働プロキシの垢が圏外扱いで応募スキップされる。
     measured_ok = bool(ips) or bool(wlan)

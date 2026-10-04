@@ -48,7 +48,6 @@ PROXY_POOL_DEFAULT: list[str] = [
     "socks5h://172.26.80.1:1084",  # zin20120731
     "socks5h://172.26.80.1:1085",  # TankanNotes
     "socks5h://172.26.80.1:1087",  # toushiwatch
-    "socks5h://172.26.80.1:1089",  # inobase1-4
 ]
 
 _DEAD_COOLDOWN_S: float = 300.0  # 失敗プロキシを5分クールダウン（再試行で自然回復を許容）

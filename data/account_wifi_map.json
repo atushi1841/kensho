@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-04T12:52:27+09:00",
+  "updated_at": "2026-10-04T14:45:23+09:00",
   "source": "Windows実測: netsh wlan / Get-NetIPAddress / Get-NetTCPConnection / WSLからプロキシ経由で出口IP実測",
-  "note": "「状態」は Windows実測（netsh / Get-NetIPAddress / LISTENポート）。回線の出口IPはプロキシ経由で別途実測。垢バン垢は表から除外。",
+  "note": "「状態」は Windows実測（netsh / Get-NetIPAddress / LISTENポート）。回線の出口IPはプロキシ経由で別途実測。垢バン垢は表から除外。 / 2026-10-04: home_ip欠落を復元（atushi16の実測egressと一致確認）",
   "accounts": [
     {
       "key": "atushi16",
@@ -28,7 +28,7 @@
       "local_ip": "10.32.223.239",
       "port": 1082,
       "adapter_state": "接続",
-      "signal": "59%",
+      "signal": "63%",
       "proxy_state": "listen",
       "note": "",
       "egress_ip": "106.146.16.44",
@@ -41,15 +41,15 @@
       "transport": "Aterm MR05LN（新規購入・モバイルルーター）",
       "ssid": "aterm-5505da",
       "adapter": "zin_AW6povo",
-      "local_ip": "192.168.43.223",
+      "local_ip": "192.168.179.2",
       "port": 1084,
-      "adapter_state": "接続",
+      "adapter_state": "切断",
       "signal": "",
-      "proxy_state": "listen",
+      "proxy_state": "停止",
       "note": "2026-10-04 ユーザー指示でAterm MR05LN(SSID aterm-5505da)へ回線変更。adapter=zin_AW6povoを接続・proxy1084起動・出口IP実測。Xセッションが15.7日で閾値超過→要再ログイン",
-      "egress_ip": "106.146.21.135",
+      "egress_ip": "",
       "egress_warn_home": false,
-      "egress_ok": true
+      "egress_ok": false
     },
     {
       "key": "TankanNotes",
@@ -63,7 +63,7 @@
       "signal": "",
       "proxy_state": "listen",
       "note": "2026-09-10 Wi-Fi→有線直結へ切替",
-      "egress_ip": "126.253.238.16",
+      "egress_ip": "126.253.252.92",
       "egress_warn_home": false,
       "egress_ok": true
     },
@@ -73,9 +73,9 @@
       "transport": "モバイル回線（RM10JE_S）",
       "ssid": "RM10JE_S",
       "adapter": "RM10JE_S",
-      "local_ip": "10.172.70.130",
+      "local_ip": "10.125.38.130",
       "port": 1087,
-      "adapter_state": "接続",
+      "adapter_state": "切断",
       "signal": "",
       "proxy_state": "listen",
       "note": "2026-10-04 RM10JE_S再起動後に回線復旧（adapter=Up 10.125.38.130・proxy1087起動・出口IP 106.146.0.164）。Xセッション18.5日で閾値超過→要再ログイン。config.yamlのaccountsに未登録",
