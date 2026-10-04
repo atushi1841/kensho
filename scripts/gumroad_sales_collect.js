@@ -137,6 +137,12 @@ async function main() {
   await new Promise((r) => setTimeout(r, NAVIGATION_TIMEOUT));
   const url = await evalJs('location.href');
   console.log('Dashboard URL:', url);
+  // 2026-10-04: 失効検知の厳密化。従来は本文先頭200字の英語 login/sign in のみを見ていたため、
+  //   ①日本語ロケールの「ログイン」を検知できず ②URL が /login へリダイレクトされても
+  //   本文に該当語が無ければ login_ok=true と誤判定していた（実測: 失効中も login_ok=true で
+  //   cookie 失効が無言死し、Gumroad 商品の ZIP が 09/28 版のまま陳腐化していた）。
+  const _urlStr = String(url || '');
+  const urlIsLogin = /\/login|\/sign_in|\/signin/i.test(_urlStr);
 
   // 5. 売上データ抽出
   const bodyText = await evalJs('document.body ? document.body.innerText : ""');
@@ -150,7 +156,7 @@ async function main() {
       last_7_days: null,
       last_28_days: null,
       total_earnings: null,
-      has_login: !/log ?in|sign ?in/i.test(bodyText.slice(0, 200)),
+      has_login: !urlIsLogin && !/(log ?in|sign ?in|ログイン)/i.test(bodyText.slice(0, 300)),
     };
     if (balanceIdx >= 0) {
       const seg = bodyText.slice(balanceIdx, Math.min(balanceIdx + 150, bodyText.length));
