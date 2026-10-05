@@ -1,0 +1,28 @@
+{
+  "task_id": "t_973250e5",
+  "task_title": "価格監視通知サービス（日本EC特化型Micro SaaS）",
+  "created_at": "2026-10-05T00:00:00Z",
+  "modules_implemented": [
+    "kensho/price_monitor/models.py",
+    "kensho/price_monitor/db.py",
+    "kensho/price_monitor/scraper.py",
+    "kensho/price_monitor/notifier.py",
+    "kensho/price_monitor/service.py",
+    "kensho/price_monitor/api.py",
+    "kensho/price_monitor/worker.py",
+    "kensho/price_monitor/cli.py",
+    "kensho/price_monitor/__init__.py"
+  ],
+  "tests": {
+    "test_file": "tests/test_price_monitor.py",
+    "tests_run": 5,
+    "tests_passed": 5,
+    "status": "success"
+  },
+  "pricing_tiers": {
+    "free": {"fee_jpy": 0, "max_rules": 3, "interval_min": 60},
+    "pro": {"fee_jpy": 1980, "max_rules": 30, "interval_min": 30},
+    "business": {"fee_jpy": 4980, "max_rules": 200, "interval_min": 15}
+  },
+  "report_path": "reports/revenue-proposals/2026-10-05-japan-ec-price-monitor-saas.md"
+}
