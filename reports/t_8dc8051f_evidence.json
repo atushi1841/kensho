@@ -21,5 +21,10 @@
     "sha256:d59885e78887d87587f69536dbd327c3707a7e1edf95de39aac24f54bdc9d589"
   ],
   "task_id": "t_8dc8051f",
-  "status": "complete"
+  "status": "complete",
+  "outcome": {
+    "metric": "loop_health.sh 有効JSON出力 + state.json direct read fallback",
+    "before": "broken symlink → health検証不能 (score不明)",
+    "after": "symlink生存 + state.json直接読み + loop_health.sh実行で score=60 priority=new_proposals 確認"
+  }
 }
