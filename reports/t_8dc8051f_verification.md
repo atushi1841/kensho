@@ -39,5 +39,11 @@ archived 196
 $ cd /mnt/d/Project2/kensho && git log --oneline -1
 3e6ca37 t_8dc8051f: final evidence json
 $ bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_8dc8051f --workdir /mnt/d/Project2/kensho --write-evidence --payload-file /tmp/payload_8dc8051f.json
-written: /mnt/d/Project2/kensho/reports/t_8dc8051f_evidence.json (guard j verification => pass, sha256=...)
+written: /mnt/d/Project2/kensho/reports/t_8dc8051f_evidence.json (guard j verification => pass, sha256=07840d655216dc7b5444a41712396aab939eb3d665cf0d5199cac070a428bdd5)
 ```
+
+### Evidence Hash Verification
+
+$ sha256sum reports/t_8dc8051f_evidence.json reports/t_8dc8051f_verification.md
+07840d655216dc7b5444a41712396aab939eb3d665cf0d5199cac070a428bdd5  reports/t_8dc8051f_evidence.json
+321fad9d1e62711602119a52b655a9a17aa66306d60536a118cf1b8ae77c63cf  reports/t_8dc8051f_verification.md
