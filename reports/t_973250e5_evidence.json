@@ -1,28 +1,29 @@
 {
   "task_id": "t_973250e5",
-  "task_title": "価格監視通知サービス（日本EC特化型Micro SaaS）",
-  "created_at": "2026-10-05T00:00:00Z",
-  "modules_implemented": [
-    "kensho/price_monitor/models.py",
-    "kensho/price_monitor/db.py",
-    "kensho/price_monitor/scraper.py",
-    "kensho/price_monitor/notifier.py",
-    "kensho/price_monitor/service.py",
-    "kensho/price_monitor/api.py",
-    "kensho/price_monitor/worker.py",
-    "kensho/price_monitor/cli.py",
-    "kensho/price_monitor/__init__.py"
+  "status": "completed",
+  "success_indicators": [
+    {
+      "metric": "tests_passed",
+      "before": 0,
+      "after": 5
+    },
+    {
+      "metric": "api_endpoints",
+      "before": 0,
+      "after": 8
+    }
   ],
-  "tests": {
-    "test_file": "tests/test_price_monitor.py",
-    "tests_run": 5,
-    "tests_passed": 5,
-    "status": "success"
-  },
-  "pricing_tiers": {
-    "free": {"fee_jpy": 0, "max_rules": 3, "interval_min": 60},
-    "pro": {"fee_jpy": 1980, "max_rules": 30, "interval_min": 30},
-    "business": {"fee_jpy": 4980, "max_rules": 200, "interval_min": 15}
-  },
-  "report_path": "reports/revenue-proposals/2026-10-05-japan-ec-price-monitor-saas.md"
+  "verification_commands": [
+    "/home/atushi/kensho-venv/bin/pytest tests/test_price_monitor.py -v",
+    "/home/atushi/kensho-venv/bin/python -m kensho.price_monitor.cli --help",
+    "git status --short"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-10-05-japan-ec-price-monitor-saas.md",
+    "/mnt/d/Project2/kensho/reports/t_973250e5_verification.md"
+  ],
+  "evidence_hashes": {
+    "reports/revenue-proposals/2026-10-05-japan-ec-price-monitor-saas.md": "5951fcf62986d7cb5111b157ec129d513af7ac11dd2fc02f0c80c3a2f35cb45e",
+    "reports/t_973250e5_verification.md": "2f392ef540b29fa793bfa68fcb82c181d1465a458ddcb4c2cb9f9f05aa73b3b4"
+  }
 }
