@@ -38,6 +38,8 @@ done 775
 archived 196
 $ cd /mnt/d/Project2/kensho && git log --oneline -1
 3e6ca37 t_8dc8051f: final evidence json
+$ git cat-file -t 3e6ca37cddffab2526c6bc5d0783f2394342b86c
+commit
 $ bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_8dc8051f --workdir /mnt/d/Project2/kensho --write-evidence --payload-file /tmp/payload_8dc8051f.json
 written: /mnt/d/Project2/kensho/reports/t_8dc8051f_evidence.json (guard j verification => pass, sha256=07840d655216dc7b5444a41712396aab939eb3d665cf0d5199cac070a428bdd5)
 ```
