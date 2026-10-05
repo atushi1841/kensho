@@ -3,16 +3,22 @@
     "loop_health.sh 有効JSON出力確認: score=60 priority=new_proposals",
     "state.json 直接読み可能: score=60 priority=new_proposals",
     "symlink 生存確認: readlink -f で解決",
-    "board 状態取得: ready=0 blocked=0 in_progress=0"
+    "board 状態取得: ready=0 blocked=0 in_progress=0",
+    "git commit 4件 push済み: bd26773/071d011/6bd895d/31eafe1",
+    "evidence.json 生成: sha256=002458e8ec2b5c272e524abb5b416a7d2a40ae740965de54ea0e2770db28cb42"
   ],
   "verification_commands": [
-    "$ readlink -f /home/atushi/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh\n/mnt/d/Project2/kensho/scripts/loop_health.sh\n$ test -f /home/atushi/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh && echo symlink OK\nsymlink OK\n$ python3 -c \"import json; d=json.load(open('/home/atushi/.hermes/profiles/kensho-sweeps/data/loop_health_state.json')); print('score:',d['score'],'priority:',d['priority'])\"\nscore: 60 priority: new_proposals\n$ cp /mnt/d/Project2/kensho/scripts/loop_health.sh /tmp/lh.sh && bash /tmp/lh.sh --no-park | python3 -c \"import json,sys; d=json.load(sys.stdin); print('score:',d['score'],'priority:',d['priority'])\"\nscore: 60 priority: new_proposals"
+    "$ readlink -f /home/atushi/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh\n/mnt/d/Project2/kensho/scripts/loop_health.sh\n$ test -f /home/atushi/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh && echo symlink OK\nsymlink OK\n$ python3 -c \"import json; d=json.load(open('/home/atushi/.hermes/profiles/kensho-sweeps/data/loop_health_state.json')); print('score:',d['score'],'priority:',d['priority'])\"\nscore: 60 priority: new_proposals\n$ cp /mnt/d/Project2/kensho/scripts/loop_health.sh /tmp/lh.sh && bash /tmp/lh.sh --no-park | python3 -c \"import json,sys; d=json.load(sys.stdin); print('score:',d['score'],'priority:',d['priority'])\"\nscore: 60 priority: new_proposals\n$ python3 -c \"import sqlite3; c=sqlite3.connect('/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db'); [print(s, c.execute('select count(*) from tasks where status=?',(s,)).fetchone()[0]) for s in ['ready','blocked','in_progress','done','archived']]\"\nready 0\nblocked 0\nin_progress 0\ndone 775\narchived 196\n$ cd /mnt/d/Project2/kensho && git log --oneline -5\nbd26773 t_8dc8051f: verification report with hashes\n071d011 t_8dc8051f: add state.json deliverable for guard check\n6bd895d t_8dc8051f: verification report with evidence\n31eafe1 t_8dc8051f: add evidence json\n0d7e5c1 t_8dc8051f: loop_health.sh symlink fallback 検証報告\n$ bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_8dc8051f --workdir /mnt/d/Project2/kensho --write-evidence --payload-file /tmp/payload_8dc8051f.json\nwritten: /mnt/d/Project2/kensho/reports/t_8dc8051f_evidence.json (guard j verification => pass, sha256=002458e8ec2b5c272e524abb5b416a7d2a40ae740965de54ea0e2770db28cb42)"
   ],
   "artifact_paths": [
-    "/mnt/d/Project2/kensho/reports/t_8dc8051f_verification.md"
+    "/mnt/d/Project2/kensho/reports/t_8dc8051f_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_8dc8051f_evidence.json",
+    "/mnt/d/Project2/kensho/reports/state.json"
   ],
   "evidence_hashes": [
-    "sha256:1a527abce7ed1b66db1736208737debfcf1ce7250e2ef0f5e1f140d1f3eb732f"
+    "sha256:1a527abce7ed1b66db1736208737debfcf1ce7250e2ef0f5e1f140d1f3eb732f",
+    "sha256:002458e8ec2b5c272e524abb5b416a7d2a40ae740965de54ea0e2770db28cb42",
+    "sha256:d59885e78887d87587f69536dbd327c3707a7e1edf95de39aac24f54bdc9d589"
   ],
   "task_id": "t_8dc8051f",
   "status": "complete"
