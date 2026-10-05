@@ -1021,7 +1021,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     blog_tpl = _read(blog_template_path)
     title = (
         f"懸賞{stats['total_campaigns']:,}件の自動応募ログを全部集計したら、"
-        f"「応募導線」と「当選枠」に地味な崖があった"
+        f"「応募導線」と「当選枠」に地味な崖があった（{week_label}）"
     )
     tags = ["python", "automation", "datajournalism", "japanese"][:4]
     drafts: dict[str, str] = {}
