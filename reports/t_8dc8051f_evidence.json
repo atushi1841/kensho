@@ -23,8 +23,8 @@
   "task_id": "t_8dc8051f",
   "status": "complete",
   "outcome": {
-    "metric": "loop_health.sh 有効JSON出力 + state.json direct read fallback",
-    "before": "broken symlink → health検証不能 (score不明)",
-    "after": "symlink生存 + state.json直接読み + loop_health.sh実行で score=60 priority=new_proposals 確認"
+    "metric": "loop_health.sh JSON出力 + state.json読取",
+    "before": 0,
+    "after": 1
   }
 }
