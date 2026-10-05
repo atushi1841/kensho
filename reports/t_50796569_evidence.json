@@ -1,0 +1,19 @@
+{
+  "success_indicators": [
+    "Qiita 2本投稿完了",
+    "both articles private=False confirmed"
+  ],
+  "verification_commands": [
+    "$ curl qiita API item ca99332b17cb07ac26ae → private=False",
+    "$ curl qiita API item 897f8d90b1be3514d0b8 → private=False",
+    "$ publish_qiita.py --publish --public → HTTP 200 (PATCH/POST)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-10-06-revenue-worker-v1.md"
+  ],
+  "evidence_hashes": [
+    "sha256:16e71a3c76723dc3b0cc0294ef2fc1604224a024c21425c63bc68e0b71952b38"
+  ],
+  "task_id": "t_50796569",
+  "status": "complete"
+}
