@@ -1,0 +1,22 @@
+{
+  "score": 60,
+  "streak": 3,
+  "last_escalate_streak": 0,
+  "last_low_band": 0,
+  "business_ok": false,
+  "priority": "new_proposals",
+  "advice": {
+    "critic": "propose_new",
+    "worker": "propose_new",
+    "qa": "propose_new"
+  },
+  "escalated_at": "",
+  "park_cooldown_until": 0,
+  "park_after_h": "24",
+  "last_park_action": "none",
+  "last_park_ts": "",
+  "last_park_result": "",
+  "last_park_target": "",
+  "last_run_ts": "2026-10-05T22:51:49+09:00",
+  "escalation_active": false
+}
