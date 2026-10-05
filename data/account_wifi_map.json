@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-06T02:00:27+09:00",
+  "updated_at": "2026-10-06T03:45:13+09:00",
   "source": "Windows実測: netsh wlan / Get-NetIPAddress / Get-NetTCPConnection / WSLからプロキシ経由で出口IP実測",
   "note": "「状態」は Windows実測（netsh / Get-NetIPAddress / LISTENポート）。回線の出口IPはプロキシ経由で別途実測。垢バン垢は表から除外。 / 2026-10-04: home_ip欠落を復元（atushi16の実測egressと一致確認）",
   "accounts": [
@@ -28,7 +28,7 @@
       "local_ip": "10.32.223.239",
       "port": 1082,
       "adapter_state": "接続",
-      "signal": "55%",
+      "signal": "59%",
       "proxy_state": "listen",
       "note": "",
       "egress_ip": "106.146.6.17",
@@ -63,7 +63,7 @@
       "signal": "",
       "proxy_state": "listen",
       "note": "2026-09-10 Wi-Fi→有線直結へ切替",
-      "egress_ip": "126.253.250.16",
+      "egress_ip": "126.253.243.142",
       "egress_warn_home": false,
       "egress_ok": true
     },
@@ -77,7 +77,7 @@
       "port": 1087,
       "adapter_state": "切断",
       "signal": "",
-      "proxy_state": "停止",
+      "proxy_state": "listen",
       "note": "2026-10-04 RM10JE_S再起動後に回線復旧（adapter=Up 10.125.38.130・proxy1087起動・出口IP 106.146.0.164）。Xセッション18.5日で閾値超過→要再ログイン。config.yamlのaccountsに未登録",
       "egress_ip": "",
       "egress_warn_home": false,

@@ -1,5 +1,5 @@
 {
-  "status": "dead_proxy",
+  "status": "alive",
   "status_schema": [
     "alive",
     "dead_proxy",
@@ -8,7 +8,7 @@
   "port": 1081,
   "last_success": "",
   "last_error_type": "",
-  "stop_reason": "プロキシ死骸（TCP疎通 or 出口IP確認失敗）",
+  "stop_reason": "",
   "account": "atushi16",
-  "updated": "2026-10-06T02:00:33.944280"
+  "updated": "2026-10-06T03:45:34.768093"
 }
