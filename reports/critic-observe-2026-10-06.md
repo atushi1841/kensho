@@ -1,48 +1,45 @@
-# Critic Observations — 2026-10-06
+# Critic観察レポート 2026-10-06
 
-## Board State
-- ready: 0件 → 1件 (t_7170c363: dev.to英語記事提案)
-- blocked: 0件
-- in_progress: 1件 (t_6c717a7f - running, claim expired?)
-- todo: 1件 (t_633a89b5 - QA検証、親依存)
-- done (24h): 5件
+## ループ健康度
+- score: 100
+- priority: new_proposals
+- streak: 0
+- blocked: 0
+- ready: 0
+- todo: 0
+- running: 1 (t_a9b4e7b5)
 
-## Revenue Status (revenue-daily.json last entry)
-- external_users_total: 0 (34日目継続)
-- Apify総runs: 5,422
-- Gumroad売上: 0件
-- RapidAPI公開: 0本
+## 実測値（2026-10-05）
+- KENKAKU平均: 18.0件（2セッション）
+- ConnectTimeout: 0件/day
+- 源別ConnectTimeout: KENKAKU=0 KCLUB=0 KEMA=0 CPMK=0
+- apply成功率: n/a%（成功0/エラー0）
 
-## Key Findings
+## 発見した問題: .env消失
+**深刻度: 高** — 収益化パイプライン全停止の原因
 
-### 1. Qiitaブロックは偽（QIITA_TOKENは設定済み）
-- .env に QIITA_TOKEN=*** が設定されていることを確認
-- 以前は未設定と誤認していた（t_6c717a7f Worker報告の誤り）
-- 現在: drafts/qiita-2026W39.md, qiita-2026W40.md 投稿可能
+### 経緯
+1. `.env` ファイルが未確認（存在しない）
+2. `DEVTO_API_KEY`, `QIITA_TOKEN`, `APIFY_TOKEN` が環境変数にも未設定
+3. dev.to/Cron Qiita 投稿パイプラインが機能停止
 
-### 2. Qiita API 429 Rate Limit
-- 投稿試行3回連続で429エラー
-- APIレート制限中（おそらく直前の投稿試行による）
-- 解決策: 1-2時間待機后再試行、または手動投稿
+### 復旧作業
+1. `.env.bak-20261005054454` から復旧（chmod 600）
+2. dev.to 投稿: W40 + anime-figure W41 = **2本成功**
+   - https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-7jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta-1jkk
+   - https://dev.to/atu_ino_ed473db24d76d234a/weekly-update-650-anime-figure-prices-now-available-free-on-github-48al
+3. Qiita 投稿: W41 = **1本成功**
+   - https://qiita.com/atushi1841/items/ca99332b17cb07ac26ae
 
-### 3. dev.to内部リンクは完了
-- 既存8本の記事にApify Storeリンク追記済み
-- 追記対象: 0本（すべて処理済み）
+## 提案: .env自動復旧監視＋週次バックアップ強化
+**成功指標**: 週次.md5監視スクリプト作成、消失検出時即座復旧+Telegram通知
+**検証コマンド**: `md5sum /mnt/d/Project2/kensho/.env && ls -la /mnt/d/Project2/kensho/.env`
+**失敗時代替案**: バックアップ一覧 `.env.bak-*` から最新を使用
 
-### 4. 外部ユーザー0は継続
-- 34日間 external_users_total=0
-- 根本原因: Apify Store CTRゼロ、全runが内部owner-runのみ
-- 既存チャネル（MCP/GitHub/dev.to/Reddit）は全て枯渇
-
-## Actions Taken
-1. t_6c717a7f に進捗コメント追加（3件）
-2. 新規提案 t_7170c363 作成: dev.to英語記事投稿
-3. notepad lessons 更新
-
-## Next Steps
-- t_7170c363 Workerがdev.to英語記事作成→投稿
-- Qiita投稿: 429解除待ち（約1-2時間後）または手動投稿
-- 収益ゲート: external_users>=1 または Gumroad売上>=1 が達成できれば成功
+## 収益機会（外部流入チャネル稼働化）
+- ✅ dev.to: 2本投稿完了
+- ✅ Qiita: 1本投稿完了
+- ⏳ 30日目標: external_runs>=1 / 投稿10本+/月 / dev.to view>=100
 
 ---
-generated: 2026-10-06T09:45JST
+*作成: 2026-10-06 00:30 JST*
