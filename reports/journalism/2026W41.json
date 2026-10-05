@@ -1,0 +1,119 @@
+{
+  "total_campaigns": 3,
+  "accounts": [],
+  "total_entries": 0,
+  "coverage_rate": 0.0,
+  "value_known": 0,
+  "value_from_text": 0,
+  "deadline_known": 3,
+  "text_missing": 3,
+  "category_unclassified": 3,
+  "total_estimated_value_jpy": 0,
+  "total_seats": 23,
+  "by_category": {
+    "分類不能・情報欠損": {
+      "n": 3.0,
+      "entries": 0.0,
+      "value": 0.0,
+      "wins": 0.0,
+      "seats": 23.0
+    }
+  },
+  "by_wincount": {
+    "6〜20名": {
+      "n": 2.0,
+      "entries": 0.0,
+      "wins": 0.0
+    },
+    "2〜5名": {
+      "n": 1.0,
+      "entries": 0.0,
+      "wins": 0.0
+    }
+  },
+  "by_deadline": {
+    "明日締切": 3
+  },
+  "by_route": {
+    "未判定": 3
+  },
+  "by_source": {
+    "kenshouclub": 3
+  },
+  "by_account": {},
+  "keywords": [],
+  "missed": [
+    {
+      "title": "h_b_antique",
+      "value": 0,
+      "seats": 10,
+      "missing": 1,
+      "deadline": "2026-10-07",
+      "source": "kenshouclub"
+    },
+    {
+      "title": "yomiuri_osaka",
+      "value": 0,
+      "seats": 9,
+      "missing": 1,
+      "deadline": "2026-10-07",
+      "source": "kenshouclub"
+    },
+    {
+      "title": "differencee31",
+      "value": 0,
+      "seats": 4,
+      "missing": 1,
+      "deadline": "2026-10-07",
+      "source": "kenshouclub"
+    }
+  ],
+  "wins": {
+    "matched": 0,
+    "unmatched": 0,
+    "total": 0,
+    "by_category": {},
+    "by_wincount": {},
+    "by_source": {},
+    "matched_keys": {},
+    "entries_by_category": {
+      "金券・現金": 287,
+      "デジタル特典": 49,
+      "分類不能・情報欠損": 932,
+      "食品・飲料": 235,
+      "Pay系・ポイント": 55,
+      "Amazonギフト券": 190,
+      "旅行・宿泊": 79,
+      "グッズ・ノベルティ": 201,
+      "ゲーム機・ゲームソフト": 40,
+      "体験・チケット": 85,
+      "化粧品・日用品": 67,
+      "家電・ガジェット": 98
+    },
+    "entries_total": 2318
+  },
+  "wow": {
+    "prev_size": 305,
+    "size_delta": -302,
+    "new_campaigns": 3,
+    "disappeared": 305,
+    "value_delta": -163495,
+    "entries_delta": -340,
+    "new_sample": [
+      "yomiuri_osaka",
+      "differencee31",
+      "h_b_antique"
+    ]
+  },
+  "route_unknown": 3,
+  "week_label": "2026W41",
+  "scope": "week",
+  "generated_at": "2026-10-06 00:31 JST",
+  "data_files": [
+    "data/collected_today.json",
+    "data/collected.json",
+    "data/collected_history/collected_20260923.json",
+    "data/collected_history/collected_20260928.json"
+  ],
+  "fingerprint": "cfa6956c405101169f4bef1789b4c7986ca70ad2c4d9305bba17aa434d6de779"
+}
