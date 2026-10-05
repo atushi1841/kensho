@@ -1,0 +1,25 @@
+{
+  "success_indicators": [
+    "backup_env.sh created",
+    "monitor_env.sh created",
+    "monitor exit 0",
+    "md5 checksum recorded"
+  ],
+  "verification_commands": [
+    "md5sum /mnt/d/Project2/kensho/.env",
+    "ls -la /mnt/d/Project2/kensho/.env.bak-*",
+    "bash /mnt/d/Project2/kensho/scripts/monitor_env.sh"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/backup_env.sh",
+    "/mnt/d/Project2/kensho/scripts/monitor_env.sh",
+    "/mnt/d/Project2/kensho/reports/t_187030fb_verification.md"
+  ],
+  "evidence_hashes": [
+    "375750b2b119203624880f299e1db8686c61774bac0c1b9cf42493d889a0c807",
+    "f12f11c2dfac6c0d59eb3e15c5005722b38190fcb490a992125de125d10f89bd",
+    "f2bf3cc269f5a7a2612f73955e38c19604c589bfa8e6260390969091d648f15a"
+  ],
+  "task_id": "t_187030fb",
+  "status": "complete"
+}
