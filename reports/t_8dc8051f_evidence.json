@@ -1,0 +1,19 @@
+{
+  "success_indicators": [
+    "loop_health.sh 有効JSON出力確認: score=60 priority=new_proposals",
+    "state.json 直接読み可能: score=60 priority=new_proposals",
+    "symlink 生存確認: readlink -f で解決",
+    "board 状態取得: ready=0 blocked=0 in_progress=0"
+  ],
+  "verification_commands": [
+    "$ readlink -f /home/atushi/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh\n/mnt/d/Project2/kensho/scripts/loop_health.sh\n$ test -f /home/atushi/.hermes/profiles/kensho-sweeps/scripts/loop_health.sh && echo symlink OK\nsymlink OK\n$ python3 -c \"import json; d=json.load(open('/home/atushi/.hermes/profiles/kensho-sweeps/data/loop_health_state.json')); print('score:',d['score'],'priority:',d['priority'])\"\nscore: 60 priority: new_proposals\n$ cp /mnt/d/Project2/kensho/scripts/loop_health.sh /tmp/lh.sh && bash /tmp/lh.sh --no-park | python3 -c \"import json,sys; d=json.load(sys.stdin); print('score:',d['score'],'priority:',d['priority'])\"\nscore: 60 priority: new_proposals"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_8dc8051f_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:1a527abce7ed1b66db1736208737debfcf1ce7250e2ef0f5e1f140d1f3eb732f"
+  ],
+  "task_id": "t_8dc8051f",
+  "status": "complete"
+}
