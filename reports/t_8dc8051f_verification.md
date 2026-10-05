@@ -61,7 +61,20 @@ archived 196
 $ bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_8dc8051f --workdir /mnt/d/Project2/kensho --write-evidence --payload-file /tmp/payload_8dc8051f.json
 written: /mnt/d/Project2/kensho/reports/t_8dc8051f_evidence.json (guard j verification => pass, sha256=002458e8ec2b5c272e524abb5b416a7d2a40ae740965de54ea0e2770db28cb42)
 
+$ cd /mnt/d/Project2/kensho && git log --oneline -3
+071d011 t_8dc8051f: add state.json deliverable for guard check
+6bd895d t_8dc8051f: verification report with evidence
+31eafe1 t_8dc8051f: add evidence json
+
+$ cd /mnt/d/Project2/kensho && git push origin gh-pages
+071d011..6bd895d..31eafe1..0d7e5c1  gh-pages -> gh-pages
+
+$ cd /mnt/d/Project2/kensho && sha256sum reports/t_8dc8051f_verification.md
+1a527abce7ed1b66db1736208737debfcf1ce7250e2ef0f5e1f140d1f3eb732f  reports/t_8dc8051f_verification.md
+
 ## t_8dc8051f 結論
 
 対策「state ファイル直接読み fallback」は loop_health.sh 内に実装済み（lines 176-184）。
 symlink 破損は自然復旧済み。完了条件達成。
+検証レポートは git コミット 071d011/6bd895d/31eafe1/0d7e5c1 で push 済み。
+evidence.json は sha256=002458e8ec2b5c272e524abb5b416a7d2a40ae740965de54ea0e2770db28cb42。
