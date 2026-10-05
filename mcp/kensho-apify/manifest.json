@@ -1,0 +1,82 @@
+{
+  "manifest_version": "0.4",
+  "name": "kensho-apify",
+  "display_name": "Kensho Apify Actors MCP",
+  "version": "1.0.0",
+  "description": "MCP server that wraps Apify Actors for on-demand Japanese market data fetching. Tools: list_actors, run_actor, get_run, get_dataset.",
+  "long_description": "Apifyの.actorを実行して日本語市場データを取得するMCPサーバーです。\n\n## 提供ツール\n\n| ツール | 内容 |\n|---|---|\n| `list_actors()` | 利用可能なApify actor一覧を取得 |\n| `run_actor(actor_id, input_data)` | Apify actorを実行 |\n| `get_run(run_id)` | 実行ステータスを取得 |\n| `get_dataset(run_id, limit)` | データセットからアイテムを取得 |\n\n## データソース\n\n- メルカリ検索結果\n- ヤフオク!落札価格\n- 楽天市場商品\n- SUUMO不動産\n- 食べログレビュー\n\n## 動作要件\n\n- `APIFY_TOKEN` 環境変数が必要\n- Python 3.10以上\n\n## インストール\n\n```bash\nsmithery install @atushi1841/kensho-apify\n```",
+  "author": {
+    "name": "atushi1841"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atushi1841/kensho"
+  },
+  "homepage": "https://github.com/atushi1841/kensho",
+  "server": {
+    "type": "python",
+    "entry_point": "server.py",
+    "mcp_config": {
+      "command": "python3",
+      "args": ["${__dirname}/server.py"]
+    }
+  },
+  "compatibility": {
+    "platforms": ["darwin", "linux", "win32"],
+    "runtimes": {
+      "python": ">=3.10"
+    }
+  },
+  "keywords": [
+    "apify",
+    "japan",
+    "mercari",
+    "yahoo-auctions",
+    "rakuten",
+    "suumo",
+    "tabelog",
+    "data-collection"
+  ],
+  "tools": [
+    {
+      "name": "list_actors",
+      "description": "List all Apify actors available to the user."
+    },
+    {
+      "name": "run_actor",
+      "description": "Run an Apify actor with input parameters and return the run ID.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "actor_id": {"type": "string", "description": "The actor ID or slug to run"},
+          "input_data": {"type": "object", "description": "Input parameters for the actor"},
+          "timeout_seconds": {"type": "integer", "description": "Wait time in seconds (default 300)"}
+        },
+        "required": ["actor_id"]
+      }
+    },
+    {
+      "name": "get_run",
+      "description": "Get status of an Apify actor run.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "run_id": {"type": "string", "description": "The run ID to check"}
+        },
+        "required": ["run_id"]
+      }
+    },
+    {
+      "name": "get_dataset",
+      "description": "Get items from an Apify actor run's dataset.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "run_id": {"type": "string", "description": "The run ID"},
+          "limit": {"type": "integer", "description": "Max items to return (default 100)"}
+        },
+        "required": ["run_id"]
+      }
+    }
+  ]
+}
