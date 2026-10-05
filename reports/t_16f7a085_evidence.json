@@ -1,0 +1,36 @@
+{
+  "success_indicators": [
+    "kensho-apify MCP server created at mcp/kensho-apify/server.py",
+    "All 5 files committed to gh-pages branch (fade75d)",
+    "site/index.html updated with kensho-apify entry",
+    "py_compile passed: syntax OK",
+    "GitHub API confirms files exist on gh-pages"
+  ],
+  "verification_commands": [
+    "$ python3 -m py_compile mcp/kensho-apify/server.py && echo OK => py_compile OK",
+    "$ curl -s https://api.github.com/repos/atushi1841/kensho/contents/mcp/kensho-apify?ref=gh-pages | python3 -c 'import json,sys; print([x[\"name\"] for x in json.load(sys.stdin)])' => ['README.md', 'manifest.json', 'pyproject.toml', 'requirements.txt', 'server.py']",
+    "$ curl -s https://api.github.com/repos/atushi1841/kensho/branches/gh-pages | python3 -c 'import json,sys; print(json.load(sys.stdin)[\"commit\"][\"sha\"][:7])' => fade75d",
+    "$ git -C /mnt/d/Project2/kensho log --oneline -1 => fade75d t_16f7a085: add kensho-apify MCP server wrapping Apify Actors",
+    "$ curl -s https://raw.githubusercontent.com/atushi1841/kensho/gh-pages/site/index.html | grep -c kensho-apify => 1"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/mcp/kensho-apify/server.py",
+    "/mnt/d/Project2/kensho/mcp/kensho-apify/manifest.json",
+    "/mnt/d/Project2/kensho/mcp/kensho-apify/README.md",
+    "/mnt/d/Project2/kensho/mcp/kensho-apify/pyproject.toml",
+    "/mnt/d/Project2/kensho/mcp/kensho-apify/requirements.txt",
+    "/mnt/d/Project2/kensho/site/index.html",
+    "/mnt/d/Project2/kensho/reports/t_16f7a085_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:6d2827c50bad729b161739218c26f76763c93c4b5ed55cc5a6dd6167caa12823",
+    "sha256:0e9de547c9802d88190a66538191523d2fb3f4388984cea774fcf2e5ac65fca7",
+    "sha256:0e7992a89c315b9d3430ebc4b9c94f05d7316144b8fd32b1c616847587ec922c",
+    "sha256:a91eb1ff538bda8ee4fc38e2b234847485126446b43bd9482490636a5827bac1",
+    "sha256:d7c4540cd6b62d31500652be9d9cefa443a92d5027abf5e264df36bcbb44356c",
+    "sha256:239b3cf701426c8c785960e34b0072707c91cede5df3a4519c78a797cb06648d",
+    "sha256:1f451a76fda62acfb73a3c3ece78142ea05e5af554bb169de71cc057ed36c0c8"
+  ],
+  "task_id": "t_16f7a085",
+  "status": "complete"
+}
