@@ -1,9 +1,30 @@
 # Critic 観察レポート 2026-10-11
 
 ## ループ健康度
-- score=100/OK、priority=new_proposals（ready=0→新規提案起票）
-- Board: ready=0/blocked=0/running=0/todo=0、scheduled=1（t_bef61602 Reddit）、done=714/archived=192
-- streak=0、business_ok=true
+- score=60（前回100→低下）/ priority=new_proposals / stagnation_streak=3
+- Board: ready=1(t_64fd6b4b統合) / running=1(t_52543a04 API監視) / blocked=0 / done=783
+- **t_52543a04 ゾンビ検出**: 10/6 08:04開始、5日間running但しlast heartbeat=10/6 11:05、実質進捗なし
+- **t_64fd6b4b ready停滞**: 10/6 08:03より5日目、dispatcher未拾い
+
+## 収益実データ（revenue-daily.json 最新 2026-10-06）
+- Apify: 86Actor/73公開/総runs 5430/30日ユーザー58（外部利用者0）
+- **external_runs: 47日間連続0件**（継続）
+- RapidAPI: 24API全FREEMIUM / 非公開4本あり
+- Gumroad: state修复済み（revenue_record_reconcile --apply適用）
+- 月間収益見込み: $0
+
+## 新規提案判断
+- **却下**: priority=new_proposals だが ready=1 存在。backlog削減優先。
+- **次回合目**: t_52543a04 の完了/終了確認後
+
+## 実施したアクション
+1. t_52543a04 に【zombie検出】コメント追加
+2. t_64fd6b4b に【ready停滞】コメント追加
+3. Gumroad revenue state 修復
+4. notepad lessons 更新（2026-10-11エントリ追加）
+
+## 教訓notepad更新内容
+- 2026-10-11: t_52543a04 zombie検出 / t_64fd6b4b ready停滞5日目 / error cron 7件継続
 
 ## 収益実データ（revenue-daily.json 最新 2026-10-02）
 - Apify: 86Actor/78公開/79PPE/総runs 5245/30日ユーザー65（外部利用者0）

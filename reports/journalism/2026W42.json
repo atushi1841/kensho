@@ -1,0 +1,454 @@
+{
+  "total_campaigns": 1842,
+  "accounts": [
+    "TankanNotes",
+    "atushi16",
+    "atushi1840",
+    "chugakujuken",
+    "inobase1-4",
+    "kudou",
+    "royalkensho",
+    "toushiwatch",
+    "zin20120731"
+  ],
+  "total_entries": 1896,
+  "coverage_rate": 0.11436844010133912,
+  "value_known": 301,
+  "value_from_text": 282,
+  "deadline_known": 1405,
+  "text_missing": 132,
+  "category_unclassified": 824,
+  "total_estimated_value_jpy": 1751743,
+  "total_seats": 120154,
+  "by_category": {
+    "分類不能・情報欠損": {
+      "n": 824.0,
+      "entries": 794.0,
+      "value": 674084.0,
+      "wins": 0.0,
+      "seats": 68073.0
+    },
+    "デジタル特典": {
+      "n": 53.0,
+      "entries": 30.0,
+      "value": 32177.0,
+      "wins": 0.0,
+      "seats": 16495.0
+    },
+    "旅行・宿泊": {
+      "n": 38.0,
+      "entries": 47.0,
+      "value": 128600.0,
+      "wins": 0.0,
+      "seats": 184.0
+    },
+    "金券・現金": {
+      "n": 132.0,
+      "entries": 241.0,
+      "value": 261520.0,
+      "wins": 0.0,
+      "seats": 3993.0
+    },
+    "食品・飲料": {
+      "n": 165.0,
+      "entries": 202.0,
+      "value": 99200.0,
+      "wins": 0.0,
+      "seats": 10179.0
+    },
+    "Pay系・ポイント": {
+      "n": 38.0,
+      "entries": 48.0,
+      "value": 24090.0,
+      "wins": 0.0,
+      "seats": 4379.0
+    },
+    "Amazonギフト券": {
+      "n": 190.0,
+      "entries": 149.0,
+      "value": 503034.0,
+      "wins": 0.0,
+      "seats": 4185.0
+    },
+    "家電・ガジェット": {
+      "n": 54.0,
+      "entries": 93.0,
+      "value": 7598.0,
+      "wins": 0.0,
+      "seats": 6713.0
+    },
+    "グッズ・ノベルティ": {
+      "n": 221.0,
+      "entries": 156.0,
+      "value": 13940.0,
+      "wins": 0.0,
+      "seats": 2176.0
+    },
+    "体験・チケット": {
+      "n": 60.0,
+      "entries": 56.0,
+      "value": 6000.0,
+      "wins": 0.0,
+      "seats": 2953.0
+    },
+    "化粧品・日用品": {
+      "n": 44.0,
+      "entries": 47.0,
+      "value": 1500.0,
+      "wins": 0.0,
+      "seats": 472.0
+    },
+    "ゲーム機・ゲームソフト": {
+      "n": 23.0,
+      "entries": 33.0,
+      "value": 0.0,
+      "wins": 0.0,
+      "seats": 352.0
+    }
+  },
+  "by_wincount": {
+    "枠数不明・記載なし": {
+      "n": 313.0,
+      "entries": 253.0,
+      "wins": 0.0
+    },
+    "101名以上（大量枠）": {
+      "n": 75.0,
+      "entries": 151.0,
+      "wins": 0.0
+    },
+    "21〜100名": {
+      "n": 244.0,
+      "entries": 343.0,
+      "wins": 0.0
+    },
+    "1名（最難関）": {
+      "n": 234.0,
+      "entries": 216.0,
+      "wins": 0.0
+    },
+    "6〜20名": {
+      "n": 425.0,
+      "entries": 389.0,
+      "wins": 0.0
+    },
+    "2〜5名": {
+      "n": 551.0,
+      "entries": 544.0,
+      "wins": 0.0
+    }
+  },
+  "by_deadline": {
+    "2〜3日": 16,
+    "8〜30日": 112,
+    "4〜7日": 42,
+    "本日締切": 63,
+    "明日締切": 106,
+    "31日以上": 1066,
+    "期限未記載": 437
+  },
+  "by_route": {
+    "未判定": 279,
+    "X": 1531,
+    "要確認": 12,
+    "LINE": 8,
+    "会員ID": 3,
+    "外部フォーム": 9
+  },
+  "by_source": {
+    "ken-kaku": 34,
+    "kema": 57,
+    "kenshouclub": 658,
+    "chancecom": 67,
+    "twscrape": 866,
+    "knshow": 87,
+    "kensho-everyday": 25,
+    "kenshofan": 7,
+    "cpmeikan": 41
+  },
+  "by_account": {
+    "atushi16": 417,
+    "kudou": 426,
+    "zin20120731": 353,
+    "TankanNotes": 393,
+    "inobase1-4": 112,
+    "royalkensho": 59,
+    "atushi1840": 89,
+    "toushiwatch": 40,
+    "chugakujuken": 7
+  },
+  "keywords": [
+    {
+      "keyword": "Amazon",
+      "campaigns": 163,
+      "coverage": 0.09270620313565099,
+      "lift": -0.021662236965688128,
+      "avg_entries": 0.834355828220859
+    },
+    {
+      "keyword": "#プレゼント企画",
+      "campaigns": 123,
+      "coverage": 0.05510388437217705,
+      "lift": -0.05926455572916207,
+      "avg_entries": 0.4959349593495935
+    },
+    {
+      "keyword": "ギフト",
+      "campaigns": 98,
+      "coverage": 0.08956916099773242,
+      "lift": -0.0247992791036067,
+      "avg_entries": 0.8061224489795917
+    },
+    {
+      "keyword": "サイン",
+      "campaigns": 70,
+      "coverage": 0.057142857142857155,
+      "lift": -0.057225582958481964,
+      "avg_entries": 0.5142857142857143
+    },
+    {
+      "keyword": "ギフトカード",
+      "campaigns": 67,
+      "coverage": 0.1293532338308458,
+      "lift": 0.014984793729506674,
+      "avg_entries": 1.1641791044776122
+    },
+    {
+      "keyword": "QUO",
+      "campaigns": 66,
+      "coverage": 0.19528619528619529,
+      "lift": 0.08091775518485617,
+      "avg_entries": 1.7575757575757576
+    },
+    {
+      "keyword": "#モニター募集",
+      "campaigns": 58,
+      "coverage": 0.0,
+      "lift": -0.11436844010133912,
+      "avg_entries": 0.0
+    },
+    {
+      "keyword": "周年",
+      "campaigns": 57,
+      "coverage": 0.13255360623781676,
+      "lift": 0.018185166136477637,
+      "avg_entries": 1.1929824561403508
+    },
+    {
+      "keyword": "official",
+      "campaigns": 54,
+      "coverage": 0.18312757201646093,
+      "lift": 0.06875913191512181,
+      "avg_entries": 1.6481481481481484
+    },
+    {
+      "keyword": "レビュー",
+      "campaigns": 53,
+      "coverage": 0.0020964360587002093,
+      "lift": -0.11227200404263891,
+      "avg_entries": 0.018867924528301883
+    },
+    {
+      "keyword": "コラボ",
+      "campaigns": 50,
+      "coverage": 0.1577777777777778,
+      "lift": 0.043409337676438675,
+      "avg_entries": 1.4200000000000002
+    },
+    {
+      "keyword": "SNS",
+      "campaigns": 50,
+      "coverage": 0.03777777777777777,
+      "lift": -0.07659066232356135,
+      "avg_entries": 0.33999999999999997
+    },
+    {
+      "keyword": "豪華",
+      "campaigns": 45,
+      "coverage": 0.10864197530864196,
+      "lift": -0.0057264647926971585,
+      "avg_entries": 0.9777777777777776
+    },
+    {
+      "keyword": "引用元",
+      "campaigns": 42,
+      "coverage": 0.047619047619047616,
+      "lift": -0.0667493924822915,
+      "avg_entries": 0.42857142857142855
+    },
+    {
+      "keyword": "ポイント",
+      "campaigns": 38,
+      "coverage": 0.14327485380116958,
+      "lift": 0.028906413699830463,
+      "avg_entries": 1.2894736842105263
+    },
+    {
+      "keyword": "感想",
+      "campaigns": 38,
+      "coverage": 0.06432748538011697,
+      "lift": -0.05004095472122215,
+      "avg_entries": 0.5789473684210528
+    },
+    {
+      "keyword": "毎月",
+      "campaigns": 38,
+      "coverage": 0.06140350877192983,
+      "lift": -0.05296493132940929,
+      "avg_entries": 0.5526315789473685
+    },
+    {
+      "keyword": "応募条件",
+      "campaigns": 37,
+      "coverage": 0.05105105105105105,
+      "lift": -0.06331738905028807,
+      "avg_entries": 0.4594594594594595
+    },
+    {
+      "keyword": "周年記念",
+      "campaigns": 36,
+      "coverage": 0.07407407407407406,
+      "lift": -0.04029436602726506,
+      "avg_entries": 0.6666666666666665
+    },
+    {
+      "keyword": "総額",
+      "campaigns": 36,
+      "coverage": 0.043209876543209874,
+      "lift": -0.07115856355812925,
+      "avg_entries": 0.38888888888888884
+    }
+  ],
+  "missed": [
+    {
+      "title": "#投資初心者 の方へ📘",
+      "value": 260000,
+      "seats": 5,
+      "missing": 3,
+      "deadline": "2026-09-30",
+      "source": "knshow"
+    },
+    {
+      "title": "文豪たちが「探偵」として実在の未解決事件に挑む昭和文豪ミステリー小説『桜桃探偵舎』連載記念！",
+      "value": 219800,
+      "seats": 1,
+      "missing": 9,
+      "deadline": "2026-10-06",
+      "source": "kenshouclub"
+    },
+    {
+      "title": "ニコレン公式アプリ「ニコパス」😊",
+      "value": 100000,
+      "seats": 1,
+      "missing": 5,
+      "deadline": "2026-09-30",
+      "source": "knshow"
+    },
+    {
+      "title": "◤本日リリース！◢",
+      "value": 63000,
+      "seats": 0,
+      "missing": 5,
+      "deadline": "2026-09-23",
+      "source": "cpmeikan"
+    },
+    {
+      "title": "＼豪華宿泊券をゲット！／",
+      "value": 55800,
+      "seats": 10,
+      "missing": 4,
+      "deadline": "2026-11-06",
+      "source": "twscrape"
+    },
+    {
+      "title": "🥩＼フォロー＆RTで当たる／",
+      "value": 45000,
+      "seats": 3,
+      "missing": 9,
+      "deadline": "2026-09-30",
+      "source": "twscrape"
+    },
+    {
+      "title": "＼フォロー＆リポストで応募／",
+      "value": 30000,
+      "seats": 30,
+      "missing": 9,
+      "deadline": "2026-09-30",
+      "source": "knshow"
+    },
+    {
+      "title": "🎁#ブックバン夏祭り プレゼントキャンペーン 🎁",
+      "value": 30000,
+      "seats": 25,
+      "missing": 3,
+      "deadline": "2026-09-30",
+      "source": "knshow"
+    },
+    {
+      "title": "＼ メガ割記念 #プレゼントキャンペーン／",
+      "value": 21200,
+      "seats": 10,
+      "missing": 4,
+      "deadline": "2026-09-30",
+      "source": "kema"
+    },
+    {
+      "title": "@QUOcardPayをフォロー＆この投稿をリポストで",
+      "value": 20000,
+      "seats": 25,
+      "missing": 5,
+      "deadline": "2026-09-23",
+      "source": "twscrape"
+    }
+  ],
+  "wins": {
+    "matched": 0,
+    "unmatched": 0,
+    "total": 0,
+    "by_category": {},
+    "by_wincount": {},
+    "by_source": {},
+    "matched_keys": {},
+    "entries_by_category": {
+      "分類不能・情報欠損": 794,
+      "デジタル特典": 30,
+      "旅行・宿泊": 47,
+      "金券・現金": 241,
+      "食品・飲料": 202,
+      "Pay系・ポイント": 48,
+      "Amazonギフト券": 149,
+      "家電・ガジェット": 93,
+      "グッズ・ノベルティ": 156,
+      "体験・チケット": 56,
+      "化粧品・日用品": 47,
+      "ゲーム機・ゲームソフト": 33
+    },
+    "entries_total": 1896
+  },
+  "wow": {
+    "prev_size": 1178,
+    "size_delta": 664,
+    "new_campaigns": 664,
+    "disappeared": 0,
+    "value_delta": 569410,
+    "entries_delta": 509,
+    "new_sample": [
+      "narisup",
+      "welcia_jp",
+      "koikeya_cp",
+      "squareenix_jp",
+      "laurier_jp"
+    ]
+  },
+  "route_unknown": 291,
+  "week_label": "2026W42",
+  "scope": "all",
+  "generated_at": "2026-10-06 05:49 JST",
+  "data_files": [
+    "data/collected_today.json",
+    "data/collected.json",
+    "data/collected_history/collected_20260923.json",
+    "data/collected_history/collected_20260928.json"
+  ],
+  "fingerprint": "bea1aa66b8ebbe38867ac52bd4a6f43536f0928f8935c4628a26b254179f31fb"
+}
