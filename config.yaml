@@ -64,31 +64,35 @@ accounts:
   display: '@zin20120731'
   key: zin20120731
   schedule:
-    batches:
-    - max: 15
-      time: 08:00
-    - max: 15
-      time: 09:15
-    - max: 15
-      time: 06:30
-    - max: 15
-      time: 07:05
-    - max: 15
-      time: 07:35
-    - max: 15
-      time: 08:55
-    - max: 15
-      time: 09:30
-    - max: 15
-      time: '10:05'
-    - max: 15
-      time: '10:45'
-    - max: 15
-      time: '11:55'
-    - max: 15
-      time: '12:30'
-    - max: 15
-      time: '13:05'
+    # 2026-10-07 応募停止: プロキシ1084不通（回線 aterm-5505da 未接続）= dead_proxy。
+    # accounts からは外さない（外すと proxy_watchdog の復旧試行が止まる）。復旧後に下の batches を戻す。
+    # 実測: 有効なままだと 1日533回の「結果空っぽ」空振りを生んでいた。
+    batches: []
+    # batches:
+    # - max: 15
+    #   time: 08:00
+    # - max: 15
+    #   time: 09:15
+    # - max: 15
+    #   time: 06:30
+    # - max: 15
+    #   time: 07:05
+    # - max: 15
+    #   time: 07:35
+    # - max: 15
+    #   time: 08:55
+    # - max: 15
+    #   time: 09:30
+    # - max: 15
+    #   time: '10:05'
+    # - max: 15
+    #   time: '10:45'
+    # - max: 15
+    #   time: '11:55'
+    # - max: 15
+    #   time: '12:30'
+    # - max: 15
+    #   time: '13:05'
     collects: false
   session: data/x_session_c.json
 - daily_target: 50
