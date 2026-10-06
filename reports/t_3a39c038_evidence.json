@@ -1,0 +1,20 @@
+{
+  "success_indicators": [
+    "MCP registry 404確認 - 未掲載状態実測",
+    "worker差分applier.py修正実装・push完了"
+  ],
+  "verification_commands": [
+    "$ curl -s -o /dev/null -w \"%{http_code}\" https://registry.modelcontextprotocol.io/v0.1/mcp/japan-ec-mcp → 404",
+    "$ curl -s -o /dev/null -w \"%{http_code}\" https://mcp.so/api/servers/japan-ec-mcp → 404",
+    "$ git log --oneline -1 → 211fad7 fix(applier): 未判定導線を本文分類へ戻す"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/2026-10-07-qa-verification.md",
+    "/mnt/d/Project2/kensho/reports/t_3f40d6ee_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  ],
+  "task_id": "t_3a39c038",
+  "status": "complete"
+}
