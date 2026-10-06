@@ -1,0 +1,35 @@
+{
+  "task_id": "t_2d49610b",
+  "status": "complete",
+  "success_indicators": [
+    "curl README | grep -c apify.com = 14 (target >=4, 3.5x)",
+    "README contains '## MCP 接続例' section (target: present)",
+    "MCP 公開レジストリ登録状況 section added (MCP公式=登録済, Smithery/mcp.so=要ユーザー対応)",
+    "収益ゲート table added (who/channel/30day/existing-reuse)"
+  ],
+  "verification_commands": [
+    "$ curl -s https://raw.githubusercontent.com/atushi1841/japan-ec-mcp/main/README.md | grep -c 'apify.com' => 14",
+    "$ curl -s https://raw.githubusercontent.com/atushi1841/japan-ec-mcp/main/README.md | grep -E '^## MCP 接続例' => '## MCP 接続例' present",
+    "$ git -C /tmp/jecmcp log --oneline -1 => HEAD docs(t_2d49610b): READMEにApify詳細URL+MCP接続例を追記し外部流入改善 (japan-ec-mcp repo)",
+    "$ git -C /mnt/d/Project2/kensho log --oneline -1 => d53327e docs(t_2d49610b): verification report for japan-ec-mcp README improvement (kensho repo)",
+    "$ git -C /tmp/jecmcp show --stat HEAD => README.md 165 insertions(+), 13 deletions(-)",
+    "$ git push origin main (japan-ec-mcp) => 8456bf6..824e25d main -> main",
+    "$ git push origin main (kensho) => 6369ce6..d53327e main -> main",
+    "$ curl -s -o /dev/null -w '%{http_code}\\n' https://github.com/atushi1841/japan-ec-mcp => 200",
+    "$ sha256sum README.md (japan-ec-mcp) => 440e421f03d5dbc86aaca7d0fe740e6bdc8aab76c339dd0768c96d4f5f26bae6",
+    "$ sha256sum reports/t_2d49610b_verification.md (kensho) => 5ad0c07b1e4abb6d7c54207a91739ccaef972160dc09f1140bedd54e57936e5a"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_2d49610b_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_2d49610b_evidence.json"
+  ],
+  "evidence_hashes": [
+    "5ad0c07b1e4abb6d7c54207a91739ccaef972160dc09f1140bedd54e57936e5a",
+    "440e421f03d5dbc86aaca7d0fe740e6bdc8aab76c339dd0768c96d4f5f26bae6"
+  ],
+  "outcome": {
+    "metric": "README apify.com link count",
+    "before": 4,
+    "after": 14
+  }
+}
