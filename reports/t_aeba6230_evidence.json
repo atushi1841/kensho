@@ -1,0 +1,28 @@
+{
+  "task_id": "t_aeba6230",
+  "status": "complete",
+  "success_indicators": [
+    "loop_health.shにartifact_age計算ロジック実装完了",
+    "pytest 3件PASS",
+    "commit 87bc5a7 pushed to main"
+  ],
+  "verification_commands": [
+    "$ python3 -m pytest tests/test_loop_health.py::test_artifact_age_field_present tests/test_loop_health.py::test_artifact_age_penalty_via_override tests/test_loop_health.py::test_artifact_age_no_penalty_healthy --no-cov\n3 passed in 20.85s",
+    "$ LOOPHEALTH_ARTIFACT_AGE_OVERRIDE='{\"t_test\": 5.0}' bash scripts/loop_health.sh --no-park --state /tmp/lh_test.json | jq '.artifact_age_penalty'\n30",
+    "$ git log --oneline -1\n87bc5a7 fix(t_aeba6230): complete artifact_age implementation + test fixes"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/loop_health.sh",
+    "/mnt/d/Project2/kensho/tests/test_loop_health.py",
+    "/mnt/d/Project2/kensho/reports/t_aeba6230_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:ca9d58fd8c5801146c59832e5feba45bdf776345c8fb329c1015925744cb40e6",
+    "sha256:2a2ead20aeef70a98cd282b246ec8d9fa753bec67dc7ba22e6679e8158a03ff6"
+  ],
+  "outcome": {
+    "metric": "test_pass_rate",
+    "before": 0,
+    "after": 3
+  }
+}
