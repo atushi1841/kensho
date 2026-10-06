@@ -33,3 +33,15 @@ private: false
 各ActorにはExample run input、Dataset output（JSON/CSV）、Scheduled runs機能が付きます。
 
 ソース: [github.com/atushi1841/kensho](https://github.com/atushi1841/kensho)
+
+## さらに多くのActorへ
+
+上記8つのActorに加えて、[Apify Store](https://apify.com/fruitful_quintessence) では以下のActorも公開中です。
+
+| Actor | 用途 |
+|-------|------|
+| [kensho-sweep-mcp](https://apify.com/fruitful_quintessence/kensho-sweep-mcp) | X懜賞自動収集・応募MCPサーバー |
+| [japan-hobby-market-scanner](https://apify.com/fruitful_quintessence/japan-hobby-market-scanner) | 日本ホビーマーケットスキャン |
+| [japan-prize-giveaway-scraper](https://apify.com/fruitful_quintessence/japan-prize-giveaway-scraper) | X懜賞 campaigns データ収集 |
+
+全Actorは [Apify Store](https://apify.com/fruitful_quintessence) で公開中（88本以上）。
