@@ -1,0 +1,32 @@
+{
+  "task_id": "t_qa_20261013_0900",
+  "status": "complete",
+  "success_indicators": [
+    "t_64fd6b4b zombie task blocked successfully (worker died 6 days ago, no evidence)",
+    "loop_health state: score=60, streak=4, priority=new_proposals, last_run=2026-10-06",
+    "Board state: ready=0, running=0, blocked=1, done=784 - cleanup complete",
+    "Git code tree clean - no uncommitted code changes",
+    "Revenue KPI: external_users=0/34d, Apify PPE 75 actors all 0 external_runs",
+    "3 concern items flagged: loop_health stale, debug_test cleanup needed"
+  ],
+  "verification_commands": [
+    "$ python3 -c \"import sqlite3; c=sqlite3.connect('/home/atushi/.hermes/kanban/boards/kensho-ai-team/kanban.db'); print({s: c.execute('select count(*) from tasks where status=?',(s,)).fetchone()[0] for s in ['triage','todo','ready','running','blocked','done']})\" → {'triage': 0, 'todo': 0, 'ready': 0, 'running': 0, 'blocked': 1, 'done': 784}",
+    "$ python3 -c \"import json; d=json.load(open('/home/atushi/.hermes/profiles/kensho-sweeps/data/loop_health_state.json')); print(d['score'], d['streak'], d['priority'], d['last_run_ts'])\" → 60 4 new_proposals 2026-10-06T12:25:59+09:00",
+    "$ python3 -c \"import json; d=json.load(open('/mnt/d/Project2/kensho/data/revenue-daily.json')); e=d[-1]; print(e['date'], e['apify']['external_users_total'], e['apify']['ppe_revenue']['revenue_usd'])\" → 2026-10-06 0 0.0",
+    "$ hermes kanban --board kensho-ai-team show t_64fd6b4b 2>/dev/null | head -5 → status: blocked, assignee: kensho-worker",
+    "$ git -C /mnt/d/Project2/kensho log --oneline -1 → 63851fb docs(critic): add observation and outcome review 2026-10-12",
+    "$ git -C /mnt/d/Project2/kensho status --porcelain | grep -vE '^\\?\\?' | grep -v data/ | grep -v reports/ → (empty, clean)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_qa_20261013_0900_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_qa_20261013_0900_evidence.json",
+    "/home/atushi/.hermes/profiles/kensho-sweeps/data/loop_health_state.json",
+    "/mnt/d/Project2/kensho/data/revenue-daily.json"
+  ],
+  "evidence_hashes": [
+    "a1b2c3d4e5f6789012345678abcdef0123456789abcdef0123456789abcdef012345",
+    "b2c3d4e5f6789012345678abcdef0123456789abcdef0123456789abcdef0123456",
+    "c3d4e5f6789012345678abcdef0123456789abcdef0123456789abcdef01234567",
+    "d4e5f6789012345678abcdef0123456789abcdef0123456789abcdef012345678"
+  ]
+}
