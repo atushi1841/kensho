@@ -1,4 +1,39 @@
 {
  "applied": true,
- "rows": []
+ "rows": [
+  {
+   "id": 4803750,
+   "title": "懸賞1,842件の自動応募ログを全部集計したら、「応募導線」と「当選枠」に地味な崖があった（2026W43）",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-1842jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta2026w43-p2c",
+   "actors": [
+    "japan-prize-giveaway-scraper"
+   ],
+   "added_chars": 232,
+   "put_status": 200,
+   "readback_has_link": true
+  },
+  {
+   "id": 4803747,
+   "title": "懸賞1,842件の自動応募ログを全部集計したら、「応募導線」と「当選枠」に地味な崖があった",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-1842jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta-2ifc",
+   "actors": [
+    "japan-prize-giveaway-scraper"
+   ],
+   "added_chars": 232,
+   "put_status": 200,
+   "readback_has_link": true
+  },
+  {
+   "id": 4797699,
+   "title": "TEST_W39_UNIQUE_1791149425",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/testw39unique1791149425-5913",
+   "actors": [
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices"
+   ],
+   "added_chars": 336,
+   "put_status": 200,
+   "readback_has_link": true
+  }
+ ]
 }
