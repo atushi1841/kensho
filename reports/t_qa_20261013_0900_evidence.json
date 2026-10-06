@@ -14,7 +14,7 @@
     "$ python3 -c \"import json; d=json.load(open('/home/atushi/.hermes/profiles/kensho-sweeps/data/loop_health_state.json')); print(d['score'], d['streak'], d['priority'], d['last_run_ts'])\" → 60 4 new_proposals 2026-10-06T12:25:59+09:00",
     "$ python3 -c \"import json; d=json.load(open('/mnt/d/Project2/kensho/data/revenue-daily.json')); e=d[-1]; print(e['date'], e['apify']['external_users_total'], e['apify']['ppe_revenue']['revenue_usd'])\" → 2026-10-06 0 0.0",
     "$ hermes kanban --board kensho-ai-team show t_64fd6b4b 2>/dev/null | head -5 → status: blocked, assignee: kensho-worker",
-    "$ git -C /mnt/d/Project2/kensho log --oneline -1 → 63851fb docs(critic): add observation and outcome review 2026-10-12",
+    "$ git -C /mnt/d/Project2/kensho log --oneline -1 → aa01343 docs(t_qa_20261013): QA verify - blocked zombie task t_64fd6b4b",
     "$ git -C /mnt/d/Project2/kensho status --porcelain | grep -vE '^\\?\\?' | grep -v data/ | grep -v reports/ → (empty, clean)"
   ],
   "artifact_paths": [
@@ -24,9 +24,9 @@
     "/mnt/d/Project2/kensho/data/revenue-daily.json"
   ],
   "evidence_hashes": [
-    "a1b2c3d4e5f6789012345678abcdef0123456789abcdef0123456789abcdef012345",
-    "b2c3d4e5f6789012345678abcdef0123456789abcdef0123456789abcdef0123456",
-    "c3d4e5f6789012345678abcdef0123456789abcdef0123456789abcdef01234567",
-    "d4e5f6789012345678abcdef0123456789abcdef0123456789abcdef012345678"
+    "ffee285d40642b4438563f53fb6cbe440089576a75fcc5e16dd947e5a595f158",
+    "2ec35fac48e7fc4fe181645a962a469c7f08330bbb1ffa22ffbb708f10934d43",
+    "c89113003bcb6a12a76678c865b0b3907afa52a07e749342d034c6b1f9d62668",
+    "9595fa26ac9fc051ae5cdfa70b3166e2f9012c5066f9970dd895d03731bfd190"
   ]
 }
