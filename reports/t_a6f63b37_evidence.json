@@ -1,0 +1,27 @@
+{
+  "task_id": "t_a6f63b37",
+  "status": "blocked",
+  "success_indicators": [
+    "Glama掲載URL取得（手動登録後）",
+    "mcpservers.org掲載URL取得（手動登録後）",
+    "GitHubトピック mcp-server 追加完了"
+  ],
+  "verification_commands": [
+    "$ ls /mnt/d/Project2/kensho/mcp/*/smithery.yaml => 5 files",
+    "$ curl -s 'https://glama.ai/mcp/servers' | grep -i kensho => (手動登録後確認)",
+    "$ gh auth status => not logged in（要ユーザー対応）"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/2026-10-07-revenue-worker.md"
+  ],
+  "evidence_hashes": [
+    "sha256:dece5b35e4ac57a90f6dcb65b5f921831c0e6334c79591debf78357bb7be549f"
+  ],
+  "outcome": {
+    "metric": "external_channels",
+    "before": 0,
+    "after": 0
+  },
+  "block_reason": "Glama/mcpservers.org手動OAuth登録必要。自動化不可。",
+  "next_action": "ユーザー手動登録 or gh auth login後 GitHubトピック追加"
+}
