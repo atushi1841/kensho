@@ -1,0 +1,37 @@
+{
+  "task_id": "t_9a529295",
+  "status": "complete",
+  "success_indicators": [
+    "Smithery publish SUCCESS (deploymentId=1270f9db)",
+    "API tools=2 confirmed (search_japan_marketplace, get_japan_resale_guidance, etc.)",
+    "connections=1 stdio confirmed",
+    "mcpUrl=japan-ec-mcp--atushi1841.run.tools",
+    "dev.to 31 articles: 30 have Apify link, 1 is MCP-specialized (no-store needed)",
+    "devto_internal_links.py --list: 追記対象 0本 (all linked)",
+    "GitHub README: 14 Apify links + 4 MCP connection patterns added"
+  ],
+  "failures": [
+    "mcp.so API: HTTP 502 (down for 30+ minutes, not our fault)",
+    "mcp.so web page: notFound route for atushi1841 (server not listed)",
+    "Official MCP registry (registry.modelcontextprotocol.io): 0 hits out of 30 servers"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/devto_internal_links.py --list => 追記対象: 0本",
+    "$ cat reports/apify-seo/devto-links.json => applied=false rows=[]",
+    "$ curl https://api.smithery.ai/servers/atushi1841/japan-ec-mcp => HTTP 200 tools:2+",
+    "$ curl https://api.mcp.so/servers/atushi1841 => HTTP 502",
+    "$ curl https://registry.modelcontextprotocol.io/v0/servers => 30 total, 0 hits"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_9a529295_verification.md"
+  ],
+  "metrics": {
+    "smithery_registered": true,
+    "devto_linked_articles": 30,
+    "devto_total_articles": 31,
+    "mcp_so_status": "502_DOWN",
+    "official_registry_status": "not_listed",
+    "readme_apify_links": 14,
+    "readme_mcp_patterns": 4
+  }
+}
