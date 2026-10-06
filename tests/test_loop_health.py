@@ -205,3 +205,56 @@ def test_priority_advice_fields_present(tmp_path: Path) -> None:
 
     # stagnation_streak は streak と同一（停止ターン数）
     assert r["stagnation_streak"] == r["streak"]
+
+
+def test_artifact_age_field_present(tmp_path: Path) -> None:
+    """t_aeba6230: artifact_age_hours フィールドがJSON出力に含まれる."""
+    tasks = [
+        {"id": "t_art1", "status": "running", "title": "artifact test", "started_at": NOW_TS - 3600, "result": None},
+    ]
+    out = _run_loop_health(tmp_path, tasks)
+    assert "artifact_age_hours" in out
+    assert "artifact_age_penalty" in out
+    # 既存DBにcommentがないタスクは inf または実時刻に基づく値
+
+
+def test_artifact_age_penalty_via_override(tmp_path: Path) -> None:
+    """t_aeba6230: LOOPHEALTH_ARTIFACT_AGE_OVERRIDE でスコア減点を検証."""
+    import os
+    # artifact_age >= 2h のタスクをOverride
+    env = os.environ.copy()
+    env["LOOPHEALTH_ARTIFACT_AGE_OVERRIDE"] = json.dumps({"t_art2": 3.0})  # 3h = >=2h penalty
+    tasks = [
+        {"id": "t_art2", "status": "running", "title": "artifact penalty test", "started_at": NOW_TS - 3600, "result": None},
+    ]
+    proc = subprocess.run(
+        ["bash", str(SCRIPT), "--tasks", json.dumps(tasks), "--board", "kensho-ai-team",
+         "--state", str(tmp_path / "s.json"), "--dry-run", "--no-park"],
+        capture_output=True, text=True, timeout=120, env=env, cwd=REPO_ROOT,
+    )
+    assert proc.returncode == 0, proc.stderr
+    out = json.loads(proc.stdout)
+    # artifact_age 3h >= 2h → -15 penalty (score = 100 - 15 = 85 最小)
+    assert out["artifact_age_hours"]["t_art2"] == 3.0
+    assert out["artifact_age_penalty"] == 15
+    assert out["score"] <= 85  # 他の減点がある可能性を考慮
+
+
+def test_artifact_age_no_penalty_healthy(tmp_path: Path) -> None:
+    """t_aeba6230: commentありかつrecentなタスクはpenaltyなし."""
+    import os
+    # artifact_age < 2h (recent comment)
+    env = os.environ.copy()
+    env["LOOPHEALTH_ARTIFACT_AGE_OVERRIDE"] = json.dumps({"t_art3": 0.5})  # 30min = no penalty
+    tasks = [
+        {"id": "t_art3", "status": "running", "title": "healthy artifact test", "started_at": NOW_TS - 3600, "result": None},
+    ]
+    proc = subprocess.run(
+        ["bash", str(SCRIPT), "--tasks", json.dumps(tasks), "--board", "kensho-ai-team",
+         "--state", str(tmp_path / "s.json"), "--dry-run", "--no-park"],
+        capture_output=True, text=True, timeout=120, env=env, cwd=REPO_ROOT,
+    )
+    assert proc.returncode == 0, proc.stderr
+    out = json.loads(proc.stdout)
+    assert out["artifact_age_hours"]["t_art3"] == 0.5
+    assert out["artifact_age_penalty"] == 0

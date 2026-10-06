@@ -395,6 +395,55 @@ except Exception:
     running_without_pid = 0
     pass
 
+# ── Artifact Age monitoring (t_aeba6230 / 2026-10-06) ─────────────────────
+# dev.to pattern: 「プロセス生存より最終成果物の鮮度」。running中タスクの
+# 最終 comment/checkpoint 時刻を DB から取得し、経過時間を計算する。
+#   >= 2h → score -15, >= 4h → -30（streak 加算用）、>= 6h → park 対象。
+# LOOPHEALTH_ARTIFACT_AGE_OVERRIDE: テスト用 env (JSON: {"t_xxx": 1.5, ...})。
+artifact_age_hours = {}  # task_id -> hours since last comment
+_artifact_override = os.environ.get("LOOPHEALTH_ARTIFACT_AGE_OVERRIDE", "")
+if _artifact_override:
+    try:
+        artifact_age_hours.update(json.loads(_artifact_override))
+    except Exception:
+        artifact_age_hours = {}
+else:
+    try:
+        _dbp = os.environ.get("_LH_DB", "")
+        if _dbp and os.path.exists(_dbp):
+            with sqlite3.connect("file:%s?mode=ro" % _dbp, uri=True) as _c:
+                _c.row_factory = sqlite3.Row
+                for _t in running:
+                    _tid = _t["id"]
+                    _row = _c.execute(
+                        "SELECT MAX(created_at) AS last_ts FROM task_comments WHERE task_id = ?",
+                        (_tid,)
+                    ).fetchone()
+                    _last_ts = _row["last_ts"] if _row and _row["last_ts"] else None
+                    if _last_ts:
+                        artifact_age_hours[_tid] = (now - int(_last_ts)) / 3600.0
+                    else:
+                        artifact_age_hours[_tid] = float('inf')  # no comments = infinite age
+    except Exception:
+        artifact_age_hours = {}
+
+# artifact_age based score deductions (t_aeba6230)
+artifact_age_penalty = 0
+if artifact_age_hours:
+    # Use the oldest running task's artifact age (same as top_task)
+    _oldest_id = by_age[0]["id"] if by_age else None
+    _oldest_artifact_age = artifact_age_hours.get(_oldest_id, 0) if _oldest_id else 0
+    # Also check if ANY running task has artifact_age >= thresholds (for broader detection)
+    _any_2h = any(v >= 2 for v in artifact_age_hours.values() if v != float('inf')) or \
+              any(v == float('inf') for v in artifact_age_hours.values())
+    _any_4h = any(v >= 4 for v in artifact_age_hours.values() if v != float('inf')) or \
+              any(v == float('inf') for v in artifact_age_hours.values())
+    if _any_4h:
+        artifact_age_penalty = 30
+    elif _any_2h:
+        artifact_age_penalty = 15
+score -= artifact_age_penalty
+
 # config-based max_in_progress (v143 / t_6f45dab0): dispatcher と同一の解決経路。
 # 旧: resolve_max_in_progress(None) → NameError → score=0/alert=ERROR で監視死亡。
 # 本実装: profile config の kanban.max_in_progress → 無い場合は derive_default (8)。
@@ -755,6 +804,8 @@ print(json.dumps({
     "priority": priority,
     "stagnation_streak": streak,
     "advice": advice,
+    "artifact_age_hours": artifact_age_hours,
+    "artifact_age_penalty": artifact_age_penalty,
 }))
 PYEOF
 )
