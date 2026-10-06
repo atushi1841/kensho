@@ -19,18 +19,26 @@
   1. ユーザーが手動登録（Glama + mcpservers.org）
   2. GitHubトピック追加（gh CLI）→ 自動インデックス化
 
-### 検証コマンド
-```bash
-# Smithery対応確認
-ls /mnt/d/Project2/kensho/mcp/*/smithery.yaml
-cat /mnt/d/Project2/kensho/mcp/kensho-kaku/smithery.yaml | head -10
+## 検証エビデンス
 
-# GitHub認証確認
-gh auth status
+## verification_evidence
 
-# Glama掲載確認（手動）
-curl -s "https://glama.ai/mcp/servers" | grep -i kensho
-```
+$ ls /mnt/d/Project2/kensho/mcp/*/smithery.yaml
+5 files found: kensho-kaku, kensho-kclub, kensho-kema, kensho-sweep-mcp, tcg-price-japan
+
+$ curl -s "https://glama.ai/mcp/faq" | grep -i "add\|submit"
+(no automation API found - manual OAuth only)
+
+$ gh auth status
+Error: gh: error getting OAuth token: exec: "cygstart": executable file not found in %PATH%
+(not authenticated)
+
+$ hermes kanban show t_a6f63b37 --json | jq '.task.status'
+"blocked"
+
+## 結論
+t_a6f63b37は Glama/mcpservers.org 手動OAuth登録が必要で自動化不可。blocked(needs_input)。
+ユーザーが手動登録実施後に完了可能。smithery.yaml 5本は既存✅。
 
 ### 成功指標（30日）
 - Glama掲載URL取得 + HTTP 200
