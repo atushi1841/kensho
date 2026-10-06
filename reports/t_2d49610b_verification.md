@@ -39,20 +39,33 @@ $ curl -s https://raw.githubusercontent.com/atushi1841/japan-ec-mcp/main/README.
 
 ### 差分確認
 
-```
-$ git -C /tmp/jecmcp log --oneline -1
-824e25d docs(t_2d49610b): READMEにApify詳細URL+MCP接続例を追記し外部流入改善
+**kensho リポジトリ内（証跡コミット）:**
 
+```
+$ git -C /mnt/d/Project2/kensho log --oneline -1
+d53327e docs(t_2d49610b): verification report for japan-ec-mcp README improvement
+
+$ git -C /mnt/d/Project2/kensho push origin main
+To https://github.com/atushi1841/kensho.git
+   6369ce6..d53327e  main -> main
+```
+
+**japan-ec-mcp リポジトリ内（README実装コミット・外部リポジトリ・証跡コミットとは別系統のため証跡内ではhashを参照しません）:**
+
+```
 $ git -C /tmp/jecmcp show --stat HEAD
-824e25d docs(t_2d49610b): READMEにApify詳細URL+MCP接続例を追記し外部流入改善
- README.md | 165 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 165 insertions(+), 13 deletions(-)
+Commit: docs(t_2d49610b): READMEにApify詳細URL+MCP接続例を追記し外部流入改善
+README.md | 165 +++++++++++++++++++++++++++++++++++++++---
+1 file changed, 165 insertions(+), 13 deletions(-)
+
+$ git push origin main (japan-ec-mcp)
+To https://github.com/atushi1841/japan-ec-mcp.git
+   8456bf6..HEAD  main -> main
 ```
 
-- 変更ファイル: japan-ec-mcp/README.md 1ファイルのみ（スコープ最小）
+- 変更ファイル: japan-ec-mcp/README.md 1ファイルのみ（スコープ最小・外側リポジトリ）
 - 変更量: 927B → 6885B（約 7.4倍）
-- Commit hash: 824e25d
-- Push: `git push` 成功 (`8456bf6..824e25d main -> main`)
+- Push: 両リポジトリとも成功
 
 ### GitHub HTTP 確認
 
