@@ -1,0 +1,22 @@
+{
+  "success_indicators": [
+    "devto_internal_links.py --list: 追記対象0本",
+    "devto-links.json applied=true",
+    "31記事全Apifyリンク済"
+  ],
+  "verification_commands": [
+    "python3 scripts/devto_internal_links.py --list",
+    "cat reports/apify-seo/devto-links.json",
+    "grep -rl apify.com/fruitful_quintessence reports/journalism/drafts/ | wc -l"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_7658589a_verification.md",
+    "/mnt/d/Project2/kensho/reports/apify-seo/devto-links.json"
+  ],
+  "evidence_hashes": [
+    "sha256:74f372feae48ff957e3b754ff2077e9777d0cf264c948d12ac1e37915c59832e",
+    "sha256:3dfb36df1cd82d985173463bfefff90c0d8f7b763bc9fc53a6beeabe279fa674"
+  ],
+  "task_id": "t_7658589a",
+  "status": "complete"
+}
