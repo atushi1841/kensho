@@ -1,0 +1,18 @@
+{
+  "task_id": "t_b059c536",
+  "status": "success",
+  "success_indicators": [
+    "\u8abf\u67fb\u5b8c\u4e86"
+  ],
+  "verification_commands": [
+    "git -C /mnt/d/Project2/kensho log --oneline -5",
+    "python -m pytest -q --no-cov tests/test_regression_gates.py::test_loop_health_band_reset_invariant tests/test_agent_eval_harness.py::test_sim_three_consecutive tests/test_revenue_collect.py::TestV94PpeFallbackPath::test_load_ppe_actors_reads_data_tmp_entity",
+    "python3 -c \"import sys; sys.path.insert(0, '/mnt/d/Project2/kensho/scripts'); import kensho_revenue_collect as krc; print(krc.load_ppe_actors())\""
+  ],
+  "artifact_paths": [
+    "reports/t_b059c536_verification.md"
+  ],
+  "evidence_hashes": {
+    "reports/t_b059c536_verification.md": "c14ff64111d119e8f74b19c263ec08b6166c3bb99d761a9591d824e1b6453d22"
+  }
+}
