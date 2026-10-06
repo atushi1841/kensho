@@ -626,6 +626,22 @@ def check_shadowban(username: str) -> bool:
         return False
 
 
+def _target_username() -> str:
+    """運用垢の一元管理: data/reddit/expected_account.txt を正とする。
+
+    2026-10-07 決定: 運用垢は u/Former-Minute-3264（実測で cookie 有効・垢年齢49日。
+    u/sabotenJAL は 10/3 に実投稿成功の実績があるが、以後の cookie 更新が無く現在は
+    別垢の cookie しか手元に無いため予備扱い）。ゲート G4 はこのファイルと照合するので、
+    ここを直せば agent 側の想定垢も自動で追従する。
+    """
+    p = Path(__file__).resolve().parents[1] / "data" / "reddit" / "expected_account.txt"
+    try:
+        name = p.read_text(encoding="utf-8").strip()
+    except OSError:
+        name = ""
+    return name or "Former-Minute-3264"
+
+
 def check_karma(username: str) -> dict[str, Any] | None:
     """current karma to compare against stored baseline."""
     url = f"https://www.reddit.com/user/{username}/about.json"
@@ -759,7 +775,7 @@ def main() -> int:
 
     # 7. ベンチマーク記録（karma baseline）
     if args.baseline:
-        username = "sabotenJAL"
+        username = _target_username()
         cur = check_karma(username)
         if cur:
             cur["checked_at"] = datetime.now(JST).isoformat()
@@ -809,7 +825,7 @@ def do_submit(sched: dict[str, Any], fact: dict[str, Any]) -> int:
     # 調査では「新垢は 1-2件/時、1日3-5件まで」が共通見解（超過は最速の検知トリガー）。
     max_per_run = 1  # 調査の共通見解: 新垢は 1-2件/時。1回の起動で撃つのは1件まで。
 
-    username = "sabotenJAL"
+    username = _target_username()
     # ベースライン確認
     baseline = load_karma_baseline()
     cur_karma = check_karma(username)
