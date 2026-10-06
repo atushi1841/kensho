@@ -115,6 +115,24 @@ def test_assign_pathway_keeps_existing() -> None:
     assert item.get(PATHWAY_KEY) == "LINE"
 
 
+def test_assign_pathway_reclassifies_unclassified() -> None:
+    """"未判定" は確定値ではなく未取得の意味 — 本文が入れば再判定する。
+
+    2026-10-07 実測: 収集時は tweet_text 未取得で全件 "未判定" になり、
+    その後本文が付いても再判定されず 283/283 が自動応募対象外になっていた。
+    """
+    item: dict[str, object] = {"tweet_text": "フォロー＆リポストで応募", PATHWAY_KEY: "未判定"}
+    label = assign_pathway(item)
+    assert label == X_LABEL
+    assert item.get(PATHWAY_KEY) == X_LABEL
+
+
+def test_assign_pathway_unclassified_stays_when_no_text() -> None:
+    """本文が無ければ "未判定" のまま（安全側・自動応募対象外）。"""
+    item: dict[str, object] = {PATHWAY_KEY: "未判定"}
+    assert assign_pathway(item) == "未判定"
+
+
 def test_label_counts_categorizes() -> None:
     items: list[dict[str, object]] = [
         {"tweet_text": "フォロー&RTで応募", PATHWAY_KEY: "X"},

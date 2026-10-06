@@ -181,11 +181,22 @@ def classify_pathway(text: str) -> str:
 # 検証コマンド(タスク本文)は '導線' キーを読むため、このキー名で統一する。
 PATHWAY_KEY: str = "導線"
 
+# 本文未取得を表すラベル。"未判定" は確定値ではなく「未取得」の意味なので、
+# tweet_text が後から入った時点で再判定する（他のラベルは確定値として保持）。
+UNCLASSIFIED_LABEL: str = "未判定"
+
 
 def assign_pathway(item: dict[str, Any]) -> str:
-    """collected アイテムに導入ラベルを付与して返す（既存は再判定せず保持）。"""
+    """collected アイテムに導入ラベルを付与して返す。
+
+    既存ラベルは保持するが、"未判定" だけは再判定する。
+    理由 (2026-10-07 実測): 収集時点では tweet_text が未取得のため全件が
+    "未判定" で確定し、その後 tweet_text が付与されても再判定されず、
+    applier 側で全件が自動応募対象外になっていた（応募枯渇の真因）。
+    "未判定" は「未取得」の意味なので、本文が手に入った時点で分類し直す。
+    """
     existing = item.get(PATHWAY_KEY)
-    if existing:
+    if existing and str(existing) != UNCLASSIFIED_LABEL:
         return str(existing)
     label: str = classify_pathway((item.get("tweet_text") or ""))
     item[PATHWAY_KEY] = label

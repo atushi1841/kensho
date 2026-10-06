@@ -154,3 +154,5 @@ data/overseas_prospects/_drafts_*.json
 data/overseas_prospects/_leads_*.json
 data/*.lock
 data/*.tmp
+.env.bak*
+.mypy_cache/
