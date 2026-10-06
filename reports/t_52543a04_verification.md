@@ -60,6 +60,12 @@ $ ruff check kensho/agent_api/
 Found 3 errors (UP042 StrEnum, N801 class name) — style warnings only, no errors
 ```
 
+## verification_evidence
+
+- $ python3 -m pytest tests/test_agent_api.py tests/test_price_monitor.py -q → 13 passed (PASS)
+- $ python3 -m kensho.agent_api.cli --help → CLIヘルプ表示確認 (PASS)
+- $ python3 -c "from kensho.agent_api import Agent, AgentAPI_DB, AgentAPIService" → インポート成功 (PASS)
+
 ## 収益化マップ
 - **収益源**: AIエージェント向けサブスクリプション（Pro ¥1,980/月、Business ¥4,980/月）
 - **現状**: MVP完成、外部run 0件、WAITLIST 0件
