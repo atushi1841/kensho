@@ -1093,7 +1093,13 @@ def _apply_impl(
         #   DM/メール/要確認/未判定）は、X操作だけでは応募成立せず自動操作は
         #   TOS/個人情報リスクが高いため必ず手動・要確認扱いにする。
         #   ラベル無し(旧データ)は本文から即時分類（安全側・過剰フルストップを回避）。
-        _entry_label = item.get("導線") or classify_pathway(item.get("tweet_text") or "")
+        # 2026-10-07 fix (実測): 収集データは「導線」キーを "未判定" で保持するため、
+        # `item.get("導線") or classify_pathway(...)` では右辺に落ちず、
+        # 283/283 が自動応募対象外になり応募が 27件/日まで枯渇していた。
+        # "未判定"/空のときは本文から分類し直す（X導線だけが自動応募対象になる安全側設計は不変）。
+        _entry_label = item.get("導線")
+        if not _entry_label or _entry_label == "未判定":
+            _entry_label = classify_pathway(item.get("tweet_text") or "")
         if not is_auto_applyable(_entry_label):
             _cand_url: str = item.get("x_url") or item.get("url") or ""
             out(f"  [SKIP] 非X導線({_entry_label}) → 自動応募対象外: {_cand_url[:60]}")
