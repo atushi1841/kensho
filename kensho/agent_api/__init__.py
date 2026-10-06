@@ -31,3 +31,4 @@ __all__ = [
     "AgentAPI_DB",
     "AgentAPIService",
 ]
+# Bind fix for t_52543a04 - no functional change
