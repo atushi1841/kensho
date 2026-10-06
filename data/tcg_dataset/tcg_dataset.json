@@ -1,7 +1,7 @@
 {
   "source": "suruga-ya.jp",
-  "total_observations": 2040,
-  "unique_items": 170,
+  "total_observations": 2160,
+  "unique_items": 171,
   "with_used_price": 92,
   "in_stock": 92,
   "keywords": [
@@ -12,7 +12,7 @@
     "ポケモンカードゲーム リザードン"
   ],
   "first_collected_at": "2026-09-21T23:13:01Z",
-  "last_collected_at": "2026-10-05T22:30:44Z",
+  "last_collected_at": "2026-10-06T22:30:46Z",
   "price_changed_items": 8,
   "used_price_movers": [
     {
@@ -20,14 +20,14 @@
       "first_price_jpy": 648000,
       "last_price_jpy": 598000,
       "delta_jpy": -50000,
-      "observations": 17
+      "observations": 18
     },
     {
       "name": "ポケモンカードゲーム スカーレット＆バイオレット スペシャルデッキセットex フシギバナ・リザードン・カメックス",
       "first_price_jpy": 42800,
       "last_price_jpy": 34800,
       "delta_jpy": -8000,
-      "observations": 17
+      "observations": 18
     },
     {
       "name": "125/098[SAR]：(キラ)ロケット団のミュウツーex",
@@ -41,21 +41,21 @@
       "first_price_jpy": 49800,
       "last_price_jpy": 46800,
       "delta_jpy": -3000,
-      "observations": 17
+      "observations": 18
     },
     {
       "name": "183/165[AR]：(キラ)ミュウツー",
       "first_price_jpy": 3480,
       "last_price_jpy": 1940,
       "delta_jpy": -1540,
-      "observations": 15
+      "observations": 16
     },
     {
       "name": "237/193[SAR]：(キラ)ロケット団のミュウツーex",
       "first_price_jpy": 13800,
       "last_price_jpy": 12800,
       "delta_jpy": -1000,
-      "observations": 17
+      "observations": 18
     },
     {
       "name": "054/103：(キラ)ミュウツー",
@@ -69,7 +69,7 @@
       "first_price_jpy": 280,
       "last_price_jpy": 270,
       "delta_jpy": -10,
-      "observations": 17
+      "observations": 18
     }
   ],
   "latest_csv": "/mnt/d/Project2/kensho/data/tcg_dataset/tcg_dataset_latest.csv",
