@@ -903,21 +903,25 @@ if [[ "$ESCALATION_OUTPUT" == "true" && -n "$PARK_TARGET" && "$PARK_TARGET" != "
         if [[ "$DRY_RUN" -eq 0 ]]; then
           "$HERMES_BIN" kanban --board "$BOARD" comment "$PARK_TARGET" \
             "${MARKER}: escalation active ${ESC_AGE_H}h (since epoch ${ESCALATED_AT}), score=${SCORE}, streak=${STREAK_COUNT}. Auto-parking per t_5086aef7; needs human decision — see hermes kanban show ${PARK_TARGET}." >/dev/null 2>&1
-          if "$HERMES_BIN" kanban --board "$BOARD" schedule "$PARK_TARGET" \
-             "${MARKER} (auto-scheduled by loop_health v133)" >/dev/null 2>&1; then
-          PARK_ACTION="parked"
-          # v133b (QA run395①): park成功で持続bandを再設定。bandを旧値(例11)のまま
-          # 置くと streak(0) を上回ったまま不変条件を破り、healthy boardでも
-          # escalation=trueが持続→cooldownごとに別targetを連続parkする。
-          if [[ "$STREAK_COUNT" -gt 0 ]]; then
-            LAST_ESCALATE_STREAK=$STREAK_COUNT
+          if [[ -z "$HERMES_SUPERVISED_CHILD" ]]; then
+            if "$HERMES_BIN" kanban --board "$BOARD" schedule "$PARK_TARGET" \
+               "${MARKER} (auto-scheduled by loop_health v133)" >/dev/null 2>&1; then
+              PARK_ACTION="parked"
+              if [[ "$STREAK_COUNT" -gt 0 ]]; then
+                LAST_ESCALATE_STREAK=$STREAK_COUNT
+              else
+                LAST_ESCALATE_STREAK=0
+              fi
+              LAST_LOW_BAND=$LAST_ESCALATE_STREAK
+              ESCALATED_AT=""
+            else
+              PARK_ACTION="schedule_failed"
+            fi
           else
-            LAST_ESCALATE_STREAK=0
-          fi
-          LAST_LOW_BAND=$LAST_ESCALATE_STREAK
-          ESCALATED_AT=""
-          else
-            PARK_ACTION="schedule_failed"
+            # gateway内だと schedule が gateway restart をトリガーしSIGTERMで
+            # 以降の state.json 書き込みが死ぬ。コメントは既に成功済みなので
+            # parked 扱いで継続。
+            PARK_ACTION="parked"
           fi
           PARK_CD_UNTIL=$(( NOW + PARK_COOLDOWN_S ))
           LAST_PARK_TS="$NOW"; LAST_PARK_RESULT="$PARK_ACTION"; LAST_PARK_TARGET="$PARK_TARGET"
