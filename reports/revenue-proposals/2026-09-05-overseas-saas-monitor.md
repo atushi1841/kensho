@@ -1,7 +1,7 @@
 # 海外SaaS 需要モニタ & 提案DM 下書き (2026-09-05)
 
-- 生成: 2026-10-06T07:07:01.298304+09:00
-- 収集ヒット: 38 / 需要シグナル: 15 / 提案下書き: 1
+- 生成: 2026-10-07T07:07:04.726709+09:00
+- 収集ヒット: 7 / 需要シグナル: 1 / 提案下書き: 0
 - 収集源: HN Algolia 公式API (無料・レート制限遵守)。Reddit公式API/X自垢は次フェーズで拡張
 - 方針: すべて【下書きのみ】。自動送信はしない。送信可否はユーザー最終判断。
 
@@ -88,12 +88,4 @@ If you're researching used-goods prices across 800+ hard off / offmall second-ha
 
 ## 提案DM 下書き一覧 (本日ヒット)
 
-### Show HN: SoldStack – sold prices API for secondhand clothes
-
-- ソース: HN:49966745 / 2026-10-05T16:09:30Z
-- URL: https://soldstack.fly.dev/
-- マッチ: Mercari Japan Search Scraper
-
-```
-Hi aarontian0 — saw your post "Show HN: SoldStack – sold prices API for secondhand clothes". If you're still looking, I have a Mercari Japan listings scraper (used prices in JPY) — fits a lot of the mercari, mercari japan use cases you mentioned. It's $0.002 / result. Here's the link if you want to check it out: https://apify.com/apitor/mercari-japan-search-scraper. Happy to share a sample too if useful. No pressure, just figured it might save you the build.
-```
+(本日、直近7日の需要投稿に十分なマッチなし。テンプレートは上記から手動利用可能)

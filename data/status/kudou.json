@@ -6,9 +6,9 @@
     "unchecked"
   ],
   "port": 1082,
-  "last_success": "",
-  "last_error_type": "",
+  "last_success": "2026-10-06T11:44:39Z follow",
+  "last_error_type": "no_like_button",
   "stop_reason": "",
   "account": "kudou",
-  "updated": "2026-10-06T03:45:34.768093"
+  "updated": "2026-10-07T07:15:22.714102"
 }
