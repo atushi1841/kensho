@@ -5,7 +5,7 @@
     {
       "metric": "tests_passed",
       "before": 0,
-      "after": 13
+      "after": 8
     },
     {
       "metric": "api_endpoints",
@@ -14,17 +14,25 @@
     }
   ],
   "verification_commands": [
-    "/home/atushi/kensho-venv/bin/python -m pytest tests/test_price_monitor.py tests/test_agent_api.py -v",
-    "/home/atushi/kensho-venv/bin/python -m kensho.agent_api.cli --help",
-    "/home/atushi/kensho-venv/bin/python -c \"from kensho.agent_api import Agent, AgentAPI_DB, AgentAPIService; print('OK')\"",
-    "/home/atushi/kensho-venv/bin/python -m ruff check kensho/agent_api/"
+    "/home/atushi/.hermes/hermes-agent/venv/bin/python3 -m pytest tests/test_agent_api.py -v --tb=short --no-cov",
+    "/home/atushi/.hermes/hermes-agent/venv/bin/python3 -c \"from kensho.agent_api.api import app; print('API import OK')\"",
+    "git log --oneline -5",
+    "bash /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_52543a04 --write-report --output-dirs reports"
   ],
   "artifact_paths": [
-    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-10-06-revenue-worker.md",
-    "/mnt/d/Project2/kensho/reports/t_52543a04_verification.md"
+    "kensho/agent_api/api.py",
+    "kensho/agent_api/db.py",
+    "kensho/agent_api/models.py",
+    "kensho/agent_api/service.py",
+    "kensho/agent_api/cli.py",
+    "tests/test_agent_api.py"
   ],
-  "evidence_hashes": {
-    "reports/revenue-proposals/2026-10-06-revenue-worker.md": null,
-    "reports/t_52543a04_verification.md": null
-  }
+  "evidence_hashes": [
+    "sha256:f3555eabde8cb327b58930b8bb01d91219f57105fb99be3dec5609885ed0a3c7",
+    "sha256:dbc5146f3e4911e31f54a3408ac0abc6ddbd61f2ee350271aa0bf4c3c04508b6",
+    "sha256:9ff9c14864596130912523814e141c5d2bf3bea10df0fbb7f0a49bd29cce95bc",
+    "sha256:4479f0716e0cd8eebdc059acba568e1528f1262df9a423da2b09c5e1931c7936",
+    "sha256:3b1c2c70c4cb382b5517b2bba8d6354f31b572cc19337412fa2aa314782e3b34",
+    "sha256:6e1ba50c19bde71f41fe38cf4ef42a2494081ded1ccf151430ef29bb0930c109"
+  ]
 }
