@@ -90,11 +90,14 @@ def call(method: str, path: str, key: str, body: dict | None = None) -> tuple[in
 
 
 def pick_actors(article: dict) -> list[str]:
-    hay = ((article.get("title") or "") + " " + " ".join(article.get("tag_list") or [])).lower()
+    hay = ((article.get("title") or "") + " " + " ".join(article.get("tag_list") or []) + " " + (article.get("body_markdown") or "")).lower()
+    matched: list[str] = []
     for keys, actors in ROUTES:
         if any(k in hay for k in keys):
-            return actors
-    return []
+            for a in actors:
+                if a not in matched:
+                    matched.append(a)
+    return matched
 
 
 def build_section(actors: list[str]) -> str:
@@ -130,21 +133,26 @@ def main() -> int:
     for a in arts:
         aid, title = a.get("id"), a.get("title")
         body = a.get("body_markdown") or ""
-        has_link = "apify.com/fruitful_quintessence" in body
         actors = pick_actors(a)
-        needs = bool(actors) and not has_link
-        print(f"  {'要追記' if needs else ('既存' if has_link else '対象外')} id={aid} {title[:58]}")
-        if not needs:
+        if not actors:
+            print(f"  対象外 id={aid} {title[:58]}")
             continue
-        new_body = body.rstrip() + "\n" + build_section(actors)
+        # 既に全アクターのlinkが存在するか（部分的でも可: 一部のみなら追加）
+        existing = [a2 for a2 in actors if f"{STORE_BASE}/{a2}" in body]
+        if len(existing) == len(actors):
+            print(f"  既存 id={aid} {title[:58]}")
+            continue
+        missing = [a2 for a2 in actors if a2 not in existing]
+        new_body = body.rstrip() + "\n" + build_section(missing)
         rows.append({"id": aid, "title": title, "url": a.get("url"), "actors": actors,
+                     "missing_actors": missing,
                      "added_chars": len(new_body) - len(body)})
         if args.apply:
             st2, resp = call("PUT", f"/{aid}", key, {"article": {"body_markdown": new_body}})
             st3, verify = call("GET", f"/{aid}", key)
             live = (verify.get("body_markdown") if isinstance(verify, dict) else "") or ""
             rows[-1].update({"put_status": st2, "readback_has_link":
-                             "apify.com/fruitful_quintessence" in live})
+                             all(f"{STORE_BASE}/{a2}" in live for a2 in actors)})
             print(f"     PUT {st2} / read-back 反映={rows[-1]['readback_has_link']}")
 
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
