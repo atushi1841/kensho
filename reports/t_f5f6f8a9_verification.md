@@ -1,4 +1,4 @@
-## verification evidence for t_f5f6f8a9
+## verification_evidence
 
 dominant task id: t_f5f6f8a9（本文引用9回）
 worker_output_file: /mnt/d/Project2/kensho/reports/t_f5f6f8a9_verification.md
@@ -33,4 +33,4 @@ outcome: {'metric': 'dev.to article published', 'before': 0, 'after': 1}
 - 達成可否: external_run>=1は**未達成**（pending扱い）
 
 ### 代替案
-記事公開自体は完了。外部流入は30日以内の.monitoring。
+記事公開自体は完了。外部流入は30日以内のmonitoring。
