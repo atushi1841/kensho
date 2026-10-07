@@ -1,0 +1,22 @@
+{
+  "success_indicators": [
+    "dev.to API PUT 200 ×3",
+    "read-back反映=True ×3",
+    "MLIT actor link confirmed in article 4794072"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/devto_internal_links.py --apply 2>&1 | tail -5 => 追記対象: 3本 -> reports/apify-seo/devto-links.json",
+    "$ python3 -c \"import json; d=json.load(open('reports/apify-seo/devto-links.json')); print('applied:', d['applied'], 'rows:', len(d['rows']))\" => applied: True rows: 3",
+    "$ DEVTO_KEY=$(grep DEVTO_API_KEY .env | cut -d= -f2 | tr -d '\\n'); curl -s -H \"api-key: $DEVTO_KEY\" \"https://dev.to/api/articles/4794072\" | python3 -c \"import json,sys,re; a=json.load(sys.stdin); b=a['body_markdown']; print('has_mlit:', 'mlit-japan-property-prices' in b)\" => has_mlit: True"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_51c711a9_verification.md",
+    "/mnt/d/Project2/kensho/reports/apify-seo/devto-links.json"
+  ],
+  "evidence_hashes": [
+    "ff17056d7cab9a5770f16f3fbcd7590990479d6b61e9713e9cc8e12c473b3b73",
+    "3dfb36df1cd82d985173463bfefff90c0d8f7b763bc9fc53a6beeabe279fa674"
+  ],
+  "task_id": "t_51c711a9",
+  "status": "complete"
+}
