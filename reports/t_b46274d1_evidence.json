@@ -1,0 +1,21 @@
+{
+  "success_indicators": [
+    "japan-market-mcp README now contains at least one apify.com link",
+    "japan-ec-mcp README already had 14 apify.com links (unchanged)",
+    "japan-anime-figure-mcp README now contains at least one apify.com link",
+    "All changes committed and pushed to GitHub main branch"
+  ],
+  "verification_commands": [
+    "curl -s https://raw.githubusercontent.com/atushi1841/japan-market-mcp/main/README.md | grep -c apify.com",
+    "curl -s https://raw.githubusercontent.com/atushi1841/japan-ec-mcp/main/README.md | grep -c apify.com",
+    "curl -s https://raw.githubusercontent.com/atushi1841/japan-anime-figure-mcp/main/README.md | grep -c apify.com"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_b46274d1_verification.md"
+  ],
+  "evidence_hashes": [
+    "0c12aa9b850f2ced3e563964886981a25773301cda41a48c60163d49568c0d2f"
+  ],
+  "task_id": "t_b46274d1",
+  "status": "complete"
+}
