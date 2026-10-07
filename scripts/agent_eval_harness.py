@@ -251,7 +251,15 @@ def simulate_cron_run(basedir: Path, run_idx: int) -> dict:
     score = 100 - run_idx * 2
     state = {"score": score, "streak": 0 if score >= 70 else prev_streak + 1,
              "running": 0, "blocked": 0, "top_task": None,
-             "lines": [f"score={score}"], "run": run_idx}
+             "lines": [f"score={score}"], "run": run_idx,
+             # v155 (t_7b49e7bf): priority/stagnation_streak/advice がループヘルス必須フィールドに追加されたため、
+             # simulate_cron_run も同等の構造を出力しないと judge_loop_health_json が FAIL する。
+             "priority": "normal", "stagnation_streak": 0,
+             "advice": {
+                 "critic": {"action": "continue", "reason": "sim"},
+                 "worker": {"action": "continue", "reason": "sim"},
+                 "qa": {"action": "continue", "reason": "sim"},
+             }}
     state_file.write_text(json.dumps(state), encoding="utf-8")
 
     checks = [

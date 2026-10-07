@@ -45,7 +45,11 @@ LAYERS = ("component", "trace", "sim")
 
 def _valid_loop_health(score: int = 88) -> str:
     return json.dumps({"score": score, "streak": 0, "running": 2,
-                       "blocked": 1, "top_task": None, "lines": ["score=88"]})
+                       "blocked": 1, "top_task": None, "lines": ["score=88"],
+                       "priority": "normal", "stagnation_streak": 0,
+                       "advice": {"critic": {"action": "continue", "reason": "ok"},
+                                  "worker": {"action": "continue", "reason": "ok"},
+                                  "qa": {"action": "continue", "reason": "ok"}}})
 
 
 @pytest.mark.parametrize("raw, expect_ok", [
