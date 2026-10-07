@@ -124,12 +124,37 @@ def test_done_guard_has_result_check() -> None:
 
 
 def _run_loop_health(state: dict[str, Any], now: int) -> tuple[dict[str, Any], dict[str, Any]]:
-    """loop_health.shをdry-run/no-parkで走らせ (stdout, 更新後state) を返す。"""
+    """loop_health.shをdry-run/no-parkで走らせ (stdout, 更新後state) を返す。
+
+    実board DB の artifact_age_penalty 等がスコアに影響しないよう、
+    空SQLite DB を --db 経由で注入して固定する。
+    """
+    import sqlite3
     import tempfile
 
     with tempfile.TemporaryDirectory() as td:
         state_file = Path(td) / "loop_health_state.json"
         state_file.write_text(json.dumps(state), encoding="utf-8")
+        # 空のkanban DBを作成（artifact_age_penaltyやdeadlock guardが実boardを参照しないよう）
+        db_file = Path(td) / "empty.db"
+        conn = sqlite3.connect(str(db_file))
+        conn.executescript(
+            "CREATE TABLE tasks(id TEXT PRIMARY KEY, status TEXT, title TEXT,"
+            " result TEXT, started_at INTEGER);"
+            "CREATE TABLE task_runs(id INTEGER PRIMARY KEY, task_id TEXT,"
+            " status TEXT, started_at INTEGER);"
+            "CREATE TABLE task_comments(id INTEGER PRIMARY KEY, task_id TEXT,"
+            " body TEXT, created_at INTEGER);"
+            "CREATE TABLE task_links(child_id TEXT, parent_id TEXT);"
+            # _db_has_tasks counts rows in `tasks`; a single row keeps the injected
+            # DB from being overwritten by the real kanban.db fallback.
+            f"INSERT INTO tasks(id, status, title, result, started_at)"
+            f" VALUES ('t_gatecheck', 'running', 'healthy', NULL, {now});"
+            "INSERT INTO task_comments(id, task_id, body, created_at)"
+            f" VALUES (1, 't_gatecheck', 'fixture comment', {now});"
+        )
+        conn.commit()
+        conn.close()
         tasks = json.dumps([
             {"id": "t_gatecheck", "status": "running", "title": "healthy", "started_at": now - 3600, "result": None}
         ])
@@ -139,6 +164,8 @@ def _run_loop_health(state: dict[str, Any], now: int) -> tuple[dict[str, Any], d
                 str(LOOP_HEALTH),
                 "--tasks",
                 tasks,
+                "--db",
+                str(db_file),
                 "--state",
                 str(state_file),
                 "--dry-run",

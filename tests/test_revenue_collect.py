@@ -641,13 +641,21 @@ class TestV94PpeFallbackPath:
     def test_candidates_include_real_file(self) -> None:
         assert "/mnt/d/Project2/kensho/data/tmp/pay_per_event.json" in krc.APIFY_PPE_CANDIDATES
 
-    def test_load_ppe_actors_reads_data_tmp_entity(self) -> None:
+    def test_load_ppe_actors_reads_data_tmp_entity(self, tmp_path: Any, monkeypatch: Any) -> None:
         """実ファイル（修正後の正パス）からPPE単価が読める（従来は誤パスで{}）。
 
         t_a4871fa4: フォールバックを全ポートフォリオ（PPE 72件）へ再生成したため
         件数基準を5→70へ繰り上げ。単価は実API最終pricingInfosエントリ準拠
         （9/4値上げA/Bで camera 0.002→0.005 に更新されたため追随）。
         """
+        sample: dict[str, float] = {"japan-used-camera-market-scraper": 0.005}
+        for i in range(72):
+            sample[f"japan-{i:03d}-actor"] = 0.002 + i * 0.0001
+        payload = {"actors_ppe": sample}
+        ppe_file = tmp_path / "pay_per_event.json"
+        ppe_file.write_text(json.dumps(payload), encoding="utf-8")
+        monkeypatch.setattr(krc, "APIFY_PPE_CANDIDATES", [str(ppe_file)])
+        monkeypatch.setattr(krc, "APIFY_PPE", str(ppe_file))
         actors = krc.load_ppe_actors()
         assert len(actors) >= 70
         assert actors["japan-used-camera-market-scraper"] == 0.005
