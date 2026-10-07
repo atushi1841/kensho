@@ -60,15 +60,15 @@
     }
   },
   "2104375750963159448": {
-    "score": 45.46,
+    "score": 45.63,
     "factors": {
-      "engagement": 59.0,
+      "engagement": 59.5,
       "prize": 30.0,
       "deadline": 37.78,
       "event_type": 55.0
     },
     "factors_raw": {
-      "estimated_applicants": 590,
+      "estimated_applicants": 595,
       "prize_value_jpy": 0,
       "days_remaining": 6.0,
       "is_national": true
@@ -120,75 +120,75 @@
     }
   },
   "2104405812131364938": {
-    "score": 39.65,
+    "score": 39.83,
     "factors": {
-      "engagement": 64.0,
+      "engagement": 64.5,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 55.0
     },
     "factors_raw": {
-      "estimated_applicants": 640,
+      "estimated_applicants": 645,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": true
     }
   },
   "2104737928031486004": {
-    "score": 47.17,
+    "score": 48.57,
     "factors": {
-      "engagement": 55.0,
+      "engagement": 59.0,
       "prize": 30.0,
       "deadline": 53.33,
       "event_type": 55.0
     },
     "factors_raw": {
-      "estimated_applicants": 550,
+      "estimated_applicants": 590,
       "prize_value_jpy": 0,
       "days_remaining": 12.0,
       "is_national": true
     }
   },
   "2103357893714268429": {
-    "score": 42.42,
+    "score": 42.6,
     "factors": {
-      "engagement": 60.5,
+      "engagement": 61.0,
       "prize": 30.0,
       "deadline": 20.0,
       "event_type": 55.0
     },
     "factors_raw": {
-      "estimated_applicants": 605,
+      "estimated_applicants": 610,
       "prize_value_jpy": 0,
       "days_remaining": 2.0,
       "is_national": true
     }
   },
   "2103635666185662498": {
-    "score": 58.25,
+    "score": 58.42,
     "factors": {
-      "engagement": 60.0,
+      "engagement": 60.5,
       "prize": 30.0,
       "deadline": 100.0,
       "event_type": 55.0
     },
     "factors_raw": {
-      "estimated_applicants": 600,
+      "estimated_applicants": 605,
       "prize_value_jpy": 0,
       "days_remaining": 54.0,
       "is_national": true
     }
   },
   "2101823729395286325": {
-    "score": 39.12,
+    "score": 39.3,
     "factors": {
-      "engagement": 62.5,
+      "engagement": 63.0,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 55.0
     },
     "factors_raw": {
-      "estimated_applicants": 625,
+      "estimated_applicants": 630,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": true
@@ -210,15 +210,15 @@
     }
   },
   "2097973364417868137": {
-    "score": 45.05,
+    "score": 45.22,
     "factors": {
-      "engagement": 68.0,
+      "engagement": 68.5,
       "prize": 30.0,
       "deadline": 20.0,
       "event_type": 55.0
     },
     "factors_raw": {
-      "estimated_applicants": 680,
+      "estimated_applicants": 685,
       "prize_value_jpy": 0,
       "days_remaining": 2.0,
       "is_national": true
@@ -285,30 +285,30 @@
     }
   },
   "2103394071460880860": {
-    "score": 58.49,
+    "score": 58.66,
     "factors": {
-      "engagement": 73.86,
+      "engagement": 74.36,
       "prize": 30.0,
       "deadline": 84.44,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 738,
+      "estimated_applicants": 743,
       "prize_value_jpy": 0,
       "days_remaining": 24.0,
       "is_national": false
     }
   },
   "2099392706711888075": {
-    "score": 58.96,
+    "score": 59.13,
     "factors": {
-      "engagement": 75.2,
+      "engagement": 75.7,
       "prize": 30.0,
       "deadline": 84.44,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 752,
+      "estimated_applicants": 757,
       "prize_value_jpy": 0,
       "days_remaining": 24.0,
       "is_national": false
@@ -465,45 +465,45 @@
     }
   },
   "2098577341660434456": {
-    "score": 61.22,
+    "score": 61.39,
     "factors": {
-      "engagement": 81.65,
+      "engagement": 82.15,
       "prize": 30.0,
       "deadline": 84.44,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 816,
+      "estimated_applicants": 821,
       "prize_value_jpy": 0,
       "days_remaining": 24.0,
       "is_national": false
     }
   },
   "2103318826079461555": {
-    "score": 56.62,
+    "score": 56.8,
     "factors": {
-      "engagement": 68.53,
+      "engagement": 69.03,
       "prize": 30.0,
       "deadline": 84.44,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 685,
+      "estimated_applicants": 690,
       "prize_value_jpy": 0,
       "days_remaining": 24.0,
       "is_national": false
     }
   },
   "2103786703936999815": {
-    "score": 55.27,
+    "score": 55.44,
     "factors": {
-      "engagement": 64.66,
+      "engagement": 65.16,
       "prize": 30.0,
       "deadline": 84.44,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 646,
+      "estimated_applicants": 651,
       "prize_value_jpy": 0,
       "days_remaining": 24.0,
       "is_national": false
@@ -945,15 +945,15 @@
     }
   },
   "2103681066263527529": {
-    "score": 39.9,
+    "score": 40.08,
     "factors": {
-      "engagement": 69.01,
+      "engagement": 69.51,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 690,
+      "estimated_applicants": 695,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -1005,15 +1005,15 @@
     }
   },
   "2102352216086454474": {
-    "score": 39.88,
+    "score": 40.05,
     "factors": {
-      "engagement": 68.94,
+      "engagement": 69.44,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 689,
+      "estimated_applicants": 694,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -1035,15 +1035,15 @@
     }
   },
   "2102971446737899542": {
-    "score": 39.53,
+    "score": 39.7,
     "factors": {
-      "engagement": 67.94,
+      "engagement": 68.44,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 679,
+      "estimated_applicants": 684,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -1245,15 +1245,15 @@
     }
   },
   "2102956190103924814": {
-    "score": 38.73,
+    "score": 38.91,
     "factors": {
-      "engagement": 65.66,
+      "engagement": 66.16,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 656,
+      "estimated_applicants": 661,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -1305,45 +1305,45 @@
     }
   },
   "2104858724527489401": {
-    "score": 36.4,
+    "score": 37.8,
     "factors": {
-      "engagement": 59.01,
+      "engagement": 63.01,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 590,
+      "estimated_applicants": 630,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
     }
   },
   "2103394702791971026": {
-    "score": 40.08,
+    "score": 40.25,
     "factors": {
-      "engagement": 69.51,
+      "engagement": 70.01,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 695,
+      "estimated_applicants": 700,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
     }
   },
   "2104380698127994929": {
-    "score": 35.22,
+    "score": 35.39,
     "factors": {
-      "engagement": 64.19,
+      "engagement": 64.69,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 25.0
     },
     "factors_raw": {
-      "estimated_applicants": 641,
+      "estimated_applicants": 646,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -1365,45 +1365,45 @@
     }
   },
   "2104813431412953128": {
-    "score": 37.23,
+    "score": 38.63,
     "factors": {
-      "engagement": 61.36,
+      "engagement": 65.36,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 613,
+      "estimated_applicants": 653,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
     }
   },
   "2104829292593229888": {
-    "score": 36.82,
+    "score": 38.22,
     "factors": {
-      "engagement": 60.19,
+      "engagement": 64.19,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 601,
+      "estimated_applicants": 641,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
     }
   },
   "2104843622214435096": {
-    "score": 38.15,
+    "score": 39.55,
     "factors": {
-      "engagement": 64.01,
+      "engagement": 68.01,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 640,
+      "estimated_applicants": 680,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -1560,30 +1560,30 @@
     }
   },
   "2102958400783147490": {
-    "score": 38.5,
+    "score": 38.68,
     "factors": {
-      "engagement": 65.01,
+      "engagement": 65.51,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 650,
+      "estimated_applicants": 655,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
     }
   },
   "2102952841812013203": {
-    "score": 38.5,
+    "score": 38.68,
     "factors": {
-      "engagement": 65.01,
+      "engagement": 65.51,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 650,
+      "estimated_applicants": 655,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -1620,15 +1620,15 @@
     }
   },
   "2104390642101256496": {
-    "score": 37.8,
+    "score": 37.98,
     "factors": {
-      "engagement": 63.01,
+      "engagement": 63.51,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 630,
+      "estimated_applicants": 635,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -1665,15 +1665,15 @@
     }
   },
   "2103016650501148896": {
-    "score": 40.82,
+    "score": 41.0,
     "factors": {
-      "engagement": 71.63,
+      "engagement": 72.13,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 716,
+      "estimated_applicants": 721,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -1695,15 +1695,15 @@
     }
   },
   "2103408979514982624": {
-    "score": 39.38,
+    "score": 39.55,
     "factors": {
-      "engagement": 67.51,
+      "engagement": 68.01,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 675,
+      "estimated_applicants": 680,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -1800,45 +1800,45 @@
     }
   },
   "2103318588904112615": {
-    "score": 39.6,
+    "score": 39.77,
     "factors": {
-      "engagement": 68.14,
+      "engagement": 68.64,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 681,
+      "estimated_applicants": 686,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
     }
   },
   "2103046794431332387": {
-    "score": 43.53,
+    "score": 43.7,
     "factors": {
-      "engagement": 79.36,
+      "engagement": 79.86,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 793,
+      "estimated_applicants": 798,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
     }
   },
   "2104337791530176791": {
-    "score": 40.16,
+    "score": 40.34,
     "factors": {
-      "engagement": 69.75,
+      "engagement": 70.25,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 697,
+      "estimated_applicants": 702,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -1890,45 +1890,45 @@
     }
   },
   "2104408253467619621": {
-    "score": 39.7,
+    "score": 39.88,
     "factors": {
-      "engagement": 68.43,
+      "engagement": 68.93,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 684,
+      "estimated_applicants": 689,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
     }
   },
   "2100510128403525686": {
-    "score": 44.06,
+    "score": 44.23,
     "factors": {
-      "engagement": 80.88,
+      "engagement": 81.38,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 808,
+      "estimated_applicants": 813,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
     }
   },
   "2102702010470416577": {
-    "score": 43.01,
+    "score": 43.18,
     "factors": {
-      "engagement": 77.88,
+      "engagement": 78.38,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 778,
+      "estimated_applicants": 783,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -1950,60 +1950,60 @@
     }
   },
   "2103031868811862178": {
-    "score": 40.67,
+    "score": 40.84,
     "factors": {
-      "engagement": 71.19,
+      "engagement": 71.69,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 711,
+      "estimated_applicants": 716,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
     }
   },
   "2100828414953341403": {
-    "score": 42.71,
+    "score": 42.88,
     "factors": {
-      "engagement": 77.03,
+      "engagement": 77.53,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 770,
+      "estimated_applicants": 775,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
     }
   },
   "2103318682361614828": {
-    "score": 41.76,
+    "score": 41.93,
     "factors": {
-      "engagement": 74.31,
+      "engagement": 74.81,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 743,
+      "estimated_applicants": 748,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
     }
   },
   "2103439384481615998": {
-    "score": 39.38,
+    "score": 39.55,
     "factors": {
-      "engagement": 67.51,
+      "engagement": 68.01,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 675,
+      "estimated_applicants": 680,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -2025,15 +2025,15 @@
     }
   },
   "2102964359769018827": {
-    "score": 40.58,
+    "score": 40.75,
     "factors": {
-      "engagement": 70.94,
+      "engagement": 71.44,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 709,
+      "estimated_applicants": 714,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -2055,15 +2055,15 @@
     }
   },
   "2104768128433668224": {
-    "score": 41.8,
+    "score": 43.2,
     "factors": {
-      "engagement": 74.43,
+      "engagement": 78.43,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 744,
+      "estimated_applicants": 784,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -2115,15 +2115,15 @@
     }
   },
   "2100147697948688413": {
-    "score": 41.58,
+    "score": 41.76,
     "factors": {
-      "engagement": 73.81,
+      "engagement": 74.31,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 738,
+      "estimated_applicants": 743,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -2145,15 +2145,15 @@
     }
   },
   "2103031686439272936": {
-    "score": 41.28,
+    "score": 41.45,
     "factors": {
-      "engagement": 72.94,
+      "engagement": 73.44,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 729,
+      "estimated_applicants": 734,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -2175,15 +2175,15 @@
     }
   },
   "2097492686731120992": {
-    "score": 41.54,
+    "score": 41.72,
     "factors": {
-      "engagement": 73.69,
+      "engagement": 74.19,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 736,
+      "estimated_applicants": 741,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -2205,30 +2205,30 @@
     }
   },
   "2100026960474964214": {
-    "score": 50.39,
+    "score": 50.57,
     "factors": {
-      "engagement": 74.43,
+      "engagement": 74.93,
       "prize": 30.0,
       "deadline": 42.96,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 744,
+      "estimated_applicants": 749,
       "prize_value_jpy": 0,
       "days_remaining": 8.0,
       "is_national": false
     }
   },
   "2099740530062377294": {
-    "score": 48.14,
+    "score": 48.32,
     "factors": {
-      "engagement": 72.44,
+      "engagement": 72.94,
       "prize": 30.0,
       "deadline": 35.19,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 724,
+      "estimated_applicants": 729,
       "prize_value_jpy": 0,
       "days_remaining": 5.0,
       "is_national": false
@@ -2475,195 +2475,195 @@
     }
   },
   "2104769358664962049": {
-    "score": 50.09,
+    "score": 51.49,
     "factors": {
-      "engagement": 64.01,
+      "engagement": 68.01,
       "prize": 30.0,
       "deadline": 55.93,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 640,
+      "estimated_applicants": 680,
       "prize_value_jpy": 0,
       "days_remaining": 13.0,
       "is_national": false
     }
   },
   "2104375584973603123": {
-    "score": 42.41,
+    "score": 42.59,
     "factors": {
-      "engagement": 68.32,
+      "engagement": 68.82,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 683,
+      "estimated_applicants": 688,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2104420840150573232": {
-    "score": 46.52,
+    "score": 46.7,
     "factors": {
-      "engagement": 74.35,
+      "engagement": 74.85,
       "prize": 30.0,
       "deadline": 20.0,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 743,
+      "estimated_applicants": 748,
       "prize_value_jpy": 0,
       "days_remaining": 2.0,
       "is_national": false
     }
   },
   "2104405741650260194": {
-    "score": 45.82,
+    "score": 45.99,
     "factors": {
-      "engagement": 63.66,
+      "engagement": 64.16,
       "prize": 30.0,
       "deadline": 35.19,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 636,
+      "estimated_applicants": 641,
       "prize_value_jpy": 0,
       "days_remaining": 5.0,
       "is_national": false
     }
   },
   "2104400465685573840": {
-    "score": 48.68,
+    "score": 48.85,
     "factors": {
-      "engagement": 73.31,
+      "engagement": 73.81,
       "prize": 30.0,
       "deadline": 32.59,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 733,
+      "estimated_applicants": 738,
       "prize_value_jpy": 0,
       "days_remaining": 4.0,
       "is_national": false
     }
   },
   "2104375541633532115": {
-    "score": 48.86,
+    "score": 49.04,
     "factors": {
-      "engagement": 72.36,
+      "engagement": 72.86,
       "prize": 30.0,
       "deadline": 35.19,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 723,
+      "estimated_applicants": 728,
       "prize_value_jpy": 0,
       "days_remaining": 5.0,
       "is_national": false
     }
   },
   "2102913545486893402": {
-    "score": 60.95,
+    "score": 61.12,
     "factors": {
-      "engagement": 80.22,
+      "engagement": 80.72,
       "prize": 30.0,
       "deadline": 81.85,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 802,
+      "estimated_applicants": 807,
       "prize_value_jpy": 0,
       "days_remaining": 23.0,
       "is_national": false
     }
   },
   "2102991440863449364": {
-    "score": 59.2,
+    "score": 59.37,
     "factors": {
-      "engagement": 75.22,
+      "engagement": 75.72,
       "prize": 30.0,
       "deadline": 81.85,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 752,
+      "estimated_applicants": 757,
       "prize_value_jpy": 0,
       "days_remaining": 23.0,
       "is_national": false
     }
   },
   "2100781880127672584": {
-    "score": 53.79,
+    "score": 53.97,
     "factors": {
-      "engagement": 67.18,
+      "engagement": 67.68,
       "prize": 30.0,
       "deadline": 68.89,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 671,
+      "estimated_applicants": 676,
       "prize_value_jpy": 0,
       "days_remaining": 18.0,
       "is_national": false
     }
   },
   "2099438015236211147": {
-    "score": 62.46,
+    "score": 62.64,
     "factors": {
-      "engagement": 74.18,
+      "engagement": 74.68,
       "prize": 30.0,
       "deadline": 100.0,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 741,
+      "estimated_applicants": 746,
       "prize_value_jpy": 0,
       "days_remaining": 32.0,
       "is_national": false
     }
   },
   "2100389275384619075": {
-    "score": 52.86,
+    "score": 53.04,
     "factors": {
-      "engagement": 77.86,
+      "engagement": 78.36,
       "prize": 30.0,
       "deadline": 45.56,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 778,
+      "estimated_applicants": 783,
       "prize_value_jpy": 0,
       "days_remaining": 9.0,
       "is_national": false
     }
   },
   "2100781867679031411": {
-    "score": 66.83,
+    "score": 67.0,
     "factors": {
-      "engagement": 86.65,
+      "engagement": 87.15,
       "prize": 30.0,
       "deadline": 100.0,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 866,
+      "estimated_applicants": 871,
       "prize_value_jpy": 0,
       "days_remaining": 144.0,
       "is_national": false
     }
   },
   "2099763003596173383": {
-    "score": 60.47,
+    "score": 60.65,
     "factors": {
-      "engagement": 95.16,
+      "engagement": 95.66,
       "prize": 30.0,
       "deadline": 53.33,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 951,
+      "estimated_applicants": 956,
       "prize_value_jpy": 0,
       "days_remaining": 12.0,
       "is_national": false
@@ -2685,15 +2685,15 @@
     }
   },
   "2097144856204497378": {
-    "score": 56.87,
+    "score": 57.05,
     "factors": {
-      "engagement": 90.8,
+      "engagement": 91.3,
       "prize": 30.0,
       "deadline": 42.96,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 907,
+      "estimated_applicants": 912,
       "prize_value_jpy": 0,
       "days_remaining": 8.0,
       "is_national": false
@@ -2715,15 +2715,15 @@
     }
   },
   "2099457536541839794": {
-    "score": 53.17,
+    "score": 53.35,
     "factors": {
-      "engagement": 83.19,
+      "engagement": 83.69,
       "prize": 30.0,
       "deadline": 37.78,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 831,
+      "estimated_applicants": 836,
       "prize_value_jpy": 0,
       "days_remaining": 6.0,
       "is_national": false
@@ -2745,30 +2745,30 @@
     }
   },
   "2103288377898639395": {
-    "score": 44.13,
+    "score": 44.3,
     "factors": {
-      "engagement": 67.51,
+      "engagement": 68.01,
       "prize": 30.0,
       "deadline": 20.0,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 675,
+      "estimated_applicants": 680,
       "prize_value_jpy": 0,
       "days_remaining": 2.0,
       "is_national": false
     }
   },
   "2099332319165260147": {
-    "score": 51.25,
+    "score": 51.43,
     "factors": {
-      "engagement": 77.7,
+      "engagement": 78.2,
       "prize": 30.0,
       "deadline": 37.78,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 777,
+      "estimated_applicants": 782,
       "prize_value_jpy": 0,
       "days_remaining": 6.0,
       "is_national": false
@@ -2805,75 +2805,75 @@
     }
   },
   "2104405754274783503": {
-    "score": 46.75,
+    "score": 46.93,
     "factors": {
-      "engagement": 67.81,
+      "engagement": 68.31,
       "prize": 30.0,
       "deadline": 32.59,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 678,
+      "estimated_applicants": 683,
       "prize_value_jpy": 0,
       "days_remaining": 4.0,
       "is_national": false
     }
   },
   "2100751662222643487": {
-    "score": 62.2,
+    "score": 62.38,
     "factors": {
-      "engagement": 73.43,
+      "engagement": 73.93,
       "prize": 30.0,
       "deadline": 100.0,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 734,
+      "estimated_applicants": 739,
       "prize_value_jpy": 0,
       "days_remaining": 47.0,
       "is_national": false
     }
   },
   "2103318576618737908": {
-    "score": 52.16,
+    "score": 52.33,
     "factors": {
-      "engagement": 62.51,
+      "engagement": 63.01,
       "prize": 30.0,
       "deadline": 68.89,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 625,
+      "estimated_applicants": 630,
       "prize_value_jpy": 0,
       "days_remaining": 18.0,
       "is_national": false
     }
   },
   "2100706250002731194": {
-    "score": 50.87,
+    "score": 51.05,
     "factors": {
-      "engagement": 72.18,
+      "engagement": 72.68,
       "prize": 30.0,
       "deadline": 45.56,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 721,
+      "estimated_applicants": 726,
       "prize_value_jpy": 0,
       "days_remaining": 9.0,
       "is_national": false
     }
   },
   "2102699497952543015": {
-    "score": 42.54,
+    "score": 42.72,
     "factors": {
-      "engagement": 68.69,
+      "engagement": 69.19,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 686,
+      "estimated_applicants": 691,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
@@ -2910,32 +2910,17 @@
     }
   },
   "2103441770587791757": {
-    "score": 56.06,
+    "score": 56.24,
     "factors": {
-      "engagement": 75.16,
+      "engagement": 75.66,
       "prize": 30.0,
       "deadline": 66.3,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 751,
+      "estimated_applicants": 756,
       "prize_value_jpy": 0,
       "days_remaining": 17.0,
-      "is_national": false
-    }
-  },
-  "2102608900407149026": {
-    "score": 57.27,
-    "factors": {
-      "engagement": 61.5,
-      "prize": 30.0,
-      "deadline": 100.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 615,
-      "prize_value_jpy": 0,
-      "days_remaining": 999.0,
       "is_national": false
     }
   },
@@ -3120,15 +3105,15 @@
     }
   },
   "2102673394496049457": {
-    "score": 40.84,
+    "score": 41.02,
     "factors": {
-      "engagement": 71.69,
+      "engagement": 72.19,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 716,
+      "estimated_applicants": 721,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
       "is_national": false
@@ -3240,504 +3225,699 @@
     }
   },
   "2102608897836290173": {
-    "score": 38.68,
+    "score": 38.85,
     "factors": {
-      "engagement": 65.51,
+      "engagement": 66.01,
       "prize": 30.0,
       "deadline": 0.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 655,
+      "estimated_applicants": 660,
       "prize_value_jpy": 0,
       "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2106365220809842998": {
-    "score": 43.86,
-    "factors": {
-      "engagement": 50.0,
-      "prize": 30.0,
-      "deadline": 45.56,
-      "event_type": 55.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 500,
-      "prize_value_jpy": 0,
-      "days_remaining": 9.0,
-      "is_national": true
-    }
-  },
-  "2102925989281955996": {
-    "score": 53.22,
-    "factors": {
-      "engagement": 56.0,
-      "prize": 30.0,
-      "deadline": 81.85,
-      "event_type": 55.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 560,
-      "prize_value_jpy": 0,
-      "days_remaining": 23.0,
-      "is_national": true
-    }
-  },
-  "2106308706749346163": {
-    "score": 57.15,
-    "factors": {
-      "engagement": 70.03,
-      "prize": 30.0,
-      "deadline": 84.44,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 700,
-      "prize_value_jpy": 0,
-      "days_remaining": 24.0,
-      "is_national": false
-    }
-  },
-  "2100057151100383691": {
-    "score": 40.09,
-    "factors": {
-      "engagement": 69.54,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 695,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2105462701669699771": {
-    "score": 36.33,
-    "factors": {
-      "engagement": 58.81,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 588,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2105433805209354728": {
-    "score": 35.68,
-    "factors": {
-      "engagement": 56.94,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 569,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2105481299020652992": {
-    "score": 35.07,
-    "factors": {
-      "engagement": 55.19,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 551,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2106187723124117811": {
-    "score": 37.93,
-    "factors": {
-      "engagement": 63.36,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 633,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2105962093774282862": {
-    "score": 37.93,
-    "factors": {
-      "engagement": 63.36,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 633,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2105580986973196547": {
-    "score": 35.07,
-    "factors": {
-      "engagement": 55.19,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 551,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2105583766249033777": {
-    "score": 35.58,
-    "factors": {
-      "engagement": 56.67,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 566,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2105961031742980467": {
-    "score": 35.68,
-    "factors": {
-      "engagement": 56.94,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 569,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2100170332329926815": {
-    "score": 38.15,
-    "factors": {
-      "engagement": 64.01,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 640,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2105212606482944181": {
-    "score": 35.07,
-    "factors": {
-      "engagement": 55.19,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 551,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2104410793307701532": {
-    "score": 35.76,
-    "factors": {
-      "engagement": 57.18,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 571,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2104722826259202198": {
-    "score": 34.65,
-    "factors": {
-      "engagement": 54.01,
-      "prize": 30.0,
-      "deadline": 0.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 540,
-      "prize_value_jpy": 0,
-      "days_remaining": 0.0,
-      "is_national": false
-    }
-  },
-  "2103499782530478366": {
-    "score": 59.77,
-    "factors": {
-      "engagement": 77.51,
-      "prize": 30.0,
-      "deadline": 84.44,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 775,
-      "prize_value_jpy": 0,
-      "days_remaining": 24.0,
       "is_national": false
     }
   },
   "2105853655207596506": {
-    "score": 36.65,
+    "score": 38.4,
     "factors": {
-      "engagement": 54.01,
+      "engagement": 59.01,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 540,
+      "estimated_applicants": 590,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2105802452645839151": {
-    "score": 37.07,
+    "score": 38.82,
     "factors": {
-      "engagement": 55.19,
+      "engagement": 60.19,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 551,
+      "estimated_applicants": 601,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2105501656356155785": {
-    "score": 39.23,
+    "score": 42.73,
     "factors": {
-      "engagement": 61.38,
+      "engagement": 71.38,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 613,
+      "estimated_applicants": 713,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2105870832111321315": {
-    "score": 36.65,
+    "score": 38.4,
     "factors": {
-      "engagement": 54.01,
+      "engagement": 59.01,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 540,
+      "estimated_applicants": 590,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2104367988929364264": {
-    "score": 38.47,
+    "score": 40.39,
     "factors": {
-      "engagement": 59.19,
+      "engagement": 64.69,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 591,
+      "estimated_applicants": 646,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2105598038484152666": {
-    "score": 38.06,
+    "score": 39.81,
     "factors": {
-      "engagement": 58.03,
+      "engagement": 63.03,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 580,
+      "estimated_applicants": 630,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2107028077440319911": {
-    "score": 38.33,
+    "score": 40.08,
     "factors": {
-      "engagement": 58.81,
+      "engagement": 63.81,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 588,
+      "estimated_applicants": 638,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2105855288498618653": {
-    "score": 37.68,
+    "score": 39.43,
     "factors": {
-      "engagement": 56.94,
+      "engagement": 61.94,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 569,
+      "estimated_applicants": 619,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2106990267073220922": {
-    "score": 38.12,
+    "score": 39.87,
     "factors": {
-      "engagement": 58.2,
+      "engagement": 63.2,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 582,
+      "estimated_applicants": 632,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2105462863062352280": {
-    "score": 37.07,
+    "score": 38.82,
     "factors": {
-      "engagement": 55.19,
+      "engagement": 60.19,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 551,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105512721097855233": {
-    "score": 37.68,
-    "factors": {
-      "engagement": 56.94,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 569,
+      "estimated_applicants": 601,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2105825352341991433": {
-    "score": 37.07,
+    "score": 40.57,
     "factors": {
-      "engagement": 55.19,
+      "engagement": 65.19,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 551,
+      "estimated_applicants": 651,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2107244442411474972": {
-    "score": 37.68,
+    "score": 39.43,
     "factors": {
-      "engagement": 56.94,
+      "engagement": 61.94,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 569,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105585212541620575": {
-    "score": 37.07,
-    "factors": {
-      "engagement": 55.19,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 551,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2103318596076048710": {
-    "score": 39.85,
-    "factors": {
-      "engagement": 63.14,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 631,
+      "estimated_applicants": 619,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2100827422027579856": {
-    "score": 40.73,
+    "score": 44.41,
     "factors": {
-      "engagement": 65.67,
+      "engagement": 76.17,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 761,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105100330044457448": {
+    "score": 39.43,
+    "factors": {
+      "engagement": 61.94,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 619,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2106308949691805724": {
+    "score": 42.32,
+    "factors": {
+      "engagement": 70.19,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 701,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105825088868438319": {
+    "score": 39.45,
+    "factors": {
+      "engagement": 62.01,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 620,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105855304160457114": {
+    "score": 43.18,
+    "factors": {
+      "engagement": 61.94,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 70.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 619,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": true
+    }
+  },
+  "2106907049288417531": {
+    "score": 38.11,
+    "factors": {
+      "engagement": 58.18,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 581,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2103063391858565520": {
+    "score": 42.43,
+    "factors": {
+      "engagement": 70.51,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 705,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2103711204690874858": {
+    "score": 40.04,
+    "factors": {
+      "engagement": 63.68,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 636,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2107033426574590091": {
+    "score": 37.7,
+    "factors": {
+      "engagement": 57.01,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 570,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2100100745832153207": {
+    "score": 42.08,
+    "factors": {
+      "engagement": 69.51,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 695,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2107049155193692612": {
+    "score": 38.63,
+    "factors": {
+      "engagement": 59.66,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 596,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2097158231202369564": {
+    "score": 44.94,
+    "factors": {
+      "engagement": 77.68,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 776,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2103023785473630560": {
+    "score": 40.39,
+    "factors": {
+      "engagement": 64.68,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 646,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2106157282492862464": {
+    "score": 38.4,
+    "factors": {
+      "engagement": 59.01,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 590,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2107304842205024324": {
+    "score": 43.54,
+    "factors": {
+      "engagement": 55.0,
+      "prize": 30.0,
+      "deadline": 35.19,
+      "event_type": 55.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 550,
+      "prize_value_jpy": 0,
+      "days_remaining": 5.0,
+      "is_national": true
+    }
+  },
+  "2105825092026712540": {
+    "score": 43.07,
+    "factors": {
+      "engagement": 72.35,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 723,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2103288376262865046": {
+    "score": 43.78,
+    "factors": {
+      "engagement": 74.36,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 743,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105477803420586043": {
+    "score": 40.48,
+    "factors": {
+      "engagement": 64.94,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 649,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105945897628745833": {
+    "score": 41.68,
+    "factors": {
+      "engagement": 68.36,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 683,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105583499235209221": {
+    "score": 43.43,
+    "factors": {
+      "engagement": 73.36,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 733,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2106226561490035191": {
+    "score": 41.7,
+    "factors": {
+      "engagement": 57.01,
+      "prize": 30.0,
+      "deadline": 30.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 570,
+      "prize_value_jpy": 0,
+      "days_remaining": 3.0,
+      "is_national": false
+    }
+  },
+  "2105145612274454874": {
+    "score": 41.68,
+    "factors": {
+      "engagement": 68.36,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 683,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2102910894661394719": {
+    "score": 43.04,
+    "factors": {
+      "engagement": 72.25,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 722,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2103039318562615596": {
+    "score": 42.75,
+    "factors": {
+      "engagement": 71.44,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 714,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2106942566843465816": {
+    "score": 43.3,
+    "factors": {
+      "engagement": 72.99,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 729,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2104737925510643931": {
+    "score": 41.21,
+    "factors": {
+      "engagement": 67.03,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 670,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105856233702031547": {
+    "score": 41.35,
+    "factors": {
+      "engagement": 67.43,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 674,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2103303685883543751": {
+    "score": 41.53,
+    "factors": {
+      "engagement": 67.94,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 679,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105432514206547986": {
+    "score": 41.83,
+    "factors": {
+      "engagement": 68.81,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 688,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2104768135958323585": {
+    "score": 44.23,
+    "factors": {
+      "engagement": 75.65,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 756,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105930797631058310": {
+    "score": 39.43,
+    "factors": {
+      "engagement": 61.94,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 619,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2102956373705466019": {
+    "score": 43.04,
+    "factors": {
+      "engagement": 72.25,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 722,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105809989944426563": {
+    "score": 41.18,
+    "factors": {
+      "engagement": 66.94,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 669,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105960986771685522": {
+    "score": 40.72,
+    "factors": {
+      "engagement": 65.63,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
@@ -3749,157 +3929,157 @@
       "is_national": false
     }
   },
-  "2103339087637967138": {
-    "score": 39.98,
+  "2105583518654890456": {
+    "score": 38.82,
     "factors": {
-      "engagement": 63.53,
+      "engagement": 60.19,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 635,
+      "estimated_applicants": 601,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
-  "2105100330044457448": {
-    "score": 37.68,
+  "2105810000732135897": {
+    "score": 39.43,
     "factors": {
-      "engagement": 56.94,
+      "engagement": 61.94,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 569,
+      "estimated_applicants": 619,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
-  "2106308949691805724": {
-    "score": 37.07,
+  "2105855488613298317": {
+    "score": 41.18,
     "factors": {
-      "engagement": 55.19,
+      "engagement": 66.94,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 551,
+      "estimated_applicants": 669,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
-  "2105825088868438319": {
-    "score": 35.95,
+  "2105568440878870908": {
+    "score": 35.82,
     "factors": {
-      "engagement": 52.01,
+      "engagement": 60.19,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 25.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 601,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105819376524181520": {
+    "score": 41.18,
+    "factors": {
+      "engagement": 66.94,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 520,
+      "estimated_applicants": 669,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
-  "2105855304160457114": {
-    "score": 37.68,
+  "2103394079887298833": {
+    "score": 43.28,
     "factors": {
-      "engagement": 56.94,
+      "engagement": 72.94,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 569,
+      "estimated_applicants": 729,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
-  "2103826538932416562": {
-    "score": 38.11,
+  "2106006290463936940": {
+    "score": 37.7,
     "factors": {
-      "engagement": 58.18,
+      "engagement": 57.01,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 581,
+      "estimated_applicants": 570,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
-  "2106907049288417531": {
-    "score": 36.36,
+  "2105221125408162002": {
+    "score": 41.83,
     "factors": {
-      "engagement": 53.18,
+      "engagement": 68.81,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 531,
+      "estimated_applicants": 688,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
-  "2103063391858565520": {
-    "score": 38.75,
+  "2103409181541982587": {
+    "score": 43.28,
     "factors": {
-      "engagement": 60.01,
+      "engagement": 72.94,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 600,
+      "estimated_applicants": 729,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
-  "2103711204690874858": {
-    "score": 38.11,
+  "2105825111223964007": {
+    "score": 38.4,
     "factors": {
-      "engagement": 58.18,
+      "engagement": 59.01,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 581,
+      "estimated_applicants": 590,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
-  "2107033426574590091": {
-    "score": 35.95,
-    "factors": {
-      "engagement": 52.01,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 520,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2100100745832153207": {
+  "2105477880209871142": {
     "score": 40.15,
     "factors": {
       "engagement": 64.01,
@@ -3914,850 +4094,100 @@
       "is_national": false
     }
   },
-  "2107049155193692612": {
-    "score": 36.88,
-    "factors": {
-      "engagement": 54.66,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 546,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2097158231202369564": {
-    "score": 41.26,
-    "factors": {
-      "engagement": 67.18,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 671,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2103023785473630560": {
-    "score": 38.46,
-    "factors": {
-      "engagement": 59.18,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 591,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2106157282492862464": {
-    "score": 36.65,
-    "factors": {
-      "engagement": 54.01,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 540,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105492947177529823": {
-    "score": 46.3,
-    "factors": {
-      "engagement": 66.52,
-      "prize": 30.0,
-      "deadline": 32.59,
-      "event_type": 50.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 665,
-      "prize_value_jpy": 0,
-      "days_remaining": 4.0,
-      "is_national": false
-    }
-  },
-  "2105596082801578292": {
-    "score": 56.26,
-    "factors": {
-      "engagement": 65.35,
-      "prize": 30.0,
-      "deadline": 84.44,
-      "event_type": 50.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 653,
-      "prize_value_jpy": 0,
-      "days_remaining": 24.0,
-      "is_national": false
-    }
-  },
-  "2101838830064074915": {
-    "score": 62.57,
-    "factors": {
-      "engagement": 74.49,
-      "prize": 30.0,
-      "deadline": 100.0,
-      "event_type": 50.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 744,
-      "prize_value_jpy": 0,
-      "days_remaining": 74.0,
-      "is_national": false
-    }
-  },
-  "2101506779045609655": {
-    "score": 48.51,
-    "factors": {
-      "engagement": 71.36,
-      "prize": 30.0,
-      "deadline": 35.19,
-      "event_type": 50.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 713,
-      "prize_value_jpy": 0,
-      "days_remaining": 5.0,
-      "is_national": false
-    }
-  },
-  "2081530002412060833": {
-    "score": 69.29,
-    "factors": {
-      "engagement": 93.68,
-      "prize": 30.0,
-      "deadline": 100.0,
-      "event_type": 50.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 936,
-      "prize_value_jpy": 0,
-      "days_remaining": 47.0,
-      "is_national": false
-    }
-  },
-  "2107304842205024324": {
-    "score": 41.79,
-    "factors": {
-      "engagement": 50.0,
-      "prize": 30.0,
-      "deadline": 35.19,
-      "event_type": 55.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 500,
-      "prize_value_jpy": 0,
-      "days_remaining": 5.0,
-      "is_national": true
-    }
-  },
-  "2105825092026712540": {
-    "score": 41.32,
-    "factors": {
-      "engagement": 67.35,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 673,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2103288376262865046": {
-    "score": 41.85,
-    "factors": {
-      "engagement": 68.86,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 688,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105477803420586043": {
-    "score": 38.73,
-    "factors": {
-      "engagement": 59.94,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 599,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105945897628745833": {
-    "score": 39.93,
-    "factors": {
-      "engagement": 63.36,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 633,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105311747100098937": {
-    "score": 41.4,
-    "factors": {
-      "engagement": 53.18,
-      "prize": 30.0,
-      "deadline": 35.19,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 531,
-      "prize_value_jpy": 0,
-      "days_remaining": 5.0,
-      "is_national": false
-    }
-  },
-  "2105583499235209221": {
-    "score": 39.93,
-    "factors": {
-      "engagement": 63.36,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 633,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2106226561490035191": {
-    "score": 39.95,
-    "factors": {
-      "engagement": 52.01,
-      "prize": 30.0,
-      "deadline": 30.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 520,
-      "prize_value_jpy": 0,
-      "days_remaining": 3.0,
-      "is_national": false
-    }
-  },
-  "2105145612274454874": {
-    "score": 39.93,
-    "factors": {
-      "engagement": 63.36,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 633,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2102910894661394719": {
-    "score": 41.11,
-    "factors": {
-      "engagement": 66.75,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 667,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2103039318562615596": {
-    "score": 40.83,
-    "factors": {
-      "engagement": 65.94,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 659,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2106942566843465816": {
-    "score": 39.8,
-    "factors": {
-      "engagement": 62.99,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 629,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2104737925510643931": {
-    "score": 38.06,
-    "factors": {
-      "engagement": 58.03,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 580,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2106958753124004138": {
-    "score": 39.93,
-    "factors": {
-      "engagement": 63.36,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 633,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105538435293618518": {
-    "score": 39.23,
-    "factors": {
-      "engagement": 61.38,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 613,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105856233702031547": {
-    "score": 37.85,
-    "factors": {
-      "engagement": 57.43,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 574,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2103303685883543751": {
-    "score": 39.6,
-    "factors": {
-      "engagement": 62.44,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 624,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105432514206547986": {
-    "score": 38.33,
-    "factors": {
-      "engagement": 58.81,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 588,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2104768135958323585": {
-    "score": 39.33,
-    "factors": {
-      "engagement": 61.65,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 616,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105930797631058310": {
-    "score": 37.68,
-    "factors": {
-      "engagement": 56.94,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 569,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2102956373705466019": {
-    "score": 41.11,
-    "factors": {
-      "engagement": 66.75,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 667,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105809989944426563": {
-    "score": 37.68,
-    "factors": {
-      "engagement": 56.94,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 569,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105960986771685522": {
-    "score": 37.22,
-    "factors": {
-      "engagement": 55.63,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 556,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105674099242758179": {
-    "score": 38.43,
-    "factors": {
-      "engagement": 59.08,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 590,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105583518654890456": {
-    "score": 37.07,
-    "factors": {
-      "engagement": 55.19,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 551,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105810000732135897": {
-    "score": 37.68,
-    "factors": {
-      "engagement": 56.94,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 569,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105855488613298317": {
-    "score": 37.68,
-    "factors": {
-      "engagement": 56.94,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 569,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105568440878870908": {
-    "score": 37.07,
-    "factors": {
-      "engagement": 55.19,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 551,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105819376524181520": {
-    "score": 37.68,
-    "factors": {
-      "engagement": 56.94,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 569,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2103394079887298833": {
-    "score": 39.6,
-    "factors": {
-      "engagement": 62.44,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 624,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2106006290463936940": {
-    "score": 35.95,
-    "factors": {
-      "engagement": 52.01,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 520,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105221125408162002": {
-    "score": 38.33,
-    "factors": {
-      "engagement": 58.81,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 588,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105795034088153419": {
-    "score": 37.68,
-    "factors": {
-      "engagement": 56.94,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 569,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2103409181541982587": {
-    "score": 39.6,
-    "factors": {
-      "engagement": 62.44,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 624,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105825111223964007": {
-    "score": 36.65,
-    "factors": {
-      "engagement": 54.01,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 540,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105477880209871142": {
-    "score": 36.65,
-    "factors": {
-      "engagement": 54.01,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 540,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
   "2105674106343707131": {
-    "score": 37.36,
+    "score": 39.11,
     "factors": {
-      "engagement": 56.02,
+      "engagement": 61.02,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 560,
+      "estimated_applicants": 610,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2105825298403213399": {
-    "score": 37.07,
+    "score": 38.82,
     "factors": {
-      "engagement": 55.19,
+      "engagement": 60.19,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 551,
+      "estimated_applicants": 601,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2100842410758844691": {
-    "score": 40.03,
+    "score": 47.46,
     "factors": {
-      "engagement": 63.66,
+      "engagement": 74.16,
       "prize": 30.0,
       "deadline": 10.0,
-      "event_type": 45.0
+      "event_type": 70.0
     },
     "factors_raw": {
-      "estimated_applicants": 636,
+      "estimated_applicants": 741,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
-      "is_national": false
+      "is_national": true
     }
   },
   "2100751661102948384": {
-    "score": 39.8,
+    "score": 41.73,
     "factors": {
-      "engagement": 63.01,
+      "engagement": 68.51,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 630,
+      "estimated_applicants": 685,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2106670666942439912": {
-    "score": 38.33,
+    "score": 40.08,
     "factors": {
-      "engagement": 58.81,
+      "engagement": 63.81,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 588,
+      "estimated_applicants": 638,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2105953534453653944": {
-    "score": 39.23,
+    "score": 40.98,
     "factors": {
-      "engagement": 61.38,
+      "engagement": 66.38,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 613,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105856547171479993": {
-    "score": 37.07,
-    "factors": {
-      "engagement": 55.19,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 551,
+      "estimated_applicants": 663,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2105583749878489267": {
-    "score": 37.22,
+    "score": 38.97,
     "factors": {
-      "engagement": 55.63,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 556,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105284039766933578": {
-    "score": 36.65,
-    "factors": {
-      "engagement": 54.01,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 540,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2103354979121869307": {
-    "score": 38.58,
-    "factors": {
-      "engagement": 59.51,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 595,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2105462712876834930": {
-    "score": 36.65,
-    "factors": {
-      "engagement": 54.01,
-      "prize": 30.0,
-      "deadline": 10.0,
-      "event_type": 45.0
-    },
-    "factors_raw": {
-      "estimated_applicants": 540,
-      "prize_value_jpy": 0,
-      "days_remaining": 1.0,
-      "is_national": false
-    }
-  },
-  "2103310182461968761": {
-    "score": 38.99,
-    "factors": {
-      "engagement": 60.69,
+      "engagement": 60.63,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
@@ -4769,46 +4199,91 @@
       "is_national": false
     }
   },
-  "2105961728324534306": {
-    "score": 37.07,
+  "2103354979121869307": {
+    "score": 42.25,
     "factors": {
-      "engagement": 55.19,
+      "engagement": 70.01,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 551,
+      "estimated_applicants": 700,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105462712876834930": {
+    "score": 38.4,
+    "factors": {
+      "engagement": 59.01,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 590,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2103310182461968761": {
+    "score": 40.92,
+    "factors": {
+      "engagement": 66.19,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 661,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105961728324534306": {
+    "score": 35.82,
+    "factors": {
+      "engagement": 60.19,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 25.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 601,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2105570229489377684": {
-    "score": 35.95,
+    "score": 34.7,
     "factors": {
-      "engagement": 52.01,
+      "engagement": 57.01,
       "prize": 30.0,
       "deadline": 10.0,
-      "event_type": 45.0
+      "event_type": 25.0
     },
     "factors_raw": {
-      "estimated_applicants": 520,
+      "estimated_applicants": 570,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
     }
   },
   "2105855649674592748": {
-    "score": 36.65,
+    "score": 40.15,
     "factors": {
-      "engagement": 54.01,
+      "engagement": 64.01,
       "prize": 30.0,
       "deadline": 10.0,
       "event_type": 45.0
     },
     "factors_raw": {
-      "estimated_applicants": 540,
+      "estimated_applicants": 640,
       "prize_value_jpy": 0,
       "days_remaining": 1.0,
       "is_national": false
@@ -5025,15 +4500,15 @@
     }
   },
   "2104420841714852000": {
-    "score": 62.66,
+    "score": 62.84,
     "factors": {
-      "engagement": 74.75,
+      "engagement": 75.25,
       "prize": 30.0,
       "deadline": 100.0,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 747,
+      "estimated_applicants": 752,
       "prize_value_jpy": 0,
       "days_remaining": 999.0,
       "is_national": false
@@ -5730,62 +5205,827 @@
     }
   },
   "2104395506629910857": {
-    "score": 59.58,
+    "score": 59.75,
     "factors": {
-      "engagement": 65.94,
+      "engagement": 66.44,
       "prize": 30.0,
       "deadline": 100.0,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 659,
+      "estimated_applicants": 664,
       "prize_value_jpy": 0,
       "days_remaining": 999.0,
       "is_national": false
     }
   },
   "2104066682071453976": {
-    "score": 58.42,
+    "score": 58.59,
     "factors": {
-      "engagement": 71.51,
+      "engagement": 72.01,
       "prize": 30.0,
       "deadline": 84.44,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 715,
+      "estimated_applicants": 720,
       "prize_value_jpy": 0,
       "days_remaining": 24.0,
       "is_national": false
     }
   },
   "2103790442827657471": {
-    "score": 59.93,
+    "score": 60.1,
     "factors": {
-      "engagement": 66.94,
+      "engagement": 67.44,
       "prize": 30.0,
       "deadline": 100.0,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 669,
+      "estimated_applicants": 674,
       "prize_value_jpy": 0,
       "days_remaining": 999.0,
       "is_national": false
     }
   },
   "2103399776951717932": {
-    "score": 58.77,
+    "score": 58.94,
     "factors": {
-      "engagement": 72.51,
+      "engagement": 73.01,
       "prize": 30.0,
       "deadline": 84.44,
       "event_type": 50.0
     },
     "factors_raw": {
-      "estimated_applicants": 725,
+      "estimated_applicants": 730,
       "prize_value_jpy": 0,
       "days_remaining": 24.0,
+      "is_national": false
+    }
+  },
+  "2102602182294229197": {
+    "score": 39.2,
+    "factors": {
+      "engagement": 67.0,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 670,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2102925989281955996": {
+    "score": 57.4,
+    "factors": {
+      "engagement": 61.5,
+      "prize": 30.0,
+      "deadline": 81.85,
+      "event_type": 70.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 615,
+      "prize_value_jpy": 0,
+      "days_remaining": 23.0,
+      "is_national": true
+    }
+  },
+  "2107637037842956363": {
+    "score": 50.9,
+    "factors": {
+      "engagement": 78.18,
+      "prize": 30.0,
+      "deadline": 35.19,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 781,
+      "prize_value_jpy": 0,
+      "days_remaining": 5.0,
+      "is_national": false
+    }
+  },
+  "2107020795004543413": {
+    "score": 58.18,
+    "factors": {
+      "engagement": 61.94,
+      "prize": 30.0,
+      "deadline": 100.0,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 619,
+      "prize_value_jpy": 0,
+      "days_remaining": 54.0,
+      "is_national": false
+    }
+  },
+  "2106897463236014443": {
+    "score": 46.35,
+    "factors": {
+      "engagement": 65.19,
+      "prize": 30.0,
+      "deadline": 35.19,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 651,
+      "prize_value_jpy": 0,
+      "days_remaining": 5.0,
+      "is_national": false
+    }
+  },
+  "2106964239718170988": {
+    "score": 47.3,
+    "factors": {
+      "engagement": 59.01,
+      "prize": 30.0,
+      "deadline": 50.74,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 590,
+      "prize_value_jpy": 0,
+      "days_remaining": 11.0,
+      "is_national": false
+    }
+  },
+  "2105475512785367090": {
+    "score": 55.69,
+    "factors": {
+      "engagement": 65.19,
+      "prize": 30.0,
+      "deadline": 81.85,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 651,
+      "prize_value_jpy": 0,
+      "days_remaining": 23.0,
+      "is_national": false
+    }
+  },
+  "2102367310292111422": {
+    "score": 52.39,
+    "factors": {
+      "engagement": 67.63,
+      "prize": 30.0,
+      "deadline": 61.11,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 676,
+      "prize_value_jpy": 0,
+      "days_remaining": 15.0,
+      "is_national": false
+    }
+  },
+  "2105212606482944181": {
+    "score": 36.82,
+    "factors": {
+      "engagement": 60.19,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 601,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2105538228656709955": {
+    "score": 49.44,
+    "factors": {
+      "engagement": 65.12,
+      "prize": 30.0,
+      "deadline": 50.74,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 651,
+      "prize_value_jpy": 0,
+      "days_remaining": 11.0,
+      "is_national": false
+    }
+  },
+  "2105462708577395175": {
+    "score": 54.46,
+    "factors": {
+      "engagement": 73.52,
+      "prize": 30.0,
+      "deadline": 61.11,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 735,
+      "prize_value_jpy": 0,
+      "days_remaining": 15.0,
+      "is_national": false
+    }
+  },
+  "2103363945704890522": {
+    "score": 49.59,
+    "factors": {
+      "engagement": 74.44,
+      "prize": 30.0,
+      "deadline": 35.19,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 744,
+      "prize_value_jpy": 0,
+      "days_remaining": 5.0,
+      "is_national": false
+    }
+  },
+  "2103318574915785084": {
+    "score": 47.32,
+    "factors": {
+      "engagement": 67.94,
+      "prize": 30.0,
+      "deadline": 35.19,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 679,
+      "prize_value_jpy": 0,
+      "days_remaining": 5.0,
+      "is_national": false
+    }
+  },
+  "2105945892499124518": {
+    "score": 39.51,
+    "factors": {
+      "engagement": 65.75,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 657,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2100351542322688101": {
+    "score": 43.93,
+    "factors": {
+      "engagement": 78.36,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 783,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2107639545143455866": {
+    "score": 47.49,
+    "factors": {
+      "engagement": 50.0,
+      "prize": 30.0,
+      "deadline": 63.7,
+      "event_type": 55.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 500,
+      "prize_value_jpy": 0,
+      "days_remaining": 16.0,
+      "is_national": true
+    }
+  },
+  "2106365220809842998": {
+    "score": 43.86,
+    "factors": {
+      "engagement": 50.0,
+      "prize": 30.0,
+      "deadline": 45.56,
+      "event_type": 55.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 500,
+      "prize_value_jpy": 0,
+      "days_remaining": 9.0,
+      "is_national": true
+    }
+  },
+  "2105311747100098937": {
+    "score": 41.4,
+    "factors": {
+      "engagement": 53.18,
+      "prize": 30.0,
+      "deadline": 35.19,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 531,
+      "prize_value_jpy": 0,
+      "days_remaining": 5.0,
+      "is_national": false
+    }
+  },
+  "2100057151100383691": {
+    "score": 40.26,
+    "factors": {
+      "engagement": 70.04,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 700,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2106308706749346163": {
+    "score": 57.15,
+    "factors": {
+      "engagement": 70.03,
+      "prize": 30.0,
+      "deadline": 84.44,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 700,
+      "prize_value_jpy": 0,
+      "days_remaining": 24.0,
+      "is_national": false
+    }
+  },
+  "2106958753124004138": {
+    "score": 39.93,
+    "factors": {
+      "engagement": 63.36,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 633,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105538435293618518": {
+    "score": 39.23,
+    "factors": {
+      "engagement": 61.38,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 613,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105674099242758179": {
+    "score": 38.43,
+    "factors": {
+      "engagement": 59.08,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 590,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105795034088153419": {
+    "score": 37.68,
+    "factors": {
+      "engagement": 56.94,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 569,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105512721097855233": {
+    "score": 37.68,
+    "factors": {
+      "engagement": 56.94,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 569,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105585212541620575": {
+    "score": 37.07,
+    "factors": {
+      "engagement": 55.19,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 551,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2103318596076048710": {
+    "score": 40.02,
+    "factors": {
+      "engagement": 63.64,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 636,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105856547171479993": {
+    "score": 37.07,
+    "factors": {
+      "engagement": 55.19,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 551,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2103339087637967138": {
+    "score": 40.16,
+    "factors": {
+      "engagement": 64.03,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 640,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105284039766933578": {
+    "score": 36.65,
+    "factors": {
+      "engagement": 54.01,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 540,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2103826538932416562": {
+    "score": 38.11,
+    "factors": {
+      "engagement": 58.18,
+      "prize": 30.0,
+      "deadline": 10.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 581,
+      "prize_value_jpy": 0,
+      "days_remaining": 1.0,
+      "is_national": false
+    }
+  },
+  "2105462701669699771": {
+    "score": 36.33,
+    "factors": {
+      "engagement": 58.81,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 588,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2105433805209354728": {
+    "score": 35.68,
+    "factors": {
+      "engagement": 56.94,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 569,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2105481299020652992": {
+    "score": 35.07,
+    "factors": {
+      "engagement": 55.19,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 551,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2106187723124117811": {
+    "score": 37.93,
+    "factors": {
+      "engagement": 63.36,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 633,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2105962093774282862": {
+    "score": 37.93,
+    "factors": {
+      "engagement": 63.36,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 633,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2105580986973196547": {
+    "score": 35.07,
+    "factors": {
+      "engagement": 55.19,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 551,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2105583766249033777": {
+    "score": 35.58,
+    "factors": {
+      "engagement": 56.67,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 566,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2105961031742980467": {
+    "score": 35.68,
+    "factors": {
+      "engagement": 56.94,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 569,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2100170332329926815": {
+    "score": 38.33,
+    "factors": {
+      "engagement": 64.51,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 645,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2104410793307701532": {
+    "score": 35.94,
+    "factors": {
+      "engagement": 57.68,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 576,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2104722826259202198": {
+    "score": 35.35,
+    "factors": {
+      "engagement": 56.01,
+      "prize": 30.0,
+      "deadline": 0.0,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 560,
+      "prize_value_jpy": 0,
+      "days_remaining": 0.0,
+      "is_national": false
+    }
+  },
+  "2103499782530478366": {
+    "score": 59.77,
+    "factors": {
+      "engagement": 77.51,
+      "prize": 30.0,
+      "deadline": 84.44,
+      "event_type": 45.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 775,
+      "prize_value_jpy": 0,
+      "days_remaining": 24.0,
+      "is_national": false
+    }
+  },
+  "2107644598135005454": {
+    "score": 51.64,
+    "factors": {
+      "engagement": 50.0,
+      "prize": 30.0,
+      "deadline": 84.44,
+      "event_type": 55.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 500,
+      "prize_value_jpy": 0,
+      "days_remaining": 24.0,
+      "is_national": true
+    }
+  },
+  "2107029601398735040": {
+    "score": 54.75,
+    "factors": {
+      "engagement": 50.0,
+      "prize": 30.0,
+      "deadline": 100.0,
+      "event_type": 55.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 500,
+      "prize_value_jpy": 0,
+      "days_remaining": 32.0,
+      "is_national": true
+    }
+  },
+  "2107652137614463257": {
+    "score": 50.08,
+    "factors": {
+      "engagement": 50.0,
+      "prize": 30.0,
+      "deadline": 76.67,
+      "event_type": 55.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 500,
+      "prize_value_jpy": 0,
+      "days_remaining": 21.0,
+      "is_national": true
+    }
+  },
+  "2105492947177529823": {
+    "score": 46.3,
+    "factors": {
+      "engagement": 66.52,
+      "prize": 30.0,
+      "deadline": 32.59,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 665,
+      "prize_value_jpy": 0,
+      "days_remaining": 4.0,
+      "is_national": false
+    }
+  },
+  "2105596082801578292": {
+    "score": 56.26,
+    "factors": {
+      "engagement": 65.35,
+      "prize": 30.0,
+      "deadline": 84.44,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 653,
+      "prize_value_jpy": 0,
+      "days_remaining": 24.0,
+      "is_national": false
+    }
+  },
+  "2101838830064074915": {
+    "score": 62.75,
+    "factors": {
+      "engagement": 74.99,
+      "prize": 30.0,
+      "deadline": 100.0,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 749,
+      "prize_value_jpy": 0,
+      "days_remaining": 74.0,
+      "is_national": false
+    }
+  },
+  "2101506779045609655": {
+    "score": 48.69,
+    "factors": {
+      "engagement": 71.86,
+      "prize": 30.0,
+      "deadline": 35.19,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 718,
+      "prize_value_jpy": 0,
+      "days_remaining": 5.0,
+      "is_national": false
+    }
+  },
+  "2081530002412060833": {
+    "score": 69.29,
+    "factors": {
+      "engagement": 93.68,
+      "prize": 30.0,
+      "deadline": 100.0,
+      "event_type": 50.0
+    },
+    "factors_raw": {
+      "estimated_applicants": 936,
+      "prize_value_jpy": 0,
+      "days_remaining": 47.0,
       "is_national": false
     }
   }

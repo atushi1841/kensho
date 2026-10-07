@@ -11,13 +11,15 @@
   },
   {
     "name": "japan-used-instrument-market-cn",
-    "status": "failed",
-    "http_code": 400
+    "status": "updated",
+    "http_code": 400,
+    "seoTitle": "Japan Musical Instruments (CN版)"
   },
   {
     "name": "japan-used-instrument-market-kr",
-    "status": "failed",
-    "http_code": 400
+    "status": "updated",
+    "http_code": 400,
+    "seoTitle": "Japan Musical Instruments (KR版)"
   },
   {
     "name": "japan-luxury-brand-market-cn",
@@ -71,13 +73,15 @@
   },
   {
     "name": "japan-property-market-cn",
-    "status": "failed",
-    "http_code": 400
+    "status": "updated",
+    "http_code": 400,
+    "seoTitle": "Japan Property Market (CN版)"
   },
   {
     "name": "japan-property-market-kr",
-    "status": "failed",
-    "http_code": 400
+    "status": "updated",
+    "http_code": 400,
+    "seoTitle": "Japan Property Market (KR版)"
   },
   {
     "name": "japan-rent-market-cn",

@@ -1,0 +1,23 @@
+{
+  "task_id": "t_qa_20261017_0900",
+  "status": "complete",
+  "success_indicators": [
+    "loop_health score=70/streak=0/normal",
+    "board ready=5/blocked=0/clean",
+    "revenue external_runs=0 tracked correctly",
+    "PPE 13/20 trigger success documented"
+  ],
+  "verification_commands": [
+    "$ python3 -c \"import json; d=json.load(open('/home/atushi/.hermes/profiles/kensho-sweeps/data/loop_health_state.json')); print(d['score'], d['priority'])\" → 70 new_proposals",
+    "$ hermes kanban --board kensho-ai-team list --status ready | wc -l → 5 cards",
+    "$ python3 -c \"import json; d=json.load(open('/mnt/d/Project2/kensho/data/revenue-daily.json')); print(d[-1]['date'], d[-1]['apify']['external_users_total'])\" → 2026-10-07 0",
+    "$ python3 -c \"import json; d=json.load(open('/mnt/d/Project2/kensho/data/apify_ppe_external_runs_state.json')); print(len(d['last_trigger']))\" → 19 runs",
+    "$ git -C /mnt/d/Project2/kensho log --oneline -1 → 86afd1a"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_qa_20261017_0900_verification.md"
+  ],
+  "evidence_hashes": [
+    "f5fbd046aec14e607a978edc19921f22d29ee0261510fc8eec4b565a768120fe"
+  ]
+}

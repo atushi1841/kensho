@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-05",
-  "collected_at": "2026-10-05T00:28:42",
+  "date": "2026-10-07",
+  "collected_at": "2026-10-07T09:15:04",
   "sales": {
     "ok": true,
     "total": 0,
@@ -8,10 +8,10 @@
   },
   "sales_source": "api",
   "views": {
-    "date": "2026-10-05",
+    "date": "2026-10-07",
     "views": null,
-    "prev_date": "2026-10-04",
-    "prev_views": 2,
+    "prev_date": "2026-10-06",
+    "prev_views": null,
     "pct": null,
     "meets_target": null,
     "twitter_views": null,
@@ -22,10 +22,10 @@
     "sales_meets_target": false,
     "sales_target": ">=1/week",
     "views": {
-      "date": "2026-10-05",
+      "date": "2026-10-07",
       "views": null,
-      "prev_date": "2026-10-04",
-      "prev_views": 2,
+      "prev_date": "2026-10-06",
+      "prev_views": null,
       "pct": null,
       "meets_target": null,
       "twitter_views": null,
@@ -34,7 +34,7 @@
     "views_meets_target": null,
     "views_target": "prev-day +20%"
   },
-  "summary": "sales_source=api sales_week=0 sales_met=False views=None(prev=2) dod=None% views_met=None twitter_views=None",
+  "summary": "sales_source=api sales_week=0 sales_met=False views=None(prev=None) dod=None% views_met=None twitter_views=None",
   "history": [
     {
       "date": "2026-09-26",
@@ -675,6 +675,42 @@
           "views": null,
           "prev_date": "2026-10-04",
           "prev_views": 2,
+          "pct": null,
+          "meets_target": null,
+          "twitter_views": null,
+          "twitter_referrers": []
+        },
+        "views_meets_target": null,
+        "views_target": "prev-day +20%"
+      }
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "sales_source=api sales_week=0 sales_met=False views=None(prev=None) dod=None% views_met=None twitter_views=None",
+      "sales": {
+        "ok": true,
+        "total": 0,
+        "week": 0
+      },
+      "views": {
+        "date": "2026-10-07",
+        "views": null,
+        "prev_date": "2026-10-06",
+        "prev_views": null,
+        "pct": null,
+        "meets_target": null,
+        "twitter_views": null,
+        "twitter_referrers": []
+      },
+      "eval": {
+        "sales_week_count": 0,
+        "sales_meets_target": false,
+        "sales_target": ">=1/week",
+        "views": {
+          "date": "2026-10-07",
+          "views": null,
+          "prev_date": "2026-10-06",
+          "prev_views": null,
           "pct": null,
           "meets_target": null,
           "twitter_views": null,
