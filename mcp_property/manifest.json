@@ -1,0 +1,128 @@
+{
+  "manifest_version": "0.4",
+  "name": "mlit-property-prices-mcp",
+  "display_name": "MLIT Property Prices MCP",
+  "version": "0.1.0",
+  "description": "Japanese real-estate transaction prices from MLIT Reinfolib XIT001 API via Apify actor for AI agents and investors.",
+  "long_description": "MLIT Property Prices MCP です。\\n\\nAIエージェント（Claude, Cursor, ChatGPT等）から日本国内の不動産取引価格データを取得できます。\\n\\n## 提供ツール\\n\\n| ツール | 内容 |\\n|---|---|\\n| `query_property_prices` | MLIT XIT001不動産取引価格APIを呼び出し、都道府県・期間指定で取引データを取得 |\\n| `get_run_results` | 実行結果のデータセットを取得 |\\n\\n## 動作要件\\n\\n- APIFY_TOKEN環境変数が必要（Apifyプラットフォーム利用分)\\n- 依存解決に [uv](https://docs.astral.sh/uv/) を使用（`uv run` 経由で起動、Python 3.10以上）\\n- 関連 Apify Actor: fruitful_quintessence/mlit-japan-property-prices\\n\\n## データソース\\n\\n- 国土交通省 不動産情報ライブラリ Reinfolib XIT001 API\\n- 全47都道府県、2005年第3四半期から現在まで\\n- 取引価格（総額・単価）、面積、間取り、築年数、構造、用途、道路接面、都市計画区域等\\n\\n## BYOK (Bring Your Own Key)\\n\\n- MLIT APIキーは環境変数 MLIT_API_KEY またはツール引数で提供\\n- 無料で取得可能: https://www.reinfolib.mlit.go.jp/ → API利用申請\\n",
+  "author": {
+    "name": "atushi1841",
+    "url": "https://github.com/atushi1841"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atushi1841/kensho"
+  },
+  "homepage": "https://github.com/atushi1841/kensho/tree/main/mcp_property",
+  "server": {
+    "type": "python",
+    "entry_point": "src/stdio_main.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "src/stdio_main.py"
+      ]
+    }
+  },
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "linux",
+      "win32"
+    ],
+    "runtimes": {
+      "python": ">=3.10"
+    }
+  },
+  "keywords": [
+    "japan",
+    "real-estate",
+    "property",
+    "mlit",
+    "reinfolib",
+    "transaction-prices",
+    "mcp",
+    "apify"
+  ],
+  "tools": [
+    {
+      "name": "query_property_prices",
+      "description": "Query Japanese real-estate transaction prices from the official MLIT XIT001 API via Apify actor. Returns structured JSON with price, area, floor plan, building year, structure, use, road frontage and city-planning fields for investment screening and valuation.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "prefecture_code": {
+            "type": "string",
+            "description": "Two-digit prefecture code (e.g. \"13\" = Tokyo). Omit for all 47 prefectures."
+          },
+          "year_from": {
+            "type": "integer",
+            "description": "Starting year (default 2005)",
+            "default": 2005
+          },
+          "year_to": {
+            "type": "integer",
+            "description": "Ending year (default 2026)",
+            "default": 2026
+          },
+          "quarter_from": {
+            "type": "integer",
+            "description": "Starting quarter (1-4)",
+            "default": 1
+          },
+          "quarter_to": {
+            "type": "integer",
+            "description": "Ending quarter (1-4)",
+            "default": 4
+          },
+          "price_classification": {
+            "type": "string",
+            "description": "'01' transaction prices (default), '02' contract prices, '' both",
+            "default": "01"
+          },
+          "language": {
+            "type": "string",
+            "description": "'ja' or 'en' (English for international buyers)",
+            "default": "en"
+          },
+          "max_requests": {
+            "type": "integer",
+            "description": "Safety cap on upstream MLIT API calls (default 50)",
+            "default": 50
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Max dataset records returned (default 1000)",
+            "default": 1000
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_run_results",
+      "description": "Fetch the dataset produced by a run started via query_property_prices.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "description": "Run ID returned from query_property_prices"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Max records to return (default 1000)",
+            "default": 1000
+          }
+        },
+        "required": [
+          "run_id"
+        ],
+        "type": "object"
+      }
+    }
+  ]
+}

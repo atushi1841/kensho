@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.atushi1841/mlit-property-prices-mcp",
+  "description": "MLIT Japan real-estate transaction prices (XIT001) via Apify actor for AI agents and investors.",
+  "repository": {
+    "url": "https://github.com/atushi1841/kensho",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "title": "MLIT Property Prices MCP",
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/atushi1841/kensho/releases/download/mlit-property-prices-mcp-v0.1.0/server.mcpb",
+      "version": "0.1.0",
+      "fileSha256": "PLACEHOLDER_SHA256_WILL_BE_UPDATED_ON_RELEASE",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
