@@ -20,25 +20,25 @@ dominant task id: t_f5f6f8a9（本文引用9回、ファイル名= t_f5f6f8a9）
 
 **コマンド1: dev.to API認証確認**
 ```bash
-curl -s -H "api-key: [REDACTED]" "https://dev.to/api/users/me"
+$ curl -s -H "api-key: [REDACTED]" "https://dev.to/api/users/me"
 ```
 HTTP 200, username=atu_ino_ed473db24d76d234a
 
 **コマンド2: 記事投稿確認**
 ```bash
-curl -s -H "api-key: [REDACTED]" "https://dev.to/api/articles/4812861"
+$ curl -s -H "api-key: [REDACTED]" "https://dev.to/api/articles/4812861"
 ```
 HTTP 200, title="MLIT Japan Property Prices: Free Data for AI Agents", published=true
 
 **コマンド3: worker report存在確認**
 ```bash
-ls -la /mnt/d/Project2/kensho/reports/t_f5f6f8a9-worker-report.md
+$ ls -la /mnt/d/Project2/kensho/reports/t_f5f6f8a9-worker-report.md
 ```
 -rwxrwxrwx 1 atushi atushi 3949 Oct 7 reports/t_f5f6f8a9-worker-report.md
 
-**コマンド4: external_run測定**
+**コマンド4: external_users測定**
 ```bash
-python3 -c "import json; d=json.load(open('/mnt/d/Project2/kensho/data/revenue-daily.json')); rec=d[-1]; print('external_users:',rec.get('apify',{}).get('external_users_total','n/a'))"
+$ python3 -c "import json; d=json.load(open('/mnt/d/Project2/kensho/data/revenue-daily.json')); rec=d[-1]; print('external_users:',rec.get('apify',{}).get('external_users_total','n/a'))"
 ```
 external_users: 0（記事公開から0時間経過・計上不可）
 
