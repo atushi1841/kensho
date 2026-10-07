@@ -46,6 +46,9 @@ ROUTES: list[tuple[tuple[str, ...], list[str]]] = [
     (("anime", "figure", "フィギュア"), ["japan-anime-figure-price-data", "surugaya-japan-hobby-prices"]),
     (("instrument", "guitar", "楽器"), ["japan-used-instrument-market-scraper", "digimart-japan-used-instrument-scraper"]),
     (("rent", "real estate", "賃貸", "不動産"), ["japan-rent-market-scraper", "suumo-japan-real-estate-scraper"]),
+    # MLIT不動産取引価格 (2026-10-07 追加: t_f5f6f8a9/t_51c711a9対応)
+    (("property", "不動産", "mlit", "real estate transaction", "land price", "物件価格"),
+     ["mlit-japan-property-prices"]),
     (("price", "prices", "価格"), ["japan-kakaku-price-search", "japan-market-mcp"]),
 ]
 
