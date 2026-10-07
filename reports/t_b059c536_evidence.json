@@ -1,0 +1,19 @@
+{
+  "success_indicators": [
+    "3 failing tests now pass",
+    "score=79 (>=55) from loop_health fixture"
+  ],
+  "verification_commands": [
+    "git -C /mnt/d/Project2/kensho log --oneline -3",
+    "python -m pytest -q --no-cov tests/test_regression_gates.py::test_loop_health_band_reset_invariant tests/test_agent_eval_harness.py::test_sim_three_consecutive tests/test_revenue_collect.py::TestV94PpeFallbackPath::test_load_ppe_actors_reads_data_tmp_entity",
+    "python -m pytest -q --no-cov --ignore=tests/test_price_monitor.py --ignore=tests/test_agent_api.py"
+  ],
+  "artifact_paths": [
+    "reports/t_b059c536_verification.md"
+  ],
+  "evidence_hashes": [
+    "2ebb11d3196724573909af26ba16f8af750e8a7d89428d2e5f535ab0f1ccbe6b"
+  ],
+  "task_id": "t_b059c536",
+  "status": "complete"
+}
