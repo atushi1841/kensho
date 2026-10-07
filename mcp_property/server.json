@@ -11,9 +11,9 @@
   "packages": [
     {
       "registryType": "mcpb",
-      "identifier": "https://github.com/atushi1841/kensho/releases/download/mlit-property-prices-mcp-v0.1.0/server.mcpb",
+      "identifier": "https://github.com/atushi1841/kensho/releases/download/v0.1.0/server.mcpb",
       "version": "0.1.0",
-      "fileSha256": "PLACEHOLDER_SHA256_WILL_BE_UPDATED_ON_RELEASE",
+      "fileSha256": "e2f5d4ce75b2becdc170cbb264f8f509674b3cd3367f5f469ba629bb34f522ca",
       "transport": {
         "type": "stdio"
       }
