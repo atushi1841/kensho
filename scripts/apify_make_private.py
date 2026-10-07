@@ -51,34 +51,36 @@ TARGET_ACTORS: list[str] = [
 # 合計 20 パターン。実際の公開数は API 経由で動的確認。
 
 
-def load_token() -> str:
+def _token() -> str:
     tok = os.environ.get("APIFY_TOKEN", "").strip()
     if not tok:
         env_path = Path(PROJECT_DIR) / ".env"
         if env_path.exists():
             for line in env_path.read_text(encoding="utf-8-sig").splitlines():
-                if line.startswith("APIFY_TOKEN_DEFAULT="):
+                if line.startswith(("APIFY_TOKEN=", "APIFY_TOKEN_DEFAULT=")):
                     tok = line.split("=", 1)[1].strip().strip('"').strip("'")
                     break
     return tok
 
 
-TOKEN = load_token()
-assert TOKEN, "no APIFY_TOKEN"
+TOKEN = _token()
+assert TOKEN, "no APIFY_TOKEN/APIFY_TOKEN_DEFAULT"
+TOKEN_LEN = len(TOKEN)
 
 
 def api_get(path: str) -> dict:
-    url = f"{API}{path}?token={TOKEN}"
-    req = urllib.request.Request(url)
+    url = f"{API}{path}"
+    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {TOKEN}"})
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.loads(r.read())
 
 
 def api_put(actor_id: str, payload: dict) -> tuple[int, dict]:
-    url = f"{API}/acts/{actor_id}?token={TOKEN}"
+    url = f"{API}/acts/{actor_id}"
     data = json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(url, data=data, method="PUT",
-                                 headers={"Content-Type": "application/json"})
+                                 headers={"Content-Type": "application/json",
+                                          "Authorization": f"Bearer {TOKEN}"})
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             return r.getcode(), json.loads(r.read())
@@ -96,8 +98,8 @@ def main() -> int:
     ap.add_argument("--sleep", type=float, default=1.5)
     args = ap.parse_args()
 
-    # 全アクター名 → id のマッピングを取得
-    actors = api_get("/acts?my=true&limit=200")["data"]["items"]
+    # 全アクター名 → id のマッピングを取得（user=fruitful_quintessence 限定）
+    actors = api_get(f"/actors?limit=200&userId=fruitful_quintessence")["data"]["items"]
     name_to_id = {a["name"]: a["id"] for a in actors}
     print(f"total my actors: {len(name_to_id)}", file=sys.stderr)
 
