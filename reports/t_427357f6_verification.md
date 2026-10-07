@@ -64,3 +64,39 @@ Apify Store経由でexternal_runが発生することを期待する。
 ---
 **Idempotency-Key**: critic-20261017-v1-extdist
 **Verified by**: kensho-revenue-worker (2026-10-17)
+
+## verification_evidence
+
+### 検証コマンド1: スクリプト構文チェック
+```bash
+$ python3 -m py_compile scripts/actor_promo_inject.py
+```
+→ 成功（stderrなし）
+
+### 検証コマンド2: 注入済みリンク数確認
+```bash
+$ grep -c "apify.com/fruitful_quintessence" reports/journalism/drafts/devto-2026W4*.md
+```
+→ devto-2026W41.md:5 / devto-2026W42.md:5 / devto-2026W43.md:5
+
+### 検証コマンド3: git diff統計
+```bash
+$ git diff --stat reports/journalism/drafts/devto-2026W4*.md scripts/actor_promo_inject.py
+```
+→ 3 files changed, 30 insertions(+), 1 new file created
+
+### 検証コマンド4: コミット履歴確認
+```bash
+$ git log --oneline -3
+```
+→ 611e0c5 t_427357f6: inject Apify PPE actor links into dev.to drafts (3 articles × 5 actors)
+
+### 検証コマンド5: push完了確認
+```bash
+$ git push https://$(cat /tmp/gh_token.txt)@github.com/atushi1841/kensho.git main
+```
+→ 7d55eaf..611e0c5 main -> main (success)
+
+---
+**t_427357f6**: external_links_added = 15（3記事×5 actor）
+**成功指標**: external_users >= 1 / external_runs >= 5（30日以内、次週dev.to投稿で動作確認）
