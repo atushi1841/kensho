@@ -1,0 +1,19 @@
+{
+  "task_id": "t_486da85b",
+  "status": "complete",
+  "success_indicators": [
+    "Identified 7 low-run language variant actors",
+    "Marked 7/7 actors as isDeprecated=True and added redirect links to main actors via Apify PUT API"
+  ],
+  "verification_commands": [
+    "$ curl -s https://api.apify.com/v2/actors/yCN9ystlovHkgolzw => isDeprecated: true, description: DEPRECATED redirect link",
+    "$ curl -s https://api.apify.com/v2/actors/kDY2AAouEJzp8kfyj => isDeprecated: true, description: DEPRECATED redirect link",
+    "$ curl -s https://api.apify.com/v2/actors/pcSpFWK2A2HWRE2mx => isDeprecated: true, description: DEPRECATED redirect link"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_486da85b_verification.md"
+  ],
+  "evidence_hashes": [
+    "e35ae7de8e7bbcde62aea9e3948fb6dab412ce8ef83de36b094ff2894e59c756"
+  ]
+}
