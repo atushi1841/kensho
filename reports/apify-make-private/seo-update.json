@@ -1,0 +1,92 @@
+[
+  {
+    "name": "japan-camera-market-cn-scraper",
+    "status": "updated",
+    "seoTitle": "Japan cameras Prices — Listings & Market Data (CN版)"
+  },
+  {
+    "name": "japan-camera-market-kr-scraper",
+    "status": "updated",
+    "seoTitle": "Japan cameras Prices — Listings & Market Data (KR版)"
+  },
+  {
+    "name": "japan-used-instrument-market-cn",
+    "status": "failed",
+    "http_code": 400
+  },
+  {
+    "name": "japan-used-instrument-market-kr",
+    "status": "failed",
+    "http_code": 400
+  },
+  {
+    "name": "japan-luxury-brand-market-cn",
+    "status": "updated",
+    "seoTitle": "Japan luxury brand Prices — Listings & Market Data (CN版)"
+  },
+  {
+    "name": "japan-luxury-brand-market-kr",
+    "status": "updated",
+    "seoTitle": "Japan luxury brand Prices — Listings & Market Data (KR版)"
+  },
+  {
+    "name": "japan-offmall-market-cn",
+    "status": "updated",
+    "seoTitle": "Japan Hard Off OffMall Prices — Listings & Market Data (CN版)"
+  },
+  {
+    "name": "japan-offmall-market-kr",
+    "status": "updated",
+    "seoTitle": "Japan Hard Off OffMall Prices — Listings & Market Data (KR版)"
+  },
+  {
+    "name": "japan-watch-market-scraper-cn",
+    "status": "updated",
+    "seoTitle": "Japan watches Prices — Listings & Market Data (CN版)"
+  },
+  {
+    "name": "japan-watch-market-scraper-kr",
+    "status": "updated",
+    "seoTitle": "Japan watches Prices — Listings & Market Data (KR版)"
+  },
+  {
+    "name": "goo-net-car-scraper-es",
+    "status": "updated",
+    "seoTitle": "Japan car market Prices — Listings & Market Data (ES版)"
+  },
+  {
+    "name": "goo-net-car-scraper-pt",
+    "status": "updated",
+    "seoTitle": "Japan car market Prices — Listings & Market Data (PT版)"
+  },
+  {
+    "name": "goo-net-car-scraper-fr",
+    "status": "updated",
+    "seoTitle": "Japan car market Prices — Listings & Market Data (FR版)"
+  },
+  {
+    "name": "goo-net-car-scraper-ru",
+    "status": "updated",
+    "seoTitle": "Japan car market Prices — Listings & Market Data (RU版)"
+  },
+  {
+    "name": "japan-property-market-cn",
+    "status": "failed",
+    "http_code": 400
+  },
+  {
+    "name": "japan-property-market-kr",
+    "status": "failed",
+    "http_code": 400
+  },
+  {
+    "name": "japan-rent-market-cn",
+    "status": "updated",
+    "seoTitle": "Japan rent market cn Prices — Listings & Market Data (CN版)"
+  },
+  {
+    "name": "japan-rent-market-kr",
+    "status": "updated",
+    "seoTitle": "Japan rent market kr Prices — Listings & Market Data (KR版)"
+  }
+]
