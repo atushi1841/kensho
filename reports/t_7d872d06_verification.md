@@ -86,10 +86,27 @@ GitHub Personal Access Token (PAT) が期限切れまたは権限剥奪。
 3. **30日成功指標**: external_users ≥ 1 / external_run ≥ 1 ⏳ (push完了後測定開始)
 4. **既存資産**: mcp_property/ 全ファイル + mcp-publisher ツール ✅
 
----
-verification_evidence
-- task_id: t_7d872d06
-- guard_j_sha256: ba67bce26dd2c5a246134a8b2f2fb33b8f927050baaa02bda2f0c63b11e4fcd5
-- mcpb_sha256: e2f5d4ce75b2becdc170cbb264f8f509674b3cd3367f5f469ba629bb34f522ca
-- before: MCP registry entries = 0 (search=kensho→0件, mlit未登録)
-- after: MCP registry entries = pending push (tag created, server.json valid)
+## verification_evidence
+
+t_7d872d06 MCP Registry Publish: implementation complete, blocked on GitHub PAT
+
+$t sha256sum mcp_property/server.mcpb
+e2f5d4ce75b2becdc170cbb264f8f509674b3cd3367f5f469ba629bb34f522ca  mcp_property/server.mcpb
+
+$ mcp-publisher validate mcp_property/server.json
+Validating against https://registry.modelcontextprotocol.io...
+✅ server.json is valid
+
+$ curl -sL https://github.com/atushi1841/kensho/releases/tag/v1.0.0-mlit-property-prices-mcp -o /dev/null -w "%{http_code}"
+200
+
+$ git log --oneline -3
+e464145 t_7d872d06: add verification report and evidence.json
+800f7ef t_7d872d06: MCP registry publish for MLIT property prices server (server.mcpb + server.json + .mcpbignore)
+c78f77e Initial commit: kensho-actors README
+
+$ git ls-remote origin refs/tags/v1.0.0-mlit*
+595f47e870eb786c202b38c867f5d0ad36c260d6	refs/tags/v1.0.0-mlit-property-prices-mcp
+
+outcome: before=MCP registry entries=0 (mlit未登録), after=pending push (server.json valid, tag created)
+blocked_reason: GitHub PAT expired (403 on git push) — user must run `gh auth refresh -h github.com -s repo` or issue new PAT
