@@ -1,0 +1,26 @@
+{
+  "success_indicators": [
+    "dev.to 記事が https://dev.to/.../mlit-japan-property-prices-free-data-for-ai-agents-real-estate-investors-doo で HTTP 200 確認済み",
+    "記事本文に Apify Store link（mlit-japan-property-prices）が6箇所埋め込み済み"
+  ],
+  "verification_commands": [
+    "$ curl -s -o /dev/null -w 'HTTP %{http_code}' 'https://dev.to/atu_ino_ed473db24d76d234a/mlit-japan-property-prices-free-data-for-ai-agents-real-estate-investors-doo' => HTTP 200",
+    "$ grep -c 'apify.com' /mnt/d/Project2/kensho/reports/journalism/drafts/devto-mlit-property-2026.md => 6",
+    "$ python3 scripts/publish_devto.py reports/journalism/drafts/devto-mlit-property-2026.md --publish => [OK] id=4812973 published_at=2026-10-07T14:52:44Z"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_d1ade230_verification.md",
+    "/mnt/d/Project2/kensho/reports/journalism/drafts/devto-mlit-property-2026.md"
+  ],
+  "evidence_hashes": [
+    "sha256:c456b39f845a3bdba8288ac01b5763ffe966210510c9c879376cb63c4690aa7c",
+    "sha256:77abe702651fbe772b6f25afa2b8a28438faf6787b712443d7f3930019b9506f"
+  ],
+  "outcome": {
+    "metric": "dev.to新規記事投稿数",
+    "before": 0,
+    "after": 1
+  },
+  "task_id": "t_d1ade230",
+  "status": "complete"
+}
