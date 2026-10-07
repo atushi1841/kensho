@@ -74,7 +74,7 @@ PRIORITY_ACTORS: list[dict[str, Any]] = [
     {"actual_name": "dmm-scraper", "fallback_id": "nUm22B2guMo8vXom6", "priority": 3, "price_usd": 0.002},
     {"actual_name": "kitamura-japan-used-camera-scraper", "fallback_id": "DOiD9y1NAJfLBcAjT", "priority": 3, "price_usd": 0.005},
     {"actual_name": "jackroad-used-watch-scraper", "fallback_id": "nWf9BR2ndMTYqKxNB", "priority": 3, "price_usd": 0.005},
-    {"actual_name": "komehyo-japan-brand-scraper", "fallback_id": "Db3iY8FIRxPjPag7N", "priority": 3, "price_usd": 0.005},
+    {"actual_name": "komehyo-japan-brand-scraper", "fallback_id": "Db3iY8FIRxPjPag7N", "priority": 3, "price_usd": 0.005, "disabled": True, "disable_reason": "2026-10-07: API 404 actor not found"},
     # $0.004/$0.003 アクター
     {"actual_name": "eurostat-indicators", "fallback_id": "pAxQ0lRyArudhK9Wx", "priority": 4, "price_usd": 0.004},
     {"actual_name": "world-bank-indicators", "fallback_id": "u2qsG1UfVHWsgl8Dg", "priority": 4, "price_usd": 0.003},
@@ -88,6 +88,15 @@ PRIORITY_ACTORS: list[dict[str, Any]] = [
 # MCP常駐型アクター（通常runだとTIMED-OUTになるため起動除外）
 MCP_RESIDENT_SUFFIX = "-mcp"
 MCP_RESIDENT_IDS = {"57SNehd4cHNFyUCj3", "RdCHlXHphoLsWnyhh", "0eeiFH0nLqlWVoOAc", "xUYsD13SVHHRFQS1H", "BxstMzzxh8jq6UtfS"}
+
+# アクター別 input パラメータ（2026-10-07 実測: 一部アクターは input ネスト不可・top-level必須）
+# 証拠: surugaya F8Hl0a8Cx9bpJBrxR → {"searchKeyword":"トイザラス"} で200/READY
+#        jackroad nWf9BR2ndMTYqKxNB → {"keyword":"SEIKO"} で200/READY
+#        他は input ネスト不要（payload={waitForFinish:0} で通る）
+ACTOR_INPUT_PARAMS: dict[str, dict[str, str]] = {
+    "F8Hl0a8Cx9bpJBrxR": {"searchKeyword": "トイザラス"},
+    "nWf9BR2ndMTYqKxNB": {"keyword": "SEIKO"},
+}
 
 # 起動間隔（同一アクターの連続起動防止用）
 # 2026-10-04 t_ab4e4024: 24hに固定（週1cron実行対応。72hだと隔週実行になるため）
@@ -210,6 +219,10 @@ def trigger_actor_run(
     try:
         timeout_secs = RETRY_TIMEOUT_OVERRIDES.get(actor_id)
         payload = {"waitForFinish": 0}
+        # アクター別 input パラメータ（2026-10-07: surugaya/jackroad は top-level 必須）
+        extra = ACTOR_INPUT_PARAMS.get(actor_id)
+        if extra:
+            payload.update(extra)
         if timeout_secs is not None:
             payload["timeoutSecs"] = timeout_secs
         
@@ -341,6 +354,19 @@ def main(argv: list[str] | None = None) -> int:
                 "triggered": False,
                 "skipped": True,
                 "reason": "MCP resident",
+            })
+            continue
+        
+        # 無効化済みアクターはスキップ
+        if t.get("disabled"):
+            print(f"  [SKIP] {actual_name}: disabled ({t.get('disable_reason','')})")
+            results.append({
+                "actual_name": actual_name,
+                "actor_id": actor_id,
+                "price_usd": price_usd,
+                "triggered": False,
+                "skipped": True,
+                "reason": f"disabled: {t.get('disable_reason','')}",
             })
             continue
         
