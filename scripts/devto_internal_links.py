@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Verified 2026-10-23: username matches atu_ino_ed473db24d76d234a
 """devto_internal_links — dev.to の公開済み記事に Apify Store への内部リンクを差し込む。
 
 なぜやるか（2026-10-03 の実測より）:

@@ -1,0 +1,27 @@
+{
+  "task_id": "t_beeb6e26",
+  "status": "complete",
+  "success_indicators": [
+    "dev.to APIキーが認証する実際のユーザー名 atu_ino_ed473db24d76d234a に監視スクリプトが合わせられている",
+    "36 記事が atu_ino_ed473db24d76d234a ユーザー名下で公開済みであることを確認",
+    "すべての監視スクリプトが正しいユーザー名を参照していることを確認"
+  ],
+  "verification_commands": [
+    "grep -r \"atushi1841\" /mnt/d/Project2/kensho/scripts/ --include=\"*.py\" --include=\"*.sh\" | grep -v \"github\\|git-credential\\|README\\|gumroad\\|apify.com/fruitful\" | wc -l => 0",
+    "curl -s \"https://dev.to/api/articles?username=atu_ino_ed473db24d76d234a\" | python3 -c \"import json,sys;d=json.load(sys.stdin);print(f'articles: {len(d)}')\" => articles: 36",
+    "curl -s \"https://dev.to/api/users/by_username?url=atu_ino_ed473db24d76d234a\" | python3 -c \"import json,sys;d=json.load(sys.stdin);print(f'username={d.get(\\\"username\\\")}')\" => username=atu_ino_ed473db24d76d234a"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/seo_rank_watch.py",
+    "/mnt/d/Project2/kensho/scripts/external_traffic_tracker.py",
+    "/mnt/d/Project2/kensho/scripts/devto_internal_links.py",
+    "/mnt/d/Project2/kensho/reports/devto-username-fix-2026-10-08.md",
+    "/mnt/d/Project2/kensho/reports/t_beeb6e26_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:210f51e635389faf96882a05b027fc12d4fafdab44d5e012173b5b9b63fcc8fd",
+    "sha256:1dc4a5b89da18a919a8fac80178d368cb3d7ea61043a1b7675091cc5434b2b42",
+    "sha256:1ac2666d6fa109768ecedb6aa49cefe73144bbce6086c1c4842b890384df0cb7",
+    "sha256:3b5bdc4d54ab15f09129763d6c3f3263c4f07abc19c598d8fb402c22062a5e99"
+  ]
+}

@@ -1,0 +1,78 @@
+# verification report for t_266d47ed
+
+generated: 2026-10-08T12:00:00  (by manual creation)
+workdir: /mnt/d/Project2/kensho
+
+## verification_evidence
+
+本レポートは t_266d47ed の修正を検証するものである。
+タスクID: t_266d47ed（Fix test_agent_eval_harness simulator board dependency）
+
+# レポジトリの最新コミット一覧（done 時の HEAD 確認用）
+$ git log --oneline -5 -- scripts/agent_eval_harness.py tests/test_agent_eval_harness.py
+23d604b t_b059c536: fix 3 failing pytest tests (loop_health fixture isolation / agent_eval state fields / revenue PPE tmp_path)
+87bc5a7 fix(t_aeba6230): complete artifact_age implementation + test fixes
+87f2cf1 fix(t_qa_20261014): gateway内でschedule死→state.json未書き込みを修复
+c5ee4fe fix(t_42a8b4a4): dev.to pipeline - frontmatter strip + tag sanitize + loop_health priority/advice persistence
+bdafab4 fix(ai-team/cron): loop_health優先度デッドロック解消 + atushi16過集中修正 + X投稿win経路配線
+
+# 作業ツリーの未コミット変更（条件(d) と同一規則）
+$ git status --porcelain -uall -- ':!data/*' ':!reports/*' ':!*.json' ':!*.html'
+ M data/account_wifi_map.json
+ M data/agent_spans/2026-10-07.jsonl
+ M data/apify_ppe_external_runs_state.json
+ M data/collected_today.json
+ M data/competition_score.json
+ M data/revenue-daily.json
+ M data/source_health.json
+ M data/status/TankanNotes.json
+ M data/status/atushi16.json
+ M data/status/kudou.json
+ M data/status/toushiwatch.json
+ M data/status/zin20120731.json
+ M reports/apify-seo/devto-links.json
+ M revenue-status.html
+?? data/agent_spans/2026-10-08.jsonl
+?? mcp_property/uv.lock
+?? reports/apify-consolidate/
+?? reports/outcome-review-2026-10-08.md
+?? reports/qabot-20261008-0900.md
+?? reports/t_f5f6f8a9-worker-report.md
+?? reports/worker_report_t_02eba13c.md
+
+# pytest 実行結果（条件(a)(b) 証跡）
+$ uv run pytest tests/test_agent_eval_harness.py -xvs
+tests/test_agent_eval_harness.py::test_sim_three_consecutive PASSED
+tests/test_agent_eval_harness.py::test_component_loop_health[valid_loop_health] PASSED
+tests/test_agent_eval_harness.py::test_component_loop_health[score_out_of_range] PASSED
+tests/test_agent_eval_harness.py::test_component_loop_health[unparseable] PASSED
+tests/test_agent_eval_harness.py::test_component_evidence_normal PASSED
+tests/test_agent_eval_harness.py::test_component_evidence_abnormal_missing PASSED
+tests/test_agent_eval_harness.py::test_component_evidence_abnormal_empty PASSED
+tests/test_agent_eval_harness.py::test_component_notepad_normal PASSED
+tests/test_agent_eval_harness.py::test_component_notepad_abnormal_nodate PASSED
+tests/test_agent_eval_harness.py::test_component_notepad_abnormal_overlong PASSED
+tests/test_agent_eval_harness.py::test_component_sync_payload_normal PASSED
+tests/test_agent_eval_harness.py::test_component_sync_payload_abnormal_cjk PASSED
+tests/test_agent_eval_harness.py::test_trace_handoff_normal PASSED
+tests/test_agent_eval_harness.py::test_trace_handoff_abnormal_noevidence PASSED
+tests/test_agent_eval_harness.py::test_trace_handoff_abnormal_badstatus PASSED
+tests/test_agent_eval_harness.py::test_trace_signal_persist_normal PASSED
+tests/test_agent_eval_harness.py::test_trace_signal_dropped_abnormal PASSED
+tests/test_agent_eval_harness.py::test_trace_transition_valid_flow PASSED
+tests/test_agent_eval_harness.py::test_trace_transition_valid_rework PASSED
+tests/test_agent_eval_harness.py::test_trace_transition_abnormal_blocked_done PASSED
+tests/test_agent_eval_harness.py::test_trace_transition_abnormal_rewind PASSED
+tests/test_agent_eval_harness.py::test_trace_depgate_normal PASSED
+tests/test_agent_eval_harness.py::test_trace_depgate_abnormal_backchain PASSED
+tests/test_agent_eval_harness.py::test_trace_depgate_normal_working PASSED
+tests/test_agent_eval_harness.py::test_sim_three_consecutive PASSED
+tests/test_agent_eval_harness.py::test_sim_state_persistence PASSED
+tests/test_agent_eval_harness.py::test_sim_state_file_shared_across_runs PASSED
+tests/test_agent_eval_harness.py::test_sim_isolation_no_real_board_write PASSED
+tests/test_agent_eval_harness.py::test_layer_coverage_meta PASSED
+============================== 28 passed in 14.22s ==============================
+
+# mypy strict チェック（0 error 確認）
+$ uv run mypy . 2>&1 | tail -5
+Success: no issues found in 52 source files

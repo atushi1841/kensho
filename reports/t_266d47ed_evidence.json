@@ -1,0 +1,21 @@
+{
+  "task_id": "t_266d47ed",
+  "status": "complete",
+  "success_indicators": [
+    "test_sim_three_consecutive passes",
+    "test_component_loop_health[valid_loop_health] passes",
+    "all 28 tests in test_agent_eval_harness.py pass"
+  ],
+  "verification_commands": [
+    "$ git log --oneline -5 -- scripts/agent_eval_harness.py tests/test_agent_eval_harness.py",
+    "$ uv run pytest tests/test_agent_eval_harness.py -xvs",
+    "$ uv run mypy ."
+  ],
+  "artifact_paths": [
+    "reports/t_266d47ed_verification.md",
+    "reports/t_266d47ed_evidence.json"
+  ],
+  "evidence_hashes": [
+    "23d604b959fa83030666127cd76ff5e44f321d47"
+  ]
+}

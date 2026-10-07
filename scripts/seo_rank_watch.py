@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Verified 2026-10-23: username matches atu_ino_ed473db24d76d234a
 """
 seo_rank_watch.py v2 — 実Google順位計測型SEO Rank Watch
 =================================================================

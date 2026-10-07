@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Verified 2026-10-23: username matches atu_ino_ed473db24d76d234a
 """external_traffic_tracker — UTM経由/Gumroad無料サンプルクリック等の外部流入を記録.
 
 背景:
