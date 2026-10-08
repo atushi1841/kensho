@@ -1,0 +1,22 @@
+{
+  "success_indicators": [
+    "Article published and verified",
+    "Apify links added to published articles"
+  ],
+  "verification_commands": [
+    "cd /mnt/d/Project2/kensho && python3 devto_weekly_pipeline.py 2>&1 | head -100",
+    "cd /mnt/d/Project2/kensho && git add devto_weekly_pipeline.py reports/apify-seo/devto-links.json reports/journalism/drafts/devto-2026W44-mcp-intro.md mcp_servers/japan_ec_mcp",
+    "cd /mnt/d/Project2/kensho && git commit -m \"fix: devto_weekly_pipeline duplicate function removal; feat: add MCP intro article devto-2026W44-mcp-intro.md; sync draft and publish; add Apify links to published article\"",
+    "cd /mnt/d/Project2/kensho && git push origin main 2>&1"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_ac39d972_verification.md",
+    "/mnt/d/Project2/kensho/reports/apify-seo/devto-links.json"
+  ],
+  "evidence_hashes": [
+    "121fd9e0026f08d5d8e42575ed6e0ca506fa39411a1700cc8d31bab7009244a1",
+    "e1bcd3692d39603e5235666e9f8912eb7fa2780e793fb1c7636d1361d77f9fc0"
+  ],
+  "task_id": "t_ac39d972",
+  "status": "complete"
+}
