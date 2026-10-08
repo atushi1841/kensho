@@ -519,10 +519,6 @@ def run_pipeline(bdir=None, state_file=None):
     add_apify_links()
 
     # Phase 2: Add Apify Store links to published articles
-    print("\\n\\n--- Phase 2: Adding Apify Store links to published articles ---")
-    add_apify_links()
-
-    # Phase 3: Pipeline configuration
     print("\\n\\n--- Phase 3: Pipeline configuration ---")
     print("Next run: Weekly (every 1 week)")
     print("Strategy: 2ドラフトの露出テスト後は新規記事生成（懸賞/データネタ）へ移行")
