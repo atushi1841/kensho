@@ -1,0 +1,22 @@
+{
+  "success_indicators": [
+    "5 MCP repo READMEs updated with Smithery install command",
+    "GitHub API PUT 200 for all 5 repos",
+    "read-back grep @smithery/cli=1 for all 5 repos"
+  ],
+  "verification_commands": [
+    "$ gh api repos/atushi1841/japan-market-mcp/contents/README.md --jq '.content' | base64 -d | grep -c @smithery/cli => 1",
+    "$ gh api repos/atushi1841/japan-ec-mcp/contents/README.md --jq '.content' | base64 -d | grep -c @smithery/cli => 1",
+    "$ gh api repos/atushi1841/japan-fuel-price-mcp/contents/README.md --jq '.content' | base64 -d | grep -c @smithery/cli => 1",
+    "$ gh api repos/atushi1841/japan-minimum-wage-mcp/contents/README.md --jq '.content' | base64 -d | grep -c @smithery/cli => 1",
+    "$ gh api repos/atushi1841/japan-jepx-mcp/contents/README.md --jq '.content' | base64 -d | grep -c @smithery/cli => 1"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_68d83095_verification.md"
+  ],
+  "evidence_hashes": [
+    "b98c83e4e3e061329e3af8e36c134f0d43eaeb696d1e05c4d5807e0433a434a9"
+  ],
+  "task_id": "t_68d83095",
+  "status": "complete"
+}
