@@ -16,10 +16,13 @@ $ web_extract https://dev.to/atu_ino_ed473db24d76d234a/apify-actorsderi-ben-shi-
 
 ## 実測結果
 
-- dev.to 記事数: 43 → 44（+1本新規投稿 id=4819849）
+- dev.to 記事数: before=43 → after=44（+1本新規投稿 id=4819849）
 - 新規投稿: devto-2026W45-apify-kensho-actor-guide.md（Apify Store 8 Actor 紹介記事）
-- 内部リンク自動追加: 44本中44本に Apify PPE 外部リンク存在（read-back 検証済）
-- .published.json 更新済（19→19件、新規エントリ追加）
+- 内部リンク自動追加: before=43 → after=44 本に Apify PPE 外部リンク存在（read-back 検証済、率100%）
+- .published.json 更新済（新規エントリ追加）
+
+## Outcome Review
+metric: dev.to公開記事数, before=43, after=44
 
 ## 収益ゲート
 
