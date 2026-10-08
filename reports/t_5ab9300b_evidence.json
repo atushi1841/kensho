@@ -1,0 +1,24 @@
+{
+  "task_id": "t_5ab9300b",
+  "status": "complete",
+  "success_indicators": [
+    "README links verified across 3 MCP repositories",
+    "Apify actor cross-promotion integrated"
+  ],
+  "verification_commands": [
+    "$ gh api repos/atushi1841/japan-market-mcp/readme --jq '.content' | base64 -d | grep -c 'apify.com' => 35",
+    "$ gh api repos/atushi1841/japan-ec-mcp/readme --jq '.content' | base64 -d | grep -c 'apify.com' => 1",
+    "$ gh api repos/atushi1841/japan-anime-figure-mcp/readme --jq '.content' | base64 -d | grep -c 'apify.com' => 1"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_5ab9300b_verification.md"
+  ],
+  "evidence_hashes": [
+    "sha256:66d20dc49449524bc66d091bb269121fc5f24c5f1b71e641074c4886a2bc65a7"
+  ],
+  "outcome": {
+    "metric": "README_apify_links_verified",
+    "before": 0,
+    "after": 3
+  }
+}
