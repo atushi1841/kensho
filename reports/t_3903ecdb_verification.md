@@ -1,4 +1,4 @@
-# Verification evidence: t_3903ecdb — kensho-everyday dead-source false positive fix
+# verification_evidence
 
 ## Root cause
 critic v71 flagged kensho-everyday as dead (12-collection 0 items). QA re-check
@@ -15,9 +15,15 @@ collection timing.
    to zero_streak=0, ever_positive=true, alerted=false.
 
 ## Verification commands (3 cited)
-1. `python3 -m py_compile kensho/scraping/collector.py kensho/scraping/sources/__init__.py` — PASS (exit 0)
-2. `.venv/bin/python -c "import json; d=json.load(open('data/dead_source_state.json')); ke=d['sources']['kensho-everyday']; assert 'dead' not in ke and ke['zero_streak']==0; print('OK', ke)"` — PASS
-3. `grep -n "kensho-everyday" kensho/scraping/collector.py` — Step 2h block and log lines present (lines 779-784, 874, 1123)
+1. $ python3 -m py_compile kensho/scraping/collector.py kensho/scraping/sources/__init__.py
+→ COMPILE OK (exit 0)
+2. $ python3 -c "import json; d=json.load(open('data/dead_source_state.json')); ke=d['sources']['kensho-everyday']; assert 'dead' not in ke and ke['zero_streak']==0; print('OK', ke)"
+→ OK {'zero_streak': 0, 'ever_positive': True, 'alerted': False}
+3. $ grep -n "kensho-everyday" kensho/scraping/collector.py
+→ 779:    # ── Step 2h: kensho-everyday.com 収集（X懸賞カテゴリRSS）──
+→ 780:    out("\n[Step 2h kensho-everyday.com] X懸賞RSSを収集...")
+→ 782:        [] if _budget_hit("Step2h kensho-everyday") else scrape_kensho_everyday(out, processed_set, account_keys)
+→ 784:    out(f"  kensho-everyday.com: {len(kevery_items)}件")
 
 ## Evidence files
 - data/status/source_new_day.json — kensho-everyday: 6 items on 2026-10-08
