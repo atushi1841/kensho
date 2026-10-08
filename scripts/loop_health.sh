@@ -382,6 +382,33 @@ try:
 except Exception:
     pass  # fail-safe: preflight itself broken must not kill loop_health
 
+# ── Skip-if-running detection (t_fb6f912a) ──────────────────────────
+# Detect cron jobs whose PID file exists and process is alive.
+# Score penalty: -10 per running job without a PID file (stale lock risk).
+skip_running_count = 0
+skip_running_ids = []
+import glob as _glob
+_state_dir = os.path.expanduser("~/.hermes/state")
+if os.path.isdir(_state_dir):
+    for _pf in sorted(_glob.glob(os.path.join(_state_dir, "*.pid"))):
+        _jid = os.path.basename(_pf).replace(".pid", "")
+        try:
+            with open(_pf) as _f:
+                _pid_str = _f.read().strip()
+            if _pid_str:
+                _pid = int(_pid_str)
+                # Check if process exists (Linux kill -0 equivalent)
+                os.kill(_pid, 0)  # raises OSError if process does not exist
+                skip_running_count += 1
+                skip_running_ids.append(_jid)
+        except (OSError, ValueError, PermissionError):
+            # Process dead or invalid PID — stale PID file, skip
+            pass
+
+# Penalty: active PID file without wrapper = stale lock risk
+if skip_running_count > 0:
+    score -= 10 * skip_running_count
+
 # ── Orphan run penalty (t_9ea4b148) ───────────────────────────────────────
 # When orphan runs exist (card deleted but run persists), apply penalty to drop score < 80.
 orphan_penalty = 0
@@ -865,6 +892,8 @@ print(json.dumps({
     "orphan_runs": orphan_runs,
     "stale_heartbeat_runs": stale_heartbeat_runs,
     "running_without_pid": running_without_pid,
+    "skip_running_count": skip_running_count,
+    "skip_running_ids": skip_running_ids,
     "lines": lines[:5],
     "priority": priority,
     "stagnation_streak": streak,
