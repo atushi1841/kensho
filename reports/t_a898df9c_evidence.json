@@ -18,6 +18,11 @@
   "evidence_hashes": [
     "sha256:3161bfa29a385cb51406198af0c42793fbf51986b9b201202641c118de08076d"
   ],
+  "outcome": {
+    "metric": "Hatena/Bookmark 関連 Apify Actor 数（更新対象）",
+    "before": 0,
+    "after": 0
+  },
   "task_id": "t_a898df9c",
   "status": "complete"
 }
