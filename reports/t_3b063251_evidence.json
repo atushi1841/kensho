@@ -1,0 +1,25 @@
+{
+  "task_id": "t_3b063251",
+  "status": "complete",
+  "success_indicators": [
+    "Smithery MCP publish status=SUCCESS",
+    "MCP URL generated: https://japan-ec-apify-mcp--atushi1841.run.tools",
+    "Deployment ID: 6eb85e21-b0f0-40c4-a5be-4544b95b6883"
+  ],
+  "verification_commands": [
+    "$ smithery mcp publish server.mcpb -n atushi1841/japan-ec-apify-mcp => {\"status\":\"SUCCESS\",\"mcpUrl\":\"https://japan-ec-apify-mcp--atushi1841.run.tools\"}",
+    "$ python3 -c \"import zipfile; z=zipfile.ZipFile('server.mcpb'); print(z.namelist())\" => ['README.md', 'manifest.json', 'pyproject.toml', 'server.py', ...]",
+    "$ sha256sum server.mcpb => 9ac800f52bd626b3d9db4e43ed1dc649a8e0cb7a05250b3dec0fbb334ebe5d44  server.mcpb"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/mcp/japan-ec-apify-mcp/server.mcpb"
+  ],
+  "evidence_hashes": [
+    "9ac800f52bd626b3d9db4e43ed1dc649a8e0cb7a05250b3dec0fbb334ebe5d44"
+  ],
+  "outcome": {
+    "metric": "Smithery MCP公開数",
+    "before": 0,
+    "after": 1
+  }
+}
