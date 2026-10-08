@@ -1,0 +1,42 @@
+name: Apify Actor Demo
+on:
+  workflow_dispatch:
+    inputs:
+      actor_name:
+        description: 'Apify actor name to demo'
+        required: true
+        type: string
+  schedule:
+    - cron: '0 1 * * *' # once daily to keep workflow active
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Demo actor
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import os, urllib.request, json, sys
+          actor = os.environ.get('INPUT_ACTOR_NAME') or '${{ github.event.inputs.actor_name }}'
+          if not actor:
+            print('no actor specified'); sys.exit(0)
+          token = os.environ.get('APIFY_TOKEN','')
+          url = f'https://api.apify.com/v2/acts?token={token}&my=true&limit=100'
+          try:
+            with urllib.request.urlopen(url, timeout=30) as r:
+              data = json.loads(r.read())
+            items = [i for i in data.get('data',{}).get('items',[]) if i.get('name')==actor]
+            print('Actor found:' , bool(items))
+            if items:
+              print(json.dumps(items[0], indent=2)[:2000])
+          except Exception as e:
+            print('error', e)
+          PY
