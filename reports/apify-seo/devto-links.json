@@ -1,4 +1,82 @@
 {
  "applied": true,
- "rows": []
+ "rows": [
+  {
+   "id": 4817790,
+   "title": "Weekly Update: 650+ Anime Figure Prices Now Available Free on GitHub",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/weekly-update-650-anime-figure-prices-now-available-free-on-github-2796",
+   "actors": [
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-rent-market-scraper",
+    "suumo-japan-real-estate-scraper",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-rent-market-scraper",
+    "suumo-japan-real-estate-scraper",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "added_chars": 717,
+   "put_status": 200,
+   "readback_has_link": true
+  },
+  {
+   "id": 4817742,
+   "title": "懸賞1,842件の自動応募ログを全部集計したら、「応募導線」と「当選枠」に地味な崖があった（2026W43）",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-1842jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta2026w43-4725",
+   "actors": [
+    "japan-prize-giveaway-scraper",
+    "mercari-japan-search-scraper",
+    "yahoo-auctions-japan-scraper",
+    "mandarake-auction-scraper",
+    "japan-used-camera-market-scraper",
+    "kitamura-japan-used-camera-scraper"
+   ],
+   "missing_actors": [
+    "japan-prize-giveaway-scraper",
+    "yahoo-auctions-japan-scraper",
+    "kitamura-japan-used-camera-scraper"
+   ],
+   "added_chars": 450,
+   "put_status": 200,
+   "readback_has_link": true
+  },
+  {
+   "id": 4817741,
+   "title": "MCPサーバーで日本の中古ECデータをAIエージェントから呼び出す方法",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/mcpsabaderi-ben-nozhong-gu-ecdetawoaiezientokarahu-bichu-sufang-fa-4le3",
+   "actors": [
+    "japan-used-camera-market-scraper",
+    "kitamura-japan-used-camera-scraper",
+    "japan-watch-market-scraper",
+    "jackroad-used-watch-scraper",
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-used-instrument-market-scraper",
+    "digimart-japan-used-instrument-scraper",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [
+    "japan-used-camera-market-scraper",
+    "kitamura-japan-used-camera-scraper",
+    "japan-watch-market-scraper",
+    "jackroad-used-watch-scraper",
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-used-instrument-market-scraper",
+    "digimart-japan-used-instrument-scraper",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "added_chars": 1179,
+   "put_status": 200,
+   "readback_has_link": true
+  }
+ ]
 }
