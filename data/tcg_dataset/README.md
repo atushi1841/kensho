@@ -30,12 +30,12 @@ price reference.
 ## Dataset stats (last build)
 
 - Unique items:            176
-- Total observations:      2280
+- Total observations:      2400
 - Items with used price:   96
 - Items in stock:          96
 - Keywords:                ポケモンカードゲーム イーブイ, ポケモンカードゲーム ピカチュウ, ポケモンカードゲーム ポケモンカード151, ポケモンカードゲーム ミュウツー, ポケモンカードゲーム リザードン
-- Collection window:       2026-09-21T23:13:01Z → 2026-10-07T22:30:44Z
-- Used-price movers seen:  8
+- Collection window:       2026-09-21T23:13:01Z → 2026-10-08T22:30:13Z
+- Used-price movers seen:  9
 
 ## Use cases
 
