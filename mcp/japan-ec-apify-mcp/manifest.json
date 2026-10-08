@@ -1,0 +1,152 @@
+{
+  "manifest_version": "0.4",
+  "name": "japan-ec-apify-mcp",
+  "display_name": "Japan EC Apify MCP Server",
+  "version": "0.1.0",
+  "description": "MCP server wrapping Japanese e-commerce Apify actors (Mercari, Yahoo Auctions, Rakuten, SUUMO, Kakaku) for AI-agent-callable tools.",
+  "author": {
+    "name": "atushi1841",
+    "url": "https://github.com/atushi1841"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atushi1841/kensho"
+  },
+  "server": {
+    "type": "python",
+    "entry_point": "server.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "server.py"
+      ]
+    }
+  },
+  "compatibility": {
+    "platforms": ["darwin", "linux", "win32"],
+    "runtimes": {
+      "python": ">=3.10"
+    }
+  },
+  "keywords": ["japanecommerce", "apify", "mcp", "mercari", "yahooauctions", "rakuten", "suumo", "kakaku"],
+  "tools": [
+    {
+      "name": "run_mercari_scraper",
+      "description": "Search Mercari Japan for keyword using the mercari-japan-search-scraper actor. Returns Apify run info.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "Product name or search term in Japanese or English"
+          },
+          "limit": {
+            "anyOf": [
+              { "type": "integer", "minimum": 1 },
+              { "type": "null" }
+            ],
+            "default": null,
+            "description": "Max results to return (actor-specific)"
+          }
+        },
+        "required": ["keyword"],
+        "type": "object"
+      }
+    },
+    {
+      "name": "run_yahoo_auctions_scraper",
+      "description": "Search Yahoo! Auctions Japan for keyword using the yahoo-auctions-japan-scraper actor. Returns Apify run info.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "Product name or search term in Japanese or English"
+          },
+          "limit": {
+            "anyOf": [
+              { "type": "integer", "minimum": 1 },
+              { "type": "null" }
+            ],
+            "default": null,
+            "description": "Max results to return (actor-specific)"
+          }
+        },
+        "required": ["keyword"],
+        "type": "object"
+      }
+    },
+    {
+      "name": "run_rakuten_scraper",
+      "description": "Search Rakuten Market for keyword using the rakuten-market-scraper actor. Returns Apify run info.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "Product name or search term in Japanese or English"
+          },
+          "limit": {
+            "anyOf": [
+              { "type": "integer", "minimum": 1 },
+              { "type": "null" }
+            ],
+            "default": null,
+            "description": "Max results to return (actor-specific)"
+          }
+        },
+        "required": ["keyword"],
+        "type": "object"
+      }
+    },
+    {
+      "name": "run_suumo_scraper",
+      "description": "Search SUUMO for real estate listings using the suumo-japan-real-estate-scraper actor. Returns Apify run info.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "Real estate search term in Japanese or English"
+          },
+          "limit": {
+            "anyOf": [
+              { "type": "integer", "minimum": 1 },
+              { "type": "null" }
+            ],
+            "default": null,
+            "description": "Max results to return (actor-specific)"
+          }
+        },
+        "required": ["keyword"],
+        "type": "object"
+      }
+    },
+    {
+      "name": "run_kakaku_scraper",
+      "description": "Search Kakaku.com for price data using the japan-kakaku-price-search actor. Returns Apify run info.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "Product name or search term in Japanese or English"
+          },
+          "limit": {
+            "anyOf": [
+              { "type": "integer", "minimum": 1 },
+              { "type": "null" }
+            ],
+            "default": null,
+            "description": "Max results to return (actor-specific)"
+          }
+        },
+        "required": ["keyword"],
+        "type": "object"
+      }
+    }
+  ]
+}

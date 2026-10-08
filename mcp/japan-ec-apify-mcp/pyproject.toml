@@ -1,0 +1,16 @@
+[project]
+name = "japan-ec-apify-mcp"
+version = "0.1.0"
+description = "MCP server wrapping Japanese e-commerce Apify actors (Mercari, Yahoo Auctions, Rakuten, SUUMO, Kakaku)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp>=0.1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/atushi1841/kensho"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
