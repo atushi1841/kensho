@@ -1,5 +1,9 @@
 # amazon-paapi-jp-actor
 
+[![Run in GitHub Actions](https://github.com/atushi1841/kensho/actions/workflows/apify-demo.yml/badge.svg)](https://github.com/atushi1841/kensho/actions/workflows/apify-demo.yml)
+
+[▶ Run in GitHub Actions](https://github.com/atushi1841/kensho/actions/workflows/apify-demo.yml)
+
 This Apify actor scrapes **amazon paapi jp** data from Japanese scrapes Japanese marketplace data sources. It produces structured JSON or CSV
 suitable for resale arbitrage, market research, price monitoring, AI training pipelines, and competitor analysis.
 
