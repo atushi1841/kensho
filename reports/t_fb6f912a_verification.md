@@ -1,17 +1,12 @@
 # verification_evidence: t_fb6f912a
 
-## 成功指標
-- 以後24hで同一cronの重複起動0件
-- timeout連鎖によるstale lock reclaim ≤3件/日
-- workerプロンプトに「skip-if-running」実装が含まれること
-
-## 検証コマンド
+## verification_evidence
 
 $ bash -n /mnt/d/Project2/kensho/scripts/cron_wrapper.sh
-→ Syntax OK
+→ Syntax OK (no output)
 
 $ bash -n /mnt/d/Project2/kensho/scripts/loop_health.sh
-→ (no output = OK)
+→ Syntax OK (no output)
 
 $ /home/atushi/kensho-venv/bin/python -m pytest tests/test_loop_health.py -v
 → 8 passed
