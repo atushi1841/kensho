@@ -1,21 +1,26 @@
 {
-  "success_indicators": [
-    "dev.to 記事数 43→44（id=4819849 新規投稿）",
-    "全44本に Apify PPE 外部リンク存在（read-back 検証済）",
-    "web_extract で HTTP200・本文全文取得確認"
-  ],
-  "verification_commands": [
-    "cd /mnt/d/Project2/kensho && python3 scripts/publish_devto.py /mnt/d/Project2/apify-sales-funnel/blog/devto-2026W45-apify-kensho-actor-guide.md --publish => [OK] id=4819849",
-    "cd /mnt/d/Project2/kensho && python3 scripts/devto_internal_links.py --apply => 公開記事44本 PUT200 readback=True 追記対象1本",
-    "web_extract https://dev.to/atu_ino_ed473db24d76d234a/...--3gce => HTTP200 title確認"
-  ],
   "artifact_paths": [
     "/mnt/d/Project2/kensho/reports/t_5e56e00f_verification.md",
     "/mnt/d/Project2/apify-sales-funnel/blog/devto-2026W45-apify-kensho-actor-guide.md",
     "/mnt/d/Project2/apify-sales-funnel/blog/.published.json"
   ],
   "evidence_hashes": [
-    "sha256:6c0f7b75ecdb0232d78f847ab1de76b99cf5817726616997563272a1a782b67f"
+    "sha256:fa91ecf431d6b3226d1c99f0f1ab749a96b63406d7622612dba1f4bf525619f4"
+  ],
+  "outcome": {
+    "after": 44,
+    "before": 43,
+    "metric": "dev.to公開記事数"
+  },
+  "success_indicators": [
+    "dev.to 記事数 before=43→after=44（id=4819849 新規投稿）",
+    "内部リンク含有率 before=100%→after=100% 44本全て",
+    "web_extract で HTTP200・本文全文取得確認"
+  ],
+  "verification_commands": [
+    "cd /mnt/d/Project2/kensho && python3 scripts/publish_devto.py /mnt/d/Project2/apify-sales-funnel/blog/devto-2026W45-apify-kensho-actor-guide.md --publish => [OK] id=4819849",
+    "cd /mnt/d/Project2/kensho && python3 scripts/devto_internal_links.py --apply => 公開記事44本 PUT200 readback=True 追記対象1本",
+    "web_extract https://dev.to/atu_ino_ed473db24d76d234a/...--3gce => HTTP200 title確認"
   ],
   "task_id": "t_5e56e00f",
   "status": "complete"
