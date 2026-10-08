@@ -1,0 +1,1 @@
+/mnt/d/Project2/kensho/devto_weekly_pipeline.py
