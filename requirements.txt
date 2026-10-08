@@ -19,3 +19,4 @@ pydantic>=2.0
 pydantic-settings>=2.0
 requests>=2.31
 twscrape>=0.20.1
+fastapi==0.142.3
