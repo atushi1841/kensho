@@ -237,6 +237,15 @@ NOW=$(date +%s)
 export _LH_TASKS_FILE="$TASKS_FILE" _LH_NOW="$NOW" _LH_PREV="$PREV_STREAK" _LH_DB="$DB_PATH"
 export _LH_MAX_IN_PROGRESS
 
+# Revenue divergence detection for loop_health
+_diverged_count=0
+if [ -f "/mnt/d/Project2/kensho/scripts/revenue_record_reconcile.py" ]; then
+    if python3 /mnt/d/Project2/kensho/scripts/revenue_record_reconcile.py --check 2>/dev/null | grep -q "DIVERGED"; then
+        _diverged_count=1
+    fi
+fi
+export _LH_DIVERGED_COUNT=$_diverged_count
+
 # ─── Analyze ─────────────────────────────────────────────────────────────────
 ANALYSIS=$(python3 - <<'PYEOF'
 import json, os, re, sqlite3, time, sys, datetime as _dt
@@ -244,6 +253,12 @@ import json, os, re, sqlite3, time, sys, datetime as _dt
 tasks = json.loads(open(os.environ.get("_LH_TASKS_FILE", "/dev/null")).read() or "[]")
 now = int(os.environ.get("_LH_NOW", str(int(time.time()))))
 prev_streak = int(os.environ.get("_LH_PREV", "0"))
+
+# Revenue divergence penalty (from bash)
+_diverged_count = int(os.environ.get("_LH_DIVERGED_COUNT", "0"))
+if _diverged_count:
+    score -= 20  # Significant penalty for revenue divergence
+
 
 # v137b (t_83ce94c5): tasks.started_at = 初回 attempt 時刻で dispatch 後更新されない。
 # 16h 停滞と誤判定するため task_runs.status='running' の最新 started_at を参照する。
@@ -600,6 +615,41 @@ else:
 if zombie_task_count:
     score -= 10 * zombie_task_count
 
+# ── Root cause cluster detection (t_2e76f93d: loop_health block root cause clustering) ──
+# Detect blocked tasks with same root cause and apply penalty per cluster
+blocked_task_ids = [t["id"] for t in blocked]
+if blocked_task_ids:
+    # Normalize reasons: lowercase, replace non-alnum with space, collapse spaces
+    import re
+    def normalize_reason(s):
+        s = s.lower()
+        s = re.sub(r'[^a-z0-9]+', ' ', s)
+        s = re.sub(r'\s+', ' ', s).strip()
+        return s
+    reason_map = {}
+    for t in blocked:
+        reason = t.get("result") or ""
+        norm = normalize_reason(reason)
+        words = norm.split()
+        key = ' '.join(words[:3]) if len(words) >= 3 else norm
+        reason_map.setdefault(key, []).append(t["id"])
+    clusters = {key: ids for key, ids in reason_map.items() if len(ids) >= 2}
+    if clusters:
+        score -= 5 * len(clusters)
+        block_clusters = []
+        for key, ids in clusters.items():
+            rep_reason = next((t.get("result") or "" for t in blocked if t["id"] == ids[0]), "")
+            block_clusters.append({
+                "cause": rep_reason[:100],
+                "size": len(ids),
+                "task_ids": ids
+            })
+    else:
+        block_clusters = []
+else:
+    block_clusters = []
+
+
 score = max(0, min(100, score))
 
 # ── Business KPI gate (t_08b42528: apply stopped detection) ──
@@ -648,7 +698,19 @@ except Exception:
 _business_detect = (_jst_hour >= 9) and (_jst_hour not in _no_action_hours) and (_done_count == 0)
 business_ok = (not _business_detect)
 if _business_detect:
-    # Check if we have gradients for pattern mining\n    if [ -f "/mnt/d/Project2/kensho/data/textual_gradients.json" ]; then\n        gradient_count=$(python3 -c "import json; d=json.load(open(/mnt/d/Project2/kensho/data/textual_gradients.json)); print(len(d.get(gradients, [])))")\n        if [ "$gradient_count" -gt 0 ]; then\n            echo "[$(date)] Found $gradient_count textual gradients for pattern mining" >> "$LOOPHEALTH_LOG_PATH"\n        fi\n    fi
+    # v145 (t_515d0237): bash ブロックが python heredoc 内に混在し SyntaxError →
+    # loop_health 全体が analysis failed / score=0 になる。python で等価処理に置換。
+    try:
+        _gp = "/mnt/d/Project2/kensho/data/textual_gradients.json"
+        if os.path.exists(_gp):
+            with open(_gp) as _gf:
+                _gd = json.load(_gf)
+            _gc = len(_gd.get("gradients", []))
+            if _gc > 0:
+                with open(_kpi_log, "a") as _lf:
+                    _lf.write(f"[{_dt.datetime.now()}] Found {_gc} textual gradients for pattern mining\n")
+    except Exception:
+        pass
     score = max(0, min(score, 60))
 
 # ── Streak (v143 / t_6f45dab0) ────────────────────────────────────────────────
@@ -806,6 +868,7 @@ print(json.dumps({
     "advice": advice,
     "artifact_age_hours": artifact_age_hours,
     "artifact_age_penalty": artifact_age_penalty,
+    "block_clusters": block_clusters,
 }))
 PYEOF
 )
