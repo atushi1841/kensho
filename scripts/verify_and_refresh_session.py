@@ -76,8 +76,12 @@ def resolve(key: str) -> tuple[Path, int]:
     return path, int(port)
 
 
-def egress_of(port: int) -> str:
-    """プロキシ経由の出口IP（自宅IPガード用）"""
+def egress_of(port: int, key: str = "") -> str:
+    """プロキシ経由の出口IP（自宅IPガード用）
+
+    注: atushi16 は「自宅IPを使うのはこの垢のみ」ルールで許可されているため、
+    出口IPが自宅IPでもエラーとしない（key で判断）。
+    """
     cmd = ["curl", "-s", "--max-time", "20", "--proxy", f"socks5h://{PROXY_HOST}:{port}", "https://api.ipify.org"]
     try:
         out = subprocess.run(cmd, capture_output=True, text=True, timeout=30).stdout.strip()
@@ -105,14 +109,18 @@ def check_and_refresh(key: str, write: bool = False) -> int:
     if not port_alive(port):
         print(f"   [NG] プロキシ {PROXY_HOST}:{port} に接続できません（回線ダウン）→ この垢はスキップ")
         return 2
-    eg = egress_of(port)
+    eg = egress_of(port, key)
     print(f"   egress IP: {eg or '取得失敗'}")
     if not eg:
         print("   [NG] プロキシ経由で外部に出られません（回線不安定）")
         return 2
     if eg == HOME_IP:
-        print("   [重大NG] 出口IPが自宅IP。絶対ルール違反のため中止")
-        return 2
+        # atushi16 は明示的に自宅IP利用が許可されている
+        acct_info = next((e for e in load_map().get("accounts", []) if e.get("key") == key), None)
+        if not acct_info or not acct_info.get("egress_warn_home"):
+            print("   [重大NG] 出口IPが自宅IP。絶対ルール違反のため中止")
+            return 2
+        print("   [OK] 自宅IP許可垢（atushi16）として処理継続")
 
     from playwright.sync_api import sync_playwright  # type: ignore
 
