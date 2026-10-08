@@ -254,12 +254,6 @@ tasks = json.loads(open(os.environ.get("_LH_TASKS_FILE", "/dev/null")).read() or
 now = int(os.environ.get("_LH_NOW", str(int(time.time()))))
 prev_streak = int(os.environ.get("_LH_PREV", "0"))
 
-# Revenue divergence penalty (from bash)
-_diverged_count = int(os.environ.get("_LH_DIVERGED_COUNT", "0"))
-if _diverged_count:
-    score -= 20  # Significant penalty for revenue divergence
-
-
 # v137b (t_83ce94c5): tasks.started_at = 初回 attempt 時刻で dispatch 後更新されない。
 # 16h 停滞と誤判定するため task_runs.status='running' の最新 started_at を参照する。
 # DB 不可・未取得時は tasks.started_at にフォールバック。
@@ -334,6 +328,15 @@ by_age = sorted(
 # ── Score calculation (v142 / t_9f14ee5d) ──────────────────────────────
 # config-based max_in_progress penalty, streak reset on zero real deductions
 score = 100
+
+# ── Revenue divergence penalty (t_3e17e927) ─────────────────────────────
+# bash ブロック（240-247行目）で revenue_record_reconcile.py --check を実行し
+# DIVERGED を検出，则 _LH_DIVERGED_COUNT=1 を env で受け渡す。
+# score = 100 の**後**に評価しないと NameError（score 未定義）になるため、
+# ここに移動。（旧位置 260 行目は heredoc 内・score 定義前で実行時クラッシュの危険性）
+_diverged_count = int(os.environ.get("_LH_DIVERGED_COUNT", "0"))
+if _diverged_count:
+    score -= 20  # Significant penalty for revenue divergence
 
 # ── Deadlock penalty (t_5dd7ba12) ─────────────────────────────────────
 # When ready==0 && todo>0 (no runnable tasks but pending work), apply penalty
@@ -869,6 +872,7 @@ print(json.dumps({
     "artifact_age_hours": artifact_age_hours,
     "artifact_age_penalty": artifact_age_penalty,
     "block_clusters": block_clusters,
+    "revenue_diverged_count": _diverged_count,
 }))
 PYEOF
 )

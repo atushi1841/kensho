@@ -213,7 +213,8 @@ def improve_devto_article(article_id: int, keyword: str, api_key: str) -> bool:
     """記事body末尾にキーワードH2節を追記 (被リンク用)"""
     import requests
 
-    H = {"api-key": api_key, "Content-Type": "application/json"}  # noqa: N806
+    H = {"api-key": api_key, "Content-Type": "application/json",
+         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}  # noqa: N806
     r = requests.get(f"https://dev.to/api/articles/{article_id}", headers=H, timeout=30).json()
     body = r.get("body_markdown") or ""
     if keyword.lower() in body.lower():
