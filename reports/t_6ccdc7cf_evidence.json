@@ -1,0 +1,26 @@
+{
+  "success_indicators": [
+    "dev.to API returns 200 for GET /api/users/me",
+    "dev.to API returns 201 for POST /api/articles (test article)",
+    "Weekly pipeline devto_weekly_pipeline.py published article ID 4814776 with HTTP 200",
+    "All 30 existing dev.to articles contain Apify Store external links",
+    "Newly published article ID 4814776 contains Apify Store external link"
+  ],
+  "verification_commands": [
+    "$ curl -s -H \"Api-Key: $DEVTO_API_KEY\" -H \"User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\" https://dev.to/api/users/me | python3 -c \"import json,sys;print(json.load(sys.stdin).get('username'))\"",
+    "$ python3 -c \"import json,os,urllib.request; key=os.getenv('DEVTO_API_KEY',''); ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'; req=urllib.request.Request('https://dev.to/api/users/me', headers={'api-key':key,'User-Agent':ua}); print(urllib.request.urlopen(req,timeout=30).status)\"",
+    "$ python3 devto_weekly_pipeline.py 2>&1 | grep -E \"\\[SUCCESS\\] Published article ID|Published: 1 article\\(s\\)\"",
+    "$ python3 -c \"import json,os,urllib.request; key=os.getenv('DEVTO_API_KEY',''); ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'; [print(f'id={aid} has_link={\"apify.com/fruitful_quintessence\" in (json.load(urllib.request.urlopen(urllib.request.Request(f\"https://dev.to/api/articles/{aid}\", headers={\"api-key\":key,'User-Agent':ua})).get('body_markdown',''))})' for aid in [4814639,4812861,4814776]]\"",
+    "$ cat reports/apify-seo/devto-links.json | python3 -c \"import json,sys;d=json.load(sys.stdin);print('Applied:',d.get('applied'));print('Rows:',len(d.get('rows',[])));[print('  id:',r.get('id'),'title:',r.get('title','')[:30],'put:',r.get('put_status'),'readback:',r.get('readback_has_link')) for r in d.get('rows',[])]\""
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-10-08-revenue-worker.md",
+    "/mnt/d/Project2/kensho/reports/apify-seo/devto-links.json"
+  ],
+  "evidence_hashes": [
+    "sha256:c5229829ef62fa4a79a1f7791803fcb3ab015a0e6b2cf2feb2b39f74841a17ce",
+    "sha256:ce162fb76165a8778b4ee853534535554fe3038ca9cc5d864b90e11c7e2cfb39"
+  ],
+  "task_id": "t_6ccdc7cf",
+  "status": "complete"
+}
