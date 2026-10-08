@@ -1,6 +1,8 @@
-# agent.reviews 評価検証 t_92c6687c
+# t_92c6687c agent.reviews 非API収益評価
 
-## verification_evidence t_92c6687c
+## 判定: 実装実行
+
+## verification_evidence
 
 ### 1. curl agent.reviews ホームページ
 
@@ -32,12 +34,21 @@ $ curl -s "https://agent.reviews/index.md" | head -5
 3,994 tools and 189,217 reviews so far.
 ```
 
-### 4. HN スレッド score
+### 4. curl HN スレッド score
 
 ```
 $ curl -s https://hacker-news.firebaseio.com/v0/item/49995539.json | jq .score
 57
 ```
+
+### 5. kanban_done_guard 実行結果
+
+```
+$ python3 /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kanban_done_guard.py t_92c6687c --task
+kanban_done_guard task=t_92c6687c -> PASS (all conditions)
+```
+
+全条件充足。
 
 ## kanban_complete payload
 
