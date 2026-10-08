@@ -430,7 +430,29 @@ def publish_article(article, status_callback=print, api_key=None, published_stat
     return result
 
 
-# ── Step 3: Main pipeline execution ────────────────────────────────────
+# ── Step 3: Add Apify Store links to published articles ────────────────
+def add_apify_links():
+    """Run devto_internal_links.py --apply to add Apify Store links to published articles."""
+    try:
+        result = subprocess.run(
+            [sys.executable, "/mnt/d/Project2/kensho/scripts/devto_internal_links.py", "--apply"],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        if result.returncode == 0:
+            print("[LINKS] Apify Store link addition completed successfully")
+            # Print key output lines
+            for line in result.stdout.split("\\n"):
+                if "追記対象" in line or "PUT" in line or "read-back" in line:
+                    print(f"[LINKS] {line}")
+        else:
+            print(f"[WARN] Apify Store link addition failed: {result.stderr}")
+    except Exception as e:
+        print(f"[WARN] Failed to run devto_internal_links.py: {e}")
+
+
+# ── Step 3: Add Apify Store links to published articles ────────────────
 def run_pipeline(bdir=None, state_file=None):
     """Execute the full dev.to posting pipeline. 戻り値は終了コード（上記契約）。"""
     target_dir = bdir or blog_dir()
@@ -492,13 +514,21 @@ def run_pipeline(bdir=None, state_file=None):
         except OSError as exc:
             print(f"[WARN] 公開済み記録の保存に失敗: {exc}")
 
-    # Phase 2: 週次運用の案内
-    print("\n--- Phase 2: Pipeline configuration ---")
+    # Phase 2: Add Apify Store links to published articles
+    print("\\n--- Phase 2: Adding Apify Store links to published articles ---")
+    add_apify_links()
+
+    # Phase 2: Add Apify Store links to published articles
+    print("\\n\\n--- Phase 2: Adding Apify Store links to published articles ---")
+    add_apify_links()
+
+    # Phase 3: Pipeline configuration
+    print("\\n\\n--- Phase 3: Pipeline configuration ---")
     print("Next run: Weekly (every 1 week)")
     print("Strategy: 2ドラフトの露出テスト後は新規記事生成（懸賞/データネタ）へ移行")
     print(f"Blog source: {target_dir}")
 
-    print("\n" + "=" * 60)
+    print("\\n" + "=" * 60)
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Pipeline COMPLETE")
     print(f"Published: {len(published_articles)} article(s)")
     for a in published_articles:
