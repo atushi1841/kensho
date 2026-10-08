@@ -4,7 +4,7 @@ on:
     inputs:
       actor_name:
         description: 'Apify actor name to demo'
-        required: true
+        required: false
         type: string
   schedule:
     - cron: '0 1 * * *' # once daily to keep workflow active
@@ -22,10 +22,11 @@ jobs:
       - name: Demo actor
         env:
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          ACTOR_NAME: ${{ github.event.inputs.actor_name || 'ai-model-price-api' }}
         run: |
           python3 - <<'PY'
           import os, urllib.request, json, sys
-          actor = os.environ.get('INPUT_ACTOR_NAME') or '${{ github.event.inputs.actor_name }}'
+          actor = os.environ.get('ACTOR_NAME') or ''
           if not actor:
             print('no actor specified'); sys.exit(0)
           token = os.environ.get('APIFY_TOKEN','')
