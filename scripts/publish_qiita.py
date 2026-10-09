@@ -96,6 +96,84 @@ def build_payload(meta: dict, body: str, force_public: bool) -> dict:
     }
 
 
+def normalize_title(title: str) -> str:
+    """デデアップ用: 小文字化+空白正規化したタイトル。"""
+    return " ".join(title.strip().lower().split())
+
+
+def _find_items_by_title(token: str, title: str) -> list[dict]:
+    """公開・非公開を問わず同一正規化タイトルの既存記事を検索（最大5ページ）。"""
+    import urllib.error
+    import urllib.request
+
+    url = "https://qiita.com/api/v2/authenticated_user/items"
+    target = normalize_title(title)
+    hits: list[dict] = []
+    for page in range(1, 6):
+        req = urllib.request.Request(
+            f"{url}?per_page=100&page={page}",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                items = json.load(r)
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                import time
+                time.sleep(15)
+                continue
+            return hits
+        if not items:
+            break
+        for it in items:
+            if normalize_title(it.get("title", "")) == target:
+                hits.append(it)
+    return hits
+
+
+def _pick_canonical(hits: list[dict]) -> dict:
+    """canonical = likes最大、同数なら最古（id文字列が小さい順で先頭）。"""
+    return max(hits, key=lambda a: (int(a.get("likes_count") or 0), -_id_key(a)))
+
+
+def _id_key(a: dict) -> int:
+    try:
+        return int(a.get("id", "0"))
+    except (TypeError, ValueError):
+        return 0
+
+
+def _set_private(token: str, item_id: str) -> bool:
+    """重複記事を削除（Qiita APIはDELETE対応・実測204、t_957e7220）。
+    DELETEが失敗した場合のみ private:true にフォールバック。"""
+    import urllib.error
+    import urllib.request
+
+    req = urllib.request.Request(
+        f"https://qiita.com/api/v2/items/{item_id}",
+        headers={"Authorization": f"Bearer {token}"},
+        method="DELETE",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30):
+            return True
+    except urllib.error.HTTPError as e:
+        print(f"[WARN] DELETE {item_id} failed: HTTP {e.code} — private化にフォールバック", file=sys.stderr)
+
+    req = urllib.request.Request(
+        f"https://qiita.com/api/v2/items/{item_id}",
+        data=json.dumps({"private": True}).encode("utf-8"),
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        method="PATCH",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30):
+            return True
+    except urllib.error.HTTPError as e:
+        print(f"[WARN] 非公開化 {item_id} failed: HTTP {e.code}", file=sys.stderr)
+        return False
+
+
 def _find_existing_draft(token: str, title: str) -> list[str]:
     """同一 title の Draft（private=True）を authenticated_user/items から検索し、
     id リストを返す（無ければ []）。"""
@@ -191,6 +269,23 @@ def main() -> int:
     if not token:
         print("[ERR] QIITA_TOKEN が未設定（env / .env）", file=sys.stderr)
         return 3
+
+    # デデアップゲート: 正規化タイトル一致の既存記事があれば POST せず canonical をPATCH更新、他は非公開化
+    existing = _find_items_by_title(token, payload["title"])
+    if existing:
+        canonical = _pick_canonical(existing)
+        cid = canonical.get("id")
+        print(f"[DEDUP] 既存記事 {len(existing)}件検出 (ids={[a.get('id') for a in existing]}) → canonical id={cid} をPATCH更新、他は非公開化")
+        for a in existing:
+            if a.get("id") != cid and not a.get("private"):
+                _set_private(token, a["id"])
+        try:
+            data = _patch_item(token, cid, payload)
+        except urllib.error.HTTPError as e:
+            print(f"[ERR] PATCH HTTP {e.code}: {e.read().decode('utf-8','replace')[:500]}", file=sys.stderr)
+            return 4
+        print(f"[OK] {data.get('url')} (id={data.get('id')}, private={data.get('private')}) [updated, not created]")
+        return 0
 
     import time
     import urllib.error

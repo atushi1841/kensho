@@ -92,6 +92,59 @@ def parse_draft(path: Path) -> tuple[dict, str]:
     return meta, "\n".join(lines).strip() + "\n"
 
 
+def normalize_title(title: str) -> str:
+    """デデアップ用: 小文字化+空白正規化したタイトル。"""
+    return " ".join(title.strip().lower().split())
+
+
+def find_existing_articles(token: str, title: str) -> list[dict]:
+    """自分の投稿（published+draft）から正規化タイトル一致の既存記事を探す。
+    GET /api/articles/me → [{id, page_views_count, published}, ...]（無ければ []）。"""
+    import urllib.error
+    import urllib.request
+
+    req = urllib.request.Request(
+        "https://dev.to/api/articles/me?per_page=100",
+        headers={"api-key": token, "User-Agent": "Mozilla/5.0"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=45) as r:
+            arts = json.load(r)
+    except urllib.error.HTTPError as e:
+        print(f"[WARN] 既存記事取得失敗 HTTP {e.code} — デデアップゲートスキップ", file=sys.stderr)
+        return []
+    target = normalize_title(title)
+    hits = []
+    for a in arts:
+        a = a.get("article", a)
+        if normalize_title(a.get("title", "")) == target:
+            hits.append(a)
+    return hits
+
+
+def pick_canonical(hits: list[dict]) -> dict:
+    """canonical = views最大、同数なら最古（id最小）。viewをここに集中させる。"""
+    return max(hits, key=lambda a: (int(a.get("page_views_count") or 0), -int(a.get("id") or 0)))
+
+
+def update_article(token: str, article_id: int, payload: dict) -> dict:
+    """PUT /api/articles/<id> で既存記事を更新（createしない）。"""
+    import urllib.request
+
+    req = urllib.request.Request(
+        f"{API}/{article_id}",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "api-key": token,
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        },
+        method="PUT",
+    )
+    with urllib.request.urlopen(req, timeout=45) as r:
+        return json.load(r)
+
+
 def build_payload(meta: dict, body: str, force_public: bool) -> dict:
     tags = (meta.get("tags") or [])[:MAX_TAGS]
     published = True if force_public else bool(meta.get("published", False))
@@ -135,6 +188,25 @@ def main() -> int:
     if not token:
         print("[ERR] DEVTO_API_KEY が未設定（env / .env）", file=sys.stderr)
         return 3
+
+    # デデアップゲート: 正規化タイトル一致の既存記事があれば POST せず PUT で更新する
+    existing = find_existing_articles(token, payload["article"]["title"])
+    if existing:
+        canonical = pick_canonical(existing)
+        cid = int(canonical["id"])
+        print(f"[DEDUP] 既存記事 {len(existing)}件検出 (ids={[a['id'] for a in existing]}) → canonical id={cid} をPUT更新します")
+        try:
+            data = update_article(token, cid, payload)
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode("utf-8", "replace")[:500]
+            print(f"[ERR] PUT HTTP {e.code}: {detail}", file=sys.stderr)
+            return 4
+        except Exception as e:
+            print(f"[ERR] PUT {type(e).__name__}: {e}", file=sys.stderr)
+            return 5
+        art = data.get("article", data)
+        print(f"[OK] {art.get('url')} (id={art.get('id')}, published={art.get('published')}) [updated, not created]")
+        return 0
 
     req = urllib.request.Request(
         API,
