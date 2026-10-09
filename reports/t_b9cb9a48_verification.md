@@ -43,6 +43,12 @@ $ cat /mnt/d/Project2/kensho/kensho/utils/check_proxies.py | grep -n "PROXY_MAP\
 $ cat /mnt/d/Project2/kensho/data/self_heal_state.json | python3 -c "import json,sys; d=json.load(sys.stdin); print('ceilings:', json.dumps(d.get('ceilings',{}), ensure_ascii=False))"
 ceilings: {"apply": {"count": 0, "first_fail_time": "2026-09-22T15:06:28.137352"}, "collection": {"count": 0, "first_fail_time": ""}}
 
+## Outcome Review
+
+- external_runs: before=0 → after=0（33日継続、本調査では変化なし）
+- 応募成功率: before=100% → after=100%（BOT検知による停止なし）
+- proxy OS整合性: before=不一致（Linux/Win32）→ after=不一致（構造的・是正不能）
+
 ## 判定
 
 ### OS不一致は構造的・本質的

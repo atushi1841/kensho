@@ -18,5 +18,10 @@
   "evidence_hashes": [
     "6eb66fee5dd534bedf1d40e44fe807a2299b52afcd0bedd7c68b3879f7956e31",
     "40b84b00d80145b36c2b982a778d58aafbc86b5d83354ade42cb992c38bae441"
-  ]
+  ],
+  "outcome": {
+    "metric": "external_runs",
+    "before": 0,
+    "after": 0
+  }
 }
