@@ -1,0 +1,27 @@
+{
+  "success_indicators": [
+    "dev.to記事公開 id=4825022 (HTTP 200実測)",
+    "記事内にSmithery10本+GitHub9本+MCP公式レジストリのURLリンク",
+    "秘密情報なし"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/publish_devto.py reports/journalism/drafts/devto-mcp-servers-20261010.md --publish --public => [OK] https://dev.to/atu_ino_ed473db24d76d234a/... (id=4825022)",
+    "$ curl -s -o /dev/null -w \"HTTP %{http_code}\" <article-url> => HTTP 200",
+    "$ curl -s https://dev.to/api/articles/4825022 => title: I Published 10 Free MCP Servers for Japanese Data..."
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_81919d6f_verification.md",
+    "/mnt/d/Project2/kensho/reports/journalism/drafts/devto-mcp-servers-20261010.md"
+  ],
+  "evidence_hashes": [
+    "dd8ed3d313b4203f66c4d9194001e39d722cf1133e3429b07c1b761a3feb69aa",
+    "96555f2edb17cdb8a2a692358e8c4cb836dbe23429a6ed00a365c6595470932a"
+  ],
+  "outcome": {
+    "metric": "dev.to MCP紹介記事公開数",
+    "before": 0,
+    "after": 1
+  },
+  "task_id": "t_81919d6f",
+  "status": "complete"
+}
