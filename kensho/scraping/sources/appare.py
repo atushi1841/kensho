@@ -88,7 +88,7 @@ def scrape_appare(out: Any, processed_set: set[str], account_keys: list[str]) ->
     items: list[dict[str, Any]] = []
     seen_x_urls: set[str] = set()
 
-    for page in range(1, 20):  # 最大20ページ（実質11ページまで有効）
+    for page in range(1, 12):  # 11ページまで（2026-10-09実測: 12ページ目以降はX懸賞ヒット0件のため打切り）
         list_url = _list_url(page)
         try:
             code, html, _ = _fetch_with_retry(list_url, timeout=30, source="appare")
@@ -110,12 +110,12 @@ def scrape_appare(out: Any, processed_set: set[str], account_keys: list[str]) ->
                 try:
                     detail_url = _detail_url(link_id)
                     code2, html2, final_url2 = _fetch_with_retry(detail_url, referer=list_url, timeout=30, source="appare")
-                    if code2 != 200:
-                        continue
 
-                    # appare.com の詳細リンクは X へ直接リダイレクトする（2026-10-09実測）。
-                    # 本文にX URLが無くても final_url が x.com/status ならそれを採用。
-                    x_url = _extract_x_url(html2)
+                    # appare.com 詳細ページは 302 + body内meta refreshにX URL（2026-10-09実測:
+                    # code=302, final_urlは appare.com のまま, body に <meta refresh=...x.com/...>）
+                    x_url = None
+                    if code2 in (200, 302):
+                        x_url = _extract_x_url(html2)
                     if not x_url and re.match(r"https?://(?:x|twitter)\.com/[a-zA-Z0-9_]+/status/\d+", final_url2 or ""):
                         x_url = final_url2
                     if not x_url:

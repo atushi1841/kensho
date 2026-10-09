@@ -133,3 +133,19 @@ def test_scrape_appare_redirect_final_url(monkeypatch: pytest.MonkeyPatch) -> No
     assert len(items) == 1
     assert items[0]["x_url"] == "https://x.com/lg_jpn/status/2097000000000000000"
     assert items[0]["source"] == "appare"
+
+
+def test_scrape_appare_302_meta_refresh(monkeypatch: pytest.MonkeyPatch) -> None:
+    """詳細ページは302を返しbodyのmeta refreshにX URLを含む（2026-10-09実測挙動）。"""
+    listing = '<a href="search-category.cgi?links=340552">商品</a>'
+    body_302 = '<meta http-equiv="refresh" content="0;url=https://x.com/lg_jpn/status/2107667234596528417">'
+    def fake_fetch(url: str, **_: Any) -> tuple[int, str, str]:
+        if "mode=1new" in url:
+            return 200, listing, url
+        return 302, body_302, url
+
+    monkeypatch.setattr(appare, "_fetch_with_retry", fake_fetch)
+    log = _Log()
+    items = appare.scrape_appare(log, set(), ["atushi16"])
+    assert len(items) == 1
+    assert items[0]["x_url"] == "https://x.com/lg_jpn/status/2107667234596528417"
