@@ -4,12 +4,40 @@
 
 ## Verification Evidence
 
-1. `grep -A20 'key: kudou' /mnt/d/Project2/kensho/config.yaml` → batches行が全行#コメント + `batches: []`
-2. `/home/atushi/kensho-venv/bin/python -c "import yaml; c=yaml.safe_load(open('/mnt/d/Project2/kensho/config.yaml')); a=[x for x in c['accounts'] if x['key']=='kudou'][0]; print('kudou batches:', a['schedule'].get('batches'))"` → `kudou batches: []`
-3. `/home/atushi/kensho-venv/bin/python -c "import yaml; c=yaml.safe_load(open('/mnt/d/Project2/kensho/config.yaml')); print({x['key']: x.get('daily_target') for x in c['accounts'] if (x.get('schedule') or {}).get('batches')})"` → `{'TankanNotes': 50, 'atushi16': 75}`
-4. `KENSHO_VERBOSE=1 KENSHO_MIN_APPLY_HOUR=0 /home/atushi/kensho-venv/bin/python /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho_apply_volume.py` → `[SKIP] 本日はまだ応募実績が集積されていない（監視対象外）\nEXIT=0`
-5. `cd /mnt/d/Project2/kensho && python3 -c "import json; d=json.load(open('data/daily_counts.json')); d['date']='2026-10-09'; json.dump(d,open('data/daily_counts.json','w'),ensure_ascii=False,indent=2)" && KENSHO_VERBOSE=1 KENSHO_MIN_APPLY_HOUR=0 /home/atushi/kensho-venv/bin/python /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho_apply_volume.py` → `[OK] 応募は目標比を満たす: TankanNotes=50/50(100%) atushi16=70/75(93%)\nEXIT=0`
-6. `git -C /mnt/d/Project2/kensho log --oneline -1` → `442e98d stop kudou batches (proxy 1082 dead)`
+```
+$ grep -A20 'key: kudou' /mnt/d/Project2/kensho/config.yaml
+  key: kudou
+  schedule:
+    # batches commented out: proxy 1082 dead (2026-10-10 PROXY-CHECK dead=[1082])
+    # restore via watchdog only; do not re-enable here
+    batches: []
+    collects: false
+```
+
+```
+$ /home/atushi/kensho-venv/bin/python -c "import yaml; c=yaml.safe_load(open('/mnt/d/Project2/kensho/config.yaml')); a=[x for x in c['accounts'] if x['key']=='kudou'][0]; print('kudou batches:', a['schedule'].get('batches'))"
+kudou batches: []
+```
+
+```
+$ /home/atushi/kensho-venv/bin/python -c "import yaml; c=yaml.safe_load(open('/mnt/d/Project2/kensho/config.yaml')); print({x['key']: x.get('daily_target') for x in c['accounts'] if (x.get('schedule') or {}).get('batches')})"
+{'TankanNotes': 50, 'atushi16': 75}
+```
+
+```
+$ KENSHO_VERBOSE=1 KENSHO_MIN_APPLY_HOUR=0 /home/atushi/kensho-venv/bin/python /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho_apply_volume.py
+[SKIP] 本日はまだ応募実績が集積されていない（監視対象外）
+```
+
+```
+$ cd /mnt/d/Project2/kensho && python3 -c "import json; d=json.load(open('data/daily_counts.json')); d['date']='2026-10-09'; json.dump(d,open('data/daily_counts.json','w'),ensure_ascii=False,indent=2)" && KENSHO_VERBOSE=1 KENSHO_MIN_APPLY_HOUR=0 /home/atushi/kensho-venv/bin/python /home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho_apply_volume.py
+[OK] 応募は目標比を満たす: TankanNotes=50/50(100%) atushi16=70/75(93%)
+```
+
+```
+$ git -C /mnt/d/Project2/kensho log --oneline -1
+442e98d stop kudou batches (proxy 1082 dead)
+```
 
 ## 変更内容
 
