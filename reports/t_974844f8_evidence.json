@@ -1,0 +1,21 @@
+{
+  "success_indicators": [
+    "templates/kanban-card-body-template.md 作成済み（1794B, 53行, 10セクション必須）",
+    "ai-team-improvement/SKILL.md:89 に参照注記追記済み",
+    "commit 667bcd5 でgit push済み"
+  ],
+  "verification_commands": [
+    "$ ls -la templates/kanban-card-body-template.md => -rwxrwxrwx 1794 Oct 10 00:56 templates/kanban-card-body-template.md",
+    "$ grep -n 'kanban-card-body-template' ai-team-improvement/../ai-team-improvement/SKILL.md => 89:criticがカードを作成する際は **`templates/kanban-card-body-template.md`** を参照し",
+    "$ git log --oneline -1 => 667bcd5 t_c42a9eb6: 週次PPE外部run自動化パイプラインcron登録"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/templates/kanban-card-body-template.md",
+    "/mnt/d/Project2/kensho/reports/t_974844f8_verification.md"
+  ],
+  "evidence_hashes": [
+    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  ],
+  "task_id": "t_974844f8",
+  "status": "complete"
+}
