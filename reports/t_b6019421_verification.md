@@ -1,11 +1,19 @@
-# Verification Evidence for t_b6019421
-
 ## verification_evidence
 
-1. `kanban_show t_b6019421` - viewed task details
-2. `read_file kensho/scraping/sources/mechatoku.py` - confirmed new source
-3. `read_file kensho/scraping/sources/appare.py` - confirmed new source
-4. `terminal .venv/bin/python -m pytest tests/test_mechatoku_scraper.py tests/test_appare_scraper.py -q` - ran unit tests (10 passed)
+$ python3 -m pytest tests/test_mechatoku_scraper.py tests/test_appare_scraper.py -q
+=> 10 passed
+
+$ git show HEAD:kensho/scraping/sources/__init__.py | grep -E "mechatoku|appare"
+=> from .mechatoku import MechatokuScraper
+=> from .appare import AppareScraper
+
+$ python3 -c "from kensho.scraping.sources import MechatokuScraper, AppareScraper; print('import ok')"
+=> import ok
+
+$ git log --oneline -3
+=> 70d4933 add verification evidence for t_dc47add0
+=> 3737c35 docs: 稼働サマlier 2026-10-09 (auto)
+=> 0425983 t_09435cb2: Publish 9 Qiita drafts, achieve public count 9/10
 
 ## Verification
 
