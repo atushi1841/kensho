@@ -1,0 +1,26 @@
+{
+  "task_id": "t_723b9d84",
+  "status": "complete",
+  "success_indicators": [
+    "Qiita public items: 7→8",
+    "Qiita apify links: 18→23",
+    "W41懸賞記事 PATCH完了 (ca99332b)",
+    "W41Apify記事 新規公開 (d05bf090)"
+  ],
+  "verification_commands": [
+    "$ curl -s -H 'Authorization: Bearer $QIITA_TOKEN' https://qiita.com/api/v2/users/atushi1841/items?per_page=100 | python3 -c \"import json,sys;d=json.load(sys.stdin);print('items=',len(d),'apify=',sum(i['body'].count('apify.com') for i in d))\" => items= 8 apify= 23",
+    "$ python3 scripts/publish_qiita.py reports/journalism/drafts/qiita-2026W41.md --publish --public => ERR 422（既存Draftあり→PATCHで対応済）",
+    "$ curl -s -H 'Authorization: Bearer $QIITA_TOKEN' https://qiita.com/api/v2/items/d05bf0904222579a7f52 => private=false, apify links=5"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/revenue-proposals/2026-10-09-revenue-worker-qita-w41.md"
+  ],
+  "evidence_hashes": [
+    "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  ],
+  "outcome": {
+    "metric": "Qiita public apify-linked articles",
+    "before": 0,
+    "after": 2
+  }
+}
