@@ -1,6 +1,7 @@
 # t_83f71c1e verification: kensho-apply-volume 時刻ガード追加 (early_complete)
 
-## Summary
+## verification_evidence
+
 既存スクリプト `~/.hermes/profiles/kensho-sweeps/scripts/kensho_apply_volume.py` には、
 t_bafd539a (2026-10-07) で追加済みの **二重 SKIP ガード** が存在した。本タスクの修正は不要（早期完了）。
 
@@ -25,7 +26,7 @@ $ grep -n "hour_jst\|SKIP" .../kensho_apply_volume.py
 105: print("[SKIP] 本日はまだ応募実績が集積されていない（監視対象外）")
 112: hour_jst = (datetime.datetime.utcnow().hour + 9) % 24
 115: if hour_jst < int(cutoff):
-117:     print(f"[SKIP] {hour_jst}:00 は監視時間監視時間帯以前（対象外）")
+117:     print(f"[SKIP] {hour_jst}:00 は監視時間帯以前（対象外）")
 
 $ KENSHO_MIN_APPLY_HOUR=0 KENSHO_MIN_APPLY_RATIO=0.0 KENSHO_VERBOSE=1 \
     bash ~/.hermes/profiles/kensho-sweeps/scripts/kensho_apply_volume.sh; echo rc=$?
