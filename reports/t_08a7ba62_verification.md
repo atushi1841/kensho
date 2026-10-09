@@ -62,7 +62,7 @@ $ ls -la /mnt/d/Project2/kensho/kensho/scraping/dm_monitor.py /mnt/d/Project2/ke
 
 $ git -C /mnt/d/Project2/kensho log --oneline -3 -- reports/t_08a7ba62_verification.md
 ```
-(no output — 未コミット、新規ファイル)
+895394c t_08a7ba62: winning_tracker実装 & 偽done修正証跡追加
 ```
 
 ## 成功指標確認 (t_08a7ba62)
@@ -70,7 +70,7 @@ $ git -C /mnt/d/Project2/kensho log --oneline -3 -- reports/t_08a7ba62_verificat
 - [x] 当選検出手順がコード化（scripts/dm_scan.py + kensho/scraping/dm_monitor.py 実在）
 - [x] 当選0件 confirmed（dm_wins_status.exists=False = 実測値、推測ではない）
 - [x] evidence_hashes が sha256: 形式の実ハッシュ（2件、両方とも sha256: + 64hex）
-- [x] artifact_paths がリポジトリ内実在パス（5件、全存在確認済）
+- [x] artifact_paths がリポジトリ内実在パス（4件、全存在確認済）
 
 ## Outcome Review (guard k)
 - metric: 偽done修正完了
