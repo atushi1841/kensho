@@ -1,0 +1,34 @@
+{
+  "success_indicators": [
+    "publish_devto.py/publish_qiita.py に公開前デデアップゲート実装・commit 89985be push済み",
+    "dev.to公開一覧27記事の重複タイトルグループ数 13→0（curl実測）",
+    "Qiita公開一覧8記事の重複タイトルグループ数 1→0（DELETE 204実測）",
+    "dedup_devto.py --apply で重複20件非公開化（unpublished 20件）"
+  ],
+  "verification_commands": [
+    "$ git log --oneline -1 -- scripts/publish_devto.py => 89985be t_957e7220: dev.to/Qiita公開前デデアップゲート",
+    "$ curl -s https://dev.to/api/articles?username=atu_ino_ed473db24d76d234a&per_page=100 | python3 -c (Counter集計) => dev.to public: 27 dupgroups: 0",
+    "$ curl -s -w 'HTTP %{http_code}' -X DELETE -H 'Authorization: Bearer $QIITA_TOKEN' https://qiita.com/api/v2/items/8544628b0cda368c394e => HTTP 204",
+    "$ python3 scripts/dedup_devto.py --apply => [SUMMARY] groups=8 deleted=8 apply=True (計20件 unpublished)",
+    "$ python3 -c (find_existing_articles/pick_canonical) => gate hits: [4825022] canonical: 4825022"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/publish_devto.py",
+    "/mnt/d/Project2/kensho/scripts/publish_qiita.py",
+    "/mnt/d/Project2/kensho/scripts/dedup_devto.py",
+    "/mnt/d/Project2/kensho/reports/t_957e7220_verification.md"
+  ],
+  "evidence_hashes": [
+    "4e13f4cfb2e81c38fd9bd4bdf4a0a5388574f538094c9cdb9791abd953dd15d9",
+    "4feae55e2a538469ca7e3f08b03a8cef426430ca98404b076a4a6f430fa9ceac",
+    "3884355c948e0ded031e7328ec53d737662bd42ccd6d43f971344c1886cf3e86",
+    "e2e4b7eda02edd99db029dff82b17115a4d2bfbd91d183fbb9d34755717da7b6"
+  ],
+  "outcome": {
+    "metric": "dev.to公開一覧の重複タイトルグループ数",
+    "before": 13,
+    "after": 0
+  },
+  "task_id": "t_957e7220",
+  "status": "complete"
+}
