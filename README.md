@@ -150,13 +150,13 @@ web_search fch "懸賞 自動応募"
 - ファイル: `anime_figure_prices_weekly/YYYY-Www.csv.gz` (≈900 KB)
 - スキーマ: figure_id / name / series / character / manufacturer / release_date / scale / msrp_jpy / lowest_price_jpy / highest_price_jpy / in_stock_count / offers(JSON) / fetched_at / confidence / sources_merged
 
-### MCP レジストリ — 8 servers 公開中
+### MCP レジストリ — 10 servers 公開中
 
 Kensho の MCP サーバー群を AI クライアント（Claude / Cursor / VS Code 等）から直接呼び出せるよう、主要レジストリに登録済み。
 
 | レジストリ | サーバー数 | 状態 |
 |---|---|---|
-| **MCP 公式レジストリ** | 8 | ✅ active（`io.github.atushi1841/*`） |
+| **MCP 公式レジストリ** | 10 | ✅ active（`io.github.atushi1841/*`、[検索](https://registry.modelcontextprotocol.io/v0.1/servers?search=atushi1841)） |
 | **Smithery** | 6 | ✅ description / icon / repositoryUrl 充実 |
 | **mcp.so** | 6 | 📝 YAML 設定済（手動提出待ち） |
 
@@ -169,6 +169,8 @@ Kensho の MCP サーバー群を AI クライアント（Claude / Cursor / VS C
 - `tcg-price-japan` — TCG（ポケモン）中古価格
 - `japan-fuel-price-mcp` — 国内燃料価格（都道府県別）
 - `japan-minimum-wage-mcp` — 最低賃金（47都道府県）
+- `japan-ec-mcp` — 国内EC価格比較
+- `mlit-property-prices-mcp` — 国土交通省 不動産取引価格（MCPBバンドル）
 
 **接続方法**（mcp.so YAML 設定は `mcp_so_configs/` 参照）:
 ```json
