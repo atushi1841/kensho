@@ -56,6 +56,34 @@ $ cd /mnt/d/Project2/japan-watch-market-scraper && git remote -v
 $ cd /mnt/d/Project2/japan-fuel-price-mcp && git pull --rebase && git push
 → a84d418 HEAD -> main. remote changes rebase済み。
 
+## verification_evidence
+$ grep "Apify Store" /mnt/d/Project2/japan-camera-market-scraper/README.md | head -1
+→ [![Apify Store](https://img.shields.io/badge/Apify-Store-blue)](https://apify.com/fruitful_quintessence/japan-used-camera-market-scraper)
+
+$ grep "Apify Store" /mnt/d/Project2/japan-prize-giveaway-scraper/README.md | head -1
+→ [![Apify Store](https://img.shields.io/badge/Apify-Store-blue)](https://apify.com/fruitful_quintessence/japan-prize-giveaway-scraper)
+
+$ grep "Apify Store" /mnt/d/Project2/japan-luxury-brand-market/README.md | head -1
+→ [![Apify Store](https://img.shields.io/badge/Apify-Store-blue)](https://apify.com/fruitful_quintessence/japan-luxury-brand-market-scraper)
+
+$ grep "Apify Store" /mnt/d/Project2/japan-watch-market-scraper/README.md | head -1
+→ [![Apify Store](https://img.shields.io/badge/Apify-Store-blue)](https://apify.com/fruitful_quintessence/japan-watch-market-scraper)
+
+$ grep "Apify Store" /mnt/d/Project2/japan-used-instrument-market/README.md | head -1
+→ [![Apify Store](https://img.shields.io/badge/Apify-Store-blue)](https://apify.com/fruitful_quintessence/japan-used-instrument-market-scraper)
+
+$ grep "Apify Store" /mnt/d/Project2/japan-offmall-market/README.md | head -1
+→ [![Apify Store](https://img.shields.io/badge/Apify-Store-blue)](https://apify.com/fruitful_quintessence/japan-offmall-market-scraper)
+
+$ grep "Apify Store" /mnt/d/Project2/japan-rent-market/README.md | head -1
+→ [![Apify Store](https://img.shields.io/badge/Apify-Store-blue)](https://apify.com/fruitful_quintessence/japan-rent-market-scraper)
+
+$ grep "Apify Store" /mnt/d/Project2/japan-fuel-price-mcp/README.md | head -1
+→ [![Apify Store](https://img.shields.io/badge/Apify-Store-blue)](https://apify.com/fruitful_quintessence/japan-fuel-price-mcp)
+
+$ git -C /mnt/d/Project2/kensho log --oneline -1
+→ 9f250a8 t_f02878ee: add sha256 hash and outcome to evidence
+
 ## 自己レビュー（Reflexion）
 ```json
 {
