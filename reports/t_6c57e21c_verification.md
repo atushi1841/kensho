@@ -10,7 +10,7 @@
 `scripts/smithery_useCount_fetch.sh` を作成し、Smithery CLI (`npx -y @smithery/cli search --namespace atushi1841`) を呼び出して
 namespace=atushi1841 の全MCPサーバーの useCount を取得する。JSON Lines 出力をパースし、useCount ごとにソートした JSON ファイルを `data/` に保存する。
 
-## 検証エビデンス
+## verification_evidence
 
 $ bash /mnt/d/Project2/kensho/scripts/smithery_useCount_fetch.sh
 {"total_useCount": 0, "zero_count": 10, "server_count": 10, "output_file": "/mnt/d/Project2/kensho/data/smithery_usecount_20261009_115436.json"}
