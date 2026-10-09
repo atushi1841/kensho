@@ -1,0 +1,58 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-10-09T16:46:40.649238+09:00",
+  "project_dir": "/mnt/d/Project2/kensho",
+  "summary": {
+    "total_collected": 404,
+    "total_applied": 64,
+    "total_wins_confirmed": 0,
+    "win_rate_percent": 0.0
+  },
+  "dm_wins_status": {
+    "exists": false,
+    "total_wins": 0,
+    "by_account": {}
+  },
+  "collected_sources": {
+    "ken-kaku": 29,
+    "kenshouclub": 246,
+    "cpmeikan": 2,
+    "kema": 32,
+    "chancecom": 30,
+    "kensho-everyday": 8,
+    "twscrape": 57
+  },
+  "accounts": [
+    {
+      "key": "atushi16",
+      "display": "atushi16",
+      "dm_win_check": "run dm_scan.py"
+    },
+    {
+      "key": "TankanNotes",
+      "display": "TankanNotes",
+      "dm_win_check": "run dm_scan.py"
+    },
+    {
+      "key": "kudou",
+      "display": "kudou",
+      "dm_win_check": "run dm_scan.py"
+    },
+    {
+      "key": "zin20120731",
+      "display": "zin20120731",
+      "dm_win_check": "run dm_scan.py"
+    }
+  ],
+  "win_detection_method": {
+    "primary": "dm_monitor (X DM) - kensho/scraping/dm_monitor.py",
+    "alt_sources": [
+      "email (manual)",
+      "sweepstakes site notification (manual)"
+    ],
+    "script": "scripts/dm_scan.py",
+    "last_check": null,
+    "confirmed_wins_last_30d": 0
+  },
+  "notes": "過去30日 当選0件 confirmed。collected.json: 404件、うち応募済み 64件。検出ソース: X DM（dm_monitor.py実装済み）、メール・懸賞サイト通知は手動確認想定。winning_tracker.json生成完了。"
+}
