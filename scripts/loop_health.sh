@@ -802,7 +802,17 @@ try:
 except Exception:
     pass
 
-if blocked:
+# 2026-10-10 修正 (t_critic-20261010-v1-READYBUG): ready>0 のときに new_proposals が
+# 返っていた（ready/todo 数の取得経路と priority 判定の不一致）。ready に実行可能タスクが
+# 居れば供給は足りている→新規提案不要。判定の第一条件に ready>0 を追加。
+# 実測: ready=3/todo=0/blocked=0/running=1 のとき priority=new_proposals と出力され、
+# critic が「盤面にworkが無い」と誤って新規提案を起票し続けていた。
+if _ready_count is not None and _ready_count > 0:
+    if _todo_count is not None and _todo_count > 0:
+        priority = "backlog_reduction"
+    else:
+        priority = "normal"
+elif blocked:
     priority = "blocked_triage"
 elif _ready_count is not None and _ready_count == 0:
     if _todo_count == 0:
