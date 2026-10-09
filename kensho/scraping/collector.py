@@ -694,6 +694,25 @@ def _collect_impl(
     out(f"  ke-ma.net: {len(kema_items)}件")
     collected.extend(kema_items)
 
+    # ── Step 2e+1: mechatoku.com（めちゃ得ページ / とらたぬ情報）収集 ──
+    # ★ 2026-10-10: 元は Step 2j+1（最後尾）だったが、1500秒予算が kenshou.club 等で
+    #   枯渇し appare が恒常的に打ち切られた（10/09 21:00実測: 経過2583秒で appare skip）。
+    #   軽量ソース（15/11ページ・詳細fetchはXヒットのみ）なので早期実行に移動。
+    out("\n[Step 2e+1 mechatoku.com] X懸賞を収集...")
+    mechatoku_items: list[dict[str, Any]] = _run_source(
+        "mechatoku", scrape_mechatoku, out, processed_set, account_keys
+    )
+    out(f"  mechatoku: {len(mechatoku_items)}件")
+    collected.extend(mechatoku_items)
+
+    # ── Step 2e+2: appare.com（懸賞天晴）収集 ──
+    out("\n[Step 2e+2 appare.com] X懸賞を収集...")
+    appare_items: list[dict[str, Any]] = _run_source(
+        "appare", scrape_appare, out, processed_set, account_keys
+    )
+    out(f"  appare: {len(appare_items)}件")
+    collected.extend(appare_items)
+
     # ── Step 2f: twscrape 収集 ──
     out("\n[Step 2f twscrape] X直接検索で懸賞を収集...")
     # ★ t_9cc18ba0: research(セッション使用のX検索)をapply時刻と分離 — 同一セッションで
@@ -801,22 +820,6 @@ def _collect_impl(
     )
     out(f"  kenshofan: {len(kenshofan_items)}件")
     collected.extend(kenshofan_items)
-
-    # ── Step 2j+1: mechatoku.com（めちゃ得ページ / とらたぬ情報）収集 ──
-    out("\n[Step 2j+1 mechatoku.com] X懸賞を収集...")
-    mechatoku_items: list[dict[str, Any]] = _run_source(
-        "mechatoku", scrape_mechatoku, out, processed_set, account_keys
-    )
-    out(f"  mechatoku: {len(mechatoku_items)}件")
-    collected.extend(mechatoku_items)
-
-    # ── Step 2j+2: appare.com（懸賞天晴）収集 ──
-    out("\n[Step 2j+2 appare.com] X懸賞を収集...")
-    appare_items: list[dict[str, Any]] = _run_source(
-        "appare", scrape_appare, out, processed_set, account_keys
-    )
-    out(f"  appare: {len(appare_items)}件")
-    collected.extend(appare_items)
 
     # ── Step 2k: アニメフィギュア価格データセット収集──
     out("\n[Step 2k アニメフィギュア価格価格] Hpoi API + figurememo + MyFigureListからフィギュア価格データを収集...")
