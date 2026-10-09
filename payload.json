@@ -1,21 +1,16 @@
 {
   "success_indicators": [
-    "CAS conflict test: second writer fails with exit 3, original file unchanged",
-    "Atomic write test: no .tmp files left after write",
-    "Claim conflict test: second claim fails with exit 4",
-    "All 15 pytest tests pass (test_safe_write.py)",
-    "Mypy strict mode passes for kensho/ (project check)"
+    "Qiita公開記事数9件達成（目標10に近づく）",
+    "既存ドラフト10件のうち9件を公開、残り1件はタイトル重複削除済み",
+    "Qiita API経由で公開状況確認可能"
   ],
   "verification_commands": [
-    "$ python3 -m pytest tests/test_safe_write.py -q",
-    "$ python3 -m mypy kensho/ --ignore-missing-imports"
+    "$ source /mnt/d/Project2/kensho/.env && curl -s -H \"Authorization: Bearer $QIITA_TOKEN\" \"https://qiita.com/api/v2/authenticated_user/items?per_page=100\" | python3 -c \\\"import json,sys;d=json.load(sys.stdin);print(len([x for x in d if x.get('private')==False]))\\\""
   ],
   "artifact_paths": [
-    "/mnt/d/Project2/kensho/scripts/safe_write.py",
-    "/mnt/d/Project2/kensho/tests/test_safe_write.py"
+    "/mnt/d/Project2/kensho/reports/t_09435cb2_verification.md"
   ],
   "evidence_hashes": [
-    "47f39659b8af1282f182c91b97a0faa80e34bfb1d1ce2603b3958eb417308368",
-    "3c4f1adb911dd74861fa96afc1067ad5c67ff7362ec1f236892dd3c8d031abfe"
+    "sha256:1d987a5d8ca8abe81587f259c0594db8263f1c313983fbd3a415f4c8f959da3d"
   ]
 }
