@@ -1,0 +1,27 @@
+{
+  "task_id": "t_f02878ee",
+  "status": "complete",
+  "success_indicators": [
+    "8 GitHub READMEs updated with Apify Store badge links",
+    "All changes committed and pushed to origin/main",
+    "external_runs=0 is unchanged (badge addition is config-side, not actor-run dependent)"
+  ],
+  "verification_commands": [
+    "$ head -3 /mnt/d/Project2/japan-camera-market-scraper/README.md → shows Apify Store badge",
+    "$ head -3 /mnt/d/Project2/japan-prize-giveaway-scraper/README.md → shows Apify Store badge",
+    "$ grep -c 'Apify Store' /mnt/d/Project2/japan-camera-market-scraper/README.md → 1 (PASS)",
+    "$ grep -c 'Apify Store' /mnt/d/Project2/japan-prize-giveaway-scraper/README.md → 1 (PASS)",
+    "$ git -C /mnt/d/Project2/japan-camera-market-scraper log --oneline -1 → f046991 (t_f02878ee commit)"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/japan-camera-market-scraper/README.md",
+    "/mnt/d/Project2/japan-luxury-brand-market/README.md",
+    "/mnt/d/Project2/japan-watch-market-scraper/README.md",
+    "/mnt/d/Project2/japan-used-instrument-market/README.md",
+    "/mnt/d/Project2/japan-offmall-market/README.md",
+    "/mnt/d/Project2/japan-rent-market/README.md",
+    "/mnt/d/Project2/japan-fuel-price-mcp/README.md",
+    "/mnt/d/Project2/japan-prize-giveaway-scraper/README.md"
+  ],
+  "evidence_hashes": []
+}

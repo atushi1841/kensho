@@ -56,6 +56,18 @@ DRY_RUN = "--dry-run" in sys.argv
 # TIMED-OUT → Apifyエラーメールの再発源。自動再試行せず監視のみでskippingする。
 MCP_RESIDENT_SUFFIX = "-mcp"
 
+# t_apify_noret r41: 必須入力が無いrunは必ずFAILED → 自動再試行のたびに
+# Apifyエラーメールが再送される「メール多発」源。かつself-runはexternal runに
+# 計上されず収益は永久に$0のため、再試行する意味が無い。監視のみでスキップする。
+#   8WBam4CPB72q9Rvsd yahoo-auctions-japan-scraper : searchKeywords 必須（無入力→FAILED）
+#   wxMskoiHMPeeH2qAJ tackleberry-japan-fishing-... : keyword 必須
+#   rIZ3NSg5Ul34PgpYx japan-corporate-numbers      : exampleInputが helloWorld プレースホルダ（実装未完了・exitCode91）
+NO_AUTO_RETRY_ACTOR_IDS = {
+    "8WBam4CPB72q9Rvsd",
+    "wxMskoiHMPeeH2qAJ",
+    "rIZ3NSg5Ul34PgpYx",
+}
+
 # 実行時timeout上書き（5f32176由来。常駐型の誤再試行時に備え残す）
 RETRY_TIMEOUT_OVERRIDES = {
     "57SNehd4cHNFyUCj3": 7200,  # japan-market-mcp
@@ -275,6 +287,7 @@ def main():
     skipped = []
     errors = []
     resident_skipped = []
+    no_input_skipped = []
     budget_exhausted = []
 
     print(f"[{datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}] Apify monitor start — {total} actors")
@@ -324,6 +337,11 @@ def main():
                 if is_resident_mcp(name, actor_id):
                     resident_skipped.append(name)
                     continue
+                # 必須入力の無いrunは必ずFAILED（=Apifyエラーメール再発源）。
+                # self-runはexternal runに計上されず収益ゼロのため再試行しない（t_apify_noret）。
+                if actor_id in NO_AUTO_RETRY_ACTOR_IDS:
+                    no_input_skipped.append(name)
+                    continue
                 # RETRY_LIMIT実効化: 24h窓で既に上限回数再試行済みなら打ち切り
                 with state_lock:
                     allowed = retry_allowed(state, actor_id)
@@ -365,7 +383,7 @@ def main():
         except TimeoutError:
             pass  # deadline超過: 以下未処理分はWARNで報告
 
-    processed_total = len(skipped) + len(retried) + len(errors) + len(resident_skipped) + len(budget_exhausted)
+    processed_total = len(skipped) + len(retried) + len(errors) + len(resident_skipped) + len(no_input_skipped) + len(budget_exhausted)
     if processed_total < len(todo) or time.monotonic() >= deadline:
         print(f"  [WARN] scan deadline hit: processed {processed_total}/{len(todo)}")
 
@@ -374,6 +392,8 @@ def main():
     print(f"Total: {total} | Retried: {len(retried)} | Skipped (ok): {len(skipped)} | Errors: {len(errors)}")
     if resident_skipped:
         print(f"Resident-MCP skipped (no auto-retry): {', '.join(resident_skipped[:20])}")
+    if no_input_skipped:
+        print(f"Requires-input skipped (no auto-retry): {', '.join(no_input_skipped[:20])}")
     if budget_exhausted:
         print(f"Retry-budget exhausted ({RETRY_LIMIT}/{FAILURE_WINDOW_HOURS}h): {', '.join(budget_exhausted[:20])}")
     if retried:

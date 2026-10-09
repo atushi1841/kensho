@@ -51,6 +51,8 @@ from kensho.scraping.sources import (
     scrape_kenshouclub,
     scrape_kenshofan,  # ★ 新規: kenshofan.com（懸賞ファン）第5収集源
     scrape_yahooshopping,
+    scrape_mechatoku,  # ★ 新規: mechatoku.com（めちゃ得ページ / とらたぬ情報）
+    scrape_appare,  # ★ 新規: appare.com（懸賞天晴）
     scrape_mercari,
     scrape_rakutenmarket,
     scrape_prtimes,
@@ -799,6 +801,22 @@ def _collect_impl(
     )
     out(f"  kenshofan: {len(kenshofan_items)}件")
     collected.extend(kenshofan_items)
+
+    # ── Step 2j+1: mechatoku.com（めちゃ得ページ / とらたぬ情報）収集 ──
+    out("\n[Step 2j+1 mechatoku.com] X懸賞を収集...")
+    mechatoku_items: list[dict[str, Any]] = _run_source(
+        "mechatoku", scrape_mechatoku, out, processed_set, account_keys
+    )
+    out(f"  mechatoku: {len(mechatoku_items)}件")
+    collected.extend(mechatoku_items)
+
+    # ── Step 2j+2: appare.com（懸賞天晴）収集 ──
+    out("\n[Step 2j+2 appare.com] X懸賞を収集...")
+    appare_items: list[dict[str, Any]] = _run_source(
+        "appare", scrape_appare, out, processed_set, account_keys
+    )
+    out(f"  appare: {len(appare_items)}件")
+    collected.extend(appare_items)
 
     # ── Step 2k: アニメフィギュア価格データセット収集──
     out("\n[Step 2k アニメフィギュア価格価格] Hpoi API + figurememo + MyFigureListからフィギュア価格データを収集...")

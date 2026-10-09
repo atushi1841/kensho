@@ -47,6 +47,8 @@ from .scrapling_fetch import (
     scrapling_fetch_with_retry,
 )
 from .twscrape import scrape_twscrape
+from .mechatoku import scrape_mechatoku
+from .appare import scrape_appare
 from .anime_figure_pricing import scrape_anime_figure_pricing
 from .anime_figure_api import (
     FigurePrice,
@@ -99,6 +101,8 @@ __all__ = [
     "scrape_chancecom",
     "scrape_prtimes",
     "scrape_anime_figure_pricing",
+    "scrape_mechatoku",
+    "scrape_appare",
     "FigurePrice",
     "FigurePriceAggregator",
     "PriceSource",
