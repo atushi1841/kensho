@@ -21,38 +21,38 @@
    → task status: running, title: 回線断時の補填自動化
    ```
 
-2. read_file: config.yaml確認
+2. git log: コミット履歴確認
    ```
-   $ read_file path=/mnt/d/Project2/kensho/config.yaml
-   → atushi16 max:7, TankanNotes max:15 (original)
-   → zin batches: [] (commented out)
+   $ git -C /mnt/d/Project2/kensho log --oneline -5
+   → a3fcc8b t_4ec96eb8: proxy dead compensation...
+   → 2de5191 t_4ec96eb8: fix import path in test_compensation_orchestrator
    ```
 
-3. terminal: 現状status確認
+3. terminal: status確認
    ```
    $ cat data/status/kudou.json | grep status
    → "status": "dead_proxy"
-   
+
    $ cat data/status/zin20120731.json | grep status
    → "status": "alive"
    ```
 
-4. write_file: compensation.py作成
+4. terminal: test実行
    ```
-   $ write_file path=kensho/utils/compensation.py
-   → 新規ファイル作成 (145行)
-   ```
-
-5. terminal: test実行
-   ```
-   $ /home/atushi/kensho-venv/bin/python -m pytest tests/test_compensation.py -v
-   → 6 passed (apply/revert/is_dead等)
+   $ /home/atushi/kensho-venv/bin/python -m pytest tests/test_compensation.py tests/test_compensation_orchestrator.py tests/test_collector.py tests/test_applier.py -q --no-header
+   → 152 passed in 113.40s
    ```
 
-6. terminal: comp状態確認
+5. terminal: comp状態確認
    ```
    $ /home/atushi/kensho-venv/bin/python kensho/utils/compensation.py
-   → "No compensation needed" (zin aliveのため正常)
+   → "Compensation already reverted"
+   ```
+
+6. git commit: 修正コミット
+   ```
+   $ git log --oneline -3
+   → 2de5191 t_4ec96eb8: fix import path in test_compensation_orchestrator (kensho.orchestrator)
    ```
 
 ## シナリオ別動作
