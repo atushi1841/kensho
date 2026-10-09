@@ -23,5 +23,12 @@
     "/mnt/d/Project2/japan-fuel-price-mcp/README.md",
     "/mnt/d/Project2/japan-prize-giveaway-scraper/README.md"
   ],
-  "evidence_hashes": []
+  "evidence_hashes": [
+    "sha256:3b29bdc30f1e095bd5c88d274a7b1718124fed0ec3796297bc53b8ce449cf491"
+  ],
+  "outcome": {
+    "metric": "apify_store_badges_added",
+    "before": 0,
+    "after": 8
+  }
 }
