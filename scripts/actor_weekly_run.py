@@ -13,6 +13,7 @@
   python3 scripts/actor_weekly_run.py --force          # 週次dedupを無視
   python3 scripts/actor_weekly_run.py --slot a         # スロット指定（a=月曜/b=金曜）
   python3 scripts/actor_weekly_run.py --max 1          # 最大1アクター（既定2）
+  python3 scripts/actor_weekly_run.py --skip-x-post    # X投稿をスキップ（CDP不通時）
 
 退出コード:
   0=実行/スキップ(正常)  2=dry-run  1=依存/投稿失敗
@@ -129,20 +130,18 @@ def _save_json(path: Path, data: dict[str, Any]) -> None:
 
 
 def _load_token() -> str:
-    """Apifyトークンを.env/環境変数から取得。"""
-    tok = os.environ.get("APIFY_TOKEN", "").strip() or os.environ.get(
-        "APIFY_TOKEN_DEFAULT", ""
+    """Apifyトークンを.env/環境変数から取得（.env優先）。"""
+    env_path = REPO / ".env"
+    if env_path.is_file():
+        for line in env_path.read_text(encoding="utf-8-sig").splitlines():
+            line = line.strip()
+            if line.startswith(("APIFY_TOKEN_DEFAULT=", "APIFY_TOKEN=")):
+                tok = line.split("=", 1)[1].strip().strip('"').strip("'")
+                if tok:
+                    return tok
+    return os.environ.get("APIFY_TOKEN_DEFAULT", "").strip() or os.environ.get(
+        "APIFY_TOKEN", ""
     ).strip()
-    if not tok:
-        env_path = REPO / ".env"
-        if env_path.is_file():
-            for line in env_path.read_text(encoding="utf-8-sig").splitlines():
-                line = line.strip()
-                if line.startswith(("APIFY_TOKEN=", "APIFY_TOKEN_DEFAULT=")):
-                    tok = line.split("=", 1)[1].strip().strip('"').strip("'")
-                    if tok:
-                        break
-    return tok
 
 
 def api_get(path: str, token: str) -> dict:
@@ -262,7 +261,7 @@ def post_via_cdp(text: str, log_fn: Any) -> str:
         proc = subprocess.run(
             ["powershell.exe", "-NoProfile", "-Command",
              "cd C:\\\\temp; node x_post_driver.js x_body.txt C:\\\\temp\\\\x_post_out.json"],
-            capture_output=True, text=True, timeout=420,
+            capture_output=True, text=True, timeout=30,
         )
         tail = ((proc.stdout or "") + (proc.stderr or "")).strip().splitlines()[-5:]
     except subprocess.TimeoutExpired as e:
@@ -336,10 +335,12 @@ Run results are posted to [X (@atushi16)](https://x.com/atushi16) as well.
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="Apify Actor週次自動実行結果をX/dev.toで公開")
-    ap.add_argument("--dry-run", action="store_true", help="投稿せず実行内容を表示")
+    ap.add_argument("--dry-run", action="store_true", help="投稿ではなく実行内容を表示")
     ap.add_argument("--force", action="store_true", help="週次dedupを無視")
     ap.add_argument("--slot", default="a", choices=["a", "b"], help="投稿スロット（a=月曜/b=金曜）")
     ap.add_argument("--max", type=int, default=2, help="1回あたりの最大実行アクター数")
+    ap.add_argument("--skip-x-post", action="store_true",
+                    help="X(CDP)投稿をスキップ（Apify run + dev.to のみ実行）。WSL→Windows CDP が不通な場合の代替")
     args = ap.parse_args()
 
     def log(msg: str) -> None:
@@ -396,14 +397,17 @@ def main() -> None:
             result = run_actor(act["id"], token, dry_run=False)
             log(f"  status={result.get('status')} run_id={result.get('run_id')} error={result.get('error')}")
 
-            # X 投稿
-            txt = generate_tweet(result, act["name"])
-            log(f"Xtweet({len(txt)}chars): {txt[:100]}...")
-            try:
-                tweet_id = post_via_cdp(txt, log)
-            except Exception as e:
-                log(f"ERROR: X投稿失敗: {e}")
-                sys.exit(1)
+            # X 投稿（skip-x-post フラグON時または失敗時は警告のみ・state更新は継続）
+            tweet_id = ""
+            if args.skip_x_post:
+                log("X投稿をスキップ (--skip-x-post)")
+            else:
+                txt = generate_tweet(result, act["name"])
+                log(f"Xtweet({len(txt)}chars): {txt[:100]}...")
+                try:
+                    tweet_id = post_via_cdp(txt, log)
+                except Exception as e:
+                    log(f"WARN: X投稿失敗（続行）: {e}")
 
             # dev.to 投稿
             devto_title, devto_body = build_devto_article(act["name"], result)
