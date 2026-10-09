@@ -6,9 +6,10 @@
 #   - 休み日は計画ごと次の活動日へ繰り越し、当日は投稿しない
 #   - 予定時刻より先の分は撃たない（前倒し投稿を防ぐ）
 #   - 403 が出たら warmup_stop.flag を立てて停止（BOTシグナルを増幅させない）
-#   - go.flag が無い/古い場合は何もせず終了する（回線を切り替えた時だけ動かす）
+#   - go.flag が無い場合は何もせず終了する（ユーザーが設置したことを確認済みの印）
 #
 # go.flag を置く = その回線で動かしてよい、という意思表示（既存ジョブと同じ思想）。
+# go.flag の24h TTLは廃止。ユーザーが設置した時点のegress検証で継続する。
 set -uo pipefail
 
 REPO=/mnt/d/Project2/kensho
@@ -27,19 +28,14 @@ if [ -f "$STOP_FLAG" ]; then
   exit 0
 fi
 
-# 回線ゲート: go.flag が必要（24時間以内）
+# 回線ゲート: go.flag が必要（TTLなし・ユーザー設置が継続の証）
 if [ ! -f "$GO_FLAG" ]; then
   echo "$(date '+%F %T') SKIP: go.flag not present - 回線を切り替えたら作成してください" >>"$LOG"
   exit 0
 fi
-age=$(( $(date +%s) - $(stat -c %Y "$GO_FLAG") ))
-if [ "$age" -gt 86400 ]; then
-  echo "$(date '+%F %T') SKIP: go.flag is stale (${age}s)" >>"$LOG"
-  exit 0
-fi
 
 source /home/atushi/kensho-venv/bin/activate 2>/dev/null
-out=$(python3 scripts/reddit_warmup_agent.py --submit --i-understand-risk --count 5 2>&1)
+out=$(python3 scripts/reddit_warmup_agent.py --submit --i-understand-risk --count 5 --proxy-port 1085 2>&1)
 rc=$?
 echo "$out" >>"$LOG"
 echo "$(date '+%F %T') done rc=$rc" >>"$LOG"

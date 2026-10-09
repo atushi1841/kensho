@@ -10,6 +10,8 @@
   - shadowban check logic: 404 検出
   - trim_to_range: 短すぎる/長すぎる入力の調整
   - load_fact_data: 実データと欠損両ケース
+  - egress guard: 自宅IP検知で即中止、非自宅IP通過
+  - G5 gate: karma>=150 AND age_days>=30 で実投稿ブロック
 """
 from __future__ import annotations
 
@@ -432,6 +434,95 @@ def test_is_stopped_false_when_no_flag(tmp_path: Path) -> None:
         # テスト後は必ずクリーンな状態に戻す（flag を残さない）
         if real_flag.exists():
             real_flag.unlink()
+
+
+# ---------------------------------------------------------------------------
+# egress guard (egress IP check + home IP block)
+# ---------------------------------------------------------------------------
+
+def test_check_egress_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    """非自宅IPが返ってきたら status='ok'。"""
+    import subprocess
+    fake = subprocess.CompletedProcess(args=[], returncode=0, stdout="126.179.0.173\n", stderr="")
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: fake)
+    ip, status = wa.check_egress(proxy_port=1085)
+    assert status == "ok"
+    assert ip == "126.179.0.173"
+
+
+def test_check_egress_home_ip_triggers_block(monkeypatch: pytest.MonkeyPatch) -> None:
+    """自宅IPが返ってきたら status='home_ip'。"""
+    import subprocess
+    fake = subprocess.CompletedProcess(args=[], returncode=0, stdout="219.104.132.236\n", stderr="")
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: fake)
+    ip, status = wa.check_egress(proxy_port=1081)
+    assert status == "home_ip"
+    assert ip == wa.HOME_IP
+
+
+def test_check_egress_timeout_on_failure(monkeypatch: pytest.MonkeyPatch) -> None:
+    """curl失敗時は status='timeout'。"""
+    import subprocess
+    fake = subprocess.CompletedProcess(args=[], returncode=28, stdout="", stderr="timeout")
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: fake)
+    ip, status = wa.check_egress(proxy_port=1082)
+    assert status == "timeout"
+    assert ip == ""
+
+
+def test_enforce_egress_guard_allows_nonhome_ip(monkeypatch: pytest.MonkeyPatch) -> None:
+    """非自宅IPなら RuntimeError は出ない。"""
+    import subprocess
+    fake = subprocess.CompletedProcess(args=[], returncode=0, stdout="126.179.0.173\n", stderr="")
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: fake)
+    # 例外を投げなければ通る
+    wa.enforce_egress_guard(1085)
+
+
+def test_enforce_egress_guard_blocks_home_ip(monkeypatch: pytest.MonkeyPatch) -> None:
+    """自宅IP(1081) を指定したら RuntimeError で即中止。"""
+    import subprocess
+    fake = subprocess.CompletedProcess(args=[], returncode=0, stdout="219.104.132.236\n", stderr="")
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: fake)
+    with pytest.raises(RuntimeError, match="WARMUP_EGRESS_BLOCK"):
+        wa.enforce_egress_guard(1081)
+
+
+def test_enforce_egress_guard_blocks_timeout(monkeypatch: pytest.MonkeyPatch) -> None:
+    """プロキシ不通(1082) は RuntimeError で中止。"""
+    import subprocess
+    fake = subprocess.CompletedProcess(args=[], returncode=28, stdout="", stderr="")
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: fake)
+    with pytest.raises(RuntimeError, match="WARMUP_EGRESS_TIMEOUT"):
+        wa.enforce_egress_guard(1082)
+
+
+# ---------------------------------------------------------------------------
+# G5 gate
+# ---------------------------------------------------------------------------
+
+def test_gate_g5_blocked_true(monkeypatch: pytest.MonkeyPatch) -> None:
+    """karma>=150 AND age_days>=30 → 実投稿ブロック。"""
+    monkeypatch.setattr(wa, "check_karma", lambda u: {"total_karma": 200, "comment_karma": 150, "link_karma": 50})
+    monkeypatch.setattr(wa, "check_account_age_days", lambda u: 45)
+    assert wa.gate_g5_blocked({"total_karma": 200, "comment_karma": 150, "link_karma": 50}, "testuser") is True
+
+
+def test_gate_g5_blocked_false_low_karma(monkeypatch: pytest.MonkeyPatch) -> None:
+    """karma不足 → ブロックしない。"""
+    monkeypatch.setattr(wa, "check_account_age_days", lambda u: 45)
+    assert wa.gate_g5_blocked({"total_karma": 50, "comment_karma": 30, "link_karma": 20}, "testuser") is False
+
+
+def test_gate_g5_blocked_false_young_account(monkeypatch: pytest.MonkeyPatch) -> None:
+    """age不足 → ブロックしない。"""
+    monkeypatch.setattr(wa, "check_account_age_days", lambda u: 10)
+    assert wa.gate_g5_blocked({"total_karma": 200, "comment_karma": 150, "link_karma": 50}, "testuser") is False
+
+
+def test_gate_g5_blocked_none_returns_false() -> None:
+    """karmaチェック失敗(None) → ブロックしない。"""
+    assert wa.gate_g5_blocked(None, "testuser") is False
 
 
 # ---------------------------------------------------------------------------

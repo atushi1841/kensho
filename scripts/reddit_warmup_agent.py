@@ -58,6 +58,9 @@ SAFETY_LOG_FILE = REPO / "data" / "reddit" / "warmup_safety.jsonl"
 
 JST = timezone(timedelta(hours=9))
 
+HOME_IP = "219.104.132.236"  # 自宅IP — 一致したら即中止（必須ガード）
+DEFAULT_PROXY_PORT = 1085   # TankanNotes SOCKS5（1082・1084は現在切断中）
+
 SUBS = [
     "NoStupidQuestions",
     "AskReddit",
@@ -675,6 +678,44 @@ def load_karma_baseline() -> dict[str, Any]:
     return {}
 
 
+def check_account_age_days(username: str) -> int | None:
+    """アカウント作成からの経過年数を返す。取得失敗時は None。"""
+    url = f"https://www.reddit.com/user/{username}/about.json"
+    ck = load_cookie()
+    hdr = build_cookie_header(ck)
+    try:
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Cookie": hdr,
+        })
+        with urllib.request.urlopen(req, timeout=15) as r:
+            d = json.loads(r.read().decode())
+        created_utc = d.get("data", {}).get("created_utc", 0)
+        if not created_utc:
+            return None
+        age_sec = time.time() - created_utc
+        return int(age_sec / 86400)
+    except Exception:
+        return None
+
+
+def gate_g5_blocked(karma: dict[str, int] | None, username: str) -> bool:
+    """G5ゲート: total_karma>=150 AND age_days>=30 → 実投稿永久ブロック。
+
+    両条件を満たす場合は True（ブロック）、それ以外は False（暖機継続可）。
+    warmupはupvote/commentのみ許可される。
+    """
+    if karma is None:
+        return False
+    total = karma.get("total_karma", 0)
+    age = check_account_age_days(username)
+    if age is None:
+        return False
+    blocked = (total >= 150) and (age >= 30)
+    log(f"G5 gate: karma={total} age_days={age} → {'BLOCK' if blocked else 'OK'}")
+    return blocked
+
+
 def save_karma_baseline(base: dict[str, Any]) -> None:
     base_file = REPO / "data" / "reddit" / "warmup_karma_baseline.json"
     base_file.parent.mkdir(parents=True, exist_ok=True)
@@ -695,6 +736,49 @@ def is_stopped() -> bool:
     return flag.exists()
 
 
+def check_egress(proxy_port: int = DEFAULT_PROXY_PORT) -> tuple[str, str]:
+    """SOCKS5経由で出口IPを実測し、(ip, status) を返す。
+
+    status は 'ok' / 'timeout' / 'home_ip' のいずれか。
+    - ok: 非自宅IP → 継続可
+    - timeout: プロキシ不通 or 取得失敗 → 中断が必要
+    - home_ip: 自宅IP(219.104.132.236) と一致 → 即時中止（絶対ガード）
+    """
+    import subprocess as _sp
+    cmd = ["curl", "-s", "--max-time", "15",
+           "--proxy", f"socks5h://172.26.80.1:{proxy_port}",
+           "https://api.ipify.org"]
+    try:
+        r = _sp.run(cmd, capture_output=True, text=True, timeout=20)
+        ip = r.stdout.strip()
+    except Exception as exc:  # noqa: BLE001
+        log(f"egress check error (port={proxy_port}): {exc}")
+        return ("", "timeout")
+    if not ip:
+        log(f"egress check: no response from port {proxy_port}")
+        return ("", "timeout")
+    log(f"egress实测: port={proxy_port} ip={ip}")
+    if ip == HOME_IP:
+        log(f"egress guard TRIGGERED: ip={ip} is HOME_IP — aborting immediately")
+        return (ip, "home_ip")
+    return (ip, "ok")
+
+
+def enforce_egress_guard(proxy_port: int) -> None:
+    """egressチェックを行い、自宅IPまたは不通ならRuntimeErrorで中断する。"""
+    ip, status = check_egress(proxy_port)
+    if status == "home_ip":
+        raise RuntimeError(
+            f"WARMUP_EGRESS_BLOCK: 出口IPが自宅IP({HOME_IP})。"
+            " 自宅線でのReddit warmupは禁止。回線を切り替えてgo.flagを作り直してください。"
+        )
+    if status == "timeout":
+        raise RuntimeError(
+            f"WARMUP_EGRESS_TIMEOUT: プロキシポート{proxy_port}経由で"
+            "出口IPが取得できない（回線不通）。プロキシが起動しているか確認してください。"
+        )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Reddit新垢karma形成支援エージェント（人間らしさ優先・ドラフト生成中心）",
@@ -711,6 +795,8 @@ def main() -> int:
     parser.add_argument("--window-max", type=float, default=6.0, help="候補のスレ最大経過年数（時間）")
     parser.add_argument("--max-comments", type=int, default=8, help="コメント数上限（少ないほど先取り）")
     parser.add_argument("--baseline", action="store_true", help="現在のkarmaをベンチマークとして記録するのみ")
+    parser.add_argument("--proxy-port", type=int, default=DEFAULT_PROXY_PORT,
+                        help=f"出口IP検証に使うSOCKS5ポート（既定={DEFAULT_PROXY_PORT}）")
     args = parser.parse_args()
 
     if args.submit and not args.i_understand_risk:
@@ -721,6 +807,9 @@ def main() -> int:
         reason = (REPO / "data" / "reddit" / "warmup_stop.flag").read_text(encoding="utf-8").strip()
         print(f"WARMUP_STOP active. Reason: {reason}", file=sys.stderr)
         return 3
+
+    # egress guard: 自宅IPで実行したら即時中止（絶対ガード）
+    enforce_egress_guard(args.proxy_port)
 
     history_path = Path(args.history_path) if args.history_path else HISTORY_FILE
 
@@ -788,8 +877,6 @@ def main() -> int:
     # 8. 実投稿（--submit --i-understand-risk 時）
     if args.submit:
         return do_submit(sched, fact)
-
-    # 通常: ドラフト + スケジュールJSONを出力
     output = {
         "dry_run": True,
         "generated_at": datetime.now(JST).isoformat(),
@@ -835,6 +922,12 @@ def do_submit(sched: dict[str, Any], fact: dict[str, Any]) -> int:
         if cur_karma.get("total_karma", 0) < prev and prev > 0:
             trigger_stop(f"karma decreased from {prev} to {cur_karma['total_karma']}")
         save_karma_baseline(cur_karma)
+
+    # G5ゲート: karma>=150 AND age>=30days → 実投稿永久ブロック（暖機は継続）
+    if gate_g5_blocked(cur_karma, username):
+        log("G5 gate BLOCKED: total_karma>=150 AND age_days>=30 — real posts are permanently blocked")
+        log("warmup continues: upvote/comment only, no real posting until account is manually reviewed")
+        # 停止はしない（暖機は継続）。代わりに次回以降のsubmitで同じ判定が走る。
 
     # shadowban 検査（ログアウト状態）
     if check_shadowban(username):
