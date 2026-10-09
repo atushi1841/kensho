@@ -48,6 +48,7 @@ from kensho.scraping.collector import collect  # noqa: E402
 from kensho.utils.freeze_festival import check_and_update, get_action_scale  # noqa: E402
 from kensho.utils.network import get_all_adapters  # noqa: E402
 from kensho.utils.proxy_watchdog import check_proxy_health  # noqa: E402
+from kensho.utils.compensation import main as run_compensation  # noqa: E402
 
 # ── 最終処理時刻 管理ファイル ──
 STATE_DIR = os.path.join(os.path.dirname(__file__), "data")
@@ -409,6 +410,9 @@ def main() -> None:
 
         cfg = load_config()
         state = load_state()
+
+        # --- Compensation for dead proxies
+        _safe_step("Compensation Check", log, lambda: run_compensation())
 
         # ハートビート（orchestrator_heartbeat.json）を書き込む
         try:

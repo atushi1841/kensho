@@ -140,6 +140,23 @@ web_search fch "懸賞 自動応募"
 - 全アクター: **seoTitle/seoDescription 完備 / 最小権限 / カテゴリ設定済み**
 - レビュー獲得・外部掲載で可視性向上中（dev.to / GitHub / MCPレジストリ）
 
+#### Actor統合方針（2026-10-09確定）
+
+同一対象の分割出品により人気シグナルが分散していたため、以下の方針で統合完了:
+
+| カテゴリ | 主力Actor（推奨） | 統合済み（非推奨） | 削減 |
+|---------|------------------|-------------------|-----|
+| watch | japan-watch-market-scraper | -cn, -kr, jackroad-used-watch | 4→1 |
+| luxury | japan-luxury-brand-market-scraper | -cn, -kr | 3→1 |
+| instrument | japan-used-instrument-market-scraper | -cn, -kr, digimart-japan-used | 4→1 |
+| offmall | japan-offmall-market-scraper | -cn, -kr | 3→1 |
+| suumo | suumo-japan-real-estate-scraper | — | 1（既存） |
+| kakaku | japan-kakaku-price-search | — | 1（既存） |
+
+**合計: 16 actors → 6 actors（10件統合）**
+
+関連actorはメインactorの解説セクションで言及し、間接的リンクを経由させる方針。
+
 ### Gumroad — デジタル商品販売
 - **商品ページ**: [agyhq](https://gumroad.com/a/agyhq) — アニメフィギュア価格データセット
 - 週次更新データを自動配信（GitHub Releases連動）
