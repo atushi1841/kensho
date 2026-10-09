@@ -1,9 +1,9 @@
 {
   "source": "suruga-ya.jp",
-  "total_observations": 2400,
-  "unique_items": 176,
-  "with_used_price": 96,
-  "in_stock": 96,
+  "total_observations": 2520,
+  "unique_items": 180,
+  "with_used_price": 100,
+  "in_stock": 100,
   "keywords": [
     "ポケモンカードゲーム イーブイ",
     "ポケモンカードゲーム ピカチュウ",
@@ -12,57 +12,64 @@
     "ポケモンカードゲーム リザードン"
   ],
   "first_collected_at": "2026-09-21T23:13:01Z",
-  "last_collected_at": "2026-10-08T22:30:13Z",
-  "price_changed_items": 9,
+  "last_collected_at": "2026-10-09T22:30:16Z",
+  "price_changed_items": 10,
   "used_price_movers": [
     {
       "name": "ポケモンカードゲーム ピカチュウ ワールド",
       "first_price_jpy": 648000,
       "last_price_jpy": 548000,
       "delta_jpy": -100000,
-      "observations": 20
+      "observations": 21
     },
     {
       "name": "ポケモンカードゲーム スカーレット＆バイオレット スペシャルデッキセットex フシギバナ・リザードン・カメックス",
       "first_price_jpy": 42800,
       "last_price_jpy": 34800,
       "delta_jpy": -8000,
-      "observations": 20
+      "observations": 21
     },
     {
       "name": "125/098[SAR]：(キラ)ロケット団のミュウツーex",
       "first_price_jpy": 59800,
       "last_price_jpy": 54800,
       "delta_jpy": -5000,
-      "observations": 18
+      "observations": 19
     },
     {
       "name": "ポケモンカードゲーム スペシャルジャンボカード サンダーとフリーザーとファイヤー 月刊コロコロコミック1997年10月号付録",
       "first_price_jpy": 2980,
       "last_price_jpy": 7480,
       "delta_jpy": 4500,
-      "observations": 20
+      "observations": 21
     },
     {
       "name": "237/193[SAR]：(キラ)ロケット団のミュウツーex",
       "first_price_jpy": 13800,
       "last_price_jpy": 10200,
       "delta_jpy": -3600,
-      "observations": 20
+      "observations": 21
     },
     {
       "name": "【BOX】ポケモンカードゲーム スカーレット＆バイオレット 強化拡張パック ポケモンカード151",
       "first_price_jpy": 49800,
       "last_price_jpy": 46800,
       "delta_jpy": -3000,
-      "observations": 20
+      "observations": 21
     },
     {
       "name": "183/165[AR]：(キラ)ミュウツー",
       "first_price_jpy": 3480,
-      "last_price_jpy": 1940,
-      "delta_jpy": -1540,
-      "observations": 16
+      "last_price_jpy": 3280,
+      "delta_jpy": -200,
+      "observations": 17
+    },
+    {
+      "name": "ポケモンカードゲーム ポケモンコイン ピカチュウ(両手上げ/銀/クラッドアイス) キャンペーン配布品",
+      "first_price_jpy": 290,
+      "last_price_jpy": 320,
+      "delta_jpy": 30,
+      "observations": 13
     },
     {
       "name": "054/103：(キラ)ミュウツー",
@@ -76,7 +83,7 @@
       "first_price_jpy": 280,
       "last_price_jpy": 270,
       "delta_jpy": -10,
-      "observations": 20
+      "observations": 21
     }
   ],
   "latest_csv": "/mnt/d/Project2/kensho/data/tcg_dataset/tcg_dataset_latest.csv",
