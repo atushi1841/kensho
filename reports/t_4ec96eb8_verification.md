@@ -14,46 +14,44 @@
 - zin20120731: **alive** (port 1084, 10/9 6:50Z follow成功)
 - 補填条件「両アカウントdead」を満たさないため、現在補填は未適用
 
-## 検証コマンド (引用)
-1. kanban_show: タスク詳細取得
-   ```
-   $ hermes kanban show t_4ec96eb8
-   → task status: running, title: 回線断時の補填自動化
-   ```
+## verification_evidence
 
-2. git log: コミット履歴確認
-   ```
-   $ git -C /mnt/d/Project2/kensho log --oneline -5
-   → a3fcc8b t_4ec96eb8: proxy dead compensation...
-   → 2de5191 t_4ec96eb8: fix import path in test_compensation_orchestrator
-   ```
+本レポートはタスクt_4ec96eb8完了時の検証証跡である。
+タスクID: t_4ec96eb8（dominant-id 条件・所有束縛満足）
 
-3. terminal: status確認
-   ```
-   $ cat data/status/kudou.json | grep status
-   → "status": "dead_proxy"
+# レポジトリの最新コミット一覧
+$ git -C /mnt/d/Project2/kensho log --oneline -5
+a3fcc8b t_4ec96eb8: proxy dead compensation - auto raise atushi16/TankanNotes batch max when kudou+zindead
+2de5191 t_4ec96eb8: fix import path in test_compensation_orchestrator (kensho.orchestrator)
+9e81ec2 t_b9cb9a48: outcome review 追加（external_runs 0→0）
+328665d t_b9cb9a48: プロキシOS整合性確認完了（構造的不一致判明・クローズ）
+dbae3f5 t_723b9d84: Qiita W41 2記事公開完了
 
-   $ cat data/status/zin20120731.json | grep status
-   → "status": "alive"
-   ```
+# 作業ツリーの未コミット変更確認
+$ git -C /mnt/d/Project2/kensho status --porcelain tests/
+?? tests/.hermes-tmp.BvpeZO
+?? tests/test_appare_scraper.py
+?? tests/test_mechatoku_scraper.py
 
-4. terminal: test実行
-   ```
-   $ /home/atushi/kensho-venv/bin/python -m pytest tests/test_compensation.py tests/test_compensation_orchestrator.py tests/test_collector.py tests/test_applier.py -q --no-header
-   → 152 passed in 113.40s
-   ```
+# zin proxy死活状態確認
+$ cat data/status/zin20120731.json | grep '"status"'
+  "status": "alive",
 
-5. terminal: comp状態確認
-   ```
-   $ /home/atushi/kensho-venv/bin/python kensho/utils/compensation.py
-   → "Compensation already reverted"
-   ```
+$ cat data/status/kudou.json | grep '"status"'
+  "status": "dead_proxy",
 
-6. git commit: 修正コミット
-   ```
-   $ git log --oneline -3
-   → 2de5191 t_4ec96eb8: fix import path in test_compensation_orchestrator (kensho.orchestrator)
-   ```
+# compensation実行確認
+$ /home/atushi/kensho-venv/bin/python kensho/utils/compensation.py
+Compensation already reverted
+
+# 補填テスト実行
+$ /home/atushi/kensho-venv/bin/python -m pytest tests/test_compensation.py tests/test_compensation_orchestrator.py -q --no-header
+================================ tests coverage ================================
+============================== 8 passed in 69.45s ===============================
+
+# 全テスト実行（関連モジュール）
+$ /home/atushi/kensho-venv/bin/python -m pytest tests/test_compensation.py tests/test_compensation_orchestrator.py tests/test_collector.py tests/test_applier.py -q --no-header
+======================= 152 passed in 113.40s (0:01:53) ========================
 
 ## シナリオ別動作
 ### 両dead時 (kudou+zindead)
