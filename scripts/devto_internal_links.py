@@ -105,7 +105,7 @@ def build_section(actors: list[str]) -> str:
     lines = ["", "---", "", f"## {SECTION_TITLE}", "",
              "The datasets behind this analysis are available on Apify (pay-per-result, free tier to start):", ""]
     for a in actors:
-        lines.append(f"- [{a}]({STORE_BASE}/{a})")
+        lines.append(f"- [{a}]({STORE_BASE}/{a}?utm_source=devto&utm_medium=article&utm_campaign=weekly_seo)")
     lines.append("")
     return "\n".join(lines)
 
