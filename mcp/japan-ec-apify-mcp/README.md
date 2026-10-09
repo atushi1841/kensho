@@ -29,3 +29,15 @@ All return the raw Apify run object including `runId` and `status`. To get actua
 ## Notes
 
 This server focuses on wrapping the actors; result fetching is left to the generic Apify MCP server or direct Apify API calls.
+
+## Data Source: Apify Store & Smithery Registry
+
+This MCP server is available on:
+
+- **Apify Store**: [Mercari/Yahoo/Rakuten/SUU_MO/Kakaku via Apify](https://apify.com/fruitful_quintessence/acts/mercari-japan-search-scraper) — Mercari/Yahoo/Rakuten/SUU_MO/Kakaku via Apify
+- **Smithery Registry**: [Install via Smithery](https://server.smithery.ai/whSePszWpMtfeLYBp) — MCP server for AI agents
+
+Install via Smithery:
+```bash
+npx @smithery/cli install whSePszWpMtfeLYBp --client claude
+```

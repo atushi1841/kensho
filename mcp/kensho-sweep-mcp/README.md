@@ -39,3 +39,15 @@ Requires `fastmcp>=3.0.0` (see `requirements.txt`).
 ```bash
 npx -y @anthropic-ai/mcpb pack . dist/kensho-sweep-mcp.mcpb
 ```
+
+## Data Source: Apify Store & Smithery Registry
+
+This MCP server is available on:
+
+- **Apify Store**: [Japan sweepstakes from knshow.com, kenshou.club, ken-kaku.com, cp.meikan.org](https://apify.com/fruitful_quintessence/acts/kensho-sweep-mcp) — Japan sweepstakes from knshow.com, kenshou.club, ken-kaku.com, cp.meikan.org
+- **Smithery Registry**: [Install via Smithery](https://server.smithery.ai/kjf9ZKQ5zWyOQxzvL) — MCP server for AI agents
+
+Install via Smithery:
+```bash
+npx @smithery/cli install kjf9ZKQ5zWyOQxzvL --client claude
+```

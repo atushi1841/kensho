@@ -40,3 +40,15 @@ Requires `fastmcp>=3.0.0` (see `requirements.txt`).
 ```bash
 npx -y @anthropic-ai/mcpb pack . dist/tcg-price-japan.mcpb
 ```
+
+## Data Source: Apify Store & Smithery Registry
+
+This MCP server is available on:
+
+- **Apify Store**: [TCG prices from suruga-ya.jp](https://apify.com/fruitful_quintessence/acts/surugaya-japan-hobby-prices) — TCG prices from suruga-ya.jp
+- **Smithery Registry**: [Install via Smithery](https://server.smithery.ai/F8Hl0a8Cx9bpJBrxR) — MCP server for AI agents
+
+Install via Smithery:
+```bash
+npx @smithery/cli install F8Hl0a8Cx9bpJBrxR --client claude
+```

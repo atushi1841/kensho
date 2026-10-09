@@ -50,3 +50,15 @@ This MCP Connector follows the Kensho revenue sharing model:
 ## Integration Notes
 
 The kensho-kclub MCP Connector serves as an additional data source for the main Kensho sweepstakes collection, complementing the existing knshow.com, ken-kaku.com, kenshou.club, and cp.meikan.org sources. It provides specialized coverage of the Kenshou.club sweepstakes ecosystem with 24 pages of archives tagged with "twitterで応募".
+
+## Data Source: Apify Store & Smithery Registry
+
+This MCP server is available on:
+
+- **Apify Store**: [Kenshou.club sweepstakes data](https://apify.com/fruitful_quintessence/acts/kensho-sweep-mcp) — Kenshou.club sweepstakes data
+- **Smithery Registry**: [Install via Smithery](https://server.smithery.ai/kjf9ZKQ5zWyOQxzvL) — MCP server for AI agents
+
+Install via Smithery:
+```bash
+npx @smithery/cli install kjf9ZKQ5zWyOQxzvL --client claude
+```
