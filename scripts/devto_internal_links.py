@@ -131,6 +131,7 @@ def main() -> int:
 
     print(f"公開記事: {len(arts)}本")
     rows = []
+    pending = []
     for a in arts:
         aid, title = a.get("id"), a.get("title")
         body = a.get("body_markdown") or ""
@@ -142,26 +143,40 @@ def main() -> int:
         existing = [a2 for a2 in actors if f"{STORE_BASE}/{a2}" in body]
         if len(existing) == len(actors):
             print(f"  既存 id={aid} {title[:58]}")
+            rows.append({"id": aid, "title": title, "url": a.get("url"), "actors": actors,
+                         "missing_actors": [], "put_status": None,
+                         "readback_has_link": True, "already_present": True})
             continue
         missing = [a2 for a2 in actors if a2 not in existing]
         new_body = body.rstrip() + "\n" + build_section(missing)
-        rows.append({"id": aid, "title": title, "url": a.get("url"), "actors": actors,
-                     "missing_actors": missing,
-                     "added_chars": len(new_body) - len(body)})
+        rec = {"id": aid, "title": title, "url": a.get("url"), "actors": actors,
+               "missing_actors": missing,
+               "added_chars": len(new_body) - len(body),
+               "already_present": False}
         if args.apply:
             st2, resp = call("PUT", f"/{aid}", key, {"article": {"body_markdown": new_body}})
             st3, verify = call("GET", f"/{aid}", key)
             live = (verify.get("body_markdown") if isinstance(verify, dict) else "") or ""
-            rows[-1].update({"put_status": st2, "readback_has_link":
-                             all(f"{STORE_BASE}/{a2}" in live for a2 in actors)})
-            print(f"     PUT {st2} / read-back 反映={rows[-1]['readback_has_link']}")
+            rec.update({"put_status": st2,
+                        "readback_has_link": all(f"{STORE_BASE}/{a2}" in live for a2 in actors)})
+            print(f"     PUT {st2} / read-back 反映={rec['readback_has_link']}")
+        else:
+            # dry-run: PUT は行わず、ライブ read-back のみ検証（証拠収集）
+            st3, verify = call("GET", f"/{aid}", key)
+            live = (verify.get("body_markdown") if isinstance(verify, dict) else "") or ""
+            rec.update({"put_status": None,
+                        "readback_has_link": all(f"{STORE_BASE}/{a2}" in live for a2 in actors)})
+            print(f"     [dry-run] read-back 反映={rec['readback_has_link']}")
+        rows.append(rec)
+        pending.append(rec)
 
-    os.makedirs(os.path.dirname(args.out), exist_ok=True)
-    with open(args.out, "w", encoding="utf-8") as fh:
-        json.dump({"applied": bool(args.apply), "rows": rows}, fh, ensure_ascii=False, indent=1)
-    print(f"\n追記対象: {len(rows)}本  -> {args.out}")
+    if args.apply or args.dry_run:
+        os.makedirs(os.path.dirname(args.out), exist_ok=True)
+        with open(args.out, "w", encoding="utf-8") as fh:
+            json.dump({"applied": bool(args.apply), "rows": rows}, fh, ensure_ascii=False, indent=1)
+        print(f"\n追記対象: {len(pending)}本 / 対象記事合計 {len(rows)}本  -> {args.out}")
     if not args.apply:
-        print("（--dry-run のため書き込みなし。--apply で反映）")
+        print("（--dry-run のため PUT は行わず、ライブ read-back のみ検証）")
     return 0
 
 

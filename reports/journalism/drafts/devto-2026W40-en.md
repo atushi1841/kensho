@@ -57,3 +57,15 @@ Try the [mercari-japan-search-scraper](https://apify.com/fruitful_quintessence/m
 ## Data Used in This Post
 
 The market data behind our weekly Japanese ecommerce reports comes from these same Actors. If you find this useful, star the repo on [GitHub](https://github.com/atushi1841/kensho) — it helps other developers discover these tools.
+
+## Install via Smithery
+
+For direct MCP access to Japanese market data:
+
+```bash
+# japan-ec-mcp: Mercari, Yahoo Auctions, Rakuten, and more
+npx @smithery/cli install atushi1841/japan-ec-mcp --client claude
+
+# japan-market-mcp: Multi-platform market data
+npx @smithery/cli install atushi1841/japan-market-mcp --client claude
+```

@@ -2,81 +2,451 @@
  "applied": true,
  "rows": [
   {
-   "id": 4817790,
-   "title": "Weekly Update: 650+ Anime Figure Prices Now Available Free on GitHub",
-   "url": "https://dev.to/atu_ino_ed473db24d76d234a/weekly-update-650-anime-figure-prices-now-available-free-on-github-2796",
+   "id": 4825022,
+   "title": "I Published 10 Free MCP Servers for Japanese Data (Prices, Sweepstakes, Fuel, TCG) — Here's the Full List",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/i-published-10-free-mcp-servers-for-japanese-data-prices-sweepstakes-fuel-tcg-heres-the-3dfh",
    "actors": [
+    "japan-prize-giveaway-scraper",
+    "mercari-japan-search-scraper",
+    "yahoo-auctions-japan-scraper",
+    "mandarake-auction-scraper",
     "japan-anime-figure-price-data",
     "surugaya-japan-hobby-prices",
     "japan-rent-market-scraper",
     "suumo-japan-real-estate-scraper",
+    "mlit-japan-property-prices",
     "japan-kakaku-price-search",
     "japan-market-mcp"
    ],
-   "missing_actors": [
-    "japan-anime-figure-price-data",
-    "surugaya-japan-hobby-prices",
-    "japan-rent-market-scraper",
-    "suumo-japan-real-estate-scraper",
-    "japan-kakaku-price-search",
-    "japan-market-mcp"
-   ],
-   "added_chars": 717,
-   "put_status": 200,
-   "readback_has_link": true
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
   },
   {
-   "id": 4817742,
-   "title": "懸賞1,842件の自動応募ログを全部集計したら、「応募導線」と「当選枠」に地味な崖があった（2026W43）",
-   "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-1842jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta2026w43-4725",
+   "id": 4817031,
+   "title": "Apify Actorsで日本市場データを無料でスクレイピング8選（2026年版）",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/untitled-437f",
+   "actors": [
+    "mercari-japan-search-scraper",
+    "yahoo-auctions-japan-scraper",
+    "mandarake-auction-scraper",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4815781,
+   "title": "MCPサーバーで日本の中古ECデータをAIエージェントから呼び出す方法",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/mcpsabaderi-ben-nozhong-gu-ecdetawoaiezientokarahu-bichu-sufang-fa-5him",
+   "actors": [
+    "mercari-japan-search-scraper",
+    "japan-used-camera-market-scraper",
+    "kitamura-japan-used-camera-scraper",
+    "japan-watch-market-scraper",
+    "jackroad-used-watch-scraper",
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-used-instrument-market-scraper",
+    "digimart-japan-used-instrument-scraper",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4814776,
+   "title": "MLIT Japan Property Prices — Free Data for AI Agents & Real Estate Investors",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/mlit-japan-property-prices-free-data-for-ai-agents-real-estate-investors-2fhk",
+   "actors": [
+    "yahoo-auctions-japan-scraper",
+    "mandarake-auction-scraper",
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-rent-market-scraper",
+    "suumo-japan-real-estate-scraper",
+    "mlit-japan-property-prices",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4814639,
+   "title": "Kensho Apify MCP — Japanese Market Data via Model Context Protocol",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/kensho-apify-mcp-japanese-market-data-via-model-context-protocol-5c2i",
    "actors": [
     "japan-prize-giveaway-scraper",
     "mercari-japan-search-scraper",
     "yahoo-auctions-japan-scraper",
     "mandarake-auction-scraper",
     "japan-used-camera-market-scraper",
-    "kitamura-japan-used-camera-scraper"
+    "kitamura-japan-used-camera-scraper",
+    "japan-rent-market-scraper",
+    "suumo-japan-real-estate-scraper"
    ],
-   "missing_actors": [
-    "japan-prize-giveaway-scraper",
-    "yahoo-auctions-japan-scraper",
-    "kitamura-japan-used-camera-scraper"
-   ],
-   "added_chars": 450,
-   "put_status": 200,
-   "readback_has_link": true
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
   },
   {
-   "id": 4817741,
-   "title": "MCPサーバーで日本の中古ECデータをAIエージェントから呼び出す方法",
-   "url": "https://dev.to/atu_ino_ed473db24d76d234a/mcpsabaderi-ben-nozhong-gu-ecdetawoaiezientokarahu-bichu-sufang-fa-4le3",
+   "id": 4809370,
+   "title": "日本市場データを手に入れる8つのApify Actor ― Mercari・Yahoo!オークション・ラクマをScraping",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/ri-ben-shi-chang-detawoshou-niru-reru8tunoapify-actor-mercariyahoookusiyonrakumawoscraping-59d2",
    "actors": [
+    "japan-prize-giveaway-scraper",
+    "mercari-japan-search-scraper",
+    "yahoo-auctions-japan-scraper",
+    "mandarake-auction-scraper",
+    "japan-rent-market-scraper",
+    "suumo-japan-real-estate-scraper",
+    "mlit-japan-property-prices",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4803750,
+   "title": "懸賞1,842件の自動応募ログを全部集計したら、「応募導線」と「当選枠」に地味な崖があった（2026W43）",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-1842jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta2026w43-p2c",
+   "actors": [
+    "japan-prize-giveaway-scraper"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4803747,
+   "title": "懸賞1,842件の自動応募ログを全部集計したら、「応募導線」と「当選枠」に地味な崖があった",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-1842jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta-2ifc",
+   "actors": [
+    "japan-prize-giveaway-scraper"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4803042,
+   "title": "日本市場データを無料で取得: Apify Actor 8選（Mercari・Yahoo!オークション・ラクマ対応）",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/ri-ben-shi-chang-detawowu-liao-dequ-de-apify-actor-8xuan-mercariyahoookusiyonrakumadui-ying--36dl",
+   "actors": [
+    "japan-prize-giveaway-scraper",
+    "mercari-japan-search-scraper",
+    "yahoo-auctions-japan-scraper",
+    "mandarake-auction-scraper",
+    "japan-rent-market-scraper",
+    "suumo-japan-real-estate-scraper",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4803041,
+   "title": "Weekly Update: 655+ Anime Figure Prices Now Available Free on GitHub",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/weekly-update-655-anime-figure-prices-now-available-free-on-github-324i",
+   "actors": [
+    "mercari-japan-search-scraper",
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-rent-market-scraper",
+    "suumo-japan-real-estate-scraper",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4803039,
+   "title": "懸賞3件の自動応募ログを全部集計したら、「応募導線」と「当選枠」に地味な崖があった",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-3jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta-54mh",
+   "actors": [
+    "japan-prize-giveaway-scraper"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4803037,
+   "title": "Weekly Update: 650+ Anime Figure Prices Now Available Free on GitHub",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/weekly-update-650-anime-figure-prices-now-available-free-on-github-33oa",
+   "actors": [
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-rent-market-scraper",
+    "suumo-japan-real-estate-scraper",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4802318,
+   "title": "懸賞7件の自動応募ログを全部集計したら、「応募導線」と「当選枠」に地味な崖があった",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-7jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta-1jkk",
+   "actors": [
+    "japan-prize-giveaway-scraper",
+    "mercari-japan-search-scraper",
+    "yahoo-auctions-japan-scraper",
+    "mandarake-auction-scraper",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4798799,
+   "title": "懸賞1,871件の自動応募ログを全部集計したら、「応募導線」と「当選枠」に地味な崖があった",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-1871jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta-j78",
+   "actors": [
+    "japan-prize-giveaway-scraper"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4797706,
+   "title": "Weekly Japanese Anime Figure & Collectibles Market Report (Week 40, 2026)",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/weekly-japanese-anime-figure-collectibles-market-report-week-40-2026-32pi",
+   "actors": [
+    "mercari-japan-search-scraper",
+    "yahoo-auctions-japan-scraper",
+    "mandarake-auction-scraper",
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4797704,
+   "title": "W39_STRIpped_TEST",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/w39strippedtest-4jcj",
+   "actors": [
+    "mercari-japan-search-scraper",
+    "yahoo-auctions-japan-scraper",
+    "mandarake-auction-scraper",
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4797701,
+   "title": "This Week's Japanese Hobby & Collectibles Market Price Summary (Week 39, 2026)",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/this-weeks-japanese-hobby-collectibles-market-price-summary-week-39-2026-387o",
+   "actors": [
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4797700,
+   "title": "W39_SIMPLE_TEST",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/w39simpletest-5e27",
+   "actors": [
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4797699,
+   "title": "TEST_W39_UNIQUE_1791149425",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/testw39unique1791149425-5913",
+   "actors": [
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4797610,
+   "title": "Japanese Market Data You Can Actually Use: 8 Apify Actors for Scraping Mercari, Yahoo Auctions, Rakuten, and More",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/japanese-market-data-you-can-actually-use-8-apify-actors-for-scraping-mercari-yahoo-auctions-2i5i",
+   "actors": [
+    "mercari-japan-search-scraper",
+    "yahoo-auctions-japan-scraper",
+    "mandarake-auction-scraper",
+    "japan-used-camera-market-scraper",
+    "kitamura-japan-used-camera-scraper",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4794073,
+   "title": "懸賞応募自動化のリアル: 3万円の収益を生んだコード",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-ying-mu-zi-dong-hua-noriaru-3mo-yuan-noshou-yi-wosheng-ndakodo-3b0c",
+   "actors": [
+    "japan-prize-giveaway-scraper"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4794072,
+   "title": "MCPサーバー6本をMCP公式レジストリに登録した結果",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/mcpsaba6ben-womcpgong-shi-rezisutorinideng-lu-sitajie-guo-2lph",
+   "actors": [
+    "japan-prize-giveaway-scraper",
+    "japan-rent-market-scraper",
+    "suumo-japan-real-estate-scraper",
+    "mlit-japan-property-prices",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4794070,
+   "title": "Apifyで日本市場の価格データを自動収集: 86個のアクターを公開",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/apifyderi-ben-shi-chang-nojia-ge-detawozi-dong-shou-ji-86ge-noakutawogong-kai-56hh",
+   "actors": [
+    "mercari-japan-search-scraper",
+    "yahoo-auctions-japan-scraper",
+    "mandarake-auction-scraper",
+    "japan-used-instrument-market-scraper",
+    "digimart-japan-used-instrument-scraper",
+    "japan-rent-market-scraper",
+    "suumo-japan-real-estate-scraper",
+    "mlit-japan-property-prices",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4760098,
+   "title": "懸賞112件の自動応募ログを全部集計したら、「応募導線」と「当選枠」に地味な崖があった",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/xuan-shang-112jian-nozi-dong-ying-mu-roguwoquan-bu-ji-ji-sitara-ying-mu-dao-xian-todang-xuan-waku-nidi-wei-naya-gaatuta-i07",
+   "actors": [
+    "japan-prize-giveaway-scraper",
+    "japan-used-camera-market-scraper",
+    "kitamura-japan-used-camera-scraper",
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4606013,
+   "title": "How to Scrape Mercari Japan in 2026 (Prices, Listings & Sold Data — No API Key)",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/how-to-scrape-mercari-japan-in-2026-prices-listings-sold-data-no-api-key-1bk8",
+   "actors": [
+    "mercari-japan-search-scraper",
+    "japan-used-camera-market-scraper",
+    "kitamura-japan-used-camera-scraper",
+    "japan-anime-figure-price-data",
+    "surugaya-japan-hobby-prices",
+    "japan-kakaku-price-search",
+    "japan-market-mcp"
+   ],
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
+  },
+  {
+   "id": 4587593,
+   "title": "Japanese used-goods price data via API (Mercari, Yahoo Auctions, Suruga-ya, Mandarake)",
+   "url": "https://dev.to/atu_ino_ed473db24d76d234a/japanese-used-goods-price-data-via-api-mercari-yahoo-auctions-suruga-ya-mandarake-3dk2",
+   "actors": [
+    "mercari-japan-search-scraper",
+    "yahoo-auctions-japan-scraper",
+    "mandarake-auction-scraper",
     "japan-used-camera-market-scraper",
     "kitamura-japan-used-camera-scraper",
     "japan-watch-market-scraper",
     "jackroad-used-watch-scraper",
     "japan-anime-figure-price-data",
     "surugaya-japan-hobby-prices",
-    "japan-used-instrument-market-scraper",
-    "digimart-japan-used-instrument-scraper",
+    "japan-rent-market-scraper",
+    "suumo-japan-real-estate-scraper",
     "japan-kakaku-price-search",
     "japan-market-mcp"
    ],
-   "missing_actors": [
-    "japan-used-camera-market-scraper",
-    "kitamura-japan-used-camera-scraper",
-    "japan-watch-market-scraper",
-    "jackroad-used-watch-scraper",
-    "japan-anime-figure-price-data",
-    "surugaya-japan-hobby-prices",
-    "japan-used-instrument-market-scraper",
-    "digimart-japan-used-instrument-scraper",
-    "japan-kakaku-price-search",
-    "japan-market-mcp"
-   ],
-   "added_chars": 1179,
-   "put_status": 200,
-   "readback_has_link": true
+   "missing_actors": [],
+   "put_status": null,
+   "readback_has_link": true,
+   "already_present": true
   }
  ]
 }

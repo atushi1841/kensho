@@ -2,7 +2,8 @@
   "success_indicators": [
     "hermes cron list に kensho-actor-ppe-weekly (job ID 33bd80f2ce2f) が登録済み",
     "bash kensho-actor-ppe-weekly.sh 実行で exit_code=0、Targeted=5 Skipped=5",
-    "data/apify_ppe_external_runs_state.json に5件のrun履歴保存済み"
+    "data/apify_ppe_external_runs_state.json に5件のrun履歴保存済み",
+    "scripts/cron_wrappers/kensho-actor-ppe-weekly.sh がgit追跡済みでbound済み"
   ],
   "verification_commands": [
     "$ hermes cron list | grep kensho-actor-ppe-weekly => Name: kensho-actor-ppe-weekly, Schedule: 0 10 * * 3, Next run: 2026-10-14T10:00:00+09:00",
@@ -12,11 +13,16 @@
   "artifact_paths": [
     "/mnt/d/Project2/kensho/reports/t_c42a9eb6_verification.md",
     "/mnt/d/Project2/kensho/data/apify_ppe_external_runs_state.json",
-    "/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho-actor-ppe-weekly.sh"
+    "/mnt/d/Project2/kensho/scripts/cron_wrappers/kensho-actor-ppe-weekly.sh"
   ],
   "evidence_hashes": [
     "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   ],
+  "outcome": {
+    "metric": "external_runs_triggered",
+    "before": 0,
+    "after": 0
+  },
   "task_id": "t_c42a9eb6",
   "status": "complete"
 }

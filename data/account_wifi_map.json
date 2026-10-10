@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-07T21:00:11+09:00",
+  "updated_at": "2026-10-11T01:15:20+09:00",
   "source": "Windows実測: netsh wlan / Get-NetIPAddress / Get-NetTCPConnection / WSLからプロキシ経由で出口IP実測",
   "note": "「状態」は Windows実測（netsh / Get-NetIPAddress / LISTENポート）。回線の出口IPはプロキシ経由で別途実測。垢バン垢は表から除外。 / 2026-10-04: home_ip欠落を復元（atushi16の実測egressと一致確認）",
   "accounts": [
@@ -27,13 +27,13 @@
       "adapter": "kudou_RM10JE_B",
       "local_ip": "10.32.223.239",
       "port": 1082,
-      "adapter_state": "接続",
-      "signal": "59%",
-      "proxy_state": "listen",
+      "adapter_state": "未検出",
+      "signal": "",
+      "proxy_state": "停止",
       "note": "",
-      "egress_ip": "106.146.5.155",
+      "egress_ip": "",
       "egress_warn_home": false,
-      "egress_ok": true
+      "egress_ok": false
     },
     {
       "key": "zin20120731",
@@ -43,13 +43,13 @@
       "adapter": "zin_AW6povo",
       "local_ip": "192.168.179.2",
       "port": 1084,
-      "adapter_state": "切断",
-      "signal": "",
-      "proxy_state": "停止",
+      "adapter_state": "接続",
+      "signal": "60%",
+      "proxy_state": "listen",
       "note": "2026-10-04 ユーザー指示でAterm MR05LN(SSID aterm-5505da)へ回線変更。adapter=zin_AW6povoを接続・proxy1084起動・出口IP実測。Xセッションが15.7日で閾値超過→要再ログイン",
-      "egress_ip": "",
+      "egress_ip": "106.133.22.126",
       "egress_warn_home": false,
-      "egress_ok": false
+      "egress_ok": true
     },
     {
       "key": "TankanNotes",
@@ -63,7 +63,7 @@
       "signal": "",
       "proxy_state": "listen",
       "note": "2026-09-10 Wi-Fi→有線直結へ切替",
-      "egress_ip": "126.253.251.240",
+      "egress_ip": "126.179.15.53",
       "egress_warn_home": false,
       "egress_ok": true
     },

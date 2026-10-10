@@ -1,14 +1,14 @@
 {
-  "status": "dead_proxy",
+  "status": "alive",
   "status_schema": [
     "alive",
     "dead_proxy",
     "unchecked"
   ],
   "port": 1084,
-  "last_success": "",
-  "last_error_type": "",
-  "stop_reason": "プロキシ死骸（TCP疎通 or 出口IP確認失敗）",
+  "last_success": "2026-10-10T12:45:06Z like",
+  "last_error_type": "automation_blocked",
+  "stop_reason": "",
   "account": "zin20120731",
-  "updated": "2026-10-07T21:00:25.742331"
+  "updated": "2026-10-11T01:15:42.784892"
 }

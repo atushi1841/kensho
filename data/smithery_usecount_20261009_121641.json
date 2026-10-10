@@ -1,0 +1,67 @@
+{
+  "namespace": "atushi1841",
+  "fetched_at": "2026-10-09T12:16:55+09:00",
+  "count": 10,
+  "servers": [
+    {
+      "name": "kensho-sweep-mcp",
+      "qualifiedName": "atushi1841/kensho-sweep-mcp",
+      "useCount": 0,
+      "connectionUrl": "https://server.smithery.ai/atushi1841/kensho-sweep-mcp"
+    },
+    {
+      "name": "kensho-kclub",
+      "qualifiedName": "atushi1841/kensho-kclub",
+      "useCount": 0,
+      "connectionUrl": "https://server.smithery.ai/atushi1841/kensho-kclub"
+    },
+    {
+      "name": "japan-anime-figure-mcp",
+      "qualifiedName": "atushi1841/japan-anime-figure-mcp",
+      "useCount": 0,
+      "connectionUrl": "https://server.smithery.ai/atushi1841/japan-anime-figure-mcp"
+    },
+    {
+      "name": "kensho-kema",
+      "qualifiedName": "atushi1841/kensho-kema",
+      "useCount": 0,
+      "connectionUrl": "https://server.smithery.ai/atushi1841/kensho-kema"
+    },
+    {
+      "name": "tcg-price-japan",
+      "qualifiedName": "atushi1841/tcg-price-japan",
+      "useCount": 0,
+      "connectionUrl": "https://server.smithery.ai/atushi1841/tcg-price-japan"
+    },
+    {
+      "name": "kensho-kaku",
+      "qualifiedName": "atushi1841/kensho-kaku",
+      "useCount": 0,
+      "connectionUrl": "https://server.smithery.ai/atushi1841/kensho-kaku"
+    },
+    {
+      "name": "japan-ec-mcp",
+      "qualifiedName": "atushi1841/japan-ec-mcp",
+      "useCount": 0,
+      "connectionUrl": "https://server.smithery.ai/atushi1841/japan-ec-mcp"
+    },
+    {
+      "name": "japan-fuel-price-mcp",
+      "qualifiedName": "atushi1841/japan-fuel-price-mcp",
+      "useCount": 0,
+      "connectionUrl": "https://server.smithery.ai/atushi1841/japan-fuel-price-mcp"
+    },
+    {
+      "name": "japan-ec-apify-mcp",
+      "qualifiedName": "atushi1841/japan-ec-apify-mcp",
+      "useCount": 0,
+      "connectionUrl": "https://server.smithery.ai/atushi1841/japan-ec-apify-mcp"
+    },
+    {
+      "name": "japan-market-mcp",
+      "qualifiedName": "atushi1841/japan-market-mcp",
+      "useCount": 0,
+      "connectionUrl": "https://server.smithery.ai/atushi1841/japan-market-mcp"
+    }
+  ]
+}

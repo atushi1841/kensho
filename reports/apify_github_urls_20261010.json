@@ -1,0 +1,129 @@
+{
+  "timestamp": "2026-10-10 09:53:56",
+  "total_actors": 81,
+  "updated": 24,
+  "failed": 0,
+  "updated_list": [
+    {
+      "name": "japan-camera-market-cn-scraper",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "japan-camera-market-kr-scraper",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "tabelog-debug-fetch",
+      "version": "0.0",
+      "ok": true
+    },
+    {
+      "name": "yahoo-auctions-japan-scraper",
+      "version": "0.0",
+      "ok": true
+    },
+    {
+      "name": "japan-camera-resale-price-stats",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "mini-actor-test-0903",
+      "version": "0.1",
+      "ok": true
+    },
+    {
+      "name": "japan-figure-plamo-resale-price-stats",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "tackleberry-scraper",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "amazon-paapi-jp-actor",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "ai-model-price-api",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "japan-egov-laws",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "japan-jma-weather",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "japan-mhlw-medical",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "japan-corporate-numbers",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "world-bank-indicators",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "eurostat-indicators",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "japan-crowdfunding-trend-feed",
+      "version": "0.2",
+      "ok": true
+    },
+    {
+      "name": "kensho-high-value-leads",
+      "version": "1.0",
+      "ok": true
+    },
+    {
+      "name": "test-actor",
+      "version": "0.0",
+      "ok": true
+    },
+    {
+      "name": "kensho-sweep-mcp",
+      "version": "3.1",
+      "ok": true
+    },
+    {
+      "name": "japan-anime-figure-price-data",
+      "version": "0.3",
+      "ok": true
+    },
+    {
+      "name": "my-actor-1",
+      "version": "0.0",
+      "ok": true
+    },
+    {
+      "name": "japan-anime-figure-demand-features",
+      "version": "0.1",
+      "ok": true
+    },
+    {
+      "name": "mlit-japan-property-prices",
+      "version": "0.7",
+      "ok": true
+    }
+  ],
+  "failed_list": []
+}

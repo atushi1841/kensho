@@ -1,0 +1,35 @@
+name: Update Apify Actor READMEs
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Every day at 02:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          # We need to use a token with repo scope for pushing if we were to push to this repo.
+          # But we are only reading this repo and using the script to update Apify actors.
+          # So we don't need to push to this repo, but we do need to push to the actor's source repos.
+          # The script uses GH_TOKEN to push to the actor's GitHub repos (if they are GIT_REPO type).
+          # So we pass the token to the script via environment.
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Apify README deploy
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          python scripts/apify_readme_deploy.py --deploy

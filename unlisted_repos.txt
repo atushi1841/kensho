@@ -1,0 +1,10 @@
+atushi1841/japan-anime-figure-mcp
+atushi1841/japan-ec-mcp
+atushi1841/japan-food-delivery-mcp
+atushi1841/japan-jepx-mcp
+atushi1841/japan-market-data
+atushi1841/japan-property-hazard-mcp
+atushi1841/kensho-kaku
+atushi1841/kensho-kclub
+atushi1841/kensho-kema
+atushi1841/kensho-sweep-mcp

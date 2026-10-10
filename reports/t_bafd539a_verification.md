@@ -50,7 +50,8 @@ $ git -C /mnt/d/Project2/kensho log --oneline -1
 - 当日合計が全垢で 0 なら「まだ動いていない」＝正常、exit 0 SKIP
 - JST < 19 時は監視時間帯以前、exit 0 SKIP（手動実行・早版本での誤検知防止）
 - cron `0 19 * * *` は通常正常検知。next run `2026-10-10T19:00:00+09:00`
-- commit `340ed3d`（kensho-sweeps プロファイルリポジティ、remote なし＝ローカルのみ）
+- 修正は `/home/atushi/.hermes/profiles/kensho-sweeps/scripts/kensho_apply_volume.py`
+  （kensho-sweeps プロファイルリポジティ。remote なし＝ローカルのみ、本 repo に push 不能。ハッシュは本 repo の ancestor でないため ghost として無効化済）
 
 ## 成功指標
 

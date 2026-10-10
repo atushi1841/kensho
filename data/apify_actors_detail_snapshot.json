@@ -2,199 +2,199 @@
  {
   "id": "F8Hl0a8Cx9bpJBrxR",
   "createdAt": "2026-07-24T13:56:15.682Z",
-  "modifiedAt": "2026-10-04T03:23:55.862Z",
+  "modifiedAt": "2026-10-09T21:12:21.357Z",
   "name": "surugaya-japan-hobby-prices",
   "username": "fruitful_quintessence",
   "title": "Japan Suruga-ya Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 108,
-   "lastRunStartedAt": "2026-10-06T09:38:38.348Z"
+   "totalRuns": 114,
+   "lastRunStartedAt": "2026-10-08T22:12:44.922Z"
   }
  },
  {
   "id": "q2E37PVTg5JcGOTEn",
   "createdAt": "2026-07-26T19:40:29.785Z",
-  "modifiedAt": "2026-10-05T18:49:37.423Z",
+  "modifiedAt": "2026-10-07T09:14:20.066Z",
   "name": "mandarake-auction-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan mandarake auction Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 334,
-   "lastRunStartedAt": "2026-10-06T04:44:47.757Z"
+   "totalRuns": 343,
+   "lastRunStartedAt": "2026-10-09T17:55:01.502Z"
   }
  },
  {
   "id": "xUYsD13SVHHRFQS1H",
   "createdAt": "2026-07-27T09:51:57.550Z",
-  "modifiedAt": "2026-10-05T18:30:29.400Z",
+  "modifiedAt": "2026-10-07T09:14:51.503Z",
   "name": "mandarake-surugaya-mcp",
   "username": "fruitful_quintessence",
   "title": "Japan Suruga-ya Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 26,
-   "lastRunStartedAt": "2026-10-06T12:24:34.751Z"
+   "totalRuns": 28,
+   "lastRunStartedAt": "2026-10-09T01:00:39.780Z"
   }
  },
  {
   "id": "0eeiFH0nLqlWVoOAc",
   "createdAt": "2026-07-29T11:27:23.722Z",
-  "modifiedAt": "2026-10-05T18:49:35.412Z",
+  "modifiedAt": "2026-10-07T09:14:53.470Z",
   "name": "rakuten-japan-mcp",
   "username": "fruitful_quintessence",
   "title": "Japan Rakuten Ichiba Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 40,
-   "lastRunStartedAt": "2026-10-06T12:24:34.351Z"
+   "totalRuns": 42,
+   "lastRunStartedAt": "2026-10-09T01:00:38.957Z"
   }
  },
  {
   "id": "6Z7tJ3plfUmAgGmbk",
   "createdAt": "2026-07-30T10:57:49.411Z",
-  "modifiedAt": "2026-10-04T03:24:06.906Z",
+  "modifiedAt": "2026-10-07T09:14:54.659Z",
   "name": "dlsite-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan dlsite Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 93,
-   "lastRunStartedAt": "2026-10-06T02:24:41.688Z"
+   "totalRuns": 101,
+   "lastRunStartedAt": "2026-10-09T20:46:43.027Z"
   }
  },
  {
   "id": "nUm22B2guMo8vXom6",
   "createdAt": "2026-07-30T11:57:13.945Z",
-  "modifiedAt": "2026-10-04T03:24:09.248Z",
+  "modifiedAt": "2026-10-07T09:14:55.863Z",
   "name": "dmm-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan dmm Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 43,
-   "lastRunStartedAt": "2026-10-05T23:18:55.761Z"
+   "totalRuns": 50,
+   "lastRunStartedAt": "2026-10-09T17:42:50.833Z"
   }
  },
  {
   "id": "wxMskoiHMPeeH2qAJ",
   "createdAt": "2026-08-08T11:33:05.415Z",
-  "modifiedAt": "2026-10-04T03:24:11.600Z",
+  "modifiedAt": "2026-10-07T09:14:57.066Z",
   "name": "tackleberry-japan-fishing-tackle-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan tackleberry japan fishing tackle Prices — Listings & M...",
   "stats": {
-   "totalRuns": 228,
-   "lastRunStartedAt": "2026-10-06T21:00:03.821Z"
+   "totalRuns": 243,
+   "lastRunStartedAt": "2026-10-09T21:00:14.171Z"
   }
  },
  {
   "id": "DOiD9y1NAJfLBcAjT",
   "createdAt": "2026-08-08T12:28:03.667Z",
-  "modifiedAt": "2026-10-04T03:25:14.045Z",
+  "modifiedAt": "2026-10-07T09:14:58.303Z",
   "name": "kitamura-japan-used-camera-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan Kitamura Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 76,
-   "lastRunStartedAt": "2026-10-06T18:00:05.820Z"
+   "totalRuns": 84,
+   "lastRunStartedAt": "2026-10-09T18:00:16.494Z"
   }
  },
  {
   "id": "nWf9BR2ndMTYqKxNB",
   "createdAt": "2026-08-08T12:52:13.480Z",
-  "modifiedAt": "2026-10-04T03:25:16.504Z",
+  "modifiedAt": "2026-10-07T09:14:59.497Z",
   "name": "jackroad-used-watch-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan watches Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 63,
-   "lastRunStartedAt": "2026-10-06T18:00:10.105Z"
+   "totalRuns": 71,
+   "lastRunStartedAt": "2026-10-09T18:00:15.637Z"
   }
  },
  {
   "id": "Db3iY8FIRxPjPag7N",
   "createdAt": "2026-08-08T13:20:50.891Z",
-  "modifiedAt": "2026-10-04T03:25:19.485Z",
+  "modifiedAt": "2026-10-07T09:15:30.727Z",
   "name": "komehyo-japan-brand-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan Komehyo Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 78,
-   "lastRunStartedAt": "2026-10-06T18:00:15.072Z"
+   "totalRuns": 81,
+   "lastRunStartedAt": "2026-10-09T18:00:25.937Z"
   }
  },
  {
   "id": "vvD9vs8D1AwoQrTTS",
   "createdAt": "2026-08-08T14:13:26.548Z",
-  "modifiedAt": "2026-10-04T03:25:22.411Z",
+  "modifiedAt": "2026-10-07T09:15:31.981Z",
   "name": "iosys-japan-used-smartphone-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan IOSYS Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 69,
-   "lastRunStartedAt": "2026-10-06T18:00:18.353Z"
+   "totalRuns": 72,
+   "lastRunStartedAt": "2026-10-09T18:00:14.573Z"
   }
  },
  {
   "id": "FSuoQiX8OG4KuIQ9c",
   "createdAt": "2026-08-10T06:13:45.502Z",
-  "modifiedAt": "2026-10-04T03:25:25.086Z",
+  "modifiedAt": "2026-10-07T09:15:33.178Z",
   "name": "digimart-japan-used-instrument-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan Digimart Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 59,
-   "lastRunStartedAt": "2026-10-05T18:11:15.311Z"
+   "totalRuns": 63,
+   "lastRunStartedAt": "2026-10-09T12:30:49.675Z"
   }
  },
  {
   "id": "mQaZFo6up4YZKepC3",
   "createdAt": "2026-08-10T06:32:51.953Z",
-  "modifiedAt": "2026-10-04T03:25:27.580Z",
+  "modifiedAt": "2026-10-07T09:15:34.615Z",
   "name": "japan-used-camera-market-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan cameras Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 144,
-   "lastRunStartedAt": "2026-10-06T10:00:28.525Z"
+   "totalRuns": 165,
+   "lastRunStartedAt": "2026-10-09T16:51:36.061Z"
   }
  },
  {
   "id": "yN1R26HrV6C2MBKas",
   "createdAt": "2026-08-10T06:54:00.019Z",
-  "modifiedAt": "2026-10-04T03:26:29.790Z",
+  "modifiedAt": "2026-10-07T09:15:35.807Z",
   "name": "japan-used-instrument-market-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan musical instruments Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 132,
-   "lastRunStartedAt": "2026-10-06T14:00:07.742Z"
+   "totalRuns": 145,
+   "lastRunStartedAt": "2026-10-09T16:52:10.676Z"
   }
  },
  {
   "id": "gMqdrS2evpcybSZc2",
   "createdAt": "2026-08-10T07:02:13.442Z",
-  "modifiedAt": "2026-10-04T03:26:32.298Z",
+  "modifiedAt": "2026-10-07T09:15:37.004Z",
   "name": "japan-watch-market-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan watches Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 134,
-   "lastRunStartedAt": "2026-10-06T11:00:31.773Z"
+   "totalRuns": 149,
+   "lastRunStartedAt": "2026-10-09T16:52:07.809Z"
   }
  },
  {
   "id": "b0vuqa3ESvy2mOwFB",
   "createdAt": "2026-08-10T07:17:25.031Z",
-  "modifiedAt": "2026-10-04T03:26:34.908Z",
+  "modifiedAt": "2026-10-07T09:15:38.224Z",
   "name": "japan-luxury-brand-market-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan luxury brand Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 132,
-   "lastRunStartedAt": "2026-10-06T13:00:15.215Z"
+   "totalRuns": 147,
+   "lastRunStartedAt": "2026-10-09T16:52:09.226Z"
   }
  },
  {
   "id": "57SNehd4cHNFyUCj3",
   "createdAt": "2026-08-10T09:44:53.060Z",
-  "modifiedAt": "2026-10-06T22:14:46.047Z",
+  "modifiedAt": "2026-10-07T09:15:39.604Z",
   "name": "japan-market-mcp",
   "username": "fruitful_quintessence",
   "title": "Japan Second-Hand Market Price Comparison API",
@@ -206,55 +206,55 @@
  {
   "id": "Zh4kqcS4dYPWpFzBd",
   "createdAt": "2026-08-10T10:18:50.041Z",
-  "modifiedAt": "2026-10-04T03:26:40.198Z",
+  "modifiedAt": "2026-10-07T09:15:41.556Z",
   "name": "japan-offmall-market-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan Hard Off OffMall Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 338,
-   "lastRunStartedAt": "2026-10-06T03:30:16.612Z"
+   "totalRuns": 366,
+   "lastRunStartedAt": "2026-10-09T16:52:42.122Z"
   }
  },
  {
   "id": "OqO1aPmd1njsKQvaW",
   "createdAt": "2026-08-10T12:06:28.008Z",
-  "modifiedAt": "2026-10-04T03:27:43.353Z",
+  "modifiedAt": "2026-10-09T01:07:05.565Z",
   "name": "japan-camera-market-cn-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan cameras Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 35,
-   "lastRunStartedAt": "2026-10-06T15:38:43.707Z"
+   "totalRuns": 37,
+   "lastRunStartedAt": "2026-10-09T07:14:43.615Z"
   }
  },
  {
   "id": "rEaPnKwB07oS2cyZh",
   "createdAt": "2026-08-10T12:08:15.161Z",
-  "modifiedAt": "2026-10-04T03:27:46.209Z",
+  "modifiedAt": "2026-10-09T01:07:09.226Z",
   "name": "japan-camera-market-kr-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan cameras Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 35,
-   "lastRunStartedAt": "2026-10-06T15:38:43.411Z"
+   "totalRuns": 37,
+   "lastRunStartedAt": "2026-10-09T07:14:43.322Z"
   }
  },
  {
   "id": "hoqt6EVaVcniMXWbK",
   "createdAt": "2026-08-10T12:20:55.575Z",
-  "modifiedAt": "2026-10-04T03:27:48.784Z",
+  "modifiedAt": "2026-10-09T01:07:42.856Z",
   "name": "japan-watch-market-scraper-cn",
   "username": "fruitful_quintessence",
   "title": "Japan watches Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 76,
-   "lastRunStartedAt": "2026-10-06T15:51:01.847Z"
+   "totalRuns": 82,
+   "lastRunStartedAt": "2026-10-09T15:31:50.852Z"
   }
  },
  {
   "id": "kDY2AAouEJzp8kfyj",
   "createdAt": "2026-08-10T12:20:58.176Z",
-  "modifiedAt": "2026-10-04T03:27:51.142Z",
+  "modifiedAt": "2026-10-09T01:07:46.079Z",
   "name": "japan-watch-market-scraper-kr",
   "username": "fruitful_quintessence",
   "title": "Japan watches Prices — Listings & Market Data",
@@ -266,19 +266,19 @@
  {
   "id": "Igcmtgs71DCHze3CL",
   "createdAt": "2026-08-10T12:21:00.694Z",
-  "modifiedAt": "2026-10-04T03:27:53.478Z",
+  "modifiedAt": "2026-10-09T01:07:49.298Z",
   "name": "japan-luxury-brand-market-cn",
   "username": "fruitful_quintessence",
   "title": "Japan luxury brand Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 78,
-   "lastRunStartedAt": "2026-10-06T15:31:16.576Z"
+   "totalRuns": 83,
+   "lastRunStartedAt": "2026-10-09T15:32:14.248Z"
   }
  },
  {
   "id": "5J3JeV9cOSA3Gha0j",
   "createdAt": "2026-08-10T12:21:03.241Z",
-  "modifiedAt": "2026-10-04T03:27:56.013Z",
+  "modifiedAt": "2026-10-07T17:03:04.134Z",
   "name": "japan-luxury-brand-market-kr",
   "username": "fruitful_quintessence",
   "title": "Japan luxury brand Prices — Listings & Market Data",
@@ -290,7 +290,7 @@
  {
   "id": "p279xuzqUvvLROE7O",
   "createdAt": "2026-08-10T12:21:05.698Z",
-  "modifiedAt": "2026-10-04T03:27:58.395Z",
+  "modifiedAt": "2026-10-07T17:02:53.820Z",
   "name": "japan-used-instrument-market-cn",
   "username": "fruitful_quintessence",
   "title": "Japan musical instruments Prices — Listings & Market Data",
@@ -302,7 +302,7 @@
  {
   "id": "agm9XlFlLFj7jlt66",
   "createdAt": "2026-08-10T12:21:08.276Z",
-  "modifiedAt": "2026-10-04T03:30:00.740Z",
+  "modifiedAt": "2026-10-07T17:02:57.265Z",
   "name": "japan-used-instrument-market-kr",
   "username": "fruitful_quintessence",
   "title": "Japan musical instruments Prices — Listings & Market Data",
@@ -314,7 +314,7 @@
  {
   "id": "wxLa590euQRaAJNKO",
   "createdAt": "2026-08-10T12:21:10.768Z",
-  "modifiedAt": "2026-10-04T03:30:03.116Z",
+  "modifiedAt": "2026-10-07T17:03:07.557Z",
   "name": "japan-offmall-market-cn",
   "username": "fruitful_quintessence",
   "title": "Japan Hard Off OffMall Prices — Listings & Market Data",
@@ -326,43 +326,43 @@
  {
   "id": "9HSJRPbEIIGc6bHOx",
   "createdAt": "2026-08-10T12:21:13.339Z",
-  "modifiedAt": "2026-10-04T03:30:05.386Z",
+  "modifiedAt": "2026-10-07T17:03:10.926Z",
   "name": "japan-offmall-market-kr",
   "username": "fruitful_quintessence",
   "title": "Japan Hard Off OffMall Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 34,
-   "lastRunStartedAt": "2026-10-05T21:36:57.646Z"
+   "totalRuns": 35,
+   "lastRunStartedAt": "2026-10-07T03:22:59.512Z"
   }
  },
  {
   "id": "N1o8olAoZyXTJuhnb",
   "createdAt": "2026-08-10T12:41:01.397Z",
-  "modifiedAt": "2026-10-04T03:30:07.848Z",
+  "modifiedAt": "2026-10-07T09:15:55.935Z",
   "name": "japan-rent-market-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan rent market Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 93,
-   "lastRunStartedAt": "2026-10-06T15:40:51.077Z"
+   "totalRuns": 98,
+   "lastRunStartedAt": "2026-10-09T13:00:03.980Z"
   }
  },
  {
   "id": "5EOtT2UpEGEU83nhO",
   "createdAt": "2026-08-10T12:49:24.769Z",
-  "modifiedAt": "2026-10-04T03:30:10.162Z",
+  "modifiedAt": "2026-10-07T17:03:27.869Z",
   "name": "japan-rent-market-cn",
   "username": "fruitful_quintessence",
   "title": "Japan rent market cn Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 97,
-   "lastRunStartedAt": "2026-10-06T15:53:10.345Z"
+   "totalRuns": 100,
+   "lastRunStartedAt": "2026-10-09T13:30:04.828Z"
   }
  },
  {
   "id": "lWHSccM79ZpPxOLls",
   "createdAt": "2026-08-10T12:49:27.648Z",
-  "modifiedAt": "2026-10-04T03:30:12.772Z",
+  "modifiedAt": "2026-10-07T17:03:31.278Z",
   "name": "japan-rent-market-kr",
   "username": "fruitful_quintessence",
   "title": "Japan rent market kr Prices — Listings & Market Data",
@@ -374,19 +374,19 @@
  {
   "id": "AiXA2WVMNTaGuHoDh",
   "createdAt": "2026-08-10T13:07:45.274Z",
-  "modifiedAt": "2026-10-04T03:30:15.010Z",
+  "modifiedAt": "2026-10-07T09:15:59.549Z",
   "name": "japan-property-market-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan property market Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 94,
-   "lastRunStartedAt": "2026-10-06T14:00:02.385Z"
+   "totalRuns": 100,
+   "lastRunStartedAt": "2026-10-09T15:58:42.716Z"
   }
  },
  {
   "id": "aAe1nK4dpqgmBksOK",
   "createdAt": "2026-08-10T13:11:59.603Z",
-  "modifiedAt": "2026-10-04T03:30:17.219Z",
+  "modifiedAt": "2026-10-07T17:03:21.150Z",
   "name": "japan-property-market-cn",
   "username": "fruitful_quintessence",
   "title": "Japan property market cn Prices — Listings & Market Data",
@@ -398,7 +398,7 @@
  {
   "id": "CeDRuOvv0IHA8NL4M",
   "createdAt": "2026-08-10T13:12:02.242Z",
-  "modifiedAt": "2026-10-04T03:30:19.732Z",
+  "modifiedAt": "2026-10-07T17:03:24.558Z",
   "name": "japan-property-market-kr",
   "username": "fruitful_quintessence",
   "title": "Japan property market kr Prices — Listings & Market Data",
@@ -410,31 +410,31 @@
  {
   "id": "XOqsB7rCHYrb42kcY",
   "createdAt": "2026-08-10T13:24:42.868Z",
-  "modifiedAt": "2026-10-04T23:51:48.923Z",
+  "modifiedAt": "2026-10-07T09:16:03.121Z",
   "name": "japan-kakaku-price-search",
   "username": "fruitful_quintessence",
   "title": "Japan kakaku price Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 134,
-   "lastRunStartedAt": "2026-10-06T15:30:25.357Z"
+   "totalRuns": 144,
+   "lastRunStartedAt": "2026-10-09T15:30:27.274Z"
   }
  },
  {
   "id": "2Yy3Zu3pw0KzqYOP5",
   "createdAt": "2026-08-11T00:01:15.281Z",
-  "modifiedAt": "2026-10-04T03:30:29.323Z",
+  "modifiedAt": "2026-10-07T09:16:04.314Z",
   "name": "kimono-market-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan kimono market Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 67,
-   "lastRunStartedAt": "2026-10-06T16:54:56.318Z"
+   "totalRuns": 69,
+   "lastRunStartedAt": "2026-10-09T05:28:54.646Z"
   }
  },
  {
   "id": "yCN9ystlovHkgolzw",
   "createdAt": "2026-08-11T03:41:54.095Z",
-  "modifiedAt": "2026-10-04T03:30:31.897Z",
+  "modifiedAt": "2026-10-07T17:04:04.083Z",
   "name": "kimono-market-scraper-cn",
   "username": "fruitful_quintessence",
   "title": "Japan kimono market scraper cn Prices — Listings & Market Data",
@@ -446,7 +446,7 @@
  {
   "id": "8iktWtPM0ZD3ab54f",
   "createdAt": "2026-08-11T03:41:57.957Z",
-  "modifiedAt": "2026-10-04T03:30:34.355Z",
+  "modifiedAt": "2026-10-07T17:04:07.409Z",
   "name": "kimono-market-scraper-kr",
   "username": "fruitful_quintessence",
   "title": "Japan kimono market scraper kr Prices — Listings & Market Data",
@@ -458,31 +458,31 @@
  {
   "id": "bgm5Gxn4BeBmoO7xD",
   "createdAt": "2026-08-11T04:40:19.617Z",
-  "modifiedAt": "2026-10-04T03:30:36.704Z",
+  "modifiedAt": "2026-10-07T09:16:08.298Z",
   "name": "goo-net-car-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan car market Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 80,
-   "lastRunStartedAt": "2026-10-06T16:56:51.118Z"
+   "totalRuns": 84,
+   "lastRunStartedAt": "2026-10-09T05:30:58.325Z"
   }
  },
  {
   "id": "W9cXhDckzHd9RZWnQ",
   "createdAt": "2026-08-11T07:20:17.857Z",
-  "modifiedAt": "2026-10-04T03:30:38.933Z",
+  "modifiedAt": "2026-10-07T09:16:09.488Z",
   "name": "biglemon-machinery-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan biglemon machinery Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 58,
-   "lastRunStartedAt": "2026-10-06T16:58:58.910Z"
+   "totalRuns": 64,
+   "lastRunStartedAt": "2026-10-09T05:32:54.730Z"
   }
  },
  {
   "id": "pcSpFWK2A2HWRE2mx",
   "createdAt": "2026-08-11T07:27:07.914Z",
-  "modifiedAt": "2026-10-04T03:30:41.186Z",
+  "modifiedAt": "2026-10-07T17:07:49.076Z",
   "name": "goo-net-car-scraper-es",
   "username": "fruitful_quintessence",
   "title": "Japan car market Prices — Listings & Market Data",
@@ -494,7 +494,7 @@
  {
   "id": "ksRNLhw7sjdmoVbVt",
   "createdAt": "2026-08-11T07:29:58.934Z",
-  "modifiedAt": "2026-10-04T03:30:43.462Z",
+  "modifiedAt": "2026-10-07T17:08:31.787Z",
   "name": "goo-net-car-scraper-pt",
   "username": "fruitful_quintessence",
   "title": "Japan car market Prices — Listings & Market Data",
@@ -506,31 +506,31 @@
  {
   "id": "FzQlnqfCsMfSlRG9j",
   "createdAt": "2026-08-13T07:04:47.543Z",
-  "modifiedAt": "2026-10-04T23:51:48.253Z",
+  "modifiedAt": "2026-10-07T09:16:13.038Z",
   "name": "suumo-japan-real-estate-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan suumo japan real estate Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 60,
-   "lastRunStartedAt": "2026-10-06T16:38:51.991Z"
+   "totalRuns": 62,
+   "lastRunStartedAt": "2026-10-09T05:12:59.826Z"
   }
  },
  {
   "id": "pZ20lXqRtsJUl9bGk",
   "createdAt": "2026-08-13T09:02:31.886Z",
-  "modifiedAt": "2026-10-05T18:30:27.459Z",
+  "modifiedAt": "2026-10-07T09:16:14.252Z",
   "name": "rakuten-market-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan rakuten market Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 35,
-   "lastRunStartedAt": "2026-10-06T04:34:45.983Z"
+   "totalRuns": 37,
+   "lastRunStartedAt": "2026-10-08T16:57:08.206Z"
   }
  },
  {
   "id": "S3IdRuweFhrTwvJJN",
   "createdAt": "2026-08-13T09:08:38.922Z",
-  "modifiedAt": "2026-10-04T03:30:59.032Z",
+  "modifiedAt": "2026-10-07T09:16:15.427Z",
   "name": "tabelog-debug-fetch",
   "username": "fruitful_quintessence",
   "title": "Japan tabelog debug Prices — Listings & Market Data",
@@ -542,7 +542,7 @@
  {
   "id": "vN10EvpaN6lNSRxUo",
   "createdAt": "2026-08-13T09:25:53.523Z",
-  "modifiedAt": "2026-10-04T03:31:01.173Z",
+  "modifiedAt": "2026-10-07T17:08:28.423Z",
   "name": "goo-net-car-scraper-fr",
   "username": "fruitful_quintessence",
   "title": "Japan car market Prices — Listings & Market Data",
@@ -554,7 +554,7 @@
  {
   "id": "L0xYjvLZT8aYUKjKQ",
   "createdAt": "2026-08-13T09:25:54.733Z",
-  "modifiedAt": "2026-10-04T03:31:03.519Z",
+  "modifiedAt": "2026-10-07T17:08:35.156Z",
   "name": "goo-net-car-scraper-ru",
   "username": "fruitful_quintessence",
   "title": "Japan car market Prices — Listings & Market Data",
@@ -566,115 +566,115 @@
  {
   "id": "xv30Eoxh7NMJgJIj5",
   "createdAt": "2026-08-13T11:46:04.326Z",
-  "modifiedAt": "2026-10-04T03:31:05.770Z",
+  "modifiedAt": "2026-10-07T09:16:19.017Z",
   "name": "goobike-motorcycle-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan goobike motorcycle Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 54,
-   "lastRunStartedAt": "2026-10-06T16:47:03.004Z"
+   "totalRuns": 56,
+   "lastRunStartedAt": "2026-10-09T05:20:57.905Z"
   }
  },
  {
   "id": "BdQF1T6wB5T25AO20",
   "createdAt": "2026-08-13T12:04:23.174Z",
-  "modifiedAt": "2026-10-04T03:31:07.936Z",
+  "modifiedAt": "2026-10-07T09:16:20.200Z",
   "name": "upgarage-parts-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan upgarage parts Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 62,
-   "lastRunStartedAt": "2026-10-06T16:40:44.209Z"
+   "totalRuns": 64,
+   "lastRunStartedAt": "2026-10-09T05:14:48.377Z"
   }
  },
  {
   "id": "xPSQSSsdVjRwWQAiA",
   "createdAt": "2026-08-13T12:19:19.028Z",
-  "modifiedAt": "2026-10-04T03:31:10.118Z",
+  "modifiedAt": "2026-10-07T09:16:21.408Z",
   "name": "golfpartner-used-club-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan golfpartner used club Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 54,
-   "lastRunStartedAt": "2026-10-06T16:40:43.920Z"
+   "totalRuns": 57,
+   "lastRunStartedAt": "2026-10-09T05:14:48.099Z"
   }
  },
  {
   "id": "8WBam4CPB72q9Rvsd",
   "createdAt": "2026-08-13T15:05:02.697Z",
-  "modifiedAt": "2026-10-04T03:31:12.322Z",
+  "modifiedAt": "2026-10-07T09:16:22.614Z",
   "name": "yahoo-auctions-japan-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan Yahoo Auctions Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 142,
-   "lastRunStartedAt": "2026-10-06T22:22:01.604Z"
+   "totalRuns": 159,
+   "lastRunStartedAt": "2026-10-09T04:44:53.522Z"
   }
  },
  {
   "id": "whSePszWpMtfeLYBp",
   "createdAt": "2026-08-13T21:35:40.843Z",
-  "modifiedAt": "2026-10-04T03:31:14.657Z",
+  "modifiedAt": "2026-10-07T09:16:24.095Z",
   "name": "mercari-japan-search-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan Mercari Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 167,
-   "lastRunStartedAt": "2026-10-06T22:11:03.422Z"
+   "totalRuns": 174,
+   "lastRunStartedAt": "2026-10-09T10:44:39.068Z"
   }
  },
  {
   "id": "UVkH1uhlt57Jf6QnT",
   "createdAt": "2026-08-19T09:06:25.403Z",
-  "modifiedAt": "2026-10-04T03:31:16.800Z",
+  "modifiedAt": "2026-10-07T09:16:25.281Z",
   "name": "japan-hotpepper-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan HotPepper Beauty Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 55,
-   "lastRunStartedAt": "2026-10-05T21:33:05.474Z"
+   "totalRuns": 58,
+   "lastRunStartedAt": "2026-10-09T15:54:51.711Z"
   }
  },
  {
   "id": "95ZKdUlpFBo8CBYJh",
   "createdAt": "2026-08-19T09:17:54.146Z",
-  "modifiedAt": "2026-10-04T03:31:19.102Z",
+  "modifiedAt": "2026-10-07T09:16:26.498Z",
   "name": "japan-hotpepper-cn-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan HotPepper Beauty Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 48,
-   "lastRunStartedAt": "2026-10-05T21:44:55.221Z"
+   "totalRuns": 51,
+   "lastRunStartedAt": "2026-10-09T16:06:52.007Z"
   }
  },
  {
   "id": "FVJsHJhb4aPq54Uyd",
   "createdAt": "2026-08-19T09:17:56.750Z",
-  "modifiedAt": "2026-10-04T03:31:21.639Z",
+  "modifiedAt": "2026-10-07T09:16:27.691Z",
   "name": "japan-hotpepper-kr-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan HotPepper Beauty Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 48,
-   "lastRunStartedAt": "2026-10-05T21:44:55.548Z"
+   "totalRuns": 51,
+   "lastRunStartedAt": "2026-10-09T16:06:52.358Z"
   }
  },
  {
   "id": "xJI4WaPBfQiDJfcnp",
   "createdAt": "2026-09-02T21:55:48.427Z",
-  "modifiedAt": "2026-10-04T03:32:23.965Z",
+  "modifiedAt": "2026-10-07T09:16:28.909Z",
   "name": "japan-camera-resale-price-stats",
   "username": "fruitful_quintessence",
   "title": "Japan cameras Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 42,
-   "lastRunStartedAt": "2026-10-06T12:04:50.600Z"
+   "totalRuns": 44,
+   "lastRunStartedAt": "2026-10-09T00:40:45.929Z"
   }
  },
  {
   "id": "lRUO0nFDpE66U013r",
   "createdAt": "2026-09-02T22:01:13.062Z",
-  "modifiedAt": "2026-10-04T03:32:26.522Z",
+  "modifiedAt": "2026-10-07T09:16:30.522Z",
   "name": "mini-actor-test-0903",
   "username": "fruitful_quintessence",
   "title": "Japan mini actor test 0903 Prices — Listings & Market Data",
@@ -686,19 +686,19 @@
  {
   "id": "WnrudUFF2kZxZcj7Z",
   "createdAt": "2026-09-02T22:55:23.056Z",
-  "modifiedAt": "2026-10-04T03:32:28.646Z",
+  "modifiedAt": "2026-10-07T09:16:31.750Z",
   "name": "japan-figure-plamo-resale-price-stats",
   "username": "fruitful_quintessence",
   "title": "Japan figure plamo resale price Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 31,
-   "lastRunStartedAt": "2026-10-06T04:44:35.609Z"
+   "totalRuns": 33,
+   "lastRunStartedAt": "2026-10-08T17:07:09.666Z"
   }
  },
  {
   "id": "VCKdDJ5BdT9Z8aIDf",
   "createdAt": "2026-09-05T05:52:48.061Z",
-  "modifiedAt": "2026-10-04T03:32:31.111Z",
+  "modifiedAt": "2026-10-07T09:16:33.369Z",
   "name": "tackleberry-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan tackleberry Prices — Listings & Market Data",
@@ -710,7 +710,7 @@
  {
   "id": "doneSfO13IuNgcWPk",
   "createdAt": "2026-09-05T07:54:18.142Z",
-  "modifiedAt": "2026-10-04T03:32:33.622Z",
+  "modifiedAt": "2026-10-07T09:16:34.963Z",
   "name": "amazon-paapi-jp-actor",
   "username": "fruitful_quintessence",
   "title": "Japan amazon paapi jp Prices — Listings & Market Data",
@@ -722,19 +722,19 @@
  {
   "id": "6EvRs5kF1mbelC03M",
   "createdAt": "2026-09-05T08:38:18.845Z",
-  "modifiedAt": "2026-10-04T03:32:37.075Z",
+  "modifiedAt": "2026-10-07T09:17:06.704Z",
   "name": "ai-model-price-api",
   "username": "fruitful_quintessence",
   "title": "Japan ai model price Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 38,
-   "lastRunStartedAt": "2026-10-05T22:44:42.757Z"
+   "totalRuns": 41,
+   "lastRunStartedAt": "2026-10-09T17:06:57.795Z"
   }
  },
  {
   "id": "pWhvh8aWz4i6OM1ST",
   "createdAt": "2026-09-05T08:43:05.185Z",
-  "modifiedAt": "2026-10-04T03:32:39.424Z",
+  "modifiedAt": "2026-10-07T09:17:08.131Z",
   "name": "japan-egov-laws",
   "username": "fruitful_quintessence",
   "title": "Japan egov laws Prices — Listings & Market Data",
@@ -746,7 +746,7 @@
  {
   "id": "1g84gsOT7vE9yxNla",
   "createdAt": "2026-09-05T08:43:05.642Z",
-  "modifiedAt": "2026-10-04T03:32:41.906Z",
+  "modifiedAt": "2026-10-07T09:17:09.761Z",
   "name": "japan-jma-weather",
   "username": "fruitful_quintessence",
   "title": "Japan jma weather Prices — Listings & Market Data",
@@ -758,67 +758,67 @@
  {
   "id": "62DcoLUAkkOB1hGAH",
   "createdAt": "2026-09-05T08:43:06.046Z",
-  "modifiedAt": "2026-10-04T03:32:44.406Z",
+  "modifiedAt": "2026-10-07T09:17:41.372Z",
   "name": "japan-mhlw-medical",
   "username": "fruitful_quintessence",
   "title": "Japan mhlw medical Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 33,
-   "lastRunStartedAt": "2026-10-05T22:44:43.103Z"
+   "totalRuns": 36,
+   "lastRunStartedAt": "2026-10-09T17:06:58.079Z"
   }
  },
  {
   "id": "rIZ3NSg5Ul34PgpYx",
   "createdAt": "2026-09-05T08:43:06.551Z",
-  "modifiedAt": "2026-10-04T03:32:46.856Z",
+  "modifiedAt": "2026-10-07T09:17:42.805Z",
   "name": "japan-corporate-numbers",
   "username": "fruitful_quintessence",
   "title": "Japan corporate numbers Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 42,
-   "lastRunStartedAt": "2026-10-06T22:22:12.483Z"
+   "totalRuns": 48,
+   "lastRunStartedAt": "2026-10-08T22:47:36.025Z"
   }
  },
  {
   "id": "u2qsG1UfVHWsgl8Dg",
   "createdAt": "2026-09-05T08:48:15.812Z",
-  "modifiedAt": "2026-10-04T03:32:49.235Z",
+  "modifiedAt": "2026-10-07T09:17:44.209Z",
   "name": "world-bank-indicators",
   "username": "fruitful_quintessence",
   "title": "Japan world bank indicators Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 35,
-   "lastRunStartedAt": "2026-10-05T22:44:42.188Z"
+   "totalRuns": 39,
+   "lastRunStartedAt": "2026-10-09T17:06:57.186Z"
   }
  },
  {
   "id": "pAxQ0lRyArudhK9Wx",
   "createdAt": "2026-09-05T08:48:16.210Z",
-  "modifiedAt": "2026-10-04T03:32:51.760Z",
+  "modifiedAt": "2026-10-07T09:17:45.808Z",
   "name": "eurostat-indicators",
   "username": "fruitful_quintessence",
   "title": "Japan eurostat indicators Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 36,
-   "lastRunStartedAt": "2026-10-05T22:44:42.469Z"
+   "totalRuns": 42,
+   "lastRunStartedAt": "2026-10-09T17:06:57.505Z"
   }
  },
  {
   "id": "LSETMqsB30U9slWeU",
   "createdAt": "2026-09-07T04:29:21.814Z",
-  "modifiedAt": "2026-10-04T03:32:54.345Z",
+  "modifiedAt": "2026-10-07T09:17:47.447Z",
   "name": "japan-crowdfunding-trend-feed",
   "username": "fruitful_quintessence",
   "title": "Japan crowdfunding trend Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 32,
-   "lastRunStartedAt": "2026-10-06T14:33:10.422Z"
+   "totalRuns": 34,
+   "lastRunStartedAt": "2026-10-09T03:10:35.014Z"
   }
  },
  {
   "id": "90MPAX9mfR1DbNDJh",
   "createdAt": "2026-09-08T23:54:30.781Z",
-  "modifiedAt": "2026-10-04T03:32:57.222Z",
+  "modifiedAt": "2026-10-07T09:17:49.081Z",
   "name": "my-actor",
   "username": "fruitful_quintessence",
   "title": "Japan my Prices — Listings & Market Data",
@@ -829,19 +829,19 @@
  {
   "id": "FPlcw4CWMAKooZNe6",
   "createdAt": "2026-09-09T00:10:06.951Z",
-  "modifiedAt": "2026-10-04T03:34:59.488Z",
+  "modifiedAt": "2026-10-07T09:17:50.262Z",
   "name": "japan-prize-giveaway-scraper",
   "username": "fruitful_quintessence",
   "title": "Japan prize giveaway Prices — Listings & Market Data",
   "stats": {
-   "totalRuns": 29,
-   "lastRunStartedAt": "2026-10-06T13:40:40.165Z"
+   "totalRuns": 31,
+   "lastRunStartedAt": "2026-10-09T02:16:50.776Z"
   }
  },
  {
   "id": "RdCHlXHphoLsWnyhh",
   "createdAt": "2026-09-12T01:09:03.652Z",
-  "modifiedAt": "2026-10-06T22:14:54.724Z",
+  "modifiedAt": "2026-10-07T09:17:51.470Z",
   "name": "japan-fuel-price-mcp",
   "username": "fruitful_quintessence",
   "title": "Japan Retail Fuel Price API (Gasoline / Diesel / Kerosene)",
@@ -853,7 +853,7 @@
  {
   "id": "SWVTsribU0AIJVXtR",
   "createdAt": "2026-09-13T23:15:59.406Z",
-  "modifiedAt": "2026-10-04T03:35:03.814Z",
+  "modifiedAt": "2026-10-07T09:17:52.700Z",
   "name": "kensho-high-value-leads",
   "username": "fruitful_quintessence",
   "title": "Japan kensho high value leads Prices — Listings & Market Data",
@@ -865,7 +865,7 @@
  {
   "id": "LXzxoGGC0bmMTqEtd",
   "createdAt": "2026-09-13T23:35:33.942Z",
-  "modifiedAt": "2026-10-04T03:35:06.139Z",
+  "modifiedAt": "2026-10-07T09:18:23.927Z",
   "name": "test-actor",
   "username": "fruitful_quintessence",
   "title": "Japan test Prices — Listings & Market Data",
@@ -876,7 +876,7 @@
  {
   "id": "ODh1F4XP5sLlXu6Ep",
   "createdAt": "2026-09-15T01:13:58.087Z",
-  "modifiedAt": "2026-10-06T22:14:55.892Z",
+  "modifiedAt": "2026-10-07T09:18:25.154Z",
   "name": "japan-minimum-wage-mcp",
   "username": "fruitful_quintessence",
   "title": "Japan Minimum Wage Lookup API",
@@ -888,19 +888,19 @@
  {
   "id": "XJCgrhOZE47qc7T3i",
   "createdAt": "2026-09-16T16:24:29.981Z",
-  "modifiedAt": "2026-10-06T22:12:14.867Z",
+  "modifiedAt": "2026-10-07T09:18:26.386Z",
   "name": "japan-property-hazard-mcp",
   "username": "fruitful_quintessence",
   "title": "Japan Property Hazard Risk MCP",
   "stats": {
-   "totalRuns": 1,
-   "lastRunStartedAt": "2026-10-06T22:12:38.446Z"
+   "totalRuns": 3,
+   "lastRunStartedAt": "2026-10-09T10:44:52.074Z"
   }
  },
  {
   "id": "BxstMzzxh8jq6UtfS",
   "createdAt": "2026-09-18T07:47:42.177Z",
-  "modifiedAt": "2026-10-04T03:35:13.173Z",
+  "modifiedAt": "2026-10-07T09:18:27.594Z",
   "name": "japan-jepx-mcp",
   "username": "fruitful_quintessence",
   "title": "Japan jepx mcp Prices — Listings & Market Data",
@@ -912,31 +912,31 @@
  {
   "id": "kjf9ZKQ5zWyOQxzvL",
   "createdAt": "2026-09-26T19:59:50.694Z",
-  "modifiedAt": "2026-10-06T22:14:51.845Z",
+  "modifiedAt": "2026-10-07T09:18:28.867Z",
   "name": "kensho-sweep-mcp",
   "username": "fruitful_quintessence",
   "title": "Japan Sweepstakes & Giveaway Listings MCP",
   "stats": {
-   "totalRuns": 8,
-   "lastRunStartedAt": "2026-10-06T12:28:37.827Z"
+   "totalRuns": 10,
+   "lastRunStartedAt": "2026-10-09T01:04:41.118Z"
   }
  },
  {
   "id": "DKzufUSvmuXNKHeYx",
   "createdAt": "2026-09-27T05:33:05.839Z",
-  "modifiedAt": "2026-10-06T22:14:48.053Z",
+  "modifiedAt": "2026-10-07T09:18:31.948Z",
   "name": "japan-anime-figure-price-data",
   "username": "fruitful_quintessence",
   "title": "Japan Anime Figure Price Data (Resale Market)",
   "stats": {
-   "totalRuns": 113,
-   "lastRunStartedAt": "2026-10-06T21:12:42.878Z"
+   "totalRuns": 115,
+   "lastRunStartedAt": "2026-10-09T09:44:43.976Z"
   }
  },
  {
   "id": "KAmLNI93rwL86w8d6",
   "createdAt": "2026-09-28T05:56:48.056Z",
-  "modifiedAt": "2026-10-04T03:35:27.968Z",
+  "modifiedAt": "2026-10-07T09:18:36.120Z",
   "name": "my-actor-1",
   "username": "fruitful_quintessence",
   "title": "Japan my actor 1 Prices — Listings & Market Data",
@@ -947,13 +947,25 @@
  {
   "id": "8cCUNDwmelphhoXFs",
   "createdAt": "2026-09-28T13:19:46.639Z",
-  "modifiedAt": "2026-10-04T03:35:32.146Z",
+  "modifiedAt": "2026-10-07T09:18:38.929Z",
   "name": "japan-anime-figure-demand-features",
   "username": "fruitful_quintessence",
   "title": "Japan anime figure demand features Prices — Listings & Marke...",
   "stats": {
-   "totalRuns": 13,
-   "lastRunStartedAt": "2026-10-05T19:02:50.406Z"
+   "totalRuns": 16,
+   "lastRunStartedAt": "2026-10-09T13:22:41.657Z"
+  }
+ },
+ {
+  "id": "ykFU6apmNgzFXgvkO",
+  "createdAt": "2026-10-07T05:13:59.928Z",
+  "modifiedAt": "2026-10-07T09:19:29.819Z",
+  "name": "mlit-japan-property-prices",
+  "username": "fruitful_quintessence",
+  "title": "Mlit Japan Property Prices",
+  "stats": {
+   "totalRuns": 7,
+   "lastRunStartedAt": "2026-10-09T20:51:02.811Z"
   }
  }
 ]

@@ -1,0 +1,20 @@
+Verification Evidence Section
+
+1. Audit log analysis (data/audit.jsonl) for 2026-10-09:
+   - atushi16: follow success 67, like success 71, rt success 50
+   - TankanNotes: follow success 56, like success 54, rt success 32
+   - kudou: follow success 28, like success 29, rt success 15
+
+2. Collected.json analysis:
+   - Total items: 411
+   - Applied counts (non-DEFER): atushi16=32, TankanNotes=24, kudou=17
+   - Results field empty for all inspected items (no 'ok' or other results recorded)
+   - No wins recorded in results field
+
+3. dm_wins.json: does not exist (no wins detected via DM monitor)
+
+4. Orchestrator logs (logs/2026-10-09/):
+   - Proxy blocked accounts: kudou (port 1082), zin20120731 (port 1084)
+   - Other accounts (atushi16 port 1081, TankanNotes port 1085) showed alive
+
+Conclusion: Applier is executing actions and recording them in audit.jsonl and applied timestamps in collected.json, but the results field (intended for win tracking) is not being populated, and no wins have been detected via DM monitor.

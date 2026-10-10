@@ -1,0 +1,28 @@
+Verification Evidence for task t_d1df914c
+
+- Command: kanban_show t_d1df914c -> showed task description and context.
+- Command: terminal (various) -> inspected logs, audit.jsonl, collected.json, orchestrator logs.
+- Command: read_file -> examined applier.py, orchestrator.py, dashboard.py, etc.
+- Command: write_file -> created probe scripts and verification evidence.
+
+Evidence:
+1. Audit log (data/audit.jsonl) for 2026-10-09 shows successful actions:
+   * atushi16: follow success 67, like success 71, rt success 50
+   * TankanNotes: follow success 56, like success 54, rt success 32
+   * kudou: follow success 28, like success 29, rt success 15
+   This indicates the applier is executing and recording successes.
+
+2. Collected.json (data/collected.json) contains 411 items.
+   Applied counts (non-DEFER timestamps) per account:
+   * atushi16: 32
+   * TankanNotes: 24
+   * kudou: 17
+   However, the results field for all inspected items is empty (no 'ok', 'rt_failed', etc.), suggesting win tracking via results is not being populated in this dataset.
+
+3. No dm_wins.json file exists, indicating the DM monitor has not detected any win messages.
+
+4. Orchestrator logs (logs/2026-10-09/ orchestrator_*.log) show:
+   * Proxy blocked accounts: kudou (port 1082), zin20120731 (port 1084) -> skipped due to safety IP separation.
+   * Other accounts (atushi16 port 1081, TankanNotes port 1085) are alive and processing.
+
+Conclusion: The applier is functioning and recording actions in audit logs and applied timestamps, but the results field intended for win tracking remains empty, and no wins have been detected via DM. The raffle system's effectiveness in terms of executing actions is verified; win tracking needs further investigation.

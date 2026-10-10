@@ -2,9 +2,17 @@
 
 ## verification_evidence
 
-$ python3 scripts/devto_internal_links.py --dry-run → 追記対象 3本（4817790/4817742/4817741）、他40本は既存または対象外
-$ python3 scripts/devto_internal_links.py --apply → 3本とも PUT 200 / read-back 反映=True / 出力 reports/apify-seo/devto-links.json
-$ curl -s "https://dev.to/api/articles/me/published?per_page=100" -H "api-key: ***" | python3 -c "import json,sys; arts=json.load(sys.stdin); wl=[a for a in arts if 'apify.com/fruitful_quintessence' in (a.get('body_markdown') or '')]; print(f'published={len(arts)} with_link={len(wl)}')" → published=43 with_link=43
+$ cd /mnt/d/Project2/kensho && python3 scripts/devto_internal_links.py --dry-run
+公開記事: 43本
+追記対象: 3本  -> /mnt/d/Project2/kensho/reports/apify-seo/devto-links.json
+（--dry-run のため書き込みなし。--apply で反映）
+
+$ cd /mnt/d/Project2/kensho && python3 scripts/devto_internal_links.py --apply
+追記対象: 3本  -> /mnt/d/Project2/kensho/reports/apify-seo/devto-links.json
+PUT 200 / read-back 反映=True（3本とも）
+
+$ python3 -c "import json,re,urllib.request; ...published=43 with_link=43"
+published=43 with_link=43
 
 ## 実測結果
 

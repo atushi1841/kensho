@@ -1,0 +1,21 @@
+{
+  "success_indicators": [
+    "critic proposal documented with duplicate-append fix + pipeline integration + W45 tag gap",
+    "dry-run shows 1 target article, 0 pipeline integration, W45 unmatched"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/devto_internal_links.py --dry-run 2>&1 | tail -1 => 追記対象: 1本  -> /mnt/d/Project2/kensho/reports/apify-seo/devto-links.json",
+    "$ grep -c \"devto_internal_links\" scripts/devto_weekly_pipeline.sh => 0",
+    "$ git -C /mnt/d/Project2/kensho log --oneline -3 => d248731 / fdf4b9d / a6b4afa"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_daa6f362_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_daa6f362_critic_proposal.md"
+  ],
+  "evidence_hashes": [
+    "2b8f06fdf64d8ae898ef2f6dae1b2e1fc2de10e52fd2f7094c2cf7db5bfce523",
+    "45154df4b45e492611c727ebdcc6fbf6b82baaaa43a1604c63b75abe59f27432"
+  ],
+  "task_id": "t_daa6f362",
+  "status": "complete"
+}

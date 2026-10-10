@@ -51,4 +51,17 @@ Apify Storeへのリンクは記事末尾に自動追加されます。
 - スクレイピングのメンテナンスコスト削減
 - データ取得の信頼性向上（公式API・正規ルートを利用）
 
+## Smithery インストール
+
+```bash
+# japan-ec-mcp をインストール
+npx @smithery/cli install atushi1841/japan-ec-mcp --client claude
+```
+
 ---
+
+---
+
+## Data used in this post
+
+- [mercari-japan-search-scraper](https://apify.com/fruitful_quintessence/mercari-japan-search-scraper)

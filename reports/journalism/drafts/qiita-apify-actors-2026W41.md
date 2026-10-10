@@ -45,3 +45,19 @@ private: false
 | [japan-prize-giveaway-scraper](https://apify.com/fruitful_quintessence/japan-prize-giveaway-scraper) | X懜賞 campaigns データ収集 |
 
 全Actorは [Apify Store](https://apify.com/fruitful_quintessence) で公開中（88本以上）。
+
+## Smithery MCP Server
+
+さらに、これらのデータをMCP経由で直接アクセスできます：
+
+```bash
+# japan-ec-mcp をインストール
+npx @smithery/cli install atushi1841/japan-ec-mcp --client claude
+```
+
+また、懸賞情報の自動収集には以下も利用できます：
+
+```bash
+# kensho-sweep-mcp をインストール
+npx @smithery/cli install atushi1841/kensho-sweep-mcp --client claude
+```

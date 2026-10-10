@@ -1,14 +1,14 @@
 {
-  "status": "alive",
+  "status": "dead_proxy",
   "status_schema": [
     "alive",
     "dead_proxy",
     "unchecked"
   ],
   "port": 1082,
-  "last_success": "2026-10-07T07:23:48Z rt",
-  "last_error_type": "http_404",
-  "stop_reason": "",
+  "last_success": "2026-10-08T01:45:10Z like",
+  "last_error_type": "automation_blocked",
+  "stop_reason": "プロキシ死骸（TCP疎通 or 出口IP確認失敗）",
   "account": "kudou",
-  "updated": "2026-10-07T21:00:25.742331"
+  "updated": "2026-10-11T01:15:42.784892"
 }

@@ -52,3 +52,12 @@ curl -s https://api.github.com/repos/atushi1841/kensho/releases/latest \
 ---
 
 *This is part of the [Kensho](https://github.com/atushi1841/kensho) project — automated Japanese marketplace price tracking.*
+
+## Related MCP Server
+
+For real-time data access via MCP, install the japan-anime-figure-mcp:
+
+```bash
+# Install via Smithery
+npx @smithery/cli install atushi1841/japan-anime-figure-mcp --client claude
+```

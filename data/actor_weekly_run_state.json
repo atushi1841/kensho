@@ -1,0 +1,19 @@
+{
+  "posted_weeks": {
+    "2026-W41": {
+      "a": {
+        "whSePszWpMtfeLYBp": {
+          "run_id": null,
+          "status": null,
+          "dataset_id": null,
+          "error": "HTTP 400",
+          "tweet_id": "",
+          "devto_url": "https://dev.to/atu_ino_ed473db24d76d234a/apify-actor-weekly-run-mercari-japan-search-scraper-unknown-7bg",
+          "posted_at": "2026-10-09T14:54:21+00:00",
+          "date": "2026-10-09",
+          "slot": "a"
+        }
+      }
+    }
+  }
+}

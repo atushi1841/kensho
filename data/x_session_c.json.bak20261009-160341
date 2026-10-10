@@ -1,0 +1,109 @@
+{
+  "cookies": [
+    {
+      "name": "auth_token",
+      "value": "cd142c611a1441c85527f43cb05866252beebf64",
+      "domain": "x.com",
+      "path": "/",
+      "expires": 1798729200,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ct0",
+      "value": "3351494164c50f82b9b415b24d403e2d98f4e6c795d7c8488362dbb9c740e71d42be40d4d14bad2948132f5148817f538e0d443616b8663aa91d6194f439efe119eb1db8005c90df5c599e960eea5dae",
+      "domain": "x.com",
+      "path": "/",
+      "expires": 1798729200,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "lang",
+      "value": "ja",
+      "domain": "x.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "None"
+    },
+    {
+      "name": "personalization_id",
+      "value": "\"v1_TQ+cUFcGNpqGKhQt55mvGg==\"",
+      "domain": ".x.com",
+      "path": "/",
+      "expires": 1825660642.303,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "guest_id",
+      "value": "v1%3A179110064036069997",
+      "domain": ".x.com",
+      "path": "/",
+      "expires": 1825660642.303,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "guest_id_ads",
+      "value": "v1%3A179110064036069997",
+      "domain": ".x.com",
+      "path": "/",
+      "expires": 1826085697.745,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "guest_id_marketing",
+      "value": "v1%3A179110064036069997",
+      "domain": ".x.com",
+      "path": "/",
+      "expires": 1826085697.745,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "twid",
+      "value": "u%3D1229021612399185923",
+      "domain": ".x.com",
+      "path": "/",
+      "expires": 1823061697.745,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "70ryNWvyEuo15In8n7auOH3BbJDxExU_gy7I84VSkEg-1791525696.100949-1.0.1.1-Kdy8T_haB8luh96hsB4_lVrm0Tp2YfIC8Bl8BLizgLn4MGoBP5wOWSp5jIrLbF48eQwVvx8ukSqQg6bFaC.AMcvLVfBGkgHirKv6l4.2LrqooE8oVDs7cbBYttlBjSK6",
+      "domain": ".x.com",
+      "path": "/",
+      "expires": 1791527497.745,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://x.com",
+      "localStorage": [
+        {
+          "name": "rweb.recentUserIds",
+          "value": "[]"
+        },
+        {
+          "name": "__cuid",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}

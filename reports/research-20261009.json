@@ -1,0 +1,37 @@
+{
+  "candidates": [
+    {
+      "name": "Apify Store 有料Actor展開",
+      "model": "PPE(Pay Per Event)または従量課金。開発者還元率80%、 payout最低$10〜$20。Agentic payments対応でAIエージェント経由自動購入可能。",
+      "price": "$0.01〜$0.10/event または月額サブスク、長期的に月$100〜$500以上",
+      "evidence": [
+        "https://docs.apify.com/actors/publishing/monetize",
+        "https://blog.apify.com/building-98-actors-on-apify-store/"
+      ],
+      "summary": "Olivier Reynaud氏は6ヶ月で98 Actor公開・2,500ユーザー・月数千ドル収益達成。競合少ないニッチ狙いが成功鍵。Apify StoreのSEO優位性(「ziprecruiter scraper」等で上位表示)を活用可能。",
+      "kensho_fit": "cost:低（既存58本活用）、risk:中（プロモーション必要）、implementation:即時可能"
+    },
+    {
+      "name": "懸賞・景品データDaaS API",
+      "model": "kengai dataを定期更新的にAPI経由で提供。月額tieredサブスク。データ質・新鮮さが差別化要因。",
+      "price": "月額¥5,000〜¥50,000、顧客5-10名で月$500〜$2,000",
+      "evidence": [
+        "https://www.moesif.com/blog/monitoring/Monetizing-Proprietary-Data-Through-APIs/",
+        "https://community.latenode.com/t/individual-developers-earning-revenue-through-rapidapi-marketplace/36813"
+      ],
+      "summary": "DaaS市場は subscriptionモデルで55%シェア。AI企業は独自データセットを必要としBloomberg IntelligenceはAI市場が2032年に$1.3Tと予測。RapidAPI個人開発者は月数百〜数千ドル実例あり但し独自営業必要。",
+      "kensho_fit": "cost:中（API層構築1-2週）、risk:高（利用規約法的グレー）、implementation:2-4週"
+    },
+    {
+      "name": "EC価格監視SaaS（日本市場特化）",
+      "model": "Amazon/楽天価格・在庫・レビュー監視をSaaS化。複数アカウントからの競合監視。",
+      "price": "月額¥5,000〜¥50,000、目標月¥100,000以上",
+      "evidence": [
+        "https://www.browserless.io/blog/state-of-web-scraping-2026",
+        "https://brightdata.com/blog/web-data/best-web-scraping-services"
+      ],
+      "summary": "2026年スクレイピング市場はAI駆動・実ブラウザ・コンプライアンスがトレンド。ボット検出強化によりmanaged service需要増加。但しBright Data/Zyte等大手競合多数。",
+      "kensho_fit": "cost:高（SaaS基盤・決済・CS）、risk:中（競合激激）、implementation:1-3月"
+    }
+  ]
+}

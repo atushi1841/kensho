@@ -1,0 +1,19 @@
+{
+  "success_indicators": [
+    "dev.to article id=4817031 published with correct title",
+    "RapidAPI publishing abandoned per user policy 2026-09-18"
+  ],
+  "verification_commands": [
+    "$ curl -s -H \"Authorization: Bearer $(grep DEVTO_API_KEY /mnt/d/Project2/kensho/.env | cut -d'=' -f2)\" \"https://dev.to/api/articles/4817031\" | jq -r '.title' => Apify Actorsで日本市場データを無料でスクレイピング8選（2026年版）",
+    "$ curl -s -H \"Authorization: Bearer $(grep DEVTO_API_KEY /mnt/d/Project2/kensho/.env | cut -d'=' -f2)\" \"https://dev.to/api/articles/4817031\" | jq -r '.url' => https://dev.to/atu_ino_ed473db24d76d234a/untitled-437f",
+    "$ find /mnt/d/Project2/kensho -name 'rapidapi_auth.json' 2>/dev/null | wc -l => 0"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_0b856e2c_verification.md"
+  ],
+  "evidence_hashes": [
+    "41c02de1e8375b336ae777938bbceceefe42c36180288f3a415a04048e3c4309"
+  ],
+  "task_id": "t_0b856e2c",
+  "status": "complete"
+}

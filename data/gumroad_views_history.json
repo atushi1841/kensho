@@ -94,5 +94,33 @@
     },
     "login_ok": true,
     "collected_at": "2026-10-04T09:05:40.521"
+  },
+  "2026-10-08": {
+    "views": 0,
+    "sales": 0,
+    "total": "0",
+    "referrers": {},
+    "login_ok": true,
+    "collected_at": "2026-10-09T09:05:20.386"
+  },
+  "2026-10-09": {
+    "views": 1,
+    "sales": 0,
+    "total": "0",
+    "referrers": {
+      "Direct, email, IM": 1
+    },
+    "login_ok": true,
+    "collected_at": "2026-10-10T09:05:20.956"
+  },
+  "2026-10-10": {
+    "views": 1,
+    "sales": 0,
+    "total": "0",
+    "referrers": {
+      "Direct, email, IM": 1
+    },
+    "login_ok": true,
+    "collected_at": "2026-10-10T09:05:42.461"
   }
 }

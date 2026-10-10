@@ -26,9 +26,9 @@
     "/mnt/d/Project2/kensho/reports/t_83f71c1e_verification.md",
     "/mnt/d/Project2/kensho/reports/t_83f71c1e_evidence.json"
   ],
-  "evidence_hashes": {
-    "t_83f71c1e_verification.md": "sha256:2699a685c8729903c581f3e4ef96092c1eaa3b01dd467f0ff20353b905ad79c0"
-  },
+  "evidence_hashes": [
+    "sha256:2699a685c8729903c581f3e4ef96092c1eaa3b01dd467f0ff20353b905ad79c0"
+  ],
   "guards_present": {
     "hour_cutoff_jst19": {"line": 115, "status": "present"},
     "stale_date_mismatch": {"line": 71, "status": "present"},

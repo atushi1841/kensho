@@ -1,0 +1,22 @@
+# Verification Evidence Section for t_8852e33d
+
+## Command Citations (>=3 required)
+
+1. Check artifact_age_penalty after fix:
+   $ bash scripts/loop_health.sh --no-park 2>&1 | jq '.artifact_age_penalty'
+   0
+
+2. Check loop_health score after fix:
+   $ bash scripts/loop_health.sh --no-park 2>&1 | jq '.score'
+   59
+
+3. Check streak after fix:
+   $ bash scripts/loop_health.sh --no-park 2>&1 | jq '.streak'
+   0
+
+## Evidence Files
+- reports/t_8852e33d_verification.md
+- reports/t_8852e33d_evidence.json
+
+## Commit
+d1e0862 t_8852e33d: fix artifact_age penalty false positive by excluding live workers (PID check) and running<4h tasks

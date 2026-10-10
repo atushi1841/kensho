@@ -1,0 +1,302 @@
+accounts:
+- daily_target: 75
+  disable_reply: true
+  display: '@atushi16'
+  key: atushi16
+  schedule:
+    batches:
+    - max: 7
+      time: 08:02
+    - max: 7
+      time: 09:12
+    - max: 7
+      time: '10:27'
+    - max: 7
+      time: '11:47'
+    - max: 7
+      time: '12:56'
+    - max: 7
+      time: '14:12'
+    - max: 7
+      time: '15:37'
+    - max: 7
+      time: '16:47'
+    - max: 7
+      time: '18:02'
+    - max: 7
+      time: '19:22'
+    - max: 7
+      time: '20:47'
+    - max: 7
+      time: '22:17'
+    collects: false
+  session: data/x_session.json
+- daily_target: 50
+  disable_reply: true
+  display: '@kudou_aoshi'
+  key: kudou
+  schedule:
+    batches: []
+    collects: false
+  session: data/x_session_kudou.json
+- daily_target: 50
+  disable_reply: true
+  display: '@zin20120731'
+  key: zin20120731
+  schedule:
+    batches: []
+    collects: false
+  session: data/x_session_c.json
+- daily_target: 50
+  disable_reply: true
+  display: '@TankanNotes'
+  key: TankanNotes
+  schedule:
+    batches:
+    - max: 15
+      time: 09:29
+    - max: 15
+      time: '10:52'
+    - max: 15
+      time: '12:23'
+    - max: 15
+      time: '13:43'
+    - max: 15
+      time: '14:56'
+    - max: 15
+      time: '16:08'
+    - max: 15
+      time: '17:19'
+    - max: 15
+      time: '18:44'
+    - max: 15
+      time: '20:12'
+    - max: 15
+      time: '22:07'
+    collects: false
+  session: data/x_session_TankanNotes.json
+applier:
+  anomaly_max_consecutive_rt_like: 5
+  cross_account_defer_max_hours: 8
+  cross_account_defer_min_hours: 4
+  cross_account_proximity_hours: 6
+  follow_lock_hours: 4
+  like_standalone_skip: 0.6
+  like_with_follow_skip: 0.1
+  multi_response_threshold: 2
+  multi_response_window_sec: 1800
+  retry_defer_minutes: 30
+  skip_rates:
+    all: 0.03
+    follow: 0.08
+    like: 0.15
+    rt: 0.1
+collection:
+  health_daily_failure_rate: 0.5
+  health_max_consecutive_failures: 4
+  health_min_attempts: 6
+  llm_batch_size: 8
+  llm_breaker:
+    backoff_multiplier: 2.0
+    cooldown_seconds: 300
+    failure_threshold: 3
+    max_cooldown_seconds: 3600
+  llm_classify: true
+  llm_model: qwen3.8-27b
+  max_items: 500
+  max_pages: 99
+  max_run_seconds: 1500
+  research_hours:
+  - 3
+  separate_cron: true
+  source: https://knshow.com
+  times:
+  - 03:00
+  - 09:00
+  - '10:00'
+  - '11:00'
+  - '12:00'
+  - '13:00'
+  - '14:00'
+  - '15:00'
+  - '16:00'
+  - '17:00'
+  - '18:00'
+  - '19:00'
+  - '20:00'
+  - '21:00'
+  use_scrapling: true
+collection_filter:
+  drop_without_must_word: true
+  max_tweet_age_hours: 72
+  min_like_threshold: 1
+  min_retweet_threshold: 3
+failure_ceiling:
+  cooldown_minutes: 30
+  enabled: true
+  max_consecutive_failures: 3
+freeze_festival:
+  enabled: false
+  scale: 0.5
+  search_query: 凍結祭り
+  valid_days: 3
+general:
+  log_retention_days: 30
+  project_dir: /mnt/d/Project2/kensho
+  python: /home/atushi/kensho-venv/bin/python
+  session_warn_days: 14
+keepalive:
+  interfaces:
+  - label: WiFi-A (@kudou_aoshi)
+    type: wifi_monitor
+    wifi_profile: a
+  - label: WiFi-C (@zin20120731)
+    type: wifi_monitor
+    wifi_profile: AiR-WiFi_6_povo
+  - label: Ethernet-D (@TankanNotes)
+    network_interface: Tankan_ETH3
+    type: ping
+  - label: WiFi-E (@toushiwatch)
+    type: wifi_monitor
+    wifi_profile: 2_povo_AW
+  interval_minutes: 5
+ng_words:
+- 応募フォーム
+- クイズ
+- アンケート
+- 合言葉
+- 応募はこちら
+notify:
+  discord_webhook: ''
+  windows_toast: false
+orchestrator:
+  apply_timeout: 1800
+  batch_jitter_minutes: 15
+  interval_minutes: 15
+  max_accounts_per_run: 7
+  max_concurrent_accounts: 7
+  no_action_window:
+  - 00:00
+  - 07:00
+  priority: competition_score
+policy_engine:
+  hourly_limits:
+    follow: 15
+    like: 30
+    rt: 20
+  risk_weights:
+    follow: 0.8
+    like: 1.0
+    rt: 0.9
+  skip_probability:
+    follow: 0.05
+    like: 0.03
+    rt: 0.05
+prize_scoring:
+  enabled: true
+  food_multiplier:
+    お菓子|スナック|チョコ|アイス|調味料|食品|ラーメン: 1.4
+    飲料|ドリンク|お茶|コーヒー|ビール|ジュース|スイーツ: 1.5
+  item_patterns:
+  - Amazon.*ギフト券?|ギフト券
+  - 商品券|図書券
+  - QUOカード|クオカード
+  - 家電|スマホ|タブレット
+  - 旅行|宿泊|温泉
+  - 現金
+  - Switch|PS5|ゲーム機
+  jpy_patterns:
+  - \d{1,3}(?:,\d{3})*万円
+  - \d{1,3}(?:,\d{3})*円
+  - \d{1,3}(?:,\d{3})*円相当
+  - \d{1,3}(?:,\d{3})*円分
+  priority_multipliers:
+    Amazon.*ギフト券?|ギフト券: 2.5
+    QUOカード|クオカード: 1.2
+    Switch|PS5: 2.0
+    商品券|図書券: 1.5
+    家電|スマホ|タブレット: 2.0
+    旅行|宿泊: 2.5
+    現金: 3.0
+  short_deadline:
+    multiplier: 1.3
+    within_hours: 24
+  sponsor_multiplier:
+    協賛|タイアップ|提供: 1.7
+    地域限定|店舗|店頭|ローカル|ご当地: 1.5
+  winner_count_multiplier:
+    '100': 1.3
+    '2000': 2.0
+    '600': 1.6
+approvals:
+  cron_mode: approve
+rate_limits:
+  active_hours_end: '23:00'
+  active_hours_start: 08:00
+  break_after_n_items: 7
+  break_max_seconds: 120
+  break_min_seconds: 40
+  extra_long_pause_chance: 0.2
+  max_actions_per_hour: 15
+  max_delay_between_actions: 60
+  max_follow_per_day: 100
+  max_like_per_day: 250
+  max_reply_per_day: 10
+  max_rt_per_day: 80
+  max_total_actions_per_day: 100
+  memory_reserve_mb: 2048
+  min_delay_between_actions: 15
+  speed_guard_max_actions: 15
+  speed_guard_pause_sec: 30
+  speed_guard_window_sec: 180
+required_words:
+  require_all: []
+  require_any:
+  - フォロー
+  - リポスト
+  - RT
+safety:
+  cache_ttl_seconds: 300
+  dead_proxy_check: true
+  home_internet_accounts:
+  - atushi16
+  ip_check_timeout: 10
+  ip_separation_check: true
+self_healing:
+  ai_assisted: false
+  ai_model: ''
+  ai_timeout_sec: 25
+  allowed_ai_actions: retry,switch_transport,reduce_scope
+  enabled: true
+  failure_ceiling_consecutive: 3
+  failure_ceiling_cooldown_minutes: 30
+  fatal_signal_kinds: session,auth,dead_proxy,rate_limit,rate_limited,suspended,frozen,no_auth_session,needs_login,login_failed,goto_failed,challenge
+  fatal_signal_markers: auth_token,no_auth_session,needs_login,not logged in,login
+    failed,ログイン失敗,invalid session,cookie expired,session expired,dead_proxy,http_0,goto_failed,goto
+    failed,proxy is dead,プロキシ死骸,rate_limited,account suspended,frozen,読み取り専用
+  log_tail_lines: 60
+  max_attempts: 3
+  max_delay_sec: 10
+  min_delay_sec: 3
+  notify_on_error: true
+  recovery_order: jitter_retry,ai_consult,network_check,transport_fallback,scope_reduction
+  retry_empty_collection: false
+  retry_partial_apply: false
+  state_file: data/self_heal_state.json
+skip_url_posts: false
+telegram:
+  chat_id: '8510166694'
+  enabled: true
+  token: ${TELEGRAM_BOT_TOKEN}
+  notify_on:
+  - dm_win
+  - error
+  - daily_report
+  - over_concentration
+  - system_status
+verification:
+  enabled: true
+  verify_account_health: true
+  verify_follow: true
+  verify_like: false
+  verify_rt: true

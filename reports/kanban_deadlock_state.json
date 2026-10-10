@@ -1,13 +1,189 @@
 {
   "ready": 0,
   "todo": 0,
-  "running": 0,
+  "running": 1,
   "blocked": 0,
-  "scheduled": 0,
-  "total": 0,
+  "scheduled": 1,
+  "total": 907,
   "cond1_ready_zero": false,
   "cond2_todo_lt_80": false,
-  "reverse_edges": [],
-  "deadlock": false,
-  "reason": "empty board"
+  "reverse_edges": [
+    {
+      "child": "t_f86685b6",
+      "parent": "t_40f5f6e7",
+      "grandchild": "t_35c91498",
+      "child_task_title": "kensho-value-feed 実装: 既存kakaku価格データをGitHub README+",
+      "parent_task_title": "攻めの企画: 既存資産を活用した「価値提供型」自動拡散パイプラインの構築"
+    },
+    {
+      "child": "t_2bd258d5",
+      "parent": "t_77713506",
+      "grandchild": "t_37e25225",
+      "child_task_title": "垢単位サーキットブレーカと圏外垢スキップを self_heal.py に実装",
+      "parent_task_title": "self_heal.py のgit前処理と衝突解消・ベースライン確定"
+    },
+    {
+      "child": "t_0ac95415",
+      "parent": "t_2bd258d5",
+      "grandchild": "t_37e25225",
+      "child_task_title": "実装の批評レビュー: BOT制約不変・ログ安全性・エッジケース検証",
+      "parent_task_title": "垢単位サーキットブレーカと圏外垢スキップを self_heal.py に実装"
+    },
+    {
+      "child": "t_f8cec77d",
+      "parent": "t_2bd258d5",
+      "grandchild": "t_37e25225",
+      "child_task_title": "24h実測による before/after 検証と evidence.json 記録",
+      "parent_task_title": "垢単位サーキットブレーカと圏外垢スキップを self_heal.py に実装"
+    },
+    {
+      "child": "t_a38b99bc",
+      "parent": "t_efe1736c",
+      "grandchild": "t_757b8b5d",
+      "child_task_title": "[ループ衛生・高] 偽done新経路の封鎖: guardに条件(l)「カード本文の成果物トークン実在",
+      "parent_task_title": "[ループ衛生・高] t_031f04b9は偽done（--write-report未実装を実測0件で"
+    },
+    {
+      "child": "t_0e82115e",
+      "parent": "t_1e8c6f70",
+      "grandchild": "t_a38b99bc",
+      "child_task_title": "Run test cases",
+      "parent_task_title": "Create test cases"
+    },
+    {
+      "child": "t_1cb9ab60",
+      "parent": "t_dd850be8",
+      "grandchild": "t_6a933a79",
+      "child_task_title": "Clean, normalize, and merge scraped figure data in",
+      "parent_task_title": "Scrape anime figure data from Hpoi, figurememo, an"
+    },
+    {
+      "child": "t_822c1217",
+      "parent": "t_1cb9ab60",
+      "grandchild": "t_6a933a79",
+      "child_task_title": "Package dataset and publish as sellable product on",
+      "parent_task_title": "Clean, normalize, and merge scraped figure data in"
+    },
+    {
+      "child": "t_822c1217",
+      "parent": "t_0ceb866a",
+      "grandchild": "t_6a933a79",
+      "child_task_title": "Package dataset and publish as sellable product on",
+      "parent_task_title": "Research competitive landscape and market position"
+    },
+    {
+      "child": "t_b2fc9a38",
+      "parent": "t_822c1217",
+      "grandchild": "t_6a933a79",
+      "child_task_title": "QA verify published product with live API reads an",
+      "parent_task_title": "Package dataset and publish as sellable product on"
+    },
+    {
+      "child": "t_0b6603ab",
+      "parent": "t_f601390c",
+      "grandchild": "t_8cffcd78",
+      "child_task_title": "Implement Apify/RapidAPI/Gumroad sales channel for",
+      "parent_task_title": "Define AI agent demand forecasting data product an"
+    },
+    {
+      "child": "t_48730ad6",
+      "parent": "t_0b6603ab",
+      "grandchild": "t_8cffcd78",
+      "child_task_title": "QA verify the forecasting data sales implementatio",
+      "parent_task_title": "Implement Apify/RapidAPI/Gumroad sales channel for"
+    },
+    {
+      "child": "t_6e640220",
+      "parent": "t_c190c675",
+      "grandchild": "t_d3e6ca22",
+      "child_task_title": "Generate SEO-friendly descriptions for repos",
+      "parent_task_title": "Audit GitHub repos for missing descriptions"
+    },
+    {
+      "child": "t_c15dfe97",
+      "parent": "t_6e640220",
+      "grandchild": "t_d3e6ca22",
+      "child_task_title": "Set descriptions via gh CLI",
+      "parent_task_title": "Generate SEO-friendly descriptions for repos"
+    },
+    {
+      "child": "t_5b6263cb",
+      "parent": "t_c15dfe97",
+      "grandchild": "t_d3e6ca22",
+      "child_task_title": "Verify all descriptions are set",
+      "parent_task_title": "Set descriptions via gh CLI"
+    },
+    {
+      "child": "t_bd20963b",
+      "parent": "t_54fcf5db",
+      "grandchild": "t_232fc89e",
+      "child_task_title": "Populate README.md with MCP tool details",
+      "parent_task_title": "Create GitHub repository 'japan-ec-mcp'"
+    },
+    {
+      "child": "t_6faa0972",
+      "parent": "t_54fcf5db",
+      "grandchild": "t_232fc89e",
+      "child_task_title": "Verify repository HTTP 200 response",
+      "parent_task_title": "Create GitHub repository 'japan-ec-mcp'"
+    },
+    {
+      "child": "t_a9e7b59b",
+      "parent": "t_5247ad3e",
+      "grandchild": "t_232fc89e",
+      "child_task_title": "Set up GitHub Actions for automatic README updates",
+      "parent_task_title": "Update kensho repo README with external inflow URL"
+    },
+    {
+      "child": "t_aa2b6a39",
+      "parent": "t_02eba13c",
+      "grandchild": "t_b059c536",
+      "child_task_title": "Run pytest to verify fixes and check for regressio",
+      "parent_task_title": "Fix test_loop_health_band_reset_invariant board de"
+    },
+    {
+      "child": "t_aa2b6a39",
+      "parent": "t_266d47ed",
+      "grandchild": "t_b059c536",
+      "child_task_title": "Run pytest to verify fixes and check for regressio",
+      "parent_task_title": "Fix test_agent_eval_harness simulator board depend"
+    },
+    {
+      "child": "t_aa2b6a39",
+      "parent": "t_d15f08da",
+      "grandchild": "t_b059c536",
+      "child_task_title": "Run pytest to verify fixes and check for regressio",
+      "parent_task_title": "Fix test_load_ppe_actors_reads_data_tmp_entity dat"
+    },
+    {
+      "child": "t_62a2f175",
+      "parent": "t_b46274d1",
+      "grandchild": "t_5ab9300b",
+      "child_task_title": "Generate verification evidence report",
+      "parent_task_title": "Update README for all MCP repos with Apify link"
+    },
+    {
+      "child": "t_870a49c7",
+      "parent": "t_cfaf93c0",
+      "grandchild": "t_cdb54a4f",
+      "child_task_title": "Add missing mcp.json or README metadata to each re",
+      "parent_task_title": "List unlisted MCP repos and produce diff"
+    },
+    {
+      "child": "t_25832581",
+      "parent": "t_870a49c7",
+      "grandchild": "t_cdb54a4f",
+      "child_task_title": "Register each repo on Glama via List it for free o",
+      "parent_task_title": "Add missing mcp.json or README metadata to each re"
+    },
+    {
+      "child": "t_dea751b5",
+      "parent": "t_25832581",
+      "grandchild": "t_cdb54a4f",
+      "child_task_title": "Verify HTTP 200 for each registered URL",
+      "parent_task_title": "Register each repo on Glama via List it for free o"
+    }
+  ],
+  "deadlock": true,
+  "reason": "reverse edges 25"
 }

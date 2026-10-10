@@ -97,3 +97,12 @@ If you find this useful or have specific data needs, let me know in the comments
 The dataset behind this post is available on Apify (pay-per-result, free tier to start):
 
 - [mlit-japan-property-prices](https://apify.com/fruitful_quintessence/mlit-japan-property-prices)
+
+## Smithery MCP Server
+
+For AI agents using MCP-compatible tools (Claude, Cursor, VS Code), install directly:
+
+```bash
+# Install MLIT Property Prices MCP via Smithery
+npx @smithery/cli install atushi1841/mlit-property-prices-mcp --client claude
+```
