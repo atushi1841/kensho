@@ -237,6 +237,41 @@ NOW=$(date +%s)
 export _LH_TASKS_FILE="$TASKS_FILE" _LH_NOW="$NOW" _LH_PREV="$PREV_STREAK" _LH_DB="$DB_PATH"
 export _LH_MAX_IN_PROGRESS
 
+# ─── Live-worker PID check for artifact_age exclusion (t_8852e33d) ────────────
+# artifact_age penalty は「最終成果物（comment）の鮮度」で stoi するが、
+# ワーカーPIDが生存中（作業中）または running 開始<4h のタスクは「結果物未生成＝
+# 停滞」ではない（作業中のため comment が来ないだけ）。 penalty 対象から除外し、
+# 停滞判定の偽陽性（artifact_age=inf → -30）を解消する。
+# pgrep -f "kanban task <tid>" で生存PIDを確認（stale-lock 教訓 2026-09-24 の流用）。
+# pgrep が無い環境では空map（除外なし＝旧挙動）。
+_LIVE_TASKS_JSON="{}"
+if command -v pgrep >/dev/null 2>&1; then
+  _LIVE_TASKS_JSON=$(python3 - "$TASKS_FILE" <<'PYEOF'
+import json, os, subprocess, sys
+_tasks_file = sys.argv[1]
+try:
+    tasks = json.loads(open(_tasks_file).read() or "[]")
+except Exception:
+    tasks = []
+live = {}
+for t in tasks:
+    if t.get("status") != "running":
+        continue
+    tid = t.get("id", "")
+    alive = False
+    try:
+        r = subprocess.run(["pgrep", "-f", "kanban task %s" % tid],
+                           capture_output=True, timeout=5)
+        alive = (r.returncode == 0)
+    except Exception:
+        alive = False
+    live[tid] = alive
+print(json.dumps(live))
+PYEOF
+)
+fi
+export _LH_LIVE_TASKS="$_LIVE_TASKS_JSON"
+
 # Revenue divergence detection for loop_health
 _diverged_count=0
 if [ -f "/mnt/d/Project2/kensho/scripts/revenue_record_reconcile.py" ]; then
@@ -272,6 +307,29 @@ except Exception:
 
 running = [t for t in tasks if t.get("status") == "running"]
 blocked = [t for t in tasks if t.get("status") == "blocked"]
+
+# ── Live-worker PID exclusion (t_8852e33d) ──────────────────────────────────
+# artifact_age penalty は comment 鮮度で stoi するが、ワーカーPIDが生存中（作業中）
+# のタスクは「結果物未生成＝停滞」ではない。 penalty 対象から除外する。
+# pgrep 不可環境では空map（除外なし＝旧挙動）。
+live_tasks = {}
+try:
+    _lv = os.environ.get("_LH_LIVE_TASKS", "")
+    if _lv:
+        live_tasks = json.loads(_lv)
+except Exception:
+    live_tasks = {}
+
+# running 開始<4h も除外条件（running されてから短い = 作業初期＝停滞ではない）。
+# effective_started_at が取れない場合は tasks.started_at にフォールバック（v143 方針に
+# 合致：DB 解決済みなら実 run が取れるため、ここでは tasks.started_at を使用）。
+def _is_live(t):
+    if live_tasks.get(t.get("id")):
+        return True
+    st = effective_started_at.get(t.get("id")) or t.get("started_at")
+    if st and (now - int(st)) < 4 * 3600:
+        return True
+    return False
 
 # Detect same-result repeat (v142: 定義が v142 リライトで失われていたため再導入)
 results = {}
@@ -460,6 +518,9 @@ else:
                 _c.row_factory = sqlite3.Row
                 for _t in running:
                     _tid = _t["id"]
+                    # t_8852e33d: ワーカーPID生存中 or running 開始<4h は除外（作業中＝停滞ではない）
+                    if _is_live(_t):
+                        continue
                     _row = _c.execute(
                         "SELECT MAX(created_at) AS last_ts FROM task_comments WHERE task_id = ?",
                         (_tid,)
