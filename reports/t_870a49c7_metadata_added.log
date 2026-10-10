@@ -1,0 +1,12 @@
+# t_870a49c7 — mcp.json metadata added to unlisted MCP repos (2026-10-10)
+# Pushed via GitHub Contents API (gh api --method PUT) to default branch of each repo.
+japan-anime-figure-mcp commit=a7cf2992 content_sha=403e8100
+japan-ec-mcp commit=21fe8a9d content_sha=087f78ab
+japan-food-delivery-mcp commit=83b933e8 content_sha=4285e710
+japan-jepx-mcp commit=1b6508a1 content_sha=1ed5bfc0
+japan-market-data commit=d625c600 content_sha=697ef1ec
+japan-property-hazard-mcp commit=e9f752cd content_sha=573774ad
+kensho-kaku commit=12a8ce0a content_sha=71e4b509
+kensho-kclub commit=8a041ac9 content_sha=eb8f81c9
+kensho-kema commit=f8707849 content_sha=d857e86d
+kensho-sweep-mcp commit=dfbf542d content_sha=6c7a308d
