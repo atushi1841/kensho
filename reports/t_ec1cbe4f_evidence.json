@@ -1,0 +1,26 @@
+{
+  "task_id": "t_ec1cbe4f",
+  "status": "complete",
+  "success_indicators": [
+    "HTTP 200 for https://atushi1841.github.io/kensho/",
+    "85 Apify actor links in catalog",
+    "gh-pages branch updated with commit aad0b83c"
+  ],
+  "verification_commands": [
+    "$ curl -sI https://atushi1841.github.io/kensho/ | head -1 => HTTP/2 200",
+    "$ curl -sL https://atushi1841.github.io/kensho/ | grep -o 'apify.com' | wc -l => 85",
+    "$ gh api repos/atushi1841/kensho/commits/gh-pages --jq '.sha' => aad0b83ca7f6bf4a9bd01500706ced5144b40104"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/catalog-output/index.html",
+    "/mnt/d/Project2/kensho/reports/t_ec1cbe4f_verification.md"
+  ],
+  "evidence_hashes": [
+    "aad0b83ca7f6bf4a9bd01500706ced5144b40104"
+  ],
+  "outcome": {
+    "metric": "actor_count",
+    "before": 9,
+    "after": 85
+  }
+}
