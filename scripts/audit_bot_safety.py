@@ -267,6 +267,14 @@ def main() -> int:
                 continue
             if _jst.date().isoformat() != date_s:
                 continue
+            # ★ 2026-10-10: already_* は「既に実行済み」を検知しただけの無実行レコードで、
+            #   実際のアクションではない。日次レポート側(daily_pipeline_report, prop101)は
+            #   既に除外済みだが本監査は未除外だったため、TankanNotes 09時台が
+            #   「17件（実アクション15＋already_retweeted 2）」と誤計上し
+            #   BOTシグナルを偽発報していた（実測: 10/10 09時台, 上限15ちょうど）。
+            #   深夜・連続間隔・過フォロー等いずれの判定も「行動」ではないため除外が正しい。
+            if str(r.get("reason", "")).startswith("already_"):
+                continue
             rows.append((
                 ts,
                 _jst,  # JST対応 datetime（深夜/過集中判定に使う）

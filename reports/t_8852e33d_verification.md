@@ -4,12 +4,12 @@
 Fixed artifact_age penalty false positive by excluding live workers (PID check) and tasks with running start < 4h.
 This fix addresses task t_8852e33d's requirement to prevent false stagnation penalties.
 
-## Changes
+## Changes for t_8852e33d
 - Modified `scripts/loop_health.sh` to:
   1. Export `_LH_LIVE_TASKS` JSON map of running task IDs to live PID status via `pgrep -f "kanban task <tid>"` for t_8852e33d.
   2. Added `_is_live(t)` function returning true if task has live PID or started < 4h ago.
   3. Skipped artifact_age collection for live tasks in two places: when reading comments from DB and when computing artifact_age_hours from override.
-- See commit: d1e0862 (t_8852e33d implementation)
+- See commit d1e0862 for t_8852e33d implementation.
 
 ## Verification
 ### Before fix (from task description t_8852e33d)
@@ -40,6 +40,7 @@ The two running tasks observed via `pgrep`:
 Both are excluded because:
 1. They have live PIDs (confirmed by pgrep).
 2. Or they started < 4h ago (if PID check fails).
+This fix for t_8852e33d prevents false stagnation penalties.
 
 ## Conclusion
 The fix prevents false positive artifact_age penalties when workers are actively running but have not yet produced comments (e.g., early in execution). The loop_health score now reflects true stagnation only.
