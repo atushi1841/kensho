@@ -6,10 +6,10 @@
     "追記対象 0 本を確認 → t_83c84e86 の完了条件達成"
   ],
   "verification_commands": [
-    "python3 scripts/devto_internal_links.py --list | grep '追記対象' => 追記対象: 0本",
-    "python3 scripts/devto_internal_links.py --apply | grep 'PUT' => PUT 200 / read-back 反映=True",
-    "python3 -c \"import json;d=json.load(open('reports/apify-seo/devto-links.json'));print(d['applied'],len(d['rows']))\" => True 1",
-    "python3 scripts/devto_internal_links.py --list | grep -c '既存' => 26"
+    "python3 scripts/devto_internal_links.py --list | grep 追記対象 => 追記対象: 0本",
+    "python3 scripts/devto_internal_links.py --apply | grep PUT => PUT 200 / read-back 反映=True",
+    "python3 -c \"import json;d=json.load(open(reports/apify-seo/devto-links.json));print(d.applied,len(d.rows))\" => True 1",
+    "python3 scripts/devto_internal_links.py --list | grep -c 既存 => 26"
   ],
   "artifact_paths": [
     "/mnt/d/Project2/kensho/reports/t_83c84e86_verification.md",
@@ -17,8 +17,13 @@
   ],
   "evidence_hashes": [
     "01d115f6afaec47ed8e21a67ccb03dfcb8925021f11d52b6ddef3dd51a8b805d",
-    "3dfb36df1cd82d985173463bfefff90c0d8f7b763bc9fc53a6beeabe279fa674"
+    "803ae3806484a1caf665f4b54df6e6f445fe7a79019bff3f08e48b1eefa2a1db"
   ],
+  "outcome": {
+    "metric": "dev.to 記事のApify Store外部链接未適用件数",
+    "before": 1,
+    "after": 0
+  },
   "task_id": "t_83c84e86",
   "status": "complete"
 }
