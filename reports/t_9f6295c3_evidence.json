@@ -1,0 +1,25 @@
+{
+  "success_indicators": [
+    "dev.to article id=4829635 published via API",
+    "article URL returns HTTP 200 with full body",
+    "13 apify.com links embedded in article body",
+    "GitHub Pages catalog (85 actors) referenced from dev.to"
+  ],
+  "verification_commands": [
+    "$ curl -s https://dev.to/api/articles/4829635 | python3 -c \"import json,sys;d=json.load(sys.stdin);print('id:',d['id'],'title:',d['title'][:60],'url:',d['url'])\" => id: 4829635 title: 日本市場のデータ収集を1本に詰めた85個のApify Actor — カタログ公開と使い方 url: https://dev.to/atu_ino_ed473db24d76d234a/ri-ben-shi-chang-nodetashou-ji-wo1ben-nijie-meta85ge-noapify-actor-katarogugong-kai-toshi-ifang-157e",
+    "$ curl -s https://dev.to/atu_ino_ed473db24d76d234a/ri-ben-shi-chang-nodetashou-ji-wo1ben-nijie-meta85ge-noapify-actor-katarogugong-kai-toshi-ifang-157e | python3 -c \"import sys,re;t=sys.stdin.read();links=set(re.findall(r'apify\\.com/[^\\\"<> ]+',t));print('apify_links_in_article:',len(links))\" => apify_links_in_article: 13",
+    "$ curl -sI https://atushi1841.github.io/kensho/ | head -1 => HTTP/2 200",
+    "$ cat /mnt/d/Project2/apify-sales-funnel/blog/.published.json | python3 -c \"import json,sys;d=json.load(sys.stdin);print('total_published_articles:',len(d))\" => total_published_articles: 21"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_9f6295c3_verification.md",
+    "/mnt/d/Project2/kensho/reports/journalism/drafts/devto-apify-catalog-2026.md",
+    "/mnt/d/Project2/apify-sales-funnel/blog/.published.json"
+  ],
+  "evidence_hashes": [
+    "9d11c5de1070dbf76e19295d5322af336e56215881a7e47d3b68a2e2b8371f0f",
+    "4ae31eb8c09d0a8f86f69c85bb428dc6b4ecd59ae42da14a84d9361f1972ccb9"
+  ],
+  "task_id": "t_9f6295c3",
+  "status": "complete"
+}
