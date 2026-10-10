@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.atushi1841/japan-property-hazard-mcp",
-  "description": "Japan property hazard risk MCP - MLIT real estate library API (BYOK) flood/landslide/tsunami/liquefaction risk",
+  "description": "Japan property hazard risk MCP - MLIT real estate library API (BYOK) flood/landslide/tsunami/liqu...",
   "repository": {
     "url": "https://github.com/atushi1841/japan-property-hazard-mcp",
     "source": "github",
-    "subfolder": "mcp_metadata/"
+    "subfolder": "mcp_metadata/japan-property-hazard-mcp"
   },
   "version": "0.1.0",
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "@atushi1841/",
+      "identifier": "@atushi1841/japan-property-hazard-mcp",
       "version": "0.1.0",
       "transport": {
         "type": "stdio"

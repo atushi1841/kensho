@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.atushi1841/kensho-sweep-mcp",
-  "description": "Read-only Japan X/Twitter sweepstakes campaign data (1133 observations). 3 tools: current sweep, sweep history, top prize movers.",
+  "description": "Read-only Japan X/Twitter sweepstakes campaign data (1133 observations). 3 tools: current sweep, ...",
   "repository": {
     "url": "https://github.com/atushi1841/kensho-sweep-mcp",
     "source": "github",
-    "subfolder": "mcp_metadata/"
+    "subfolder": "mcp_metadata/kensho-sweep-mcp"
   },
   "version": "1.0.0",
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "@atushi1841/",
+      "identifier": "@atushi1841/kensho-sweep-mcp",
       "version": "1.0.0",
       "transport": {
         "type": "stdio"

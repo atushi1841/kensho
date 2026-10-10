@@ -5,13 +5,13 @@
   "repository": {
     "url": "https://github.com/atushi1841/kensho-kaku",
     "source": "github",
-    "subfolder": "mcp_metadata/"
+    "subfolder": "mcp_metadata/kensho-kaku"
   },
   "version": "1.0.0",
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "@atushi1841/",
+      "identifier": "@atushi1841/kensho-kaku",
       "version": "1.0.0",
       "transport": {
         "type": "stdio"

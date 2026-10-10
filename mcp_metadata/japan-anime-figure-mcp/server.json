@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.atushi1841/japan-anime-figure-mcp",
-  "description": "Read-only MCP server exposing Japanese anime figure price comparison data (MyFigureList). 3 tools: current price, price history, lowest price search.",
+  "description": "Read-only MCP server exposing Japanese anime figure price comparison data (MyFigureList). 3 tools...",
   "repository": {
     "url": "https://github.com/atushi1841/japan-anime-figure-mcp",
     "source": "github",
-    "subfolder": "mcp_metadata/"
+    "subfolder": "mcp_metadata/japan-anime-figure-mcp"
   },
   "version": "1.0.0",
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "@atushi1841/",
+      "identifier": "@atushi1841/japan-anime-figure-mcp",
       "version": "1.0.0",
       "transport": {
         "type": "stdio"
