@@ -10,7 +10,7 @@
   "verification_commands": [
     "$ curl -s 'https://api.apify.com/v2/actors?token=$APIFY_TOKEN&limit=100' | python3 -c \"import json,sys; d=json.load(sys.stdin); print(len(d['data']['items']))\" => 66",
     "$ curl -s https://atushi1841.github.io/kensho/ | head -20 => HTTP 200",
-    "$ git log --oneline gh-pages -3 => 6c92b85 t_7cc77b87: consolidate catalog"
+    "$ git log --oneline gh-pages -3 => 69dd644 t_7cc77b87: fix evidence JSON"
   ],
   "artifact_paths": [
     "/mnt/d/Project2/kensho/catalog-output/apify-catalog.json",
