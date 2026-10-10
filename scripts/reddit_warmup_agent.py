@@ -1001,6 +1001,19 @@ def _ensure_cdp() -> bool:
     _, code = _ps_run(f"curl.exe -s -o NUL -w '%{{http_code}}' http://127.0.0.1:{CDP_PORT}/json/version", 20)
     if code.endswith("200"):
         return True
+    # ★ 2026-10-10 (恒久停止の再発防止):
+    #   同じ --user-data-dir の Chrome が debug port 無しで既に走っていると、
+    #   Start-Process は「既存インスタンスへのハンドオフ」になり、新規プロセスは
+    #   起動するが **debug port は永久に開かない**。08:31 にこれで warmup が
+    #   stop flag を立てて恒久停止した（再起動でなく Chrome 再起動でしか復旧不能）。
+    #   → 先に reddit-cdp プロファイル使用中の chrome のみを終了させてから起動する。
+    _ps_run(
+        "Get-CimInstance Win32_Process -Filter \"Name='chrome.exe'\" | "
+        "Where-Object { $_.CommandLine -like '*reddit-cdp*' } | "
+        "ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }",
+        40,
+    )
+    time.sleep(2)
     _ps_run(
         f"Start-Process 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' -ArgumentList "
         f"'--remote-debugging-port={CDP_PORT}','--user-data-dir={CDP_PROFILE}',"
