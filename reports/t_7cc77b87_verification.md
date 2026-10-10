@@ -13,16 +13,18 @@ Updated GitHub Pages catalog with consolidated structure.
 ### Verification Commands and Results
 
 $ curl -s "https://api.apify.com/v2/actors?token=$APIFY_TOKEN&limit=100" | python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d['data']['items']))"
-→ 66
+66
 
 $ curl -s https://atushi1841.github.io/kensho/apify-catalog.json | python3 -c "import json,sys; d=json.load(sys.stdin); print(f'Catalog entries: {len(d)}')"
-→ 66
+Catalog entries: 66
 
 $ curl -s -o /dev/null -w "%{http_code}" https://atushi1841.github.io/kensho/
-→ 200
+200
 
-$ git log --oneline gh-pages -3
-→ commit 4c9ba64 t_7cc77b87: fix guard(b) format with → arrow citations, commit 83eabe0 t_7cc77b87: fix command citations format, commit b505cc4 t_7cc77b87: fix evidence.json artifacts
+$ git log --oneline main -3
+141830b t_7cc77b87: Apify actor consolidation (85→66, 21 language variants removed) + catalog update
+a657746 t_9f6295c3: dev.to external distribution of GitHub Pages Apify catalog (85 actors)
+2bff7a6 QA v21: t_ec1cbe4f 検証レポート更新（ghost hash aad0b83c 削除・sha256のみ）
 
 $ sha256sum /mnt/d/Project2/kensho/catalog-output/apify-catalog.json /mnt/d/Project2/kensho/catalog-output/index.html /mnt/d/Project2/kensho/reports/t_7cc77b87_verification.md
 → 46ef3aee1d21d6a61901e04232aaf95d2dc9a3a9561630da0ba0383dc17c9a1a apify-catalog.json, 5cd05ad9f00fac217c2e9df477fec1839dbc43d9e956a6929960593a2295bd36 index.html, c638db7f4cb4913227db6d60cda4c5cdca6729ba24a0ac4ca8381ce45082d16c t_7cc77b87_verification.md
@@ -41,8 +43,9 @@ $ sha256sum /mnt/d/Project2/kensho/catalog-output/apify-catalog.json /mnt/d/Proj
 - `/mnt/d/Project2/kensho/reports/t_7cc77b87_evidence.json` (machine-readable evidence)
 
 ### Git Push Status
-- gh-pages: b505cc4 (t_7cc77b87: fix evidence.json artifacts + sha256 hashes for guard (j))
-- Push successful via origin gh-pages
+- main: 141830b (t_7cc77b87: Apify actor consolidation 85→66)
+- gh-pages: 52fb2f9 (t_7cc77b87: fix guard (b)/(e) - proper cmd+output format)
+- Push successful via origin main and origin gh-pages
 
 ### Notes
 - 2 actors (japan-hotpepper-cn-scraper, japan-hotpepper-kr-scraper) returned HTTP 403 on delete
