@@ -1,0 +1,12 @@
+{
+  "name": "io.github.atushi1841/japan-market-data",
+  "description": "Japan market data collection: Apify Actors, MCP servers and scrapers (Apify Store: https://apify.com/fruitful_quintessence)",
+  "url": "https://github.com/atushi1841/japan-market-data",
+  "author": "atushi1841",
+  "version": "0.1.0",
+  "modelcontextprotocol": {
+    "schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+    "transport": "stdio",
+    "run": "see README.md"
+  }
+}

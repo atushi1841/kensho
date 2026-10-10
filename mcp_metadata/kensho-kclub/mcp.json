@@ -1,0 +1,12 @@
+{
+  "name": "io.github.atushi1841/kensho-kclub",
+  "description": "Japan X/Twitter sweepstakes data from kenshou.club (read-only, bundled dataset).",
+  "url": "https://github.com/atushi1841/kensho-kclub",
+  "author": "atushi1841",
+  "version": "1.0.0",
+  "modelcontextprotocol": {
+    "schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+    "transport": "stdio",
+    "server_json": "https://raw.githubusercontent.com/atushi1841/kensho-kclub/main/server.json"
+  }
+}
