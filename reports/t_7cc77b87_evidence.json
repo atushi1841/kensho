@@ -10,7 +10,8 @@
   "verification_commands": [
     "$ curl -s 'https://api.apify.com/v2/actors?token=$APIFY_TOKEN&limit=100' | python3 -c \"import json,sys; d=json.load(sys.stdin); print(len(d['data']['items']))\" => 66",
     "$ curl -s https://atushi1841.github.io/kensho/apify-catalog.json | python3 -c \"import json,sys; d=json.load(sys.stdin); print(f'Catalog entries: {len(d)}')\" => 66",
-    "$ curl -s -o /dev/null -w '%{http_code}' https://atushi1841.github.io/kensho/ => 200"
+    "$ curl -s -o /dev/null -w '%{http_code}' https://atushi1841.github.io/kensho/ => 200",
+    "$ git log --oneline main -3 => 141830b t_7cc77b87: Apify actor consolidation"
   ],
   "artifact_paths": [
     "/mnt/d/Project2/kensho/catalog-output/apify-catalog.json",
