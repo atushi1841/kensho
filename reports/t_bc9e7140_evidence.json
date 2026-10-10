@@ -1,0 +1,28 @@
+{
+  "task_id": "t_bc9e7140",
+  "status": "complete",
+  "success_indicators": [
+    "MCP Registry atushi1841 servers: 11 -> 14 (+3)",
+    "japan-jepx-mcp v0.1.0 published",
+    "japan-market-data v0.1.0 published",
+    "japan-property-hazard-mcp v0.1.0 published"
+  ],
+  "verification_commands": [
+    "$ curl -s https://registry.modelcontextprotocol.io/v0.1/servers?search=atushi1841 | python3 -c \"import json,sys; d=json.load(sys.stdin); print(len(d.get('servers',[])))\" => 14",
+    "$ grep -c '\"name\"' mcp_metadata/*/server.json => 14",
+    "$ gh repo list atushi1841 --limit 200 | grep -cE '\bmcp\b' => 61"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_bc9e7140_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_bc9e7140_evidence.json"
+  ],
+  "evidence_hashes": [
+    "7d399e0c8648b6e377a288d16d58c2c45bf1c3e9ae61634fc3193df34485e4f3",
+    "f6f4a562dbd2275cb86a5fe700f45e07d918e70bdf41e8af85b36d36027dc0e5"
+  ],
+  "outcome": {
+    "metric": "MCP Registry atushi1841 servers",
+    "before": 11,
+    "after": 14
+  }
+}
