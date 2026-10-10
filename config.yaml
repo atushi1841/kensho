@@ -46,7 +46,7 @@ accounts:
   schedule:
     batches:
     - max: 7
-      time: '09:50'
+      time: 09:50
     - max: 7
       time: '11:10'
     - max: 7
