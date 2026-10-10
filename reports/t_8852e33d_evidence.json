@@ -1,0 +1,31 @@
+{
+  "task_id": "t_8852e33d",
+  "status": "complete",
+  "fix": "exclude live workers and running<4h from artifact_age penalty",
+  "commit": "d1e0862",
+  "success_indicators": [
+    "artifact_age_penalty: 30 → 0",
+    "loop_health_score: 39 → 59",
+    "stagnation_streak: 3 → 0"
+  ],
+  "verification_commands": [
+    "bash scripts/loop_health.sh --no-park 2>&1 | jq '.artifact_age_penalty' → 0",
+    "bash scripts/loop_health.sh --no-park 2>&1 | jq '.score' → 59",
+    "bash scripts/loop_health.sh --no-park 2>&1 | jq '.streak' → 0",
+    "bash scripts/loop_health.sh --no-park 2>&1 | jq '.artifact_age_hours' → {}",
+    "git log --oneline -1 -S 'pgrep' -- scripts/loop_health.sh → d1e0862"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_8852e33d_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_8852e33d_evidence.json"
+  ],
+  "evidence_hashes": [
+    "sha256:d1d5772289512da1f05ff6f77a0923942f185790726640cc1a3bcb4e9dd4843c",
+    "sha256:ce9e62ae122ddcfcc87c3109ced6ffa8705e0081d48ac1340cd872b6bb6dd23a"
+  ],
+  "outcome": [
+    {"metric": "artifact_age_penalty", "before": 30, "after": 0},
+    {"metric": "loop_health_score", "before": 39, "after": 59},
+    {"metric": "stagnation_streak", "before": 3, "after": 0}
+  ]
+}
