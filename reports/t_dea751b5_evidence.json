@@ -6,20 +6,19 @@
     "Critic redefinition: JSON-LD Count method is the correct verification"
   ],
   "verification_commands": [
-    "python3 verify_glama.py => Extracted 5 slugs, all HTTP 200",
-    "curl nonexistent-slug-xyz-12345 => 200 (proves HTTP 200 is invalid check)",
-    "curl totally-fake-mcp-00001 => 200 (same)"
+    "python3 -c \"import urllib.request,re; html=urllib.request.urlopen('https://glama.ai/mcp/servers?query=author%3Aatushi1841',timeout=15).read().decode(); items=re.findall(r'\\\"url\\\":\\\"(https://glama\\.ai/mcp/servers/[^\\\"]+)\\\"', html); print(f'JSON-LD unique: {len(set(items))}')\" => JSON-LD unique: 5",
+    "curl -s -o /dev/null -w '%{http_code}' https://glama.ai/mcp/servers/atushi1841/nonexistent-slug-xyz-12345 => 200 (proves HTTP 200 is invalid check)",
+    "curl -s -o /dev/null -w '%{http_code}' https://glama.ai/mcp/servers/atushi1841/totally-fake-mcp-00001 => 200 (same)"
   ],
   "artifact_paths": [
-    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_cdb54a4f/reports/t_dea751b5_v14.md",
-    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_cdb54a4f/reports/t_dea751b5_evidence_v14.json",
     "/mnt/d/Project2/kensho/reports/t_dea751b5_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_dea751b5_v14.md",
     "/mnt/d/Project2/kensho/reports/t_dea751b5_evidence.json"
   ],
   "evidence_hashes": [
-    "sha256:02d9e7a8910f117c02e13e462735339bb88b806eb62e9f72829457685ab6415f",
-    "sha256:2e57e8fed73175e52efc01c233f5ed4d7c83d637a5ef714af62d7e03267f1e0f",
-    "sha256:633fc4f100fab20fbb65bc3dfb432dd8dde820cf42798856703991e2fb3cf601"
+    "3b33fce1ad11864bad13ef08d06403b5963c0ef44ed557f0ed8ca3be52355f86",
+    "23e2df25d012045d04c0565c5d29c36415c202c9ff66e1d6d2f81a2873559f8e",
+    "7acede93a1d428fffdaeca716dfc913043a1f62105ad9ed5ddab2569127541f7"
   ],
   "task_id": "t_dea751b5",
   "status": "incomplete_verified",
