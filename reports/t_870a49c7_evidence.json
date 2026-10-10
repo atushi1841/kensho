@@ -1,0 +1,27 @@
+{
+  "success_indicators": [
+    "mcp.json read-back TOTAL_OK=10/10 (gh api contents/mcp.json, required fields asserted per repo)",
+    "10 GitHub commit hashes recorded in reports/t_870a49c7_metadata_added.log",
+    "kensho repo verification report pushed: commit 19a6d27"
+  ],
+  "verification_commands": [
+    "$ gh api \"repos/atushi1841/kensho-kaku/contents/mcp.json\" --jq .content | base64 -d => name io.github.atushi1841/kensho-kaku",
+    "$ CNT=0; for r in <10 repos>; do gh api repos/atushi1841/$r/contents/mcp.json ... assert fields; done; echo TOTAL_OK => TOTAL_OK=10/10",
+    "$ gh api repos/atushi1841/japan-ec-mcp/contents/mcp.json --jq .content | base64 -d | python3 assert => japan-ec-mcp OK"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_870a49c7_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_870a49c7_metadata_added.log"
+  ],
+  "evidence_hashes": [
+    "edef0e6c5f6ba75a06214aa33ead6ffa9a474fa3e28152df802627d56a8f49b3",
+    "f3ae89b9981a84f0d0550f1e00387e3c57b1c6bbf01057fa4952c65a315b9bbf"
+  ],
+  "outcome": {
+    "metric": "repos_with_mcp_json",
+    "before": 0,
+    "after": 10
+  },
+  "task_id": "t_870a49c7",
+  "status": "complete"
+}
