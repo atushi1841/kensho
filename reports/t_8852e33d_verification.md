@@ -45,7 +45,7 @@ This fix for t_8852e33d prevents false stagnation penalties.
 ## Conclusion
 The fix prevents false positive artifact_age penalties when workers are actively running but have not yet produced comments (e.g., early in execution). The loop_health score now reflects true stagnation only.
 
-## verification_evidence: task t_8852e33d fix
+## verification_evidence
 
 ### Command Citations
 ```bash
