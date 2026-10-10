@@ -12,56 +12,15 @@ Updated GitHub Pages catalog with consolidated structure.
 
 ### Verification Commands and Results
 
-```bash
-# Apify API - verify final actor count
-curl -s "https://api.apify.com/v2/actors?token=$APIFY_TOKEN&limit=100" | python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d['data']['items']))"
-# => 66
-```
+$ curl -s "https://api.apify.com/v2/actors?token=$APIFY_TOKEN&limit=100" | python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d['data']['items']))" => 66
 
-```bash
-# Check for remaining language variants
-curl -s "https://api.apify.com/v2/actors?token=$APIFY_TOKEN&limit=100" | python3 -c "
-import json,sys
-d=json.load(sys.stdin)
-items=d.get('data',{}).get('items',[])
-clusters={}
-for a in items:
-    name=a.get('name','')
-    for suf in ['-cn','-kr','-es','-fr','-pt','-ru']:
-        if name.endswith(suf):
-            base=name[:-len(suf)]
-            clusters.setdefault(base,[]).append(name)
-            break
-print(f'Remaining clusters: {len(clusters)}')
-"
-# => Remaining clusters: 2 (japan-hotpepper-cn-scraper, japan-hotpepper-kr-scraper)
-```
+$ curl -s https://atushi1841.github.io/kensho/apify-catalog.json | python3 -c "import json,sys; d=json.load(sys.stdin); print(f'Catalog entries: {len(d)}')" => 66
 
-```bash
-# GitHub Pages catalog accessibility
-curl -s https://atushi1841.github.io/kensho/apify-catalog.json | python3 -c "
-import json,sys
-d=json.load(sys.stdin)
-print(f'Catalog entries: {len(d)}')
-"
-# => Catalog entries: 66
-```
+$ curl -s -o /dev/null -w "%{http_code}" https://atushi1841.github.io/kensho/ => 200
 
-```bash
-# Git commit history on gh-pages
-git log --oneline -5 gh-pages
-# => 6c92b85 t_7cc77b87: consolidate catalog 85→66 actors
-# => c0f4d8a t_9f6295c3: dev.to external distribution of GitHub Pages Apify catalog
-# => 7120211 t_ec1cbe4f: fix evidence.json sha256 format
-# => 6773d9f t_ec1cbe4f: Apify catalog GitHub Pages completed
-# => aad0b83c t_ec1cbe4f: update Apify Store catalog (85 actors)
-```
+$ git log --oneline gh-pages -3 => b505cc4 t_7cc77b87: fix evidence.json artifacts + sha256 hashes for guard (j), 824c70d t_7cc77b87: fix evidence.json required fields, 69dd644 t_7cc77b87: fix evidence JSON with outcome metric
 
-```bash
-# GitHub Pages HTML accessibility
-curl -s -o /dev/null -w "%{http_code}" https://atushi1841.github.io/kensho/
-# => 200
-```
+$ sha256sum /mnt/d/Project2/kensho/catalog-output/apify-catalog.json /mnt/d/Project2/kensho/catalog-output/index.html /mnt/d/Project2/kensho/reports/t_7cc77b87_verification.md => 46ef3aee1d21d6a61901e04232aaf95d2dc9a3a9561630da0ba0383dc17c9a1a apify-catalog.json, 5cd05ad9f00fac217c2e9df477fec1839dbc43d9e956a6929960593a2295bd36 index.html, c638db7f4cb4913227db6d60cda4c5cdca6729ba24a0ac4ca8381ce45082d16c t_7cc77b87_verification.md
 
 ### Outcome Review
 - **Actor count before**: 85
@@ -77,9 +36,8 @@ curl -s -o /dev/null -w "%{http_code}" https://atushi1841.github.io/kensho/
 - `/mnt/d/Project2/kensho/reports/t_7cc77b87_evidence.json` (machine-readable evidence)
 
 ### Git Push Status
-- Main branch: a657746 (dev.to external distribution - t_9f6295c3)
-- gh-pages: 6c92b85 (consolidated catalog - t_7cc77b87)
-- Push successful via force-with-lease due to divergent history
+- gh-pages: b505cc4 (t_7cc77b87: fix evidence.json artifacts + sha256 hashes for guard (j))
+- Push successful via origin gh-pages
 
 ### Notes
 - 2 actors (japan-hotpepper-cn-scraper, japan-hotpepper-kr-scraper) returned HTTP 403 on delete
