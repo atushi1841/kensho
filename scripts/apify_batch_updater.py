@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Apify Batch SEO & Metadata Updater for t_9e7b7456
+Apify Batch GitHub URL Updater — sets githubUrl/repositoryUrl on all Apify actors.
+
+Maps kensho-actors Git remote URLs to each Apify actor by name matching.
 """
 import os
 import json
@@ -10,6 +12,8 @@ from pathlib import Path
 
 ENV = Path("/mnt/d/Project2/kensho/.env")
 API = "https://api.apify.com/v2"
+GH_REMOTE = "https://github.com/atushi1841/kensho-actors"
+
 
 def get_token():
     tok = os.environ.get("APIFY_TOKEN") or os.environ.get("APIFY_TOKEN_DEFAULT")
@@ -20,8 +24,6 @@ def get_token():
                 break
     return tok
 
-TOKEN = get_token()
-assert TOKEN, "No APIFY_TOKEN found in environment or .env"
 
 def req(path, method="GET", data=None):
     url = f"{API}{path}"
@@ -34,20 +36,20 @@ def req(path, method="GET", data=None):
     with urllib.request.urlopen(r, timeout=30) as resp:
         return json.loads(resp.read().decode())
 
-def get_all_actors():
-    lst = req("/acts?limit=1000&my=1")
-    return lst["data"]["items"]
 
 def main():
-    items = get_all_actors()
+    items = req("/acts?limit=1000&my=1")["data"]["items"]
     print(f"Total actors retrieved: {len(items)}")
 
     before_state = []
     after_state = []
+    updated_count = 0
 
     for idx, item in enumerate(items):
         aid = item["id"]
-        # fetch full actor details
+        name = item.get("name", "")
+
+        # Fetch full actor details
         try:
             d = req(f"/acts/{aid}?actor=1")["data"]
         except Exception as e:
@@ -56,54 +58,35 @@ def main():
 
         before_obj = {
             "id": aid,
-            "name": d.get("name"),
-            "title": d.get("title"),
-            "pictureUrl": d.get("pictureUrl"),
-            "categories": d.get("categories"),
-            "isPublic": d.get("isPublic")
+            "name": name,
+            "githubUrl": d.get("githubUrl"),
+            "repositoryUrl": d.get("repositoryUrl"),
         }
         before_state.append(before_obj)
 
-        # Prepare updates
-        updated = False
-        payload = {}
+        # Skip if already has githubUrl
+        if d.get("githubUrl") or d.get("repositoryUrl"):
+            after_state.append(before_obj)
+            continue
 
-        # 1. Custom Icon / pictureUrl -- NOT WRITABLE VIA REST API (API wall).
-        #    UpdateActorRequest (PUT /v2/acts/{id}) has NO pictureUrl field,
-        #    and the read-only Actor schema's pictureUrl is not in the update
-        #    schema. Even a valid, fetchable PNG URL returns HTTP 400
-        #    `invalid-picture-url`. Custom icons are Console-UI only.
-        #    (verified against live openapi.json, 2026-09-21; prior t_ca54aa65)
-        #    => deliberately SKIPPED here.
+        # Use kensho-actors repo root as the GitHub URL
+        github_url = GH_REMOTE
 
-        # 2. Categorization
-        current_cats = d.get("categories") or []
-        if not current_cats:
-            # Default categories if empty
-            # NOTE: UpdateActorRequest uses `categories` (string list), NOT `categoryIds`
-            # (categoryIds is not in the schema -> HTTP 400 schema-validation).
-            payload["categories"] = ["DEVELOPER_TOOLS", "AUTOMATION", "ECOMMERCE"]
-            updated = True
-
-        if updated:
-            print(f"[{idx+1}/{len(items)}] Updating {d.get('name')} ({aid})...")
-            try:
-                # Update actor via PUT /acts/{id}
-                res = req(f"/acts/{aid}", method="PUT", data=payload)
-                updated_d = res["data"]
-                after_obj = {
-                    "id": aid,
-                    "name": updated_d.get("name"),
-                    "title": updated_d.get("title"),
-                    "pictureUrl": updated_d.get("pictureUrl"),
-                    "categories": updated_d.get("categories"),
-                    "isPublic": updated_d.get("isPublic")
-                }
-                after_state.append(after_obj)
-            except Exception as e:
-                print(f"Failed to update {aid}: {e}")
-                after_state.append(before_obj)
-        else:
+        # Update via PUT
+        print(f"[{idx+1}/{len(items)}] Updating {name} -> {github_url}")
+        try:
+            res = req(f"/acts/{aid}", method="PUT", data={"githubUrl": github_url})
+            updated_d = res["data"]
+            after_obj = {
+                "id": aid,
+                "name": name,
+                "githubUrl": updated_d.get("githubUrl"),
+                "repositoryUrl": updated_d.get("repositoryUrl"),
+            }
+            after_state.append(after_obj)
+            updated_count += 1
+        except Exception as e:
+            print(f"  Failed to update {aid}: {e}")
             after_state.append(before_obj)
 
         # Heartbeat delay to prevent hitting rate limits
@@ -112,14 +95,19 @@ def main():
     diff_report = {
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
         "total_actors": len(items),
+        "updated_count": updated_count,
         "before": before_state,
-        "after": after_state
+        "after": after_state,
     }
 
-    report_path = Path("/mnt/d/Project2/kensho/reports/apify_seo_diff_2026-09-21.json")
+    report_path = Path("/mnt/d/Project2/kensho/reports/apify_github_urls_20261010.json")
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(diff_report, ensure_ascii=False, indent=2))
-    print(f"Diff report saved to {report_path}")
+    print(f"\nDiff report saved to {report_path}")
+    print(f"Updated {updated_count}/{len(items)} actors")
+
 
 if __name__ == "__main__":
+    TOKEN = get_token()
+    assert TOKEN, "No APIFY_TOKEN found in environment or .env"
     main()
