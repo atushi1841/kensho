@@ -18,6 +18,11 @@
     "/mnt/d/Project2/kensho/reports/t_7cc77b87_verification.md"
   ],
   "evidence_hashes": [
-    "sha256:6c92b858a1b2c3d4e5f6789012345678abcdef0123456789abcdef0123456789ab"
-  ]
+    "sha256:70baf5d4753b2020659c9664bc2a219f201b3cd9fa0ea8655b1739528bf9de1a"
+  ],
+  "outcome": {
+    "metric": "actor_count",
+    "before": 85,
+    "after": 66
+  }
 }

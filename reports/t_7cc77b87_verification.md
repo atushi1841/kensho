@@ -73,8 +73,8 @@ curl -s -o /dev/null -w "%{http_code}" https://atushi1841.github.io/kensho/
 ### Files Modified
 - `/mnt/d/Project2/kensho/catalog-output/apify-catalog.json` (new: 66 entries)
 - `/mnt/d/Project2/kensho/catalog-output/index.html` (regenerated)
-- `/mnt/d/Project2/kensho/index.html` (gh-pages: updated with consolidated catalog)
-- `/mnt/d/Project2/kensho/apify-catalog.json` (gh-pages: updated)
+- `/mnt/d/Project2/kensho/reports/t_7cc77b87_verification.md` (this file)
+- `/mnt/d/Project2/kensho/reports/t_7cc77b87_evidence.json` (machine-readable evidence)
 
 ### Git Push Status
 - Main branch: a657746 (dev.to external distribution - t_9f6295c3)
