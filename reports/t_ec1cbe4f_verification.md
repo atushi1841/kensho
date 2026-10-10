@@ -1,4 +1,4 @@
-# t_ec1cbe4f: Apify StoreカタログGitHub Pages公開完了（QA検証 v1）
+# t_ec1cbe4f: Apify StoreカタログGitHub Pages公開完了（QA検証 v4）
 
 ## verification_evidence
 
@@ -9,7 +9,7 @@
 - **GitHub Pagesソース確認**: `gh api repos/atushi1841/kensho/pages | python3 -c "import json,sys; d=json.load(sys.stdin); print('source branch:', d['source']['branch'])"` → `source branch: gh-pages` ✅
 - **gh-pagesブランチ内容確認**: `gh api repos/atushi1841/kensho/contents/index.html?ref=gh-pages | python3 -c "import json,sys,base64; d=json.load(sys.stdin); c=base64.b64decode(d['content']).decode(); print('apify.com count:', c.count('apify.com'))"` → `apify.com count: 85` ✅
 - **ローカルカタログ確認**: `grep -oP '"url": "https://apify\.com/[^"]+"' /mnt/d/Project2/kensho/catalog-output/index.html | wc -l` → `85` ✅
-- **evidence.json修正**: `evidence_hashes` に sha256 ハッシュを追加（旧: git commit SHA → 新: ファイル sha256）→ guard j PASS ✅
+- **evidence.json修正**: `evidence_hashes` に sha256 ファイルハッシュを追加 → guard j PASS ✅
 
 ### 3軸評価
 
@@ -27,7 +27,7 @@
 | BOT検出リスク | 10 | API呼び出しのみ（アクションなし） |
 | 設計一貫性 | 9 | 既存Apify API + GitHub Pagesブランチ継承 |
 | テスト充足 | 9 | 85 actors 実測（curl+gh api 独立検証） |
-| ライブ計測 | 9 | https://atushi1841.github.io/kensho/ HTTP 200 実測 |
+| ライブ計測 | 9 | https://atushi1841.github.io/kensho/ HTTP 200 実測
 
 ### 実測コマンド（6組）
 
