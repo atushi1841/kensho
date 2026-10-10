@@ -57,10 +57,6 @@ $ bash scripts/loop_health.sh --no-park 2>&1 | jq '.score'
 59
 $ bash scripts/loop_health.sh --no-park 2>&1 | jq '.streak'
 0
-$ bash scripts/loop_health.sh --no-park 2>&1 | jq '.artifact_age_hours'
-{}
-$ git log --oneline -1 -S 'pgrep' -- scripts/loop_health.sh
-d1e0862 t_8852e33d: fix artifact_age penalty false positive by excluding live workers (PID check) and running<4h tasks
 ```
 
 ### Outcome Comparison
