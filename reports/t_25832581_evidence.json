@@ -30,7 +30,9 @@
     "/mnt/d/Project2/kensho/reports/t_25832581_verification.md",
     "/mnt/d/Project2/kensho/reports/glama-registration-structural-impossibility-2026-10-10.md"
   ],
-  "evidence_hashes": [],
+  "evidence_hashes": [
+    "sha256:0c31523d4956e6037e4a98ea2fa5d700a48752493c5bb92b4076dc5f6ecd77af"
+  ],
   "outcome": {
     "metric": "glama_registered_count",
     "before": 0,
