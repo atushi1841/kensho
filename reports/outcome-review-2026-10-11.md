@@ -4,10 +4,12 @@
 
 ### 事後効果測定（Outcome Review / 過去7日 done）
 - KPI方向性ルール: 各 before→after の末尾に `(方向: up/down/equal)` を明記する。 この語は数値の上下のみを表し、良悪は指標の意味に依存する（例: 失敗回数・試行回数・所要秒数の down は改善 / 未pushコミット残数の up は悪化）。
-- 対象: done=177件（2026-10-04以降）/ 数値KPIあり=46件
-- 実測確認: あり=40件 / 未実測=6件 / KPI非該当=131件
+- 対象: done=178件（2026-10-04以降）/ 数値KPIあり=46件
+- 実測確認: あり=40件 / 未実測=6件 / KPI非該当=132件
 - 実測確認率: 87.0%（目標>50%） → 達成
 - 実測済みタスク:
+  - `t_ec1cbe4f` actor_count 9→85 (方向: up)
+  - `t_83c84e86` dev.to 記事のApify Store外部链接未適用件数 1→0 (方向: down)
   - `t_680be7c9` Qiita apify.com links with utm_source=qiita 0→4 (方向: up)
   - `t_bc9e7140` MCP Registry atushi1841 servers 11→14 (方向: up)
   - `t_25832581` glama_registered_count 0→5 (方向: up)
@@ -16,13 +18,12 @@
   - `t_957e7220` dev.to公開一覧の重複タイトルグループ数 13→0 (方向: down)
   - `t_81919d6f` dev.to MCP紹介記事公開数 0→1 (方向: up)
   - `t_974844f8` card_templates_created_with_completion_criteria 0.005→1.0 (方向: up)
-  - `t_c42a9eb6` external_runs_triggered 0→0 (方向: equal)
-  - `t_f02878ee` apify_store_badges_added 0→8 (方向: up)
 - ⚠️ after<before: 33件（悪化疑い 2件 / 方向未宣言 31件）
 - 悪化疑いの詳細:
   - `t_d28cf2a8` HF Space public count 0→2 (方向: up)
   - `t_2d49610b` README apify.com link count 4→14 (方向: up)
 - 方向未宣言の詳細:
+  - `t_ec1cbe4f` actor_count 9→85 (方向未宣言)
   - `t_680be7c9` Qiita apify.com links with utm_source=qiita 0→4 (方向未宣言)
   - `t_bc9e7140` MCP Registry atushi1841 servers 11→14 (方向未宣言)
   - `t_25832581` glama_registered_count 0→5 (方向未宣言)
@@ -33,7 +34,6 @@
   - `t_81919d6f` dev.to MCP紹介記事公開数 0→1 (方向未宣言)
   - `t_974844f8` card_templates_created_with_completion_criteria 0.005→1.0 (方向未宣言)
   - `t_c42a9eb6` external_runs_triggered 0→0 (方向未宣言)
-  - `t_f02878ee` apify_store_badges_added 0→8 (方向未宣言)
 - 未実測タスク（before/after の数値を追記してクローズすること）:
   - `t_d1df914c` 懸賞応募の有効性検証＋当選トラッキング台帳の整備（当選0の切り分け）（kensho-worker）
   - `t_7658589a` dev.to週次SEO投稿にApify PPEアクターへの外部リンクを追加し外部流入を促進（kensho-revenue-worker）

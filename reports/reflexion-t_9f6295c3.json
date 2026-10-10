@@ -1,0 +1,25 @@
+{
+  "self_review": {
+    "what_was_done": "t_9f6295c3: GitHub Pages Apify Storeカタログ（85 actors）を参照するdev.to記事を公開。apify.com link 13本埋め込みで外部流入チャネル構築。guard PASS(all conditions)、git push a657746済み。",
+    "what_went_well": [
+      "dev.to API経由で記事公開（id=4829635）完了",
+      "apify.com link 13本を記事本文に埋め込み、外部流入チャネルを構築",
+      "kanban done guard all conditions PASS（a/b/c/d/e/f/g/j/k/l）",
+      "git push origin main a657746 でpush済み",
+      ".published.json に記事情報を記録（累計21本）"
+    ],
+    "what_could_improve": [
+      "dev.to APIのpublishedフィールドがNoneを返す（API側の挙動）。代わりにcurlで記事URLにアクセスして内容を確認する必要がある",
+      "kanban_done_guard.py の実行が120秒程度かかった（WSL環境の遅延要因）",
+      "同一タスクの進捗チェックポイントをkanban commentに記録する手順を強化すべき"
+    ],
+    "mistakes_or_risks": [
+      "dev.to APIのpublished:true PUTでpublishedフィールドがNoneを返す問題 → curlで代替検証済みのためリスクなし",
+      "git status timeoutはWSL環境の特性（通常動作）→ 90秒timeoutで対処済み",
+      "done guardのevidence_hashes sha256形式は前回t_ec1cbe4fで修正済み→今回は正常動作"
+    ],
+    "learned": "dev.to API PUTはpublished:trueを指定してもNoneを返す。記事の公開状態確認はcurlで記事URLにアクセスしてcontentが表示されることで代替検証する。kanban_done_guard.pyはWSL環境で最大120秒かかることがあるのでtimeout余裕を持って設定すること。",
+    "confidence": 9,
+    "verification_evidence": "guard PASS(all conditions) / git push a657746 / dev.to article id=4829635 HTTP200 / apify.com links=13 in article / .published.json total=21 articles"
+  }
+}
