@@ -1,0 +1,24 @@
+{
+  "success_indicators": [
+    "dev.to 公開記事 27 本中 26 本は既に Apify Store リンクあり、1 本対象外",
+    "1 本（id=4797699）に 4 アクターの UTM リンク追記を PUT 200 で完了",
+    "read-back 反映=True を確認",
+    "追記対象 0 本を確認 → t_83c84e86 の完了条件達成"
+  ],
+  "verification_commands": [
+    "python3 scripts/devto_internal_links.py --list | grep '追記対象' => 追記対象: 0本",
+    "python3 scripts/devto_internal_links.py --apply | grep 'PUT' => PUT 200 / read-back 反映=True",
+    "python3 -c \"import json;d=json.load(open('reports/apify-seo/devto-links.json'));print(d['applied'],len(d['rows']))\" => True 1",
+    "python3 scripts/devto_internal_links.py --list | grep -c '既存' => 26"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/reports/t_83c84e86_verification.md",
+    "/mnt/d/Project2/kensho/reports/apify-seo/devto-links.json"
+  ],
+  "evidence_hashes": [
+    "01d115f6afaec47ed8e21a67ccb03dfcb8925021f11d52b6ddef3dd51a8b805d",
+    "3dfb36df1cd82d985173463bfefff90c0d8f7b763bc9fc53a6beeabe279fa674"
+  ],
+  "task_id": "t_83c84e86",
+  "status": "complete"
+}
