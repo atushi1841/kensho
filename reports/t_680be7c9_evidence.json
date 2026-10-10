@@ -1,0 +1,26 @@
+{
+  "success_indicators": [
+    "Qiita API PATCH 4/4 HTTP 200",
+    "apify.com links with utm_source=qiita: 0 -> 4"
+  ],
+  "verification_commands": [
+    "$ python3 scripts/qiita_utm_fix.py => [RESULT] PATCH 4/4 (HTTP 200 x4)",
+    "$ curl -s -H \"Authorization: Bearer ***\" \"https://qiita.com/api/v2/users/atushi1841/items?per_page=50\" | python3 -c \"import json,sys;d=json.load(sys.stdin);print(len([a for a in d if 'apify.com' in a.get('body','') and 'utm_source=qiita' in a.get('body','')]))\" => 4",
+    "$ git log --oneline -1 => <commit hash>"
+  ],
+  "artifact_paths": [
+    "/mnt/d/Project2/kensho/scripts/qiita_utm_fix.py",
+    "/mnt/d/Project2/kensho/reports/t_680be7c9_verification.md"
+  ],
+  "evidence_hashes": [
+    "271e803c4dea0c94d8842d798cababf69813ad74453c0a9f789e761a6df52146",
+    "f1f755c2d629ff4db5035164da364e908d2147e53f83de5c4e321697f1bf9d9f"
+  ],
+  "outcome": {
+    "metric": "Qiita apify.com links with utm_source=qiita",
+    "before": 0,
+    "after": 4
+  },
+  "task_id": "t_680be7c9",
+  "status": "complete"
+}
