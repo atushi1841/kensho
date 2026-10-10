@@ -1,7 +1,7 @@
 {
   "success_indicators": [
     "JSON-LD itemCount extraction: 5 registered slugs confirmed",
-    "HTTP 200 verified for all 5 registered slugs",
+    "HTTP 200 verified for all 5 registered slugs (but HTTP 200 is invalid check)",
     "False completion condition identified: HTTP 200 returns for fake slugs too",
     "Critic redefinition: JSON-LD Count method is the correct verification"
   ],
@@ -11,10 +11,10 @@
     "curl totally-fake-mcp-00001 => 200 (same)"
   ],
   "artifact_paths": [
-    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_cdb54a4f/verification_results.log",
-    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_cdb54a4f/verify_glama.py",
-    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_cdb54a4f/glama_search.html",
-    "/mnt/d/Project2/kensho/reports/t_dea751b5_verification.md"
+    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_cdb54a4f/reports/t_dea751b5_v14.md",
+    "/home/atushi/.hermes/kanban/boards/kensho-ai-team/workspaces/t_cdb54a4f/reports/t_dea751b5_evidence_v14.json",
+    "/mnt/d/Project2/kensho/reports/t_dea751b5_verification.md",
+    "/mnt/d/Project2/kensho/reports/t_dea751b5_evidence.json"
   ],
   "evidence_hashes": [
     "sha256:02d9e7a8910f117c02e13e462735339bb88b806eb62e9f72829457685ab6415f",
