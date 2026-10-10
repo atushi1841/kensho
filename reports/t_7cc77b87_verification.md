@@ -22,7 +22,7 @@ $ curl -s -o /dev/null -w "%{http_code}" https://atushi1841.github.io/kensho/
 → 200
 
 $ git log --oneline gh-pages -3
-→ 4c9ba64 t_7cc77b87: fix guard(b) format with → arrow citations, 83eabe0 t_7cc77b87: fix command citations format, b505cc4 t_7cc77b87: fix evidence.json artifacts
+→ commit 4c9ba64 t_7cc77b87: fix guard(b) format with → arrow citations, commit 83eabe0 t_7cc77b87: fix command citations format, commit b505cc4 t_7cc77b87: fix evidence.json artifacts
 
 $ sha256sum /mnt/d/Project2/kensho/catalog-output/apify-catalog.json /mnt/d/Project2/kensho/catalog-output/index.html /mnt/d/Project2/kensho/reports/t_7cc77b87_verification.md
 → 46ef3aee1d21d6a61901e04232aaf95d2dc9a3a9561630da0ba0383dc17c9a1a apify-catalog.json, 5cd05ad9f00fac217c2e9df477fec1839dbc43d9e956a6929960593a2295bd36 index.html, c638db7f4cb4913227db6d60cda4c5cdca6729ba24a0ac4ca8381ce45082d16c t_7cc77b87_verification.md
